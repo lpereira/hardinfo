@@ -1,0 +1,117 @@
+[Translation]
+translated-by=Leandro Pereira <leandro@linuxmag.com.br>
+
+[computer.c]
+Unknown distribution=Distribuição desconhecida
+%d hour%s and %ld minute%s=%d hora%s e %ld minuto%s
+%d day%s, %d hour%s and %ld minute%s=%d dia%s, %d hora%s e %ld minuto%s
+<b>Computer name:</b>=<b>Nome do computador:</b>
+Computer name:=Nome do computador:
+<b>Distribution:</b>=<b>Distribuição:</b>
+Distribution:=Distribuição:
+<b>Kernel:</b>=<b>Kernel:</b>
+Kernel:=Kernel:
+<b>Uptime:</b>=<b>Uptime:</b>
+Uptime:=Uptime:
+Updating...=Atualizando...
+<b>%s</b> at %d MHz (%d bogomips)=<b>%s</b> em %d MHz (%d bogomips)
+%s at %d MHz (%d bogomips)=%s em %d MHz (%d bogomips)
+Family %d, model %d, stepping %d=Família %d, modelo %d, stepping %d
+%d KB L2 cache=%d KB de cache nível 2
+
+[hardinfo.c]
+System Information=Informações do Sistema
+Computer=Computador
+<b><big>Operating System</big></b>=<b><big>Sistema Operacional</big></b>
+Operating System=Sistema Operacional
+<b><big>Processor</big></b>=<b><big>Processador</big></b>
+Processor=Processador
+<b><big>Memory Usage</big></b>=<b><big>Uso da Memória</big></b>
+Memory Usage=Uso da Memória
+Devices=Dipositivos
+Device information=Informação do Dispositivo
+Refresh=Atualizar
+Close=Fechar
+Environment=Ambiente
+<b><big>X-Window System</big></b>=<b><big>X-Window System</big></b>
+X-Window System=Sistema X-Window
+PCI Devices=Dispositivos PCI
+ISA PnP Devices=Dispositivos ISA PnP
+ATA/IDE Block Devices=Dispositivos ATA/IDE
+SCSI Devices=Dispositivos SCSI
+Communication Ports=Portas de Comunicação
+Parallel Ports=Portas Paralelas
+This is free software; you can modify and/or distribute it\n=Este programa é software livre; você pode modificá-lo e/ou distribuí-lo\n
+under the terms of GNU GPL version 2. See http://www.fsf.org/\n=sob os termos da GNU GPL versão 2. Veja http://www.fsf.org/\n
+for more information.\n\n=para maiores informações.\n\n
+Translation module registered.\n=Módulo de tradução registrado.\n
+
+[ide.c]
+ATA/IDE %s Device=%s ATA/IDE
+Cache: %d KB=Cache: %d KB
+
+[intl.c]
+
+[isapnp.c]
+ISA Plug and Play Device=Dispositivo ISA Plug and Play
+Card ID: %d=Identificação da placa: %d
+PnP version: %.2f, Product version: %.2f=Versão PnP: %.2f, versão do produto: %.2f
+
+[parport.c]
+N/A=N/D
+Printer=Impressora
+Multimedia=Multimídia
+Legacy Device=Dispositivo Legado
+Parallel Port=Porta paralela
+Description: %s=Descrição: %s
+Command set: %s=Comandos: %s
+Class: %s=Classe: %s
+Base I/O address: 0x%x=Endereço E/S básico: 0x%x
+Modes: %s=Modos: %s
+Uses DMA=Usa acesso direto à memória
+
+[pci.c]
+I/O address: 0x%x to 0x%x=Endereço de E/S: 0x%x até 0x%x
+Memory: %ld KB=Memória: %ld KB
+Frequency: %dMHz=Frequência: %dMHz
+Latency: %d=Latência: %d
+Bus master=Bus master
+Bus: %d, Device: %d, Function: %d=Barramento: %d, Dispositivo: %d, Função: %d
+
+[scsi.c]
+Disk=Disco
+Tape=Fita
+Printer=Impressora
+CD-ROM=CD-ROM
+CD-ROM=CD-ROM
+Scanner=Scanner
+Generic=Genérico
+SCSI %s Device=%s SCSI
+Revision: %s=Revisão: %s
+Type: %s=Tipo: %s
+Controller: %d, Bus: %d, ID: %d, LUN: %d=Controlador: %d, Barramento: %d, ID: %d, LUN: %d
+
+[serial.c]
+Communication Port=Porta de Comunicação
+I/O port: 0x%x, IRQ: %d=Porta de E/S: 0x%x, IRQ: %d
+
+[usb.c]
+USB Device=Dispositivo USB
+Manufacturer: %s=Fabricante: %s
+Class: %s (%d)=Classe: %s (%d)
+Version: %.2f, Revision: %.2f=Versão: %.2f, Revisão: %.2f
+Vendor ID: 0x%X, Product ID: 0x%X=Identificação do fabricante: 0x%X, produto: 0x%X
+USB Devices=Dispositivos USB
+Unknown device (%s)=Dispositivo desconhecido (%s)
+
+[x11.c]
+<b>Display:</b>=<b>Display:</b>
+Display:=Display:
+<b>Vendor:</b>=<b>Distribuidor:</b>
+Vendor:=Distribuidor:
+<b>Release:</b>=<b>Versão:</b>
+Release:=Versão:
+<b>Resolution:</b>=<b>Resolução:</b>
+Resolution:=Resolução:
+Local display (%s)=Display local (%s)
+Remote display (%s)=Display remoto (%s)

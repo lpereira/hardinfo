@@ -1,0 +1,2 @@
+?package(hardinfo):needs=X11 section=Apps/System\
+  title="System Information" command="/usr/bin/hardinfo"

@@ -1,0 +1,109 @@
+[Translation]
+translated-by=Unknown
+
+[computer.c]
+Unknown distribution=Unknown distribution
+%d hour%s and %ld minute%s=%d hour%s and %ld minute%s
+%d day%s, %d hour%s and %ld minute%s=%d day%s, %d hour%s and %ld minute%s
+<b>Computer name:</b>=<b>Computer name:</b>
+Computer name:=Computer name:
+<b>Distribution:</b>=<b>Distribution:</b>
+Distribution:=Distribution:
+<b>Kernel:</b>=<b>Kernel:</b>
+Kernel:=Kernel:
+<b>Uptime:</b>=<b>Uptime:</b>
+Uptime:=Uptime:
+Updating...=Updating...
+<b>%s</b> at %d MHz (%d bogomips)=<b>%s</b> at %d MHz (%d bogomips)
+%s at %d MHz (%d bogomips)=%s at %d MHz (%d bogomips)
+Family %d, model %d, stepping %d=Family %d, model %d, stepping %d
+%d KB L2 cache=%d KB L2 cache
+
+[hardinfo.c]
+System Information=System Information
+Computer=Computer
+<b><big>Operating System</big></b>=<b><big>Operating System</big></b>
+Operating System=Operating System
+<b><big>Processor</big></b>=<b><big>Processor</big></b>
+Processor=Processor
+<b><big>Memory Usage</big></b>=<b><big>Memory Usage</big></b>
+Memory Usage=Memory Usage
+Devices=Devices
+Device information=Device information
+Refresh=Refresh
+Close=Close
+Environment=Environment
+<b><big>X-Window System</big></b>=<b><big>X-Window System</big></b>
+X-Window System=X-Window System
+PCI Devices=PCI Devices
+ISA PnP Devices=ISA PnP Devices
+ATA/IDE Block Devices=ATA/IDE Block Devices
+SCSI Devices=SCSI Devices
+Communication Ports=Communication Ports
+Parallel Ports=Parallel Ports
+This is free software; you can modify and/or distribute it\n=This is free software; you can modify and/or distribute it\n
+under the terms of GNU GPL version 2. See http://www.fsf.org/\n=under the terms of GNU GPL version 2. See http://www.fsf.org/\n
+for more information.\n\n=for more information.\n\n
+
+[ide.c]
+ATA/IDE %s Device=ATA/IDE %s Device
+Cache: %d KB=Cache: %d KB
+
+[intl.c]
+
+[isapnp.c]
+ISA Plug and Play Device=ISA Plug and Play Device
+Card ID: %d=Card ID: %d
+PnP version: %.2f, Product version: %.2f=PnP version: %.2f, Product version: %.2f
+
+[parport.c]
+N/A=N/A
+Parallel Port=Parallel Port
+Description: %s=Description: %s
+Command set: %s=Command set: %s
+Class: %s=Class: %s
+Base I/O address: 0x%x=Base I/O address: 0x%x
+Modes: %s=Modes: %s
+Uses DMA=Uses DMA
+
+[pci.c]
+I/O address: 0x%x to 0x%x=I/O address: 0x%x to 0x%x
+Memory: %ld KB=Memory: %ld KB
+Frequency: %dMHz=Frequency: %dMHz
+Latency: %d=Latency: %d
+Bus master=Bus master
+Bus: %d, Device: %d, Function: %d=Bus: %d, Device: %d, Function: %d
+
+[scsi.c]
+SCSI %s Device=SCSI %s Device
+Revision: %s=Revision: %s
+Type: %s=Type: %s
+Controller: %d, Bus: %d, ID: %d, LUN: %d=Controller: %d, Bus: %d, ID: %d, LUN: %d
+
+[serial.c]
+Communication Port=Communication Port
+I/O port: 0x%x, IRQ: %d=I/O port: 0x%x, IRQ: %d
+
+[usb.c]
+USB Devices=USB Devices
+Unknown device (%s)=Unknown device (%s)
+USB Device=USB Device
+Manufacturer: %s=Manufacturer: %s
+Class: %s (%d)=Class: %s (%d)
+Version: %.2f, Revision: %.2f=Version: %.2f, Revision: %.2f
+Vendor ID: 0x%X, Product ID: 0x%X=Vendor ID: 0x%X, Product ID: 0x%X
+
+[x11.c]
+Local display (%s)=Local display (%s)
+Remote display (%s)=Remote display (%s)
+XFree86 version %s (protocol version %d.%d)=XFree86 version %s (protocol version %d.%d)
+%d (protocol version %d.%d)=%d (protocol version %d.%d)
+<b>Display:</b>=<b>Display:</b>
+Display:=Display:
+<b>Vendor:</b>=<b>Vendor:</b>
+Vendor:=Vendor:
+<b>Release:</b>=<b>Release:</b>
+Release:=Release:
+<b>Resolution:</b>=<b>Resolution:</b>
+Resolution:=Resolution:
+

@@ -1,0 +1,127 @@
+03/07/2003 13:25 BRST	<leandro@linuxmag.com.br>	0.3.6-pre3
+
+	* v4l.[ch], hardinfo.[ch], pixmaps/v4l.png
+	  - Added Video 4 Linux support
+
+02/07/2003 20:51 BRST	<leandro@linuxmag.com.br>	0.3.6-pre2
+
+	* pixmaps/cnc.png
+	  - Added pixmap for Conectiva Linux.
+
+	* pci.c
+	  - Fixed memory detection bug in lspci parser.
+
+24/06/2003 20:10 BRST	<leandro@linuxmag.com.br>	0.3.6-pre1
+
+	* intl.c
+	  - Search for locale information in LANG, LC_MESSAGES and LC_ALL.
+
+	* about.[ch], hardinfo.[ch], pixmaps/logo.png
+	  - Included about box.
+
+	* configure
+	  - Added --with-gtk1 and --with-gtk2.
+
+	* lang/es_*.lang
+	  - Added Spanish translation
+	    (Thanks to Erica Andrews <phrozensmoke@yahoo.com>)
+
+	* pixmaps/usb.png
+	  - Changed USB icon a little bit.
+
+23/06/2003 15:50 BRST	<leandro@linuxmag.com.br>	0.3.5
+
+	* intl.c
+	  - Improved error checking.
+	  - Fixed segfault.
+	    (Patch from Sameh Attia <sameh.attia@tedata.net>)
+
+	* configure
+	  - Added option to disable i18n (--disable-nls).
+
+22/06/2003 21:52 BRST	<leandro@linuxmag.com.br>	0.3.4
+
+	* 0.3.4 released!
+
+19/06/2003 21:42 BRST	<leandro@linuxmag.com.br>	0.3.4-pre2
+
+	* intl.c, intl.h, genintl.pl, lang/*
+	  - Added i18n support.
+
+	* configure, computer.c
+	  - Finished PowerPC processor information support.
+
+19/06/2003 10:52 BRST	<leandro@linuxmag.com.br>	0.3.4-pre1
+
+	* hardinfo.h
+	  - Fixed segfault on startup.
+	    (Patch from Thomas Zajic <zlatko@gmx.at>)
+
+	* x11.c, x11.h, hardinfo.c
+	  - Added X-Window system information.
+
+	* pixmaps/x11.png
+	  - Added pixmap for X-Window information.
+
+	* configure, computer.c
+	  - Preliminary PowerPC processor information support.
+
+18/06/2003 22:14 BRST	<leandro@linuxmag.com.br>	0.3.3
+
+	* pci.c
+	  - Fixed a bug in lspci parser.
+
+	* computer.c, computer.h, hardinfo.c, hardinfo.h
+	  - Added operating system, processor and memory information
+
+	* hardinfo.c, hardinfo.h
+	  - Added "Refresh" and "Close" buttons
+
+16/06/2003 17:50 BRST	<leandro@linuxmag.com.br>	0.3.2
+
+	* configure, Makefile.in, hardinfo.c, pci.c
+	  - Some cleanups.
+
+16/06/2003 17:41 BRST	<leandro@linuxmag.com.br>	0.3.2-pre2
+
+	* configure, Makefile.in
+	  - Using automatic configuration utility:
+	    o If GTK2 isn't available, the GTK1.2 version will be built.
+	    o Search for lspci in various paths. If not found, fall back
+	      to the old /proc/pci parser.
+
+	* hardinfo.c
+	  - Parallel Port support added.
+
+	* ide.c, isapnp.c, parport.c, pci.c, scsi.c, serial.c, usb.c
+	  - Separate parsers from GUI.
+
+	* *.xpm
+	  - Moved *.xpm to pixmaps/.
+
+16/06/2003 10:46 BRST	<leandro@linuxmag.com.br>	0.3.2-pre1
+
+	* hardinfo.c
+	  - SCSI support added.
+	    (Patch from Pascal F.Martin <pascalmartin@earthlink.net>)
+	  - Fixed lspci path (it's now fixed in "/sbin/lspci", which seems
+	    to be the default, as Google says).
+	
+	* *.png
+	  - Moved all PNG files to pixmaps/.
+
+
+15/06/2003 21:17 BRST	<leandro@linuxmag.com.br>	0.3.1
+
+	* hardinfo.c
+	  - Application is now exits when the window is closed.
+	  - Parse `lspci -v' output instead of `/proc/pci', which
+	    is deprecated. This should work with 2.5 kernels too!
+	  - Images are not loaded from current directory anymore.
+
+	* debian/
+	  - HardInfo is now Debianized. :)
+
+	* Makefile
+	  - Added `install' target.
+	  - Images are now installed in `/usr/share/hardinfo/pixmaps'.
