@@ -1,0 +1,29 @@
+<ui>
+  <menubar>
+    <menu name="FileMenu" action="FileMenuAction">
+      <menuitem name="Generate Report..." action="ReportAction" />
+      <separator/>
+      <menuitem name="Quit" action="QuitAction" />
+      <placeholder name="FileMenuAdditions" />
+    </menu>
+    <menu name="ViewMenu" action="ViewMenuAction">
+      <menuitem name="LeftPane" action="LeftPaneAction"/>
+      <menuitem name="Toolbar" action="ToolbarAction"/>
+      <separator/>
+      <menuitem name="Refresh" action="RefreshAction"/>
+      <separator/>
+      <separator name="LastSep"/>
+    </menu>
+    <menu name="HelpMenu" action="HelpMenuAction">
+      <menuitem name="About" action="AboutAction"/>
+    </menu>
+  </menubar>
+  
+  <toolbar action="MainMenuBar" action="MainMenuBarAction">
+    <placeholder name="ToolItems">
+      <toolitem name="Refresh" action="RefreshAction"/>
+      <separator/>
+      <toolitem name="Report" action="ReportAction"/>
+    </placeholder>
+  </toolbar>
+</ui>

@@ -1,0 +1,42 @@
+
+CC = gcc  -fPIC
+CFLAGS = -Wall -g $(GTK_CFLAGS) $(GLADE_CFLAGS) -I.
+
+# ----------------------------------------------------------------------------
+
+OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o sha1.o md5.o \
+		menu.o stock.o callbacks.o expr.o
+MODULES = computer.so devices.so benchmark.so 
+
+all:	$(OBJECTS) $(MODULES)
+	$(CC) $(CFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) $(GTK_FLAGS) \
+		$(GLADE_LIBS) $(GLADE_FLAGS) 
+
+	# Creating FIXME file
+	rm -fr FIXME && fgrep -nir "FIXME" * |grep -v Makefile |grep -v svn \
+			> FIXME || true
+
+%.so:	%.c
+	@echo "[01;34m--- Module: $< ($@)[00m"
+	$(CC) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS) \
+		$(GLADE_LIBS) $(GLADE_FLAGS)
+	mv $@ modules
+	
+clean:
+	rm -rf .xvpics pixmaps/.xvpics *.o *.so hardinfo modules/*.so report
+	find . -name \*~ -exec rm -v {} \;
+	find . -name x86 -type l -exec rm -v {} \;
+
+dist-clean:	clean
+	rm -rf Makefile debian/hardinfo/ config.h arch/this
+
+package:	dist-clean
+	@echo "Creating tar.gz..."
+	cd .. && tar czf $(PACKAGE).tar.gz $(PACKAGE)/* && cd $(PACKAGE)
+	@echo "Creating tar.bz2..."
+	cd .. && tar cjf $(PACKAGE).tar.bz2 $(PACKAGE)/* && cd $(PACKAGE)
+
+deb:	dist-clean
+	@echo "Creating deb..."
+	dpkg-buildpackage -rfakeroot -k${USER}
+

@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+#
+# ToscoConf 0.04
+# Copyright (c) 2003-2004 Leandro Pereira <leandro@linuxmag.com.br>
+# All rights reserved.
+#
+# This script is in the Tosco Public License. It may be copied and/or
+# modified, in whole or in part, provided that all copies must retain the
+# above copyright notice, this condition and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+# AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+#
+# (yes, I did a copy&paste from the BSD license, eat me)
+#
+# ---------------------------------------------------------------------------
+
+PACKAGE=`basename ${PWD} | cut -d"-" -f1`;
+VERSION=`basename ${PWD} | cut -d"-" -f2`;
+
+[ "$PACKAGE" == "$VERSION" ] && VERSION="SVN_$(date)"
+
+echo "ToscoConf (version 0.04) for $PACKAGE version $VERSION"
+
+# ---------------------------------------------------------------------------
+
+echo -n "Running: "
+OS=`uname`
+echo -n $OS
+case $OS in		
+	Linux)
+		echo -n " (OK) " ;;
+	*)
+		echo " (not supported, yet!)"
+		exit ;;
+esac	
+
+PROC=`uname -m`
+case $PROC in
+	i?86)
+		ln -sf linux/x86 arch/this
+		ARCH="ARCH_i386" ;;
+	ppc)
+		ln -sf linux/ppc arch/this
+		ARCH="ARCH_PPC" ;;
+	x86_64)
+		ln -sf linux/x86_64 arch/this
+		ARCH="ARCH_x86_64" ;;
+	mips)
+		ln -sf linux/mips arch/this
+		ARCH="ARCH_MIPS" ;;
+	parisc*)
+		ln -sf linux/parisc arch/this
+		ARCH="ARCH_PARISC" ;;
+	ia64)
+		ln -sf linux/ia64 arch/this
+		ARCH="ARCH_IA64" ;;
+	*)
+		# uname -m on m68k doesn't return anything useful :/
+		grep "680?0" /proc/cpuinfo > /dev/null
+		if [ "$?" == "0" ]; then
+			ln -sf linux/m68k arch/this
+			ARCH="ARCH_m68k"
+		else
+			echo "Architeture \"$ARCH\" not supported." 
+			exit
+		fi
+
+		;;
+esac
+
+echo "$PROC ($ARCH)"
+
+# ---------------------------------------------------------------------------
+
+echo -n "Checking for lspci... "
+LSPCIPATH="/sbin/lspci /usr/sbin/lspci /bin/lspci /usr/bin/lspci `which lspci`"
+for i in $LSPCIPATH; do
+	if [ -x "$i" ]; then
+	LSPCI=$i
+		break;
+	fi
+done
+
+if [ -e "$LSPCI" ]; then
+	echo $LSPCI
+else
+	echo "lspci cannot be found"
+fi
+
+# ---------------------------------------------------------------------------
+
+GTK2=-1
+MIN_VERSION="2.6.0"
+echo -n "Checking for GTK ${MIN_VERSION}... "
+for i in `which pkg-config`; do
+	pkg-config --errors-to-stdout gtk+-2.0 \
+		--atleast-version=$MIN_VERSION > /dev/null
+	case $? in
+		0)
+			GTK_FLAGS=`pkg-config gtk+-2.0 --cflags`
+			GTK_LIBS=`pkg-config gtk+-2.0 --libs`
+			echo "OK (pkgconfig)"
+			GTK2=1 ;;
+		*)
+			echo "not found." ;;
+	esac
+done
+
+# --------------------------------------------------------------------------
+
+if [ $GTK2 -eq -1 ]; then
+	echo -e "\nYou need the GTK libraries, including the development stuff."
+	echo "If you're using Debian, running the command as root:"
+	echo -e "\n\tapt-get install libgtk2.0-dev\n"
+	echo "Will do the trick."
+	exit
+fi
+
+# --------------------------------------------------------------------------
+
+echo -e "\nWriting config.h..."
+rm -f config.h
+echo -e "#ifndef __CONFIG_H__\n#define __CONFIG_H__\n" > config.h
+
+echo "#define VERSION \"$VERSION\"" >> config.h
+
+if [ "$LSPCI" ]; then
+	echo "#define LSPCI \"$LSPCI -v\"" >> config.h
+fi
+
+echo "#define $ARCH" >> config.h
+
+echo "#define PLATFORM \"`uname`\"" >> config.h
+echo "#define KERNEL   \"`uname -r`\"" >> config.h
+echo "#define HOSTNAME \"`hostname`\"" >> config.h
+
+echo "#define PREFIX \"./\"" >> config.h
+echo "#define DEBUG 1" >> config.h
+
+echo -e "\n#endif	/* __CONFIG_H__ */" >> config.h
+
+echo "Writing Makefile..."
+rm -f Makefile
+
+echo "GTK_LIBS = ${GTK_LIBS}" > Makefile
+echo "GTK_CFLAGS = ${GTK_FLAGS}" >> Makefile
+echo "GLADE_LIBS = ${GLADE_LIBS}" >> Makefile
+echo "GLADE_CFLAGS = ${GLADE_FLAGS}" >> Makefile
+echo "PACKAGE = `basename ${PWD}`" >> Makefile
+
+cat Makefile.in >> Makefile
+
+echo -e "\nDone. Type \"make\" to compile the program.\n"
+echo "If you get errors, probably you don't have the right libraries,"
+echo "includes or utilities. However, if you're sure this is a bug in my"
+echo -e "code, please send a patch (use \"diff -u\") to <leandro@linuxmag.com.br>.\n"
