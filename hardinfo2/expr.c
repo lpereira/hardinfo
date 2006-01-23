@@ -94,7 +94,7 @@ GSList *math_infix_to_postfix(GSList *infix)
 	    t_sp--;
 	} else if (t->type != TOKEN_OPERATOR) {
 	    postfix = g_slist_append(postfix, t);
-	} else if (!stack) {
+	} else if (t_sp == 0) {
 	    stack[++t_sp] = t;
 	} else {
 	    while (t_sp != 0 && priority(t->val.op) <= priority(stack[t_sp]->val.op))

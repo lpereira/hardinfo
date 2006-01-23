@@ -90,6 +90,9 @@ scan_languages(OperatingSystem * os)
 	    g_free(revision);
 	    g_free(date);
 	    g_free(codeset);
+	    
+	    title = source = address = email = language = territory = \
+	        revision = date = codeset = NULL;
 	}
     }
 

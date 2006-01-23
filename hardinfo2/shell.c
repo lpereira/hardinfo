@@ -162,7 +162,8 @@ shell_status_pulse(void)
 void
 shell_status_set_percentage(gint percentage)
 {
-    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(shell->progress), (float)percentage/100.0);
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(shell->progress),
+                                  (float)percentage/100.0);
     while (gtk_events_pending())
 	gtk_main_iteration();
 }
@@ -205,7 +206,7 @@ shell_do_reload(void)
 }
 
 void
-shell_status_update(const gchar * message)
+shell_status_update(const gchar *message)
 {
     gtk_label_set_markup(GTK_LABEL(shell->status), message);
     gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
@@ -308,14 +309,11 @@ shell_tree_modules_load(ShellTree * shelltree)
 		GdkPixbuf *(*shell_icon) (gint);
 		const gchar *(*shell_name) (gint);
 		ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
-		gpointer symbol;
 
-		if (g_module_symbol(module->dll, "hi_icon", &symbol)) {
-		    shell_icon = symbol;
+		if (g_module_symbol(module->dll, "hi_icon", &(shell_icon))) {
 		    entry->icon = shell_icon(i);
 		}
-		if (g_module_symbol(module->dll, "hi_name", &symbol)) {
-		    shell_name = symbol;
+		if (g_module_symbol(module->dll, "hi_name", &(shell_name))) {
 		    entry->name = g_strdup(shell_name(i));
 		}
 		g_module_symbol(module->dll, "hi_info",
@@ -331,8 +329,7 @@ shell_tree_modules_load(ShellTree * shelltree)
 		module->entries = g_slist_append(module->entries, entry);
 	    }
 
-	    shelltree->modules =
-		g_slist_append(shelltree->modules, module);
+	    shelltree->modules = g_slist_append(shelltree->modules, module);
 	} else {
 	    g_free(module->name);
 	    g_free(module->icon);
@@ -754,9 +751,7 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
         value = g_key_file_get_value(key_file, group, key, NULL);
 
 	if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-		gchar *p = strchr(key, '#');
-		if (p)
-		    *p = 0;
+	        strend(key, '#');
         
 	        gtk_tree_store_append(store, &child, &parent);	        
 	        gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value,
@@ -915,8 +910,12 @@ module_selected(GtkTreeSelection * ts, gpointer data)
 
 	info_selected_show_extra(NULL);	/* clears the more info store */
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->info->view));
+
+	/* urgh. why don't GTK do this when the model is cleared? */
 	gtk_range_set_value(GTK_RANGE(GTK_SCROLLED_WINDOW(shell->info->scroll)->vscrollbar), 0.0);
+	gtk_range_set_value(GTK_RANGE(GTK_SCROLLED_WINDOW(shell->info->scroll)->hscrollbar), 0.0);
 	gtk_range_set_value(GTK_RANGE(GTK_SCROLLED_WINDOW(shell->moreinfo->scroll)->vscrollbar), 0.0);
+	gtk_range_set_value(GTK_RANGE(GTK_SCROLLED_WINDOW(shell->moreinfo->scroll)->hscrollbar), 0.0);
 	
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);
