@@ -53,6 +53,11 @@ static GHashTable	*update_tbl = NULL;
 /*
  * Code :) ********************************************************************
  */
+
+Shell *shell_get_main_shell(void)
+{
+    return shell;
+}
  
 void shell_ui_manager_set_visible(const gchar *path,
                                   gboolean setting)
@@ -171,9 +176,16 @@ shell_status_set_percentage(gint percentage)
 void
 shell_view_set_enabled(gboolean setting)
 {
+    if (setting) {
+        widget_set_cursor(shell->window, GDK_LEFT_PTR);
+    } else {
+        widget_set_cursor(shell->window, GDK_WATCH);
+    }
+
     gtk_widget_set_sensitive(shell->hpaned, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
+    shell_action_set_enabled("ReportAction", setting);
 }
 
 void
@@ -191,6 +203,7 @@ void
 shell_do_reload(void)
 {
     shell_action_set_enabled("RefreshAction", FALSE);
+    shell_action_set_enabled("ReportAction", FALSE);
 
     if (shell->selected && shell->selected->reloadfunc) {
     	GtkTreeSelection *ts;
@@ -203,6 +216,7 @@ shell_do_reload(void)
     }
 
     shell_action_set_enabled("RefreshAction", TRUE);
+    shell_action_set_enabled("ReportAction", TRUE);
 }
 
 void
@@ -212,6 +226,13 @@ shell_status_update(const gchar *message)
     gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
     while (gtk_events_pending())
 	gtk_main_iteration();
+}
+
+static void
+destroy_me(void)
+{
+    gtk_main_quit();
+    exit(0);
 }
 
 static void
@@ -225,7 +246,7 @@ shell_create_window(void)
     gtk_window_set_icon(GTK_WINDOW(shell->window), icon_cache_get_pixbuf("logo.png"));
     gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
     gtk_widget_set_size_request(shell->window, 600, 400);
-    g_signal_connect(G_OBJECT(shell->window), "destroy", gtk_main_quit,
+    g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me,
 		     NULL);
 
     vbox = gtk_vbox_new(FALSE, 0);
@@ -310,10 +331,10 @@ shell_tree_modules_load(ShellTree * shelltree)
 		const gchar *(*shell_name) (gint);
 		ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
 
-		if (g_module_symbol(module->dll, "hi_icon", &(shell_icon))) {
+		if (g_module_symbol(module->dll, "hi_icon", (gpointer)&(shell_icon))) {
 		    entry->icon = shell_icon(i);
 		}
-		if (g_module_symbol(module->dll, "hi_name", &(shell_name))) {
+		if (g_module_symbol(module->dll, "hi_name", (gpointer)&(shell_name))) {
 		    entry->name = g_strdup(shell_name(i));
 		}
 		g_module_symbol(module->dll, "hi_info",
@@ -419,7 +440,8 @@ add_modules_to_gui(gpointer data, gpointer user_data)
 
     gtk_tree_store_append(store, &parent, NULL);
     gtk_tree_store_set(store, &parent, TREE_COL_NAME, module->name,
-                       TREE_COL_DATA, NULL, -1);
+                       TREE_COL_DATA, NULL,
+                       TREE_COL_SEL, FALSE, -1);
 
     if (module->icon) {
 	gtk_tree_store_set(store, &parent, TREE_COL_PBUF, module->icon, -1);
@@ -437,7 +459,8 @@ add_modules_to_gui(gpointer data, gpointer user_data)
 
 	    gtk_tree_store_append(store, &child, &parent);
 	    gtk_tree_store_set(store, &child, TREE_COL_NAME, entry->name,
-			       TREE_COL_DATA, entry, -1);
+			       TREE_COL_DATA, entry,
+                               TREE_COL_SEL, FALSE, -1);
 
 	    if (entry->icon) {
 		gtk_tree_store_set(store, &child, TREE_COL_PBUF,
@@ -498,7 +521,6 @@ shell_init(void)
     gtk_widget_hide(shell->notebook);
 
     shell_action_set_enabled("RefreshAction", FALSE);
-    shell_action_set_enabled("ReportAction", FALSE);
     shell_action_set_active("LeftPaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
     shell_action_set_property("RefreshAction", "is-important", TRUE);
@@ -1036,7 +1058,7 @@ shell_tree_new()
 				   GTK_POLICY_AUTOMATIC);
 
     store = gtk_tree_store_new(TREE_NCOL, GDK_TYPE_PIXBUF, G_TYPE_STRING,
-			       G_TYPE_POINTER);
+			       G_TYPE_POINTER, G_TYPE_BOOLEAN);
     model = GTK_TREE_MODEL(store);
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);

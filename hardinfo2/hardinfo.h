@@ -19,7 +19,7 @@
 #ifndef __HARDINFO_H__
 #define __HARDINFO_H__
 
-#include <glib.h>
+#include <gtk/gtk.h>
 
 typedef struct _ModuleEntry ModuleEntry;
 
@@ -31,5 +31,6 @@ struct _ModuleEntry {
 inline void remove_quotes(gchar *str);
 inline void strend(gchar *str, gchar chr);
 inline void remove_linefeed(gchar *str);
+       void widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
 
 #endif				/* __HARDINFO_H__ */

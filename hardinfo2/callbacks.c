@@ -15,11 +15,14 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
+
 #include <gtk/gtk.h>
 #include <callbacks.h>
 #include <iconcache.h>
 #include <config.h>
+
 #include <shell.h>
+#include <report.h>
 
 void cb_refresh()
 {
@@ -63,7 +66,9 @@ void cb_about()
 
 void cb_generate_report()
 {
-    g_print("generate report\n");
+    Shell *shell = shell_get_main_shell();
+
+    report_dialog_show(shell->tree->model, shell->window);
 }
 
 void cb_quit(void)

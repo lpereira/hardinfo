@@ -15,50 +15,34 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-#include <string.h>
-#include <hardinfo.h>
-#include <gtk/gtk.h>
-
-inline void
-remove_quotes(gchar *str)
-{
-    if (!str)
-        return;
-
-    while (*str == '"')
-        *(str++) = ' ';
-
-    gchar *p;
-    if ((p = strchr(str, '"')))
-        *p = 0;
-}
-
-inline void
-strend(gchar *str, gchar chr)
-{
-    if (!str)
-        return;
-        
-    char *p;
-    if ((p = strchr(str, chr)))
-        *p = 0;
-}
-
-inline void
-remove_linefeed(gchar * str)
-{
-    strend(str, '\n');
-}
-
-void
-widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
-{   
-        GdkCursor *cursor;
  
-        cursor = gdk_cursor_new(cursor_type);
-        gdk_window_set_cursor(GDK_WINDOW(widget->window), cursor);
-        gdk_cursor_unref(cursor);
-        
-        while(gtk_events_pending())
-                gtk_main_iteration();
-}
+#ifndef __REPORT_H__
+#define __REPORT_H__
+#include <gtk/gtk.h>
+#include <shell.h>
+
+typedef struct _ReportDialog	ReportDialog;
+typedef struct _ReportContext	ReportContext;
+
+struct _ReportContext {
+  ReportDialog		*rd;
+  ShellModuleEntry	*entry;
+  
+  FILE			*stream;
+};
+
+struct _ReportDialog {
+  GtkWidget *dialog;
+  GtkWidget *filechooser;
+  GtkWidget *btn_cancel;
+  GtkWidget *btn_generate;
+  GtkWidget *btn_sel_all;
+  GtkWidget *btn_sel_none;
+  GtkWidget *treeview;
+  
+  GtkTreeModel *model;
+};
+
+void report_dialog_show();
+
+#endif	/* __REPORT_H__ */

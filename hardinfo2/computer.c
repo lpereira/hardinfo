@@ -40,6 +40,7 @@ enum {
     COMPUTER_FILESYSTEMS,
     COMPUTER_SHARES,
     COMPUTER_DISPLAY,
+    COMPUTER_NETWORK,
 /*    COMPUTER_LOADGRAPH,*/
 } Entries;
 
@@ -52,6 +53,7 @@ static ModuleEntry hi_entries[] = {
     {"Filesystems",		"dev_removable.png"},
     {"Shared Directories",	"shares.png"},
     {"Display",			"monitor.png"},
+    {"Network Interfaces",	"network.png"},
 /*    {"<s>LoadGraph</s>",	"summary.png"}*/
 };
 
@@ -70,6 +72,7 @@ static GHashTable *moreinfo = NULL;
 #include <arch/this/filesystem.h>
 #include <arch/this/samba.h>
 #include <arch/this/sensors.h>
+#include <arch/this/net.h>
 
 static Computer *
 computer_get_info(void)
@@ -112,6 +115,9 @@ computer_get_info(void)
     shell_status_update("Reading sensors...");
     read_sensors();
 
+    shell_status_update("Obtaining network information...");
+    scan_net_interfaces();
+
     computer->date_time = "...";
     return computer;
 }
@@ -122,6 +128,9 @@ hi_reload(gint entry)
     switch (entry) {
     case COMPUTER_FILESYSTEMS:
 	scan_filesystems();
+	break;
+    case COMPUTER_NETWORK:
+	scan_net_interfaces();
 	break;
     case COMPUTER_SENSORS:
 	read_sensors();
@@ -183,16 +192,21 @@ hi_info(gint entry)
     static Computer *computer = NULL;
     static gchar *tmp = NULL;
 
-    if (tmp != NULL) {
+    /*if (tmp != NULL) {
        g_free(tmp);
        tmp = NULL;
-    } 
+    } */
 
     if (!computer) {
 	computer = computer_get_info();
     }
 
     switch (entry) {
+    case COMPUTER_NETWORK:
+        return g_strdup_printf("[$ShellParam$]\n"
+                               "ReloadInterval=3000\n"
+                               "ViewType=1\n"
+                               "%s", network_interfaces);
     case COMPUTER_SENSORS:
         return g_strdup_printf("[$ShellParam$]\n"
                                "ReloadInterval=3000\n"

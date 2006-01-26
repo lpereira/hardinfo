@@ -45,6 +45,7 @@ typedef enum {
     TREE_COL_PBUF,
     TREE_COL_NAME,
     TREE_COL_DATA,
+    TREE_COL_SEL,
     TREE_NCOL
 } ShellTreeColumns;
 
@@ -116,6 +117,8 @@ struct _ShellFieldUpdate {
 void		shell_init(void);
 void		shell_do_reload(void);
 
+Shell	       *shell_get_main_shell();
+
 void		shell_action_set_enabled(const gchar *action_name,
                                          gboolean setting);
 gboolean	shell_action_get_active(const gchar *action_name);
@@ -132,6 +135,8 @@ void		shell_ui_manager_set_visible(const gchar *path,
 void		shell_status_update(const gchar *message);
 void		shell_status_pulse(void);
 void		shell_status_set_percentage(gint percentage);
+void		shell_status_set_enabled(gboolean setting);
+
 void		shell_view_set_enabled(gboolean setting);
 
 #endif				/* __SHELL_H__ */

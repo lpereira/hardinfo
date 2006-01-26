@@ -27,10 +27,6 @@ main(int argc, char **argv)
 {
     gtk_init(&argc, &argv);
 
-#ifdef DEBUG
-    g_log_set_always_fatal(G_LOG_LEVEL_MASK);
-#endif
-
     icon_cache_init();
     stock_icons_init();
     shell_init();
