@@ -36,12 +36,12 @@ static GtkActionEntry entries[] =
   
   { "ReportAction", HI_STOCK_REPORT,                    /* name, stock id */
     "Generate _Report", "<control>R",                   /* label, accelerator */
-    "Report",                                           /* tooltip */ 
+    "Creates a report in HTML",                         /* tooltip */ 
     G_CALLBACK(cb_generate_report) },
   
   { "RefreshAction", GTK_STOCK_REFRESH,
     "_Refresh", "F5",
-    "Refresh",
+    NULL,
     G_CALLBACK(cb_refresh) },
 
   { "AboutAction", GTK_STOCK_ABOUT,
@@ -51,7 +51,7 @@ static GtkActionEntry entries[] =
 
   { "QuitAction", GTK_STOCK_QUIT,
     "_Quit", "<control>Q",    
-    "Quit",
+    NULL,
     G_CALLBACK(cb_quit) }
 };
 

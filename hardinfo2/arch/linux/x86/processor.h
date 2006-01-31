@@ -224,6 +224,7 @@ static struct {
     { "dts",		"Debug Store" },
     { "ss",		"Self Snoop" },
     { "tm",		"Thermal Monitor" },
+    { "pbe",		"Pending Break Enable" },
     { "pb",		"Pending Break Enable" },
     { NULL, NULL}
 };
@@ -254,4 +255,49 @@ processor_get_capabilities_from_flags(gchar * strflags)
 
     g_strfreev(old);
     return tmp;
+}
+
+static gchar *
+processor_get_info(Processor *processor)
+{
+	gchar *tmp = processor_get_capabilities_from_flags(processor->
+						  flags);
+	gchar *ret = g_strdup_printf("[Processor]\n"
+	                       "Name=%s\n"
+	                       "Specification=%s\n"
+                               "Family, model, stepping=%d, %d, %d\n"
+			       "Vendor=%s\n"
+			       "Cache Size=%dkb\n"
+			       "Frequency=%.2fMHz\n"
+			       "BogoMips=%.2f\n"
+			       "Byte Order=%s\n"
+			       "[Features]\n"
+			       "FDIV Bug=%s\n"
+			       "HLT Bug=%s\n"
+			       "F00F Bug=%s\n"
+			       "Coma Bug=%s\n"
+			       "Has FPU=%s\n"
+			       "[Capabilities]\n" "%s",
+			       processor->strmodel,
+			       processor->model_name,
+			       processor->family,
+			       processor->model,
+			       processor->stepping,
+			       processor->vendor_id,
+			       processor->cache_size,
+			       processor->cpu_mhz,
+			       processor->bogomips,
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                               "Little Endian",
+#else
+                               "Big Endian",
+#endif
+			       processor->bug_fdiv,
+			       processor->bug_hlt,
+			       processor->bug_f00f,
+			       processor->bug_coma,
+			       processor->has_fpu,
+			       tmp);
+      g_free(tmp);
+      return ret;
 }

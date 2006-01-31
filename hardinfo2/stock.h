@@ -20,7 +20,6 @@
 #define __STOCK_H__
 
 #define HI_STOCK_REPORT		"hi-stock-report"
-#define HI_STOCK_MODULE		"hi-stock-module"
 
 void stock_icons_init(void);
 void stock_icon_register(gchar *filename, gchar *stock_id);

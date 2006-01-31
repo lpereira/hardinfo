@@ -32,9 +32,9 @@
  * Internal Prototypes ********************************************************
  */
 
-static void 		 shell_create_window();
-static ShellTree 	*shell_tree_new(void);
-static ShellInfoTree 	*shell_info_tree_new(gboolean extra);
+static void 		 create_window();
+static ShellTree 	*tree_new(void);
+static ShellInfoTree 	*info_tree_new(gboolean extra);
 
 static void		 module_selected(GtkTreeSelection * ts, gpointer data);
 static void		 module_selected_show_info(ShellModuleEntry * entry,
@@ -236,18 +236,18 @@ destroy_me(void)
 }
 
 static void
-shell_create_window(void)
+create_window(void)
 {
     GtkWidget		*vbox, *hbox;
 
     shell = g_new0(Shell, 1);
 
     shell->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_icon(GTK_WINDOW(shell->window), icon_cache_get_pixbuf("logo.png"));
+    gtk_window_set_icon(GTK_WINDOW(shell->window),
+                        icon_cache_get_pixbuf("logo.png"));
     gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
     gtk_widget_set_size_request(shell->window, 600, 400);
-    g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me,
-		     NULL);
+    g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_widget_show(vbox);
@@ -287,7 +287,6 @@ shell_create_window(void)
 	gtk_main_iteration();
 }
 
-/* FIXME: nao usar o modules.conf, ler os .so de um diretorio */
 static void
 shell_tree_modules_load(ShellTree * shelltree)
 {
@@ -321,14 +320,13 @@ shell_tree_modules_load(ShellTree * shelltree)
 	    gint(*n_entries) (void);
 	    gint i;
 
-	    if (!g_module_symbol
-		(module->dll, "hi_n_entries", (gpointer) & n_entries))
+	    if (!g_module_symbol(module->dll, "hi_n_entries", (gpointer) & n_entries))
 		continue;
 
             gint j = n_entries();
 	    for (i = 0; i <= j; i++) {
-		GdkPixbuf *(*shell_icon) (gint);
-		const gchar *(*shell_name) (gint);
+		GdkPixbuf	 *(*shell_icon) (gint);
+		const gchar	 *(*shell_name) (gint);
 		ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
 
 		if (g_module_symbol(module->dll, "hi_icon", (gpointer)&(shell_icon))) {
@@ -484,11 +482,11 @@ shell_init(void)
 	return;
     }
 
-    shell_create_window();
+    create_window();
 
-    shell->tree = shell_tree_new();
-    shell->info = shell_info_tree_new(FALSE);
-    shell->moreinfo = shell_info_tree_new(TRUE);
+    shell->tree = tree_new();
+    shell->info = info_tree_new(FALSE);
+    shell->moreinfo = info_tree_new(TRUE);
     shell->loadgraph = load_graph_new(75);
 
     gtk_paned_pack1(GTK_PANED(shell->hpaned), shell->tree->scroll,
@@ -554,9 +552,9 @@ update_field(gpointer data)
               return TRUE;       
         }
         
-        GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
-
         if (iter) {
+            GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
+            
             gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
             g_free(value);
             
@@ -605,7 +603,7 @@ reload_section(gpointer data)
 }
 
 static void
-shell_set_view_type(ShellViewType viewtype)
+set_view_type(ShellViewType viewtype)
 {
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
 
@@ -644,8 +642,10 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		     gchar * group, gchar ** keys)
 {
     if (g_str_equal(group, "$ShellParam$")) {
-	while (*keys) {
-	    gchar *key = *keys;
+        gint i;
+        
+        for (i = 0; keys[i]; i++) {
+	    gchar *key = keys[i];
 
 	    if (g_str_has_prefix(key, "UpdateInterval")) {
 		gint ms;
@@ -676,7 +676,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 
 		g_timeout_add(ms, reload_section, entry);
 	    } else if (g_str_equal(key, "ViewType")) {
-		shell_set_view_type(g_key_file_get_integer(key_file, group,
+		set_view_type(g_key_file_get_integer(key_file, group,
 							   key, NULL));
 	    } else if (g_str_has_prefix(key, "Icon")) {
 	        GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
@@ -696,8 +696,6 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
                                                                     group,
                                                                     key, NULL));
     	    }
-
-	    *keys++;
 	}
     } else {
 	g_warning("Unknown parameter group '%s'", group);
@@ -711,6 +709,7 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
     GtkTreeIter		 parent;
     GtkTreeStore	*store = GTK_TREE_STORE(shell->info->model);
     gchar 		*tmp   = g_strdup(group);
+    gint                 i;
 
     gtk_tree_store_append(store, &parent, NULL);
 
@@ -718,8 +717,8 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
     gtk_tree_store_set(store, &parent, INFO_TREE_COL_NAME, tmp, -1);
     g_free(tmp);
 
-    while (*keys) {
-	gchar *key = *keys;
+    for (i = 0; keys[i]; i++) {
+	gchar *key = keys[i];
 	gchar *value;
 	GtkTreeIter child;
 
@@ -751,8 +750,6 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	}
 
 	g_free(value);
-
-	*keys++;
     }
 }
 
@@ -761,12 +758,13 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
 {
     GtkTreeIter		 parent;
     GtkTreeStore	*store = GTK_TREE_STORE(shell->moreinfo->model);
+    gint                 i;
 
     gtk_tree_store_append(store, &parent, NULL);
     gtk_tree_store_set(store, &parent, INFO_TREE_COL_NAME, group, -1);
 
-    while (*keys) {
-	gchar *key = *keys;
+    for (i = 0; keys[i]; i++) {
+	gchar *key = keys[i];
 	GtkTreeIter child;
         gchar *value;
         
@@ -781,8 +779,6 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
 	}
        
         g_free(value);
-
-	*keys++;
     }
 }
 
@@ -797,8 +793,9 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
     GKeyFile		*key_file = g_key_file_new();
     gchar		*key_data;
-    gchar		**groups, **tmpgroups;
+    gchar		**groups;
     GtkTreeStore	*store;
+    gint                i;
 
     if (entry->func) {
         key_data = entry->func(entry->number);
@@ -808,7 +805,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     }
 
     /* reset the view type to normal */
-    shell_set_view_type(SHELL_VIEW_NORMAL);
+    set_view_type(SHELL_VIEW_NORMAL);
 
     /* recreate the iter hash table only if we're not reloading the module section */
     if (!reload) {
@@ -824,28 +821,20 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0, NULL);
     groups = g_key_file_get_groups(key_file, NULL);
 
-    tmpgroups = groups;
-
-    while (*groups) {
-	gchar *group = *groups;
-	gchar **keys =
-	    g_key_file_get_keys(key_file, group, NULL, NULL), **tmpkeys;
-
-	tmpkeys = keys;
+    for (i = 0; groups[i]; i++) {
+	gchar *group = groups[i];
+	gchar **keys = g_key_file_get_keys(key_file, group, NULL, NULL);
 
 	if (*group == '$') {
 	    group_handle_special(key_file, entry, group, keys);
 	} else {
 	    group_handle_normal(key_file, entry, group, keys);
 	}
-
-	g_strfreev(tmpkeys);
-	*groups++;
     }
 
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
 
-    g_strfreev(tmpgroups);
+    g_strfreev(groups);
     g_key_file_free(key_file);
     g_free(key_data);
 }
@@ -864,32 +853,24 @@ info_selected_show_extra(gchar * data)
     if (data) {
 	GKeyFile *key_file = g_key_file_new();
 	gchar *key_data = shell->selected->morefunc(data);
-	gchar **groups, **tmpgroups;
+	gchar **groups;
+	gint i;
 
 	g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0,
 				  NULL);
 	groups = g_key_file_get_groups(key_file, NULL);
 
-	tmpgroups = groups;
-
-	while (*groups) {
-	    gchar *group = *groups;
-	    gchar **keys =
-		g_key_file_get_keys(key_file, group, NULL, NULL),
-		**tmpkeys;
-
-	    tmpkeys = keys;
+	for (i = 0; groups[i]; i++) {
+	    gchar *group = groups[i];
+	    gchar **keys = g_key_file_get_keys(key_file, group, NULL, NULL);
 
             moreinfo_handle_normal(key_file, group, keys);
-
-	    g_strfreev(tmpkeys);
-	    *groups++;
 	}
 
 	gtk_tree_view_expand_all(GTK_TREE_VIEW
 				 (shell->moreinfo->view));
 
-	g_strfreev(tmpgroups);
+	g_strfreev(groups);
 	g_key_file_free(key_file);
 	g_free(key_data);
     }
@@ -952,7 +933,7 @@ module_selected(GtkTreeSelection * ts, gpointer data)
 	shell_action_set_enabled("RefreshAction", FALSE);    
 
 	gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
-	shell_set_view_type(SHELL_VIEW_NORMAL);
+	set_view_type(SHELL_VIEW_NORMAL);
     }
     
     current = entry;
@@ -977,7 +958,7 @@ info_selected(GtkTreeSelection * ts, gpointer data)
 }
 
 static ShellInfoTree *
-shell_info_tree_new(gboolean extra)
+info_tree_new(gboolean extra)
 {
     ShellInfoTree	*info;
     GtkWidget		*treeview, *scroll;
@@ -989,6 +970,8 @@ shell_info_tree_new(gboolean extra)
     info = g_new0(ShellInfoTree, 1);
 
     scroll = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
+					(scroll), GTK_SHADOW_IN);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
 				   GTK_POLICY_AUTOMATIC,
 				   GTK_POLICY_AUTOMATIC);
@@ -1011,7 +994,7 @@ shell_info_tree_new(gboolean extra)
     gtk_tree_view_column_pack_start(column, cr_text, TRUE);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_NAME);
-
+				       
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
@@ -1040,7 +1023,7 @@ shell_info_tree_new(gboolean extra)
 }
 
 static ShellTree *
-shell_tree_new()
+tree_new()
 {
     ShellTree		*shelltree;
     GtkWidget		*treeview, *scroll;
@@ -1053,6 +1036,8 @@ shell_tree_new()
     shelltree = g_new0(ShellTree, 1);
 
     scroll = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
+					(scroll), GTK_SHADOW_IN);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
 				   GTK_POLICY_AUTOMATIC,
 				   GTK_POLICY_AUTOMATIC);
@@ -1075,6 +1060,7 @@ shell_tree_new()
 				       TREE_COL_PBUF);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
+
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
     g_signal_connect(G_OBJECT(sel), "changed", (GCallback) module_selected,
 		     NULL);

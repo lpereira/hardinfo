@@ -84,7 +84,8 @@ scan_pci(void)
 	    strdevice =
 		g_strdup_printf("%sOEM Vendor=%s\n", strdevice, buf);
 	} else if (!strncmp(buf, "Capabilities", 12)
-		   && !strstr(buf, "only to root")) {
+		   && !strstr(buf, "only to root") && 
+		      !strstr(buf, "access denied")) {
 	    WALK_UNTIL(' ');
 	    WALK_UNTIL(']');
 	    buf++;

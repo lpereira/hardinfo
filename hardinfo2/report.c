@@ -33,6 +33,7 @@ report_html_header(ReportContext *ctx)
 	    "<html><head>\n" \
 	    "<title>HardInfo System Report</title>\n" \
 	    "<style>\n" \
+	    "body    { background: #fff }\n" \
 	    ".title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n" \
 	    ".stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n" \
 	    ".sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n" \
@@ -219,10 +220,8 @@ report_generate(ReportDialog *rd)
     if (!file)
         return FALSE;
     stream = fopen(file, "w+");
-    if (!stream) {
-        /* FIXME complain */
+    if (!stream)
         return FALSE;
-    }
     
     model	= rd->model;
     ctx		= g_new0(ReportContext, 1);
@@ -338,7 +337,7 @@ static ReportDialog
 *report_dialog_new(GtkTreeModel *model, GtkWidget *parent)
 {
     ReportDialog *rd;
-    GtkWidget *dlgReport;
+    GtkWidget *dialog;
     GtkWidget *dialog1_vbox;
     GtkWidget *scrolledwindow2;
     GtkWidget *treeview2;
@@ -355,15 +354,16 @@ static ReportDialog
 
     rd = g_new0(ReportDialog, 1);
 
-    dlgReport = gtk_dialog_new();
-    gtk_window_set_title(GTK_WINDOW(dlgReport), "Generate Report");
-    gtk_window_set_default_size(GTK_WINDOW(dlgReport), 320, 260);
-    gtk_window_set_transient_for(GTK_WINDOW(dlgReport), GTK_WINDOW(parent));
-    gtk_window_set_position(GTK_WINDOW(dlgReport), GTK_WIN_POS_CENTER_ON_PARENT);
-    gtk_window_set_type_hint(GTK_WINDOW(dlgReport),
+    dialog = gtk_dialog_new();
+    gtk_window_set_title(GTK_WINDOW(dialog), "Generate Report");
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+    gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
+    gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog),
 			     GDK_WINDOW_TYPE_HINT_DIALOG);
 
-    dialog1_vbox = GTK_DIALOG(dlgReport)->vbox;
+    dialog1_vbox = GTK_DIALOG(dialog)->vbox;
     gtk_box_set_spacing(GTK_BOX(dialog1_vbox), 5);
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
@@ -381,10 +381,9 @@ static ReportDialog
     gtk_widget_show(scrolledwindow2);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), scrolledwindow2, TRUE, TRUE, 0);
     gtk_widget_set_size_request(scrolledwindow2, -1, 200);
-    GTK_WIDGET_UNSET_FLAGS(scrolledwindow2, GTK_CAN_FOCUS);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow2),
 				   GTK_POLICY_AUTOMATIC,
-				   GTK_POLICY_ALWAYS);
+				   GTK_POLICY_AUTOMATIC);
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
 					(scrolledwindow2), GTK_SHADOW_IN);
 
@@ -392,7 +391,6 @@ static ReportDialog
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview2), FALSE);
     gtk_widget_show(treeview2);
     gtk_container_add(GTK_CONTAINER(scrolledwindow2), treeview2);
-    GTK_WIDGET_UNSET_FLAGS(treeview2, GTK_CAN_FOCUS);
     
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview2), column);
@@ -422,37 +420,33 @@ static ReportDialog
     button3 = gtk_button_new_with_mnemonic("Select _None");
     gtk_widget_show(button3);
     gtk_container_add(GTK_CONTAINER(hbuttonbox3), button3);
-    GTK_WIDGET_UNSET_FLAGS(button3, GTK_CAN_FOCUS);
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
     g_signal_connect(button3, "clicked", G_CALLBACK(report_dialog_sel_none), rd);
 
     button6 = gtk_button_new_with_mnemonic("Select _All");
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(hbuttonbox3), button6);
-    GTK_WIDGET_UNSET_FLAGS(button6, GTK_CAN_FOCUS);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
     g_signal_connect(button6, "clicked", G_CALLBACK(report_dialog_sel_all), rd);
 
-    dialog1_action_area = GTK_DIALOG(dlgReport)->action_area;
+    dialog1_action_area = GTK_DIALOG(dialog)->action_area;
     gtk_widget_show(dialog1_action_area);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
 
-    button8 = gtk_button_new_from_stock("gtk-cancel");
+    button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
     gtk_widget_show(button8);
-    gtk_dialog_add_action_widget(GTK_DIALOG(dlgReport), button8,
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
 				 GTK_RESPONSE_CANCEL);
-    GTK_WIDGET_UNSET_FLAGS(button8, GTK_CAN_FOCUS);
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
 
-    button7 = gtk_button_new_with_mnemonic("Generate _Report");
+    button7 = gtk_button_new_with_mnemonic("_Generate");
     gtk_widget_show(button7);
-    gtk_dialog_add_action_widget(GTK_DIALOG(dlgReport), button7,
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);
-    GTK_WIDGET_UNSET_FLAGS(button7, GTK_CAN_FOCUS);
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
 
-    rd->dialog		= dlgReport;
+    rd->dialog		= dialog;
     rd->btn_cancel	= button8;
     rd->btn_generate	= button7;
     rd->btn_sel_all	= button6;

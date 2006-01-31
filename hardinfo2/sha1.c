@@ -24,6 +24,10 @@ A million repetitions of "a"
 #define LITTLE_ENDIAN		/* This should be #define'd if true. */
 #endif
 
+#if defined(__OPTIMIZE__)
+#error You must compile this program without "-O".
+#endif
+
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
 

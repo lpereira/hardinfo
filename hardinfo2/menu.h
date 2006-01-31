@@ -21,4 +21,5 @@
 #include <shell.h>
 
 void	menu_init(Shell *shell);
+
 #endif	/* __MENU_H__ */

@@ -16,13 +16,16 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <stdlib.h>
 #include <gtk/gtk.h>
+
 #include <callbacks.h>
 #include <iconcache.h>
-#include <config.h>
 
 #include <shell.h>
 #include <report.h>
+
+#include <config.h>
 
 void cb_refresh()
 {
@@ -74,4 +77,5 @@ void cb_generate_report()
 void cb_quit(void)
 {
     gtk_main_quit();
+    exit(0);
 }

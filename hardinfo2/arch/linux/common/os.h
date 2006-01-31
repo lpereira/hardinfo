@@ -58,6 +58,9 @@ get_os_compiled_date(void)
     return g_strdup(buf);
 }
 
+
+#include <gdk/gdkx.h>
+
 void
 detect_desktop_environment(OperatingSystem * os)
 {
@@ -66,14 +69,15 @@ detect_desktop_environment(OperatingSystem * os)
     int maj, min;
 
     if (tmp) {
-	/* FIXME: this might not be true, as the gnome-panel in path may not be the one that's running.
-	   see where the user's running panel is and run *that* to obtain the version.
-
-	   the same applies do kcontrol --version. */
+	/* FIXME: this might not be true, as the gnome-panel in path
+	   may not be the one that's running.
+	   see where the user's running panel is and run *that* to
+	   obtain the version. */
 	version = popen("gnome-panel --version", "r");
 	if (version) {
 	    fscanf(version, "Gnome gnome-panel %d.%d", &maj, &min);
-	    if (pclose(version)) goto unknown;
+	    if (pclose(version))
+	        goto unknown;
 	} else {
 	    goto unknown;
 	}
@@ -89,7 +93,8 @@ detect_desktop_environment(OperatingSystem * os)
 	    fgets(buf, 32, version);
 
 	    fscanf(version, "KDE: %d.%d", &maj, &min);
-	    if (pclose(version)) goto unknown;
+	    if (pclose(version))
+	        goto unknown;
 	} else {
 	    goto unknown;
 	}
@@ -100,7 +105,19 @@ detect_desktop_environment(OperatingSystem * os)
 	if (!g_getenv("DISPLAY")) {
 	    os->desktop = g_strdup("Terminal");
 	} else {
-	    os->desktop = g_strdup("Unknown");
+            const gchar *windowman;
+            GdkScreen *screen = gdk_screen_get_default();
+
+            windowman = gdk_x11_screen_get_window_manager_name(screen);
+            
+            if (g_str_equal(windowman, "Xfwm4")) {
+                /* FIXME: check if xprop -root | grep XFCE_DESKTOP_WINDOW
+                   is defined */
+                os->desktop = g_strdup("XFCE 4");
+            } else {
+  	        os->desktop = g_strdup_printf("Unknown (Window Manager: %s)",
+  	                                      windowman);
+            }
 	}
     }
 }

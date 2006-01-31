@@ -133,8 +133,8 @@ gfloat math_postfix_eval(GSList *postfix, gfloat at_value)
     gfloat stack[500];
     gint sp = 0;
     
-    stack[0] = 0.0;
-
+    memset(stack, 0, sizeof(gfloat) * 500);
+    
     for (p = postfix; p; p = p->next) {
 	MathToken *t = (MathToken *) p->data;
 
@@ -233,7 +233,8 @@ int main(void)
     gchar *expr = "0.9*(@+(5.2*0.923+3*(2.0)))";
 
     postfix = math_string_to_postfix(expr);
-    g_print("%s = %f (must be 18.71964)\n", expr, math_postfix_eval(postfix, 10));
+    g_print("%s = %f (must be 18.71964)\n", expr,
+            math_postfix_eval(postfix, 10));
     math_postfix_free(postfix, TRUE);
     
     return 0;

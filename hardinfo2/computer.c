@@ -41,7 +41,6 @@ enum {
     COMPUTER_SHARES,
     COMPUTER_DISPLAY,
     COMPUTER_NETWORK,
-/*    COMPUTER_LOADGRAPH,*/
 } Entries;
 
 static ModuleEntry hi_entries[] = {
@@ -54,7 +53,6 @@ static ModuleEntry hi_entries[] = {
     {"Shared Directories",	"shares.png"},
     {"Display",			"monitor.png"},
     {"Network Interfaces",	"network.png"},
-/*    {"<s>LoadGraph</s>",	"summary.png"}*/
 };
 
 #include "computer.h"
@@ -163,13 +161,6 @@ hi_get_field(gchar * field)
 	g_free(mi);
     } else if (!strcmp(field, "Random")) {
         return g_strdup_printf("%d", rand() % 200);
-    /*} else if (!strcmp(field, "Used Memory")) {
-	MemoryInfo *mi;
-	
-	mi = computer_get_memory();
-	tmp = g_strdup_printf("%d", mi->used);
-
-	g_free(mi);*/
     } else if (!strcmp(field, "Uptime")) {
 	tmp = computer_get_formatted_uptime();
     } else if (!strcmp(field, "Date/Time")) {
@@ -214,15 +205,6 @@ hi_info(gint entry)
     case COMPUTER_SHARES:
         return g_strdup_printf("[SAMBA]\n"
                                "%s", shares_list);
-/*    case COMPUTER_LOADGRAPH:
-	return g_strdup_printf("[$ShellParam$]\n"
-			       "ViewType=2\n"
-                               "UpdateInterval$Used Memory=500\n"
-                               "LoadGraphInterval$Used Memory=50\n"
-                               "LoadGraphInterval$Random=50\n"
-                               "[Doh]\n"
-                               "Used Memory=bleh\n"
-                               "Random=Select me! /o/");*/
     case COMPUTER_FILESYSTEMS:
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "ViewType=1\n"
@@ -315,44 +297,7 @@ hi_info(gint entry)
 			       "[Available Languages]\n"
 			       "%s", computer->os->languages);
     case COMPUTER_PROCESSORS:
-	tmp = processor_get_capabilities_from_flags(computer->processor->
-						  flags);
-	return g_strdup_printf("[Processor]\n"
-	                       "Name=%s\n"
-	                       "Specification=%s\n"
-                               "Family, model, stepping=%d, %d, %d\n"
-			       "Vendor=%s\n"
-			       "Cache Size=%dkb\n"
-			       "Frequency=%.2fMHz\n"
-			       "BogoMips=%.2f\n"
-			       "Byte Order=%s\n"
-			       "[Features]\n"
-			       "FDIV Bug=%s\n"
-			       "HLT Bug=%s\n"
-			       "F00F Bug=%s\n"
-			       "Coma Bug=%s\n"
-			       "Has FPU=%s\n"
-			       "[Capabilities]\n" "%s",
-			       computer->processor->strmodel,
-			       computer->processor->model_name,
-			       computer->processor->family,
-			       computer->processor->model,
-			       computer->processor->stepping,
-			       computer->processor->vendor_id,
-			       computer->processor->cache_size,
-			       computer->processor->cpu_mhz,
-			       computer->processor->bogomips,
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                               "Little Endian",
-#else
-                               "Big Endian",
-#endif
-			       computer->processor->bug_fdiv,
-			       computer->processor->bug_hlt,
-			       computer->processor->bug_f00f,
-			       computer->processor->bug_coma,
-			       computer->processor->has_fpu,
-			       tmp);
+        return processor_get_info(computer->processor);
     default:
 	return g_strdup("[Empty]\nNo info available=");
     }

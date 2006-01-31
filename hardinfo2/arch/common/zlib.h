@@ -27,8 +27,12 @@ benchmark_zlib(void)
     if (!(compress && compressBound)) {
 	libz = g_module_open("libz", G_MODULE_BIND_LAZY);
 	if (!libz) {
-	    return g_strdup("[Error]\n"
-                   "ZLib not found=");
+            libz = g_module_open("/lib/libz.so", G_MODULE_BIND_LAZY);
+            if (!libz) {
+                g_print("%s\n", g_module_error());
+                return g_strdup("[Error]\n"
+                       "ZLib not found=");
+            }
 	}
 
 	if (!g_module_symbol(libz, "compress", (gpointer) & compress)

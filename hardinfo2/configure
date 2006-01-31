@@ -57,9 +57,9 @@ case $PROC in
 	parisc*)
 		ln -sf linux/parisc arch/this
 		ARCH="ARCH_PARISC" ;;
-	ia64)
-		ln -sf linux/ia64 arch/this
-		ARCH="ARCH_IA64" ;;
+	sparc*)
+		ln -sf linux/sparc arch/this
+		ARCH="ARCH_SPARC" ;;
 	*)
 		# uname -m on m68k doesn't return anything useful :/
 		grep "680?0" /proc/cpuinfo > /dev/null
@@ -91,6 +91,7 @@ if [ -e "$LSPCI" ]; then
 	echo $LSPCI
 else
 	echo "lspci cannot be found"
+	exit
 fi
 
 # ---------------------------------------------------------------------------
@@ -153,6 +154,7 @@ echo "GTK_CFLAGS = ${GTK_FLAGS}" >> Makefile
 echo "GLADE_LIBS = ${GLADE_LIBS}" >> Makefile
 echo "GLADE_CFLAGS = ${GLADE_FLAGS}" >> Makefile
 echo "PACKAGE = `basename ${PWD}`" >> Makefile
+echo "ARCHOPTS = " >> Makefile
 
 cat Makefile.in >> Makefile
 

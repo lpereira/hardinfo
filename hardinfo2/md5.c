@@ -36,6 +36,10 @@
 
 #include "md5.h"
 
+#if defined(__OPTIMIZE__)
+#error You must compile this program without "-O". (Or else the benchmark results may be different!)
+#endif
+
 /* Little-endian byte-swapping routines.  Note that these do not
    depend on the size of datatypes such as uint32, nor do they require
    us to detect the endianness of the machine we are running on.  It
@@ -311,3 +315,4 @@ int main(int argc, char **argv)
     return 0;
 }
 #endif				/* TEST */
+ 

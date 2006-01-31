@@ -26,13 +26,15 @@ enum {
     BENCHMARK_FIB,
     BENCHMARK_MD5,
     BENCHMARK_SHA1,
+    BENCHMARK_BLOWFISH
 } Entries;
 
 static ModuleEntry hi_entries[] = {
     {"CPU ZLib",	"compress.png"},
     {"CPU Fibonacci",	"module.png"},
     {"CPU MD5",		"module.png"},
-    {"CPU SHA1",	"module.png"}
+    {"CPU SHA1",	"module.png"},
+    {"CPU Blowfish",	"blowfish.png"}
 };
 
 static gchar *
@@ -52,24 +54,24 @@ benchmark_include_results(gchar *results, const gchar *benchmark)
         g_free(value);
     }
     
-    results = g_strconcat(results, "[$ShellParam$]\n"
-                                   "Zebra=1\n", NULL);
-                                   
     g_strfreev(machines);
     g_key_file_free(conf);
     
-    return results;
+    return g_strconcat(results, "[$ShellParam$]\n"
+                                "Zebra=1\n", NULL);
 }
 
 #include <arch/common/fib.h>
 #include <arch/common/zlib.h>
 #include <arch/common/md5.h>
 #include <arch/common/sha1.h>
+#include <arch/common/blowfish.h>
 
 static gchar *bench_zlib = NULL,
              *bench_fib  = NULL,
              *bench_md5  = NULL,
-             *bench_sha1 = NULL;
+             *bench_sha1 = NULL,
+             *bench_fish = NULL;
 
 gchar *
 hi_info(gint entry)
@@ -81,6 +83,13 @@ hi_info(gint entry)
             
             bench_zlib = benchmark_zlib();
             return g_strdup(bench_zlib);
+
+        case BENCHMARK_BLOWFISH:
+            if (bench_fish)
+                return g_strdup(bench_fish);
+                
+            bench_fish = benchmark_fish();
+            return g_strdup(bench_fish);
 
         case BENCHMARK_MD5:
             if (bench_md5)
@@ -115,6 +124,10 @@ hi_reload(gint entry)
         case BENCHMARK_ZLIB:
             if (bench_zlib) g_free(bench_zlib);
             bench_zlib = benchmark_zlib();
+            break;
+        case BENCHMARK_BLOWFISH:
+            if (bench_fish) g_free(bench_fish);
+            bench_fish = benchmark_fish();
             break;
         case BENCHMARK_MD5:
             if (bench_md5) g_free(bench_md5);

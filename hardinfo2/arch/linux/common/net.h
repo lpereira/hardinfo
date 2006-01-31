@@ -42,7 +42,6 @@ void get_net_info(char *if_name, NetInfo *netinfo)
     strcpy(ifr.ifr_name, if_name);
     strcpy(netinfo->name, if_name);
 
-    strcpy(ifr.ifr_name, if_name);
     if (ioctl(fd, SIOCGIFMTU, &ifr) < 0) {
         netinfo->mtu = 0;
     } else {

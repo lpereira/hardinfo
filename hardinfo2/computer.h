@@ -23,41 +23,38 @@
 static struct {
     gchar *file, *codename;
 } distro_db[] = {
-    {
-    DB_PREFIX "debian_version", "deb"}, {
-    DB_PREFIX "slackware-version", "slk"}, {
-    DB_PREFIX "mandrake-release", "mdk"}, {
-    DB_PREFIX "gentoo-release", "gnt"}, {
-    DB_PREFIX "conectiva-release", "cnc"}, {
-    DB_PREFIX "versão-conectiva", "cnc"}, {
-    DB_PREFIX "turbolinux-release", "tl"}, {
-    DB_PREFIX "yellowdog-release", "yd"}, {
-    DB_PREFIX "SuSE-release", "suse"}, {
-    DB_PREFIX "sun-release", "sun"},
-	/*
-	 * RedHat must be the *last* one to be checked, since
-	 * some distros (like Mandrake) includes a redhat-relase
-	 * file too.
-	 */
-    {
-    DB_PREFIX "redhat-release", "rh"}, {
-    NULL, NULL}
+    { DB_PREFIX "debian_version",	"deb"  },
+    { DB_PREFIX "slackware-version",	"slk"  },
+    { DB_PREFIX "mandrake-release",	"mdk"  },
+    { DB_PREFIX "gentoo-release",	"gnt"  },
+    { DB_PREFIX "conectiva-release",	"cnc"  },
+    { DB_PREFIX "versão-conectiva",	"cnc"  },
+    { DB_PREFIX "turbolinux-release",	"tl"   },
+    { DB_PREFIX "yellowdog-release",	"yd"   },
+    { DB_PREFIX "SuSE-release",		"suse" },
+    { DB_PREFIX "sun-release",		"sun"  },
+    /*
+     * RedHat must be the *last* one to be checked, since
+     * some distros (like Mandrake) includes a redhat-relase
+     * file too.
+     */
+    { DB_PREFIX "redhat-release",	"rh"   },
+    { NULL,				NULL   }
 };
 
+typedef struct _Computer	Computer;
+typedef struct _Processor	Processor;
+typedef struct _OperatingSystem	OperatingSystem;
+typedef struct _MemoryInfo	MemoryInfo;
+typedef struct _UptimeInfo	UptimeInfo;
+typedef struct _LoadInfo	LoadInfo;
+typedef struct _DisplayInfo	DisplayInfo;
 
-typedef struct _Computer Computer;
-typedef struct _Processor Processor;
-typedef struct _OperatingSystem OperatingSystem;
-typedef struct _MemoryInfo MemoryInfo;
-typedef struct _UptimeInfo UptimeInfo;
-typedef struct _LoadInfo LoadInfo;
-typedef struct _DisplayInfo DisplayInfo;
+typedef struct _AlsaInfo	AlsaInfo;
+typedef struct _AlsaCard	AlsaCard;
 
-typedef struct _AlsaInfo AlsaInfo;
-typedef struct _AlsaCard AlsaCard;
-
-typedef struct _FileSystem FileSystem;
-typedef struct _FileSystemEntry FileSystemEntry;
+typedef struct _FileSystem	FileSystem;
+typedef struct _FileSystemEntry	FileSystemEntry;
 
 struct _AlsaCard {
     gchar *alsa_name;
@@ -143,23 +140,23 @@ struct _MemoryInfo {
     gfloat ratio;
 };
 
-#define get_str(field_name,ptr)      \
+#define get_str(field_name,ptr)               \
   if (g_str_has_prefix(tmp[0], field_name)) { \
-    ptr = g_strdup(tmp[1]);          \
-    g_strfreev(tmp);                 \
-    continue;                       \
+    ptr = g_strdup(tmp[1]);                   \
+    g_strfreev(tmp);                          \
+    continue;                                 \
   }
-#define get_int(field_name,ptr)      \
+#define get_int(field_name,ptr)               \
   if (g_str_has_prefix(tmp[0], field_name)) { \
-    ptr = atoi(tmp[1]);              \
-    g_strfreev(tmp);                 \
-    continue;                        \
+    ptr = atoi(tmp[1]);                       \
+    g_strfreev(tmp);                          \
+    continue;                                 \
   }
-#define get_float(field_name,ptr)    \
+#define get_float(field_name,ptr)             \
   if (g_str_has_prefix(tmp[0], field_name)) { \
-    ptr = atof(tmp[1]);              \
-    g_strfreev(tmp);                 \
-    continue;                        \
+    ptr = atof(tmp[1]);                       \
+    g_strfreev(tmp);                          \
+    continue;                                 \
   }
 
 #endif				/* __COMPUTER_H__ */

@@ -63,7 +63,7 @@ scan_languages(OperatingSystem * os)
 	} else {
 	    gchar *currlocale;
 
-	    retval = g_strdup_printf("%s$%s$%s=\n", retval, name, name);
+	    retval = g_strdup_printf("%s$%s$%s=%s\n", retval, name, name, title);
 
 	    currlocale = g_strdup_printf("[Locale Information]\n"
 					 "Name=%s (%s)\n"
