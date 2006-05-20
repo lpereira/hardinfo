@@ -734,6 +734,10 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	GtkTreeIter child;
 
 	value = g_key_file_get_value(key_file, group, key, NULL);
+	if (g_str_equal(value, "...") && entry->fieldfunc) {
+	        g_free(value);
+	        value = entry->fieldfunc(key);
+	}
    
 	if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
 		gtk_tree_store_append(store, &child, &parent);

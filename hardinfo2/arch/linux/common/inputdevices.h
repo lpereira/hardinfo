@@ -37,6 +37,7 @@ static struct {
     { "Keyboard", "keyboard.png" },
     { "Joystick", "joystick.png" },
     { "Mouse",    "mouse.png"    },
+    { "Speaker",  "audio.png"  },
     { "Unknown",  "module.png"   },
 };
 
@@ -84,9 +85,13 @@ scan_inputdevices(void)
 	    else if (strstr(tmp, "mouse"))
 		d = 2;		//INPUT_MOUSE;
 	    else
-		d = 3;		//INPUT_UNKNOWN;
+		d = 4;		//INPUT_UNKNOWN;
 	    break;
 	case '\n':
+	    if (strstr(name, "PC Speaker")) {
+	      d = 3;		// INPUT_PCSPKR
+	    }
+	
 	    tmp = g_strdup_printf("INP%d", ++n);
 	    input_list = g_strdup_printf("%s$%s$%s=\n",
 					 input_list,
