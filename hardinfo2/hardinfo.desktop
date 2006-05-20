@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=System Information (hardinfo)
+Name[pt_BR]=Informações do Sistema (hardinfo)
+Comment=Information on your hardware devices
+Comment[pt_BR]=Informações sobre seus dispositivos de hardware
+Exec=hardinfo
+Icon=/usr/share/hardinfo/pixmaps/logo.png
+Terminal=false
+MultipleArgs=false
+Type=Application
+StartupNotify=true
+Categories=Application;System
