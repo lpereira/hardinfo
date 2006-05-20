@@ -29,7 +29,7 @@ benchmark_zlib(void)
 	if (!libz) {
             libz = g_module_open("/lib/libz.so", G_MODULE_BIND_LAZY);
             if (!libz) {
-                g_print("%s\n", g_module_error());
+                g_warning("Cannot load ZLib: %s", g_module_error());
                 return g_strdup("[Error]\n"
                        "ZLib not found=");
             }
@@ -51,9 +51,13 @@ benchmark_zlib(void)
     gdouble elapsed = 0;
     gchar src[65536], *tmpsrc;
     glong srclen = 65536;
+    gchar *bdata_path;
+    
+    bdata_path = g_strdup_printf("%s/hardinfo/benchmark.data",
+                                 gbr_find_data_dir(PREFIX));
 
-    if (!g_file_get_contents(PREFIX "benchmark.data",
-                             &tmpsrc, NULL, NULL)) {
+    if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
+        g_free(bdata_path);
         return g_strdup("[Error]\n"
                         PREFIX "benchmark.data not found=\n");
     }     
@@ -77,6 +81,7 @@ benchmark_zlib(void)
     }
     
     g_timer_destroy(timer);
+    g_free(bdata_path);
 
     gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
                            "<b>This Machine</b>=<b>%.2f</b>\n", elapsed);

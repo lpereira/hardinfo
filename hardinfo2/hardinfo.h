@@ -28,9 +28,10 @@ struct _ModuleEntry {
     gchar *icon;
 };
 
-inline void remove_quotes(gchar *str);
-inline void strend(gchar *str, gchar chr);
-inline void remove_linefeed(gchar *str);
-       void widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
+inline  void  remove_quotes(gchar *str);
+inline  void  strend(gchar *str, gchar chr);
+inline  void  remove_linefeed(gchar *str);
+        void  widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
+inline gchar *size_human_readable(gfloat size);
 
 #endif				/* __HARDINFO_H__ */

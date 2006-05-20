@@ -72,6 +72,8 @@ struct _Shell {
     GtkUIManager	*ui_manager;
 
     ShellViewType	 view_type;
+    
+    gint		_pulses;
 };
 
 struct _ShellTree {
@@ -128,7 +130,7 @@ void		shell_action_set_property(const gchar *action_name,
                                           const gchar *property,
                                           gboolean setting);
 
-void		shell_set_left_pane_visible(gboolean setting);
+void		shell_set_side_pane_visible(gboolean setting);
 void		shell_ui_manager_set_visible(const gchar *path,
                                              gboolean setting);
 

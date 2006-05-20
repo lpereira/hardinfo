@@ -23,7 +23,7 @@ void cb_about();
 void cb_generate_report();
 void cb_quit();
 void cb_refresh();
-void cb_left_pane();
+void cb_side_pane();
 void cb_toolbar();
 
 #endif	/* __CALLBACKS_H__ */

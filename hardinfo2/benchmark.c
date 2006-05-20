@@ -20,6 +20,7 @@
 #include <iconcache.h>
 #include <shell.h>
 #include <config.h>
+#include <binreloc.h>
 
 enum {
     BENCHMARK_ZLIB,
@@ -41,11 +42,13 @@ static gchar *
 benchmark_include_results(gchar *results, const gchar *benchmark)
 {
     GKeyFile *conf;
-    gchar **machines;
+    gchar **machines, *bconf_path;
     int i;
     
     conf = g_key_file_new();
-    g_key_file_load_from_file(conf, PREFIX "benchmark.conf", 0, NULL);
+    bconf_path = g_strdup_printf("%s/hardinfo/benchmark.conf",
+                                 gbr_find_data_dir(PREFIX));
+    g_key_file_load_from_file(conf, bconf_path, 0, NULL);
     
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
@@ -56,6 +59,7 @@ benchmark_include_results(gchar *results, const gchar *benchmark)
     
     g_strfreev(machines);
     g_key_file_free(conf);
+    g_free(bconf_path);
     
     return g_strconcat(results, "[$ShellParam$]\n"
                                 "Zebra=1\n", NULL);

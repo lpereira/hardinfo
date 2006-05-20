@@ -22,11 +22,19 @@
 #include <iconcache.h>
 #include <stock.h>
 
+#include <binreloc.h>
+
 int
 main(int argc, char **argv)
 {
-    gtk_init(&argc, &argv);
+    GError *error;
 
+    gtk_init(&argc, &argv);
+    
+    if (!gbr_init(&error)) {
+      g_error("BinReloc cannot be initialized: %s", error->message);      
+    }
+    
     icon_cache_init();
     stock_icons_init();
     shell_init();

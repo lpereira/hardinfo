@@ -24,6 +24,7 @@
 #include <config.h>
 
 #include <stock.h>
+#include <binreloc.h>
 
 #include <callbacks.h>
 
@@ -57,10 +58,10 @@ static GtkActionEntry entries[] =
 
 static GtkToggleActionEntry toggle_entries[] =
 {
-  { "LeftPaneAction", NULL,
-    "_Left Pane", NULL,    
-    "Toggles left pane visibility",
-    G_CALLBACK(cb_left_pane) },
+  { "SidePaneAction", NULL,
+    "_Side Pane", NULL,    
+    "Toggles side pane visibility",
+    G_CALLBACK(cb_side_pane) },
   { "ToolbarAction", NULL,
     "_Toolbar", NULL,    
     NULL,
@@ -82,6 +83,7 @@ void menu_init(Shell *shell)
     GtkActionGroup      *action_group;          /* Packing group for our Actions */
     GtkUIManager        *menu_manager;          /* The magic widget! */
     GError              *error;                 /* For reporting exceptions or errors */
+    gchar               *uidefs_path;
     
     /* Create our objects */
     menu_box = shell->vbox;
@@ -103,7 +105,10 @@ void menu_init(Shell *shell)
     
     /* Read in the UI from our XML file */
     error = NULL;
-    gtk_ui_manager_add_ui_from_file(menu_manager, PREFIX "uidefs.xml", &error);
+    uidefs_path = g_strdup_printf("%s/hardinfo/uidefs.xml",
+                                  gbr_find_data_dir(PREFIX));
+    gtk_ui_manager_add_ui_from_file(menu_manager, uidefs_path, &error);
+    g_free(uidefs_path);
     
     if (error) {
         g_error("building menus failed: %s", error->message);

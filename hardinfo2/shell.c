@@ -28,6 +28,8 @@
 #include <menu.h>
 #include <stock.h>
 
+#include <binreloc.h>
+
 /*
  * Internal Prototypes ********************************************************
  */
@@ -103,7 +105,7 @@ void shell_action_set_enabled(const gchar *action_name, gboolean setting)
     }
 }
 
-void shell_set_left_pane_visible(gboolean setting)
+void shell_set_side_pane_visible(gboolean setting)
 {
     if (setting)
 	gtk_widget_show(shell->tree->scroll);
@@ -159,6 +161,12 @@ void shell_action_set_active(const gchar *action_name, gboolean setting)
 void
 shell_status_pulse(void)
 {
+    if (shell->_pulses++ == 20) {
+        /* we're pulsing for some time, disable the interface and change the cursor
+           to a hourglass */
+        shell_view_set_enabled(FALSE);
+    }
+
     gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
     while (gtk_events_pending())
 	gtk_main_iteration();
@@ -177,9 +185,10 @@ void
 shell_view_set_enabled(gboolean setting)
 {
     if (setting) {
-        widget_set_cursor(shell->window, GDK_LEFT_PTR);
+      shell->_pulses = 0;
+      widget_set_cursor(shell->window, GDK_LEFT_PTR);
     } else {
-        widget_set_cursor(shell->window, GDK_WATCH);
+      widget_set_cursor(shell->window, GDK_WATCH);
     }
 
     gtk_widget_set_sensitive(shell->hpaned, setting);
@@ -238,7 +247,7 @@ destroy_me(void)
 static void
 create_window(void)
 {
-    GtkWidget		*vbox, *hbox;
+    GtkWidget	*vbox, *hbox;
 
     shell = g_new0(Shell, 1);
 
@@ -312,7 +321,9 @@ shell_tree_modules_load(ShellTree * shelltree)
 	module->icon = icon_cache_get_pixbuf(tmp);
 	g_free(tmp);
 
-	tmp = g_strdup_printf(PREFIX "modules/%s.so", iname);
+	tmp = g_strdup_printf("%s/hardinfo/modules/%s.so",
+	                      gbr_find_lib_dir(PREFIX),
+	                      iname);
 	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
 	g_free(tmp);
 
@@ -519,7 +530,7 @@ shell_init(void)
     gtk_widget_hide(shell->notebook);
 
     shell_action_set_enabled("RefreshAction", FALSE);
-    shell_action_set_active("LeftPaneAction", TRUE);
+    shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
     shell_action_set_property("RefreshAction", "is-important", TRUE);
     shell_action_set_property("ReportAction", "is-important", TRUE);
@@ -539,10 +550,10 @@ update_field(gpointer data)
            SHELL_VIEW_LOAD_GRAPH */
         if (fu->loadgraph && shell->view_type == SHELL_VIEW_LOAD_GRAPH) {
               GtkTreeSelection *ts;
-    	      
+
     	      ts = gtk_tree_view_get_selection(GTK_TREE_VIEW
             					 (shell->info->view));
-              
+            					 
               if (iter && gtk_tree_selection_iter_is_selected(ts, iter)) {
                   load_graph_update(shell->loadgraph, atoi(value));
               }
@@ -667,7 +678,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		fu->field_name = g_strdup(strchr(key, '$') + 1);
 		fu->entry = entry;
 		fu->loadgraph = TRUE;
-
+		
 		g_timeout_add(ms, update_field, fu);
 	    } else if (g_str_equal(key, "ReloadInterval")) {
 		gint ms;

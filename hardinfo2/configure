@@ -23,18 +23,22 @@
 PACKAGE=`basename ${PWD} | cut -d"-" -f1`;
 VERSION=`basename ${PWD} | cut -d"-" -f2`;
 
-[ "$PACKAGE" == "$VERSION" ] && VERSION="SVN_$(date)"
+if [ "$PACKAGE" == "$VERSION" ]; then
+	VERSION=$( printf "SVN_%d" $( svn info|grep Revision|cut -d":" -f2 ))
+	RELEASE=0
+else
+	RELEASE=1
+fi
 
 echo "ToscoConf (version 0.04) for $PACKAGE version $VERSION"
 
 # ---------------------------------------------------------------------------
 
-echo -n "Running: "
+echo "Determining system architecture."
 OS=`uname`
-echo -n $OS
 case $OS in		
 	Linux)
-		echo -n " (OK) " ;;
+		;;
 	*)
 		echo " (not supported, yet!)"
 		exit ;;
@@ -45,13 +49,13 @@ case $PROC in
 	i?86)
 		ln -sf linux/x86 arch/this
 		ARCH="ARCH_i386" ;;
-	ppc)
+	ppc*)
 		ln -sf linux/ppc arch/this
 		ARCH="ARCH_PPC" ;;
 	x86_64)
 		ln -sf linux/x86_64 arch/this
 		ARCH="ARCH_x86_64" ;;
-	mips)
+	mips*)
 		ln -sf linux/mips arch/this
 		ARCH="ARCH_MIPS" ;;
 	parisc*)
@@ -74,7 +78,10 @@ case $PROC in
 		;;
 esac
 
-echo "$PROC ($ARCH)"
+# ---------------------------------------------------------------------------
+
+echo "Compiling $PACKAGE for $OS $PROC ($ARCH)."
+echo ""
 
 # ---------------------------------------------------------------------------
 
@@ -82,8 +89,8 @@ echo -n "Checking for lspci... "
 LSPCIPATH="/sbin/lspci /usr/sbin/lspci /bin/lspci /usr/bin/lspci `which lspci`"
 for i in $LSPCIPATH; do
 	if [ -x "$i" ]; then
-	LSPCI=$i
-		break;
+		LSPCI=$i
+		break
 	fi
 done
 
@@ -98,7 +105,7 @@ fi
 
 GTK2=-1
 MIN_VERSION="2.6.0"
-echo -n "Checking for GTK ${MIN_VERSION}... "
+echo -n "Checking for GTK version >= ${MIN_VERSION}... "
 for i in `which pkg-config`; do
 	pkg-config --errors-to-stdout gtk+-2.0 \
 		--atleast-version=$MIN_VERSION > /dev/null
@@ -106,7 +113,7 @@ for i in `which pkg-config`; do
 		0)
 			GTK_FLAGS=`pkg-config gtk+-2.0 --cflags`
 			GTK_LIBS=`pkg-config gtk+-2.0 --libs`
-			echo "OK (pkgconfig)"
+			echo "found `pkg-config gtk+-2.0 --modversion`"
 			GTK2=1 ;;
 		*)
 			echo "not found." ;;
@@ -131,18 +138,17 @@ echo -e "#ifndef __CONFIG_H__\n#define __CONFIG_H__\n" > config.h
 
 echo "#define VERSION \"$VERSION\"" >> config.h
 
-if [ "$LSPCI" ]; then
-	echo "#define LSPCI \"$LSPCI -v\"" >> config.h
-fi
-
+echo "#define LSPCI \"$LSPCI -v\"" >> config.h
 echo "#define $ARCH" >> config.h
 
 echo "#define PLATFORM \"`uname`\"" >> config.h
 echo "#define KERNEL   \"`uname -r`\"" >> config.h
 echo "#define HOSTNAME \"`hostname`\"" >> config.h
 
-echo "#define PREFIX \"./\"" >> config.h
+echo "#define PREFIX \"/usr/share/hardinfo/\"" >> config.h
+echo "#define LIBPREFIX \"/usr/lib/hardinfo/\"" >> config.h
 echo "#define DEBUG 1" >> config.h
+echo "#define ENABLE_BINRELOC" >> config.h
 
 echo -e "\n#endif	/* __CONFIG_H__ */" >> config.h
 
@@ -159,6 +165,21 @@ echo "ARCHOPTS = " >> Makefile
 cat Makefile.in >> Makefile
 
 echo -e "\nDone. Type \"make\" to compile the program.\n"
-echo "If you get errors, probably you don't have the right libraries,"
-echo "includes or utilities. However, if you're sure this is a bug in my"
-echo -e "code, please send a patch (use \"diff -u\") to <leandro@linuxmag.com.br>.\n"
+
+
+if [ "$RELEASE" == 0 ]; then
+	cat << EOF
+*********************************************************
+* This is work in progress! Please report bugs at:      *
+*      http://developer.berlios.de/bugs/?group_id=5897  *
+* Or send patches to:                                   *
+*      http://developer.berlios.de/patch/?group_id=5897 *
+*********************************************************
+EOF
+else
+	cat << EOF
+If you get errors, probably you don't have the right libraries,
+includes or utilities. However, if you're sure this is a bug in my
+code, please send a patch (use \"diff -u\") to <leandro@linuxmag.com.br>.
+EOF
+fi

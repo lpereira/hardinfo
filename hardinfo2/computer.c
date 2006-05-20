@@ -41,6 +41,7 @@ enum {
     COMPUTER_SHARES,
     COMPUTER_DISPLAY,
     COMPUTER_NETWORK,
+    COMPUTER_USERS,
 } Entries;
 
 static ModuleEntry hi_entries[] = {
@@ -53,6 +54,7 @@ static ModuleEntry hi_entries[] = {
     {"Shared Directories",	"shares.png"},
     {"Display",			"monitor.png"},
     {"Network Interfaces",	"network.png"},
+    {"Users",			"users.png"},
 };
 
 #include "computer.h"
@@ -71,6 +73,7 @@ static GHashTable *moreinfo = NULL;
 #include <arch/this/samba.h>
 #include <arch/this/sensors.h>
 #include <arch/this/net.h>
+#include <arch/common/users.h>
 
 static Computer *
 computer_get_info(void)
@@ -116,6 +119,9 @@ computer_get_info(void)
     shell_status_update("Obtaining network information...");
     scan_net_interfaces();
 
+    shell_status_update("Obtaining users information...");
+    scan_users();
+
     computer->date_time = "...";
     return computer;
 }
@@ -133,6 +139,9 @@ hi_reload(gint entry)
     case COMPUTER_SENSORS:
 	read_sensors();
 	break;
+    case COMPUTER_USERS:
+        scan_users();
+        break;
     }
 }
 
@@ -159,8 +168,6 @@ hi_get_field(gchar * field)
 	tmp = g_strdup_printf("%dMB (%dMB used)", mi->total, mi->used);
 
 	g_free(mi);
-    } else if (!strcmp(field, "Random")) {
-        return g_strdup_printf("%d", rand() % 200);
     } else if (!strcmp(field, "Uptime")) {
 	tmp = computer_get_formatted_uptime();
     } else if (!strcmp(field, "Date/Time")) {
@@ -198,6 +205,14 @@ hi_info(gint entry)
                                "ReloadInterval=3000\n"
                                "ViewType=1\n"
                                "%s", network_interfaces);
+    case COMPUTER_USERS:
+        return g_strdup_printf("[$ShellParam$]\n"
+                               "ReloadInterval=10000\n"
+                               "ViewType=1\n"
+                               "[Human Users]\n"
+                               "%s\n"
+                               "[System Users]\n"
+                               "%s\n", human_users, sys_users);
     case COMPUTER_SENSORS:
         return g_strdup_printf("[$ShellParam$]\n"
                                "ReloadInterval=3000\n"

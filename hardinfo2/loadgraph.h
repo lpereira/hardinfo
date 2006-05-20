@@ -45,8 +45,7 @@ struct _LoadGraph {
 
     gint	   size;
     gint	   width, height;
-    LoadGraphColor color;
-    
+    LoadGraphColor color;    
 };
 
 LoadGraph 	*load_graph_new(gint size);

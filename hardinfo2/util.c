@@ -19,18 +19,21 @@
 #include <hardinfo.h>
 #include <gtk/gtk.h>
 
-inline void
-remove_quotes(gchar *str)
+#define KiB 1024
+#define MiB 1048576
+#define GiB 1073741824
+
+inline gchar *
+size_human_readable(gfloat size)
 {
-    if (!str)
-        return;
+    if (size < KiB)
+	return g_strdup_printf("%.1f B", size);
+    if (size < MiB)
+	return g_strdup_printf("%.1f KiB", size / KiB);
+    if (size < GiB)
+	return g_strdup_printf("%.1f MiB", size / MiB);
 
-    while (*str == '"')
-        *(str++) = ' ';
-
-    gchar *p;
-    if ((p = strchr(str, '"')))
-        *p = 0;
+    return g_strdup_printf("%.1f GiB", size / GiB);
 }
 
 inline void
@@ -42,6 +45,18 @@ strend(gchar *str, gchar chr)
     char *p;
     if ((p = strchr(str, chr)))
         *p = 0;
+}
+
+inline void
+remove_quotes(gchar *str)
+{
+    if (!str)
+        return;
+
+    while (*str == '"')
+        *(str++) = ' ';
+    
+    strend(str, '"');
 }
 
 inline void

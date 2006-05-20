@@ -19,7 +19,7 @@ void
 scan_languages(OperatingSystem * os)
 {
     FILE *locale;
-    gchar buf[128], *retval = "";
+    gchar buf[512], *retval = "";
 
     locale = popen("locale -va", "r");
     if (!locale)
@@ -36,7 +36,7 @@ scan_languages(OperatingSystem * os)
 	  *date = NULL,
 	  *codeset = NULL;
 
-    while (fgets(buf, 128, locale)) {
+    while (fgets(buf, 512, locale)) {
 	if (!strncmp(buf, "locale:", 7)) {
 	    sscanf(buf, "locale: %s", name);
 	    fgets(buf, 128, locale);

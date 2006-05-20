@@ -32,12 +32,12 @@ void cb_refresh()
     shell_do_reload();
 }
 
-void cb_left_pane()
+void cb_side_pane()
 {
     gboolean visible;
     
-    visible = shell_action_get_active("LeftPaneAction");
-    shell_set_left_pane_visible(visible);
+    visible = shell_action_get_active("SidePaneAction");
+    shell_set_side_pane_visible(visible);
 }
 
 void cb_toolbar()
@@ -51,6 +51,14 @@ void cb_toolbar()
 void cb_about()
 {
     GtkWidget *about;
+    const gchar *authors[] = {
+        "Leandro A. F. Pereira",
+        "SCSI support by Pascal F. Martin",
+        "MD5 implementation by Colin Plumb",
+        "SHA1 implementation by Steve Raid",
+        "Blowfish implementation by Paul Kocher",
+        NULL
+    };
 
     about = gtk_about_dialog_new();
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
@@ -62,6 +70,23 @@ void cb_about()
 				  "System information and benchmark tool");
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
 			      icon_cache_get_pixbuf("logo.png"));
+
+    gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about),
+       "HardInfo is free software; you can redistribute it and/or modify " \
+       "it under the terms of the GNU General Public License as published by " \
+       "the Free Software Foundation, version 2.\n\n"
+       "This program is distributed in the hope that it will be useful, " \
+       "but WITHOUT ANY WARRANTY; without even the implied warranty of " \
+       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " \
+       "GNU General Public License for more details.\n\n"
+       "You should have received a copy of the GNU General Public License " \
+       "along with this program; if not, write to the Free Software " \
+       "Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA");
+#if GTK_CHECK_VERSION(2,8,0)
+    gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(about), TRUE);
+#endif
+    
+    gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about), authors);
 
     gtk_dialog_run(GTK_DIALOG(about));
     gtk_widget_destroy(about);

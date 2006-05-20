@@ -30,8 +30,13 @@ benchmark_sha1(void)
     
     tmpsrc = src;
 
-    if (!g_file_get_contents(PREFIX "benchmark.data",
-                             &tmpsrc, NULL, NULL)) {
+    gchar *bdata_path;
+    
+    bdata_path = g_strdup_printf("%s/hardinfo/benchmark.data",
+                                 gbr_find_data_dir(PREFIX));
+
+    if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
+        g_free(bdata_path);
         return g_strdup("[Error]\n"
                         PREFIX "benchmark.data not found=\n");
     }     
@@ -53,6 +58,7 @@ benchmark_sha1(void)
     }
     
     g_timer_destroy(timer);
+    g_free(bdata_path);
 
     gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
                            "<b>This Machine</b>=<b>%.2f</b>\n", elapsed);

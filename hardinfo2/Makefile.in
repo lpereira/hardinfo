@@ -1,12 +1,12 @@
 
-CC = gcc -fPIC -pipe -O3 $(ARCHOPTS)
-CCSLOW = gcc -fPIC -pipe -O0
-CFLAGS = -Wall -g $(GTK_CFLAGS) $(GLADE_CFLAGS) -I.
+CC = gcc -O3 $(ARCHOPTS) 
+CCSLOW = gcc -O0
+CFLAGS = -fPIC -pipe -Wall -g $(GTK_CFLAGS) $(GLADE_CFLAGS) -I.
 
 # ----------------------------------------------------------------------------
 
 OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o sha1.o md5.o \
-		menu.o stock.o callbacks.o expr.o report.o blowfish.o
+		menu.o stock.o callbacks.o expr.o report.o blowfish.o binreloc.o
 MODULES = computer.so devices.so benchmark.so 
 
 all:	$(OBJECTS) $(MODULES)
@@ -26,7 +26,7 @@ sha1.o:
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	$(CC) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS) \
 		$(GLADE_LIBS) $(GLADE_FLAGS)
-	mv $@ modules
+	mv -f $@ modules
 	
 clean:
 	rm -rf .xvpics pixmaps/.xvpics *.o *.so hardinfo modules/*.so report
@@ -46,3 +46,34 @@ deb:	dist-clean
 	@echo "Creating deb..."
 	dpkg-buildpackage -rfakeroot -k${USER}
 
+install:	all
+	@echo '[01;34m*** Creating directories...[00m'
+	mkdir -p ${DESTDIR}/usr/bin
+	mkdir -p ${DESTDIR}/usr/local
+	mkdir -p ${DESTDIR}/usr/share/applications
+	mkdir -p ${DESTDIR}/usr/lib/hardinfo/modules
+	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps
+
+	@echo '[01;34m*** Installing icon...[00m'
+	cp hardinfo.desktop ${DESTDIR}/usr/share/applications
+
+	@echo '[01;34m*** Installing executable...[00m'
+	cp hardinfo ${DESTDIR}/usr/bin/hardinfo
+
+	@echo '[01;34m*** Installing modules...[00m'
+	cp -r modules/*.so ${DESTDIR}/usr/lib/hardinfo/modules
+
+	@echo '[01;34m*** Installing pixmaps...[00m'
+	cp -r pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
+
+	@echo '[01;34m*** Installing misc data...[00m'
+	cp uidefs.xml ${DESTDIR}/usr/share/hardinfo
+	cp modules.conf ${DESTDIR}/usr/share/hardinfo
+	cp benchmark.conf ${DESTDIR}/usr/share/hardinfo
+	cp benchmark.data ${DESTDIR}/usr/share/hardinfo
+
+	@echo '[01;34m*** Fixing permissions...[00m'
+	chmod -R 755 ${DESTDIR}/usr/share/hardinfo
+	chmod 755 ${DESTDIR}/usr/bin/hardinfo
+
+	@echo '[01;34m*** Done installing.[00m'

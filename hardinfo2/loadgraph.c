@@ -161,9 +161,9 @@ _draw(LoadGraph *lg)
             gdk_draw_line(draw, lg->grid, i, 0, i, lg->height);
 
     /* the graph */
-    for (i = 0; i < lg->size; i++) {
-          gint this = lg->height - lg->data[i];
-          gint next = lg->height - lg->data[i+1];
+    for (i = 0; i < lg->size; i++) {    
+          gint this = lg->height - lg->data[i] * lg->scale;
+          gint next = lg->height - lg->data[i+1] * lg->scale;
     
           gdk_draw_line(draw, lg->trace, i * 4, this, i * 4 + 2,
                         (this + next) / 2);
@@ -178,7 +178,7 @@ static inline int
 _max(LoadGraph *lg)
 {
     gint i;
-    gint max = 0;
+    gint max = 1.0;
     
     for (i = 0; i < lg->size; i++) {
         if (lg->data[i] > max)
@@ -195,25 +195,9 @@ load_graph_update(LoadGraph *lg, gint value)
     
     if (value < 0)
         return;
-    else if (value > _max(lg) && value > lg->height) {
-        /* FIXME: make scale work correctly :P */
-        gfloat nscale = (gfloat)lg->height / ceilf((float)value * lg->scale);
-
-        while (value * nscale > lg->height) {
-            nscale *= .90;
-        }
-        
-        if (nscale < lg->scale) {
-            lg->scale = nscale;
-
-            for (i = 0; i < lg->size; i++) {
-                lg->data[i] = (int)((float)lg->data[i] * lg->scale);
-            }
-        }
-    }
-
-    value = (int)ceilf((float)value * lg->scale);
     
+    lg->scale = (gfloat)lg->height / (gfloat)_max(lg);
+
     /* shift-right our data */
     for (i = 0; i < lg->size; i++) {
         lg->data[i] = lg->data[i+1];
@@ -231,12 +215,19 @@ gboolean lg_update(gpointer d)
 {
     LoadGraph *lg = (LoadGraph *)d;
     
-    int i = 0;
-    if ((rand() % 10) == 0) {
-        i = rand() % 1000 + 500;
+    static int i = 0;
+    static int j = 1;
+    
+    if (i > 150) {
+        j = -1;
+    } else if (i < 0) {
+        j = 1;
     }
 
-    load_graph_update(lg, rand() % 200 + i);
+    i += j;
+    if (rand() % 10 > 8) i*= 2;
+    if (rand() % 10 < 2) i/= 2;
+    load_graph_update(lg, i + rand() % 50);
   
     return TRUE;
 }
@@ -251,8 +242,9 @@ int main(int argc, char **argv)
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_show(window);
     
-    lg = load_graph_new(100);
-    gtk_container_add(GTK_CONTAINER(window), lg->area);
+    lg = load_graph_new(200);
+    gtk_container_add(GTK_CONTAINER(window), load_graph_get_framed(lg));
+    gtk_container_set_border_width(GTK_CONTAINER(window), 20);
     load_graph_configure_expose(lg);
     
     lg_update(lg);
