@@ -299,11 +299,17 @@ create_window(void)
 static void
 shell_tree_modules_load(ShellTree * shelltree)
 {
+    gchar       *modules_conf;
     GKeyFile	*keyfile = g_key_file_new();
     guint	 categories, i;
 
     keyfile = g_key_file_new();
-    g_key_file_load_from_file(keyfile, PREFIX "modules.conf", 0, NULL);
+    
+    modules_conf = g_strdup_printf("%s/hardinfo/modules.conf",
+                                   gbr_find_data_dir(PREFIX));
+    g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
+    g_free(modules_conf);
+    
     if (g_key_file_get_integer(keyfile, "general", "version", NULL) != 2) {
 	g_error("Wrong version of modules.conf");
     }

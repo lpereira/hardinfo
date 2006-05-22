@@ -24,7 +24,7 @@ PACKAGE=`basename ${PWD} | cut -d"-" -f1`;
 VERSION=`basename ${PWD} | cut -d"-" -f2`;
 
 if [ "$PACKAGE" == "$VERSION" ]; then
-	VERSION=$(printf "SVN_%d" $(svn -R info|grep Revision|cut -d: -f2|sort -n |uniq|tail -n1))
+	VERSION=$(printf "SVN_%d" $(svn -R info|grep Revision|cut -d: -f2|sort -n|tail -n1))
 	RELEASE=0
 else
 	RELEASE=1
