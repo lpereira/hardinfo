@@ -71,6 +71,7 @@ static GHashTable *moreinfo = NULL;
 #include <arch/this/os.h>
 #include <arch/this/filesystem.h>
 #include <arch/this/samba.h>
+#include <arch/this/nfs.h>
 #include <arch/this/sensors.h>
 #include <arch/this/net.h>
 #include <arch/common/users.h>
@@ -111,7 +112,8 @@ computer_get_info(void)
     scan_filesystems();
 
     shell_status_update("Getting shared directories...");
-    scan_shared_directories();
+    scan_samba_shared_directories();
+    scan_nfs_shared_directories();
     
     shell_status_update("Reading sensors...");
     read_sensors();
@@ -219,7 +221,9 @@ hi_info(gint entry)
                                "%s", sensors);
     case COMPUTER_SHARES:
         return g_strdup_printf("[SAMBA]\n"
-                               "%s", shares_list);
+                               "%s\n"
+                               "[NFS]\n"
+                               "%s", smb_shares_list, nfs_shares_list);
     case COMPUTER_FILESYSTEMS:
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "ViewType=1\n"

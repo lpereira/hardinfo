@@ -16,9 +16,9 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static gchar *shares_list = NULL;
+static gchar *smb_shares_list = NULL;
 void
-scan_shared_directories(void)
+scan_samba_shared_directories(void)
 {
     GKeyFile *keyfile;
     GError *error = NULL;
@@ -26,14 +26,14 @@ scan_shared_directories(void)
     gchar *smbconf;
     gsize length;
 
-    if (shares_list) {
-        g_free(shares_list);
+    if (smb_shares_list) {
+        g_free(smb_shares_list);
     }
     
     keyfile = g_key_file_new();
     
     if (!g_file_get_contents("/etc/samba/smb.conf", &smbconf, &length, &error)) {
-        shares_list = g_strdup("Cannot open /etc/samba/smb.conf=\n");
+        smb_shares_list = g_strdup("Cannot open /etc/samba/smb.conf=\n");
         g_error_free(error);
         goto cleanup;
     }
@@ -43,12 +43,12 @@ scan_shared_directories(void)
         if (*_smbconf == ';') *_smbconf = '\0';
     
     if (!g_key_file_load_from_data(keyfile, smbconf, length, 0, &error)) {
-        shares_list = g_strdup("Cannot parse smb.conf=\n");
+        smb_shares_list = g_strdup("Cannot parse smb.conf=\n");
         g_error_free(error);
         goto cleanup;
     }
 
-    shares_list = g_strdup("");
+    smb_shares_list = g_strdup("");
 
     groups = g_key_file_get_groups(keyfile, NULL);
     gchar **_groups = groups;
@@ -60,7 +60,7 @@ scan_shared_directories(void)
         
             if (g_str_equal(available, "yes")) {
                 gchar *path = g_key_file_get_string(keyfile, *groups, "path", NULL);
-                shares_list = g_strconcat(shares_list, *groups, "=",
+                smb_shares_list = g_strconcat(smb_shares_list, *groups, "=",
                                           path, "\n", NULL);
                 g_free(path);
             }
