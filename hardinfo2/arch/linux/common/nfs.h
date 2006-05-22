@@ -12,6 +12,9 @@ scan_nfs_shared_directories(void)
     nfs_shares_list = g_strdup("");
     
     exports = fopen("/etc/exports", "r");
+    if (!exports)
+        return;
+        
     while (fgets(buf, 512, exports)) {
         if (buf[0] != '/')
             continue;
