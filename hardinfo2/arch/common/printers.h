@@ -19,18 +19,30 @@
 void
 scan_printers(void)
 {
-    GModule *cups;
+    static GModule *cups = NULL;
     static int (*cupsGetPrinters) (char ***printers) = NULL;
     static char *(*cupsGetDefault) (void) = NULL;
+    static char *libcups[] = { "libcups",
+                               "libcups.so",
+                               "libcups.so.1",
+                               "libcups.so.2",
+                               NULL };
 
     if (printer_list)
 	g_free(printer_list);
 
     if (!(cupsGetPrinters && cupsGetDefault)) {
-	cups = g_module_open("libcups", G_MODULE_BIND_LAZY);
-	if (!cups) {
+        int i;
+        
+        for (i = 0; libcups[i] != NULL; i++) {
+            cups = g_module_open(libcups[i], G_MODULE_BIND_LAZY);
+            if (cups)
+                break;
+        }
+        
+        if (!cups) {
 	    printer_list = g_strdup("[Printers]\n"
-				    "CUPS libraries cannot be found=");
+	                            "CUPS libraries cannot be found=");
 	    return;
 	}
 
@@ -38,7 +50,8 @@ scan_printers(void)
 	    || !g_module_symbol(cups, "cupsGetDefault",
 				(gpointer) & cupsGetDefault)) {
 	    printer_list =
-		g_strdup("[Printers]\n" "No suitable CUPS library found=");
+		g_strdup("[Printers]\n"
+                         "No suitable CUPS library found=");
             g_module_close(cups);
 	    return;
 	}
@@ -62,6 +75,7 @@ scan_printers(void)
 	    g_free(printers[i]);
 	}
     } else {
-	printer_list = g_strdup("[Printers]\n" "No printers found");
+	printer_list = g_strdup("[Printers]\n"
+	                        "No printers found");
     }
 }
