@@ -25,6 +25,7 @@ scan_samba_shared_directories(void)
     gchar **groups;
     gchar *smbconf;
     gsize length;
+    gint i = 0;
 
     if (smb_shares_list) {
         g_free(smb_shares_list);
@@ -51,16 +52,15 @@ scan_samba_shared_directories(void)
     smb_shares_list = g_strdup("");
 
     groups = g_key_file_get_groups(keyfile, NULL);
-    gchar **_groups = groups;
-    while (*groups) {
-        if (g_key_file_has_key(keyfile, *groups, "path", NULL) &&
-            g_key_file_has_key(keyfile, *groups, "available", NULL)) {
+    while (groups[i]) {
+        if (g_key_file_has_key(keyfile, groups[i], "path", NULL) &&
+            g_key_file_has_key(keyfile, groups[i], "available", NULL)) {
             
-            gchar *available = g_key_file_get_string(keyfile, *groups, "available", NULL);
+            gchar *available = g_key_file_get_string(keyfile, groups[i], "available", NULL);
         
             if (g_str_equal(available, "yes")) {
-                gchar *path = g_key_file_get_string(keyfile, *groups, "path", NULL);
-                smb_shares_list = g_strconcat(smb_shares_list, *groups, "=",
+                gchar *path = g_key_file_get_string(keyfile, groups[i], "path", NULL);
+                smb_shares_list = g_strconcat(smb_shares_list, groups[i], "=",
                                           path, "\n", NULL);
                 g_free(path);
             }
@@ -68,10 +68,10 @@ scan_samba_shared_directories(void)
             g_free(available);
         }
         
-        *groups++;
+        i++;
     }
     
-    g_strfreev(_groups);
+    g_strfreev(groups);
   
   cleanup:
     g_key_file_free(keyfile);

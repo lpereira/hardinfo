@@ -32,7 +32,7 @@ main(int argc, char **argv)
     gtk_init(&argc, &argv);
     
     if (!gbr_init(&error)) {
-      g_error("BinReloc cannot be initialized: %s", error->message);      
+        g_error("BinReloc cannot be initialized: %s", error->message);      
     }
     
     icon_cache_init();

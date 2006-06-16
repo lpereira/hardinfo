@@ -235,22 +235,22 @@ processor_get_capabilities_from_flags(gchar * strflags)
     /* FIXME: * Separate between processor capabilities, additional instructions and whatnot.  */
     gchar **flags, **old;
     gchar *tmp = "";
-    gint i;
+    gint i, j = 0;
 
     flags = g_strsplit(strflags, " ", 0);
     old = flags;
 
-    while (*flags) {
+    while (flags[j]) {
 	gchar *meaning = "";
 	for (i = 0; flag_meaning[i].name != NULL; i++) {
-	    if (!strcmp(*flags, flag_meaning[i].name)) {
+	    if (!strcmp(flags[j], flag_meaning[i].name)) {
 		meaning = flag_meaning[i].meaning;
 		break;
 	    }
 	}
 
-	tmp = g_strdup_printf("%s%s=%s\n", tmp, *flags, meaning);
-	*flags++;
+	tmp = g_strdup_printf("%s%s=%s\n", tmp, flags[j], meaning);
+	j++;
     }
 
     g_strfreev(old);
