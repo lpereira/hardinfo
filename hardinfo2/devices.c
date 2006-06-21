@@ -58,6 +58,8 @@ static gchar *storage_list = "";
     continue;                        \
   }
 
+#include <vendor.h>
+
 #include <arch/this/pci.h>
 #include <arch/this/modules.h>
 #include <arch/common/printers.h>

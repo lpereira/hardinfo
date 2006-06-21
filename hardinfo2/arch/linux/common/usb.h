@@ -100,6 +100,13 @@ scan_usb(void)
     	        usb_list = g_strdup_printf("%s$%s$%s=\n",
 		      		           usb_list, tmp, product);
 
+                const gchar *url = vendor_get_url(manuf);
+                if (url) {
+                    gchar *tmp = g_strdup_printf("%s (%s)", manuf, url);
+                    g_free(manuf);
+                    manuf = tmp;
+                }
+
                 gchar *strhash = g_strdup_printf("[Device Information]\n"
                                                  "Product=%s\n"
                                                  "Manufacturer=%s\n"

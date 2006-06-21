@@ -1,0 +1,83 @@
+/*
+ *    HardInfo - Displays System Information
+ *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@linuxmag.com.br>
+ *
+ *    List of vendors based on GtkSysInfo (c) Pissens Sebastien.
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, version 2.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ */
+
+#include <string.h>
+#include <gtk/gtk.h>
+#include "vendor.h"
+
+/*
+ * List of vendors based on GtkSysInfo1.9beta1 list by Pissens Sebastien, also
+ * licensed under the GNU GPL version 2.
+ */
+
+static const Vendor vendors[] = {
+    { "ATI",			"ATI",			"www.ati.com" },
+    { "nVidia",			"NVIDIA",		"www.nvidia.com" },
+    { "3Com",			"3Com",			"www.3com.com" },
+    { "Intel"	,		"INTEL",		"www.intel.com" },
+    { "Cirrus Logic",		"Cirrus Logic",		"www.cirrus.com" },
+    { "VIA Technologies",	"VIA Technologies",	"www.via.com.tw" },
+    { "hp",			"Hewlett-Packard",	"www.hp.com" },
+    { "NEC Corporation",	"NEC Coporation",	"www.nec.com" },
+    { "MAXTOR",			"MAXTOR",		"www.maxtor.com" },
+    { "SAMSUNG",		"SANSUNG",		"www.samsung.com" },
+    { "PIONEER",		"PIONEER",		"www.pioneer-eur.com" },
+    { "PLEXTOR",		"PLEXTOR",		"www.plextor.be" },
+    { "Realtek Semiconductor",	"Realtek",		"www.realtek.com.tw" },
+    { "TOSHIBA",		"TOSHIBA",		"www.toshiba.com" },
+    { "LITE-ON",		"LITE-ON",		"www.liteonit.com" },
+    { "WDC",			"Western Digital",	"www.wdc.com" },
+    { "HL-DT-ST",		"LG",			"www.lge.com" },
+    { "ST",			"SEAGATE",		"www.seagate.com" },
+    { "Lexmark",		"Lexmark",		"www.lexmark.com" },
+    { "_NEC",			"NEC Corporation",	"www.nec.com" },
+    { "Creative Labs",		"Creative Labs",	"www.creative.com" },
+    { "Brooktree",		"Conexant",		"www.brooktree.com" },
+    { "Atheros",		"Atheros Communications","www.atheros.com" },
+    { "MATSHITA",		"Panasonic",		"www.panasonic.com" },
+    { "Silicon Image",		"Silicon Image, Inc.",	"www.siliconimage.com" }, 
+    { "KYE",			"KYE Systems Corp.",	"www.genius-kye.com" },
+    { NULL,			NULL,			NULL },
+};
+
+const gchar *vendor_get_name(const gchar *id)
+{
+  int i;
+  
+  for (i = 0; vendors[i].id; i++) {
+    if (strstr(id, vendors[i].id))
+      return vendors[i].name;
+  }
+  
+  return id;
+}
+
+const gchar *vendor_get_url(const gchar *id)
+{
+  int i;
+  
+  for (i = 0; vendors[i].id; i++) {
+    if (strstr(id, vendors[i].id))
+      return vendors[i].url;
+  }
+  
+  return NULL;
+}
+

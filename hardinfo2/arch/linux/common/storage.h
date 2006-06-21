@@ -120,6 +120,7 @@ scan_scsi(void)
 
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
 					     "Model=%s\n"
+					     "Vendor=%s (%s)\n"
 					     "Type=%s\n"
 					     "Revision=%s\n"
 					     "[SCSI Controller]\n"
@@ -127,6 +128,8 @@ scan_scsi(void)
 					     "Channel=%d\n"
 					     "ID=%d\n" "LUN=%d\n",
 					     model,
+					     vendor_get_name(model),
+					     vendor_get_url(model),
 					     type,
 					     revision,
 					     scsi_controller,
@@ -242,9 +245,15 @@ scan_ide(void)
 
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
 					     "Model=%s\n"
+					     "Vendor=%s (%s)\n"
 					     "Device Name=hd%c\n"
 					     "Media=%s\n" "Cache=%dkb\n",
-					     model, iface, media, cache);
+					     model,
+					     vendor_get_name(model),
+					     vendor_get_url(model),
+					     iface,
+					     media,
+					     cache);
 	    if (pgeometry && lgeometry)
 		strhash = g_strdup_printf("%s[Geometry]\n"
 					  "Physical=%s\n"

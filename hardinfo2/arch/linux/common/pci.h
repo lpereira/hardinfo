@@ -171,6 +171,17 @@ scan_pci(void)
 					"Bus, device, function=%d, %d, %d\n",
 					name, category, domain, bus,
 					device, function);
+            
+            const gchar *url = vendor_get_url(name);
+            if (url) {
+                strdevice = g_strdup_printf("%s"
+                                            "Vendor=%s (%s)\n",
+                                            strdevice,
+                                            vendor_get_name(name),
+                                            url);
+            }
+            
+            
 	    pci_list = g_strdup_printf("%s$PCI%d$%s=%s\n", pci_list, n, category,
 				name);
 
