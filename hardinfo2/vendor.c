@@ -22,29 +22,24 @@
 #include <gtk/gtk.h>
 #include "vendor.h"
 
-/*
- * List of vendors based on GtkSysInfo1.9beta1 list by Pissens Sebastien, also
- * licensed under the GNU GPL version 2.
- */
-
 static const Vendor vendors[] = {
-    { "ATI",			"ATI",			"www.ati.com" },
-    { "nVidia",			"NVIDIA",		"www.nvidia.com" },
+    { "ATI",			"ATI Technologies, Inc.","www.ati.com" },
+    { "nVidia",			"NVIDIA Corporation",	"www.nvidia.com" },
     { "3Com",			"3Com",			"www.3com.com" },
-    { "Intel"	,		"INTEL",		"www.intel.com" },
+    { "Intel"	,		"Intel Corp.",		"www.intel.com" },
     { "Cirrus Logic",		"Cirrus Logic",		"www.cirrus.com" },
     { "VIA Technologies",	"VIA Technologies",	"www.via.com.tw" },
     { "hp",			"Hewlett-Packard",	"www.hp.com" },
     { "NEC Corporation",	"NEC Coporation",	"www.nec.com" },
     { "MAXTOR",			"MAXTOR",		"www.maxtor.com" },
-    { "SAMSUNG",		"SANSUNG",		"www.samsung.com" },
+    { "SAMSUNG",		"SAMSUNG",		"www.samsung.com" },
     { "PIONEER",		"PIONEER",		"www.pioneer-eur.com" },
     { "PLEXTOR",		"PLEXTOR",		"www.plextor.be" },
     { "Realtek Semiconductor",	"Realtek",		"www.realtek.com.tw" },
     { "TOSHIBA",		"TOSHIBA",		"www.toshiba.com" },
     { "LITE-ON",		"LITE-ON",		"www.liteonit.com" },
     { "WDC",			"Western Digital",	"www.wdc.com" },
-    { "HL-DT-ST",		"LG",			"www.lge.com" },
+    { "GSA",			"LG Electronics",	"www.lge.com" },
     { "ST",			"SEAGATE",		"www.seagate.com" },
     { "Lexmark",		"Lexmark",		"www.lexmark.com" },
     { "_NEC",			"NEC Corporation",	"www.nec.com" },
@@ -54,6 +49,9 @@ static const Vendor vendors[] = {
     { "MATSHITA",		"Panasonic",		"www.panasonic.com" },
     { "Silicon Image",		"Silicon Image, Inc.",	"www.siliconimage.com" }, 
     { "KYE",			"KYE Systems Corp.",	"www.genius-kye.com" },
+    { "Broadcom",		"Broadcom Corp.",	"www.broadcom.com" },
+    { "Apple",			"Apple Computer, Inc.",	"www.apple.com" },
+    { "IBM",			"IBM Corp.",		"www.ibm.com" },
     { NULL,			NULL,			NULL },
 };
 
