@@ -103,14 +103,30 @@ scan_inputdevices(void)
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
 					     "Name=%s\n"
 					     "Type=%s\n"
-					     "Bus=0x%x\n"
-					     "Vendor=0x%x\n"
-					     "Product=0x%x\n"
-					     "Version=0x%x\n"
-					     "Connected to=%s\n",
-					     name, input_devices[d].name,
-					     bus, vendor, product,
-					     version, phys);
+					     "Bus=0x%x\n",
+					     name,
+					     input_devices[d].name,
+					     bus);
+
+	    const gchar *url = vendor_get_url(name);
+	    if (url) {
+	    	strhash = g_strdup_printf("%s"
+					  "Vendor=%s (%s)\n",
+					  strhash,
+					  vendor_get_name(name),
+					  url);
+	    } else {
+	    	strhash = g_strdup_printf("%s"
+					  "Vendor=%x\n",
+					  strhash,
+					  vendor);
+	    }
+
+	    strhash = g_strdup_printf("%s"
+				      "Product=0x%x\n"
+				      "Version=0x%x\n"
+				      "Connected to=%s\n",
+				      strhash, product, version, phys);
 	    g_hash_table_insert(devices, tmp, strhash);
 
 	    g_free(phys);

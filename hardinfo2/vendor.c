@@ -39,7 +39,7 @@ static const Vendor vendors[] = {
     { "TOSHIBA",		"TOSHIBA",		"www.toshiba.com" },
     { "LITE-ON",		"LITE-ON",		"www.liteonit.com" },
     { "WDC",			"Western Digital",	"www.wdc.com" },
-    { "GSA",			"LG Electronics",	"www.lge.com" },
+    { "HL-DT-ST",		"LG Electronics",	"www.lge.com" },
     { "ST",			"SEAGATE",		"www.seagate.com" },
     { "Lexmark",		"Lexmark",		"www.lexmark.com" },
     { "_NEC",			"NEC Corporation",	"www.nec.com" },
@@ -52,6 +52,8 @@ static const Vendor vendors[] = {
     { "Broadcom",		"Broadcom Corp.",	"www.broadcom.com" },
     { "Apple",			"Apple Computer, Inc.",	"www.apple.com" },
     { "IBM",			"IBM Corp.",		"www.ibm.com" },
+    { "Dell",			"Dell Computer Corp.",	"www.dell.com" },
+    { "Logitech",		"Logitech International SA", "www.logitech.com" },
     { NULL,			NULL,			NULL },
 };
 
