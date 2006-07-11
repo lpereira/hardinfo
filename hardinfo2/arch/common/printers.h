@@ -63,7 +63,11 @@ scan_printers(void)
 
     noprinters = cupsGetPrinters(&printers);
     default_printer = cupsGetDefault();
-
+    
+    if (!default_printer) {
+        default_printer = "";
+    }
+    
     if (noprinters > 0) {
 	printer_list = g_strdup_printf("[Printers (CUPS)]\n");
 	for (i = 0; i < noprinters; i++) {
