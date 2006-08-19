@@ -192,11 +192,6 @@ hi_info(gint entry)
     static Computer *computer = NULL;
     static gchar *tmp = NULL;
 
-    /*if (tmp != NULL) {
-       g_free(tmp);
-       tmp = NULL;
-    } */
-
     if (!computer) {
 	computer = computer_get_info();
     }
@@ -230,7 +225,8 @@ hi_info(gint entry)
 			       "ReloadInterval=5000\n"
 			       "[Mounted File Systems]\n%s\n", fs_list);
     case COMPUTER_SUMMARY:
-	tmp = computer_get_alsacards(computer);
+        if (tmp) g_free(tmp);
+        tmp = computer_get_alsacards(computer);
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "UpdateInterval$Memory=1000\n"
 			       "UpdateInterval$Date/Time=1000\n"
@@ -245,12 +241,7 @@ hi_info(gint entry)
 			       "OpenGL Renderer=%s\n"
 			       "X11 Vendor=%s\n"
 			       "[Multimedia]\n"
-			       "%s\n"
-			       "#[Storage]\n"
-			       "#IDE Controller=\n"
-			       "#SCSI Controller=\n"
-			       "#Floppy Drive=\n"
-			       "#Disk Drive=\n",
+			       "%s\n",
 			       computer->processor->model_name,
 			       computer->os->distro,
 			       computer->os->username,
@@ -283,7 +274,6 @@ hi_info(gint entry)
                                computer->display->ogl_renderer,
                                computer->display->ogl_version);
     case COMPUTER_OPERATING_SYSTEM:
-	tmp = computer_get_formatted_uptime();
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "UpdateInterval$Uptime=10000\n"
 			       "UpdateInterval$Load Average=1000\n"
@@ -299,7 +289,7 @@ hi_info(gint entry)
 			       "Home Directory=%s\n"
 			       "Desktop Environment=%s\n"
 			       "[Misc]\n"
-			       "Uptime=%s\n"
+			       "Uptime=...\n"
 			       "Load Average=...",
 			       computer->os->kernel,
 			       computer->os->compiled_date,
@@ -309,7 +299,7 @@ hi_info(gint entry)
 			       computer->os->username,
 			       computer->os->language,
 			       computer->os->homedir,
-			       computer->os->desktop, tmp);
+			       computer->os->desktop);
     case COMPUTER_LANGUAGE:
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "ViewType=1\n"

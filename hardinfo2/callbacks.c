@@ -57,6 +57,7 @@ void cb_about()
         "MD5 implementation by Colin Plumb",
         "SHA1 implementation by Steve Raid",
         "Blowfish implementation by Paul Kocher",
+        "Some code partly based on x86cpucaps by Osamu Kayasono",
         NULL
     };
 

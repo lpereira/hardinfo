@@ -22,6 +22,7 @@ scan_printers(void)
     static GModule *cups = NULL;
     static int (*cupsGetPrinters) (char ***printers) = NULL;
     static char *(*cupsGetDefault) (void) = NULL;
+    
     static char *libcups[] = { "libcups",
                                "libcups.so",
                                "libcups.so.1",
@@ -47,11 +48,9 @@ scan_printers(void)
 	}
 
 	if (!g_module_symbol(cups, "cupsGetPrinters", (gpointer) & cupsGetPrinters)
-	    || !g_module_symbol(cups, "cupsGetDefault",
-				(gpointer) & cupsGetDefault)) {
-	    printer_list =
-		g_strdup("[Printers]\n"
-                         "No suitable CUPS library found=");
+	    || !g_module_symbol(cups, "cupsGetDefault", (gpointer) & cupsGetDefault)) {
+	    printer_list = g_strdup("[Printers]\n"
+                                    "No suitable CUPS library found=");
             g_module_close(cups);
 	    return;
 	}

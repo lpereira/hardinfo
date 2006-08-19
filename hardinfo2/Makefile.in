@@ -74,7 +74,9 @@ install:	all
 	cp benchmark.data ${DESTDIR}/usr/share/hardinfo
 
 	@echo '[01;34m*** Fixing permissions...[00m'
-	chmod -R 755 ${DESTDIR}/usr/share/hardinfo
 	chmod 755 ${DESTDIR}/usr/bin/hardinfo
 
 	@echo '[01;34m*** Done installing.[00m'
+
+installer:
+	makeinstaller
