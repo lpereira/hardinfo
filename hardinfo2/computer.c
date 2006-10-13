@@ -29,6 +29,7 @@
 #include <iconcache.h>
 #include <shell.h>
 
+#include <vendor.h>
 #include <expr.h>
 
 enum {

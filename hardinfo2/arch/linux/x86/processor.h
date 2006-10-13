@@ -232,7 +232,10 @@ static struct {
 gchar *
 processor_get_capabilities_from_flags(gchar * strflags)
 {
-    /* FIXME: * Separate between processor capabilities, additional instructions and whatnot.  */
+    /* FIXME:
+     * - Separate between processor capabilities, additional instructions and whatnot.  
+     * - Use binary search or something faster than this O(n) cruft
+     */
     gchar **flags, **old;
     gchar *tmp = "";
     gint i, j = 0;
@@ -283,7 +286,7 @@ processor_get_info(Processor *processor)
 			       processor->family,
 			       processor->model,
 			       processor->stepping,
-			       processor->vendor_id,
+			       vendor_get_name(processor->vendor_id),
 			       processor->cache_size,
 			       processor->cpu_mhz,
 			       processor->bogomips,

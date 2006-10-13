@@ -54,6 +54,7 @@ static const Vendor vendors[] = {
     { "IBM",			"IBM Corp.",		"www.ibm.com" },
     { "Dell",			"Dell Computer Corp.",	"www.dell.com" },
     { "Logitech",		"Logitech International SA", "www.logitech.com" },
+    { "FUJITSU",		"Fujitsu",		"www.fujitsu.com" },
     { NULL,			NULL,			NULL },
 };
 
