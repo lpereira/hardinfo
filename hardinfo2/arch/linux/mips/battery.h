@@ -1,1 +1,1 @@
-../../linux/battery.h
+../../linux/common/battery.h
