@@ -29,6 +29,7 @@ enum {
     DEVICES_PCI,
     DEVICES_USB,
     DEVICES_PRINTERS,
+    DEVICES_BATTERY,
     DEVICES_INPUT,
     DEVICES_STORAGE,
 } Entries;
@@ -38,6 +39,7 @@ static ModuleEntry hi_entries[] = {
     {"PCI Devices",	"devices.png"},
     {"USB Devices",	"usb.png"},
     {"Printers",	"printer.png"},
+    {"Battery",		"battery.png"},
     {"Input Devices",	"keyboard.png"},
     {"Storage",		"hdd.png"},
 };
@@ -48,11 +50,12 @@ static gchar *printer_list = NULL;
 static gchar *pci_list = "";
 static gchar *input_list = NULL;
 static gchar *storage_list = "";
+static gchar *battery_list = NULL;
 
 #define WALK_UNTIL(x)   while((*buf != '\0') && (*buf != x)) buf++
 
 #define GET_STR(field_name,ptr)      \
-  if (strstr(tmp[0], field_name)) {  \
+  if (!ptr && strstr(tmp[0], field_name)) {  \
     ptr = g_markup_escape_text(g_strstrip(tmp[1]), strlen(tmp[1]));          \
     g_strfreev(tmp);                 \
     continue;                        \
@@ -66,6 +69,7 @@ static gchar *storage_list = "";
 #include <arch/this/inputdevices.h>
 #include <arch/this/usb.h>
 #include <arch/this/storage.h>
+#include <arch/this/battery.h>
 
 static void
 detect_devices(void)
@@ -92,6 +96,9 @@ detect_devices(void)
 
     shell_status_update("Scanning SCSI devices...");
     scan_scsi();
+
+    shell_status_update("Scanning batteries...");
+    scan_battery();
 }
 
 gchar *
@@ -108,6 +115,9 @@ void
 hi_reload(gint entry)
 {
     switch (entry) {
+    case DEVICES_BATTERY:
+        scan_battery();
+        break;
     case DEVICES_INPUT:
 	scan_inputdevices();
 	break;
@@ -138,6 +148,10 @@ hi_info(gint entry)
     }
 
     switch (entry) {
+    case DEVICES_BATTERY:
+        return g_strdup_printf("%s\n"
+                               "[$ShellParam$]\n"
+                               "ReloadInterval=4000\n", battery_list);
     case DEVICES_KERNEL_MODULES:
 	return g_strdup_printf("[Loaded Modules]\n"
 			       "%s"

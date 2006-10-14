@@ -58,6 +58,7 @@ void cb_about()
         "SHA1 implementation by Steve Raid",
         "Blowfish implementation by Paul Kocher",
         "Some code partly based on x86cpucaps by Osamu Kayasono",
+        "Artwork by the GNOME Project and Tango Project",
         NULL
     };
 

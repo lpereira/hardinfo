@@ -232,6 +232,36 @@ read_sensors(void)
         path_hwmon = g_strdup_printf("/sys/class/hwmon/hwmon%d/device/", ++hwmon);
     }
     
-    g_free(path_hwmon);    
+    g_free(path_hwmon);
+    
+    path_hwmon = g_strdup("/proc/acpi/thermal_zone");
+    if (g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
+      GDir *tz;
+      
+      if ((tz = g_dir_open(path_hwmon, 0, NULL))) {
+        const gchar *entry;
+        
+        sensors = g_strdup_printf("%s\n[ACPI Thermal Zone]\n", sensors);
+        while ((entry = g_dir_read_name(tz))) {
+          gchar *path = g_strdup_printf("%s/%s/temperature", path_hwmon, entry);
+          gchar *contents;
+          
+          if (g_file_get_contents(path, &contents, NULL, NULL)) {
+            int temperature;
+            
+            sscanf(contents, "temperature: %d C", &temperature);
+          
+            sensors = g_strdup_printf("%s\n%s=%d\302\260C\n",
+                      sensors, entry, temperature);
+                      
+            g_free(contents);
+          }
+        }
+      
+        g_dir_close(tz);
+      }
+    }
+    
+    g_free(path_hwmon);
 }
 
