@@ -37,7 +37,7 @@ benchmark_fish(void)
     gchar *bdata_path;
     
     bdata_path = g_strdup_printf("%s/hardinfo/benchmark.data",
-                                 gbr_find_data_dir(PREFIX));
+                                 path_data);
 
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);

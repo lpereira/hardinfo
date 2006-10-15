@@ -209,7 +209,7 @@ load_graph_update(LoadGraph *lg, gint value)
     if (value < 0)
         return;
     
-    if (lg->max_value > 0) {
+    if (lg->max_value < 0) {
       lg->scale = (gfloat)lg->height / (gfloat)_max(lg);
     } else {
       lg->scale = (gfloat)lg->height / (gfloat)lg->max_value;
@@ -261,7 +261,7 @@ int main(int argc, char **argv)
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_show(window);
     
-    lg = load_graph_new(200);
+    lg = load_graph_new(50);
     gtk_container_add(GTK_CONTAINER(window), load_graph_get_framed(lg));
     gtk_container_set_border_width(GTK_CONTAINER(window), 20);
     load_graph_configure_expose(lg);

@@ -47,7 +47,7 @@ benchmark_include_results(gchar *results, const gchar *benchmark)
     
     conf = g_key_file_new();
     bconf_path = g_strdup_printf("%s/hardinfo/benchmark.conf",
-                                 gbr_find_data_dir(PREFIX));
+                                 path_data);
     g_key_file_load_from_file(conf, bconf_path, 0, NULL);
     
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);

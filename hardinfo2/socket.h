@@ -29,6 +29,8 @@ Socket *sock_connect(gchar * host, gint port);
 int	sock_write(Socket * s, gchar * str);
 int	sock_read(Socket * s, gchar * buffer, gint size);
 void	sock_close(Socket * s);
-int	sock_is_ready(Socket *s);
+
+int	sock_ready_to_read(Socket *s);
+int	sock_ready_to_write(Socket *s);
 
 #endif	/* __HI_SOCKET_H__ */

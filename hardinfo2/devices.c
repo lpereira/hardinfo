@@ -54,11 +54,11 @@ static gchar *battery_list = NULL;
 
 #define WALK_UNTIL(x)   while((*buf != '\0') && (*buf != x)) buf++
 
-#define GET_STR(field_name,ptr)      \
-  if (!ptr && strstr(tmp[0], field_name)) {  \
-    ptr = g_markup_escape_text(g_strstrip(tmp[1]), strlen(tmp[1]));          \
-    g_strfreev(tmp);                 \
-    continue;                        \
+#define GET_STR(field_name,ptr)      					\
+  if (!ptr && strstr(tmp[0], field_name)) {				\
+    ptr = g_markup_escape_text(g_strstrip(tmp[1]), strlen(tmp[1]));	\
+    g_strfreev(tmp);                 					\
+    continue;                        					\
   }
 
 #include <vendor.h>

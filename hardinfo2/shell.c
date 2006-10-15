@@ -305,8 +305,7 @@ shell_tree_modules_load(ShellTree * shelltree)
 
     keyfile = g_key_file_new();
     
-    modules_conf = g_strdup_printf("%s/hardinfo/modules.conf",
-                                   gbr_find_data_dir(PREFIX));
+    modules_conf = g_strdup_printf("%s/hardinfo/modules.conf", path_data);
     g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
     g_free(modules_conf);
     
@@ -328,8 +327,7 @@ shell_tree_modules_load(ShellTree * shelltree)
 	g_free(tmp);
 
 	tmp = g_strdup_printf("%s/hardinfo/modules/%s.so",
-	                      gbr_find_lib_dir(PREFIX),
-	                      iname);
+	                      path_lib, iname);
 	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
 	g_free(tmp);
 

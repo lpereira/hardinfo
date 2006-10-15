@@ -24,6 +24,8 @@
 
 #include <binreloc.h>
 
+gchar *path_data, *path_lib;
+
 int
 main(int argc, char **argv)
 {
@@ -33,6 +35,9 @@ main(int argc, char **argv)
     
     if (!gbr_init(&error)) {
         g_error("BinReloc cannot be initialized: %s", error->message);      
+    } else {
+        path_data = gbr_find_data_dir(PREFIX);
+        path_lib = gbr_find_lib_dir(PREFIX);
     }
     
     icon_cache_init();

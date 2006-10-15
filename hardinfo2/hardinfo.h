@@ -35,4 +35,7 @@ inline  void  remove_linefeed(gchar *str);
 inline gchar *size_human_readable(gfloat size);
         void  nonblock_sleep(guint msec);
 
+extern	gchar*	path_lib;
+extern	gchar*	path_data;
+
 #endif				/* __HARDINFO_H__ */

@@ -50,7 +50,6 @@ deb:	dist-clean
 install:	all
 	@echo '[01;34m*** Creating directories...[00m'
 	mkdir -p ${DESTDIR}/usr/bin
-	mkdir -p ${DESTDIR}/usr/local
 	mkdir -p ${DESTDIR}/usr/share/applications
 	mkdir -p ${DESTDIR}/usr/lib/hardinfo/modules
 	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps

@@ -42,27 +42,24 @@ Socket *sock_connect(gchar * host, gint port)
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = inet_addr(host);
 	server.sin_port = htons(port);
-	
-	if (connect(sock, (struct sockaddr *) (void *) &server, sizeof(server)) < 0) {
+
+	if (connect
+	    (sock, (struct sockaddr *) (void *) &server,
+	     sizeof(server)) < 0) {
 	    return NULL;
 	}
 
 	s = g_new0(Socket, 1);
 	s->sock = sock;
-	
+
 	return s;
     }
 
     return NULL;
 }
 
-int sock_write(Socket * s, gchar * str)
-{
-    return write(s->sock, str, strlen(str));
-}
-
 /* From: http://www.erlenstar.demon.co.uk/unix/faq_3.html#SEC26 */
-int sock_is_ready(Socket *s)
+static inline int __sock_is_ready(Socket * s, int mode)
 {
     int rc, fd = s->sock;
     fd_set fds;
@@ -72,25 +69,49 @@ int sock_is_ready(Socket *s)
     FD_SET(fd, &fds);
     tv.tv_sec = tv.tv_usec = 0;
 
-    rc = select(fd+1, &fds, NULL, NULL, &tv);
+    if (mode == 0) {
+	/* read */
+	rc = select(fd + 1, &fds, NULL, NULL, &tv);
+    } else {
+	/* write */
+	rc = select(fd + 1, NULL, &fds, NULL, &tv);
+    }
+
     if (rc < 0)
-      return -1;
+	return -1;
 
     return FD_ISSET(fd, &fds) ? 1 : 0;
 }
 
+int sock_ready_to_read(Socket * s)
+{
+    return __sock_is_ready(s, 0);
+}
+
+int sock_ready_to_write(Socket * s)
+{
+    return __sock_is_ready(s, 1);
+}
+
 int sock_read(Socket * s, gchar * buffer, gint size)
 {
-    if (sock_is_ready(s)) {
-      gint n;
+    if (sock_ready_to_read(s)) {
+	gint n;
 
-      n = read(s->sock, buffer, size);
-      buffer[n] = '\0';
-      
-      return n;
+	n = read(s->sock, buffer, size);
+	buffer[n] = '\0';
+
+	return n;
     }
-    
+
     return 0;
+}
+
+int sock_write(Socket * s, gchar * str)
+{
+    while (!sock_ready_to_write(s));
+
+    return write(s->sock, str, strlen(str));
 }
 
 void sock_close(Socket * s)

@@ -27,6 +27,8 @@
 #include <binreloc.h>
 
 #include <callbacks.h>
+#include <hardinfo.h>
+
 
 static GtkActionEntry entries[] = 
 {
@@ -84,6 +86,7 @@ void menu_init(Shell *shell)
     GtkUIManager        *menu_manager;          /* The magic widget! */
     GError              *error;                 /* For reporting exceptions or errors */
     gchar               *uidefs_path;
+    GtkAccelGroup	*accel_group;
     
     /* Create our objects */
     menu_box = shell->vbox;
@@ -105,15 +108,19 @@ void menu_init(Shell *shell)
     
     /* Read in the UI from our XML file */
     error = NULL;
-    uidefs_path = g_strdup_printf("%s/hardinfo/uidefs.xml",
-                                  gbr_find_data_dir(PREFIX));
+    uidefs_path = g_strdup_printf("%s/hardinfo/uidefs.xml", path_data);
     gtk_ui_manager_add_ui_from_file(menu_manager, uidefs_path, &error);
     g_free(uidefs_path);
     
     if (error) {
         g_error("building menus failed: %s", error->message);
         g_error_free(error);
+        return;
     }
+    
+    /* Enable menu accelerators */
+    accel_group = gtk_ui_manager_get_accel_group(menu_manager);
+    gtk_window_add_accel_group(GTK_WINDOW(shell->window), accel_group);
     
     /* Connect up important signals */
     /* This signal is necessary in order to place widgets from the UI manager
