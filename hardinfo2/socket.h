@@ -22,8 +22,6 @@
 typedef struct _Socket	Socket;
 
 struct _Socket {
-  gchar *host;
-  gint   port;
   gint   sock;
 };
 

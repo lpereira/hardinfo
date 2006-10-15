@@ -77,3 +77,20 @@ widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
         while(gtk_events_pending())
                 gtk_main_iteration();
 }
+
+static gboolean
+__nonblock_cb(gpointer data)
+{
+        gtk_main_quit();
+        return FALSE;
+}
+
+void
+nonblock_sleep(guint msec)
+{
+        g_timeout_add(msec, (GSourceFunc)__nonblock_cb, NULL);
+        gtk_main();
+}
+
+
+

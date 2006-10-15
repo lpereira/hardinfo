@@ -270,46 +270,52 @@ read_sensors_acpi(void)
 static void
 read_sensors_hddtemp(void)
 {
-    Socket *s = sock_connect("127.0.0.1", 7634);
+    Socket *s;
     static gchar *old = NULL;
     gchar buffer[1024];
-    gint len;
+    gint len = 0;
     
-    if (!s)
-      return;
-
-    len = sock_read(s, buffer, sizeof(buffer));
-    sock_close(s);
-    
-    if (len > 2 && buffer[0] == '|' && buffer[1] == '/') {
-        gchar **disks;
-        int i;
+    if ((s = sock_connect("127.0.0.1", 7634))) {
+        while (len <= 2)
+            len = sock_read(s, buffer, sizeof(buffer));
+        sock_close(s);
         
-        if (old)
-            g_free(old);
+        if (len > 2 && buffer[0] == '|' && buffer[1] == '/') {
+            gchar **disks;
+            int i;
             
-        old = g_strdup("[Hard Disk Temperature]\n");
+            if (old)
+                g_free(old);
+                
+            old = g_strdup("[Hard Disk Temperature]\n");
 
-        disks = g_strsplit(buffer, "\n", 0);    
-        for (i = 0; disks[i]; i++) {
-          gchar **fields = g_strsplit(disks[i] + 1, "|", 5);
+            disks = g_strsplit(buffer, "\n", 0);    
+            for (i = 0; disks[i]; i++) {
+              gchar **fields = g_strsplit(disks[i] + 1, "|", 5);
+              
+              /*
+               * 0 -> /dev/hda
+               * 1 -> FUJITSU MHV2080AH
+               * 2 -> 41
+               * 3 -> C
+               */
+              old = g_strdup_printf("%s\n"
+                                    "%s (%s)=%s\302\260%s\n",
+                                    old,
+                                    fields[1], fields[0],
+                                    fields[2], fields[3]);
           
-          /*
-           * 0 -> /dev/hda
-           * 1 -> FUJITSU MHV2080AH
-           * 2 -> 41
-           * 3 -> C
-           */
-          old = g_strdup_printf("%s\n"
-                                "%s (%s)=%s\302\260%s\n",
-                                old,
-                                fields[1], fields[0],
-                                fields[2], fields[3]);
-      
-          g_strfreev(fields);
+              g_strfreev(fields);
+            }
+            
+            g_strfreev(disks);
+        } else {
+            /* FIXME: This might go crazy in an infinite loop. */
+            g_warning("reading hddtemp failed. retrying in 100ms");
+            nonblock_sleep(100);
+            read_sensors_hddtemp();
+            return;
         }
-        
-        g_strfreev(disks);
     }
     
     if (old) {
@@ -328,5 +334,7 @@ read_sensors(void)
     read_sensors_hwmon();
     read_sensors_acpi();
     read_sensors_hddtemp();    
+    
+    /* FIXME: Add support for omnibook, ibm acpi and more sensors */
 }
 

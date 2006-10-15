@@ -33,5 +33,6 @@ inline  void  strend(gchar *str, gchar chr);
 inline  void  remove_linefeed(gchar *str);
         void  widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
 inline gchar *size_human_readable(gfloat size);
+        void  nonblock_sleep(guint msec);
 
 #endif				/* __HARDINFO_H__ */

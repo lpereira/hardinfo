@@ -48,8 +48,6 @@ Socket *sock_connect(gchar * host, gint port)
 	}
 
 	s = g_new0(Socket, 1);
-	s->host = g_strdup(host);
-	s->port = port;
 	s->sock = sock;
 	
 	return s;
@@ -76,6 +74,5 @@ int sock_read(Socket * s, gchar * buffer, gint size)
 void sock_close(Socket * s)
 {
     close(s->sock);
-    g_free(s->host);
     g_free(s);
 }
