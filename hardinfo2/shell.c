@@ -546,7 +546,7 @@ static gboolean
 update_field(gpointer data)
 {
     ShellFieldUpdate	*fu = (ShellFieldUpdate *) data;
-
+    
     /* if the entry is still selected, update it */
     if (fu->entry->selected && fu->entry->fieldfunc) {
         gchar		*value = fu->entry->fieldfunc(fu->field_name);
@@ -556,6 +556,7 @@ update_field(gpointer data)
            SHELL_VIEW_LOAD_GRAPH */
         if (fu->loadgraph && shell->view_type == SHELL_VIEW_LOAD_GRAPH) {
               GtkTreeSelection *ts;
+              
 
     	      ts = gtk_tree_view_get_selection(GTK_TREE_VIEW
             					 (shell->info->view));
@@ -686,6 +687,11 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		fu->loadgraph = TRUE;
 		
 		g_timeout_add(ms, update_field, fu);
+            } else if (g_str_equal(key, "LoadGraphMaxValue")) {
+                gint max_value;
+                
+                max_value = g_key_file_get_integer(key_file, group, key, NULL);
+                load_graph_set_max(shell->loadgraph, max_value);
 	    } else if (g_str_equal(key, "ReloadInterval")) {
 		gint ms;
 

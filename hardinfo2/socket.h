@@ -16,34 +16,20 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static unsigned long long
-fib(unsigned long long n)
-{
-    if (n == 0)
-        return 0;
-    else if (n == 1 || n == 2)
-        return 1;
-    return fib(n - 1) + fib(n - 2);
-}
+#ifndef __HI_SOCKET_H__
+#define __HI_SOCKET_H__
 
-static gchar *
-benchmark_fib(void)
-{
-    GTimer *timer = g_timer_new();
-    gdouble elapsed = 0;
-    
-    shell_view_set_enabled(FALSE);
-    shell_status_update("Calculating the 42nd Fibonacci number...");
-    
-    g_timer_start(timer);
-    fib(42);		/* the answer? :) */
-    g_timer_stop(timer);
+typedef struct _Socket	Socket;
 
-    elapsed = g_timer_elapsed(timer, NULL);
-    
-    g_timer_destroy(timer);
+struct _Socket {
+  gchar *host;
+  gint   port;
+  gint   sock;
+};
 
-    gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
-                           "<b>This Machine</b>=<b>%.2f</b>\n", elapsed);
-    return benchmark_include_results(retval, "Fibonacci");
-}
+Socket *sock_connect(gchar * host, gint port);
+int	sock_write(Socket * s, gchar * str);
+int	sock_read(Socket * s, gchar * buffer, gint size);
+void	sock_close(Socket * s);
+
+#endif	/* __HI_SOCKET_H__ */

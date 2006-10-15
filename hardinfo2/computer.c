@@ -32,6 +32,8 @@
 #include <vendor.h>
 #include <expr.h>
 
+#include "socket.h"
+
 enum {
     COMPUTER_SUMMARY,
     COMPUTER_PROCESSORS,
@@ -213,7 +215,7 @@ hi_info(gint entry)
                                "%s\n", human_users, sys_users);
     case COMPUTER_SENSORS:
         return g_strdup_printf("[$ShellParam$]\n"
-                               "ReloadInterval=3000\n"
+                               "ReloadInterval=5000\n"
                                "%s", sensors);
     case COMPUTER_SHARES:
         return g_strdup_printf("[SAMBA]\n"

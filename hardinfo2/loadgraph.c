@@ -42,10 +42,22 @@ LoadGraph *load_graph_new(gint size)
     lg->width  = size * 4;
     lg->height = size * 2;
     
+    lg->max_value = -1;
+
     gtk_widget_set_size_request(lg->area, lg->width, lg->height);
     gtk_widget_show(lg->area);
     
     return lg;
+}
+
+int load_graph_get_max(LoadGraph *lg)
+{
+    return lg->max_value;
+}
+
+void load_graph_set_max(LoadGraph *lg, gint value)
+{
+    lg->max_value = value;
 }
 
 GtkWidget *load_graph_get_framed(LoadGraph *lg)
@@ -73,6 +85,7 @@ void load_graph_clear(LoadGraph *lg)
         lg->data[i] = 0;
 
     lg->scale = 1.0;
+//    lg->max_value = -1;
     _draw(lg);
 }
 
@@ -196,7 +209,13 @@ load_graph_update(LoadGraph *lg, gint value)
     if (value < 0)
         return;
     
-    lg->scale = (gfloat)lg->height / (gfloat)_max(lg);
+    if (lg->max_value > 0) {
+      lg->scale = (gfloat)lg->height / (gfloat)_max(lg);
+    } else {
+      lg->scale = (gfloat)lg->height / (gfloat)lg->max_value;
+      
+      g_print("using max value %d; scale is %f\n", lg->max_value, lg->scale);
+    }
 
     /* shift-right our data */
     for (i = 0; i < lg->size; i++) {

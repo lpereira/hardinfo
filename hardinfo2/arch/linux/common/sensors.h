@@ -131,17 +131,13 @@ adjust_sensor(gchar *name, float value)
     return math_postfix_eval(postfix, value);
 }
 
+
 static void
-read_sensors(void)
+read_sensors_hwmon(void)
 {
-    gchar *path_hwmon, *path_sensor, *tmp, *driver, *name, *mon;
     int hwmon, count;
-    
-    if (sensors)
-        g_free(sensors);
-    
+    gchar *path_hwmon, *path_sensor, *tmp, *driver, *name, *mon;
     hwmon = 0;
-    sensors = g_strdup("");
     
     path_hwmon = g_strdup_printf("/sys/class/hwmon/hwmon%d/device/", hwmon);
     while (g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
@@ -233,17 +229,24 @@ read_sensors(void)
     }
     
     g_free(path_hwmon);
+
+}
+
+static void
+read_sensors_acpi(void)
+{
+    const gchar *path_tz = "/proc/acpi/thermal_zone";
     
-    path_hwmon = g_strdup("/proc/acpi/thermal_zone");
-    if (g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
+    if (g_file_test(path_tz, G_FILE_TEST_EXISTS)) {
       GDir *tz;
       
-      if ((tz = g_dir_open(path_hwmon, 0, NULL))) {
+      if ((tz = g_dir_open(path_tz, 0, NULL))) {
         const gchar *entry;
         
         sensors = g_strdup_printf("%s\n[ACPI Thermal Zone]\n", sensors);
+        
         while ((entry = g_dir_read_name(tz))) {
-          gchar *path = g_strdup_printf("%s/%s/temperature", path_hwmon, entry);
+          gchar *path = g_strdup_printf("%s/%s/temperature", path_tz, entry);
           gchar *contents;
           
           if (g_file_get_contents(path, &contents, NULL, NULL)) {
@@ -261,7 +264,69 @@ read_sensors(void)
         g_dir_close(tz);
       }
     }
+
+}
+
+static void
+read_sensors_hddtemp(void)
+{
+    Socket *s = sock_connect("127.0.0.1", 7634);
+    static gchar *old = NULL;
+    gchar buffer[1024];
+    gint len;
     
-    g_free(path_hwmon);
+    if (!s)
+      return;
+
+    len = sock_read(s, buffer, sizeof(buffer));
+    sock_close(s);
+    
+    if (len > 2 && buffer[0] == '|' && buffer[1] == '/') {
+        gchar **disks;
+        int i;
+        
+        if (old)
+            g_free(old);
+            
+        old = g_strdup("[Hard Disk Temperature]\n");
+
+        disks = g_strsplit(buffer, "\n", 0);    
+        for (i = 0; disks[i]; i++) {
+          gchar **fields = g_strsplit(disks[i] + 1, "|", 5);
+          
+          /*
+           * 0 -> /dev/hda
+           * 1 -> FUJITSU MHV2080AH
+           * 2 -> 41
+           * 3 -> C
+           */
+          old = g_strdup_printf("%s\n"
+                                "%s (%s)=%s\302\260%s\n",
+                                old,
+                                fields[1], fields[0],
+                                fields[2], fields[3]);
+      
+          g_strfreev(fields);
+        }
+        
+        g_strfreev(disks);
+    }
+    
+    if (old) {
+        sensors = g_strconcat(sensors, "\n", old, NULL);
+    }
+}
+
+static void
+read_sensors(void)
+{
+    if (sensors)
+        g_free(sensors);
+    
+    sensors = g_strdup("");
+    
+    read_sensors_hwmon();
+    read_sensors_acpi();
+    read_sensors_hddtemp();    
 }
 
