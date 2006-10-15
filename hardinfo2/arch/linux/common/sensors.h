@@ -276,7 +276,7 @@ read_sensors_hddtemp(void)
     gint len = 0;
     
     if ((s = sock_connect("127.0.0.1", 7634))) {
-        while (len <= 2)
+        while (!len)
             len = sock_read(s, buffer, sizeof(buffer));
         sock_close(s);
         
@@ -309,13 +309,10 @@ read_sensors_hddtemp(void)
             }
             
             g_strfreev(disks);
-        } else {
-            /* FIXME: This might go crazy in an infinite loop. */
-            g_warning("reading hddtemp failed. retrying in 100ms");
-            nonblock_sleep(100);
-            read_sensors_hddtemp();
-            return;
         }
+    } else {
+        g_free(old);
+        old = NULL;
     }
     
     if (old) {
