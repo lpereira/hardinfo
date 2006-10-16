@@ -40,7 +40,7 @@ case $OS in
 	Linux)
 		;;
 	*)
-		echo " (not supported, yet!)"
+		echo "$OS (not supported, yet!)"
 		exit ;;
 esac	
 
@@ -64,9 +64,18 @@ case $PROC in
 	sparc*)
 		ln -sf linux/sparc arch/this
 		ARCH="ARCH_SPARC" ;;
-	armv4l)
+	armv*)
 		ln -sf linux/armv4l arch/this
 		ARCH="ARCH_ARMV4L" ;;
+        ia64)
+                ln -sf linux/ia64  arch/this
+                ARCH="ARCH_IA64" ;;
+        alpha)
+                ln -sf linux/alpha  arch/this
+                ARCH="ARCH_ALPHA" ;;
+        s390)
+                ln -sf linux/s390  arch/this
+                ARCH="ARCH_S390" ;;
 	*)
 		# uname -m on m68k doesn't return anything useful :/
 		grep "680?0" /proc/cpuinfo > /dev/null

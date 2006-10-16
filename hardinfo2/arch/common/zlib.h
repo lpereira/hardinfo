@@ -27,7 +27,7 @@ benchmark_zlib(void)
     if (!(compress && compressBound)) {
 	libz = g_module_open("libz", G_MODULE_BIND_LAZY);
 	if (!libz) {
-            libz = g_module_open("/lib/libz.so", G_MODULE_BIND_LAZY);
+            libz = g_module_open("/usr/lib/libz.so", G_MODULE_BIND_LAZY);
             if (!libz) {
                 g_warning("Cannot load ZLib: %s", g_module_error());
                 return g_strdup("[Error]\n"
