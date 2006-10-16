@@ -43,9 +43,7 @@ Socket *sock_connect(gchar * host, gint port)
 	server.sin_addr.s_addr = inet_addr(host);
 	server.sin_port = htons(port);
 
-	if (connect
-	    (sock, (struct sockaddr *) (void *) &server,
-	     sizeof(server)) < 0) {
+	if (connect(sock, (struct sockaddr *) (void *) &server, sizeof(server)) < 0) {
 	    return NULL;
 	}
 

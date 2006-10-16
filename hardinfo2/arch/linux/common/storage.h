@@ -107,7 +107,7 @@ scan_scsi(void)
                 int i;
 
                 for (i = 0; type2icon[i].type != NULL; i++)
-                    if (!strcmp(buf + 8, type2icon[i].type))
+                    if (g_str_equal(buf + 8, type2icon[i].type))
                         break;
 
                 type = type2icon[i].label;

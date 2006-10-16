@@ -34,10 +34,22 @@ main(int argc, char **argv)
     gtk_init(&argc, &argv);
     
     if (!gbr_init(&error)) {
-        g_error("BinReloc cannot be initialized: %s", error->message);      
+        path_data = g_build_filename(PREFIX, "share", "hardinfo", NULL);
+        path_lib = g_build_filename(PREFIX, "lib", "hardinfo", NULL);
+        
+        g_warning("Cannot initialize BinReloc (%s); using \"%s\" as data dir and " \
+                  "\"%s\" as lib dir.", error->message, path_data, path_lib);
+        g_error_free(error);
     } else {
-        path_data = gbr_find_data_dir(PREFIX);
-        path_lib = gbr_find_lib_dir(PREFIX);
+        gchar *tmp;
+        
+        tmp = gbr_find_data_dir(PREFIX);
+        path_data = g_build_filename(tmp, "hardinfo", NULL);
+        g_free(tmp);
+        
+        tmp = gbr_find_lib_dir(PREFIX);
+        path_lib = g_build_filename(tmp, "hardinfo", NULL);
+        g_free(tmp);
     }
     
     icon_cache_init();

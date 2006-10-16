@@ -72,7 +72,7 @@ scan_modules(void)
 	/* old modutils displays <none> when there's no value for a
 	   given field; this is not desirable in the module name 
 	   display, so change it to an empty string */
-	if (description && !strcmp(description, "&lt;none&gt;")) {
+	if (description && g_str_equal(description, "&lt;none&gt;")) {
 	    g_free(description);
 	    description = g_strdup("");
 	}

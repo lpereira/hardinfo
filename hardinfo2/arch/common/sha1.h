@@ -32,9 +32,7 @@ benchmark_sha1(void)
 
     gchar *bdata_path;
     
-    bdata_path = g_strdup_printf("%s/hardinfo/benchmark.data",
-                                 path_data);
-
+    bdata_path = g_build_filename(path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);
         return g_strdup("[Error]\n"

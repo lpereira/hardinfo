@@ -108,7 +108,7 @@ void menu_init(Shell *shell)
     
     /* Read in the UI from our XML file */
     error = NULL;
-    uidefs_path = g_strdup_printf("%s/hardinfo/uidefs.xml", path_data);
+    uidefs_path = g_build_filename(path_data, "uidefs.xml", NULL);
     gtk_ui_manager_add_ui_from_file(menu_manager, uidefs_path, &error);
     g_free(uidefs_path);
     

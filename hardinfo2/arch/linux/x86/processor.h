@@ -246,7 +246,7 @@ processor_get_capabilities_from_flags(gchar * strflags)
     while (flags[j]) {
 	gchar *meaning = "";
 	for (i = 0; flag_meaning[i].name != NULL; i++) {
-	    if (!strcmp(flags[j], flag_meaning[i].name)) {
+	    if (g_str_equal(flags[j], flag_meaning[i].name)) {
 		meaning = flag_meaning[i].meaning;
 		break;
 	    }

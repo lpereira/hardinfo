@@ -166,21 +166,21 @@ hi_get_field(gchar * field)
 {
     gchar *tmp;
 
-    if (!strcmp(field, "Memory")) {
+    if (g_str_equal(field, "Memory")) {
 	MemoryInfo *mi;
 
 	mi = computer_get_memory();
 	tmp = g_strdup_printf("%dMB (%dMB used)", mi->total, mi->used);
 
 	g_free(mi);
-    } else if (!strcmp(field, "Uptime")) {
+    } else if (g_str_equal(field, "Uptime")) {
 	tmp = computer_get_formatted_uptime();
-    } else if (!strcmp(field, "Date/Time")) {
+    } else if (g_str_equal(field, "Date/Time")) {
 	time_t t = time(NULL);
 
 	tmp = g_new0(gchar, 32);
 	strftime(tmp, 32, "%D / %R", localtime(&t));
-    } else if (!strcmp(field, "Load Average")) {
+    } else if (g_str_equal(field, "Load Average")) {
 	tmp = computer_get_formatted_loadavg();
     } else {
 	tmp = g_strdup("");

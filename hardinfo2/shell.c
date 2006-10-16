@@ -118,7 +118,7 @@ gboolean shell_action_get_active(const gchar *action_name)
     GtkAction	*action;
     GSList	*proxies;
     
-    /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
+   /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
@@ -305,7 +305,7 @@ shell_tree_modules_load(ShellTree * shelltree)
 
     keyfile = g_key_file_new();
     
-    modules_conf = g_strdup_printf("%s/hardinfo/modules.conf", path_data);
+    modules_conf = g_build_filename(path_data, "modules.conf", NULL);
     g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
     g_free(modules_conf);
     
@@ -326,8 +326,11 @@ shell_tree_modules_load(ShellTree * shelltree)
 	module->icon = icon_cache_get_pixbuf(tmp);
 	g_free(tmp);
 
-	tmp = g_strdup_printf("%s/hardinfo/modules/%s.so",
-	                      path_lib, iname);
+	tmp = g_strdup_printf("%s.so", iname);
+	g_free(iname);
+	iname = tmp;
+
+	tmp = g_build_filename(path_lib, "modules", iname, NULL);
 	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
 	g_free(tmp);
 

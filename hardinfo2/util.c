@@ -91,6 +91,3 @@ nonblock_sleep(guint msec)
         g_timeout_add(msec, (GSourceFunc)__nonblock_cb, NULL);
         gtk_main();
 }
-
-
-

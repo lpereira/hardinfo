@@ -53,12 +53,19 @@ void cb_about()
     GtkWidget *about;
     const gchar *authors[] = {
         "Leandro A. F. Pereira",
+        "",
         "SCSI support by Pascal F. Martin",
         "MD5 implementation by Colin Plumb",
         "SHA1 implementation by Steve Raid",
         "Blowfish implementation by Paul Kocher",
+        "",
         "Some code partly based on x86cpucaps by Osamu Kayasono",
-        "Artwork by the GNOME Project and Tango Project",
+        "Vendor list based on GtkSysInfo by Pissens Sebastien",
+        NULL
+    };
+    const gchar *artists[] = {
+        "The GNOME Project",
+        "Tango Project",
         NULL
     };
 
@@ -89,6 +96,7 @@ void cb_about()
 #endif
     
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about), authors);
+    gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
 
     gtk_dialog_run(GTK_DIALOG(about));
     gtk_widget_destroy(about);
