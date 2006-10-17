@@ -20,7 +20,6 @@
 #include <iconcache.h>
 #include <shell.h>
 #include <config.h>
-#include <binreloc.h>
 
 enum {
     BENCHMARK_ZLIB,

@@ -16,8 +16,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static Processor *
-computer_get_processor(void)
+static GSList *
+computer_get_processors(void)
 {
     Processor *processor;
     FILE *cpuinfo;
@@ -43,18 +43,20 @@ computer_get_processor(void)
 	g_strfreev(tmp);
     }
     
-    gchar *tmp = g_strconcat("Alpha", processor->model_name, NULL);
+    gchar *tmp = g_strconcat("Alpha ", processor->model_name, NULL);
     g_free(processor->model_name);
     processor->model_name = tmp;
 
     fclose(cpuinfo);
 
-    return processor;
+    return g_slist_append(NULL, processor);
 }
 
 static gchar *
-processor_get_info(Processor *processor)
+processor_get_info(GSList *processors)
 {
+        Processor *processor = (Processor *)processors->data;
+
 	return g_strdup_printf("[Processor] %s\n"
 	                       "Plataform String=%s\n"
 	                       "BogoMips=%.2f"

@@ -97,7 +97,7 @@ struct _UptimeInfo {
 };
 
 struct _Computer {
-    Processor *processor;
+    GSList *processors;
     MemoryInfo *memory;
     OperatingSystem *os;
     DisplayInfo *display;
@@ -118,6 +118,8 @@ struct _Processor {
     
     gint model, family, stepping;
     gchar *strmodel;
+    
+    gint id;
 };
 
 struct _OperatingSystem {

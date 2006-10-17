@@ -17,7 +17,6 @@
  */
 #include <iconcache.h>
 #include <config.h>
-#include <binreloc.h>
 #include <hardinfo.h>
 
 static GHashTable *cache = NULL;

@@ -16,8 +16,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static Processor *
-computer_get_processor(void)
+static GSList *
+computer_get_processors(void)
 {
     Processor *processor;
     FILE *cpuinfo;
@@ -43,17 +43,18 @@ computer_get_processor(void)
 	g_strfreev(tmp);
     }
     
-    gchar *tmp = g_strconcat("S390 ", processor->vendor_id, NULL);
-    processor->model_name = tmp;
+    processor->model_name = g_strconcat("S390 ", processor->vendor_id, NULL);
 
     fclose(cpuinfo);
 
-    return processor;
+    return g_slist_append(NULL, processor);
 }
 
 static gchar *
-processor_get_info(Processor *processor)
+processor_get_info(GSList *processors)
 {
+        Processor *processor = (Processor *)processors->data;
+        
 	return g_strdup_printf("[Processor]\n"
 	                       "Processors=%d\n"
 	                       "BogoMips per CPU=%.2f"

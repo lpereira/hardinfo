@@ -97,7 +97,7 @@ computer_get_info(void)
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
     shell_status_update("Getting processor information...");
-    computer->processor = computer_get_processor();
+    computer->processors = computer_get_processors();
 
     shell_status_update("Getting memory information...");
     computer->memory = computer_get_memory();
@@ -245,7 +245,7 @@ hi_info(gint entry)
 			       "X11 Vendor=%s\n"
 			       "[Multimedia]\n"
 			       "%s\n",
-			       computer->processor->model_name,
+			       "" /*computer->processor->model_name*/,
 			       computer->os->distro,
 			       computer->os->username,
 			       computer->date_time,
@@ -309,7 +309,7 @@ hi_info(gint entry)
 			       "[Available Languages]\n"
 			       "%s", computer->os->languages);
     case COMPUTER_PROCESSORS:
-        return processor_get_info(computer->processor);
+        return processor_get_info(computer->processors);
     default:
 	return g_strdup("[Empty]\nNo info available=");
     }

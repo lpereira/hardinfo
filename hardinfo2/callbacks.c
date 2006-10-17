@@ -53,7 +53,7 @@ void cb_about()
     GtkWidget *about;
     const gchar *authors[] = {
         "Leandro A. F. Pereira",
-        "",
+        "Agney Lopes Roth Ferraz",
         "SCSI support by Pascal F. Martin",
         "MD5 implementation by Colin Plumb",
         "SHA1 implementation by Steve Raid",

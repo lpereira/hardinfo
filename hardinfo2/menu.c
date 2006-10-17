@@ -24,11 +24,9 @@
 #include <config.h>
 
 #include <stock.h>
-#include <binreloc.h>
 
 #include <callbacks.h>
 #include <hardinfo.h>
-
 
 static GtkActionEntry entries[] = 
 {

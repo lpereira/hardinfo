@@ -28,8 +28,6 @@
 #include <menu.h>
 #include <stock.h>
 
-#include <binreloc.h>
-
 /*
  * Internal Prototypes ********************************************************
  */
@@ -557,7 +555,6 @@ update_field(gpointer data)
            SHELL_VIEW_LOAD_GRAPH */
         if (fu->loadgraph && shell->view_type == SHELL_VIEW_LOAD_GRAPH) {
               GtkTreeSelection *ts;
-              
 
     	      ts = gtk_tree_view_get_selection(GTK_TREE_VIEW
             					 (shell->info->view));
