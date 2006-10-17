@@ -230,6 +230,10 @@ hi_info(gint entry)
     case COMPUTER_SUMMARY:
         if (tmp) g_free(tmp);
         tmp = computer_get_alsacards(computer);
+        
+        /* FIXME: We assume all processors have the same name */
+        Processor *processor = (Processor*) computer->processors->data;
+        
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "UpdateInterval$Memory=1000\n"
 			       "UpdateInterval$Date/Time=1000\n"
@@ -245,7 +249,7 @@ hi_info(gint entry)
 			       "X11 Vendor=%s\n"
 			       "[Multimedia]\n"
 			       "%s\n",
-			       "" /*computer->processor->model_name*/,
+			       processor->model_name,
 			       computer->os->distro,
 			       computer->os->username,
 			       computer->date_time,
