@@ -175,8 +175,8 @@ scan_net_interfaces_24(void)
                                         "Interface Type=%s\n"
                                         "Hardware Address=%02x:%02x:%02x:%02x:%02x:%02x\n"
                                         "MTU=%d\n"
-                                        "Bytes Sent=%ld (%.2fMiB)\n"
-                                        "Bytes Received=%ld (%.2fMiB)\n",
+                                        "Bytes Received=%ld (%.2fMiB)\n"
+                                        "Bytes Sent=%ld (%.2fMiB)\n",
                                         net_get_iface_type(ifacename),
                                         ni.mac[0], ni.mac[1],
                                         ni.mac[2], ni.mac[3],
