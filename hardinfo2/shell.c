@@ -192,6 +192,7 @@ shell_view_set_enabled(gboolean setting)
     gtk_widget_set_sensitive(shell->hpaned, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
+    shell_action_set_enabled("CopyAction", setting);
     shell_action_set_enabled("ReportAction", setting);
 }
 
@@ -210,6 +211,7 @@ void
 shell_do_reload(void)
 {
     shell_action_set_enabled("RefreshAction", FALSE);
+    shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("ReportAction", FALSE);
 
     if (shell->selected && shell->selected->reloadfunc) {
@@ -223,6 +225,7 @@ shell_do_reload(void)
     }
 
     shell_action_set_enabled("RefreshAction", TRUE);
+    shell_action_set_enabled("CopyAction", TRUE);
     shell_action_set_enabled("ReportAction", TRUE);
 }
 
@@ -535,8 +538,10 @@ shell_init(void)
     gtk_widget_hide(shell->notebook);
 
     shell_action_set_enabled("RefreshAction", FALSE);
+    shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
+    shell_action_set_property("CopyAction", "is-important", TRUE);
     shell_action_set_property("RefreshAction", "is-important", TRUE);
     shell_action_set_property("ReportAction", "is-important", TRUE);
 }
@@ -953,9 +958,11 @@ module_selected(GtkTreeSelection * ts, gpointer data)
 	g_free(tmp);
 	
     	shell_action_set_enabled("RefreshAction", entry->reloadfunc ? TRUE : FALSE);
+    	shell_action_set_enabled("CopyAction", entry->reloadfunc ? TRUE : FALSE);
     } else {
 	gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
 	shell_action_set_enabled("RefreshAction", FALSE);    
+	shell_action_set_enabled("CopyAction", FALSE);    
 
 	gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
 	set_view_type(SHELL_VIEW_NORMAL);

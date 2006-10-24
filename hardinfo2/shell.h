@@ -100,9 +100,9 @@ struct _ShellModule {
 
 struct _ShellModuleEntry {
     gchar		*name;
-    gint		 number;
     GdkPixbuf		*icon;
     gboolean		 selected;
+    gint		 number;
     
     gchar		*(*func) (gint entry);
     gchar		*(*reloadfunc) (gint entry);

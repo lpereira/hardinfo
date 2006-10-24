@@ -32,6 +32,27 @@ void cb_refresh()
     shell_do_reload();
 }
 
+void cb_copy_to_clipboard()
+{
+    ShellModuleEntry *entry = shell_get_main_shell()->selected;
+    gchar            *data  = entry->func(entry->number);
+    GtkClipboard     *clip  = gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE));
+    gchar            *fmtdata = g_strdup("");
+    ReportContext    *ctx   = report_context_string_new(NULL, fmtdata);
+
+    ctx->entry = entry;
+
+    report_header(ctx);
+    report_table(ctx, data);
+    report_footer(ctx);
+    
+    gtk_clipboard_set_text(clip, ctx->stream, -1);
+
+    g_free((gchar*) ctx->stream);
+    g_free(ctx);
+    g_free(data);
+}
+
 void cb_side_pane()
 {
     gboolean visible;

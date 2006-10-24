@@ -23,6 +23,7 @@ void cb_about();
 void cb_generate_report();
 void cb_quit();
 void cb_refresh();
+void cb_copy_to_clipboard();
 void cb_side_pane();
 void cb_toolbar();
 

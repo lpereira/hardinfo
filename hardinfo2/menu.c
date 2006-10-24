@@ -40,6 +40,11 @@ static GtkActionEntry entries[] =
     "Creates a report in HTML",                         /* tooltip */ 
     G_CALLBACK(cb_generate_report) },
   
+  { "CopyAction", GTK_STOCK_COPY,
+    "_Copy to Clipboard", "<control>C",
+    NULL,
+    G_CALLBACK(cb_copy_to_clipboard) },
+
   { "RefreshAction", GTK_STOCK_REFRESH,
     "_Refresh", "F5",
     NULL,

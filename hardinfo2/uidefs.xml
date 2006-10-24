@@ -1,7 +1,8 @@
 <ui>
   <menubar>
     <menu name="FileMenu" action="FileMenuAction">
-      <menuitem name="Generate Report..." action="ReportAction" />
+      <menuitem name="Copy" action="CopyAction" />
+      <menuitem name="Report" action="ReportAction" />
       <separator/>
       <menuitem name="Quit" action="QuitAction" />
       <placeholder name="FileMenuAdditions" />
@@ -23,6 +24,7 @@
     <placeholder name="ToolItems">
       <toolitem name="Refresh" action="RefreshAction"/>
       <separator/>
+      <toolitem name="Copy" action="CopyAction"/>
       <toolitem name="Report" action="ReportAction"/>
     </placeholder>
   </toolbar>

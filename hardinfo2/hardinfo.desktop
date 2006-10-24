@@ -1,10 +1,11 @@
 [Desktop Entry]
+Encoding=UTF-8
 Name=System Profiler and Benchmark
-Name[pt_BR]=Informações e Testes do Sistema
+Name[pt_BR]=InformaÃ§Ãµes e Testes do Sistema
 Exec=hardinfo
 Icon=/usr/share/hardinfo/pixmaps/logo.png
 Terminal=false
 MultipleArgs=false
 Type=Application
 StartupNotify=true
-Categories=Application;System
+Categories=Application;System;
