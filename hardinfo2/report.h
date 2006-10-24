@@ -27,7 +27,7 @@ typedef struct _ReportContext	ReportContext;
 struct _ReportContext {
   ReportDialog		*rd;
   ShellModuleEntry	*entry;
-  gpointer               stream;
+  gchar			*output;
   
   void (*header)      (ReportContext *ctx);
   void (*footer)      (ReportContext *ctx);
@@ -59,8 +59,10 @@ void report_subsubtitle(ReportContext *ctx, gchar *text);
 void report_key_value(ReportContext *ctx, gchar *key, gchar *value);
 void report_table(ReportContext *ctx, gchar *text);
 
-ReportContext	*report_context_html_new(ReportDialog *rd, gpointer stream);
-ReportContext	*report_context_text_new(ReportDialog *rd, gpointer stream);
-ReportContext	*report_context_string_new(ReportDialog *rd, gpointer string);
+ReportContext	*report_context_html_new(ReportDialog *rd);
+ReportContext	*report_context_text_new(ReportDialog *rd);
+ReportContext	*report_context_string_new(ReportDialog *rd);
+
+void		 report_context_free(ReportContext *ctx);
 
 #endif	/* __REPORT_H__ */

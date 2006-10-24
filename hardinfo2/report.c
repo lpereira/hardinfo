@@ -129,77 +129,75 @@ report_table(ReportContext *ctx, gchar *text)
 static void
 report_html_header(ReportContext *ctx)
 {
-    FILE *stream = (FILE*)ctx->stream;
-    fprintf(stream,
-            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Final//EN\">\n" \
-	    "<html><head>\n" \
-	    "<title>HardInfo System Report</title>\n" \
-	    "<style>\n" \
-	    "body    { background: #fff }\n" \
-	    ".title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n" \
-	    ".stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n" \
-	    ".sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n" \
-	    ".field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n" \
-	    ".value  { font: 80%% sans-serif; color: #505050 }\n" \
-	    "</style>\n" \
-	    "</head><body>\n" \
-	    "<table width=\"100%%\"><tbody>");
+    if (ctx->output)
+        g_free(ctx->output);
+    
+    ctx->output = g_strdup("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Final//EN\">\n" \
+                           "<html><head>\n" \
+              	           "<title>HardInfo System Report</title>\n" \
+                           "<style>\n" \
+        	           "body    { background: #fff }\n" \
+        	           ".title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n" \
+        	           ".stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n" \
+        	           ".sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n" \
+        	           ".field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n" \
+        	           ".value  { font: 80%% sans-serif; color: #505050 }\n" \
+        	           "</style>\n" \
+        	           "</head><body>\n" \
+                           "<table width=\"100%%\"><tbody>");
 }
 
 static void
 report_html_footer(ReportContext *ctx)
 {
-    FILE *stream = (FILE*)ctx->stream;
-
-    fprintf(stream,
-            "</tbody></table></body></html>");
+    ctx->output = g_strconcat(ctx->output,
+                              "</tbody></table></body></html>",
+                              NULL);
 }
 
 static void
 report_html_title(ReportContext *ctx, gchar *text)
 {
-    FILE *stream = (FILE*)ctx->stream;
-
-    fprintf(stream,
-            "<tr><td colspan=\"2\" class=\"title\">%s</td></tr>\n", text);
+    ctx->output = g_strdup_printf("%s" \
+                                  "<tr><td colspan=\"2\" class=\"titl" \
+                                  "e\">%s</td></tr>\n",
+                                  ctx->output, text);
 }
 
 static void
 report_html_subtitle(ReportContext *ctx, gchar *text)
 {
-    FILE *stream = (FILE*)ctx->stream;
-
-    fprintf(stream,
-            "<tr><td colspan=\"2\" class=\"stitle\">%s</td></tr>\n", text);
+    ctx->output = g_strdup_printf("%s" \
+                                  "<tr><td colspan=\"2\" class=\"stit" \
+                                  "le\">%s</td></tr>\n",
+                                  ctx->output, text);
 }
 
 static void
 report_html_subsubtitle(ReportContext *ctx, gchar *text)
 {
-    FILE *stream = (FILE*)ctx->stream;
-
-    fprintf(stream,
-            "<tr><td colspan=\"2\" class=\"sstitle\">%s</td></tr>\n", text);
+    ctx->output = g_strdup_printf("%s" \
+                                  "<tr><td colspan=\"2\" class=\"ssti" \
+                                  "tle\">%s</td></tr>\n",
+                                  ctx->output, text);
 }
 
 static void
 report_html_key_value(ReportContext *ctx, gchar *key, gchar *value)
 {
-    FILE *stream = (FILE*)ctx->stream;
-
-    fprintf(stream,
-            "<tr><td class=\"field\">%s</td>" \
-            "<td class=\"value\">%s</td></tr>\n", key, value);
+    ctx->output = g_strdup_printf("%s" \
+                                  "<tr><td class=\"field\">%s</td>" \
+                                  "<td class=\"value\">%s</td></tr>\n",
+                                  ctx->output, key, value);
 }
 
 static void
 report_text_header(ReportContext *ctx)
 {
-    FILE *stream = (FILE*)ctx->stream;
-
-    fprintf(stream,
-	    "HardInfo System Report\n" \
-	    "----------------------\n\n");
+    if (ctx->output)
+        g_free(ctx->output);
+        
+    ctx->output = g_strdup("");
 }
 
 static void
@@ -210,103 +208,44 @@ report_text_footer(ReportContext *ctx)
 static void
 report_text_title(ReportContext *ctx, gchar *text)
 {
-    FILE *stream = (FILE*)ctx->stream;
+    gchar *str = (gchar*)ctx->output;
     int i = strlen(text);
     
-    fputs(text, stream);
-    fputc('\n', stream);
+    str = g_strdup_printf("%s\n%s\n", str, text);
     for (; i; i--)
-        fputc('*', stream);
+        str = g_strconcat(str, "*", NULL);
         
-    fputc('\n', stream);
+    str = g_strconcat(str, "\n\n", NULL);
+    ctx->output = str;
 }
 
 static void
 report_text_subtitle(ReportContext *ctx, gchar *text)
 {
-    FILE *stream = (FILE*)ctx->stream;
+    gchar *str = ctx->output;
     int i = strlen(text);
     
-    fputs(text, stream);
-    fputc('\n', stream);
+    str = g_strdup_printf("%s\n%s\n", str, text);
     for (; i; i--)
-        fputc('-', stream);
+        str = g_strconcat(str, "-", NULL);
         
-    fputc('\n', stream);
+    str = g_strconcat(str, "\n\n", NULL);
+    ctx->output = str;
 }
 
 static void
 report_text_subsubtitle(ReportContext *ctx, gchar *text)
 {
-    FILE *stream = (FILE*)ctx->stream;
-
-    fputc('-', stream);
-    fputs(text, stream);
-    fputc('-', stream);
-    
-    fputc('\n', stream);
+    ctx->output = g_strdup_printf("%s-%s-\n", ctx->output, text);
 }
 
 static void
 report_text_key_value(ReportContext *ctx, gchar *key, gchar *value)
 {
-    FILE *stream = (FILE*)ctx->stream;
-    
-    fprintf(stream, "%s\t\t: %s\n", key, value);
-}
-
-static void
-report_string_header(ReportContext *ctx)
-{
-    if (ctx->stream)
-        g_free(ctx->stream);
-        
-    ctx->stream = g_strdup("");
-}
-
-static void
-report_string_footer(ReportContext *ctx)
-{
-}
-
-static void
-report_string_title(ReportContext *ctx, gchar *text)
-{
-    gchar *str = (gchar*)ctx->stream;
-    int i = strlen(text);
-    
-    str = g_strdup_printf("%s%s\n", str, text);
-    for (; i; i--)
-        str = g_strconcat(str, "*", NULL);
-        
-    str = g_strconcat(str, "\n", NULL);
-    ctx->stream = str;
-}
-
-static void
-report_string_subtitle(ReportContext *ctx, gchar *text)
-{
-    gchar *str = (gchar*)ctx->stream;
-    int i = strlen(text);
-    
-    str = g_strdup_printf("%s%s\n", str, text);
-    for (; i; i--)
-        str = g_strconcat(str, "-", NULL);
-        
-    str = g_strconcat(str, "\n", NULL);
-    ctx->stream = str;
-}
-
-static void
-report_string_subsubtitle(ReportContext *ctx, gchar *text)
-{
-    ctx->stream = g_strdup_printf("%s-%s-\n", (gchar*)ctx->stream, text);
-}
-
-static void
-report_string_key_value(ReportContext *ctx, gchar *key, gchar *value)
-{
-    ctx->stream = g_strdup_printf("%s%s\t\t: %s\n", (gchar*)ctx->stream, key, value);
+    if (strlen(value))
+        ctx->output = g_strdup_printf("%s%s\t\t: %s\n", ctx->output, key, value);
+    else
+        ctx->output = g_strdup_printf("%s%s\n", ctx->output, key);
 }
 
 static void
@@ -352,6 +291,7 @@ report_generate_children(ReportContext *ctx, GtkTreeIter *iter)
 static gchar *
 report_get_filename(void)
 {
+    GtkFileFilter *filter;
     GtkWidget *dialog;
     gchar *filename = NULL;
 
@@ -366,19 +306,41 @@ report_get_filename(void)
                                                    TRUE);
 #endif                                                   
                                                    
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
-                                      "hardinfo report.html");
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "hardinfo report");
+    
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_mime_type(filter, "text/html");
+    gtk_file_filter_set_name(filter, "HTML");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+    
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_mime_type(filter, "text/plain");
+    gtk_file_filter_set_name(filter, "Text");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
     
     if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-    }
+         const gchar *f;
+         filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
 
+         filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
+         f = gtk_file_filter_get_name(filter);
+         
+         if (g_str_equal(f, "HTML") && !g_str_has_suffix(filename, ".html")) {
+             filename = g_strconcat(filename, ".html", NULL);
+         } else if (g_str_equal(f, "Text") && !g_str_has_suffix(filename, ".txt")) {
+             filename = g_strconcat(filename, ".txt", NULL);
+         } else {
+             g_free(filename);
+             filename = NULL;
+         }
+    }
+  
     gtk_widget_destroy (dialog);
     return filename;
 }
 
 ReportContext*
-report_context_html_new(ReportDialog *rd, gpointer stream)
+report_context_html_new(ReportDialog *rd)
 {
     ReportContext *ctx;
     
@@ -391,13 +353,13 @@ report_context_html_new(ReportDialog *rd, gpointer stream)
     ctx->keyvalue    = report_html_key_value;
     
     ctx->rd     = rd;
-    ctx->stream = stream;
+    ctx->output = g_strdup("");
     
     return ctx;
 }
 
 ReportContext*
-report_context_text_new(ReportDialog *rd, gpointer stream)
+report_context_text_new(ReportDialog *rd)
 {
     ReportContext *ctx;
     
@@ -410,35 +372,22 @@ report_context_text_new(ReportDialog *rd, gpointer stream)
     ctx->keyvalue    = report_text_key_value;
     
     ctx->rd     = rd;
-    ctx->stream = stream;
+    ctx->output = g_strdup("");
     
     return ctx;
 }
 
-ReportContext*
-report_context_string_new(ReportDialog *rd, gpointer string)
+void
+report_context_free(ReportContext *ctx)
 {
-    ReportContext *ctx;
-    
-    ctx = g_new0(ReportContext, 1);
-    ctx->header      = report_string_header;
-    ctx->footer      = report_string_footer;
-    ctx->title       = report_string_title;
-    ctx->subtitle    = report_string_subtitle;
-    ctx->subsubtitle = report_string_subsubtitle;
-    ctx->keyvalue    = report_string_key_value;
-    
-    ctx->rd     = rd;
-    ctx->stream = string;
-    
-    return ctx;
+    g_free(ctx->output);
+    g_free(ctx);
 }
 
 static gboolean
 report_generate(ReportDialog *rd)
 {
     GtkTreeIter		 iter;
-    GtkTreeModel	*model;
     ReportContext	*ctx;
     gchar		*file;
     FILE		*stream;
@@ -449,21 +398,26 @@ report_generate(ReportDialog *rd)
     if (!(stream = fopen(file, "w+")))
         return FALSE;
     
-    model = rd->model;
-    ctx	  = report_context_html_new(rd, stream);
-
+    if (g_str_has_suffix(file, ".html")) {
+        ctx = report_context_html_new(rd);
+    } else {
+        ctx = report_context_text_new(rd);
+    }
+    
     report_header(ctx);
     
-    gtk_tree_model_get_iter_first(model, &iter);
-    
+    gtk_tree_model_get_iter_first(rd->model, &iter);
     do {
          report_generate_children(ctx, &iter);
-    } while (gtk_tree_model_iter_next(model, &iter));
+    } while (gtk_tree_model_iter_next(rd->model, &iter));
 
     report_footer(ctx);
     
-    fclose(ctx->stream);
-    g_free(ctx);
+    fputs(ctx->output, stream);
+    fclose(stream);
+    
+    report_context_free(ctx);
+    g_free(file);
     
     return TRUE;
 }
@@ -657,7 +611,6 @@ static ReportDialog
     gtk_widget_show(dialog1_action_area);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
-
 
     button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
     gtk_widget_show(button8);
