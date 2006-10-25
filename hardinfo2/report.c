@@ -25,6 +25,13 @@
 static ReportDialog	*report_dialog_new(GtkTreeModel *model, GtkWidget *parent);
 static void		 set_all_active(ReportDialog *rd, gboolean setting);
 
+static FileTypes file_types[] = {
+  { "HTML (*.html)",		"text/html",	".html",	report_context_html_new },
+  { "Plain Text (*.txt)",	"text/plain",	".txt",		report_context_text_new },
+  { NULL,			NULL,		NULL,		NULL }
+};
+
+
 void
 report_header(ReportContext *ctx)
 {
@@ -287,14 +294,8 @@ report_generate_children(ReportContext *ctx, GtkTreeIter *iter)
 static gchar *
 report_get_filename(void)
 {
-    GtkFileFilter *filter;
     GtkWidget *dialog;
     gchar *filename = NULL;
-    static FileTypes file_types[] = {
-      { "HTML", "text/html", ".html" },
-      { "Plain Text", "text/plain", ".txt" },
-      { NULL, NULL, NULL }
-    };
 
     dialog = gtk_file_chooser_dialog_new("Save File",
 	                                 NULL,
@@ -302,10 +303,6 @@ report_get_filename(void)
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                          GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                                          NULL);
-#if GTK_CHECK_VERSION(2,8,0)
-    gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
-                                                   TRUE);
-#endif                                                   
                                                    
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "hardinfo report");
     
@@ -314,7 +311,6 @@ report_get_filename(void)
     
     if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
         gchar *ext = file_chooser_get_extension(dialog, file_types);
-
         filename = file_chooser_build_filename(dialog, ext);        
     }
   
@@ -372,6 +368,7 @@ report_generate(ReportDialog *rd)
 {
     GtkTreeIter		 iter;
     ReportContext	*ctx;
+    ReportContext	*(*ctx_gen)(ReportDialog *rd);
     gchar		*file;
     FILE		*stream;
     
@@ -381,28 +378,30 @@ report_generate(ReportDialog *rd)
     if (!(stream = fopen(file, "w+")))
         return FALSE;
     
-    if (g_str_has_suffix(file, ".html")) {
-        ctx = report_context_html_new(rd);
-    } else {
-        ctx = report_context_text_new(rd);
+    ctx_gen = file_types_get_data_by_name(file_types, file);
+    if (ctx_gen) {
+        ctx = ctx_gen(rd);
+        
+        report_header(ctx);
+        
+        gtk_tree_model_get_iter_first(rd->model, &iter);
+        do {
+             report_generate_children(ctx, &iter);
+        } while (gtk_tree_model_iter_next(rd->model, &iter));
+
+        report_footer(ctx);
+        
+        fputs(ctx->output, stream);
+        fclose(stream);
+        
+        report_context_free(ctx);
+        g_free(file);
+        
+        return TRUE;
     }
     
-    report_header(ctx);
-    
-    gtk_tree_model_get_iter_first(rd->model, &iter);
-    do {
-         report_generate_children(ctx, &iter);
-    } while (gtk_tree_model_iter_next(rd->model, &iter));
-
-    report_footer(ctx);
-    
-    fputs(ctx->output, stream);
-    fclose(stream);
-    
-    report_context_free(ctx);
     g_free(file);
-    
-    return TRUE;
+    return FALSE;
 }
 
 void

@@ -97,6 +97,7 @@ __expand_cb(GtkWidget *widget, gpointer data)
 {
     if (GTK_IS_EXPANDER(widget)) {
         gtk_expander_set_expanded(GTK_EXPANDER(widget), TRUE);
+        gtk_widget_hide(widget);
     } else if (GTK_IS_CONTAINER(widget)) {
         gtk_container_forall(GTK_CONTAINER(widget), (GtkCallback)__expand_cb, NULL);
     }
@@ -134,6 +135,20 @@ gchar
     for (i = 0; filters[i].name; i++) {
         if (g_str_equal(filter_name, filters[i].name)) {
             return filters[i].extension;
+        }
+    }
+    
+    return NULL;
+}
+
+gpointer
+file_types_get_data_by_name(FileTypes *filters, gchar *filename)
+{
+    gint i;
+    
+    for (i = 0; filters[i].name; i++) {
+        if (g_str_has_suffix(filename, filters[i].extension)) {
+            return filters[i].data;
         }
     }
     

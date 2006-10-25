@@ -28,6 +28,7 @@ struct _FileTypes {
   gchar	*name;
   gchar *mime_type;
   gchar *extension;
+  gpointer data;
 };
 
 struct _ModuleEntry {
@@ -46,6 +47,8 @@ inline gchar *size_human_readable(gfloat size);
         void  file_chooser_add_filters(GtkWidget *chooser, FileTypes *filters);
        gchar *file_chooser_get_extension(GtkWidget *chooser, FileTypes *filters);
        gchar *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
+       
+    gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 
 extern	gchar*	path_lib;
 extern	gchar*	path_data;
