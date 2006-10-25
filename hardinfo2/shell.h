@@ -123,6 +123,7 @@ Shell	       *shell_get_main_shell();
 
 void		shell_action_set_enabled(const gchar *action_name,
                                          gboolean setting);
+gboolean	shell_action_get_enabled(const gchar *action_name);
 gboolean	shell_action_get_active(const gchar *action_name);
 void		shell_action_set_active(const gchar *action_name,
                                         gboolean setting);

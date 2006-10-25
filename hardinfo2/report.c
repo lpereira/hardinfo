@@ -104,11 +104,7 @@ report_table(ReportContext *ctx, gchar *text)
                     }
 
                     if (*key == '$') {
-                        gchar **tmp;
-
-                        tmp = g_strsplit(++key, "$", 0);
-                        report_key_value(ctx, tmp[1], value);
-                        g_strfreev(tmp);
+                        report_key_value(ctx, strchr(key + 1, '$') + 1, value);
                     } else {
                         report_key_value(ctx, key, value);
                     }
@@ -294,6 +290,11 @@ report_get_filename(void)
     GtkFileFilter *filter;
     GtkWidget *dialog;
     gchar *filename = NULL;
+    static FileTypes file_types[] = {
+      { "HTML", "text/html", ".html" },
+      { "Plain Text", "text/plain", ".txt" },
+      { NULL, NULL, NULL }
+    };
 
     dialog = gtk_file_chooser_dialog_new("Save File",
 	                                 NULL,
@@ -308,31 +309,13 @@ report_get_filename(void)
                                                    
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "hardinfo report");
     
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_mime_type(filter, "text/html");
-    gtk_file_filter_set_name(filter, "HTML");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
-    
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_mime_type(filter, "text/plain");
-    gtk_file_filter_set_name(filter, "Text");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+    file_chooser_add_filters(dialog, file_types);
+    file_chooser_open_expander(dialog);
     
     if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-         const gchar *f;
-         filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
+        gchar *ext = file_chooser_get_extension(dialog, file_types);
 
-         filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
-         f = gtk_file_filter_get_name(filter);
-         
-         if (g_str_equal(f, "HTML") && !g_str_has_suffix(filename, ".html")) {
-             filename = g_strconcat(filename, ".html", NULL);
-         } else if (g_str_equal(f, "Text") && !g_str_has_suffix(filename, ".txt")) {
-             filename = g_strconcat(filename, ".txt", NULL);
-         } else {
-             g_free(filename);
-             filename = NULL;
-         }
+        filename = file_chooser_build_filename(dialog, ext);        
     }
   
     gtk_widget_destroy (dialog);

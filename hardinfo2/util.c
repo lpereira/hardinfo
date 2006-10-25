@@ -91,3 +91,67 @@ nonblock_sleep(guint msec)
         g_timeout_add(msec, (GSourceFunc)__nonblock_cb, NULL);
         gtk_main();
 }
+
+static void
+__expand_cb(GtkWidget *widget, gpointer data)
+{
+    if (GTK_IS_EXPANDER(widget)) {
+        gtk_expander_set_expanded(GTK_EXPANDER(widget), TRUE);
+    } else if (GTK_IS_CONTAINER(widget)) {
+        gtk_container_forall(GTK_CONTAINER(widget), (GtkCallback)__expand_cb, NULL);
+    }
+}
+
+void
+file_chooser_open_expander(GtkWidget *chooser)
+{
+    gtk_container_forall(GTK_CONTAINER(chooser), (GtkCallback)__expand_cb, NULL);
+}
+
+void
+file_chooser_add_filters(GtkWidget *chooser, FileTypes *filters)
+{
+    GtkFileFilter *filter;
+    gint i;
+    
+    for (i = 0; filters[i].name; i++) {
+        filter = gtk_file_filter_new();
+        gtk_file_filter_add_mime_type(filter, filters[i].mime_type);
+        gtk_file_filter_set_name(filter, filters[i].name);
+        gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
+    }
+}
+
+gchar 
+*file_chooser_get_extension(GtkWidget *chooser, FileTypes *filters)
+{
+    GtkFileFilter *filter;
+    const gchar *filter_name;
+    gint i;
+    
+    filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(chooser));
+    filter_name = gtk_file_filter_get_name(filter);
+    for (i = 0; filters[i].name; i++) {
+        if (g_str_equal(filter_name, filters[i].name)) {
+            return filters[i].extension;
+        }
+    }
+    
+    return NULL;
+}
+
+gchar
+*file_chooser_build_filename(GtkWidget *chooser, gchar *extension)
+{
+    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+    gchar *retval;
+    
+    if (g_str_has_suffix(filename, extension)) {
+        return filename;
+    }
+    
+    retval = g_strconcat(filename, extension, NULL);
+    g_free(filename);
+    
+    return retval;
+}

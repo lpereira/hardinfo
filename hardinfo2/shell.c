@@ -103,6 +103,18 @@ void shell_action_set_enabled(const gchar *action_name, gboolean setting)
     }
 }
 
+gboolean shell_action_get_enabled(const gchar *action_name)
+{
+    GtkAction *action;
+    
+    action = gtk_action_group_get_action(shell->action_group, action_name);
+    if (action) {
+        return gtk_action_get_sensitive(action);
+    }
+    
+    return FALSE;
+}
+
 void shell_set_side_pane_visible(gboolean setting)
 {
     if (setting)

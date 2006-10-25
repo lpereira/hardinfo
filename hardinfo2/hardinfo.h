@@ -22,6 +22,13 @@
 #include <gtk/gtk.h>
 
 typedef struct _ModuleEntry ModuleEntry;
+typedef struct _FileTypes	FileTypes;
+
+struct _FileTypes {
+  gchar	*name;
+  gchar *mime_type;
+  gchar *extension;
+};
 
 struct _ModuleEntry {
     gchar *name;
@@ -34,6 +41,11 @@ inline  void  remove_linefeed(gchar *str);
         void  widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
 inline gchar *size_human_readable(gfloat size);
         void  nonblock_sleep(guint msec);
+
+        void  file_chooser_open_expander(GtkWidget *chooser);
+        void  file_chooser_add_filters(GtkWidget *chooser, FileTypes *filters);
+       gchar *file_chooser_get_extension(GtkWidget *chooser, FileTypes *filters);
+       gchar *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
 
 extern	gchar*	path_lib;
 extern	gchar*	path_data;

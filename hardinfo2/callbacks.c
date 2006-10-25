@@ -35,20 +35,23 @@ void cb_refresh()
 void cb_copy_to_clipboard()
 {
     ShellModuleEntry *entry = shell_get_main_shell()->selected;
-    gchar            *data  = entry->func(entry->number);
-    GtkClipboard     *clip  = gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE));
-    ReportContext    *ctx   = report_context_text_new(NULL);
-
-    ctx->entry = entry;
-
-    report_header(ctx);
-    report_table(ctx, data);
-    report_footer(ctx);
     
-    gtk_clipboard_set_text(clip, ctx->output, -1);
+    if (entry) {
+        gchar         *data = entry->func(entry->number);
+        GtkClipboard  *clip = gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE));
+        ReportContext *ctx  = report_context_text_new(NULL);
 
-    g_free(data);
-    report_context_free(ctx);
+        ctx->entry = entry;
+
+        report_header(ctx);
+        report_table(ctx, data);
+        report_footer(ctx);
+        
+        gtk_clipboard_set_text(clip, ctx->output, -1);
+
+        g_free(data);
+        report_context_free(ctx);
+    }
 }
 
 void cb_side_pane()
@@ -124,8 +127,13 @@ void cb_about()
 void cb_generate_report()
 {
     Shell *shell = shell_get_main_shell();
+    gboolean btn_refresh = shell_action_get_enabled("RefreshAction");
+    gboolean btn_copy    = shell_action_get_enabled("CopyAction");
 
     report_dialog_show(shell->tree->model, shell->window);
+    
+    shell_action_set_enabled("RefreshAction", btn_refresh);
+    shell_action_set_enabled("CopyAction", btn_copy);
 }
 
 void cb_quit(void)
