@@ -7,15 +7,24 @@
 #ifndef __SHA1_H__
 #define __SHA1_H__
 
+#include <glib.h>
+
+#ifndef LITTLE_ENDIAN
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+#define LITTLE_ENDIAN		/* This should be #define'd if true. */
+#endif /* G_BYTE_ORDER */
+#endif /* LITTLE_ENDIAN */
+
+
 typedef struct {
-    unsigned long state[5];
-    unsigned long count[2];
-    unsigned char buffer[64];
+    guint32 state[5];
+    guint32 count[2];
+    guchar buffer[64];
 } SHA1_CTX;
 
-void SHA1Transform(unsigned long state[5], unsigned char buffer[64]);
+void SHA1Transform(guint32 state[5], guchar buffer[64]);
 void SHA1Init(SHA1_CTX* context);
-void SHA1Update(SHA1_CTX* context, unsigned char* data, unsigned int len);
-void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
+void SHA1Update(SHA1_CTX* context, guchar* data, unsigned int len);
+void SHA1Final(guchar digest[20], SHA1_CTX* context);
 
 #endif	/* __SHA1_H__ */

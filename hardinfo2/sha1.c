@@ -19,11 +19,6 @@ A million repetitions of "a"
 #include <string.h>
 #include <sha1.h>
 
-#include <glib.h>
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define LITTLE_ENDIAN		/* This should be #define'd if true. */
-#endif
-
 #if defined(__OPTIMIZE__)
 #error You must compile this program without "-O".
 #endif
@@ -52,16 +47,16 @@ A million repetitions of "a"
 
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
-void SHA1Transform(unsigned long state[5], unsigned char buffer[64])
+void SHA1Transform(guint32 state[5], guchar buffer[64])
 {
-    unsigned long a, b, c, d, e;
+    guint32 a, b, c, d, e;
     typedef union {
-	unsigned char c[64];
-	unsigned long l[16];
+	guchar c[64];
+	guint32 l[16];
     } CHAR64LONG16;
     CHAR64LONG16 *block;
 #ifdef SHA1HANDSOFF
-    static unsigned char workspace[64];
+    static guchar workspace[64];
     block = (CHAR64LONG16 *) workspace;
     memcpy(block, buffer, 64);
 #else
@@ -181,9 +176,9 @@ void SHA1Init(SHA1_CTX * context)
 
 /* Run your data through this. */
 
-void SHA1Update(SHA1_CTX * context, unsigned char *data, unsigned int len)
+void SHA1Update(SHA1_CTX * context, guchar *data, guint32 len)
 {
-    unsigned int i, j;
+    guint32 i, j;
 
     j = (context->count[0] >> 3) & 63;
     if ((context->count[0] += len << 3) < (len << 3))
@@ -204,22 +199,22 @@ void SHA1Update(SHA1_CTX * context, unsigned char *data, unsigned int len)
 
 /* Add padding and return the message digest. */
 
-void SHA1Final(unsigned char digest[20], SHA1_CTX * context)
+void SHA1Final(guchar digest[20], SHA1_CTX * context)
 {
-    unsigned long i, j;
-    unsigned char finalcount[8];
+    guint32 i, j;
+    guchar finalcount[8];
 
     for (i = 0; i < 8; i++) {
-	finalcount[i] = (unsigned char) ((context->count[(i >= 4 ? 0 : 1)]
+	finalcount[i] = (guchar) ((context->count[(i >= 4 ? 0 : 1)]
 					  >> ((3 - (i & 3)) * 8)) & 255);	/* Endian independent */
     }
-    SHA1Update(context, (unsigned char *) "\200", 1);
+    SHA1Update(context, (guchar *) "\200", 1);
     while ((context->count[0] & 504) != 448) {
-	SHA1Update(context, (unsigned char *) "\0", 1);
+	SHA1Update(context, (guchar *) "\0", 1);
     }
     SHA1Update(context, finalcount, 8);	/* Should cause a SHA1Transform() */
     for (i = 0; i < 20; i++) {
-	digest[i] = (unsigned char)
+	digest[i] = (guchar)
 	    ((context->state[i >> 2] >> ((3 - (i & 3)) * 8)) & 255);
     }
     /* Wipe variables */
@@ -241,12 +236,12 @@ void g_assert(int a)
     /* Bah, who needs testing anyway... ;) */
 }
 
-static void base32_encode_exactly(unsigned char *buf, int len,
-				  unsigned char *encbuf, int enclen)
+static void base32_encode_exactly(guchar *buf, gint len,
+				  guchar *encbuf, gint enclen)
 {
-    int i = 0;
-    unsigned char *ip = buf + len;
-    unsigned char *op = encbuf + enclen;
+    gint i = 0;
+    guchar *ip = buf + len;
+    guchar *op = encbuf + enclen;
 
     switch (len % 5) {
     case 0:
@@ -257,26 +252,26 @@ static void base32_encode_exactly(unsigned char *buf, int len,
 	    i >>= 5;		/* upper <234>, input #4 */
 	    /* FALLTHROUGH */
     case 4:
-	    i |= ((unsigned int) *--ip) << 3;	/* had 3 bits in `i' */
+	    i |= ((guint32) *--ip) << 3;	/* had 3 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #6 */
 	    i >>= 5;		/* upper <401234>, input #3 */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #5 */
 	    i >>= 5;		/* upper <4>, input #3 */
 	    /* FALLTHROUGH */
     case 3:
-	    i |= ((unsigned int) *--ip) << 1;	/* had 1 bits in `i' */
+	    i |= ((guint32) *--ip) << 1;	/* had 1 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #4 */
 	    i >>= 5;		/* upper <1234>, input #2 */
 	    /* FALLTHROUGH */
     case 2:
-	    i |= ((unsigned int) *--ip) << 4;	/* had 4 bits in `i' */
+	    i |= ((guint32) *--ip) << 4;	/* had 4 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #3 */
 	    i >>= 5;		/* upper <3401234>, input #1 */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #2 */
 	    i >>= 5;		/* upper <34>, input #1 */
 	    /* FALLTHROUGH */
     case 1:
-	    i |= ((unsigned int) *--ip) << 2;	/* had 2 bits in `i' */
+	    i |= ((guint32) *--ip) << 2;	/* had 2 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #1 */
 	    i >>= 5;		/* upper <01234>, input #0 */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #0 */
@@ -293,9 +288,9 @@ static void base32_encode_exactly(unsigned char *buf, int len,
 
 int main(int argc, char **argv)
 {
-    int i, j;
+    gint i, j;
     SHA1_CTX context;
-    unsigned char digest[20], buffer[16384];
+    guchar digest[20], buffer[16384];
     FILE *file;
 
     if (argc > 2) {
@@ -329,7 +324,7 @@ int main(int argc, char **argv)
 */
 
     {
-	unsigned char tmp[33];
+	guchar tmp[33];
 	tmp[32] = '\0';
 	base32_encode_exactly(digest, 20, tmp, 32);
 	printf("%s\n", tmp);
