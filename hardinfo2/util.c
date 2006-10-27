@@ -101,16 +101,15 @@ __expand_cb(GtkWidget *widget, gpointer data)
 {
     if (GTK_IS_EXPANDER(widget)) {
         gtk_expander_set_expanded(GTK_EXPANDER(widget), TRUE);
-        gtk_widget_hide(widget);
     } else if (GTK_IS_CONTAINER(widget)) {
-        gtk_container_forall(GTK_CONTAINER(widget), (GtkCallback)__expand_cb, NULL);
+        gtk_container_foreach(GTK_CONTAINER(widget), (GtkCallback)__expand_cb, NULL);
     }
 }
 
 void
 file_chooser_open_expander(GtkWidget *chooser)
 {
-    gtk_container_forall(GTK_CONTAINER(chooser), (GtkCallback)__expand_cb, NULL);
+    gtk_container_foreach(GTK_CONTAINER(chooser), (GtkCallback)__expand_cb, NULL);
 }
 
 void
@@ -267,6 +266,7 @@ ui_init(int *argc, char ***argv)
     g_set_application_name("HardInfo");
     g_log_set_handler(NULL, G_LOG_LEVEL_WARNING | G_LOG_FLAG_FATAL | G_LOG_LEVEL_ERROR,
                       log_handler, NULL);
+                      
     return gtk_init_check(argc, argv);
 }
 
@@ -275,7 +275,7 @@ open_url(gchar *url)
 {
     const gchar *browsers[] = { "xdg-open", "gnome-open", "kfmclient openURL", "sensible-browser",
                                 "firefox", "epiphany", "galeon", "mozilla", "opera", "konqueror",
-                                "links -g", NULL};
+                                "netscape", "links -g", NULL};
     gint i;
     
     for (i = 0; browsers[i]; i++) {

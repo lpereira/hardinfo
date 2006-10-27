@@ -33,6 +33,10 @@ int
 main(int argc, char **argv)
 {
     gui_running = ui_init(&argc, &argv);
+    
+    if (!gui_running) {
+        g_error("Cannot initialize GTK+.");
+    }
 
     if (!binreloc_init(FALSE)) {
         g_error("Failed to find runtime data.\n\n"
