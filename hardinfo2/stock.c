@@ -24,7 +24,8 @@ static struct {
     gchar *filename;
     gchar *stock_id;
 } stock_icons[] = {
-    { "report.png", HI_STOCK_REPORT}
+    { "report.png",	HI_STOCK_REPORT	},
+    { "internet.png",	HI_STOCK_INTERNET },
 };
 
 static GtkIconFactory *icon_factory;

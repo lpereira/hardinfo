@@ -382,7 +382,6 @@ shell_tree_modules_load(ShellTree * shelltree)
 	    shelltree->modules = g_slist_append(shelltree->modules, module);
 	} else {
 	    g_free(module->name);
-	    g_free(module->icon);
 	    g_free(module);
 	}
 
@@ -391,6 +390,10 @@ shell_tree_modules_load(ShellTree * shelltree)
 
     g_strfreev(cat);
     g_key_file_free(keyfile);
+    
+    if (g_slist_length(shelltree->modules) == 0) {
+        g_error("No module could be loaded. Check permissions on %s and try again.", path_lib);
+    }
 }
 
 static void view_menu_select_entry(gpointer data, gpointer data2)

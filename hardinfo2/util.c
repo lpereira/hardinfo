@@ -269,3 +269,25 @@ ui_init(int *argc, char ***argv)
                       log_handler, NULL);
     return gtk_init_check(argc, argv);
 }
+
+void
+open_url(gchar *url)
+{
+    const gchar *browsers[] = { "xdg-open", "gnome-open", "kfmclient openURL", "sensible-browser",
+                                "firefox", "epiphany", "galeon", "mozilla", "opera", "konqueror",
+                                "links -g", NULL};
+    gint i;
+    
+    for (i = 0; browsers[i]; i++) {
+        gchar *cmdline = g_strdup_printf("%s '%s'", browsers[i], url);
+        
+        if (g_spawn_command_line_async(cmdline, NULL)) {
+            g_free(cmdline);
+            return;
+        }
+        
+        g_free(cmdline);
+    }
+    
+    g_warning("Couldn't find a Web browser to open URL %s.", url);
+}

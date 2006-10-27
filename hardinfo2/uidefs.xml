@@ -16,6 +16,9 @@
       <separator name="LastSep"/>
     </menu>
     <menu name="HelpMenu" action="HelpMenuAction">
+      <menuitem name="WebPage" action="HomePageAction"/>
+      <menuitem name="ReportBug" action="ReportBugAction"/>
+      <separator/>
       <menuitem name="About" action="AboutAction"/>
     </menu>
   </menubar>

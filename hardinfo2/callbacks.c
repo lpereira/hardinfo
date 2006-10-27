@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 
+#include <hardinfo.h>
 #include <callbacks.h>
 #include <iconcache.h>
 
@@ -26,6 +27,16 @@
 #include <report.h>
 
 #include <config.h>
+
+void cb_open_web_page()
+{
+    open_url("http://hardinfo.berlios.de");
+}
+
+void cb_report_bug()
+{
+    open_url("http://hardinfo.berlios.de/web/BugReports");
+}
 
 void cb_refresh()
 {

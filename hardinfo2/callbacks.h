@@ -26,5 +26,7 @@ void cb_refresh();
 void cb_copy_to_clipboard();
 void cb_side_pane();
 void cb_toolbar();
+void cb_open_web_page();
+void cb_report_bug();
 
 #endif	/* __CALLBACKS_H__ */
