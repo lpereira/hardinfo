@@ -37,7 +37,7 @@ static GtkActionEntry entries[] =
   
   { "ReportAction", HI_STOCK_REPORT,                    /* name, stock id */
     "Generate _Report", "<control>R",                   /* label, accelerator */
-    "Creates a report in HTML",                         /* tooltip */ 
+    NULL, 			                        /* tooltip */ 
     G_CALLBACK(cb_generate_report) },
   
   { "CopyAction", GTK_STOCK_COPY,
@@ -116,7 +116,7 @@ void menu_init(Shell *shell)
     g_free(uidefs_path);
     
     if (error) {
-        g_error("building menus failed: %s", error->message);
+        g_error("Building menus failed: %s", error->message);
         g_error_free(error);
         return;
     }
@@ -138,3 +138,4 @@ void menu_init(Shell *shell)
     gtk_toolbar_set_style(GTK_TOOLBAR(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenuBarAction")),
                           GTK_TOOLBAR_BOTH_HORIZ);
 }
+

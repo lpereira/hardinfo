@@ -31,7 +31,6 @@ static FileTypes file_types[] = {
   { NULL,			NULL,		NULL,		NULL }
 };
 
-
 void
 report_header(ReportContext *ctx)
 {
@@ -273,8 +272,13 @@ static void
 report_generate_children(ReportContext *ctx, GtkTreeIter *iter)
 {
     GtkTreeModel *model = ctx->rd->model;
+    gboolean selected;
     gchar *name;
 
+    gtk_tree_model_get(model, iter, TREE_COL_SEL, &selected, -1);
+    if (!selected)
+        return;
+    
     gtk_tree_model_get(model, iter, TREE_COL_NAME, &name, -1);
     report_title(ctx, name);
 
@@ -368,40 +372,42 @@ report_generate(ReportDialog *rd)
 {
     GtkTreeIter		 iter;
     ReportContext	*ctx;
-    ReportContext	*(*ctx_gen)(ReportDialog *rd);
+    ReportContext	*(*create_context)(ReportDialog *rd);
     gchar		*file;
     FILE		*stream;
     
     if (!(file = report_get_filename()))
         return FALSE;
 
-    if (!(stream = fopen(file, "w+")))
-        return FALSE;
-    
-    ctx_gen = file_types_get_data_by_name(file_types, file);
-    if (ctx_gen) {
-        ctx = ctx_gen(rd);
-        
-        report_header(ctx);
-        
-        gtk_tree_model_get_iter_first(rd->model, &iter);
-        do {
-             report_generate_children(ctx, &iter);
-        } while (gtk_tree_model_iter_next(rd->model, &iter));
-
-        report_footer(ctx);
-        
-        fputs(ctx->output, stream);
-        fclose(stream);
-        
-        report_context_free(ctx);
+    if (!(stream = fopen(file, "w+"))) {
         g_free(file);
-        
-        return TRUE;
+        return FALSE;
     }
     
+    create_context = file_types_get_data_by_name(file_types, file);
     g_free(file);
-    return FALSE;
+    
+    if (!create_context) {
+        g_warning("Cannot create ReportContext. Programming bug?");
+        return FALSE;
+    }
+
+    ctx = create_context(rd);
+    report_header(ctx);
+    
+    gtk_tree_model_get_iter_first(rd->model, &iter);
+    do {
+         report_generate_children(ctx, &iter);
+    } while (gtk_tree_model_iter_next(rd->model, &iter));
+
+    report_footer(ctx);
+    
+    fputs(ctx->output, stream);
+    fclose(stream);
+    
+    report_context_free(ctx);
+    
+    return TRUE;
 }
 
 void

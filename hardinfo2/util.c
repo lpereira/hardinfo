@@ -15,9 +15,13 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
+#include <config.h>
+
 #include <string.h>
 #include <hardinfo.h>
 #include <gtk/gtk.h>
+
+#include <binreloc.h>
 
 #define KiB 1024
 #define MiB 1048576
@@ -169,4 +173,99 @@ gchar
     g_free(filename);
     
     return retval;
+}
+
+gboolean
+binreloc_init(gboolean try_hardcoded)
+{
+    GError *error = NULL;
+    gchar *tmp;
+    
+    /* If the runtime data directories we previously found, don't even try
+       to find them again. */
+    if (path_data && path_lib) {
+        return TRUE;
+    }
+    
+    if (try_hardcoded || !gbr_init(&error)) {
+        /* We were asked to try hardcoded paths or BinReloc failed to initialize. */
+        path_data = g_strdup(PREFIX);
+        path_lib = g_strdup(LIBPREFIX);
+
+        if (error) {
+            g_error_free(error);
+        }        
+    } else {
+        /* If we were able to initialize BinReloc, build the default data
+           and library paths. */
+        tmp = gbr_find_data_dir(PREFIX);
+        path_data = g_build_filename(tmp, "hardinfo", NULL);
+        g_free(tmp);
+
+        tmp = gbr_find_lib_dir(PREFIX);
+        path_lib = g_build_filename(tmp, "hardinfo", NULL);
+        g_free(tmp);
+    }
+
+    /* Try to see if the uidefs.xml file isn't missing. This isn't the
+       definitive test, but it should do okay for most situations. */
+    tmp = g_build_filename(path_data, "uidefs.xml", NULL);
+    if (!g_file_test(tmp, G_FILE_TEST_EXISTS)) {
+        g_free(path_data);
+        g_free(path_lib);
+        g_free(tmp);
+        
+        path_data = path_lib = NULL;
+        
+        if (try_hardcoded) {
+            /* We tried the hardcoded paths, but still was unable to find the
+               runtime data. Give up. */
+            return FALSE;
+        } else {
+            /* Even though BinReloc worked OK, the runtime data was not found.
+               Try the hardcoded paths. */
+            return binreloc_init(TRUE);
+        }
+    }
+    g_free(tmp);
+
+    /* We found the runtime data; hope everything is fine */
+    return TRUE;
+}
+
+static void
+log_handler(const gchar *log_domain,
+            GLogLevelFlags log_level,
+            const gchar *message,
+            gpointer user_data)
+{
+    if (!gui_running) {
+        /* No GUI running: spit the message to the terminal */
+        g_print("\n\n*** %s: %s\n\n", (log_level & G_LOG_FLAG_FATAL) ? "Error" : "Warning",
+                message);
+    } else {
+        /* Hooray! We have a GUI running! */
+        GtkWidget *dialog;
+        
+        dialog = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL,
+                                                    (log_level & G_LOG_FLAG_FATAL) ?
+                                                      GTK_MESSAGE_ERROR : GTK_MESSAGE_WARNING,
+                                                    GTK_BUTTONS_CLOSE,
+                                                    "<big><b>%s</b></big>\n\n%s",
+                                                    (log_level & G_LOG_FLAG_FATAL) ?
+                                                      "Fatal Error" : "Warning",
+                                                    message);
+
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+    }
+}
+
+gboolean
+ui_init(int *argc, char ***argv)
+{
+    g_set_application_name("HardInfo");
+    g_log_set_handler(NULL, G_LOG_LEVEL_WARNING | G_LOG_FLAG_FATAL | G_LOG_LEVEL_ERROR,
+                      log_handler, NULL);
+    return gtk_init_check(argc, argv);
 }

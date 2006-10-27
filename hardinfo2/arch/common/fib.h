@@ -16,12 +16,12 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static unsigned long long
-fib(unsigned long long n)
+static unsigned int
+fib(unsigned int n)
 {
     if (n == 0)
         return 0;
-    else if (n == 1 || n == 2)
+    else if (n <= 2)
         return 1;
     return fib(n - 1) + fib(n - 2);
 }
@@ -30,16 +30,21 @@ static gchar *
 benchmark_fib(void)
 {
     GTimer *timer = g_timer_new();
-    gdouble elapsed = 0;
+    gdouble elapsed = 1.0;
+    gint i;
     
     shell_view_set_enabled(FALSE);
     shell_status_update("Calculating the 42nd Fibonacci number...");
     
-    g_timer_start(timer);
-    fib(42);		/* the answer? :) */
-    g_timer_stop(timer);
-
-    elapsed = g_timer_elapsed(timer, NULL);
+    for (i = 0; i < 3; i++) {
+        g_timer_reset(timer);
+        g_timer_start(timer);
+        fib(42);		/* the answer? :) */
+        g_timer_stop(timer);
+        elapsed *= g_timer_elapsed(timer, NULL);
+    }
+    
+    elapsed = pow(elapsed, 1 / 3.0);
     
     g_timer_destroy(timer);
 

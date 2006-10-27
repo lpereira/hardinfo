@@ -19,37 +19,26 @@
 #include <config.h>
 #include <shell.h>
 
+#include <hardinfo.h>
 #include <iconcache.h>
 #include <stock.h>
 
 #include <binreloc.h>
 
-gchar *path_data, *path_lib;
+gchar	 *path_data = NULL,
+         *path_lib = NULL;
+gboolean  gui_running = FALSE;
 
 int
 main(int argc, char **argv)
 {
-    GError *error;
+    gui_running = ui_init(&argc, &argv);
 
-    gtk_init(&argc, &argv);
-    
-    if (!gbr_init(&error)) {
-        path_data = g_build_filename(PREFIX, "share", "hardinfo", NULL);
-        path_lib = g_build_filename(PREFIX, "lib", "hardinfo", NULL);
-        
-        g_warning("Cannot initialize BinReloc (%s); using \"%s\" as data dir and " \
-                  "\"%s\" as lib dir.", error->message, path_data, path_lib);
-        g_error_free(error);
-    } else {
-        gchar *tmp;
-        
-        tmp = gbr_find_data_dir(PREFIX);
-        path_data = g_build_filename(tmp, "hardinfo", NULL);
-        g_free(tmp);
-        
-        tmp = gbr_find_lib_dir(PREFIX);
-        path_lib = g_build_filename(tmp, "hardinfo", NULL);
-        g_free(tmp);
+    if (!binreloc_init(FALSE)) {
+        g_error("Failed to find runtime data.\n\n"
+                "\342\200\242 Is HardInfo correctly installed?\n"
+                "\342\200\242 See if %s and %s exists and you have read permision.",
+                PREFIX, LIBPREFIX);
     }
     
     icon_cache_init();

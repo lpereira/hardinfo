@@ -21,7 +21,7 @@
 
 #include <gtk/gtk.h>
 
-typedef struct _ModuleEntry ModuleEntry;
+typedef struct _ModuleEntry	ModuleEntry;
 typedef struct _FileTypes	FileTypes;
 
 struct _FileTypes {
@@ -36,21 +36,33 @@ struct _ModuleEntry {
     gchar *icon;
 };
 
-inline  void  remove_quotes(gchar *str);
-inline  void  strend(gchar *str, gchar chr);
-inline  void  remove_linefeed(gchar *str);
-        void  widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
+/* String utility functions */
+inline void remove_quotes(gchar *str);
+inline void strend(gchar *str, gchar chr);
+inline void remove_linefeed(gchar *str);
+
+/* Widget utility functions */
+void widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
+
+/* File Chooser utility functions */
+void      file_chooser_open_expander(GtkWidget *chooser);
+void      file_chooser_add_filters(GtkWidget *chooser, FileTypes *filters);
+gchar    *file_chooser_get_extension(GtkWidget *chooser, FileTypes *filters);
+gchar    *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
+gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
+
+/* Misc utility functions */
 inline gchar *size_human_readable(gfloat size);
-        void  nonblock_sleep(guint msec);
+void          nonblock_sleep(guint msec);
 
-        void  file_chooser_open_expander(GtkWidget *chooser);
-        void  file_chooser_add_filters(GtkWidget *chooser, FileTypes *filters);
-       gchar *file_chooser_get_extension(GtkWidget *chooser, FileTypes *filters);
-       gchar *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
-       
-    gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
+/* BinReloc stuff */
+gboolean binreloc_init(gboolean try_hardcoded);
 
-extern	gchar*	path_lib;
-extern	gchar*	path_data;
+extern gchar* path_lib;
+extern gchar* path_data;
+
+/* GTK UI stuff */
+gboolean ui_init(int *argc, char ***argv);
+extern gboolean gui_running;
 
 #endif				/* __HARDINFO_H__ */

@@ -520,6 +520,10 @@ shell_init(void)
     shell->moreinfo = info_tree_new(TRUE);
     shell->loadgraph = load_graph_new(75);
 
+    shell_action_set_property("CopyAction", "is-important", TRUE);
+    shell_action_set_property("RefreshAction", "is-important", TRUE);
+    shell_action_set_property("ReportAction", "is-important", TRUE);
+
     gtk_paned_pack1(GTK_PANED(shell->hpaned), shell->tree->scroll,
 		    SHELL_PACK_RESIZE, SHELL_PACK_SHRINK);
     gtk_paned_pack1(GTK_PANED(shell->vpaned), shell->info->scroll,
@@ -546,16 +550,12 @@ shell_init(void)
     gtk_widget_show_all(shell->hpaned);
 
     load_graph_configure_expose(shell->loadgraph);
-
     gtk_widget_hide(shell->notebook);
 
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
-    shell_action_set_property("CopyAction", "is-important", TRUE);
-    shell_action_set_property("RefreshAction", "is-important", TRUE);
-    shell_action_set_property("ReportAction", "is-important", TRUE);
 }
 
 static gboolean

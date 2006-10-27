@@ -49,15 +49,15 @@ struct _ReportDialog {
   GtkTreeModel *model;
 };
 
-void report_dialog_show();
+void		 report_dialog_show();
 
-void report_header(ReportContext *ctx);
-void report_footer(ReportContext *ctx);
-void report_title(ReportContext *ctx, gchar *text);
-void report_subtitle(ReportContext *ctx, gchar *text);
-void report_subsubtitle(ReportContext *ctx, gchar *text);
-void report_key_value(ReportContext *ctx, gchar *key, gchar *value);
-void report_table(ReportContext *ctx, gchar *text);
+void		 report_header		(ReportContext *ctx);
+void		 report_footer		(ReportContext *ctx);
+void		 report_title		(ReportContext *ctx, gchar *text);
+void 		 report_subtitle	(ReportContext *ctx, gchar *text);
+void 		 report_subsubtitle	(ReportContext *ctx, gchar *text);
+void		 report_key_value	(ReportContext *ctx, gchar *key, gchar *value);
+void		 report_table		(ReportContext *ctx, gchar *text);
 
 ReportContext	*report_context_html_new(ReportDialog *rd);
 ReportContext	*report_context_text_new(ReportDialog *rd);

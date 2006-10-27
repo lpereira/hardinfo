@@ -82,9 +82,6 @@ case $PROC in
 		if [ "$?" == "0" ]; then
 			ln -sf linux/m68k arch/this
 			ARCH="ARCH_m68k"
-		else
-			echo "Architeture \"$ARCH\" not supported." 
-			exit
 		fi
 
 		;;
@@ -136,7 +133,8 @@ for i in `which pkg-config`; do
 			GTK_FLAGS=`pkg-config gtk+-2.0 --cflags`
 			GTK_LIBS=`pkg-config gtk+-2.0 --libs`
 			echo "found `pkg-config gtk+-2.0 --modversion`"
-			GTK2=1 ;;
+			GTK2=1
+			break ;;
 		*)
 			echo "not found." ;;
 	esac
@@ -147,7 +145,7 @@ done
 if [ $GTK2 -eq -1 ]; then
 	echo -e "\nYou need the GTK libraries, including the development stuff."
 	echo "If you're using Debian, running the command as root:"
-	echo -e "\n\tapt-get install libgtk2.0-dev\n"
+	echo -e "\n\taptitude install libgtk2.0-dev\n"
 	echo "Will do the trick."
 	exit
 fi
@@ -171,6 +169,7 @@ echo "#define PREFIX \"/usr/share/hardinfo/\"" >> config.h
 echo "#define LIBPREFIX \"/usr/lib/hardinfo/\"" >> config.h
 echo "#define DEBUG 1" >> config.h
 echo "#define ENABLE_BINRELOC" >> config.h
+echo "#define RELEASE $RELEASE" >> config.h
 
 echo -e "\n#endif	/* __CONFIG_H__ */" >> config.h
 
