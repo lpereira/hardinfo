@@ -24,7 +24,7 @@ scan_samba_shared_directories(void)
     GError *error = NULL;
     gchar **groups;
     gchar *smbconf;
-    gsize length;
+    gsize length = -1;
     gint i = 0;
 
     if (smb_shares_list) {
@@ -33,9 +33,10 @@ scan_samba_shared_directories(void)
     
     keyfile = g_key_file_new();
     
-    if (!g_file_get_contents("/etc/samba/smb.conf", &smbconf, &length, &error)) {
+    if (!g_file_get_contents("/etc/samba/smb.conf", &smbconf, &length, &error) || length == 0) {
         smb_shares_list = g_strdup("Cannot open /etc/samba/smb.conf=\n");
-        g_error_free(error);
+        if (error)
+            g_error_free(error);
         goto cleanup;
     }
     
@@ -45,7 +46,8 @@ scan_samba_shared_directories(void)
     
     if (!g_key_file_load_from_data(keyfile, smbconf, length, 0, &error)) {
         smb_shares_list = g_strdup("Cannot parse smb.conf=\n");
-        g_error_free(error);
+        if (error)
+            g_error_free(error);
         goto cleanup;
     }
 
