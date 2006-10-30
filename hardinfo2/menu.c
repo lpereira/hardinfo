@@ -51,17 +51,17 @@ static GtkActionEntry entries[] =
     G_CALLBACK(cb_refresh) },
 
   { "HomePageAction", HI_STOCK_INTERNET,
-    "_Open HardInfo Web Site\342\200\246", NULL,
+    "_Open HardInfo Web Site", NULL,
     NULL,
     G_CALLBACK(cb_open_web_page) },
 
   { "ReportBugAction", HI_STOCK_INTERNET,
-    "_Report bug\342\200\246", NULL,
+    "_Report bug", NULL,
     NULL,
     G_CALLBACK(cb_report_bug) },
 
   { "AboutAction", GTK_STOCK_ABOUT,
-    "_About\342\200\246", NULL,    
+    "_About", NULL,    
     "Displays program version information",
     G_CALLBACK(cb_about) },
 

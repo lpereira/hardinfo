@@ -85,13 +85,17 @@ void cb_about()
 {
     GtkWidget *about;
     const gchar *authors[] = {
+        "Author:",
         "Leandro A. F. Pereira",
+        "",
+        "Contributors:",
         "Agney Lopes Roth Ferraz",
         "SCSI support by Pascal F. Martin",
+        "",
+        "Based on work by:",
         "MD5 implementation by Colin Plumb",
         "SHA1 implementation by Steve Raid",
         "Blowfish implementation by Paul Kocher",
-        "",
         "Some code partly based on x86cpucaps by Osamu Kayasono",
         "Vendor list based on GtkSysInfo by Pissens Sebastien",
         NULL
