@@ -37,9 +37,10 @@ struct _ModuleEntry {
 };
 
 /* String utility functions */
-inline void remove_quotes(gchar *str);
-inline void strend(gchar *str, gchar chr);
-inline void remove_linefeed(gchar *str);
+inline void  remove_quotes(gchar *str);
+inline void  strend(gchar *str, gchar chr);
+inline void  remove_linefeed(gchar *str);
+gchar       *strreplace(gchar *string, gchar *replace, gchar new_char);
 
 /* Widget utility functions */
 void widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);

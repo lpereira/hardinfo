@@ -165,7 +165,8 @@ scan_ide(void)
     FILE *proc_ide;
     gchar *device, iface, *model, *media, *pgeometry = NULL, *lgeometry =
 	NULL;
-    gint n = 0, i = 0, cache;
+    gint n = 0, i = 0, cache, nn = 0;
+    gchar *capab = NULL, *speed = NULL;
 
     /* remove old devices from global device table */
     g_hash_table_foreach_remove(devices, remove_ide_devices, NULL);
@@ -197,6 +198,34 @@ scan_ide(void)
 	    buf[strlen(buf) - 1] = 0;
 
 	    media = g_strdup(buf);
+	    if (g_str_equal(media, "cdrom")) {
+	        /* obtain cd-rom drive information from cdrecord */
+	        gchar *tmp = g_strdup_printf("cdrecord dev=/dev/hd%c -prcap 2>/dev/null", iface);
+	        FILE *prcap;
+	        
+	        if ((prcap = popen(tmp, "r"))) {
+  	            while (fgets(buf, 64, prcap)) {
+  	               if (g_str_has_prefix(buf, "  Does") && g_str_has_suffix(buf, "media\n") && !strstr(buf, "speed")) {
+  	                   gchar *media_type = g_strstrip(strstr(buf, "Does "));
+  	                   gchar **ttmp = g_strsplit(media_type, " ", 0);
+  	                   
+  	                   capab = g_strdup_printf("%s\nCan %s#%d=%s\n",
+  	                                           capab ? capab : "",
+  	                                           ttmp[1], ++nn, ttmp[2]);
+  	                                           
+                           g_strfreev(ttmp);
+  	               } else if ((strstr(buf, "read") || strstr(buf, "write")) && strstr(buf, "kB/s")) {
+  	                   speed = g_strconcat(speed ? speed : "",
+  	                                       strreplace(g_strstrip(buf), ":", '='),
+  	                                       "\n", NULL);
+  	               }
+  	            }
+  	            
+  	            pclose(prcap);
+                }
+	        
+	        g_free(tmp);
+	    }
 
 	    g_free(device);
 
@@ -254,21 +283,36 @@ scan_ide(void)
 					     iface,
 					     media,
 					     cache);
-	    if (pgeometry && lgeometry)
+	    if (pgeometry && lgeometry) {
 		strhash = g_strdup_printf("%s[Geometry]\n"
 					  "Physical=%s\n"
 					  "Logical=%s\n",
 					  strhash, pgeometry, lgeometry);
+
+                g_free(pgeometry);
+                pgeometry = NULL;
+                g_free(lgeometry);
+                lgeometry = NULL;
+            }
+            
+            if (capab) {
+                strhash = g_strdup_printf("%s[Capabilities]\n%s", strhash, capab);
+                
+                g_free(capab);
+                capab = NULL;
+            }
+            
+            if (speed) {
+                strhash = g_strdup_printf("%s[Speeds]\n%s", strhash, speed);
+                
+                g_free(speed);
+                speed = NULL;
+            }
             
 	    g_hash_table_insert(devices, devid, strhash);
 
 	    g_free(model);
 	    model = "";
-
-	    g_free(pgeometry);
-	    pgeometry = NULL;
-	    g_free(lgeometry);
-	    lgeometry = NULL;
 	} else
 	    g_free(device);
 

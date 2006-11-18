@@ -291,3 +291,15 @@ open_url(gchar *url)
     
     g_warning("Couldn't find a Web browser to open URL %s.", url);
 }
+
+/* Copyright: Jens Låås, SLU 2002 */
+gchar *strreplace(gchar *string, gchar *replace, gchar new_char)
+{
+  gchar *s;
+  for(s=string;*s;s++)
+    if(strchr(replace, *s))
+      *s = new_char;
+
+  return string;
+}
+
