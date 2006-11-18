@@ -166,7 +166,7 @@ scan_ide(void)
     gchar *device, iface, *model, *media, *pgeometry = NULL, *lgeometry =
 	NULL;
     gint n = 0, i = 0, cache, nn = 0;
-    gchar *capab = NULL, *speed = NULL;
+    gchar *capab = NULL, *speed = NULL, *driver = NULL;
 
     /* remove old devices from global device table */
     g_hash_table_foreach_remove(devices, remove_ide_devices, NULL);
@@ -205,19 +205,39 @@ scan_ide(void)
 	        
 	        if ((prcap = popen(tmp, "r"))) {
   	            while (fgets(buf, 64, prcap)) {
-  	               if (g_str_has_prefix(buf, "  Does") && g_str_has_suffix(buf, "media\n") && !strstr(buf, "speed")) {
-  	                   gchar *media_type = g_strstrip(strstr(buf, "Does "));
-  	                   gchar **ttmp = g_strsplit(media_type, " ", 0);
+  	               if (g_str_has_prefix(buf, "  Does")) {
+  	                   if (g_str_has_suffix(buf, "media\n") && !strstr(buf, "speed")) {
+      	                       gchar *media_type = g_strstrip(strstr(buf, "Does "));
+      	                       gchar **ttmp = g_strsplit(media_type, " ", 0);
   	                   
-  	                   capab = g_strdup_printf("%s\nCan %s#%d=%s\n",
-  	                                           capab ? capab : "",
-  	                                           ttmp[1], ++nn, ttmp[2]);
+      	                       capab = g_strdup_printf("%s\nCan %s#%d=%s\n",
+  	                                               capab ? capab : "",
+  	                                               ttmp[1], ++nn, ttmp[2]);
   	                                           
-                           g_strfreev(ttmp);
+                               g_strfreev(ttmp);
+                           } else if (strstr(buf, "Buffer-Underrun-Free")) {
+                               capab = g_strdup_printf("%s\nSupports BurnProof=%s\n",
+                                                       capab ? capab : "",
+                                                       strstr(buf, "Does not") ? "No" : "Yes");
+                           } else if (strstr(buf, "multi-session")) {
+                               capab = g_strdup_printf("%s\nCan read multi-session CDs=%s\n",
+                                                       capab ? capab : "",
+                                                       strstr(buf, "Does not") ? "No" : "Yes");
+                           } else if (strstr(buf, "audio CDs")) {
+                               capab = g_strdup_printf("%s\nCan play audio CDs=%s\n",
+                                                       capab ? capab : "",
+                                                       strstr(buf, "Does not") ? "No" : "Yes");
+                           } else if (strstr(buf, "PREVENT/ALLOW")) {
+                               capab = g_strdup_printf("%s\nCan lock media=%s\n",
+                                                       capab ? capab : "",
+                                                       strstr(buf, "Does not") ? "No" : "Yes");
+                           }
   	               } else if ((strstr(buf, "read") || strstr(buf, "write")) && strstr(buf, "kB/s")) {
   	                   speed = g_strconcat(speed ? speed : "",
   	                                       strreplace(g_strstrip(buf), ":", '='),
   	                                       "\n", NULL);
+  	               } else if (strstr(buf, "Device seems to be")) {
+  	                   driver = g_strdup_printf("Driver=%s\n", strchr(buf, ':') + 1);
   	               }
   	            }
   	            
@@ -276,13 +296,21 @@ scan_ide(void)
 					     "Model=%s\n"
 					     "Vendor=%s (%s)\n"
 					     "Device Name=hd%c\n"
-					     "Media=%s\n" "Cache=%dkb\n",
+					     "Media=%s\n"
+					     "Cache=%dkb\n",
 					     model,
 					     vendor_get_name(model),
 					     vendor_get_url(model),
 					     iface,
 					     media,
 					     cache);
+            if (driver) {
+                strhash = g_strdup_printf("%s%s\n", strhash, driver);
+                
+                g_free(driver);
+                driver = NULL;
+            }
+            
 	    if (pgeometry && lgeometry) {
 		strhash = g_strdup_printf("%s[Geometry]\n"
 					  "Physical=%s\n"
