@@ -45,7 +45,7 @@ static ModuleEntry hi_entries[] = {
 };
 
 static GHashTable *devices = NULL;
-static gchar *module_list = "";
+static gchar *module_list = NULL;
 static gchar *printer_list = NULL;
 static gchar *pci_list = "";
 static gchar *input_list = NULL;
@@ -115,6 +115,9 @@ void
 hi_reload(gint entry)
 {
     switch (entry) {
+    case DEVICES_KERNEL_MODULES:
+        scan_modules();
+        break;
     case DEVICES_BATTERY:
         scan_battery();
         break;

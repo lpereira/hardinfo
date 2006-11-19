@@ -16,11 +16,31 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+static gboolean
+remove_module_devices(gpointer key, gpointer value, gpointer data)
+{
+    if (!strncmp((gchar *) key, "MOD", 3)) {
+	g_free((gchar *) key);
+	g_free((GtkTreeIter *) value);
+	return TRUE;
+    }
+    return FALSE;
+}
+
 void
 scan_modules(void)
 {
     FILE *lsmod;
     gchar buffer[1024];
+
+    shell_status_update("Getting loaded modules information...");
+    
+    if (module_list) {
+        g_free(module_list);
+        module_list = NULL;
+    }
+
+    g_hash_table_foreach_remove(devices, remove_module_devices, NULL);
 
     lsmod = popen("/sbin/lsmod", "r");
     if (!lsmod)
@@ -79,7 +99,7 @@ scan_modules(void)
 
 	/* append this module to the list of modules */
 	module_list = g_strdup_printf("%s$%s$%s=%s\n",
-				      module_list,
+				      module_list ? module_list : "",
 				      hashkey,
 				      modname,
 				      description ? description : "");
