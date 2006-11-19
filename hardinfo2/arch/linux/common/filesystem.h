@@ -20,24 +20,8 @@
  *  Distributed under the terms of GNU GPL 2. 
  */
 #include <sys/vfs.h>
-#define KB 1024
-#define MB 1048576
-#define GB 1073741824
 
 static gchar *fs_list = NULL;
-
-static gchar *
-fs_human_readable(gfloat size)
-{
-    if (size < KB)
-	return g_strdup_printf("%.1f B", size);
-    if (size < MB)
-	return g_strdup_printf("%.1f KiB", size / KB);
-    if (size < GB)
-	return g_strdup_printf("%.1f MiB", size / MB);
-
-    return g_strdup_printf("%.1f GiB", size / GB);
-}
 
 static void
 scan_filesystems(void)
@@ -63,16 +47,18 @@ scan_filesystems(void)
 		avail = (float) sfs.f_bsize * (float) sfs.f_bavail;
 		used = size - avail;
 
-		gchar *strsize = fs_human_readable(size),
-		      *stravail = fs_human_readable(avail),
-	  	      *strused = fs_human_readable(used);
+		gchar *strsize = size_human_readable(size),
+		      *stravail = size_human_readable(avail),
+	  	      *strused = size_human_readable(used);
 
 		gchar *strhash;
 		if ((strhash = g_hash_table_lookup(moreinfo, tmp[0]))) {
 		    g_hash_table_remove(moreinfo, tmp[0]);
 		    g_free(strhash);
 		}
-
+		
+		strreplace(tmp[0], "#", '_');
+		
 		strhash = g_strdup_printf("[%s]\n"
 					  "Filesystem=%s\n"
 					  "Mounted As=%s\n"

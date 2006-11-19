@@ -18,6 +18,8 @@
 #include <config.h>
 
 #include <string.h>
+#include <shell.h>
+#include <iconcache.h>
 #include <hardinfo.h>
 #include <gtk/gtk.h>
 
@@ -27,8 +29,7 @@
 #define MiB 1048576
 #define GiB 1073741824
 
-inline gchar *
-size_human_readable(gfloat size)
+inline gchar *size_human_readable(gfloat size)
 {
     if (size < KiB)
 	return g_strdup_printf("%.1f B", size);
@@ -40,191 +41,182 @@ size_human_readable(gfloat size)
     return g_strdup_printf("%.1f GiB", size / GiB);
 }
 
-inline void
-strend(gchar *str, gchar chr)
+inline void strend(gchar * str, gchar chr)
 {
     if (!str)
-        return;
-        
+	return;
+
     char *p;
     if ((p = strchr(str, chr)))
-        *p = 0;
+	*p = 0;
 }
 
-inline void
-remove_quotes(gchar *str)
+inline void remove_quotes(gchar * str)
 {
     if (!str)
-        return;
+	return;
 
     while (*str == '"')
-        *(str++) = ' ';
-    
+	*(str++) = ' ';
+
     strend(str, '"');
 }
 
-inline void
-remove_linefeed(gchar * str)
+inline void remove_linefeed(gchar * str)
 {
     strend(str, '\n');
 }
 
-void
-widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
-{   
-        GdkCursor *cursor;
- 
-        cursor = gdk_cursor_new(cursor_type);
-        gdk_window_set_cursor(GDK_WINDOW(widget->window), cursor);
-        gdk_cursor_unref(cursor);
-        
-        while(gtk_events_pending())
-                gtk_main_iteration();
-}
-
-static gboolean
-__nonblock_cb(gpointer data)
+void widget_set_cursor(GtkWidget * widget, GdkCursorType cursor_type)
 {
-        gtk_main_quit();
-        return FALSE;
+    GdkCursor *cursor;
+
+    cursor = gdk_cursor_new(cursor_type);
+    gdk_window_set_cursor(GDK_WINDOW(widget->window), cursor);
+    gdk_cursor_unref(cursor);
+
+    while (gtk_events_pending())
+	gtk_main_iteration();
 }
 
-void
-nonblock_sleep(guint msec)
+static gboolean __nonblock_cb(gpointer data)
 {
-        g_timeout_add(msec, (GSourceFunc)__nonblock_cb, NULL);
-        gtk_main();
+    gtk_main_quit();
+    return FALSE;
 }
 
-static void
-__expand_cb(GtkWidget *widget, gpointer data)
+void nonblock_sleep(guint msec)
+{
+    g_timeout_add(msec, (GSourceFunc) __nonblock_cb, NULL);
+    gtk_main();
+}
+
+static void __expand_cb(GtkWidget * widget, gpointer data)
 {
     if (GTK_IS_EXPANDER(widget)) {
-        gtk_expander_set_expanded(GTK_EXPANDER(widget), TRUE);
+	gtk_expander_set_expanded(GTK_EXPANDER(widget), TRUE);
     } else if (GTK_IS_CONTAINER(widget)) {
-        gtk_container_foreach(GTK_CONTAINER(widget), (GtkCallback)__expand_cb, NULL);
+	gtk_container_foreach(GTK_CONTAINER(widget),
+			      (GtkCallback) __expand_cb, NULL);
     }
 }
 
-void
-file_chooser_open_expander(GtkWidget *chooser)
+void file_chooser_open_expander(GtkWidget * chooser)
 {
-    gtk_container_foreach(GTK_CONTAINER(chooser), (GtkCallback)__expand_cb, NULL);
+    gtk_container_foreach(GTK_CONTAINER(chooser),
+			  (GtkCallback) __expand_cb, NULL);
 }
 
-void
-file_chooser_add_filters(GtkWidget *chooser, FileTypes *filters)
+void file_chooser_add_filters(GtkWidget * chooser, FileTypes * filters)
 {
     GtkFileFilter *filter;
     gint i;
-    
+
     for (i = 0; filters[i].name; i++) {
-        filter = gtk_file_filter_new();
-        gtk_file_filter_add_mime_type(filter, filters[i].mime_type);
-        gtk_file_filter_set_name(filter, filters[i].name);
-        gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
+	filter = gtk_file_filter_new();
+	gtk_file_filter_add_mime_type(filter, filters[i].mime_type);
+	gtk_file_filter_set_name(filter, filters[i].name);
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
     }
 }
 
-gchar 
-*file_chooser_get_extension(GtkWidget *chooser, FileTypes *filters)
+gchar
+    * file_chooser_get_extension(GtkWidget * chooser, FileTypes * filters)
 {
     GtkFileFilter *filter;
     const gchar *filter_name;
     gint i;
-    
+
     filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(chooser));
     filter_name = gtk_file_filter_get_name(filter);
     for (i = 0; filters[i].name; i++) {
-        if (g_str_equal(filter_name, filters[i].name)) {
-            return filters[i].extension;
-        }
+	if (g_str_equal(filter_name, filters[i].name)) {
+	    return filters[i].extension;
+	}
     }
-    
+
     return NULL;
 }
 
-gpointer
-file_types_get_data_by_name(FileTypes *filters, gchar *filename)
+gpointer file_types_get_data_by_name(FileTypes * filters, gchar * filename)
 {
     gint i;
-    
+
     for (i = 0; filters[i].name; i++) {
-        if (g_str_has_suffix(filename, filters[i].extension)) {
-            return filters[i].data;
-        }
+	if (g_str_has_suffix(filename, filters[i].extension)) {
+	    return filters[i].data;
+	}
     }
-    
+
     return NULL;
 }
 
-gchar
-*file_chooser_build_filename(GtkWidget *chooser, gchar *extension)
+gchar * file_chooser_build_filename(GtkWidget * chooser, gchar * extension)
 {
-    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+    gchar *filename =
+	gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
     gchar *retval;
-    
+
     if (g_str_has_suffix(filename, extension)) {
-        return filename;
+	return filename;
     }
-    
+
     retval = g_strconcat(filename, extension, NULL);
     g_free(filename);
-    
+
     return retval;
 }
 
-gboolean
-binreloc_init(gboolean try_hardcoded)
+gboolean binreloc_init(gboolean try_hardcoded)
 {
     GError *error = NULL;
     gchar *tmp;
-    
+
     /* If the runtime data directories we previously found, don't even try
        to find them again. */
     if (path_data && path_lib) {
-        return TRUE;
+	return TRUE;
     }
-    
+
     if (try_hardcoded || !gbr_init(&error)) {
-        /* We were asked to try hardcoded paths or BinReloc failed to initialize. */
-        path_data = g_strdup(PREFIX);
-        path_lib = g_strdup(LIBPREFIX);
+	/* We were asked to try hardcoded paths or BinReloc failed to initialize. */
+	path_data = g_strdup(PREFIX);
+	path_lib = g_strdup(LIBPREFIX);
 
-        if (error) {
-            g_error_free(error);
-        }        
+	if (error) {
+	    g_error_free(error);
+	}
     } else {
-        /* If we were able to initialize BinReloc, build the default data
-           and library paths. */
-        tmp = gbr_find_data_dir(PREFIX);
-        path_data = g_build_filename(tmp, "hardinfo", NULL);
-        g_free(tmp);
+	/* If we were able to initialize BinReloc, build the default data
+	   and library paths. */
+	tmp = gbr_find_data_dir(PREFIX);
+	path_data = g_build_filename(tmp, "hardinfo", NULL);
+	g_free(tmp);
 
-        tmp = gbr_find_lib_dir(PREFIX);
-        path_lib = g_build_filename(tmp, "hardinfo", NULL);
-        g_free(tmp);
+	tmp = gbr_find_lib_dir(PREFIX);
+	path_lib = g_build_filename(tmp, "hardinfo", NULL);
+	g_free(tmp);
     }
 
     /* Try to see if the uidefs.xml file isn't missing. This isn't the
        definitive test, but it should do okay for most situations. */
     tmp = g_build_filename(path_data, "uidefs.xml", NULL);
     if (!g_file_test(tmp, G_FILE_TEST_EXISTS)) {
-        g_free(path_data);
-        g_free(path_lib);
-        g_free(tmp);
-        
-        path_data = path_lib = NULL;
-        
-        if (try_hardcoded) {
-            /* We tried the hardcoded paths, but still was unable to find the
-               runtime data. Give up. */
-            return FALSE;
-        } else {
-            /* Even though BinReloc worked OK, the runtime data was not found.
-               Try the hardcoded paths. */
-            return binreloc_init(TRUE);
-        }
+	g_free(path_data);
+	g_free(path_lib);
+	g_free(tmp);
+
+	path_data = path_lib = NULL;
+
+	if (try_hardcoded) {
+	    /* We tried the hardcoded paths, but still was unable to find the
+	       runtime data. Give up. */
+	    return FALSE;
+	} else {
+	    /* Even though BinReloc worked OK, the runtime data was not found.
+	       Try the hardcoded paths. */
+	    return binreloc_init(TRUE);
+	}
     }
     g_free(tmp);
 
@@ -233,73 +225,200 @@ binreloc_init(gboolean try_hardcoded)
 }
 
 static void
-log_handler(const gchar *log_domain,
-            GLogLevelFlags log_level,
-            const gchar *message,
-            gpointer user_data)
+log_handler(const gchar * log_domain,
+	    GLogLevelFlags log_level,
+	    const gchar * message, gpointer user_data)
 {
     if (!gui_running) {
-        /* No GUI running: spit the message to the terminal */
-        g_print("\n\n*** %s: %s\n\n", (log_level & G_LOG_FLAG_FATAL) ? "Error" : "Warning",
-                message);
+	/* No GUI running: spit the message to the terminal */
+	g_print("\n\n*** %s: %s\n\n",
+		(log_level & G_LOG_FLAG_FATAL) ? "Error" : "Warning",
+		message);
     } else {
-        /* Hooray! We have a GUI running! */
-        GtkWidget *dialog;
-        
-        dialog = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL,
-                                                    (log_level & G_LOG_FLAG_FATAL) ?
-                                                      GTK_MESSAGE_ERROR : GTK_MESSAGE_WARNING,
-                                                    GTK_BUTTONS_CLOSE,
-                                                    "<big><b>%s</b></big>\n\n%s",
-                                                    (log_level & G_LOG_FLAG_FATAL) ?
-                                                      "Fatal Error" : "Warning",
-                                                    message);
+	/* Hooray! We have a GUI running! */
+	GtkWidget *dialog;
 
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
+	dialog = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL,
+						    (log_level &
+						     G_LOG_FLAG_FATAL) ?
+						    GTK_MESSAGE_ERROR :
+						    GTK_MESSAGE_WARNING,
+						    GTK_BUTTONS_CLOSE,
+						    "<big><b>%s</b></big>\n\n%s",
+						    (log_level &
+						     G_LOG_FLAG_FATAL) ?
+						    "Fatal Error" :
+						    "Warning", message);
+
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
     }
 }
 
-gboolean
-ui_init(int *argc, char ***argv)
+void parameters_init(int *argc, char ***argv, ProgramParameters * param)
+{
+    static gboolean create_report = FALSE;
+
+    static GOptionEntry options[] = {
+	{
+	 .long_name   = "create-report",
+	 .short_name  = 'r',
+	 .arg         = G_OPTION_ARG_NONE,
+	 .arg_data    = &create_report,
+	 .description = "create a report and print to standard output"
+        },
+	{ NULL }
+    };
+    GOptionContext *ctx;
+
+    ctx = g_option_context_new("- System Profiler and Benchmark tool");
+    g_option_context_set_ignore_unknown_options(ctx, FALSE);
+    g_option_context_set_help_enabled(ctx, TRUE);
+ 
+    g_option_context_add_main_entries(ctx, options, *(argv)[0]);
+    g_option_context_parse(ctx, argc, argv, NULL);
+ 
+    g_option_context_free(ctx);
+
+    param->create_report = create_report;
+}
+
+gboolean ui_init(int *argc, char ***argv)
 {
     g_set_application_name("HardInfo");
-    g_log_set_handler(NULL, G_LOG_LEVEL_WARNING | G_LOG_FLAG_FATAL | G_LOG_LEVEL_ERROR,
-                      log_handler, NULL);
-                      
+    g_log_set_handler(NULL,
+		      G_LOG_LEVEL_WARNING | G_LOG_FLAG_FATAL |
+		      G_LOG_LEVEL_ERROR, log_handler, NULL);
+
     return gtk_init_check(argc, argv);
 }
 
-void
-open_url(gchar *url)
+void open_url(gchar * url)
 {
-    const gchar *browsers[] = { "xdg-open", "gnome-open", "kfmclient openURL", "sensible-browser",
-                                "firefox", "epiphany", "galeon", "mozilla", "opera", "konqueror",
-                                "netscape", "links -g", NULL};
+    const gchar *browsers[] =
+	{ "xdg-open", "gnome-open", "kfmclient openURL", "sensible-browser",
+	"firefox", "epiphany", "galeon", "mozilla", "opera", "konqueror",
+	"netscape", "links -g", NULL };
     gint i;
-    
+
     for (i = 0; browsers[i]; i++) {
-        gchar *cmdline = g_strdup_printf("%s '%s'", browsers[i], url);
-        
-        if (g_spawn_command_line_async(cmdline, NULL)) {
-            g_free(cmdline);
-            return;
-        }
-        
-        g_free(cmdline);
+	gchar *cmdline = g_strdup_printf("%s '%s'", browsers[i], url);
+
+	if (g_spawn_command_line_async(cmdline, NULL)) {
+	    g_free(cmdline);
+	    return;
+	}
+
+	g_free(cmdline);
     }
-    
+
     g_warning("Couldn't find a Web browser to open URL %s.", url);
 }
 
 /* Copyright: Jens Låås, SLU 2002 */
-gchar *strreplace(gchar *string, gchar *replace, gchar new_char)
+gchar *strreplace(gchar * string, gchar * replace, gchar new_char)
 {
-  gchar *s;
-  for(s=string;*s;s++)
-    if(strchr(replace, *s))
-      *s = new_char;
+    gchar *s;
+    for (s = string; *s; s++)
+	if (strchr(replace, *s))
+	    *s = new_char;
 
-  return string;
+    return string;
 }
 
+GSList *modules_load(void)
+{
+    gchar *modules_conf;
+    GKeyFile *keyfile = g_key_file_new();
+    guint categories, i;
+    GSList *modules = NULL;
+
+    keyfile = g_key_file_new();
+
+    modules_conf = g_build_filename(path_data, "modules.conf", NULL);
+    g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
+    g_free(modules_conf);
+
+    if (g_key_file_get_integer(keyfile, "general", "version", NULL) != 2) {
+	g_error("Wrong version of modules.conf");
+    }
+
+    gchar **cat = g_key_file_get_keys(keyfile, "categories", &categories, NULL);
+    for (i = 0; i < categories; i++) {
+	ShellModule *module;
+	gchar *tmp, *iname;
+
+	module = g_new0(ShellModule, 1);
+	module->name = g_strdup(cat[i]);
+	iname = g_key_file_get_value(keyfile, "categories", cat[i], NULL);
+	
+	if (gui_running) {
+	    tmp = g_strdup_printf("%s.png", iname);
+	    module->icon = icon_cache_get_pixbuf(tmp);
+	    g_free(tmp);
+	}
+
+	tmp = g_strdup_printf("%s.so", iname);
+	g_free(iname);
+	iname = tmp;
+
+	tmp = g_build_filename(path_lib, "modules", iname, NULL);
+	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
+	g_free(tmp);
+
+	if (module->dll) {
+	    gint(*n_entries) (void);
+	    gint i;
+
+	    if (!g_module_symbol
+		(module->dll, "hi_n_entries", (gpointer) & n_entries))
+		continue;
+
+	    gint j = n_entries();
+	    for (i = 0; i <= j; i++) {
+		GdkPixbuf *(*shell_icon) (gint);
+		const gchar *(*shell_name) (gint);
+		ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
+
+		if (gui_running
+		    && g_module_symbol(module->dll, "hi_icon",
+				       (gpointer) & (shell_icon))) {
+		    entry->icon = shell_icon(i);
+		}
+		if (g_module_symbol
+		    (module->dll, "hi_name", (gpointer) & (shell_name))) {
+		    entry->name = g_strdup(shell_name(i));
+		}
+		g_module_symbol(module->dll, "hi_info",
+				(gpointer) & (entry->func));
+		g_module_symbol(module->dll, "hi_reload",
+				(gpointer) & (entry->reloadfunc));
+		g_module_symbol(module->dll, "hi_more_info",
+				(gpointer) & (entry->morefunc));
+		g_module_symbol(module->dll, "hi_get_field",
+				(gpointer) & (entry->fieldfunc));
+
+		entry->number = i;
+		module->entries = g_slist_append(module->entries, entry);
+	    }
+
+	    modules = g_slist_append(modules, module);
+	} else {
+	    g_free(module->name);
+	    g_free(module);
+	}
+
+	g_free(iname);
+    }
+
+    g_strfreev(cat);
+    g_key_file_free(keyfile);
+
+    if (g_slist_length(modules) == 0) {
+	g_error
+	    ("No module could be loaded. Check permissions on %s and try again.",
+	     path_lib);
+    }
+
+    return modules;
+}

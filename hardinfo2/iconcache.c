@@ -32,6 +32,8 @@ GdkPixbuf *icon_cache_get_pixbuf(const gchar *file)
 {
     GdkPixbuf *icon;
     
+    if (!cache) icon_cache_init();
+    
     icon = g_hash_table_lookup(cache, file);
 
     if (!icon) {
@@ -48,7 +50,7 @@ GdkPixbuf *icon_cache_get_pixbuf(const gchar *file)
 GtkWidget *icon_cache_get_image(const gchar *file)
 {
     GdkPixbuf *icon;
-    
+
     icon = icon_cache_get_pixbuf(file);
     return gtk_image_new_from_pixbuf(icon);
 }
@@ -57,6 +59,8 @@ GdkPixbuf *icon_cache_get_pixbuf_at_size(const gchar *file, gint wid, gint hei)
 {
     GdkPixbuf *icon;
     
+    if (!cache) icon_cache_init();
+
     icon = g_hash_table_lookup(cache, file);
 
     if (!icon) {

@@ -116,7 +116,7 @@ struct _ShellFieldUpdate {
     gboolean		 loadgraph;
 };
 
-void		shell_init(void);
+void		shell_init(GSList *modules);
 void		shell_do_reload(void);
 
 Shell	       *shell_get_main_shell();

@@ -309,6 +309,7 @@ create_window(void)
 	gtk_main_iteration();
 }
 
+#if 0
 static void
 shell_tree_modules_load(ShellTree * shelltree)
 {
@@ -395,6 +396,7 @@ shell_tree_modules_load(ShellTree * shelltree)
         g_error("No module could be loaded. Check permissions on %s and try again.", path_lib);
     }
 }
+#endif
 
 static void view_menu_select_entry(gpointer data, gpointer data2)
 {
@@ -509,7 +511,7 @@ add_modules_to_gui(gpointer data, gpointer user_data)
 }
 
 void
-shell_init(void)
+shell_init(GSList *modules)
 {
     if (shell) {
 	g_error("Shell already created");
@@ -543,7 +545,8 @@ shell_init(void)
     shell_status_set_enabled(TRUE);
     shell_status_update("Loading modules...");
 
-    shell_tree_modules_load(shell->tree);
+    shell->tree->modules = modules ? modules : modules_load();
+
     g_slist_foreach(shell->tree->modules, add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
 

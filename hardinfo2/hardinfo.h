@@ -21,8 +21,13 @@
 
 #include <gtk/gtk.h>
 
-typedef struct _ModuleEntry	ModuleEntry;
-typedef struct _FileTypes	FileTypes;
+typedef struct _ModuleEntry		ModuleEntry;
+typedef struct _FileTypes		FileTypes;
+typedef struct _ProgramParameters	ProgramParameters;
+
+struct _ProgramParameters {
+  gboolean create_report;
+};
 
 struct _FileTypes {
   gchar	*name;
@@ -56,6 +61,7 @@ gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 inline gchar *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
+GSList       *modules_load(void);
 
 /* BinReloc stuff */
 gboolean binreloc_init(gboolean try_hardcoded);
@@ -65,6 +71,8 @@ extern gchar* path_data;
 
 /* GTK UI stuff */
 gboolean ui_init(int *argc, char ***argv);
-extern gboolean gui_running;
+void     parameters_init(int *argc, char ***argv, ProgramParameters *params);
+extern   gboolean gui_running;
+extern   ProgramParameters params;
 
 #endif				/* __HARDINFO_H__ */
