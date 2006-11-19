@@ -23,6 +23,12 @@ blowfish.o:
 sha1.o:
 	$(CCSLOW) $(CFLAGS) -c sha1.c -o $@
 
+benchmark.so:	benchmark.c
+	@echo "[01;34m--- Module: $< ($@)[00m"
+	$(CCSLOW) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS) \
+		$(GLADE_LIBS) $(GLADE_FLAGS)
+	mv -f $@ modules
+
 %.so:	%.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	$(CC) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS) \
