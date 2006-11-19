@@ -258,7 +258,7 @@ report_create_module_list_from_dialog(ReportDialog *rd)
     GtkTreeModel *model = rd->model;
     GtkTreeIter   iter;
 
-    gtk_tree_model_get_iter_first(rd->model, &iter);
+    gtk_tree_model_get_iter_first(model, &iter);
     do {
         gboolean selected;
         gchar *name;
@@ -289,7 +289,6 @@ report_create_module_list_from_dialog(ReportDialog *rd)
                     continue;
 
                 gtk_tree_model_get(model, &child, TREE_COL_DATA, &entry, -1);
-                
                 module->entries = g_slist_append(module->entries, entry);
             }
         }
