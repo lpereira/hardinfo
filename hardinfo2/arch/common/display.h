@@ -126,9 +126,13 @@ computer_get_display(void)
     DisplayInfo *di = g_new0(DisplayInfo, 1);
     
     GdkScreen *screen = gdk_screen_get_default();
-
-    di->width = gdk_screen_get_width(screen);
-    di->height = gdk_screen_get_height(screen);
+    
+    if (screen) {
+        di->width = gdk_screen_get_width(screen);
+        di->height = gdk_screen_get_height(screen);
+    } else {
+        di->width = di->height = 0;
+    }
 
     get_glx_info(di);
     get_x11_info(di);

@@ -21,11 +21,15 @@
 #include <gtk/gtk.h>
 #include <shell.h>
 
+typedef enum {
+    REPORT_FORMAT_TEXT,
+    REPORT_FORMAT_HTML
+} ReportFormat;
+
 typedef struct _ReportDialog	ReportDialog;
 typedef struct _ReportContext	ReportContext;
 
 struct _ReportContext {
-  ReportDialog		*rd;
   ShellModuleEntry	*entry;
   gchar			*output;
   
@@ -51,6 +55,9 @@ struct _ReportDialog {
 
 void		 report_dialog_show();
 
+ReportContext	*report_context_html_new();
+ReportContext	*report_context_text_new();
+
 void		 report_header		(ReportContext *ctx);
 void		 report_footer		(ReportContext *ctx);
 void		 report_title		(ReportContext *ctx, gchar *text);
@@ -59,10 +66,10 @@ void 		 report_subsubtitle	(ReportContext *ctx, gchar *text);
 void		 report_key_value	(ReportContext *ctx, gchar *key, gchar *value);
 void		 report_table		(ReportContext *ctx, gchar *text);
 
-ReportContext	*report_context_html_new(ReportDialog *rd);
-ReportContext	*report_context_text_new(ReportDialog *rd);
-ReportContext	*report_context_string_new(ReportDialog *rd);
+void             report_create_from_module_list(ReportContext *ctx, GSList *modules);
+gchar           *report_create_from_module_list_format(GSList *modules, ReportFormat format);
 
 void		 report_context_free(ReportContext *ctx);
+void             report_module_list_free(GSList *modules);
 
 #endif	/* __REPORT_H__ */

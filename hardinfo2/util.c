@@ -17,6 +17,7 @@
  */
 #include <config.h>
 
+#include <report.h>
 #include <string.h>
 #include <shell.h>
 #include <iconcache.h>
@@ -257,15 +258,23 @@ log_handler(const gchar * log_domain,
 
 void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 {
-    static gboolean create_report = FALSE;
+    static gboolean  create_report = FALSE;
+    static gchar    *report_format = NULL;
 
     static GOptionEntry options[] = {
 	{
-	 .long_name   = "create-report",
+	 .long_name   = "generate-report",
 	 .short_name  = 'r',
 	 .arg         = G_OPTION_ARG_NONE,
 	 .arg_data    = &create_report,
 	 .description = "create a report and print to standard output"
+        },
+	{
+	 .long_name   = "report-format",
+	 .short_name  = 'f',
+	 .arg         = G_OPTION_ARG_STRING,
+	 .arg_data    = &report_format,
+	 .description = "choose a report format (text, html)"
         },
 	{ NULL }
     };
@@ -281,6 +290,10 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     g_option_context_free(ctx);
 
     param->create_report = create_report;
+    param->report_format = REPORT_FORMAT_TEXT;
+    
+    if (report_format && g_str_equal(report_format, "html"))
+        param->report_format = REPORT_FORMAT_HTML;
 }
 
 gboolean ui_init(int *argc, char ***argv)

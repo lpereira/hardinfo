@@ -64,6 +64,9 @@ void shell_ui_manager_set_visible(const gchar *path,
 {
     GtkWidget *widget;
     
+    if (!gui_running)
+        return;
+    
     widget = gtk_ui_manager_get_widget(shell->ui_manager, path);
     if (!widget)
         return;
@@ -80,6 +83,9 @@ void shell_action_set_property(const gchar *action_name,
 {
     GtkAction *action;
     
+    if (!gui_running)
+        return;
+
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
         GValue value = {0};
@@ -96,6 +102,9 @@ void shell_action_set_property(const gchar *action_name,
 void shell_action_set_enabled(const gchar *action_name, gboolean setting)
 {
     GtkAction *action;
+
+    if (!gui_running)
+        return;
     
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
@@ -106,6 +115,9 @@ void shell_action_set_enabled(const gchar *action_name, gboolean setting)
 gboolean shell_action_get_enabled(const gchar *action_name)
 {
     GtkAction *action;
+
+    if (!gui_running)
+        return FALSE;
     
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
@@ -117,6 +129,9 @@ gboolean shell_action_get_enabled(const gchar *action_name)
 
 void shell_set_side_pane_visible(gboolean setting)
 {
+    if (!gui_running)
+        return;
+
     if (setting)
 	gtk_widget_show(shell->tree->scroll);
     else
@@ -128,7 +143,9 @@ gboolean shell_action_get_active(const gchar *action_name)
     GtkAction	*action;
     GSList	*proxies;
     
-   /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
+    /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
+    if (!gui_running)
+        return FALSE;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
@@ -152,6 +169,8 @@ void shell_action_set_active(const gchar *action_name, gboolean setting)
     GSList	*proxies;
     
     /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
+    if (!gui_running)
+        return;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
@@ -171,6 +190,9 @@ void shell_action_set_active(const gchar *action_name, gboolean setting)
 void
 shell_status_pulse(void)
 {
+    if (!gui_running)
+        return;
+
     if (shell->_pulses++ == 20) {
         /* we're pulsing for some time, disable the interface and change the cursor
            to a hourglass */
@@ -185,6 +207,9 @@ shell_status_pulse(void)
 void
 shell_status_set_percentage(gint percentage)
 {
+    if (!gui_running)
+        return;
+
     gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(shell->progress),
                                   (float)percentage/100.0);
     while (gtk_events_pending())
@@ -194,6 +219,9 @@ shell_status_set_percentage(gint percentage)
 void
 shell_view_set_enabled(gboolean setting)
 {
+    if (!gui_running)
+        return;
+
     if (setting) {
       shell->_pulses = 0;
       widget_set_cursor(shell->window, GDK_LEFT_PTR);
@@ -211,6 +239,9 @@ shell_view_set_enabled(gboolean setting)
 void
 shell_status_set_enabled(gboolean setting)
 {
+    if (!gui_running)
+        return;
+
     if (setting)
 	gtk_widget_show(shell->progress);
     else {
@@ -222,6 +253,9 @@ shell_status_set_enabled(gboolean setting)
 void
 shell_do_reload(void)
 {
+    if (!gui_running)
+        return;
+
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("ReportAction", FALSE);
@@ -244,6 +278,9 @@ shell_do_reload(void)
 void
 shell_status_update(const gchar *message)
 {
+    if (!gui_running)
+        return;
+
     gtk_label_set_markup(GTK_LABEL(shell->status), message);
     gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
     while (gtk_events_pending())

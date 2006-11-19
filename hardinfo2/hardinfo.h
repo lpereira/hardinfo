@@ -27,6 +27,7 @@ typedef struct _ProgramParameters	ProgramParameters;
 
 struct _ProgramParameters {
   gboolean create_report;
+  gint     report_format;
 };
 
 struct _FileTypes {

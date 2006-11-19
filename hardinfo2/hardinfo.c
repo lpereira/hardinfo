@@ -19,6 +19,7 @@
 #include <config.h>
 #include <shell.h>
 
+#include <report.h>
 #include <hardinfo.h>
 #include <iconcache.h>
 #include <stock.h>
@@ -64,14 +65,15 @@ main(int argc, char **argv)
         shell_init(modules);
   
         gtk_main();
-        
-        g_return_val_if_reached(0);
     } else if (params.create_report) {
-        g_print("creating report...\n");
+        gchar *report;
         
-        g_return_val_if_reached(0);
+        report = report_create_from_module_list_format(modules,
+                                                       params.report_format);
+        g_print("%s", report);
+        
+        g_free(report);
     }
 
-    /* should not be reached */
-    g_return_val_if_reached(1);
+    return 0;
 }

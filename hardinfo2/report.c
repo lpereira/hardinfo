@@ -250,49 +250,86 @@ report_text_key_value(ReportContext *ctx, gchar *key, gchar *value)
         ctx->output = g_strdup_printf("%s%s\n", ctx->output, key);
 }
 
-static void
-report_generate_child(ReportContext *ctx, GtkTreeIter *iter)
+static GSList *
+report_create_module_list_from_dialog(ReportDialog *rd)
 {
-    ShellModuleEntry *entry;
-    gboolean selected;
-    
-    gtk_tree_model_get(ctx->rd->model, iter, TREE_COL_SEL, &selected, -1);
-    if (!selected)
-        return;
-    
-    gtk_tree_model_get(ctx->rd->model, iter, TREE_COL_DATA, &entry, -1);
-    
-    ctx->entry = entry;
+    ShellModule  *module;
+    GSList       *modules = NULL;
+    GtkTreeModel *model = rd->model;
+    GtkTreeIter   iter;
 
-    report_subtitle(ctx, entry->name);
-    report_table(ctx, entry->func(entry->number));
+    gtk_tree_model_get_iter_first(rd->model, &iter);
+    do {
+        gboolean selected;
+        gchar *name;
+
+        gtk_tree_model_get(model, &iter, TREE_COL_SEL, &selected, -1);
+        if (!selected)
+            continue;
+            
+        module = g_new0(ShellModule, 1);
+        
+        gtk_tree_model_get(model, &iter, TREE_COL_NAME, &name, -1);
+        module->name = name;
+        module->entries = NULL;
+
+        if (gtk_tree_model_iter_has_child(model, &iter)) {
+            ShellModuleEntry *entry;
+            
+            gint children = gtk_tree_model_iter_n_children(model, &iter);
+            gint i;
+
+            for (i = 0; i < children; i++) {
+                GtkTreeIter child;
+                
+                gtk_tree_model_iter_nth_child(model, &child, &iter, i);
+                
+                gtk_tree_model_get(model, &child, TREE_COL_SEL, &selected, -1);
+                if (!selected)
+                    continue;
+
+                gtk_tree_model_get(model, &child, TREE_COL_DATA, &entry, -1);
+                
+                module->entries = g_slist_append(module->entries, entry);
+            }
+        }
+        
+        modules = g_slist_append(modules, module);
+    } while (gtk_tree_model_iter_next(rd->model, &iter));
+    
+    return modules;
 }
 
 static void
-report_generate_children(ReportContext *ctx, GtkTreeIter *iter)
+report_create_inner_from_module_list(ReportContext *ctx, GSList *modules)
 {
-    GtkTreeModel *model = ctx->rd->model;
-    gboolean selected;
-    gchar *name;
-
-    gtk_tree_model_get(model, iter, TREE_COL_SEL, &selected, -1);
-    if (!selected)
-        return;
-    
-    gtk_tree_model_get(model, iter, TREE_COL_NAME, &name, -1);
-    report_title(ctx, name);
-
-    if (gtk_tree_model_iter_has_child(model, iter)) {
-        gint children = gtk_tree_model_iter_n_children(model, iter);
-        gint i;
-
-        for (i = 0; i < children; i++) {
-            GtkTreeIter child;
+    for (; modules; modules = modules->next) {
+        ShellModule *module = (ShellModule *) modules->data;
+        GSList *entries;
+        
+        report_title(ctx, module->name);
+        
+        for (entries = module->entries; entries; entries = entries->next) {
+            ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
             
-            gtk_tree_model_iter_nth_child(model, &child, iter, i);
-            report_generate_child(ctx, &child);
+            ctx->entry = entry;
+            report_subtitle(ctx, entry->name);
+            report_table(ctx, entry->func(entry->number));
         }
     }
+}
+
+void report_module_list_free(GSList *modules)
+{
+    GSList *m;
+    
+    for (m = modules; m; m = m->next) {
+        ShellModule *module = (ShellModule *) m->data;
+        
+        g_slist_free(module->entries);
+    }
+    
+    g_slist_free(modules);
 }
 
 static gchar *
@@ -323,7 +360,7 @@ report_get_filename(void)
 }
 
 ReportContext*
-report_context_html_new(ReportDialog *rd)
+report_context_html_new()
 {
     ReportContext *ctx;
     
@@ -335,14 +372,13 @@ report_context_html_new(ReportDialog *rd)
     ctx->subsubtitle = report_html_subsubtitle;
     ctx->keyvalue    = report_html_key_value;
     
-    ctx->rd     = rd;
     ctx->output = g_strdup("");
     
     return ctx;
 }
 
 ReportContext*
-report_context_text_new(ReportDialog *rd)
+report_context_text_new()
 {
     ReportContext *ctx;
     
@@ -354,7 +390,6 @@ report_context_text_new(ReportDialog *rd)
     ctx->subsubtitle = report_text_subsubtitle;
     ctx->keyvalue    = report_text_key_value;
     
-    ctx->rd     = rd;
     ctx->output = g_strdup("");
     
     return ctx;
@@ -367,12 +402,42 @@ report_context_free(ReportContext *ctx)
     g_free(ctx);
 }
 
+void
+report_create_from_module_list(ReportContext *ctx, GSList *modules)
+{
+    report_header(ctx);
+    
+    report_create_inner_from_module_list(ctx, modules);
+    report_module_list_free(modules);
+
+    report_footer(ctx);
+}
+
+gchar *
+report_create_from_module_list_format(GSList *modules, ReportFormat format)
+{
+    ReportContext *ctx;
+    gchar *retval;
+    
+    if (format == REPORT_FORMAT_HTML)
+        ctx = report_context_html_new();
+    else 
+        ctx = report_context_text_new();
+
+    report_create_from_module_list(ctx, modules);
+    retval = g_strdup(ctx->output);
+    
+    report_context_free(ctx);
+    
+    return retval;
+}
+
 static gboolean
 report_generate(ReportDialog *rd)
 {
-    GtkTreeIter		 iter;
+    GSList		*modules;
     ReportContext	*ctx;
-    ReportContext	*(*create_context)(ReportDialog *rd);
+    ReportContext	*(*create_context)();
     gchar		*file;
     FILE		*stream;
     
@@ -392,16 +457,10 @@ report_generate(ReportDialog *rd)
         return FALSE;
     }
 
-    ctx = create_context(rd);
-    report_header(ctx);
+    ctx = create_context();
+    modules = report_create_module_list_from_dialog(rd);
     
-    gtk_tree_model_get_iter_first(rd->model, &iter);
-    do {
-         report_generate_children(ctx, &iter);
-    } while (gtk_tree_model_iter_next(rd->model, &iter));
-
-    report_footer(ctx);
-    
+    report_create_from_module_list(ctx, modules);
     fputs(ctx->output, stream);
     fclose(stream);
     
