@@ -177,12 +177,12 @@ scan_ide(void)
     for (i = 0; i <= 16; i++) {
 	device = g_strdup_printf("/proc/ide/hd%c/model", iface);
 	if (g_file_test(device, G_FILE_TEST_EXISTS)) {
-	    gchar buf[64];
+	    gchar buf[128];
 
 	    cache = 0;
 
 	    proc_ide = fopen(device, "r");
-	    fgets(buf, 64, proc_ide);
+	    fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
 
 	    buf[strlen(buf) - 1] = 0;
@@ -193,18 +193,25 @@ scan_ide(void)
 
 	    device = g_strdup_printf("/proc/ide/hd%c/media", iface);
 	    proc_ide = fopen(device, "r");
-	    fgets(buf, 64, proc_ide);
+	    fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
 	    buf[strlen(buf) - 1] = 0;
 
 	    media = g_strdup(buf);
 	    if (g_str_equal(media, "cdrom")) {
 	        /* obtain cd-rom drive information from cdrecord */
-	        gchar *tmp = g_strdup_printf("cdrecord dev=/dev/hd%c -prcap 2>/dev/null", iface);
+	        GTimer *timer;
+	        gchar *tmp = g_strdup_printf("cdrecord dev=/dev/hd%c -prcap 2>/dev/stdout", iface);
 	        FILE *prcap;
 	        
 	        if ((prcap = popen(tmp, "r"))) {
-  	            while (fgets(buf, 64, prcap)) {
+                    /* we need a timeout so cdrecord does not try to get information on cd drives
+                       with inserted media, which is not possible currently. half second should be
+                       enough. */
+                    timer = g_timer_new();
+                    g_timer_start(timer);
+
+  	            while (fgets(buf, 128, prcap) && g_timer_elapsed(timer, NULL) < 0.5) {
   	               if (g_str_has_prefix(buf, "  Does")) {
   	                   if (g_str_has_suffix(buf, "media\n") && !strstr(buf, "speed")) {
       	                       gchar *media_type = g_strstrip(strstr(buf, "Does "));
@@ -240,8 +247,9 @@ scan_ide(void)
   	                   driver = g_strdup_printf("Driver=%s\n", strchr(buf, ':') + 1);
   	               }
   	            }
-  	            
+
   	            pclose(prcap);
+                    g_timer_destroy(timer);
                 }
 	        
 	        g_free(tmp);
