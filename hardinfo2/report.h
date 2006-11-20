@@ -22,8 +22,9 @@
 #include <shell.h>
 
 typedef enum {
+    REPORT_FORMAT_HTML,
     REPORT_FORMAT_TEXT,
-    REPORT_FORMAT_HTML
+    N_REPORT_FORMAT
 } ReportFormat;
 
 typedef struct _ReportDialog	ReportDialog;

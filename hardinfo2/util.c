@@ -175,14 +175,14 @@ gboolean binreloc_init(gboolean try_hardcoded)
 
     /* If the runtime data directories we previously found, don't even try
        to find them again. */
-    if (path_data && path_lib) {
+    if (params.path_data && params.path_lib) {
 	return TRUE;
     }
 
     if (try_hardcoded || !gbr_init(&error)) {
 	/* We were asked to try hardcoded paths or BinReloc failed to initialize. */
-	path_data = g_strdup(PREFIX);
-	path_lib = g_strdup(LIBPREFIX);
+	params.path_data = g_strdup(PREFIX);
+	params.path_lib = g_strdup(LIBPREFIX);
 
 	if (error) {
 	    g_error_free(error);
@@ -191,23 +191,23 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	/* If we were able to initialize BinReloc, build the default data
 	   and library paths. */
 	tmp = gbr_find_data_dir(PREFIX);
-	path_data = g_build_filename(tmp, "hardinfo", NULL);
+	params.path_data = g_build_filename(tmp, "hardinfo", NULL);
 	g_free(tmp);
 
 	tmp = gbr_find_lib_dir(PREFIX);
-	path_lib = g_build_filename(tmp, "hardinfo", NULL);
+	params.path_lib = g_build_filename(tmp, "hardinfo", NULL);
 	g_free(tmp);
     }
 
     /* Try to see if the uidefs.xml file isn't missing. This isn't the
        definitive test, but it should do okay for most situations. */
-    tmp = g_build_filename(path_data, "uidefs.xml", NULL);
+    tmp = g_build_filename(params.path_data, "uidefs.xml", NULL);
     if (!g_file_test(tmp, G_FILE_TEST_EXISTS)) {
-	g_free(path_data);
-	g_free(path_lib);
+	g_free(params.path_data);
+	g_free(params.path_lib);
 	g_free(tmp);
 
-	path_data = path_lib = NULL;
+	params.path_data = params.path_lib = NULL;
 
 	if (try_hardcoded) {
 	    /* We tried the hardcoded paths, but still was unable to find the
@@ -230,7 +230,7 @@ log_handler(const gchar * log_domain,
 	    GLogLevelFlags log_level,
 	    const gchar * message, gpointer user_data)
 {
-    if (!gui_running) {
+    if (!params.gui_running) {
 	/* No GUI running: spit the message to the terminal */
 	g_print("\n\n*** %s: %s\n\n",
 		(log_level & G_LOG_FLAG_FATAL) ? "Error" : "Warning",
@@ -259,6 +259,7 @@ log_handler(const gchar * log_domain,
 void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 {
     static gboolean  create_report = FALSE;
+    static gboolean  show_version = FALSE;
     static gchar    *report_format = NULL;
 
     static GOptionEntry options[] = {
@@ -267,16 +268,23 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .short_name  = 'r',
 	 .arg         = G_OPTION_ARG_NONE,
 	 .arg_data    = &create_report,
-	 .description = "create a report and print to standard output"
+	 .description = "creates a report and prints to standard output"
         },
 	{
 	 .long_name   = "report-format",
 	 .short_name  = 'f',
 	 .arg         = G_OPTION_ARG_STRING,
 	 .arg_data    = &report_format,
-	 .description = "choose a report format (text, html)"
+	 .description = "chooses a report format (text, html)"
         },
-	{ NULL }
+	{
+	 .long_name   = "version",
+	 .short_name  = 'v',
+	 .arg         = G_OPTION_ARG_NONE,
+	 .arg_data    = &show_version,
+	 .description = "shows program version and quit"
+        },
+	{ NULL }	
     };
     GOptionContext *ctx;
 
@@ -291,6 +299,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 
     param->create_report = create_report;
     param->report_format = REPORT_FORMAT_TEXT;
+    param->show_version  = show_version;
     
     if (report_format && g_str_equal(report_format, "html"))
         param->report_format = REPORT_FORMAT_HTML;
@@ -348,7 +357,7 @@ GSList *modules_load(void)
 
     keyfile = g_key_file_new();
 
-    modules_conf = g_build_filename(path_data, "modules.conf", NULL);
+    modules_conf = g_build_filename(params.path_data, "modules.conf", NULL);
     g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
     g_free(modules_conf);
 
@@ -365,7 +374,7 @@ GSList *modules_load(void)
 	module->name = g_strdup(cat[i]);
 	iname = g_key_file_get_value(keyfile, "categories", cat[i], NULL);
 	
-	if (gui_running) {
+	if (params.gui_running) {
 	    tmp = g_strdup_printf("%s.png", iname);
 	    module->icon = icon_cache_get_pixbuf(tmp);
 	    g_free(tmp);
@@ -375,7 +384,7 @@ GSList *modules_load(void)
 	g_free(iname);
 	iname = tmp;
 
-	tmp = g_build_filename(path_lib, "modules", iname, NULL);
+	tmp = g_build_filename(params.path_lib, "modules", iname, NULL);
 	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
 	g_free(tmp);
 
@@ -393,7 +402,7 @@ GSList *modules_load(void)
 		const gchar *(*shell_name) (gint);
 		ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
 
-		if (gui_running
+		if (params.gui_running
 		    && g_module_symbol(module->dll, "hi_icon",
 				       (gpointer) & (shell_icon))) {
 		    entry->icon = shell_icon(i);
@@ -430,7 +439,7 @@ GSList *modules_load(void)
     if (g_slist_length(modules) == 0) {
 	g_error
 	    ("No module could be loaded. Check permissions on %s and try again.",
-	     path_lib);
+	     params.path_lib);
     }
 
     return modules;

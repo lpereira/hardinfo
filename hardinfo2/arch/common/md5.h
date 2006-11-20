@@ -33,7 +33,7 @@ benchmark_md5(void)
 
     gchar *bdata_path;
     
-    bdata_path = g_build_filename(path_data, "benchmark.data", NULL);
+    bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);
         return g_strdup("[Error]\n"

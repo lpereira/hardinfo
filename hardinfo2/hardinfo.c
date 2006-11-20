@@ -26,10 +26,6 @@
 
 #include <binreloc.h>
 
-gchar	 *path_data = NULL,
-         *path_lib = NULL;
-gboolean  gui_running = FALSE;
-
 ProgramParameters params = { 0 };
 
 int
@@ -39,14 +35,20 @@ main(int argc, char **argv)
     
     parameters_init(&argc, &argv, &params);
     
+    if (params.show_version) {
+       g_print("HardInfo version " VERSION "\n");
+       g_print("Copyright (C) 2003-2006 Leandro A. F. Pereira. See COPYING for details.\n");
+       return 0;
+    }
+    
     if (!params.create_report) {
        /* we only try to open the UI if the user didn't asked for a 
           report. */
-       gui_running = ui_init(&argc, &argv);
+       params.gui_running = ui_init(&argc, &argv);
 
        /* if GTK+ initialization failed, assume the user wants a 
           report. */
-       if (!gui_running)
+       if (!params.gui_running)
            params.create_report = TRUE;
     }
 
@@ -58,7 +60,7 @@ main(int argc, char **argv)
     
     modules = modules_load();
     
-    if (gui_running) {
+    if (params.gui_running) {
         icon_cache_init();
         stock_icons_init();
     

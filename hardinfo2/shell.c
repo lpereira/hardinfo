@@ -64,7 +64,7 @@ void shell_ui_manager_set_visible(const gchar *path,
 {
     GtkWidget *widget;
     
-    if (!gui_running)
+    if (!params.gui_running)
         return;
     
     widget = gtk_ui_manager_get_widget(shell->ui_manager, path);
@@ -83,7 +83,7 @@ void shell_action_set_property(const gchar *action_name,
 {
     GtkAction *action;
     
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
@@ -103,7 +103,7 @@ void shell_action_set_enabled(const gchar *action_name, gboolean setting)
 {
     GtkAction *action;
 
-    if (!gui_running)
+    if (!params.gui_running)
         return;
     
     action = gtk_action_group_get_action(shell->action_group, action_name);
@@ -116,7 +116,7 @@ gboolean shell_action_get_enabled(const gchar *action_name)
 {
     GtkAction *action;
 
-    if (!gui_running)
+    if (!params.gui_running)
         return FALSE;
     
     action = gtk_action_group_get_action(shell->action_group, action_name);
@@ -129,7 +129,7 @@ gboolean shell_action_get_enabled(const gchar *action_name)
 
 void shell_set_side_pane_visible(gboolean setting)
 {
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     if (setting)
@@ -144,7 +144,7 @@ gboolean shell_action_get_active(const gchar *action_name)
     GSList	*proxies;
     
     /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
-    if (!gui_running)
+    if (!params.gui_running)
         return FALSE;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
@@ -169,7 +169,7 @@ void shell_action_set_active(const gchar *action_name, gboolean setting)
     GSList	*proxies;
     
     /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
@@ -190,7 +190,7 @@ void shell_action_set_active(const gchar *action_name, gboolean setting)
 void
 shell_status_pulse(void)
 {
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     if (shell->_pulses++ == 20) {
@@ -207,7 +207,7 @@ shell_status_pulse(void)
 void
 shell_status_set_percentage(gint percentage)
 {
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(shell->progress),
@@ -219,7 +219,7 @@ shell_status_set_percentage(gint percentage)
 void
 shell_view_set_enabled(gboolean setting)
 {
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     if (setting) {
@@ -239,7 +239,7 @@ shell_view_set_enabled(gboolean setting)
 void
 shell_status_set_enabled(gboolean setting)
 {
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     if (setting)
@@ -253,7 +253,7 @@ shell_status_set_enabled(gboolean setting)
 void
 shell_do_reload(void)
 {
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     shell_action_set_enabled("RefreshAction", FALSE);
@@ -278,7 +278,7 @@ shell_do_reload(void)
 void
 shell_status_update(const gchar *message)
 {
-    if (!gui_running)
+    if (!params.gui_running)
         return;
 
     gtk_label_set_markup(GTK_LABEL(shell->status), message);
@@ -356,7 +356,7 @@ shell_tree_modules_load(ShellTree * shelltree)
 
     keyfile = g_key_file_new();
     
-    modules_conf = g_build_filename(path_data, "modules.conf", NULL);
+    modules_conf = g_build_filename(params.path_data, "modules.conf", NULL);
     g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
     g_free(modules_conf);
     
@@ -381,7 +381,7 @@ shell_tree_modules_load(ShellTree * shelltree)
 	g_free(iname);
 	iname = tmp;
 
-	tmp = g_build_filename(path_lib, "modules", iname, NULL);
+	tmp = g_build_filename(params.path_lib, "modules", iname, NULL);
 	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
 	g_free(tmp);
 
@@ -430,7 +430,7 @@ shell_tree_modules_load(ShellTree * shelltree)
     g_key_file_free(keyfile);
     
     if (g_slist_length(shelltree->modules) == 0) {
-        g_error("No module could be loaded. Check permissions on %s and try again.", path_lib);
+        g_error("No module could be loaded. Check permissions on %s and try again.", params.path_lib);
     }
 }
 #endif

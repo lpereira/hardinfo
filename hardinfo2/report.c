@@ -306,7 +306,7 @@ report_create_inner_from_module_list(ReportContext *ctx, GSList *modules)
         ShellModule *module = (ShellModule *) modules->data;
         GSList *entries;
         
-        if (!gui_running)
+        if (!params.gui_running)
             fprintf(stderr, "%s\n", module->name);
         
         report_title(ctx, module->name);
@@ -314,7 +314,7 @@ report_create_inner_from_module_list(ReportContext *ctx, GSList *modules)
         for (entries = module->entries; entries; entries = entries->next) {
             ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
             
-            if (!gui_running) 
+            if (!params.gui_running) 
                 fprintf(stderr, " * %s\n", entry->name);
             
             ctx->entry = entry;
@@ -421,13 +421,18 @@ report_create_from_module_list(ReportContext *ctx, GSList *modules)
 gchar *
 report_create_from_module_list_format(GSList *modules, ReportFormat format)
 {
-    ReportContext *ctx;
-    gchar *retval;
+    ReportContext	*(*create_context)();
+    ReportContext	*ctx;
+    gchar		*retval;
     
-    if (format == REPORT_FORMAT_HTML)
-        ctx = report_context_html_new();
-    else 
-        ctx = report_context_text_new();
+    if (format >= N_REPORT_FORMAT)
+        return NULL;
+    
+    create_context = file_types[format].data;
+    if (!create_context)
+        return NULL;
+        
+    ctx = create_context();
 
     report_create_from_module_list(ctx, modules);
     retval = g_strdup(ctx->output);

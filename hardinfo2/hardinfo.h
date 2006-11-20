@@ -27,7 +27,12 @@ typedef struct _ProgramParameters	ProgramParameters;
 
 struct _ProgramParameters {
   gboolean create_report;
+  gboolean show_version;
+  gboolean gui_running;
   gint     report_format;
+  
+  gchar   *path_lib;
+  gchar   *path_data;
 };
 
 struct _FileTypes {
@@ -67,13 +72,9 @@ GSList       *modules_load(void);
 /* BinReloc stuff */
 gboolean binreloc_init(gboolean try_hardcoded);
 
-extern gchar* path_lib;
-extern gchar* path_data;
-
 /* GTK UI stuff */
 gboolean ui_init(int *argc, char ***argv);
 void     parameters_init(int *argc, char ***argv, ProgramParameters *params);
-extern   gboolean gui_running;
 extern   ProgramParameters params;
 
 #endif				/* __HARDINFO_H__ */
