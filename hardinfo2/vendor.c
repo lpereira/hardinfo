@@ -29,6 +29,7 @@ static const Vendor vendors[] = {
     { "Intel"	,		"Intel Corp.",		"www.intel.com" },
     { "Cirrus Logic",		"Cirrus Logic",		"www.cirrus.com" },
     { "VIA Technologies",	"VIA Technologies",	"www.via.com.tw" },
+    { "VIA",			"VIA Technologies",	"www.via.com.tw" },
     { "hp",			"Hewlett-Packard",	"www.hp.com" },
     { "NEC Corporation",	"NEC Coporation",	"www.nec.com" },
     { "MAXTOR",			"MAXTOR",		"www.maxtor.com" },

@@ -306,10 +306,16 @@ report_create_inner_from_module_list(ReportContext *ctx, GSList *modules)
         ShellModule *module = (ShellModule *) modules->data;
         GSList *entries;
         
+        if (!gui_running)
+            fprintf(stderr, "%s\n", module->name);
+        
         report_title(ctx, module->name);
         
         for (entries = module->entries; entries; entries = entries->next) {
             ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
+            
+            if (!gui_running) 
+                fprintf(stderr, " * %s\n", entry->name);
             
             ctx->entry = entry;
             report_subtitle(ctx, entry->name);

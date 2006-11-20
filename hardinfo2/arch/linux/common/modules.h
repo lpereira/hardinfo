@@ -64,7 +64,7 @@ scan_modules(void)
 	sscanf(buf, "%s %ld", modname, &memory);
 
 	hashkey = g_strdup_printf("MOD%s", modname);
-	buf = g_strdup_printf("/sbin/modinfo %s", modname);
+	buf = g_strdup_printf("/sbin/modinfo %s 2>/dev/null", modname);
 
 	modi = popen(buf, "r");
 	while (fgets(buffer, 1024, modi)) {
