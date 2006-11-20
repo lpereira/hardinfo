@@ -306,11 +306,11 @@ static gchar *processor_get_detailed_info(Processor * processor)
 #else
 			  "Big Endian",
 #endif
-			  processor->bug_fdiv ? "Yes" : "No",
-			  processor->bug_hlt  ? "Yes" : "No",
-			  processor->bug_f00f ? "Yes" : "No",
-			  processor->bug_coma ? "Yes" : "No",
-			  processor->has_fpu  ? "Yes" : "No",
+			  processor->bug_fdiv ? processor->bug_fdiv : "yes",
+			  processor->bug_hlt  ? processor->bug_hlt  : "yes",
+			  processor->bug_f00f ? processor->bug_f00f : "yes",
+			  processor->bug_coma ? processor->bug_coma : "yes",
+			  processor->has_fpu  ? processor->has_fpu  : "no",
 			  tmp);
     g_free(tmp);
     return ret;
