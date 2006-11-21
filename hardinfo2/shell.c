@@ -101,14 +101,13 @@ void shell_action_set_property(const gchar *action_name,
 
 void shell_action_set_enabled(const gchar *action_name, gboolean setting)
 {
-    GtkAction *action;
+    if (params.gui_running) {
+        GtkAction *action;
 
-    if (!params.gui_running)
-        return;
-    
-    action = gtk_action_group_get_action(shell->action_group, action_name);
-    if (action) {
-        gtk_action_set_sensitive(action, setting);
+        action = gtk_action_group_get_action(shell->action_group, action_name);
+        if (action) {
+            gtk_action_set_sensitive(action, setting);
+        }
     }
 }
 
@@ -190,30 +189,44 @@ void shell_action_set_active(const gchar *action_name, gboolean setting)
 void
 shell_status_pulse(void)
 {
-    if (!params.gui_running)
-        return;
+    if (params.gui_running) {
+        if (shell->_pulses++ == 20) {
+            /* we're pulsing for some time, disable the interface and change the cursor
+               to a hourglass */
+            shell_view_set_enabled(FALSE);
+        }
 
-    if (shell->_pulses++ == 20) {
-        /* we're pulsing for some time, disable the interface and change the cursor
-           to a hourglass */
-        shell_view_set_enabled(FALSE);
+        gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
+        while (gtk_events_pending())
+            gtk_main_iteration();
+    } else {
+        static gint counter = 0;
+        
+        fprintf(stderr, "\r%c\r", "|/-\\"[counter++ % 4]);
     }
-
-    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
-    while (gtk_events_pending())
-	gtk_main_iteration();
 }
 
 void
 shell_status_set_percentage(gint percentage)
 {
-    if (!params.gui_running)
-        return;
+    if (params.gui_running) {
+        gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(shell->progress),
+                                      (float)percentage/100.0);
+        while (gtk_events_pending())
+            gtk_main_iteration();
+    } else {
+        gint i, j = percentage / 10;
+        
+        if (j < 10) {
+            gchar bar[] = "----------";
+            for (i = 0; i < j; i++) 
+               bar[i] = '#';
 
-    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(shell->progress),
-                                  (float)percentage/100.0);
-    while (gtk_events_pending())
-	gtk_main_iteration();
+            fprintf(stderr, "\r%3d%% %s\r", percentage, bar);
+        } else {
+            fprintf(stderr, "\033[2K");
+        }
+    }
 }
 
 void
