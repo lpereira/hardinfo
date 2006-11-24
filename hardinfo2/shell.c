@@ -202,7 +202,8 @@ shell_status_pulse(void)
     } else {
         static gint counter = 0;
         
-        fprintf(stderr, "\r%c\r", "|/-\\"[counter++ % 4]);
+        fprintf(stderr, "\033[2K\033[40;37;1m %c\033[0m\r",
+                "|/-\\"[counter++ % 4]);
     }
 }
 
@@ -215,16 +216,18 @@ shell_status_set_percentage(gint percentage)
         while (gtk_events_pending())
             gtk_main_iteration();
     } else {
-        gint i, j = percentage / 10;
+        gchar i, j = percentage / 10;
         
-        if (j < 10) {
+        if (percentage < 1 || j >= 10) {
+            fprintf(stderr, "\033[2K");
+        } else {
             gchar bar[] = "----------";
+            
             for (i = 0; i < j; i++) 
                bar[i] = '#';
 
-            fprintf(stderr, "\r%3d%% %s\r", percentage, bar);
-        } else {
-            fprintf(stderr, "\033[2K");
+            fprintf(stderr, "\r\033[40;37;1m%3d%% \033[40;34;1m"
+                    "%s\033[0m\r", percentage, bar);
         }
     }
 }
@@ -291,13 +294,14 @@ shell_do_reload(void)
 void
 shell_status_update(const gchar *message)
 {
-    if (!params.gui_running)
-        return;
-
-    gtk_label_set_markup(GTK_LABEL(shell->status), message);
-    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
-    while (gtk_events_pending())
-	gtk_main_iteration();
+    if (params.gui_running) {
+        gtk_label_set_markup(GTK_LABEL(shell->status), message);
+        gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
+        while (gtk_events_pending())
+	    gtk_main_iteration();
+    } else {
+        fprintf(stderr, "\033[2K\033[40;37;1m %s\033[0m\r", message);
+    }
 }
 
 static void
