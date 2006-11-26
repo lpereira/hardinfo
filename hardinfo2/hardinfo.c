@@ -55,11 +55,13 @@ main(int argc, char **argv)
     if (params.list_modules) {
         GSList *modules = modules_load_all();
         
-        g_print("Module Name\t\tDynamic Loadable Module\n");
         for (; modules; modules = modules->next) {
             ShellModule *module = (ShellModule *) modules->data;
+            gchar *name = g_path_get_basename(g_module_name(module->dll));
             
-            g_print("%s\t\t%s\n", module->name, g_module_name(module->dll));
+            g_print("%s (%s)\n", name, module->name);
+            
+            g_free(name);
         }
         
         return 0;

@@ -366,32 +366,42 @@ gchar *strreplace(gchar * string, gchar * replace, gchar new_char)
     return string;
 }
 
-static ShellModule *module_load(gchar *name, gchar *filename) {
+static ShellModule *module_load(gchar *filename) {
     ShellModule *module;
     gchar *tmp;
     
     module = g_new0(ShellModule, 1);
-    module->name = g_strdup(name);
     
     if (params.gui_running) {
+        gchar *dot = g_strrstr(filename, G_MODULE_SUFFIX) - 1;
+        
+        *dot = '\0';
+        
         tmp = g_strdup_printf("%s.png", filename);
         module->icon = icon_cache_get_pixbuf(tmp);
         g_free(tmp);
+        
+        *dot = '.';
     }
-
-    tmp = g_strdup_printf("%s.so", filename);
-    filename = tmp;
 
     tmp = g_build_filename(params.path_lib, "modules", filename, NULL);
     module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
     g_free(tmp);
-
+    
     if (module->dll) {
-        gint(*n_entries) (void);
+        gint   (*n_entries)   (void);
+        gint   (*weight_func) (void);
+        gchar *(*name_func)   (void);
         gint i;
 
-        if (!g_module_symbol(module->dll, "hi_n_entries", (gpointer) & n_entries))
+        if (!g_module_symbol(module->dll, "hi_n_entries", (gpointer) & n_entries) ||
+            !g_module_symbol(module->dll, "hi_module_name", (gpointer) & name_func))
             goto failed;
+            
+        g_module_symbol(module->dll, "hi_module_weight", (gpointer) & weight_func);
+
+        module->weight = weight_func ? weight_func() : 0;
+        module->name   = name_func();
 
         gint j = n_entries();
         for (i = 0; i <= j; i++) {
@@ -446,41 +456,36 @@ static gboolean module_in_module_list(gchar *module, gchar **module_list)
     return FALSE;
 }
 
+static gint module_cmp(gconstpointer m1, gconstpointer m2)
+{
+    ShellModule *a = (ShellModule *)m1;
+    ShellModule *b = (ShellModule *)m2;
+    
+    return a->weight - b->weight;
+}
+
 static GSList *modules_load(gchar **module_list)
 {
-    gchar *modules_conf;
-    GKeyFile *keyfile = g_key_file_new();
-    guint categories, i;
+    GDir *dir;
     GSList *modules = NULL;
-
-    keyfile = g_key_file_new();
-
-    modules_conf = g_build_filename(params.path_data, "modules.conf", NULL);
-    g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
-    g_free(modules_conf);
-
-    if (g_key_file_get_integer(keyfile, "general", "version", NULL) != 2) {
-	g_error("Wrong version of modules.conf");
+    ShellModule *module;
+    gchar *filename;
+    
+    filename = g_build_filename(params.path_lib, "modules", NULL);
+    dir = g_dir_open(filename, 0, NULL);
+    g_free(filename);
+    
+    if (!dir) {
+        return NULL;
     }
 
-    gchar **cat = g_key_file_get_keys(keyfile, "categories", &categories, NULL);
-    for (i = 0; i < categories; i++) {
-        if (module_in_module_list(cat[i], module_list)) {
-            ShellModule *module;
-            gchar *name;
-
-            name = g_key_file_get_value(keyfile, "categories", cat[i], NULL);
-            module = module_load(cat[i], name);
-    
-            if (module)
+    while ((filename = (gchar*)g_dir_read_name(dir))) {
+        if (module_in_module_list(filename, module_list)) {
+            if ((module = module_load(filename))) {
                 modules = g_slist_append(modules, module);
-                
-            g_free(name);	
+            }
         }
     }
-
-    g_strfreev(cat);
-    g_key_file_free(keyfile);
 
     if (g_slist_length(modules) == 0) {
         if (params.use_modules == NULL) {
@@ -492,8 +497,8 @@ static GSList *modules_load(gchar **module_list)
                     
         }
     }
-
-    return modules;
+    
+    return g_slist_sort(modules, module_cmp);
 }
 
 GSList *modules_load_selected(void)

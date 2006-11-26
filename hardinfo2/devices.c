@@ -210,3 +210,15 @@ hi_name(gint entry)
 {
     return hi_entries[entry].name;
 }
+
+gchar *
+hi_module_name(void)
+{
+    return g_strdup("Devices");
+}
+
+guchar
+hi_module_weight(void)
+{
+    return 160;
+}

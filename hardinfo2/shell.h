@@ -94,6 +94,8 @@ struct _ShellModule {
     gchar		*name;
     GdkPixbuf		*icon;
     GModule		*dll;
+    
+    guchar		 weight;
 
     GSList		*entries;
 };
