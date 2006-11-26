@@ -216,16 +216,14 @@ shell_status_set_percentage(gint percentage)
         while (gtk_events_pending())
             gtk_main_iteration();
     } else {
-        gchar i, j = percentage / 10;
+        gchar j = percentage / 10;
         
         if (percentage < 1 || j >= 10) {
             fprintf(stderr, "\033[2K");
         } else {
             gchar bar[] = "----------";
-            
-            for (i = 0; i < j; i++) 
-               bar[i] = '#';
 
+            memset(bar, '#', j);
             fprintf(stderr, "\r\033[40;37;1m%3d%% \033[40;34;1m"
                     "%s\033[0m\r", percentage, bar);
         }

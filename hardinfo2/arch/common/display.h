@@ -21,15 +21,14 @@ get_glx_info(DisplayInfo *di)
 {
     gchar *output;
     if (g_spawn_command_line_sync("glxinfo", &output, NULL, NULL, NULL)) {
-	gchar **output_lines, **old;
+	gchar **output_lines;
+	gint i = 0;
 
-	output_lines = g_strsplit(output, "\n", 0);
-	g_free(output);
-
-	old = output_lines;
-	while (*(++output_lines)) {
-	    if (strstr(*output_lines, "OpenGL")) {
-		gchar **tmp = g_strsplit(*output_lines, ":", 0);
+	for (output_lines = g_strsplit(output, "\n", 0);
+	     output_lines && output_lines[i];
+	     i++) {
+	    if (strstr(output_lines[i], "OpenGL")) {
+		gchar **tmp = g_strsplit(output_lines[i], ":", 0);
 
 		tmp[1] = g_strchug(tmp[1]);
 
@@ -41,7 +40,8 @@ get_glx_info(DisplayInfo *di)
 	    }
 	}
 
-	g_strfreev(old);
+	g_free(output);
+	g_strfreev(output_lines);
 
 	if (!di->ogl_vendor)
 	    di->ogl_vendor = "Unknown";

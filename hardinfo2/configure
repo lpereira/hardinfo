@@ -201,6 +201,6 @@ else
 	cat << EOF
 If you get errors, probably you don't have the right libraries,
 includes or utilities. However, if you're sure this is a bug in my
-code, please send a patch (use \"diff -u\") to <leandro@linuxmag.com.br>.
+code, please send a patch (use "diff -u") to <leandro@linuxmag.com.br>.
 EOF
 fi
