@@ -29,8 +29,11 @@ struct _ProgramParameters {
   gboolean create_report;
   gboolean show_version;
   gboolean gui_running;
+  gboolean list_modules;
+  
   gint     report_format;
   
+  gchar  **use_modules;
   gchar   *path_lib;
   gchar   *path_data;
 };
@@ -67,7 +70,8 @@ gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 inline gchar *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
-GSList       *modules_load(void);
+GSList	     *modules_load_selected(void);
+GSList       *modules_load_all(void);
 
 /* BinReloc stuff */
 gboolean binreloc_init(gboolean try_hardcoded);

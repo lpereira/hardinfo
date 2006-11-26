@@ -597,7 +597,7 @@ shell_init(GSList *modules)
     shell_status_set_enabled(TRUE);
     shell_status_update("Loading modules...");
 
-    shell->tree->modules = modules ? modules : modules_load();
+    shell->tree->modules = modules ? modules : modules_load_all();
 
     g_slist_foreach(shell->tree->modules, add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));

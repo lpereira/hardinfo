@@ -27,13 +27,13 @@ benchmark.so:	benchmark.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	$(CCSLOW) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS) \
 		$(GLADE_LIBS) $(GLADE_FLAGS)
-	mv -f $@ modules
+	ln -sf ../$@ modules
 
 %.so:	%.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	$(CC) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS) \
 		$(GLADE_LIBS) $(GLADE_FLAGS)
-	mv -f $@ modules
+	ln -sf ../$@ modules
 	
 clean:
 	rm -rf .xvpics pixmaps/.xvpics *.o *.so hardinfo modules/*.so report
@@ -68,10 +68,10 @@ install:	all
 	cp hardinfo ${DESTDIR}/usr/bin/hardinfo
 
 	@echo '[01;34m*** Installing modules...[00m'
-	cp -r modules/*.so ${DESTDIR}/usr/lib/hardinfo/modules
+	cp -Lr modules/*.so ${DESTDIR}/usr/lib/hardinfo/modules
 
 	@echo '[01;34m*** Installing pixmaps...[00m'
-	cp -r pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
+	cp -Lr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
 
 	@echo '[01;34m*** Installing misc data...[00m'
 	cp uidefs.xml ${DESTDIR}/usr/share/hardinfo

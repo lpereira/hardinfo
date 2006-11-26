@@ -33,12 +33,36 @@ main(int argc, char **argv)
 {
     GSList *modules;
     
+    /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);
     
+    /* show version information and quit */
     if (params.show_version) {
        g_print("HardInfo version " VERSION "\n");
        g_print("Copyright (C) 2003-2006 Leandro A. F. Pereira. See COPYING for details.\n");
+    
        return 0;
+    }
+    
+    /* initialize the binreloc library, so we can load program data */
+    if (!binreloc_init(FALSE))
+        g_error("Failed to find runtime data.\n\n"
+                "\342\200\242 Is HardInfo correctly installed?\n"
+                "\342\200\242 See if %s and %s exists and you have read permision.",
+                PREFIX, LIBPREFIX);
+                
+    /* list all module names */
+    if (params.list_modules) {
+        GSList *modules = modules_load_all();
+        
+        g_print("Module Name\t\tDynamic Loadable Module\n");
+        for (; modules; modules = modules->next) {
+            ShellModule *module = (ShellModule *) modules->data;
+            
+            g_print("%s\t\t%s\n", module->name, g_module_name(module->dll));
+        }
+        
+        return 0;
     }
     
     if (!params.create_report) {
@@ -46,21 +70,22 @@ main(int argc, char **argv)
           report. */
        params.gui_running = ui_init(&argc, &argv);
 
-       /* if GTK+ initialization failed, assume the user wants a 
-          report. */
+       /* as a fallback, if GTK+ initialization failed, run in report
+          generation mode. */
        if (!params.gui_running)
            params.create_report = TRUE;
     }
 
-    if (!binreloc_init(FALSE))
-        g_error("Failed to find runtime data.\n\n"
-                "\342\200\242 Is HardInfo correctly installed?\n"
-                "\342\200\242 See if %s and %s exists and you have read permision.",
-                PREFIX, LIBPREFIX);
-    
-    modules = modules_load();
-    
+    if (params.use_modules) {
+        /* load only selected modules */
+        modules = modules_load_selected();
+    } else {
+        /* load all modules */
+        modules = modules_load_all();
+    }
+
     if (params.gui_running) {
+        /* initialize gui and start gtk+ main loop */
         icon_cache_init();
         stock_icons_init();
     
@@ -68,6 +93,7 @@ main(int argc, char **argv)
   
         gtk_main();
     } else if (params.create_report) {
+        /* generate report */
         gchar *report;
         
         report = report_create_from_module_list_format(modules,

@@ -258,9 +258,11 @@ log_handler(const gchar * log_domain,
 
 void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 {
-    static gboolean  create_report = FALSE;
-    static gboolean  show_version = FALSE;
-    static gchar    *report_format = NULL;
+    static gboolean  create_report   = FALSE;
+    static gboolean  show_version    = FALSE;
+    static gboolean  list_modules    = FALSE;
+    static gchar    *report_format   = NULL;
+    static gchar   **use_modules     = NULL;
 
     static GOptionEntry options[] = {
 	{
@@ -276,6 +278,20 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg         = G_OPTION_ARG_STRING,
 	 .arg_data    = &report_format,
 	 .description = "chooses a report format (text, html)"
+        },
+	{
+	 .long_name   = "list-modules",
+	 .short_name  = 'l',
+	 .arg         = G_OPTION_ARG_NONE,
+	 .arg_data    = &list_modules,
+	 .description = "lists modules"
+        },
+	{
+	 .long_name   = "load-modules",
+	 .short_name  = 'm',
+	 .arg         = G_OPTION_ARG_STRING_ARRAY,
+	 .arg_data    = &use_modules,
+	 .description = "load only selected modules"
         },
 	{
 	 .long_name   = "version",
@@ -300,6 +316,8 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->create_report = create_report;
     param->report_format = REPORT_FORMAT_TEXT;
     param->show_version  = show_version;
+    param->list_modules  = list_modules;
+    param->use_modules   = use_modules;
     
     if (report_format && g_str_equal(report_format, "html"))
         param->report_format = REPORT_FORMAT_HTML;
@@ -348,7 +366,87 @@ gchar *strreplace(gchar * string, gchar * replace, gchar new_char)
     return string;
 }
 
-GSList *modules_load(void)
+static ShellModule *module_load(gchar *name, gchar *filename) {
+    ShellModule *module;
+    gchar *tmp;
+    
+    module = g_new0(ShellModule, 1);
+    module->name = g_strdup(name);
+    
+    if (params.gui_running) {
+        tmp = g_strdup_printf("%s.png", filename);
+        module->icon = icon_cache_get_pixbuf(tmp);
+        g_free(tmp);
+    }
+
+    tmp = g_strdup_printf("%s.so", filename);
+    filename = tmp;
+
+    tmp = g_build_filename(params.path_lib, "modules", filename, NULL);
+    module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
+    g_free(tmp);
+
+    if (module->dll) {
+        gint(*n_entries) (void);
+        gint i;
+
+        if (!g_module_symbol(module->dll, "hi_n_entries", (gpointer) & n_entries))
+            goto failed;
+
+        gint j = n_entries();
+        for (i = 0; i <= j; i++) {
+            GdkPixbuf *(*shell_icon) (gint);
+            const gchar *(*shell_name) (gint);
+            ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
+
+            if (params.gui_running
+                && g_module_symbol(module->dll, "hi_icon",
+                                   (gpointer) & (shell_icon))) {
+                entry->icon = shell_icon(i);
+            }
+            if (g_module_symbol
+                (module->dll, "hi_name", (gpointer) & (shell_name))) {
+                entry->name = g_strdup(shell_name(i));
+            }
+            g_module_symbol(module->dll, "hi_info",
+                            (gpointer) & (entry->func));
+            g_module_symbol(module->dll, "hi_reload",
+                            (gpointer) & (entry->reloadfunc));
+            g_module_symbol(module->dll, "hi_more_info",
+                            (gpointer) & (entry->morefunc));
+            g_module_symbol(module->dll, "hi_get_field",
+                            (gpointer) & (entry->fieldfunc));
+
+            entry->number = i;
+            
+            module->entries = g_slist_append(module->entries, entry);
+        }
+    } else {
+      failed:
+        g_free(module->name);
+        g_free(module);
+        module = NULL;
+    }
+    
+    return module;
+}
+
+static gboolean module_in_module_list(gchar *module, gchar **module_list)
+{
+    int i = 0;
+    
+    if (!module_list)
+        return TRUE;
+    
+    for (; module_list[i]; i++) {
+        if (g_str_equal(module_list[i], module))
+            return TRUE;
+    }
+    
+    return FALSE;
+}
+
+static GSList *modules_load(gchar **module_list)
 {
     gchar *modules_conf;
     GKeyFile *keyfile = g_key_file_new();
@@ -367,80 +465,43 @@ GSList *modules_load(void)
 
     gchar **cat = g_key_file_get_keys(keyfile, "categories", &categories, NULL);
     for (i = 0; i < categories; i++) {
-	ShellModule *module;
-	gchar *tmp, *iname;
+        if (module_in_module_list(cat[i], module_list)) {
+            ShellModule *module;
+            gchar *name;
 
-	module = g_new0(ShellModule, 1);
-	module->name = g_strdup(cat[i]);
-	iname = g_key_file_get_value(keyfile, "categories", cat[i], NULL);
-	
-	if (params.gui_running) {
-	    tmp = g_strdup_printf("%s.png", iname);
-	    module->icon = icon_cache_get_pixbuf(tmp);
-	    g_free(tmp);
-	}
-
-	tmp = g_strdup_printf("%s.so", iname);
-	g_free(iname);
-	iname = tmp;
-
-	tmp = g_build_filename(params.path_lib, "modules", iname, NULL);
-	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
-	g_free(tmp);
-
-	if (module->dll) {
-	    gint(*n_entries) (void);
-	    gint i;
-
-	    if (!g_module_symbol
-		(module->dll, "hi_n_entries", (gpointer) & n_entries))
-		continue;
-
-	    gint j = n_entries();
-	    for (i = 0; i <= j; i++) {
-		GdkPixbuf *(*shell_icon) (gint);
-		const gchar *(*shell_name) (gint);
-		ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
-
-		if (params.gui_running
-		    && g_module_symbol(module->dll, "hi_icon",
-				       (gpointer) & (shell_icon))) {
-		    entry->icon = shell_icon(i);
-		}
-		if (g_module_symbol
-		    (module->dll, "hi_name", (gpointer) & (shell_name))) {
-		    entry->name = g_strdup(shell_name(i));
-		}
-		g_module_symbol(module->dll, "hi_info",
-				(gpointer) & (entry->func));
-		g_module_symbol(module->dll, "hi_reload",
-				(gpointer) & (entry->reloadfunc));
-		g_module_symbol(module->dll, "hi_more_info",
-				(gpointer) & (entry->morefunc));
-		g_module_symbol(module->dll, "hi_get_field",
-				(gpointer) & (entry->fieldfunc));
-
-		entry->number = i;
-		module->entries = g_slist_append(module->entries, entry);
-	    }
-
-	    modules = g_slist_append(modules, module);
-	} else {
-	    g_free(module->name);
-	    g_free(module);
-	}
-
-	g_free(iname);
+            name = g_key_file_get_value(keyfile, "categories", cat[i], NULL);
+            module = module_load(cat[i], name);
+    
+            if (module)
+                modules = g_slist_append(modules, module);
+                
+            g_free(name);	
+        }
     }
 
     g_strfreev(cat);
     g_key_file_free(keyfile);
 
     if (g_slist_length(modules) == 0) {
-	g_error
-	    ("No module could be loaded. Check permissions on %s and try again.",
-	     params.path_lib);
+        if (params.use_modules == NULL) {
+    	    g_error("No module could be loaded. Check permissions on \"%s\" and try again.",
+	            params.path_lib);
+        } else {
+            g_error("No module could be loaded. Please use hardinfo -l to list all avai"
+                    "lable modules and try again with a valid module list.");
+                    
+        }
     }
 
     return modules;
+}
+
+GSList *modules_load_selected(void)
+{
+    return modules_load(params.use_modules);
+}
+
+GSList *modules_load_all(void)
+{
+    return modules_load(NULL);
 }
