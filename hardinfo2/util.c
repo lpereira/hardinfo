@@ -475,16 +475,15 @@ static GSList *modules_load(gchar **module_list)
     dir = g_dir_open(filename, 0, NULL);
     g_free(filename);
     
-    if (!dir) {
-        return NULL;
-    }
-
-    while ((filename = (gchar*)g_dir_read_name(dir))) {
-        if (module_in_module_list(filename, module_list)) {
-            if ((module = module_load(filename))) {
-                modules = g_slist_append(modules, module);
+    if (dir) {
+        while ((filename = (gchar*)g_dir_read_name(dir))) {
+            if (module_in_module_list(filename, module_list) &&
+                ((module = module_load(filename)))) {
+                    modules = g_slist_append(modules, module);
             }
         }
+
+        g_dir_close(dir);
     }
 
     if (g_slist_length(modules) == 0) {
