@@ -168,7 +168,7 @@ echo "#define HOSTNAME \"`hostname`\"" >> config.h
 echo "#define PREFIX \"/usr/share/hardinfo/\"" >> config.h
 echo "#define LIBPREFIX \"/usr/lib/hardinfo/\"" >> config.h
 echo "#define DEBUG 1" >> config.h
-echo "#define ENABLE_BINRELOC" >> config.h
+echo "#define ENABLE_BINRELOC 1" >> config.h
 echo "#define RELEASE $RELEASE" >> config.h
 
 echo -e "\n#endif	/* __CONFIG_H__ */" >> config.h

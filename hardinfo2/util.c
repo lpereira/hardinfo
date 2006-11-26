@@ -258,11 +258,11 @@ log_handler(const gchar * log_domain,
 
 void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 {
-    static gboolean  create_report   = FALSE;
-    static gboolean  show_version    = FALSE;
-    static gboolean  list_modules    = FALSE;
-    static gchar    *report_format   = NULL;
-    static gchar   **use_modules     = NULL;
+    static gboolean  create_report = FALSE;
+    static gboolean  show_version  = FALSE;
+    static gboolean  list_modules  = FALSE;
+    static gchar    *report_format = NULL;
+    static gchar   **use_modules   = NULL;
 
     static GOptionEntry options[] = {
 	{
@@ -287,11 +287,11 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .description = "lists modules"
         },
 	{
-	 .long_name   = "load-modules",
+	 .long_name   = "load-module",
 	 .short_name  = 'm',
 	 .arg         = G_OPTION_ARG_STRING_ARRAY,
 	 .arg_data    = &use_modules,
-	 .description = "load only selected modules"
+	 .description = "specify module file name to load; may be used more than once"
         },
 	{
 	 .long_name   = "version",

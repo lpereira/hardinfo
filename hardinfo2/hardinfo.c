@@ -38,44 +38,60 @@ main(int argc, char **argv)
     
     /* show version information and quit */
     if (params.show_version) {
-       g_print("HardInfo version " VERSION "\n");
-       g_print("Copyright (C) 2003-2006 Leandro A. F. Pereira. See COPYING for details.\n");
+        g_print("HardInfo version " VERSION "\n");
+        g_print("Copyright (C) 2003-2006 Leandro A. F. Pereira. See COPYING for details.\n\n");
     
-       return 0;
+        g_print("Compile-time options:\n"
+                "  Release version:   %s\n"
+                "  BinReloc enabled:  %s\n"
+                "  Data prefix:       %s\n"
+                "  Library prefix:    %s\n"
+                "  Compiled on:       %s %s (%s)\n"
+                "  Debugging enabled: %s\n\n",
+                RELEASE ? "Yes" : "No (" VERSION ")",
+                ENABLE_BINRELOC ? "Yes" : "No",
+                PREFIX,
+                LIBPREFIX,
+                PLATFORM, KERNEL, HOSTNAME,
+                DEBUG ? "Yes" : "No");
+       
+        /* show also available modules */      
+        params.list_modules = TRUE;
     }
-    
+
     /* initialize the binreloc library, so we can load program data */
     if (!binreloc_init(FALSE))
         g_error("Failed to find runtime data.\n\n"
                 "\342\200\242 Is HardInfo correctly installed?\n"
                 "\342\200\242 See if %s and %s exists and you have read permision.",
                 PREFIX, LIBPREFIX);
-                
+    
     /* list all module names */
     if (params.list_modules) {
-        GSList *modules = modules_load_all();
+        g_print("Modules:\n"
+                 "%-20s%s\n", "File Name", "Name");
         
-        for (; modules; modules = modules->next) {
-            ShellModule *module = (ShellModule *) modules->data;
-            gchar *name = g_path_get_basename(g_module_name(module->dll));
+        for (modules = modules_load_all(); modules; modules = modules->next) {
+           ShellModule *module = (ShellModule *) modules->data;
+           gchar *name = g_path_get_basename(g_module_name(module->dll));
             
-            g_print("%s (%s)\n", name, module->name);
+           g_print("%-20s%s\n", name, module->name);
             
-            g_free(name);
+           g_free(name);
         }
         
         return 0;
     }
-    
-    if (!params.create_report) {
-       /* we only try to open the UI if the user didn't asked for a 
-          report. */
-       params.gui_running = ui_init(&argc, &argv);
 
-       /* as a fallback, if GTK+ initialization failed, run in report
-          generation mode. */
-       if (!params.gui_running)
-           params.create_report = TRUE;
+    if (!params.create_report) {
+        /* we only try to open the UI if the user didn't asked for a 
+           report. */
+        params.gui_running = ui_init(&argc, &argv);
+
+        /* as a fallback, if GTK+ initialization failed, run in report
+           generation mode. */
+        if (!params.gui_running)
+            params.create_report = TRUE;
     }
 
     if (params.use_modules) {
