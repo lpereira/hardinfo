@@ -373,7 +373,7 @@ static ShellModule *module_load(gchar *filename) {
     module = g_new0(ShellModule, 1);
     
     if (params.gui_running) {
-        gchar *dot = g_strrstr(filename, G_MODULE_SUFFIX) - 1;
+        gchar *dot = g_strrstr(filename, "." G_MODULE_SUFFIX);
         
         *dot = '\0';
         
@@ -477,7 +477,8 @@ static GSList *modules_load(gchar **module_list)
     
     if (dir) {
         while ((filename = (gchar*)g_dir_read_name(dir))) {
-            if (module_in_module_list(filename, module_list) &&
+            if (g_strrstr(filename, "." G_MODULE_SUFFIX) &&
+                module_in_module_list(filename, module_list) &&
                 ((module = module_load(filename)))) {
                     modules = g_slist_append(modules, module);
             }

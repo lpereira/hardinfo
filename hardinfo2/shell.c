@@ -609,7 +609,7 @@ shell_init(GSList *modules)
 
     load_graph_configure_expose(shell->loadgraph);
     gtk_widget_hide(shell->notebook);
-
+    
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
