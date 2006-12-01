@@ -882,12 +882,6 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
     }
 }
 
-static gboolean
-g_true(gpointer key, gpointer value, gpointer data)
-{
-    return TRUE;
-}
-
 static void
 module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
@@ -910,7 +904,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     /* recreate the iter hash table only if we're not reloading the module section */
     if (!reload) {
 	if (update_tbl != NULL) {
-	    g_hash_table_foreach_remove(update_tbl, g_true, NULL);
+	    g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true, NULL);
 	}
 	update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     }

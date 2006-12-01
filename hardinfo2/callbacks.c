@@ -153,6 +153,7 @@ void cb_generate_report()
 
 void cb_quit(void)
 {
-    gtk_main_quit();
-    exit(0);
+    do {
+        gtk_main_quit();
+    } while (gtk_main_level() > 1);
 }

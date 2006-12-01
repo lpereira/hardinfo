@@ -208,7 +208,7 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	g_free(tmp);
 
 	params.path_data = params.path_lib = NULL;
-
+	
 	if (try_hardcoded) {
 	    /* We tried the hardcoded paths, but still was unable to find the
 	       runtime data. Give up. */
@@ -291,7 +291,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .short_name  = 'm',
 	 .arg         = G_OPTION_ARG_STRING_ARRAY,
 	 .arg_data    = &use_modules,
-	 .description = "specify module file name to load; may be used more than once"
+	 .description = "specify module to load"
         },
 	{
 	 .long_name   = "version",
@@ -335,10 +335,12 @@ gboolean ui_init(int *argc, char ***argv)
 
 void open_url(gchar * url)
 {
-    const gchar *browsers[] =
-	{ "xdg-open", "gnome-open", "kfmclient openURL", "sensible-browser",
-	"firefox", "epiphany", "galeon", "mozilla", "opera", "konqueror",
-	"netscape", "links -g", NULL };
+    const gchar *browsers[] = {
+	  "xdg-open", "gnome-open", "kfmclient openURL",
+	  "sensible-browser", "firefox", "epiphany",
+	  "galeon", "mozilla", "opera", "konqueror",
+	  "netscape", "links -g", NULL
+    };
     gint i;
 
     for (i = 0; browsers[i]; i++) {
@@ -409,8 +411,7 @@ static ShellModule *module_load(gchar *filename) {
             const gchar *(*shell_name) (gint);
             ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
 
-            if (params.gui_running
-                && g_module_symbol(module->dll, "hi_icon",
+            if (params.gui_running && g_module_symbol(module->dll, "hi_icon",
                                    (gpointer) & (shell_icon))) {
                 entry->icon = shell_icon(i);
             }
