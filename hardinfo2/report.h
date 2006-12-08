@@ -40,6 +40,8 @@ struct _ReportContext {
   void (*subtitle)    (ReportContext *ctx, gchar *text);
   void (*subsubtitle) (ReportContext *ctx, gchar *text);
   void (*keyvalue)    (ReportContext *ctx, gchar *key, gchar *value);
+  
+  ReportFormat		format;
 };
 
 struct _ReportDialog {

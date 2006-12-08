@@ -378,6 +378,7 @@ report_context_html_new()
     ctx->keyvalue    = report_html_key_value;
     
     ctx->output = g_strdup("");
+    ctx->format = REPORT_FORMAT_HTML;
     
     return ctx;
 }
@@ -396,6 +397,7 @@ report_context_text_new()
     ctx->keyvalue    = report_text_key_value;
     
     ctx->output = g_strdup("");
+    ctx->format = REPORT_FORMAT_TEXT;
     
     return ctx;
 }
@@ -460,10 +462,10 @@ report_generate(ReportDialog *rd)
     }
     
     create_context = file_types_get_data_by_name(file_types, file);
-    g_free(file);
     
     if (!create_context) {
         g_warning("Cannot create ReportContext. Programming bug?");
+        g_free(file);
         return FALSE;
     }
 
@@ -474,7 +476,25 @@ report_generate(ReportDialog *rd)
     fputs(ctx->output, stream);
     fclose(stream);
     
+    if (ctx->format == REPORT_FORMAT_HTML) {
+        GtkWidget *dialog;
+        dialog = gtk_message_dialog_new(NULL,
+                    		        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_QUESTION,
+                                        GTK_BUTTONS_NONE,
+                                        "Open the report with your web browser?");
+	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+			       GTK_STOCK_NO, GTK_RESPONSE_REJECT,
+			       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+			       NULL);
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+	    open_url(file);
+
+	gtk_widget_destroy(dialog);
+    }
+    
     report_context_free(ctx);
+    g_free(file);
     
     return TRUE;
 }

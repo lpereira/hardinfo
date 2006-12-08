@@ -30,7 +30,7 @@
 
 static GtkActionEntry entries[] = 
 {
-  { "FileMenuAction", NULL, "_File" },                  /* name, stock id, label */
+  { "InformationMenuAction", NULL, "_Information" },                  /* name, stock id, label */
   { "ViewMenuAction", NULL, "_View" },
   { "HelpMenuAction", NULL, "_Help" },
   { "MainMenuBarAction", NULL, "" },

@@ -1,11 +1,10 @@
 <ui>
   <menubar>
-    <menu name="FileMenu" action="FileMenuAction">
+    <menu name="InformationMenu" action="InformationMenuAction">
       <menuitem name="Copy" action="CopyAction" />
       <menuitem name="Report" action="ReportAction" />
       <separator/>
       <menuitem name="Quit" action="QuitAction" />
-      <placeholder name="FileMenuAdditions" />
     </menu>
     <menu name="ViewMenu" action="ViewMenuAction">
       <menuitem name="SidePane" action="SidePaneAction"/>
