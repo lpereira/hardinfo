@@ -221,11 +221,10 @@ shell_status_set_percentage(gint percentage)
         if (percentage < 1 || j >= 10) {
             fprintf(stderr, "\033[2K");
         } else {
-            gchar bar[] = "----------";
-
-            memset(bar, '#', j);
             fprintf(stderr, "\r\033[40;37;1m%3d%% \033[40;34;1m"
-                    "%s\033[0m\r", percentage, bar);
+                    "%s\033[0m\r",
+                    percentage, 
+                    (char*)memset("----------", '#', j));
         }
     }
 }
@@ -360,95 +359,6 @@ create_window(void)
     while (gtk_events_pending())
 	gtk_main_iteration();
 }
-
-#if 0
-static void
-shell_tree_modules_load(ShellTree * shelltree)
-{
-    gchar       *modules_conf;
-    GKeyFile	*keyfile = g_key_file_new();
-    guint	 categories, i;
-
-    keyfile = g_key_file_new();
-    
-    modules_conf = g_build_filename(params.path_data, "modules.conf", NULL);
-    g_key_file_load_from_file(keyfile, modules_conf, 0, NULL);
-    g_free(modules_conf);
-    
-    if (g_key_file_get_integer(keyfile, "general", "version", NULL) != 2) {
-	g_error("Wrong version of modules.conf");
-    }
-
-    gchar **cat = g_key_file_get_keys(keyfile, "categories", &categories, NULL);
-    for (i = 0; i < categories; i++) {
-	ShellModule *module;
-	gchar *tmp, *iname;
-	
-	module       = g_new0(ShellModule, 1);
-	module->name = g_strdup(cat[i]);
-	iname        = g_key_file_get_value(keyfile, "categories", cat[i], NULL);
-
-	tmp = g_strdup_printf("%s.png", iname);
-	module->icon = icon_cache_get_pixbuf(tmp);
-	g_free(tmp);
-
-	tmp = g_strdup_printf("%s.so", iname);
-	g_free(iname);
-	iname = tmp;
-
-	tmp = g_build_filename(params.path_lib, "modules", iname, NULL);
-	module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
-	g_free(tmp);
-
-	if (module->dll) {
-	    gint(*n_entries) (void);
-	    gint i;
-
-	    if (!g_module_symbol(module->dll, "hi_n_entries", (gpointer) & n_entries))
-		continue;
-
-            gint j = n_entries();
-	    for (i = 0; i <= j; i++) {
-		GdkPixbuf	 *(*shell_icon) (gint);
-		const gchar	 *(*shell_name) (gint);
-		ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
-
-		if (g_module_symbol(module->dll, "hi_icon", (gpointer)&(shell_icon))) {
-		    entry->icon = shell_icon(i);
-		}
-		if (g_module_symbol(module->dll, "hi_name", (gpointer)&(shell_name))) {
-		    entry->name = g_strdup(shell_name(i));
-		}
-		g_module_symbol(module->dll, "hi_info",
-				(gpointer) & (entry->func));
-		g_module_symbol(module->dll, "hi_reload",
-				(gpointer) & (entry->reloadfunc));
-		g_module_symbol(module->dll, "hi_more_info",
-				(gpointer) & (entry->morefunc));
-		g_module_symbol(module->dll, "hi_get_field",
-				(gpointer) & (entry->fieldfunc));
-
-		entry->number = i;
-		module->entries = g_slist_append(module->entries, entry);
-	    }
-
-	    shelltree->modules = g_slist_append(shelltree->modules, module);
-	} else {
-	    g_free(module->name);
-	    g_free(module);
-	}
-
-	g_free(iname);
-    }
-
-    g_strfreev(cat);
-    g_key_file_free(keyfile);
-    
-    if (g_slist_length(shelltree->modules) == 0) {
-        g_error("No module could be loaded. Check permissions on %s and try again.", params.path_lib);
-    }
-}
-#endif
 
 static void view_menu_select_entry(gpointer data, gpointer data2)
 {
