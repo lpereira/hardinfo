@@ -24,13 +24,23 @@ static gchar *network_interfaces = NULL;
 #include <linux/sockios.h>
 #include <sys/socket.h>
 
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h> /* for strncpy */
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+
 typedef struct _NetInfo NetInfo;
 struct _NetInfo {
-    char                name[16]; 
-    int                 mtu;
-    unsigned char       mac[8];
+    char name[16]; 
+    int  mtu;
+    unsigned char mac[8];
+    char ip[16];
+    char mask[16];
 };
-
 
 void get_net_info(char *if_name, NetInfo *netinfo)
 {
@@ -39,22 +49,41 @@ void get_net_info(char *if_name, NetInfo *netinfo)
 
     fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
 
-    strcpy(ifr.ifr_name, if_name);
+    /* IPv4 */
+    ifr.ifr_addr.sa_family = AF_INET;
     strcpy(netinfo->name, if_name);
 
+    /* MTU */
+    strcpy(ifr.ifr_name, if_name);
     if (ioctl(fd, SIOCGIFMTU, &ifr) < 0) {
         netinfo->mtu = 0;
     } else {
         netinfo->mtu = ifr.ifr_mtu;
     }
-    
+
+    /* HW Address */
     strcpy(ifr.ifr_name, if_name);
     if (ioctl(fd, SIOCGIFHWADDR, &ifr) < 0) {
         memset(netinfo->mac, 0, 8);
     } else {
         memcpy(netinfo->mac, ifr.ifr_ifru.ifru_hwaddr.sa_data, 8);
     }
-
+    
+    /* IP Address */
+    strcpy(ifr.ifr_name, if_name);
+    if (ioctl(fd, SIOCGIFADDR, &ifr) < 0) {
+        netinfo->ip[0] = 0;
+    } else {
+        sprintf(netinfo->ip, "%s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr)); 
+    }
+    
+    /* Mask Address */
+    strcpy(ifr.ifr_name, if_name);
+    if (ioctl(fd, SIOCGIFNETMASK, &ifr) < 0) {
+        netinfo->mask[0] = 0;
+    } else {
+        sprintf(netinfo->mask, "%s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+    }
     shutdown(fd, 0);
 }
 
@@ -162,15 +191,17 @@ scan_net_interfaces_24(void)
             gfloat recv_mb = recv_bytes / 1048576.0;
             gfloat trans_mb = trans_bytes / 1048576.0;
             
+            get_net_info(ifacename, &ni);
+
             devid = g_strdup_printf("NET%s", ifacename);
-	    network_interfaces = g_strdup_printf("%s$%s$%s=Sent %.2fMiB, received %.2fMiB\n",
+	    network_interfaces = g_strdup_printf("%s$%s$%s=Sent %.2fMiB, received %.2fMiB (%s)\n",
                                                   network_interfaces,
                                                   devid,
                                                   ifacename,
                                                   trans_mb,
-                                                  recv_mb);
+                                                  recv_mb,
+						  ni.ip[0] ? ni.ip : "No IP address");
             
-            get_net_info(ifacename, &ni);
             detailed = g_strdup_printf("[Network Adapter Properties]\n"
                                         "Interface Type=%s\n"
                                         "Hardware Address=%02x:%02x:%02x:%02x:%02x:%02x\n"
@@ -184,6 +215,14 @@ scan_net_interfaces_24(void)
                                         ni.mtu,
                                         recv_bytes, recv_mb,
                                         trans_bytes, trans_mb);
+            if (ni.ip[0]) {
+                 detailed = g_strconcat(detailed, "IP=", ni.ip, "\n", NULL);
+            }
+              
+            if (ni.mask[0]) {
+                 detailed = g_strconcat(detailed, "Mask=", ni.mask, "\n", NULL);
+            }
+              
             g_hash_table_insert(moreinfo, devid, detailed);
 	}
     }

@@ -76,15 +76,9 @@ case $PROC in
         s390)
                 ln -sf linux/s390  arch/this
                 ARCH="ARCH_S390" ;;
-	*)
-		# uname -m on m68k doesn't return anything useful :/
-		grep "680?0" /proc/cpuinfo > /dev/null
-		if [ "$?" == "0" ]; then
-			ln -sf linux/m68k arch/this
-			ARCH="ARCH_m68k"
-		fi
-
-		;;
+	m68k)
+		ln -sf linux/m68k arch/this
+		ARCH="ARCH_m68k" ;;
 esac
 
 if [ "x$ARCH" == "x" ]; then

@@ -1,1 +1,1 @@
-../../linux/common/net.h
+../../../arch/linux/common/net.h
