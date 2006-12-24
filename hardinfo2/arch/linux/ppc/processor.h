@@ -62,9 +62,9 @@ processor_get_info(GSList *processors)
 	return g_strdup_printf("[Processor]\n"
 	                       "Machine=%s\n"
 	                       "CPU=%s\n"
-	                       "L2 Cache=%.2f\n"
+	                       "L2 Cache=%dkB\n"
 	                       "Frequency=%.2fMHz\n"
-	                       "BogoMips=%.2f"
+	                       "BogoMips=%.2f\n"
 	                       "Byte Order=%s\n",
 			       processor->vendor_id,
 			       processor->model_name,
