@@ -105,18 +105,23 @@ detect_desktop_environment(OperatingSystem * os)
 	if (!g_getenv("DISPLAY")) {
 	    os->desktop = g_strdup("Terminal");
 	} else {
-            const gchar *windowman;
             GdkScreen *screen = gdk_screen_get_default();
-
-            windowman = gdk_x11_screen_get_window_manager_name(screen);
             
-            if (g_str_equal(windowman, "Xfwm4")) {
-                /* FIXME: check if xprop -root | grep XFCE_DESKTOP_WINDOW
-                   is defined */
-                os->desktop = g_strdup("XFCE 4");
+            if (screen && GDK_IS_SCREEN(screen)) {
+              const gchar *windowman;
+
+              windowman = gdk_x11_screen_get_window_manager_name(screen);
+              
+              if (g_str_equal(windowman, "Xfwm4")) {
+                  /* FIXME: check if xprop -root | grep XFCE_DESKTOP_WINDOW
+                     is defined */
+                  os->desktop = g_strdup("XFCE 4");
+              } else {
+                  os->desktop = g_strdup_printf("Unknown (Window Manager: %s)",
+                                                windowman);
+              }
             } else {
-  	        os->desktop = g_strdup_printf("Unknown (Window Manager: %s)",
-  	                                      windowman);
+              os->desktop = g_strdup("Unknown");
             }
 	}
     }

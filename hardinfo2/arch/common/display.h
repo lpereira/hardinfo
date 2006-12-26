@@ -127,7 +127,7 @@ computer_get_display(void)
     
     GdkScreen *screen = gdk_screen_get_default();
     
-    if (screen) {
+    if (screen && GDK_IS_SCREEN(screen)) {
         di->width = gdk_screen_get_width(screen);
         di->height = gdk_screen_get_height(screen);
     } else {
