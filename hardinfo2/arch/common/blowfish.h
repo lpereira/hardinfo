@@ -44,7 +44,7 @@ benchmark_fish(void)
     }     
     
     shell_view_set_enabled(FALSE);
-    shell_status_update("Benchmarking...");
+    shell_status_update("Performing Blowfish benchmark...");
     
     for (i = 0; i <= 50000; i++) { 
         g_timer_start(timer);
