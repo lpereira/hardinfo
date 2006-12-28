@@ -820,14 +820,10 @@ update_progress()
     GtkTreeStore *store = GTK_TREE_STORE(model);
     GtkTreeIter   iter, fiter;
     gchar        *tmp;
-    gdouble       maxv = 0, maxp = 0, cur, first;
+    gdouble       maxv = 0, maxp = 0, cur;
     
     gtk_tree_model_get_iter_first(model, &fiter);
 
-    gtk_tree_model_get(model, &fiter, INFO_TREE_COL_VALUE, &tmp, -1);
-    first = atof(tmp);
-    g_free(tmp);
-    
     /* finds the maximum value */
     iter = fiter;
     do {
