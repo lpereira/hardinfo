@@ -59,8 +59,9 @@ benchmark_include_results(gchar *results, const gchar *benchmark)
     g_key_file_free(conf);
     g_free(bconf_path);
     
-    return g_strconcat(results, "[$ShellParam$]\n"
-                                "Zebra=1\n", NULL);
+    return g_strconcat("[$ShellParam$]\n"
+                       "Zebra=1\n"
+                       "ViewType=3\n", results, NULL);
 }
 
 #include <arch/common/fib.h>

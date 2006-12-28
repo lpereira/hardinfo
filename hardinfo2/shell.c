@@ -212,7 +212,7 @@ shell_status_set_percentage(gint percentage)
 {
     if (params.gui_running) {
         gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(shell->progress),
-                                      (float)percentage/100.0);
+                                      (float)percentage / 100.0);
         while (gtk_events_pending())
             gtk_main_iteration();
     } else {
@@ -607,6 +607,10 @@ reload_section(gpointer data)
 static void
 set_view_type(ShellViewType viewtype)
 {
+
+    gtk_tree_view_column_set_visible(shell->info->col_progress, FALSE);
+    gtk_tree_view_column_set_visible(shell->info->col_value, TRUE);
+
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
 
     if (viewtype == shell->view_type)
@@ -636,6 +640,13 @@ set_view_type(ShellViewType viewtype)
 
 	shell->view_type = SHELL_VIEW_LOAD_GRAPH;
 	break;
+    case SHELL_VIEW_PROGRESS:
+        gtk_tree_view_column_set_visible(shell->info->col_progress, TRUE);
+        gtk_tree_view_column_set_visible(shell->info->col_value, FALSE);
+	gtk_widget_hide(shell->notebook);
+        
+        shell->view_type = SHELL_VIEW_PROGRESS;
+        break;
     }
 }
 
@@ -718,11 +729,13 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
     gchar 		*tmp   = g_strdup(group);
     gint                 i;
 
-    gtk_tree_store_append(store, &parent, NULL);
+    if (shell->view_type != SHELL_VIEW_PROGRESS) {
+        gtk_tree_store_append(store, &parent, NULL);
 
-    strend(tmp, '#');
-    gtk_tree_store_set(store, &parent, INFO_TREE_COL_NAME, tmp, -1);
-    g_free(tmp);
+        strend(tmp, '#');
+        gtk_tree_store_set(store, &parent, INFO_TREE_COL_NAME, tmp, -1);
+        g_free(tmp);
+    }
 
     for (i = 0; keys[i]; i++) {
 	gchar *key = keys[i];
@@ -736,7 +749,11 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	}
    
 	if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-		gtk_tree_store_append(store, &child, &parent);
+		if (shell->view_type == SHELL_VIEW_PROGRESS) {
+		    gtk_tree_store_append(store, &child, NULL);
+		} else {
+		    gtk_tree_store_append(store, &child, &parent);
+                }
 		gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value, -1);
 
 		strend(key, '#');
@@ -794,6 +811,36 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
 }
 
 static void
+update_progress()
+{
+    GtkTreeModel *model = shell->info->model;
+    GtkTreeStore *store = GTK_TREE_STORE(model);
+    GtkTreeIter   iter;
+    gchar        *tmp;
+    gdouble       max = 0, cur;
+    
+    gtk_tree_model_get_iter_first(model, &iter);
+    
+    while (gtk_tree_model_iter_next(model, &iter)) {
+        gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+        cur = atof(tmp);
+        if (cur > max)
+          max = cur;
+
+        g_free(tmp);
+    }
+    
+    gtk_tree_model_get_iter_first(model, &iter);
+    while (gtk_tree_model_iter_next(model, &iter)) {
+        gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+        gtk_tree_store_set(store, &iter,
+                           INFO_TREE_COL_PROGRESS, 100 * (atof(tmp) / max), -1);
+                           
+        g_free(tmp);
+    }
+}
+
+static void
 module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
     GKeyFile		*key_file = g_key_file_new();
@@ -836,8 +883,12 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	    group_handle_normal(key_file, entry, group, keys);
 	}
     }
-
+    
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
+    
+    if (shell->view_type == SHELL_VIEW_PROGRESS) {
+        update_progress();
+    }
 
     g_strfreev(groups);
     g_key_file_free(key_file);
@@ -889,7 +940,7 @@ module_selected(GtkTreeSelection * ts, gpointer data)
     GtkTreeIter			 parent;
     ShellModuleEntry		*entry;
     static ShellModuleEntry	*current = NULL;
-    static gboolean		updating = FALSE;
+    static gboolean 		 updating = FALSE;
     
     if (updating)
     	return;
@@ -972,7 +1023,7 @@ info_tree_new(gboolean extra)
     GtkTreeModel	*model;
     GtkTreeStore	*store;
     GtkTreeViewColumn	*column;
-    GtkCellRenderer	*cr_text, *cr_pbuf;
+    GtkCellRenderer	*cr_text, *cr_pbuf, *cr_progress;
     
     info = g_new0(ShellInfoTree, 1);
 
@@ -984,7 +1035,8 @@ info_tree_new(gboolean extra)
 				   GTK_POLICY_AUTOMATIC);
 
     store = gtk_tree_store_new(INFO_TREE_NCOL, G_TYPE_STRING, G_TYPE_STRING,
-	 		       G_TYPE_STRING, GDK_TYPE_PIXBUF);
+	 		       G_TYPE_STRING, GDK_TYPE_PIXBUF,
+	 		       G_TYPE_FLOAT);
     model = GTK_TREE_MODEL(store);
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
@@ -1002,7 +1054,7 @@ info_tree_new(gboolean extra)
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_NAME);
 				       
-    column = gtk_tree_view_column_new();
+    info->col_value = column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     cr_text = gtk_cell_renderer_text_new();
@@ -1010,6 +1062,15 @@ info_tree_new(gboolean extra)
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_VALUE);
 
+    info->col_progress = column = gtk_tree_view_column_new();
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+
+    cr_progress = gtk_cell_renderer_progress_new();
+    gtk_tree_view_column_pack_start(column, cr_progress, TRUE);
+    gtk_tree_view_column_add_attribute(column, cr_progress, "value",
+				       INFO_TREE_COL_PROGRESS);
+    gtk_tree_view_column_set_visible(column, FALSE);
+    
     if (!extra) {
 	GtkTreeSelection *sel;
 

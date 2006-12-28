@@ -45,7 +45,10 @@ computer_get_processors(void)
 	g_strfreev(tmp);
     }
     
-    gchar *tmp = g_strconcat("PowerPC ", processor->model_name, NULL);
+    gchar *tmp = g_strdup_printf("PowerPC %s (%.2fMHz)",
+                                 processor->model_name,
+                                 processor->cpu_mhz,
+                                 NULL);
     g_free(processor->model_name);
     processor->model_name = tmp;
 

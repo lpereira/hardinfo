@@ -39,6 +39,7 @@ typedef enum {
     SHELL_VIEW_NORMAL,
     SHELL_VIEW_DUAL,
     SHELL_VIEW_LOAD_GRAPH,
+    SHELL_VIEW_PROGRESS,
 } ShellViewType;
 
 typedef enum {
@@ -54,6 +55,7 @@ typedef enum {
     INFO_TREE_COL_VALUE,
     INFO_TREE_COL_DATA,
     INFO_TREE_COL_PBUF,
+    INFO_TREE_COL_PROGRESS,
     INFO_TREE_NCOL
 } ShellInfoTreeColumns;
 
@@ -88,6 +90,8 @@ struct _ShellInfoTree {
     GtkWidget		*scroll;
     GtkWidget		*view;
     GtkTreeModel	*model;
+    
+    GtkTreeViewColumn	*col_progress, *col_value;
 };
 
 struct _ShellModule {

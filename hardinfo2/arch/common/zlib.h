@@ -82,7 +82,7 @@ benchmark_zlib(void)
     g_free(bdata_path);
 
     gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
-                           "<b>This Machine</b>=<b>%.2f</b>\n", elapsed);
+                           "<b>This Machine</b>=%.2f\n", elapsed);
     return benchmark_include_results(retval, "ZLib");
 }
 
