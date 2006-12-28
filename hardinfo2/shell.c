@@ -557,7 +557,7 @@ update_field(gpointer data)
         if (iter) {
             GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
             
-            gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
+            gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, g_strchug(value), -1);
             g_free(value);
             
             return TRUE;
@@ -754,7 +754,7 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 		} else {
 		    gtk_tree_store_append(store, &child, &parent);
                 }
-		gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value, -1);
+		gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, g_strchug(value), -1);
 
 		strend(key, '#');
 
@@ -802,7 +802,7 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
 	        strend(key, '#');
         
 	        gtk_tree_store_append(store, &child, &parent);	        
-	        gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value,
+	        gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, g_strchug(value),
 	                           INFO_TREE_COL_NAME, key, -1);		
 	}
        
@@ -858,7 +858,8 @@ update_progress()
         
         cur = 100 - 100 * atof(tmp) / maxv + 100 - maxp;
         
-        gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur, -1);
+        gtk_tree_store_set(store, &iter,
+                           INFO_TREE_COL_PROGRESS, cur, -1);
         g_free(tmp);
     } while (gtk_tree_model_iter_next(model, &iter));
     
@@ -1094,6 +1095,8 @@ info_tree_new(gboolean extra)
     gtk_tree_view_column_pack_start(column, cr_progress, TRUE);
     gtk_tree_view_column_add_attribute(column, cr_progress, "value",
 				       INFO_TREE_COL_PROGRESS);
+    gtk_tree_view_column_add_attribute(column, cr_progress, "text",
+				       INFO_TREE_COL_VALUE);
     gtk_tree_view_column_set_visible(column, FALSE);
     
     if (!extra) {
