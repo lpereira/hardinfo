@@ -722,14 +722,14 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 
 static void
 group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
-		    gchar * group, gchar ** keys)
+		    gchar * group, gchar ** keys, gsize ngroups)
 {
     GtkTreeIter		 parent;
     GtkTreeStore	*store = GTK_TREE_STORE(shell->info->model);
     gchar 		*tmp   = g_strdup(group);
     gint                 i;
 
-    if (shell->view_type != SHELL_VIEW_PROGRESS) {
+    if (ngroups > 1) {
         gtk_tree_store_append(store, &parent, NULL);
 
         strend(tmp, '#');
@@ -749,7 +749,7 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	}
    
 	if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-		if (shell->view_type == SHELL_VIEW_PROGRESS) {
+		if (ngroups == 1) {
 		    gtk_tree_store_append(store, &child, NULL);
 		} else {
 		    gtk_tree_store_append(store, &child, &parent);
@@ -847,7 +847,6 @@ update_progress()
         cur = 100 - 100 * atof(tmp) / maxv;
         maxp = MAX(cur, maxp);
         
-        gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur, -1);
         g_free(tmp);
     } while (gtk_tree_model_iter_next(model, &iter));
 
@@ -874,6 +873,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gchar		**groups;
     GtkTreeStore	*store;
     gint                i;
+    gsize               ngroups;
 
     if (entry->func) {
         key_data = entry->func(entry->number);
@@ -897,7 +897,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gtk_tree_store_clear(store);
 
     g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0, NULL);
-    groups = g_key_file_get_groups(key_file, NULL);
+    groups = g_key_file_get_groups(key_file, &ngroups);
 
     for (i = 0; groups[i]; i++) {
 	gchar *group = groups[i];
@@ -906,7 +906,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	if (*group == '$') {
 	    group_handle_special(key_file, entry, group, keys);
 	} else {
-	    group_handle_normal(key_file, entry, group, keys);
+	    group_handle_normal(key_file, entry, group, keys, ngroups - 1);
 	}
     }
     
