@@ -47,8 +47,7 @@ computer_get_processors(void)
     
     gchar *tmp = g_strdup_printf("PowerPC %s (%.2fMHz)",
                                  processor->model_name,
-                                 processor->cpu_mhz,
-                                 NULL);
+                                 processor->cpu_mhz);
     g_free(processor->model_name);
     processor->model_name = tmp;
 

@@ -810,34 +810,59 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
     }
 }
 
+/* FIXME: This code must be rewritten. Although it works, it is *very* slow and
+          too complex for  this simple  task.  I am lazy, so I'm not fixing it.
+          Be my guest to fix it. */
 static void
 update_progress()
 {
     GtkTreeModel *model = shell->info->model;
     GtkTreeStore *store = GTK_TREE_STORE(model);
-    GtkTreeIter   iter;
+    GtkTreeIter   iter, fiter;
     gchar        *tmp;
-    gdouble       max = 0, cur;
+    gdouble       maxv = 0, maxp = 0, cur, first;
     
-    gtk_tree_model_get_iter_first(model, &iter);
+    gtk_tree_model_get_iter_first(model, &fiter);
+
+    gtk_tree_model_get(model, &fiter, INFO_TREE_COL_VALUE, &tmp, -1);
+    first = atof(tmp);
+    g_free(tmp);
     
-    while (gtk_tree_model_iter_next(model, &iter)) {
+    /* finds the maximum value */
+    iter = fiter;
+    do {
         gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+        
         cur = atof(tmp);
-        if (cur > max)
-          max = cur;
+        maxv = MAX(maxv, cur);
 
         g_free(tmp);
-    }
+    } while (gtk_tree_model_iter_next(model, &iter));
     
-    gtk_tree_model_get_iter_first(model, &iter);
-    while (gtk_tree_model_iter_next(model, &iter)) {
+    /* calculates the relative percentage and finds the maximum percentage */
+    iter = fiter;
+    do {
         gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
-        gtk_tree_store_set(store, &iter,
-                           INFO_TREE_COL_PROGRESS, 100 * (atof(tmp) / max), -1);
-                           
+        
+        cur = 100 - 100 * atof(tmp) / maxv;
+        maxp = MAX(cur, maxp);
+        
+        gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur, -1);
         g_free(tmp);
-    }
+    } while (gtk_tree_model_iter_next(model, &iter));
+
+    /* fix the maximum relative percentage */
+    iter = fiter;
+    do {
+        gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+        
+        cur = 100 - 100 * atof(tmp) / maxv + 100 - maxp;
+        
+        gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur, -1);
+        g_free(tmp);
+    } while (gtk_tree_model_iter_next(model, &iter));
+    
+    /* FIXME: sort by the best result */
 }
 
 static void
@@ -1050,7 +1075,7 @@ info_tree_new(gboolean extra)
 				       INFO_TREE_COL_PBUF);
 
     cr_text = gtk_cell_renderer_text_new();
-    gtk_tree_view_column_pack_start(column, cr_text, TRUE);
+    gtk_tree_view_column_pack_start(column, cr_text, FALSE);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_NAME);
 				       
@@ -1058,7 +1083,7 @@ info_tree_new(gboolean extra)
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     cr_text = gtk_cell_renderer_text_new();
-    gtk_tree_view_column_pack_start(column, cr_text, TRUE);
+    gtk_tree_view_column_pack_start(column, cr_text, FALSE);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_VALUE);
 
