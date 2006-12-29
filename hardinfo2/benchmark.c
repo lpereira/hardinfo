@@ -36,7 +36,7 @@ static ModuleEntry hi_entries[] = {
     {"CPU MD5",		"module.png"},
     {"CPU SHA1",	"module.png"},
     {"CPU Blowfish",	"blowfish.png"},
-    {"FPU Raytracing",	"module.png"}
+    {"FPU Raytracing",	"raytrace.png"}
 };
 
 static gchar *
