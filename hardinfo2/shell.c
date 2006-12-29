@@ -511,6 +511,7 @@ void shell_init(GSList * modules)
 
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
+    shell_action_set_enabled("SaveGraphAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
 }
@@ -632,6 +633,9 @@ static void set_view_type(ShellViewType viewtype)
     /* turn off the rules hint */
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
 
+    /* turn off the save graphic action */
+    shell_action_set_enabled("SaveGraphAction", FALSE);
+
     if (viewtype == shell->view_type)
 	return;
 	
@@ -659,6 +663,7 @@ static void set_view_type(ShellViewType viewtype)
 			       shell->loadgraph->height - 16);
 	break;
     case SHELL_VIEW_PROGRESS:
+        shell_action_set_enabled("SaveGraphAction", TRUE);
 	gtk_tree_view_column_set_visible(shell->info->col_progress, TRUE);
 	gtk_tree_view_column_set_visible(shell->info->col_value, FALSE);
 	gtk_widget_hide(shell->notebook);
@@ -903,14 +908,14 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gint i;
     gsize ngroups;
 
+    /* reset the view type to normal */
+    set_view_type(SHELL_VIEW_NORMAL);
+
     if (entry->func) {
 	key_data = entry->func(entry->number);
     } else {
 	key_data = g_strdup("[Error]\n" "Invalid module=");
     }
-
-    /* reset the view type to normal */
-    set_view_type(SHELL_VIEW_NORMAL);
 
     /* recreate the iter hash table only if we're not reloading the module section */
     if (!reload) {

@@ -42,13 +42,13 @@ main(int argc, char **argv)
         g_print("Copyright (C) 2003-2006 Leandro A. F. Pereira. See COPYING for details.\n\n");
     
         g_print("Compile-time options:\n"
-                "  Release version:   %s\n"
+                "  Release version:   %s (%s)\n"
                 "  BinReloc enabled:  %s\n"
                 "  Data prefix:       %s\n"
                 "  Library prefix:    %s\n"
                 "  Compiled on:       %s %s (%s)\n"
                 "  Debugging enabled: %s\n\n",
-                RELEASE ? "Yes" : "No (" VERSION ")",
+                RELEASE ? "Yes" : "No (" VERSION ")", ARCH,
                 ENABLE_BINRELOC ? "Yes" : "No",
                 PREFIX,
                 LIBPREFIX,

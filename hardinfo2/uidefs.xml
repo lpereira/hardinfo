@@ -2,6 +2,8 @@
   <menubar>
     <menu name="InformationMenu" action="InformationMenuAction">
       <menuitem name="Copy" action="CopyAction" />
+      <menuitem name="SaveGraph" action="SaveGraphAction" />
+      <separator/>
       <menuitem name="Report" action="ReportAction" />
       <separator/>
       <menuitem name="Quit" action="QuitAction" />

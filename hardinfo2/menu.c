@@ -45,6 +45,11 @@ static GtkActionEntry entries[] =
     NULL,
     G_CALLBACK(cb_copy_to_clipboard) },
 
+  { "SaveGraphAction", GTK_STOCK_SAVE,
+    "_Save Graphic", "<control>S",
+    NULL,
+    G_CALLBACK(cb_save_graphic) },
+
   { "RefreshAction", GTK_STOCK_REFRESH,
     "_Refresh", "F5",
     NULL,

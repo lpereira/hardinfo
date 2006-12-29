@@ -154,6 +154,7 @@ echo "#define VERSION \"$VERSION\"" >> config.h
 
 echo "#define LSPCI \"$LSPCI -v\"" >> config.h
 echo "#define $ARCH" >> config.h
+echo "#define ARCH     \"$ARCH\"" >> config.h
 
 echo "#define PLATFORM \"`uname`\"" >> config.h
 echo "#define KERNEL   \"`uname -r`\"" >> config.h
