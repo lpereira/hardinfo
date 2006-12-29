@@ -93,9 +93,10 @@ void cb_about()
         "SCSI support by Pascal F. Martin",
         "",
         "Based on work by:",
-        "MD5 implementation by Colin Plumb",
-        "SHA1 implementation by Steve Raid",
-        "Blowfish implementation by Paul Kocher",
+        "MD5 implementation by Colin Plumb (see md5.c for details)",
+        "SHA1 implementation by Steve Raid (see sha1.c for details)",
+        "Blowfish implementation by Paul Kocher (see blowfich.c for details)",
+        "Raytracing benchmark by John Walker (see fbench.c for details)",
         "Some code partly based on x86cpucaps by Osamu Kayasono",
         "Vendor list based on GtkSysInfo by Pissens Sebastien",
         NULL

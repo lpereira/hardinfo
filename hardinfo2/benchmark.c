@@ -26,7 +26,8 @@ enum {
     BENCHMARK_FIB,
     BENCHMARK_MD5,
     BENCHMARK_SHA1,
-    BENCHMARK_BLOWFISH
+    BENCHMARK_BLOWFISH,
+    BENCHMARK_RAYTRACE
 } Entries;
 
 static ModuleEntry hi_entries[] = {
@@ -34,7 +35,8 @@ static ModuleEntry hi_entries[] = {
     {"CPU Fibonacci",	"module.png"},
     {"CPU MD5",		"module.png"},
     {"CPU SHA1",	"module.png"},
-    {"CPU Blowfish",	"blowfish.png"}
+    {"CPU Blowfish",	"blowfish.png"},
+    {"FPU Raytracing",	"module.png"}
 };
 
 static gchar *
@@ -69,12 +71,14 @@ benchmark_include_results(gchar *results, const gchar *benchmark)
 #include <arch/common/md5.h>
 #include <arch/common/sha1.h>
 #include <arch/common/blowfish.h>
+#include <arch/common/raytrace.h>
 
 static gchar *bench_zlib = NULL,
              *bench_fib  = NULL,
              *bench_md5  = NULL,
              *bench_sha1 = NULL,
-             *bench_fish = NULL;
+             *bench_fish = NULL,
+             *bench_ray  = NULL;
 
 gchar *
 hi_info(gint entry)
@@ -86,6 +90,13 @@ hi_info(gint entry)
             
             bench_zlib = benchmark_zlib();
             return g_strdup(bench_zlib);
+
+        case BENCHMARK_RAYTRACE:
+            if (bench_ray)
+                return g_strdup(bench_ray);
+            
+            bench_ray = benchmark_raytrace();
+            return g_strdup(bench_ray);
 
         case BENCHMARK_BLOWFISH:
             if (bench_fish)
@@ -127,6 +138,10 @@ hi_reload(gint entry)
         case BENCHMARK_ZLIB:
             if (bench_zlib) g_free(bench_zlib);
             bench_zlib = benchmark_zlib();
+            break;
+        case BENCHMARK_RAYTRACE:
+            if (bench_ray) g_free(bench_ray);
+            bench_ray = benchmark_raytrace();
             break;
         case BENCHMARK_BLOWFISH:
             if (bench_fish) g_free(bench_fish);
