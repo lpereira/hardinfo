@@ -40,6 +40,7 @@ typedef enum {
     SHELL_VIEW_DUAL,
     SHELL_VIEW_LOAD_GRAPH,
     SHELL_VIEW_PROGRESS,
+    SHELL_VIEW_N_VIEWS
 } ShellViewType;
 
 typedef enum {
