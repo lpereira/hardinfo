@@ -427,6 +427,8 @@ static ShellModule *module_load(gchar *filename) {
                             (gpointer) & (entry->morefunc));
             g_module_symbol(module->dll, "hi_get_field",
                             (gpointer) & (entry->fieldfunc));
+            g_module_symbol(module->dll, "hi_note_func",
+                            (gpointer) & (entry->notefunc));
 
             entry->number = i;
             

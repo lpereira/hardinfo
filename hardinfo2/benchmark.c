@@ -145,6 +145,24 @@ hi_info(gint entry)
     }
 }
 
+const gchar *
+hi_note_func(gint entry)
+{
+    switch (entry) {
+        case BENCHMARK_ZLIB:
+        case BENCHMARK_MD5:
+        case BENCHMARK_SHA1:
+            return "Results in bytes/second. Higher is better.";
+            
+        case BENCHMARK_RAYTRACE:
+        case BENCHMARK_BLOWFISH:
+        case BENCHMARK_FIB:
+            return "Results in seconds. Lower is better.";
+    }
+    
+    return "";
+}
+
 void
 hi_reload(gint entry)
 {

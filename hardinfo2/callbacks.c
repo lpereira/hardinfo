@@ -28,10 +28,31 @@
 
 #include <config.h>
 
+static gint get_tree_view_visible_height(GtkTreeView *tv)
+{
+    GtkTreePath  *path;
+    GdkRectangle  rect;
+    GtkTreeIter   iter;
+    GtkTreeModel *model = gtk_tree_view_get_model(tv);
+    gint          nrows = 1;
+
+    path = gtk_tree_path_new_first();
+    gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv),
+                                path, NULL, &rect);
+
+    gtk_tree_model_get_iter_first(model, &iter);
+    do {
+        nrows++;
+    } while (gtk_tree_model_iter_next(model, &iter));
+    
+    gtk_tree_path_free(path);
+    
+    return nrows * rect.height;
+}
+
 void cb_save_graphic()
 {
-    /* this is ridiculously complicated :/ why in the hell gtk+ makes this kind of thing so difficult? 
-       FIXME: it still don't save the image with the right size; we should do this sometime soon (tm) */
+    /* this is ridiculously complicated :/ why in the hell gtk+ makes this kind of thing so difficult?  */
     Shell		*shell = shell_get_main_shell();
     GtkWidget		*widget = shell->info->view;
     GtkWidget		*dialog;
@@ -46,29 +67,49 @@ void cb_save_graphic()
     GdkColor	 	 black = { 0, 0, 0, 0 };
     GdkColor		 white = { 0, 65535, 65535, 65535 };
 
-    gint		 w, h;
-    gchar		*filename = NULL;
+    gint		 w, h, visible_height;
+    gchar		*filename = NULL, *tmp;
     
     /* */
     shell_status_update("Creating image...");
+    
+    /* unselect things in the information treeview */
+    gtk_range_set_value(GTK_RANGE
+                        (GTK_SCROLLED_WINDOW(shell->info->scroll)->
+                         vscrollbar), 0.0);
+    gtk_tree_selection_unselect_all(
+          gtk_tree_view_get_selection(GTK_TREE_VIEW(widget)));
+    while (gtk_events_pending())
+        gtk_main_iteration();
 
     /* initialize stuff */
     gc = gdk_gc_new(widget->window);
+    gdk_gc_set_background(gc, &black);
+    gdk_gc_set_foreground(gc, &white);
+    
     context = gtk_widget_get_pango_context (widget);
     layout = pango_layout_new(context);
-
+    
+    visible_height = get_tree_view_visible_height(GTK_TREE_VIEW(widget));
+                                   
     /* draw the title */    
-    pango_layout_set_markup(layout, shell->selected->name, -1);
+    tmp = g_strdup_printf("<b><big>%s</big></b>\n<small>%s</small>",
+                          shell->selected->name,
+                          shell->selected->notefunc(shell->selected->number));
+    pango_layout_set_markup(layout, tmp, -1);
     pango_layout_set_width(layout, widget->allocation.width * PANGO_SCALE);
     pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
+    g_free(tmp);
     
     pango_layout_get_pixel_extents(layout, NULL, &rect);
     
     w = widget->allocation.width;
-    h = widget->allocation.height + rect.height;
+    h = visible_height + rect.height;
     
-    pm = gdk_pixmap_new(widget->window, w, h, -1);
-    gdk_draw_layout_with_colors (GDK_DRAWABLE(pm), gc, 0, 0, layout, &white, &black);
+    pm = gdk_pixmap_new(widget->window, w, rect.height, -1);
+    gdk_draw_rectangle(GDK_DRAWABLE(pm), gc, TRUE, 0, 0, w, rect.height);
+    gdk_draw_layout_with_colors (GDK_DRAWABLE(pm), gc, 0, 0, layout,
+                                 &white, &black);
     
     /* copy the pixmap from the treeview and from the title */
     pb = gdk_pixbuf_get_from_drawable(NULL,
@@ -81,7 +122,7 @@ void cb_save_graphic()
                                       pm,
                                       NULL,
                                       0, 0,
-                                      0, widget->allocation.height,
+                                      0, visible_height,
                                       widget->allocation.width, rect.height);
 
     /* save the pixbuf to a png file */

@@ -121,6 +121,7 @@ struct _ShellModuleEntry {
     gchar		*(*reloadfunc) (gint entry);
     gchar		*(*fieldfunc) (gchar * entry);
     gchar 		*(*morefunc) (gchar * entry);
+    gchar		*(*notefunc) (gint entry);
 };
 
 struct _ShellFieldUpdate {
