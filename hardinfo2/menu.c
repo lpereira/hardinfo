@@ -45,8 +45,8 @@ static GtkActionEntry entries[] =
     NULL,
     G_CALLBACK(cb_copy_to_clipboard) },
 
-  { "SaveGraphAction", GTK_STOCK_SAVE,
-    "_Save Graphic", "<control>S",
+  { "SaveGraphAction", GTK_STOCK_SAVE_AS,
+    "_Save image as...", "<control>S",
     NULL,
     G_CALLBACK(cb_save_graphic) },
 

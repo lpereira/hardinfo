@@ -81,8 +81,8 @@ benchmark_zlib(void)
     g_timer_destroy(timer);
     g_free(bdata_path);
 
-    gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
-                           "<i>This Machine</i>=%.2f\n", elapsed);
-    return benchmark_include_results(retval, "ZLib");
+    gchar *retval = g_strdup_printf("[Results]\n"
+                                    "<i>This Machine</i>=%.3f KiB/s\n",
+                                    65536.0 / elapsed);
+    return benchmark_include_results_reverse(retval, "ZLib");
 }
-

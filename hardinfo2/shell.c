@@ -611,7 +611,8 @@ info_tree_compare_val_func(GtkTreeModel * model,
 
 	ret = (col1 == NULL) ? -1 : 1;
     } else {
-	ret = atof(col1) < atof(col2);
+	ret = shell->_order_type ? (atof(col1) < atof(col2)) :
+	                           (atof(col1) > atof(col2));
     }
 
     g_free(col1);
@@ -715,6 +716,10 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		ms = g_key_file_get_integer(key_file, group, key, NULL);
 
 		g_timeout_add(ms, reload_section, entry);
+	    } else if (g_str_equal(key, "OrderType")) {
+		shell->_order_type = g_key_file_get_integer(key_file,
+		                                            group,
+                                                            key, NULL);
 	    } else if (g_str_equal(key, "ViewType")) {
 		set_view_type(g_key_file_get_integer(key_file, group,
 						     key, NULL));
@@ -852,7 +857,7 @@ static void update_progress()
     gdouble maxv = 0, maxp = 0, cur;
 
     gtk_tree_model_get_iter_first(model, &fiter);
-
+    
     /* finds the maximum value */
     iter = fiter;
     do {
@@ -865,22 +870,28 @@ static void update_progress()
     } while (gtk_tree_model_iter_next(model, &iter));
 
     /* calculates the relative percentage and finds the maximum percentage */
-    iter = fiter;
-    do {
-	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+    if (shell->_order_type == SHELL_ORDER_ASCENDING) {
+        iter = fiter;
+        do {
+            gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 
-	cur = 100 - 100 * atof(tmp) / maxv;
-	maxp = MAX(cur, maxp);
+            cur = 100 - 100 * atof(tmp) / maxv;
+            maxp = MAX(cur, maxp);
 
-	g_free(tmp);
-    } while (gtk_tree_model_iter_next(model, &iter));
+            g_free(tmp);
+        } while (gtk_tree_model_iter_next(model, &iter));
 
+        maxp = 100 - maxp;
+    }
+    
     /* fix the maximum relative percentage */
     iter = fiter;
     do {
 	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 
-	cur = 100 - 100 * atof(tmp) / maxv + 100 - maxp;
+        cur = 100 * atof(tmp) / maxv;
+        if (shell->_order_type == SHELL_ORDER_ASCENDING)
+            cur = 100 - cur + maxp;
 
 	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur, -1);
 	g_free(tmp);
@@ -908,14 +919,14 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gint i;
     gsize ngroups;
 
-    /* reset the view type to normal */
-    set_view_type(SHELL_VIEW_NORMAL);
-
     if (entry->func) {
 	key_data = entry->func(entry->number);
     } else {
 	key_data = g_strdup("[Error]\n" "Invalid module=");
     }
+
+    /* reset the view type to normal */
+    set_view_type(SHELL_VIEW_NORMAL);
 
     /* recreate the iter hash table only if we're not reloading the module section */
     if (!reload) {

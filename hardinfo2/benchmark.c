@@ -40,7 +40,8 @@ static ModuleEntry hi_entries[] = {
 };
 
 static gchar *
-benchmark_include_results(gchar *results, const gchar *benchmark)
+__benchmark_include_results(gchar *results, const gchar *benchmark,
+                            ShellOrderType order_type)
 {
     GKeyFile *conf;
     gchar **machines, *bconf_path;
@@ -61,9 +62,22 @@ benchmark_include_results(gchar *results, const gchar *benchmark)
     g_key_file_free(conf);
     g_free(bconf_path);
     
-    return g_strconcat("[$ShellParam$]\n"
-                       "Zebra=1\n"
-                       "ViewType=3\n", results, NULL);
+    return g_strdup_printf("[$ShellParam$]\n"
+                           "Zebra=1\n"
+                           "OrderType=%d\n"
+                           "ViewType=3\n%s", order_type, results);
+}
+
+static gchar *
+benchmark_include_results_reverse(gchar *results, const gchar *benchmark)
+{
+    return __benchmark_include_results(results, benchmark, SHELL_ORDER_DESCENDING);
+}
+
+static gchar *
+benchmark_include_results(gchar *results, const gchar *benchmark)
+{
+    return __benchmark_include_results(results, benchmark, SHELL_ORDER_ASCENDING);
 }
 
 #include <arch/common/fib.h>

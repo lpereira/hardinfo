@@ -31,6 +31,11 @@ typedef struct _ShellModuleEntry	ShellModuleEntry;
 typedef struct _ShellFieldUpdate	ShellFieldUpdate;
 
 typedef enum {
+    SHELL_ORDER_DESCENDING,
+    SHELL_ORDER_ASCENDING,
+} ShellOrderType;
+
+typedef enum {
     SHELL_PACK_RESIZE = 1 << 0,
     SHELL_PACK_SHRINK = 1 << 1
 } ShellPackOptions;
@@ -77,6 +82,7 @@ struct _Shell {
     ShellViewType	 view_type;
     
     gint		_pulses;
+    ShellOrderType	_order_type;
 };
 
 struct _ShellTree {
