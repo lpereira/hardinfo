@@ -548,7 +548,7 @@ static gboolean update_field(gpointer data)
 	    GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
 
 	    gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE,
-			       g_strchug(value), -1);
+			       value, -1);
 	    g_free(value);
 
 	    return TRUE;
@@ -787,8 +787,7 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	    } else {
 		gtk_tree_store_append(store, &child, &parent);
 	    }
-	    gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE,
-			       g_strchug(value), -1);
+	    gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value, -1);
 
 	    strend(key, '#');
 
@@ -838,8 +837,7 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
 
 	    gtk_tree_store_append(store, &child, &parent);
 	    gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE,
-			       g_strchug(value), INFO_TREE_COL_NAME, key,
-			       -1);
+			       value, INFO_TREE_COL_NAME, key, -1);
 	}
 
 	g_free(value);
@@ -945,6 +943,9 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0,
 			      NULL);
     groups = g_key_file_get_groups(key_file, &ngroups);
+    
+    for (i = 0; groups[i]; i++)
+        if (groups[i][0] == '$') ngroups--;
 
     for (i = 0; groups[i]; i++) {
 	gchar *group = groups[i];
@@ -953,7 +954,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	if (*group == '$') {
 	    group_handle_special(key_file, entry, group, keys);
 	} else {
-	    group_handle_normal(key_file, entry, group, keys, ngroups - 1);
+	    group_handle_normal(key_file, entry, group, keys, ngroups);
 	}
     }
 
