@@ -44,7 +44,7 @@ benchmark_fib(void)
     elapsed = g_timer_elapsed(timer, NULL);
     g_timer_destroy(timer);
 
-    gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
-                           "<i>This Machine</i>=%.3f\n", elapsed);
+    gchar *retval = g_strdup_printf("[Results]\n"
+                           "<i>This Machine</i>=%.3f s\n", elapsed);
     return benchmark_include_results(retval, "Fibonacci");
 }

@@ -375,12 +375,13 @@ static void add_module_to_view_menu(gchar * name, GdkPixbuf * pixbuf)
     stock_icon_register_pixbuf(pixbuf, name);
 
     GtkActionEntry entries[] = {
-	{name,			/* name */
-	 name,			/* stockid */
-	 name,			/* label */
-	 NULL,			/* accelerator */
-	 NULL,			/* tooltip */
-	 NULL,			/* callback */
+	{
+           name,			/* name */
+	   name,			/* stockid */
+	   name,			/* label */
+	   NULL,			/* accelerator */
+	   NULL,			/* tooltip */
+  	   NULL,			/* callback */
 	 },
     };
 
@@ -399,12 +400,13 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
     stock_icon_register_pixbuf(pixbuf, name);
 
     GtkActionEntry entries[] = {
-	{name,			/* name */
-	 name,			/* stockid */
-	 name,			/* label */
-	 NULL,			/* accelerator */
-	 NULL,			/* tooltip */
-	 (GCallback) view_menu_select_entry,	/* callback */
+	{
+	   name,			/* name */
+	   name,			/* stockid */
+	   name,			/* label */
+	   NULL,			/* accelerator */
+	   NULL,			/* tooltip */
+	   (GCallback) view_menu_select_entry,	/* callback */
 	 },
     };
 
@@ -502,9 +504,6 @@ void shell_init(GSList * modules)
     g_slist_foreach(shell->tree->modules, add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
 
-    shell_status_update("Done.");
-    shell_status_set_enabled(FALSE);
-
     gtk_widget_show_all(shell->hpaned);
 
     load_graph_configure_expose(shell->loadgraph);
@@ -515,6 +514,9 @@ void shell_init(GSList * modules)
     shell_action_set_enabled("SaveGraphAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
+
+    shell_status_update("Done.");
+    shell_status_set_enabled(FALSE);
 }
 
 static gboolean update_field(gpointer data)
