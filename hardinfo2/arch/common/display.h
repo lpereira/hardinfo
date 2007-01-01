@@ -37,6 +37,8 @@ get_glx_info(DisplayInfo *di)
 		get_str("OpenGL version str", di->ogl_version);
 
 		g_strfreev(tmp);
+	    } else if (strstr(output_lines[i], "direct rendering: Yes")) {
+	        di->dri = TRUE;
 	    }
 	}
 

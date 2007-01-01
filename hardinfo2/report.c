@@ -21,6 +21,7 @@
 #include <string.h>
 #include <shell.h>
 #include <hardinfo.h>
+#include <config.h>
 
 static ReportDialog	*report_dialog_new(GtkTreeModel *model, GtkWidget *parent);
 static void		 set_all_active(ReportDialog *rd, gboolean setting);
@@ -68,6 +69,21 @@ report_key_value(ReportContext *ctx, gchar *key, gchar *value)
 }
 
 void
+report_context_configure(ReportContext *ctx, GKeyFile *keyfile)
+{
+    /* FIXME: sometime in the future we'll save images in the report. this
+              flag will be set if we should support that.
+              
+              so i don't forget how to encode the images inside the html files:
+              http://en.wikipedia.org/wiki/Data:_URI_scheme */
+              
+    ctx->is_image_enabled = (g_key_file_get_boolean(keyfile,
+                                                    "$ShellParam$",
+                                                    "ViewType",
+                                                    NULL) == SHELL_VIEW_PROGRESS);
+}
+
+void
 report_table(ReportContext *ctx, gchar *text)
 {
     GKeyFile	 *key_file = g_key_file_new();
@@ -82,46 +98,56 @@ report_table(ReportContext *ctx, gchar *text)
 	gchar **keys;
 	gint    j;
 	
-	if (groups[i][0] == '$')
+	if (groups[i][0] == '$') {
+	    report_context_configure(ctx, key_file);
 	    continue;
+        }
 	
         group = groups[i];
-        keys = g_key_file_get_keys(key_file, group, NULL, NULL);
 
         tmpgroup = g_strdup(group);
         strend(group, '#');
 
         report_subsubtitle(ctx, group);
 	
-	for (j = 0; keys[j]; j++) {
-            gchar *key = keys[j];
-            gchar *value;
+#if 0
+        if (ctx->is_image_enabled) {
+            report_embed_image(ctx, key_file, group);
+        } else {
+#endif        	
+            keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
+            for (j = 0; keys[j]; j++) {
+                gchar *key = keys[j];
+                gchar *value;
 
-            value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
-       
-            if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-                    strend(key, '#');
+                value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+           
+                if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
+                        strend(key, '#');
 
-                    if (g_str_equal(value, "...")) {
-                        g_free(value);
-                        if (!(value = ctx->entry->fieldfunc(key))) {
-                            value = g_strdup("...");
+                        if (g_str_equal(value, "...")) {
+                            g_free(value);
+                            if (!(value = ctx->entry->fieldfunc(key))) {
+                                value = g_strdup("...");
+                            }
                         }
-                    }
 
-                    if (*key == '$') {
-                        report_key_value(ctx, strchr(key + 1, '$') + 1, value);
-                    } else {
-                        report_key_value(ctx, key, value);
-                    }
-                                        
+                        if (*key == '$') {
+                            report_key_value(ctx, strchr(key + 1, '$') + 1, value);
+                        } else {
+                            report_key_value(ctx, key, value);
+                        }
+                                            
+                }
+
+                g_free(value);
             }
 
-            g_free(value);
-	}
-	
+            g_strfreev(keys);
+#if 0
+        }
+#endif	
 	g_free(tmpgroup);
-	g_strfreev(keys);
     }
 
     g_strfreev(groups);
@@ -134,19 +160,19 @@ report_html_header(ReportContext *ctx)
     if (ctx->output)
         g_free(ctx->output);
     
-    ctx->output = g_strdup("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Final//EN\">\n" \
-                           "<html><head>\n" \
-              	           "<title>HardInfo System Report</title>\n" \
-                           "<style>\n" \
-        	           "body    { background: #fff }\n" \
-        	           ".title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n" \
-        	           ".stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n" \
-        	           ".sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n" \
-        	           ".field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n" \
-        	           ".value  { font: 80%% sans-serif; color: #505050 }\n" \
-        	           "</style>\n" \
-        	           "</head><body>\n" \
-                           "<table width=\"100%%\"><tbody>");
+    ctx->output = g_strdup_printf("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Final//EN\">\n" \
+                                  "<html><head>\n" \
+              	                  "<title>HardInfo (%s) System Report</title>\n" \
+                                  "<style>\n" \
+        	                  "    body    { background: #fff }\n" \
+        	                  "    .title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n" \
+        	                  "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n" \
+        	                  "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n" \
+        	                  "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n" \
+        	                  "    .value  { font: 80%% sans-serif; color: #505050 }\n" \
+        	                  "</style>\n" \
+        	                  "</head><body>\n" \
+                                  "<table width=\"100%%\"><tbody>", VERSION);
 }
 
 static void

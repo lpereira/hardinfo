@@ -42,6 +42,8 @@ struct _ReportContext {
   void (*keyvalue)    (ReportContext *ctx, gchar *key, gchar *value);
   
   ReportFormat		format;
+  
+  gboolean		is_image_enabled;
 };
 
 struct _ReportDialog {

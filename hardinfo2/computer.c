@@ -270,7 +270,8 @@ hi_info(gint entry)
                                "[OpenGL]\n"
                                "Vendor=%s\n"
                                "Renderer=%s\n"
-                               "Version=%s\n",
+                               "Version=%s\n"
+                               "Direct Rendering=%s\n",
                                computer->display->width,
                                computer->display->height,
                                computer->display->vendor,
@@ -279,7 +280,8 @@ hi_info(gint entry)
                                computer->display->extensions,
                                computer->display->ogl_vendor,
                                computer->display->ogl_renderer,
-                               computer->display->ogl_version);
+                               computer->display->ogl_version,
+                               computer->display->dri ? "Yes" : "No");
     case COMPUTER_OPERATING_SYSTEM:
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "UpdateInterval$Uptime=10000\n"

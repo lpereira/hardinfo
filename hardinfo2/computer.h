@@ -82,6 +82,8 @@ struct _AlsaInfo {
 
 struct _DisplayInfo {
     gchar *ogl_vendor, *ogl_renderer, *ogl_version;
+    gboolean dri;
+    
     gchar *display_name, *vendor, *version;
     gchar *extensions;
     gchar *monitors;

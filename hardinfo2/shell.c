@@ -509,14 +509,14 @@ void shell_init(GSList * modules)
     load_graph_configure_expose(shell->loadgraph);
     gtk_widget_hide(shell->notebook);
 
+    shell_status_update("Done.");
+    shell_status_set_enabled(FALSE);
+
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("SaveGraphAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
-
-    shell_status_update("Done.");
-    shell_status_set_enabled(FALSE);
 }
 
 static gboolean update_field(gpointer data)

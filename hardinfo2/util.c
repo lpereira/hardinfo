@@ -513,3 +513,121 @@ GSList *modules_load_all(void)
 {
     return modules_load(NULL);
 }
+
+gint tree_view_get_visible_height(GtkTreeView *tv)
+{
+    GtkTreePath  *path;
+    GdkRectangle  rect;
+    GtkTreeIter   iter;
+    GtkTreeModel *model = gtk_tree_view_get_model(tv);
+    gint          nrows = 1;
+
+    path = gtk_tree_path_new_first();
+    gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv),
+                                path, NULL, &rect);
+
+    /* FIXME: isn't there any easier way to tell the number of rows? */
+    gtk_tree_model_get_iter_first(model, &iter);
+    do {
+        nrows++;
+    } while (gtk_tree_model_iter_next(model, &iter));
+    
+    gtk_tree_path_free(path);
+    
+    return nrows * rect.height;
+}
+
+void tree_view_save_image(gchar *filename)
+{
+    /* this is ridiculously complicated :/ why in the hell gtk+ makes this kind of
+       thing so difficult?  */
+    Shell		*shell = shell_get_main_shell();
+    GtkWidget		*widget = shell->info->view;
+
+    PangoLayout		*layout;
+    PangoContext	*context;
+    PangoRectangle	 rect;
+
+    GdkPixmap		*pm;
+    GdkPixbuf		*pb;
+    GdkGC		*gc;
+    GdkColor	 	 black = { 0, 0, 0, 0 };
+    GdkColor		 white = { 0, 65535, 65535, 65535 };
+
+    gint		 w, h, visible_height;
+    gchar		*tmp;
+    
+    gboolean		 tv_enabled;
+
+    /* if the treeview is disabled, we need to enable it so we get the
+       correct colors when saving. we make it insensitive later on if it
+       was this way before entering this function */    
+    tv_enabled = GTK_WIDGET_IS_SENSITIVE(widget);
+    gtk_widget_set_sensitive(widget, TRUE);
+
+    /* unselect things in the information treeview */
+    gtk_range_set_value(GTK_RANGE
+                        (GTK_SCROLLED_WINDOW(shell->info->scroll)->
+                         vscrollbar), 0.0);
+    gtk_tree_selection_unselect_all(
+          gtk_tree_view_get_selection(GTK_TREE_VIEW(widget)));
+    while (gtk_events_pending())
+        gtk_main_iteration();
+
+    /* initialize stuff */
+    gc = gdk_gc_new(widget->window);
+    gdk_gc_set_background(gc, &black);
+    gdk_gc_set_foreground(gc, &white);
+    
+    context = gtk_widget_get_pango_context (widget);
+    layout = pango_layout_new(context);
+    
+    visible_height = tree_view_get_visible_height(GTK_TREE_VIEW(widget));
+                                   
+    /* draw the title */    
+    tmp = g_strdup_printf("<b><big>%s</big></b>\n<small>%s</small>",
+                          shell->selected->name,
+                          shell->selected->notefunc(shell->selected->number));
+    pango_layout_set_markup(layout, tmp, -1);
+    pango_layout_set_width(layout, widget->allocation.width * PANGO_SCALE);
+    pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
+    pango_layout_get_pixel_extents(layout, NULL, &rect);
+    
+    w = widget->allocation.width;
+    h = visible_height + rect.height;
+    
+    pm = gdk_pixmap_new(widget->window, w, rect.height, -1);
+    gdk_draw_rectangle(GDK_DRAWABLE(pm), gc, TRUE, 0, 0, w, rect.height);
+    gdk_draw_layout_with_colors (GDK_DRAWABLE(pm), gc, 0, 0, layout,
+                                 &white, &black);
+    
+    /* copy the pixmap from the treeview and from the title */
+    pb = gdk_pixbuf_get_from_drawable(NULL,
+                                      widget->window,
+				      NULL,
+				      0, 0,
+				      0, 0,
+				      w, h);
+    pb = gdk_pixbuf_get_from_drawable(pb,
+                                      pm,
+                                      NULL,
+                                      0, 0,
+                                      0, visible_height,
+                                      w, rect.height);
+
+    /* save the pixbuf to a png file */
+    gdk_pixbuf_save(pb, filename, "png", NULL,
+                    "compression", "9",
+                    "tEXt::hardinfo::version", VERSION,
+                    "tEXt::hardinfo::arch", ARCH,
+                    NULL);
+  
+    /* unref */
+    g_object_unref(pb);
+    g_object_unref(layout);
+    g_object_unref(pm);
+    g_object_unref(gc);
+    g_free(tmp);
+    
+    gtk_widget_set_sensitive(widget, tv_enabled);
+}
