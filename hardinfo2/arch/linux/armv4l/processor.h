@@ -17,7 +17,7 @@
  */
 
 static GSList *
-computer_get_processors(void)
+__scan_processors(void)
 {
     Processor *processor;
     FILE *cpuinfo;
