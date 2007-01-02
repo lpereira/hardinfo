@@ -255,6 +255,9 @@ void
 scan_storage(gboolean reload)
 {
     SCAN_START();
+    if (*storage_list)
+        g_free(storage_list);
+    
     __scan_ide_devices();
     __scan_scsi_devices();
     SCAN_END();
