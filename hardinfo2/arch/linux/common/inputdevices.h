@@ -55,7 +55,7 @@ scan_inputdevices(void)
 	return;
 
     if (input_list) {
-	g_hash_table_foreach_remove(devices, remove_input_devices, NULL);
+	g_hash_table_foreach_remove(moreinfo, remove_input_devices, NULL);
 	g_free(input_list);
 	g_free(input_icons);
     }
@@ -127,7 +127,7 @@ scan_inputdevices(void)
 				      "Version=0x%x\n"
 				      "Connected to=%s\n",
 				      strhash, product, version, phys);
-	    g_hash_table_insert(devices, tmp, strhash);
+	    g_hash_table_insert(moreinfo, tmp, strhash);
 
 	    g_free(phys);
 	    g_free(name);

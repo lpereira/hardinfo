@@ -20,6 +20,7 @@
 #define __HARDINFO_H__
 
 #include <gtk/gtk.h>
+#include <shell.h>
 
 typedef struct _ModuleEntry		ModuleEntry;
 typedef struct _FileTypes		FileTypes;
@@ -69,6 +70,7 @@ gchar    *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
 gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 
 /* Misc utility functions */
+void	      schedule_free(gpointer ptr);
 inline gchar *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
@@ -82,5 +84,9 @@ gboolean binreloc_init(gboolean try_hardcoded);
 gboolean ui_init(int *argc, char ***argv);
 void     parameters_init(int *argc, char ***argv, ProgramParameters *params);
 extern   ProgramParameters params;
+
+/* Module stuff */
+void		 module_register(ShellModule *module);
+gchar		*module_call_method(gchar *method);
 
 #endif				/* __HARDINFO_H__ */

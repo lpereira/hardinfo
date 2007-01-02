@@ -16,6 +16,13 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#define GET_STR(field_name,ptr)      					\
+  if (!ptr && strstr(tmp[0], field_name)) {				\
+    ptr = g_markup_escape_text(g_strstrip(tmp[1]), strlen(tmp[1]));	\
+    g_strfreev(tmp);                 					\
+    continue;                        					\
+  }
+
 static gboolean
 remove_module_devices(gpointer key, gpointer value, gpointer data)
 {
@@ -40,7 +47,7 @@ scan_modules(void)
         module_list = NULL;
     }
 
-    g_hash_table_foreach_remove(devices, remove_module_devices, NULL);
+    g_hash_table_foreach_remove(moreinfo, remove_module_devices, NULL);
 
     lsmod = popen("/sbin/lsmod", "r");
     if (!lsmod)
@@ -137,7 +144,7 @@ scan_modules(void)
 	    g_free(deps);
 	}
 
-	g_hash_table_insert(devices, hashkey, strmodule);
+	g_hash_table_insert(moreinfo, hashkey, strmodule);
 
 	g_free(license);
 	g_free(description);

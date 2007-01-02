@@ -30,16 +30,12 @@
 #include <shell.h>
 
 #include <vendor.h>
-#include <expr.h>
-
-#include "socket.h"
 
 enum {
     COMPUTER_SUMMARY,
-    COMPUTER_PROCESSORS,
     COMPUTER_OPERATING_SYSTEM,
+    COMPUTER_KERNEL_MODULES,
     COMPUTER_LANGUAGE,
-    COMPUTER_SENSORS,
     COMPUTER_FILESYSTEMS,
     COMPUTER_SHARES,
     COMPUTER_DISPLAY,
@@ -49,10 +45,9 @@ enum {
 
 static ModuleEntry hi_entries[] = {
     {"Summary",			"summary.png"},
-    {"Processor",		"processor.png"},
     {"Operating System",	"os.png"},
+    {"Kernel Modules",		"module.png"},
     {"Languages",		"language.png"},
-    {"Sensors",			"therm.png"},
     {"Filesystems",		"dev_removable.png"},
     {"Shared Directories",	"shares.png"},
     {"Display",			"monitor.png"},
@@ -63,19 +58,19 @@ static ModuleEntry hi_entries[] = {
 #include "computer.h"
 
 static GHashTable *moreinfo = NULL;
+static gchar *module_list = NULL;
 
+#include <arch/this/modules.h>
 #include <arch/common/languages.h>
 #include <arch/this/alsa.h>
 #include <arch/common/display.h>
 #include <arch/this/loadavg.h>
 #include <arch/this/memory.h>
 #include <arch/this/uptime.h>
-#include <arch/this/processor.h>
 #include <arch/this/os.h>
 #include <arch/this/filesystem.h>
 #include <arch/this/samba.h>
 #include <arch/this/nfs.h>
-#include <arch/this/sensors.h>
 #include <arch/this/net.h>
 #include <arch/common/users.h>
 
@@ -96,9 +91,6 @@ computer_get_info(void)
 
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-    shell_status_update("Getting processor information...");
-    computer->processors = computer_get_processors();
-
     shell_status_update("Getting memory information...");
     computer->memory = computer_get_memory();
 
@@ -118,9 +110,6 @@ computer_get_info(void)
     scan_samba_shared_directories();
     scan_nfs_shared_directories();
     
-    shell_status_update("Reading sensors...");
-    read_sensors();
-
     shell_status_update("Obtaining network information...");
     scan_net_interfaces();
 
@@ -135,14 +124,14 @@ void
 hi_reload(gint entry)
 {
     switch (entry) {
+    case COMPUTER_KERNEL_MODULES:
+        scan_modules();
+        break;
     case COMPUTER_FILESYSTEMS:
 	scan_filesystems();
 	break;
     case COMPUTER_NETWORK:
 	scan_net_interfaces();
-	break;
-    case COMPUTER_SENSORS:
-	read_sensors();
 	break;
     case COMPUTER_USERS:
         scan_users();
@@ -193,13 +182,23 @@ gchar *
 hi_info(gint entry)
 {
     static Computer *computer = NULL;
-    static gchar *tmp = NULL;
+    static gchar *tmp1, *tmp2;
 
     if (!computer) {
 	computer = computer_get_info();
     }
 
     switch (entry) {
+    case COMPUTER_KERNEL_MODULES:
+        if (!module_list) {
+            shell_status_update("Getting loaded module information...");
+            scan_modules();
+        }
+	return g_strdup_printf("[Loaded Modules]\n"
+			       "%s"
+			       "[$ShellParam$]\n"
+			       "ViewType=1",
+			       module_list);
     case COMPUTER_NETWORK:
         return g_strdup_printf("[$ShellParam$]\n"
                                "ReloadInterval=3000\n"
@@ -213,10 +212,6 @@ hi_info(gint entry)
                                "%s\n"
                                "[System Users]\n"
                                "%s\n", human_users, sys_users);
-    case COMPUTER_SENSORS:
-        return g_strdup_printf("[$ShellParam$]\n"
-                               "ReloadInterval=5000\n"
-                               "%s", sensors);
     case COMPUTER_SHARES:
         return g_strdup_printf("[SAMBA]\n"
                                "%s\n"
@@ -228,11 +223,11 @@ hi_info(gint entry)
 			       "ReloadInterval=5000\n"
 			       "[Mounted File Systems]\n%s\n", fs_list);
     case COMPUTER_SUMMARY:
-        if (tmp) g_free(tmp);
-        tmp = computer_get_alsacards(computer);
+        tmp1 = computer_get_alsacards(computer);
+        tmp2 = module_call_method("devices::getProcessorName");
         
-        /* FIXME: We assume all processors have the same name */
-        Processor *processor = (Processor*) computer->processors->data;
+        schedule_free(tmp1);
+        schedule_free(tmp2);
         
 	return g_strdup_printf("[$ShellParam$]\n"
 			       "UpdateInterval$Memory=1000\n"
@@ -249,7 +244,7 @@ hi_info(gint entry)
 			       "X11 Vendor=%s\n"
 			       "[Multimedia]\n"
 			       "%s\n",
-			       processor->model_name,
+			       tmp2,
 			       computer->os->distro,
 			       computer->os->username,
 			       computer->date_time,
@@ -257,7 +252,7 @@ hi_info(gint entry)
 			       computer->display->height,
 			       computer->display->ogl_renderer,
 			       computer->display->vendor,
-			       tmp);
+			       tmp1);
     case COMPUTER_DISPLAY:
         return g_strdup_printf("[Display]\n"
                                "Resolution=%dx%d pixels\n"
@@ -314,8 +309,6 @@ hi_info(gint entry)
 			       "ViewType=1\n"
 			       "[Available Languages]\n"
 			       "%s", computer->os->languages);
-    case COMPUTER_PROCESSORS:
-        return processor_get_info(computer->processors);
     default:
 	return g_strdup("[Empty]\nNo info available=");
     }
@@ -349,4 +342,12 @@ guchar
 hi_module_weight(void)
 {
     return 80;
+}
+
+gchar **
+hi_module_depends_on(void)
+{
+    static gchar *deps[] = { "devices.so", NULL };
+    
+    return deps;
 }

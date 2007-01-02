@@ -43,7 +43,7 @@ scan_scsi(void)
     gchar *vendor = NULL, *revision = NULL, *model = NULL;
 
     /* remove old devices from global device table */
-    g_hash_table_foreach_remove(devices, remove_scsi_devices, NULL);
+    g_hash_table_foreach_remove(moreinfo, remove_scsi_devices, NULL);
 
     if (!g_file_test("/proc/scsi/scsi", G_FILE_TEST_EXISTS))
 	return;
@@ -136,7 +136,7 @@ scan_scsi(void)
 					     scsi_channel,
 					     scsi_id,
 					     scsi_lun);
-	    g_hash_table_insert(devices, devid, strhash);
+	    g_hash_table_insert(moreinfo, devid, strhash);
 
 	    g_free(model);
 	    g_free(revision);
@@ -169,7 +169,7 @@ scan_ide(void)
     gchar *capab = NULL, *speed = NULL, *driver = NULL;
 
     /* remove old devices from global device table */
-    g_hash_table_foreach_remove(devices, remove_ide_devices, NULL);
+    g_hash_table_foreach_remove(moreinfo, remove_ide_devices, NULL);
 
     storage_list = g_strdup_printf("%s\n[IDE Disks]\n", storage_list);
 
@@ -345,7 +345,7 @@ scan_ide(void)
                 speed = NULL;
             }
             
-	    g_hash_table_insert(devices, devid, strhash);
+	    g_hash_table_insert(moreinfo, devid, strhash);
 
 	    g_free(model);
 	    model = "";

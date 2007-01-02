@@ -47,7 +47,7 @@ scan_usb(void)
 	return;
 
     if (usb_list) {
-	g_hash_table_foreach_remove(devices, remove_usb_devices, NULL);
+	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
 	g_free(usb_list);
     }
     usb_list = g_strdup("");
@@ -125,7 +125,7 @@ scan_usb(void)
                                                  ver, rev, classid,
                                                  vendor, prodid, bus, level);
 
-                g_hash_table_insert(devices, tmp, strhash);
+                g_hash_table_insert(moreinfo, tmp, strhash);
             }
 
 	    g_free(manuf);

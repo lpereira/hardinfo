@@ -24,28 +24,35 @@
 #include <shell.h>
 #include <iconcache.h>
 
+#include <expr.h>
+#include <socket.h>
+
 enum {
-    DEVICES_KERNEL_MODULES,
+    DEVICES_PROCESSORS,
+    DEVICES_MEMORY,
     DEVICES_PCI,
     DEVICES_USB,
     DEVICES_PRINTERS,
     DEVICES_BATTERY,
+    DEVICES_SENSORS,
     DEVICES_INPUT,
     DEVICES_STORAGE,
 } Entries;
 
 static ModuleEntry hi_entries[] = {
-    {"Kernel Modules",	"module.png"},
+    {"Processor",	"processor.png"},
+    {"Memory",		"memory.png"},
     {"PCI Devices",	"devices.png"},
     {"USB Devices",	"usb.png"},
     {"Printers",	"printer.png"},
     {"Battery",		"battery.png"},
+    {"Sensors",		"therm.png"},
     {"Input Devices",	"keyboard.png"},
     {"Storage",		"hdd.png"},
 };
 
-static GHashTable *devices = NULL;
-static gchar *module_list = NULL;
+static GHashTable *moreinfo = NULL;
+static GSList *processors = NULL;
 static gchar *printer_list = NULL;
 static gchar *pci_list = "";
 static gchar *input_list = NULL;
@@ -61,23 +68,62 @@ static gchar *battery_list = NULL;
     continue;                        					\
   }
 
+#define get_str(field_name,ptr)               \
+  if (g_str_has_prefix(tmp[0], field_name)) { \
+    ptr = g_strdup(tmp[1]);                   \
+    g_strfreev(tmp);                          \
+    continue;                                 \
+  }
+#define get_int(field_name,ptr)               \
+  if (g_str_has_prefix(tmp[0], field_name)) { \
+    ptr = atoi(tmp[1]);                       \
+    g_strfreev(tmp);                          \
+    continue;                                 \
+  }
+#define get_float(field_name,ptr)             \
+  if (g_str_has_prefix(tmp[0], field_name)) { \
+    ptr = atof(tmp[1]);                       \
+    g_strfreev(tmp);                          \
+    continue;                                 \
+  }
+
 #include <vendor.h>
 
+typedef struct _Processor	Processor;
+struct _Processor {
+    gchar *model_name;
+    gchar *vendor_id;
+    gchar *flags;
+    gint cache_size;
+    gfloat bogomips, cpu_mhz;
+
+    gchar *has_fpu;
+    gchar *bug_fdiv, *bug_hlt, *bug_f00f, *bug_coma;
+    
+    gint model, family, stepping;
+    gchar *strmodel;
+    
+    gint id;
+};
+
+#include <arch/this/processor.h>
+
 #include <arch/this/pci.h>
-#include <arch/this/modules.h>
 #include <arch/common/printers.h>
 #include <arch/this/inputdevices.h>
 #include <arch/this/usb.h>
 #include <arch/this/storage.h>
 #include <arch/this/battery.h>
+#include <arch/this/sensors.h>
 
 static void
 detect_devices(void)
 {
-    devices = g_hash_table_new(g_str_hash, g_str_equal);
+    moreinfo = g_hash_table_new(g_str_hash, g_str_equal);
 
-    shell_status_update("Getting loaded modules information...");
-    scan_modules();
+    shell_status_update("Getting processor information...");
+    if (!processors)
+        processors = computer_get_processors();
 
     shell_status_update("Scanning PCI devices...");
     scan_pci();
@@ -99,12 +145,36 @@ detect_devices(void)
 
     shell_status_update("Scanning batteries...");
     scan_battery();
+
+    shell_status_update("Reading sensors...");
+    read_sensors();
+}
+
+gchar *
+get_processor_name(void)
+{
+    if (!processors) {
+        processors = computer_get_processors();
+    }
+    
+    Processor *p = (Processor *) processors->data;
+    return p->model_name;
+}
+
+ShellModuleMethod *hi_exported_methods(void)
+{
+    static ShellModuleMethod m[] = {
+      { "getProcessorName", get_processor_name },
+      { NULL }
+    };
+    
+    return m;
 }
 
 gchar *
 hi_more_info(gchar * entry)
 {
-    gchar *info = (gchar *) g_hash_table_lookup(devices, entry);
+    gchar *info = (gchar *) g_hash_table_lookup(moreinfo, entry);
 
     if (info)
 	return g_strdup(info);
@@ -115,9 +185,6 @@ void
 hi_reload(gint entry)
 {
     switch (entry) {
-    case DEVICES_KERNEL_MODULES:
-        scan_modules();
-        break;
     case DEVICES_BATTERY:
         scan_battery();
         break;
@@ -129,6 +196,9 @@ hi_reload(gint entry)
 	break;
     case DEVICES_USB:
 	scan_usb();
+	break;
+    case DEVICES_SENSORS:
+	read_sensors();
 	break;
     case DEVICES_STORAGE:
 	if (storage_list) {
@@ -146,27 +216,29 @@ hi_reload(gint entry)
 gchar *
 hi_info(gint entry)
 {
-    if (!devices) {
+    if (!moreinfo) {
 	detect_devices();
     }
 
     switch (entry) {
+    case DEVICES_PROCESSORS:
+        return processor_get_info(processors);
+    case DEVICES_MEMORY:
+        return g_strdup("[Memory]\nNot implemented=\n");
     case DEVICES_BATTERY:
         return g_strdup_printf("%s\n"
                                "[$ShellParam$]\n"
                                "ReloadInterval=4000\n", battery_list);
-    case DEVICES_KERNEL_MODULES:
-	return g_strdup_printf("[Loaded Modules]\n"
-			       "%s"
-			       "[$ShellParam$]\n"
-			       "ViewType=1",
-			       module_list);
     case DEVICES_PCI:
 	return g_strdup_printf("[PCI Devices]\n"
 			       "%s"
 			       "[$ShellParam$]\n"
 			       "ViewType=1\n",
 			       pci_list);
+    case DEVICES_SENSORS:
+        return g_strdup_printf("[$ShellParam$]\n"
+                               "ReloadInterval=5000\n"
+                               "%s", sensors);
     case DEVICES_PRINTERS:
 	return g_strdup_printf("%s\n"
 			       "[$ShellParam$]\n"

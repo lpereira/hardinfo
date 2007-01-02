@@ -368,7 +368,52 @@ gchar *strreplace(gchar * string, gchar * replace, gchar new_char)
     return string;
 }
 
-static ShellModule *module_load(gchar *filename) {
+static GHashTable *__modules = NULL;
+
+void module_register(ShellModule *module)
+{
+    ShellModuleMethod *(*get_methods) (void);
+    gchar *method_name;
+
+    if (__modules == NULL) {
+        __modules = g_hash_table_new(g_str_hash, g_str_equal);
+    }
+
+    if (g_module_symbol(module->dll, "hi_exported_methods", (gpointer) &get_methods)) {
+        ShellModuleMethod *methods = get_methods();
+        
+        while (TRUE) {
+            ShellModuleMethod method = *methods;
+            gchar *name = g_path_get_basename(g_module_name(module->dll));
+            
+            strend(name, '.');
+            
+            method_name = g_strdup_printf("%s::%s", name, method.name);
+            g_hash_table_insert(__modules, method_name, method.function);
+            g_free(name);
+            
+            if (!(*(++methods)).name)
+                break;
+        }
+    }
+
+}
+
+gchar *module_call_method(gchar *method)
+{
+    gchar *(*function) (void);
+    
+    if (__modules == NULL) {
+        return NULL;
+    }
+
+    function = g_hash_table_lookup(__modules, method);
+    return function ? g_strdup(function()) :
+                      g_strdup_printf("{Unknown method: \"%s\"}", method);
+}
+
+static ShellModule *module_load(gchar *filename)
+{
     ShellModule *module;
     gchar *tmp;
     
@@ -440,6 +485,8 @@ static ShellModule *module_load(gchar *filename) {
         g_free(module);
         module = NULL;
     }
+    
+    module_register(module);
     
     return module;
 }
@@ -541,6 +588,9 @@ void tree_view_save_image(gchar *filename)
 {
     /* this is ridiculously complicated :/ why in the hell gtk+ makes this kind of
        thing so difficult?  */
+    
+    /* FIXME: this does not work if the window (or part of it) isn't visible. does
+              anyone know how to fix this? :/ */
     Shell		*shell = shell_get_main_shell();
     GtkWidget		*widget = shell->info->view;
 
@@ -630,4 +680,17 @@ void tree_view_save_image(gchar *filename)
     g_free(tmp);
     
     gtk_widget_set_sensitive(widget, tv_enabled);
+}
+
+
+static gboolean __schedule_free_do(gpointer ptr)
+{
+    g_free(ptr);
+
+    return FALSE;
+}
+
+void schedule_free(gpointer ptr)
+{
+    g_timeout_add(5000, __schedule_free_do, ptr);
 }

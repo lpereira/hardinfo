@@ -44,7 +44,6 @@ static struct {
 };
 
 typedef struct _Computer	Computer;
-typedef struct _Processor	Processor;
 typedef struct _OperatingSystem	OperatingSystem;
 typedef struct _MemoryInfo	MemoryInfo;
 typedef struct _UptimeInfo	UptimeInfo;
@@ -100,7 +99,6 @@ struct _UptimeInfo {
 };
 
 struct _Computer {
-    GSList *processors;
     MemoryInfo *memory;
     OperatingSystem *os;
     DisplayInfo *display;

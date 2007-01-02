@@ -126,7 +126,7 @@ scan_pci(void)
 	    gpointer start, end;
 
 	    if (strdevice != NULL && strhash != NULL) {
-		g_hash_table_insert(devices, strhash, strdevice);
+		g_hash_table_insert(moreinfo, strhash, strdevice);
                 g_free(category);
                 g_free(name);
 	    }
@@ -194,7 +194,7 @@ scan_pci(void)
         pci_list = g_strconcat(pci_list, "No PCI devices found=\n", NULL);
     } else if (strhash) {
 	/* insert the last device */
-        g_hash_table_insert(devices, strhash, strdevice);
+        g_hash_table_insert(moreinfo, strhash, strdevice);
         g_free(category);
         g_free(name);
     }

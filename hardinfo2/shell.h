@@ -26,6 +26,7 @@ typedef struct _ShellTree		ShellTree;
 typedef struct _ShellInfoTree		ShellInfoTree;
 
 typedef struct _ShellModule		ShellModule;
+typedef struct _ShellModuleMethod	ShellModuleMethod;
 typedef struct _ShellModuleEntry	ShellModuleEntry;
 
 typedef struct _ShellFieldUpdate	ShellFieldUpdate;
@@ -109,6 +110,11 @@ struct _ShellModule {
     guchar		 weight;
 
     GSList		*entries;
+};
+
+struct _ShellModuleMethod {
+    gchar	*name;
+    gchar	*(*function) (void);
 };
 
 struct _ShellModuleEntry {
