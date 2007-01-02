@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@linuxmag.com.br>
+ *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@linuxmag.com.br>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -261,6 +261,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean  create_report = FALSE;
     static gboolean  show_version  = FALSE;
     static gboolean  list_modules  = FALSE;
+    static gboolean  autoload_deps = FALSE;
     static gchar    *report_format = NULL;
     static gchar   **use_modules   = NULL;
 
@@ -294,6 +295,13 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .description = "specify module to load"
         },
 	{
+	 .long_name   = "autoload-deps",
+	 .short_name  = 'a',
+	 .arg         = G_OPTION_ARG_NONE,
+	 .arg_data    = &autoload_deps,
+	 .description = "automatically load module dependencies"
+        },
+	{
 	 .long_name   = "version",
 	 .short_name  = 'v',
 	 .arg         = G_OPTION_ARG_NONE,
@@ -318,6 +326,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->show_version  = show_version;
     param->list_modules  = list_modules;
     param->use_modules   = use_modules;
+    param->autoload_deps = autoload_deps;
     
     if (report_format && g_str_equal(report_format, "html"))
         param->report_format = REPORT_FORMAT_HTML;
@@ -420,15 +429,18 @@ static ShellModule *module_load(gchar *filename)
     module = g_new0(ShellModule, 1);
     
     if (params.gui_running) {
-        gchar *dot = g_strrstr(filename, "." G_MODULE_SUFFIX);
+        gchar *tmpicon;
+        
+        tmpicon = g_strdup(filename);
+        gchar *dot = g_strrstr(tmpicon, "." G_MODULE_SUFFIX);
         
         *dot = '\0';
         
-        tmp = g_strdup_printf("%s.png", filename);
+        tmp = g_strdup_printf("%s.png", tmpicon);
         module->icon = icon_cache_get_pixbuf(tmp);
-        g_free(tmp);
         
-        *dot = '.';
+        g_free(tmp);
+        g_free(tmpicon);
     }
 
     tmp = g_build_filename(params.path_lib, "modules", filename, NULL);
@@ -514,6 +526,101 @@ static gint module_cmp(gconstpointer m1, gconstpointer m2)
     return a->weight - b->weight;
 }
 
+static void module_entry_free(gpointer data, gpointer user_data)
+{
+    ShellModuleEntry *entry = (ShellModuleEntry *)data;
+
+    g_free(entry->name);
+    g_object_unref(entry->icon);
+
+    g_free(entry);
+}
+
+static void module_free(ShellModule *module)
+{
+    g_free(module->name);
+    g_object_unref(module->icon);
+    /*g_module_close(module->dll);*/
+
+    g_slist_foreach(module->entries, (GFunc)module_entry_free, NULL);
+    g_slist_free(module->entries);
+
+    g_free(module);
+}
+
+static GSList *modules_check_deps(GSList *modules)
+{
+    GSList      *mm;
+    ShellModule *module;
+    
+    for (mm = modules; mm; mm = mm->next) {
+        gchar    **(*get_deps)(void);
+        gchar    **deps;
+        gint 	 i;
+
+        module = (ShellModule *) mm->data;
+        
+        if (g_module_symbol(module->dll, "hi_module_depends_on",
+                            (gpointer) & get_deps)) {
+            for (i = 0, deps = get_deps(); deps[i]; i++) {
+                GSList      *l;
+                ShellModule *m;
+                gboolean    found = FALSE;
+                
+                for (l = modules; l; l = l->next) {
+                    m = (ShellModule *)l->data;
+                    gchar *name = g_path_get_basename(g_module_name(m->dll));
+                    
+                    if (g_str_equal(name, deps[i]))  {
+                        found = TRUE;
+                        break;
+                    }
+                
+                    g_free(name);
+                }
+                
+                if (!found) {
+                    if (params.autoload_deps) {
+                        modules = g_slist_append(modules, module_load(deps[i]));
+                        modules = modules_check_deps(modules);	/* re-check dependencies */
+                    
+                        break;
+                    }
+
+                    if (params.gui_running) {
+                        GtkWidget *dialog;
+                        
+                        dialog = gtk_message_dialog_new(NULL,
+                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                        GTK_MESSAGE_QUESTION,
+                                                        GTK_BUTTONS_NONE,
+                                                        "Module \"%s\" depends on module \"%s\", load it?",
+                                                        module->name, deps[i]);
+                        gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+                                               GTK_STOCK_NO, GTK_RESPONSE_REJECT,
+                                               GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                               NULL);
+                                               
+                        if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+                            modules = g_slist_append(modules, module_load(deps[i]));
+                            modules = modules_check_deps(modules);	/* re-check dependencies */
+                        } else {
+                            modules = g_slist_remove(modules, module);
+                            module_free(module);
+                        }
+
+                        gtk_widget_destroy(dialog);
+                    } else {
+                        g_error("Module \"%s\" depends on module \"%s\".", module->name, deps[i]);
+                    }
+                }
+            }
+        }
+    }
+    
+    return modules;
+}
+
 static GSList *modules_load(gchar **module_list)
 {
     GDir *dir;
@@ -536,6 +643,8 @@ static GSList *modules_load(gchar **module_list)
 
         g_dir_close(dir);
     }
+
+    modules = modules_check_deps(modules);
 
     if (g_slist_length(modules) == 0) {
         if (params.use_modules == NULL) {

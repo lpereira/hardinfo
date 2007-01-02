@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@linuxmag.com.br>
+ *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@linuxmag.com.br>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
-				   "Copyright \302\251 2003-2006 " 
+				   "Copyright \302\251 2003-2007 " 
 				   "Leandro A. F. Pereira");
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				  "System information and benchmark tool");

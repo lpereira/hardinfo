@@ -31,6 +31,7 @@ struct _ProgramParameters {
   gboolean show_version;
   gboolean gui_running;
   gboolean list_modules;
+  gboolean autoload_deps;
   
   gint     report_format;
   
