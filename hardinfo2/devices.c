@@ -39,16 +39,37 @@ enum {
     DEVICES_STORAGE,
 } Entries;
 
-static ModuleEntry hi_entries[] = {
-    {"Processor",	"processor.png"},
-    {"Memory",		"memory.png"},
-    {"PCI Devices",	"devices.png"},
-    {"USB Devices",	"usb.png"},
-    {"Printers",	"printer.png"},
-    {"Battery",		"battery.png"},
-    {"Sensors",		"therm.png"},
-    {"Input Devices",	"keyboard.png"},
-    {"Storage",		"hdd.png"},
+gchar *callback_processors();
+gchar *callback_memory();
+gchar *callback_battery();
+gchar *callback_pci();
+gchar *callback_sensors();
+gchar *callback_printers();
+gchar *callback_storage();
+gchar *callback_input();
+gchar *callback_usb();
+
+void scan_processors(gboolean reload);
+void scan_memory(gboolean reload);
+void scan_battery(gboolean reload);
+void scan_pci(gboolean reload);
+void scan_sensors(gboolean reload);
+void scan_printers(gboolean reload);
+void scan_storage(gboolean reload);
+void scan_input(gboolean reload);
+void scan_usb(gboolean reload);
+
+static ModuleEntry entries[] = {
+    {"Processor",	"processor.png",	callback_processors,	scan_processors},
+    {"Memory",		"memory.png",		callback_memory,	scan_memory},
+    {"PCI Devices",	"devices.png",		callback_pci,		scan_pci},
+    {"USB Devices",	"usb.png",		callback_usb,		scan_usb},
+    {"Printers",	"printer.png",		callback_printers,	scan_printers,},
+    {"Battery",		"battery.png",		callback_battery,	scan_battery},
+    {"Sensors",		"therm.png",		callback_sensors,	scan_sensors},
+    {"Input Devices",	"keyboard.png",		callback_input,		scan_input},
+    {"Storage",		"hdd.png",		callback_storage,	scan_storage},
+    { NULL }
 };
 
 static GHashTable *moreinfo = NULL;
@@ -116,55 +137,56 @@ struct _Processor {
 #include <arch/this/battery.h>
 #include <arch/this/sensors.h>
 
-static void
-detect_devices(void)
-{
-    moreinfo = g_hash_table_new(g_str_hash, g_str_equal);
-
-    shell_status_update("Getting processor information...");
-    if (!processors)
-        processors = computer_get_processors();
-
-    shell_status_update("Scanning PCI devices...");
-    scan_pci();
-
-    shell_status_update("Searching for printers...");
-    scan_printers();
-
-    shell_status_update("Scanning input devices...");
-    scan_inputdevices();
-
-    shell_status_update("Scanning USB devices...");
-    scan_usb();
-
-    shell_status_update("Scanning IDE devices...");
-    scan_ide();
-
-    shell_status_update("Scanning SCSI devices...");
-    scan_scsi();
-
-    shell_status_update("Scanning batteries...");
-    scan_battery();
-
-    shell_status_update("Reading sensors...");
-    read_sensors();
-}
-
 gchar *
 get_processor_name(void)
 {
-    if (!processors) {
-        processors = computer_get_processors();
-    }
+    scan_processors(FALSE);
     
     Processor *p = (Processor *) processors->data;
-    return p->model_name;
+
+    if (g_slist_length(processors) > 1) {
+        return idle_free(g_strdup_printf("%dx %s",
+                                         g_slist_length(processors),
+                                         p->model_name));
+    } else {
+        return p->model_name;
+    }
 }
 
-ShellModuleMethod *hi_exported_methods(void)
+gchar *
+get_storage_devices(void)
+{
+    if (!*storage_list) {
+        scan_storage(FALSE);
+    }
+    
+    return storage_list;
+}
+
+gchar *
+get_printers(void)
+{
+    scan_printers(FALSE);
+    
+    return printer_list;
+}
+
+gchar *
+get_input_devices(void)
+{
+    scan_input(FALSE);
+    
+    return input_list;
+}
+
+ShellModuleMethod*
+hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
-      { "getProcessorName", get_processor_name },
+      { "getProcessorName",	get_processor_name },
+      { "getStorageDevices",	get_storage_devices },
+      { "getPrinters",		get_printers },
+      { "getInputDevices",	get_input_devices },
       { NULL }
     };
     
@@ -182,115 +204,174 @@ hi_more_info(gchar * entry)
 }
 
 void
-hi_reload(gint entry)
+scan_processors(gboolean reload)
 {
-    switch (entry) {
-    case DEVICES_BATTERY:
-        scan_battery();
-        break;
-    case DEVICES_INPUT:
-	scan_inputdevices();
-	break;
-    case DEVICES_PRINTERS:
-	scan_printers();
-	break;
-    case DEVICES_USB:
-	scan_usb();
-	break;
-    case DEVICES_SENSORS:
-	read_sensors();
-	break;
-    case DEVICES_STORAGE:
-	if (storage_list) {
-	    g_free(storage_list);
-	    g_free(storage_icons);
-	    storage_list = g_strdup("");
-	    storage_icons = g_strdup("");
-	}
-	scan_ide();
-	scan_scsi();
-	break;
-    }
+    SCAN_START();
+    if (!processors)
+        processors = __scan_processors();
+    SCAN_END();
+}
+
+void
+scan_memory(gboolean reload)
+{
+    SCAN_START();
+    SCAN_END();
+}
+
+void
+scan_battery(gboolean reload)
+{
+    SCAN_START();
+    __scan_battery();
+    SCAN_END();
+}
+
+void
+scan_pci(gboolean reload)
+{
+    SCAN_START();
+    __scan_pci();
+    SCAN_END();
+}
+
+void
+scan_sensors(gboolean reload)
+{
+    SCAN_START();
+    __scan_sensors();
+    SCAN_END();
+}
+
+void
+scan_printers(gboolean reload)
+{
+    SCAN_START();
+    __scan_printers();
+    SCAN_END();
+}
+
+void
+scan_storage(gboolean reload)
+{
+    SCAN_START();
+    __scan_ide_devices();
+    __scan_scsi_devices();
+    SCAN_END();
+}
+
+void
+scan_input(gboolean reload)
+{
+    SCAN_START();
+    __scan_input_devices();
+    SCAN_END();
+}
+
+void
+scan_usb(gboolean reload)
+{
+    SCAN_START();
+    __scan_usb();
+    SCAN_END();
 }
 
 gchar *
-hi_info(gint entry)
+callback_processors()
 {
-    if (!moreinfo) {
-	detect_devices();
-    }
-
-    switch (entry) {
-    case DEVICES_PROCESSORS:
-        return processor_get_info(processors);
-    case DEVICES_MEMORY:
-        return g_strdup("[Memory]\nNot implemented=\n");
-    case DEVICES_BATTERY:
-        return g_strdup_printf("%s\n"
-                               "[$ShellParam$]\n"
-                               "ReloadInterval=4000\n", battery_list);
-    case DEVICES_PCI:
-	return g_strdup_printf("[PCI Devices]\n"
-			       "%s"
-			       "[$ShellParam$]\n"
-			       "ViewType=1\n",
-			       pci_list);
-    case DEVICES_SENSORS:
-        return g_strdup_printf("[$ShellParam$]\n"
-                               "ReloadInterval=5000\n"
-                               "%s", sensors);
-    case DEVICES_PRINTERS:
-	return g_strdup_printf("%s\n"
-			       "[$ShellParam$]\n"
-			       "ReloadInterval=5000", printer_list);
-    case DEVICES_STORAGE:
-	return g_strdup_printf("%s\n"
-			       "[$ShellParam$]\n"
-			       "ReloadInterval=5000\n"
-			       "ViewType=1\n%s", storage_list, storage_icons);
-    case DEVICES_INPUT:
-	return g_strdup_printf("[Input Devices]\n"
-			       "%s"
-			       "[$ShellParam$]\n"
-			       "ViewType=1\n"
-			       "ReloadInterval=5000\n%s", input_list, input_icons);
-    case DEVICES_USB:
-	return g_strdup_printf("%s"
-			       "[$ShellParam$]\n"
-			       "ViewType=1\n"
-			       "ReloadInterval=5000\n",
-			       usb_list);
-    default:
-	return g_strdup("[Empty]\nNo info available=");
-    }
-}
-
-gint
-hi_n_entries(void)
-{
-    return G_N_ELEMENTS(hi_entries) - 1;
-}
-
-GdkPixbuf *
-hi_icon(gint entry)
-{
-    return icon_cache_get_pixbuf(hi_entries[entry].icon);
+    return processor_get_info(processors);
 }
 
 gchar *
-hi_name(gint entry)
+callback_memory()
 {
-    return hi_entries[entry].name;
+    return g_strdup("[Memory]\nNot implemented=\n");
 }
 
 gchar *
-hi_module_name(void)
+callback_battery()
+{
+    return g_strdup_printf("%s\n"
+                           "[$ShellParam$]\n"
+                           "ReloadInterval=4000\n", battery_list);
+}
+
+gchar *
+callback_pci()
+{
+    return g_strdup_printf("[PCI Devices]\n"
+                           "%s"
+                           "[$ShellParam$]\n"
+                           "ViewType=1\n",
+                           pci_list);
+}
+
+gchar *
+callback_sensors()
+{
+    return g_strdup_printf("[$ShellParam$]\n"
+                           "ReloadInterval=5000\n"
+                           "%s", sensors);
+}
+
+gchar *
+callback_printers()
+{
+    return g_strdup_printf("%s\n"
+                           "[$ShellParam$]\n"
+                           "ReloadInterval=5000", printer_list);
+}
+
+gchar *
+callback_storage()
+{
+    return g_strdup_printf("%s\n"
+                           "[$ShellParam$]\n"
+                           "ReloadInterval=5000\n"
+                           "ViewType=1\n%s", storage_list, storage_icons);
+}
+
+gchar *
+callback_input()
+{
+    return g_strdup_printf("[Input Devices]\n"
+                           "%s"
+                           "[$ShellParam$]\n"
+                           "ViewType=1\n"
+                           "ReloadInterval=5000\n%s", input_list, input_icons);
+}
+
+gchar *
+callback_usb()
+{
+    return g_strdup_printf("%s"
+                           "[$ShellParam$]\n"
+                           "ViewType=1\n"
+                           "ReloadInterval=5000\n",
+                           usb_list);
+}
+
+ModuleEntry *
+hi_module_get_entries(void)
+{
+    return entries;
+}
+
+gchar *
+hi_module_get_name(void)
 {
     return g_strdup("Devices");
 }
 
 guchar
-hi_module_weight(void)
+hi_module_get_weight(void)
 {
     return 160;
 }
+
+void
+hi_module_init(void)
+{
+    moreinfo = g_hash_table_new(g_str_hash, g_str_equal);
+}
+

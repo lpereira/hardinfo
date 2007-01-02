@@ -32,7 +32,7 @@ remove_usb_devices(gpointer key, gpointer value, gpointer data)
 
 static gchar *usb_list = NULL;
 void
-scan_usb(void)
+__scan_usb(void)
 {
     FILE *dev;
     gchar buffer[128];

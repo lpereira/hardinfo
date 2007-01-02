@@ -48,8 +48,10 @@ struct _FileTypes {
 };
 
 struct _ModuleEntry {
-    gchar *name;
-    gchar *icon;
+    gchar	*name;
+    gchar	*icon;
+    gpointer	 callback;
+    gpointer	 scan_callback;
 };
 
 /* String utility functions */
@@ -71,12 +73,18 @@ gchar    *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
 gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 
 /* Misc utility functions */
-void	      schedule_free(gpointer ptr);
+gpointer      idle_free(gpointer ptr);
 inline gchar *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
+
+void	      module_entry_scan_all_except(ModuleEntry *entries, gint except_entry);
+void	      module_entry_scan_all(ModuleEntry *entries);
+void	      module_entry_reload(ShellModuleEntry *module_entry);
+void	      module_entry_scan(ShellModuleEntry *module_entry);
+gchar	     *module_entry_function(ShellModuleEntry *module_entry);
 
 /* BinReloc stuff */
 gboolean binreloc_init(gboolean try_hardcoded);
@@ -87,7 +95,10 @@ void     parameters_init(int *argc, char ***argv, ProgramParameters *params);
 extern   ProgramParameters params;
 
 /* Module stuff */
-void		 module_register(ShellModule *module);
 gchar		*module_call_method(gchar *method);
+
+
+#define SCAN_START()  static gboolean scanned = FALSE; if (reload) scanned = FALSE; if (scanned) return;
+#define SCAN_END()    scanned = TRUE;
 
 #endif				/* __HARDINFO_H__ */

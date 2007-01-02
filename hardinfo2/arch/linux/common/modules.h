@@ -34,14 +34,12 @@ remove_module_devices(gpointer key, gpointer value, gpointer data)
     return FALSE;
 }
 
-void
-scan_modules(void)
+static void
+scan_modules_do(void)
 {
     FILE *lsmod;
     gchar buffer[1024];
 
-    shell_status_update("Getting loaded modules information...");
-    
     if (module_list) {
         g_free(module_list);
         module_list = NULL;

@@ -121,8 +121,8 @@ void file_chooser_add_filters(GtkWidget * chooser, FileTypes * filters)
     }
 }
 
-gchar
-    * file_chooser_get_extension(GtkWidget * chooser, FileTypes * filters)
+gchar *
+file_chooser_get_extension(GtkWidget * chooser, FileTypes * filters)
 {
     GtkFileFilter *filter;
     const gchar *filter_name;
@@ -377,15 +377,15 @@ gchar *strreplace(gchar * string, gchar * replace, gchar new_char)
     return string;
 }
 
-static GHashTable *__modules = NULL;
+static GHashTable *__module_methods = NULL;
 
-void module_register(ShellModule *module)
+static void module_register_methods(ShellModule *module)
 {
     ShellModuleMethod *(*get_methods) (void);
     gchar *method_name;
 
-    if (__modules == NULL) {
-        __modules = g_hash_table_new(g_str_hash, g_str_equal);
+    if (__module_methods == NULL) {
+        __module_methods = g_hash_table_new(g_str_hash, g_str_equal);
     }
 
     if (g_module_symbol(module->dll, "hi_exported_methods", (gpointer) &get_methods)) {
@@ -398,7 +398,7 @@ void module_register(ShellModule *module)
             strend(name, '.');
             
             method_name = g_strdup_printf("%s::%s", name, method.name);
-            g_hash_table_insert(__modules, method_name, method.function);
+            g_hash_table_insert(__module_methods, method_name, method.function);
             g_free(name);
             
             if (!(*(++methods)).name)
@@ -412,11 +412,11 @@ gchar *module_call_method(gchar *method)
 {
     gchar *(*function) (void);
     
-    if (__modules == NULL) {
+    if (__module_methods == NULL) {
         return NULL;
     }
 
-    function = g_hash_table_lookup(__modules, method);
+    function = g_hash_table_lookup(__module_methods, method);
     return function ? g_strdup(function()) :
                       g_strdup_printf("{Unknown method: \"%s\"}", method);
 }
@@ -448,38 +448,35 @@ static ShellModule *module_load(gchar *filename)
     g_free(tmp);
     
     if (module->dll) {
-        gint   (*n_entries)   (void);
-        gint   (*weight_func) (void);
-        gchar *(*name_func)   (void);
-        gint i;
+        void         (*init)               (void);
+        ModuleEntry *(*get_module_entries) (void);
+        gint         (*weight_func)        (void);
+        gchar       *(*name_func)          (void);
+        ModuleEntry *entries;
+        gint i = 0;
 
-        if (!g_module_symbol(module->dll, "hi_n_entries", (gpointer) & n_entries) ||
-            !g_module_symbol(module->dll, "hi_module_name", (gpointer) & name_func))
+        if (!g_module_symbol(module->dll, "hi_module_get_entries", (gpointer) & get_module_entries) ||
+            !g_module_symbol(module->dll, "hi_module_get_name", (gpointer) & name_func)) {
             goto failed;
+        }
             
-        g_module_symbol(module->dll, "hi_module_weight", (gpointer) & weight_func);
+        if (g_module_symbol(module->dll, "hi_module_init", (gpointer) & init)) {
+            init();
+        }
+
+        g_module_symbol(module->dll, "hi_module_get_weight", (gpointer) & weight_func);
 
         module->weight = weight_func ? weight_func() : 0;
         module->name   = name_func();
 
-        gint j = n_entries();
-        for (i = 0; i <= j; i++) {
-            GdkPixbuf *(*shell_icon) (gint);
-            const gchar *(*shell_name) (gint);
+        entries = get_module_entries();
+        while (entries[i].name) {
             ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
 
-            if (params.gui_running && g_module_symbol(module->dll, "hi_icon",
-                                   (gpointer) & (shell_icon))) {
-                entry->icon = shell_icon(i);
+            if (params.gui_running) {
+                entry->icon = icon_cache_get_pixbuf(entries[i].icon);
             }
-            if (g_module_symbol
-                (module->dll, "hi_name", (gpointer) & (shell_name))) {
-                entry->name = g_strdup(shell_name(i));
-            }
-            g_module_symbol(module->dll, "hi_info",
-                            (gpointer) & (entry->func));
-            g_module_symbol(module->dll, "hi_reload",
-                            (gpointer) & (entry->reloadfunc));
+
             g_module_symbol(module->dll, "hi_more_info",
                             (gpointer) & (entry->morefunc));
             g_module_symbol(module->dll, "hi_get_field",
@@ -487,18 +484,23 @@ static ShellModule *module_load(gchar *filename)
             g_module_symbol(module->dll, "hi_note_func",
                             (gpointer) & (entry->notefunc));
 
-            entry->number = i;
-            
+            entry->name      = entries[i].name;
+            entry->scan_func = entries[i].scan_callback;
+            entry->func      = entries[i].callback;
+            entry->number    = i;
+
             module->entries = g_slist_append(module->entries, entry);
+            
+            i++;
         }
+
+        module_register_methods(module);
     } else {
       failed:
         g_free(module->name);
         g_free(module);
         module = NULL;
     }
-    
-    module_register(module);
     
     return module;
 }
@@ -560,7 +562,7 @@ static GSList *modules_check_deps(GSList *modules)
 
         module = (ShellModule *) mm->data;
         
-        if (g_module_symbol(module->dll, "hi_module_depends_on",
+        if (g_module_symbol(module->dll, "hi_module_get_dependencies",
                             (gpointer) & get_deps)) {
             for (i = 0, deps = get_deps(); deps[i]; i++) {
                 GSList      *l;
@@ -792,14 +794,69 @@ void tree_view_save_image(gchar *filename)
 }
 
 
-static gboolean __schedule_free_do(gpointer ptr)
+static gboolean __idle_free_do(gpointer ptr)
 {
     g_free(ptr);
 
     return FALSE;
 }
 
-void schedule_free(gpointer ptr)
+gpointer idle_free(gpointer ptr)
 {
-    g_timeout_add(5000, __schedule_free_do, ptr);
+    g_timeout_add(2000, __idle_free_do, ptr);
+    
+    return ptr;
+}
+
+void module_entry_scan_all_except(ModuleEntry *entries, gint except_entry)
+{
+    ModuleEntry entry;
+    gint        i = 0;
+
+    void        (*scan_callback)(gboolean reload);
+    
+    for (entry = entries[0]; entry.name; entry = entries[++i]) {
+        if (i == except_entry)
+            continue;
+            
+        shell_status_update(idle_free(g_strdup_printf("Scanning: %s...", entry.name)));
+        
+        if ((scan_callback = entry.scan_callback)) {
+            scan_callback(FALSE);
+        }
+    }
+    
+    shell_status_update("Done.");
+}
+
+void module_entry_scan_all(ModuleEntry *entries)
+{
+    module_entry_scan_all_except(entries, -1);
+}
+
+void module_entry_reload(ShellModuleEntry *module_entry)
+{
+    if (module_entry->scan_func) {
+        module_entry->scan_func(TRUE);
+    }
+}
+
+void module_entry_scan(ShellModuleEntry *module_entry)
+{
+    shell_status_update(idle_free(g_strdup_printf("Scanning: %s...", module_entry->name)));
+
+    if (module_entry->scan_func) {
+        module_entry->scan_func(FALSE);
+    }
+
+    shell_status_update("Done.");
+}
+
+gchar *module_entry_function(ShellModuleEntry *module_entry)
+{
+    if (module_entry->func) {
+        return g_strdup(module_entry->func());
+    }
+    
+    return g_strdup("[Error]\n" "Invalid module=");
 }

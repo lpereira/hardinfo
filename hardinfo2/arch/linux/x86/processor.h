@@ -132,7 +132,7 @@ static void get_processor_strfamily(Processor * processor)
     }
 }
 
-static GSList *computer_get_processors(void)
+static GSList *__scan_processors(void)
 {
     GSList *procs = NULL;
     Processor *processor = NULL;

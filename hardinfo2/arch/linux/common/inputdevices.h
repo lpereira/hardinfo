@@ -42,7 +42,7 @@ static struct {
 };
 
 void
-scan_inputdevices(void)
+__scan_input_devices(void)
 {
     FILE *dev;
     gchar buffer[128];

@@ -271,13 +271,13 @@ void shell_do_reload(void)
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("ReportAction", FALSE);
 
-    if (shell->selected && shell->selected->reloadfunc) {
+    if (shell->selected) {
 	GtkTreeSelection *ts;
 
 	ts = gtk_tree_view_get_selection(GTK_TREE_VIEW(shell->tree->view));
 	shell_status_set_enabled(TRUE);
-
-	shell->selected->reloadfunc(shell->selected->number);
+	
+	module_entry_reload(shell->selected);
 	module_selected(ts, NULL);
     }
 
@@ -569,7 +569,7 @@ static gboolean reload_section(gpointer data)
     ShellModuleEntry *entry = (ShellModuleEntry *) data;
 
     /* if the entry is still selected, update it */
-    if (entry->selected && entry->reloadfunc) {
+    if (entry->selected) {
 	GtkTreePath *path = NULL;
 	GtkTreeSelection *ts;
 	GtkTreeIter iter;
@@ -581,7 +581,7 @@ static gboolean reload_section(gpointer data)
 	    path = gtk_tree_model_get_path(shell->info->model, &iter);
 
 	/* update the information, clear the treeview and populate it again */
-	entry->reloadfunc(entry->number);
+	module_entry_reload(entry);
 	info_selected_show_extra(NULL);	/* clears the more info store */
 	module_selected_show_info(entry, TRUE);
 
@@ -920,11 +920,8 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gint i;
     gsize ngroups;
 
-    if (entry->func) {
-	key_data = entry->func(entry->number);
-    } else {
-	key_data = g_strdup("[Error]\n" "Invalid module=");
-    }
+    module_entry_scan(entry);
+    key_data = module_entry_function(entry);
 
     /* reset the view type to normal */
     set_view_type(SHELL_VIEW_NORMAL);
@@ -1033,7 +1030,7 @@ static void module_selected(GtkTreeSelection * ts, gpointer data)
 
     /* Get the current selection and shows its related info */
     gtk_tree_model_get(model, &parent, TREE_COL_DATA, &entry, -1);
-    if (entry && entry->func && !entry->selected) {
+    if (entry && !entry->selected) {
 	shell_status_set_enabled(TRUE);
 	shell_status_update("Updating...");
 
@@ -1066,10 +1063,8 @@ static void module_selected(GtkTreeSelection * ts, gpointer data)
 	gtk_window_set_title(GTK_WINDOW(shell->window), tmp);
 	g_free(tmp);
 
-	shell_action_set_enabled("RefreshAction",
-				 entry->reloadfunc ? TRUE : FALSE);
-	shell_action_set_enabled("CopyAction",
-				 entry->reloadfunc ? TRUE : FALSE);
+	shell_action_set_enabled("RefreshAction", TRUE);
+	shell_action_set_enabled("CopyAction", TRUE);
     } else {
 	gtk_window_set_title(GTK_WINDOW(shell->window),
 			     "System Information");

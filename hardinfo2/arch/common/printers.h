@@ -17,7 +17,7 @@
  */
 
 void
-scan_printers(void)
+__scan_printers(void)
 {
     static GModule *cups = NULL;
     static int (*cupsGetPrinters) (char ***printers) = NULL;

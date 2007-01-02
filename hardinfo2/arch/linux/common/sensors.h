@@ -355,7 +355,7 @@ static void read_sensors_hddtemp(void)
     }
 }
 
-static void read_sensors(void)
+static void __scan_sensors(void)
 {
     if (sensors)
 	g_free(sensors);

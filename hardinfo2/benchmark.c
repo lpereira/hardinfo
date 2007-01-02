@@ -30,54 +30,75 @@ enum {
     BENCHMARK_RAYTRACE
 } Entries;
 
-static ModuleEntry hi_entries[] = {
-    {"CPU ZLib",	"compress.png"},
-    {"CPU Fibonacci",	"module.png"},
-    {"CPU MD5",		"module.png"},
-    {"CPU SHA1",	"module.png"},
-    {"CPU Blowfish",	"blowfish.png"},
-    {"FPU Raytracing",	"raytrace.png"}
+void scan_zlib(gboolean reload);
+void scan_raytr(gboolean reload);
+void scan_bfsh(gboolean reload);
+void scan_md5(gboolean reload);
+void scan_fib(gboolean reload);
+void scan_sha1(gboolean reload);
+
+gchar *callback_zlib();
+gchar *callback_raytr();
+gchar *callback_bfsh();
+gchar *callback_md5();
+gchar *callback_fib();
+gchar *callback_sha1();
+
+
+static ModuleEntry entries[] = {
+    {"CPU ZLib", "compress.png", callback_zlib, scan_zlib},
+    {"CPU Fibonacci", "module.png", callback_fib, scan_fib},
+    {"CPU MD5", "module.png", callback_md5, scan_md5},
+    {"CPU SHA1", "module.png", callback_sha1, scan_sha1},
+    {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
+    {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr},
+    { NULL }
 };
 
-static gchar *
-__benchmark_include_results(gchar *results, const gchar *benchmark,
-                            ShellOrderType order_type)
+static gchar *__benchmark_include_results(gchar * results,
+					  const gchar * benchmark,
+					  ShellOrderType order_type)
 {
     GKeyFile *conf;
     gchar **machines, *bconf_path;
     int i;
-    
+
     conf = g_key_file_new();
-    bconf_path = g_build_filename(params.path_data, "benchmark.conf", NULL);
+    bconf_path =
+	g_build_filename(params.path_data, "benchmark.conf", NULL);
     g_key_file_load_from_file(conf, bconf_path, 0, NULL);
-    
+
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
-        gchar *value = g_key_file_get_value(conf, benchmark, machines[i], NULL);
-        results = g_strconcat(results, machines[i], "=", value, "\n", NULL);
-        g_free(value);
+	gchar *value =
+	    g_key_file_get_value(conf, benchmark, machines[i], NULL);
+	results =
+	    g_strconcat(results, machines[i], "=", value, "\n", NULL);
+	g_free(value);
     }
-    
+
     g_strfreev(machines);
     g_key_file_free(conf);
     g_free(bconf_path);
-    
+
     return g_strdup_printf("[$ShellParam$]\n"
-                           "Zebra=1\n"
-                           "OrderType=%d\n"
-                           "ViewType=3\n%s", order_type, results);
+			   "Zebra=1\n"
+			   "OrderType=%d\n"
+			   "ViewType=3\n%s", order_type, results);
 }
 
-static gchar *
-benchmark_include_results_reverse(gchar *results, const gchar *benchmark)
+static gchar *benchmark_include_results_reverse(gchar * results,
+						const gchar * benchmark)
 {
-    return __benchmark_include_results(results, benchmark, SHELL_ORDER_DESCENDING);
+    return __benchmark_include_results(results, benchmark,
+				       SHELL_ORDER_DESCENDING);
 }
 
-static gchar *
-benchmark_include_results(gchar *results, const gchar *benchmark)
+static gchar *benchmark_include_results(gchar * results,
+					const gchar * benchmark)
 {
-    return __benchmark_include_results(results, benchmark, SHELL_ORDER_ASCENDING);
+    return __benchmark_include_results(results, benchmark,
+				       SHELL_ORDER_ASCENDING);
 }
 
 #include <arch/common/fib.h>
@@ -88,138 +109,118 @@ benchmark_include_results(gchar *results, const gchar *benchmark)
 #include <arch/common/raytrace.h>
 
 static gchar *bench_zlib = NULL,
-             *bench_fib  = NULL,
-             *bench_md5  = NULL,
-             *bench_sha1 = NULL,
-             *bench_fish = NULL,
-             *bench_ray  = NULL;
+    *bench_fib = NULL,
+    *bench_md5 = NULL,
+    *bench_sha1 = NULL,
+    *bench_fish = NULL,
+    *bench_ray = NULL;
 
-gchar *
-hi_info(gint entry)
+gchar *callback_zlib()
 {
-    switch (entry) {
-        case BENCHMARK_ZLIB:
-            if (bench_zlib)
-                return g_strdup(bench_zlib);
-            
-            bench_zlib = benchmark_zlib();
-            return g_strdup(bench_zlib);
-
-        case BENCHMARK_RAYTRACE:
-            if (bench_ray)
-                return g_strdup(bench_ray);
-            
-            bench_ray = benchmark_raytrace();
-            return g_strdup(bench_ray);
-
-        case BENCHMARK_BLOWFISH:
-            if (bench_fish)
-                return g_strdup(bench_fish);
-                
-            bench_fish = benchmark_fish();
-            return g_strdup(bench_fish);
-
-        case BENCHMARK_MD5:
-            if (bench_md5)
-                return g_strdup(bench_md5);
-            
-            bench_md5 = benchmark_md5();
-            return g_strdup(bench_md5);
-
-        case BENCHMARK_FIB:
-            if (bench_fib)
-                return g_strdup(bench_fib);
-            
-            bench_fib = benchmark_fib();
-            return g_strdup(bench_fib);
-
-        case BENCHMARK_SHA1:
-            if (bench_sha1)
-                return g_strdup(bench_sha1);
-            
-            bench_sha1 = benchmark_sha1();
-            return g_strdup(bench_sha1);
-
-        default:
-            return g_strdup("[Empty]\n");
-    }
+    return g_strdup(bench_zlib);
 }
 
-const gchar *
-hi_note_func(gint entry)
+gchar *callback_raytr()
+{
+    return g_strdup(bench_ray);
+}
+
+gchar *callback_bfsh()
+{
+    return g_strdup(bench_fish);
+}
+
+gchar *callback_md5()
+{
+    return g_strdup(bench_md5);
+}
+
+gchar *callback_fib()
+{
+    return g_strdup(bench_fib);
+}
+
+gchar *callback_sha1()
+{
+    return g_strdup(bench_sha1);
+}
+
+void scan_zlib(gboolean reload)
+{
+    SCAN_START();
+    g_free(bench_zlib);
+    bench_zlib = benchmark_zlib();
+    SCAN_END();
+}
+
+void scan_raytr(gboolean reload)
+{
+    SCAN_START();
+    g_free(bench_ray);
+    bench_ray = benchmark_raytrace();
+    SCAN_END();
+}
+
+void scan_bfsh(gboolean reload)
+{
+    SCAN_START();
+    g_free(bench_fish);
+    bench_fish = benchmark_fish();
+    SCAN_END();
+}
+
+void scan_md5(gboolean reload)
+{
+    SCAN_START();
+    g_free(bench_md5);
+    bench_md5 = benchmark_md5();
+    SCAN_END();
+}
+
+void scan_fib(gboolean reload)
+{
+    SCAN_START();
+    g_free(bench_fib);
+    bench_fib = benchmark_fib();
+    SCAN_END();
+}
+
+void scan_sha1(gboolean reload)
+{
+    SCAN_START();
+    g_free(bench_sha1);
+    bench_sha1 = benchmark_sha1();
+    SCAN_END();
+}
+
+const gchar *hi_note_func(gint entry)
 {
     switch (entry) {
-        case BENCHMARK_ZLIB:
-        case BENCHMARK_MD5:
-        case BENCHMARK_SHA1:
-            return "Results in bytes/second. Higher is better.";
-            
-        case BENCHMARK_RAYTRACE:
-        case BENCHMARK_BLOWFISH:
-        case BENCHMARK_FIB:
-            return "Results in seconds. Lower is better.";
+    case BENCHMARK_ZLIB:
+    case BENCHMARK_MD5:
+    case BENCHMARK_SHA1:
+	return "Results in bytes/second. Higher is better.";
+
+    case BENCHMARK_RAYTRACE:
+    case BENCHMARK_BLOWFISH:
+    case BENCHMARK_FIB:
+	return "Results in seconds. Lower is better.";
     }
-    
+
     return "";
 }
 
-void
-hi_reload(gint entry)
-{
-    switch (entry) {
-        case BENCHMARK_ZLIB:
-            if (bench_zlib) g_free(bench_zlib);
-            bench_zlib = benchmark_zlib();
-            break;
-        case BENCHMARK_RAYTRACE:
-            if (bench_ray) g_free(bench_ray);
-            bench_ray = benchmark_raytrace();
-            break;
-        case BENCHMARK_BLOWFISH:
-            if (bench_fish) g_free(bench_fish);
-            bench_fish = benchmark_fish();
-            break;
-        case BENCHMARK_MD5:
-            if (bench_md5) g_free(bench_md5);
-            bench_md5 = benchmark_md5();
-            break;
-        case BENCHMARK_FIB:
-            if (bench_fib) g_free(bench_fib);
-            bench_fib = benchmark_fib();
-            break;
-        case BENCHMARK_SHA1:
-            if (bench_sha1) g_free(bench_sha1);
-            bench_sha1 = benchmark_sha1();
-            break;
-    }
-}
-
-gint
-hi_n_entries(void)
-{
-    return G_N_ELEMENTS(hi_entries) - 1;
-}
-
-GdkPixbuf *
-hi_icon(gint entry)
-{
-    return icon_cache_get_pixbuf(hi_entries[entry].icon);
-}
-
-gchar *
-hi_name(gint entry)
-{
-    return hi_entries[entry].name;
-}
-
-gchar *
-hi_module_name(void)
+gchar *hi_module_get_name(void)
 {
     return g_strdup("Benchmarks");
 }
 
-guchar
-hi_module_weight(void)
+guchar hi_module_get_weight(void)
 {
     return 240;
+}
+
+ModuleEntry *hi_module_get_entries(void)
+{
+    return entries;
 }

@@ -31,7 +31,7 @@ remove_scsi_devices(gpointer key, gpointer value, gpointer data)
 
 /* SCSI support by Pascal F.Martin <pascalmartin@earthlink.net> */
 void
-scan_scsi(void)
+__scan_scsi_devices(void)
 {
     FILE *proc_scsi;
     gchar buffer[256], *buf;
@@ -160,7 +160,7 @@ remove_ide_devices(gpointer key, gpointer value, gpointer data)
 
 
 void
-scan_ide(void)
+__scan_ide_devices(void)
 {
     FILE *proc_ide;
     gchar *device, iface, *model, *media, *pgeometry = NULL, *lgeometry =

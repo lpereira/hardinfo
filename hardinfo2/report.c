@@ -345,7 +345,8 @@ report_create_inner_from_module_list(ReportContext *ctx, GSList *modules)
             
             ctx->entry = entry;
             report_subtitle(ctx, entry->name);
-            report_table(ctx, entry->func(entry->number));
+            module_entry_scan(entry);
+            report_table(ctx, module_entry_function(entry));
         }
     }
 }

@@ -17,7 +17,7 @@
  */
 
 static void
-scan_battery(void)
+__scan_battery(void)
 {
     gchar *acpi_path;
 

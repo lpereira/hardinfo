@@ -83,7 +83,7 @@ void cb_copy_to_clipboard()
     ShellModuleEntry *entry = shell_get_main_shell()->selected;
     
     if (entry) {
-        gchar         *data = entry->func(entry->number);
+        gchar         *data = module_entry_function(entry);
         GtkClipboard  *clip = gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE));
         ReportContext *ctx  = report_context_text_new(NULL);
 

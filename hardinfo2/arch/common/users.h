@@ -14,7 +14,8 @@ remove_users(gpointer key, gpointer value, gpointer data)
     return FALSE;
 }
 
-void scan_users(void)
+static void
+scan_users_do(void)
 {
     FILE *passwd;
     char buffer[512];

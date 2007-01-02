@@ -123,8 +123,9 @@ struct _ShellModuleEntry {
     gboolean		 selected;
     gint		 number;
     
-    gchar		*(*func) (gint entry);
-    gchar		*(*reloadfunc) (gint entry);
+    gchar		*(*func) ();
+    void		(*scan_func) ();
+
     gchar		*(*fieldfunc) (gchar * entry);
     gchar 		*(*morefunc) (gchar * entry);
     gchar		*(*notefunc) (gint entry);

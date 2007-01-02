@@ -17,7 +17,7 @@
  */
 
 void
-scan_pci(void)
+__scan_pci(void)
 {
     FILE *lspci;
     gchar buffer[256], *buf, *strhash = NULL, *strdevice = NULL;
