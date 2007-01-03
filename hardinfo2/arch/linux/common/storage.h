@@ -22,8 +22,6 @@ static gboolean
 remove_scsi_devices(gpointer key, gpointer value, gpointer data)
 {
     if (!strncmp((gchar *) key, "SCSI", 4)) {
-	g_free((gchar *) key);
-	g_free((GtkTreeIter *) value);
 	return TRUE;
     }
     return FALSE;
@@ -150,14 +148,10 @@ static gboolean
 remove_ide_devices(gpointer key, gpointer value, gpointer data)
 {
     if (!strncmp((gchar *) key, "IDE", 3)) {
-	g_free((gchar *) key);
-	g_free((gchar *) value);
-
 	return TRUE;
     }
     return FALSE;
 }
-
 
 void
 __scan_ide_devices(void)

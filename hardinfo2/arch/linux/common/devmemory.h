@@ -18,7 +18,7 @@
 
 static void __scan_memory()
 {
-    gchar **keys;
+    gchar **keys, *tmp;
     gint i;
     
     g_file_get_contents("/proc/meminfo", &meminfo, NULL, NULL);
@@ -26,23 +26,31 @@ static void __scan_memory()
     keys = g_strsplit(meminfo, "\n", 0);
 
     g_free(meminfo);
-    meminfo = "";
-    
     g_free(lginterval);
-    lginterval = "";
+    
+    meminfo = g_strdup("");
+    lginterval = g_strdup("");
     
     for (i = 0; keys[i]; i++) {
         gchar **newkeys = g_strsplit(keys[i], ":", 0);
         
-        if (!newkeys[0]) break;
+        if (!newkeys[0]) {
+            g_strfreev(newkeys);
+            break;
+        }
         
         g_strstrip(newkeys[1]);
         
         g_hash_table_replace(moreinfo, g_strdup(newkeys[0]), g_strdup(newkeys[1]));
-        meminfo = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "\n", NULL);
-        lginterval = g_strconcat(lginterval,
-                                 "LoadGraphInterval$", newkeys[0], "=500\n",
-                                 "UpdateInterval$", newkeys[0], "=500\n", NULL);
+        tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "\n", NULL);
+        g_free(meminfo);
+        meminfo = tmp;
+        
+        tmp = g_strconcat(lginterval,
+                          "LoadGraphInterval$", newkeys[0], "=500\n",
+                          "UpdateInterval$", newkeys[0], "=500\n", NULL);
+        g_free(lginterval);
+        lginterval = tmp;
 
         g_strfreev(newkeys);
     }

@@ -973,6 +973,8 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	} else {
 	    group_handle_normal(key_file, entry, group, keys, ngroups);
 	}
+	
+	g_strfreev(keys);
     }
 
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));

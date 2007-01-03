@@ -291,7 +291,8 @@ callback_memory()
                            "ViewType=2\n"
                            "RescanInterval=2000\n"
                            "%s\n",
-                           meminfo, lginterval);
+                           meminfo,
+                           lginterval);
 }
 
 gchar *
