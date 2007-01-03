@@ -1058,10 +1058,8 @@ static void module_selected(GtkTreeSelection * ts, gpointer data)
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);
 
-	gchar *tmp =
-	    g_strdup_printf("%s - System Information", entry->name);
-	gtk_window_set_title(GTK_WINDOW(shell->window), tmp);
-	g_free(tmp);
+	gtk_window_set_title(GTK_WINDOW(shell->window),
+                             idle_free(g_strdup_printf("%s - System Information", entry->name)));
 
 	shell_action_set_enabled("RefreshAction", TRUE);
 	shell_action_set_enabled("CopyAction", TRUE);

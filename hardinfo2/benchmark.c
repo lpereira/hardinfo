@@ -60,13 +60,13 @@ static gchar *__benchmark_include_results(gchar * results,
 					  ShellOrderType order_type)
 {
     GKeyFile *conf;
-    gchar **machines, *bconf_path;
+    gchar **machines;
     int i;
 
     conf = g_key_file_new();
-    bconf_path =
-	g_build_filename(params.path_data, "benchmark.conf", NULL);
-    g_key_file_load_from_file(conf, bconf_path, 0, NULL);
+    g_key_file_load_from_file(conf,
+                              idle_free(g_build_filename(params.path_data, "benchmark.conf", NULL)),
+                              0, NULL);
 
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
@@ -79,7 +79,6 @@ static gchar *__benchmark_include_results(gchar * results,
 
     g_strfreev(machines);
     g_key_file_free(conf);
-    g_free(bconf_path);
 
     return g_strdup_printf("[$ShellParam$]\n"
 			   "Zebra=1\n"

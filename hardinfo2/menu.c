@@ -103,7 +103,6 @@ void menu_init(Shell *shell)
     GtkActionGroup      *action_group;          /* Packing group for our Actions */
     GtkUIManager        *menu_manager;          /* The magic widget! */
     GError              *error;                 /* For reporting exceptions or errors */
-    gchar               *uidefs_path;
     GtkAccelGroup	*accel_group;
     
     /* Create our objects */
@@ -126,9 +125,7 @@ void menu_init(Shell *shell)
     
     /* Read in the UI from our XML file */
     error = NULL;
-    uidefs_path = g_build_filename(params.path_data, "uidefs.xml", NULL);
-    gtk_ui_manager_add_ui_from_file(menu_manager, uidefs_path, &error);
-    g_free(uidefs_path);
+    gtk_ui_manager_add_ui_from_file(menu_manager, idle_free(g_build_filename(params.path_data, "uidefs.xml", NULL)), &error);
     
     if (error) {
         g_error("Building menus failed: %s", error->message);

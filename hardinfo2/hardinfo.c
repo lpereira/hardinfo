@@ -46,20 +46,19 @@ main(int argc, char **argv)
                 "  BinReloc enabled:  %s\n"
                 "  Data prefix:       %s\n"
                 "  Library prefix:    %s\n"
-                "  Compiled on:       %s %s (%s)\n"
-                "  Debugging enabled: %s\n\n",
+                "  Compiled on:       %s %s (%s)\n",
                 RELEASE ? "Yes" : "No (" VERSION ")", ARCH,
                 ENABLE_BINRELOC ? "Yes" : "No",
                 PREFIX,
                 LIBPREFIX,
-                PLATFORM, KERNEL, HOSTNAME,
-                DEBUG ? "Yes" : "No");
+                PLATFORM, KERNEL, HOSTNAME);
        
         /* show also available modules */      
         params.list_modules = TRUE;
     }
 
     /* initialize the binreloc library, so we can load program data */
+    DEBUG("initializing binreloc");
     if (!binreloc_init(FALSE))
         g_error("Failed to find runtime data.\n\n"
                 "\342\200\242 Is HardInfo correctly installed?\n"
@@ -86,6 +85,7 @@ main(int argc, char **argv)
     if (!params.create_report) {
         /* we only try to open the UI if the user didn't asked for a 
            report. */
+        DEBUG("initializing gtk+");
         params.gui_running = ui_init(&argc, &argv);
 
         /* as a fallback, if GTK+ initialization failed, run in report

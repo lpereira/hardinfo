@@ -115,12 +115,8 @@ hi_get_field(gchar * field)
     gchar *tmp;
 
     if (g_str_equal(field, "Memory")) {
-	MemoryInfo *mi;
-
-	mi = computer_get_memory();
+	MemoryInfo *mi = idle_free(computer_get_memory());
 	tmp = g_strdup_printf("%dMB (%dMB used)", mi->total, mi->used);
-
-	g_free(mi);
     } else if (g_str_equal(field, "Uptime")) {
 	tmp = computer_get_formatted_uptime();
     } else if (g_str_equal(field, "Date/Time")) {
@@ -219,10 +215,10 @@ gchar *callback_summary()
                            "OpenGL Renderer=%s\n"
                            "X11 Vendor=%s\n"
                            "[Multimedia]\n"
-                           "%s\n"
+                           "\n%s\n"
                            "[Input Devices]\n%s\n"
-                           "%s\n"
-                           "%s\n",
+                           "\n%s\n"
+                           "\n%s\n",
                            (gchar*)idle_free(module_call_method("devices::getProcessorName")),
                            computer->os->distro,
                            computer->os->username,

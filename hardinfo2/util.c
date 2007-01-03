@@ -401,6 +401,8 @@ static void module_register_methods(ShellModule *module)
             g_hash_table_insert(__module_methods, method_name, method.function);
             g_free(name);
             
+            DEBUG("registering method %s", method_name);
+            
             if (!(*(++methods)).name)
                 break;
         }
@@ -544,6 +546,7 @@ static void module_free(ShellModule *module)
     g_object_unref(module->icon);
     /*g_module_close(module->dll);*/
 
+    DEBUG("module_free: module->entries, %p\n", module->entries);
     g_slist_foreach(module->entries, (GFunc)module_entry_free, NULL);
     g_slist_free(module->entries);
 
@@ -562,12 +565,16 @@ static GSList *modules_check_deps(GSList *modules)
 
         module = (ShellModule *) mm->data;
         
+        DEBUG("check deps: %s", module->name);
+        
         if (g_module_symbol(module->dll, "hi_module_get_dependencies",
                             (gpointer) & get_deps)) {
             for (i = 0, deps = get_deps(); deps[i]; i++) {
                 GSList      *l;
                 ShellModule *m;
                 gboolean    found = FALSE;
+                
+                DEBUG("  depends on: %s", deps[i]);
                 
                 for (l = modules; l; l = l->next) {
                     m = (ShellModule *)l->data;
@@ -796,6 +803,8 @@ void tree_view_save_image(gchar *filename)
 
 static gboolean __idle_free_do(gpointer ptr)
 {
+    DEBUG("collecting garbage: %p", ptr);
+
     g_free(ptr);
 
     return FALSE;
@@ -803,7 +812,7 @@ static gboolean __idle_free_do(gpointer ptr)
 
 gpointer idle_free(gpointer ptr)
 {
-    g_timeout_add(2000, __idle_free_do, ptr);
+    g_timeout_add(5000, __idle_free_do, ptr);
     
     return ptr;
 }
