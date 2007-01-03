@@ -106,7 +106,7 @@ hi_more_info(gchar * entry)
     if (info)
 	return g_strdup(info);
 
-    return g_strdup_printf("[Empty %s]", entry);
+    return g_strdup_printf("[%s]", entry);
 }
 
 gchar *

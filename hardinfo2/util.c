@@ -805,8 +805,9 @@ void tree_view_save_image(gchar *filename)
 
 static gboolean __idle_free_do(gpointer ptr)
 {
-    DEBUG("GC memory at %p: %s", ptr,
-          g_utf8_validate((gchar*)ptr, 3, NULL) ? (gchar*)ptr : "[non string data]");
+    DEBUG("Freeing mem @ %p: %s", ptr,
+          g_utf8_validate((gchar*)ptr, 3, NULL) ?
+                          (gchar*)ptr : "[non string data]");
 
     g_free(ptr);
 
@@ -815,6 +816,8 @@ static gboolean __idle_free_do(gpointer ptr)
 
 gpointer idle_free(gpointer ptr)
 {
+    DEBUG("Will free mem @ %p in 5000ms", ptr);
+    
     g_timeout_add(5000, __idle_free_do, ptr);
     
     return ptr;
@@ -866,5 +869,6 @@ gchar *module_entry_function(ShellModuleEntry *module_entry)
         return g_strdup(module_entry->func());
     }
     
-    return g_strdup("[Error]\n" "Invalid module=");
+    return g_strdup("[Error]\n"
+                    "Invalid module=");
 }

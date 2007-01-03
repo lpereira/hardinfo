@@ -42,6 +42,7 @@ static void module_selected_show_info(ShellModuleEntry * entry,
 static void info_selected(GtkTreeSelection * ts, gpointer data);
 static void info_selected_show_extra(gchar * data);
 static gboolean reload_section(gpointer data);
+static gboolean rescan_section(gpointer data);
 
 /*
  * Globals ********************************************************************
@@ -471,6 +472,8 @@ void shell_init(GSList * modules)
 	return;
     }
 
+    DEBUG("initializing shell");
+
     create_window();
 
     shell->tree = tree_new();
@@ -536,7 +539,7 @@ static gboolean update_field(gpointer data)
 
 	    ts = gtk_tree_view_get_selection(GTK_TREE_VIEW
 					     (shell->info->view));
-
+					     
 	    if (iter && gtk_tree_selection_iter_is_selected(ts, iter)) {
 		load_graph_update(shell->loadgraph, atoi(value));
 	    }
@@ -594,6 +597,15 @@ static gboolean reload_section(gpointer data)
 
     /* destroy the timeout: it'll be set up again */
     return FALSE;
+}
+
+static gboolean rescan_section(gpointer data)
+{
+    ShellModuleEntry *entry = (ShellModuleEntry *) data;
+
+    module_entry_reload(entry);
+
+    return entry->selected;
 }
 
 gint
@@ -705,7 +717,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		fu->field_name = g_strdup(strchr(key, '$') + 1);
 		fu->entry = entry;
 		fu->loadgraph = TRUE;
-
+		
 		g_timeout_add(ms, update_field, fu);
 	    } else if (g_str_equal(key, "LoadGraphMaxValue")) {
 		gint max_value;
@@ -719,6 +731,12 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		ms = g_key_file_get_integer(key_file, group, key, NULL);
 
 		g_timeout_add(ms, reload_section, entry);
+	    } else if (g_str_equal(key, "RescanInterval")) {
+		gint ms;
+
+		ms = g_key_file_get_integer(key_file, group, key, NULL);
+
+		g_timeout_add(ms, rescan_section, entry);
 	    } else if (g_str_equal(key, "OrderType")) {
 		shell->_order_type = g_key_file_get_integer(key_file,
 		                                            group,

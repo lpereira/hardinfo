@@ -33,6 +33,8 @@ main(int argc, char **argv)
 {
     GSList *modules;
     
+    DEBUG("HardInfo version " VERSION ". Debug version.");
+    
     /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);
     
@@ -52,6 +54,8 @@ main(int argc, char **argv)
                 PREFIX,
                 LIBPREFIX,
                 PLATFORM, KERNEL, HOSTNAME);
+
+        DEBUG("  Debugging is enabled.");
        
         /* show also available modules */      
         params.list_modules = TRUE;
@@ -96,23 +100,28 @@ main(int argc, char **argv)
 
     if (params.use_modules) {
         /* load only selected modules */
+        DEBUG("loading user-selected modules");
         modules = modules_load_selected();
     } else {
         /* load all modules */
+        DEBUG("loading all modules");
         modules = modules_load_all();
     }
 
     if (params.gui_running) {
-        /* initialize gui and start gtk+ main loop */
+        /* initialize gui and start gtk+ main loop */        
         icon_cache_init();
         stock_icons_init();
     
         shell_init(modules);
   
+        DEBUG("entering gtk+ main loop");
         gtk_main();
     } else if (params.create_report) {
         /* generate report */
         gchar *report;
+        
+        DEBUG("generating report");
         
         report = report_create_from_module_list_format(modules,
                                                        params.report_format);
@@ -121,5 +130,6 @@ main(int argc, char **argv)
         g_free(report);
     }
 
+    DEBUG("finished");
     return 0;
 }

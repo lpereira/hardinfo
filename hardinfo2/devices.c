@@ -79,6 +79,7 @@ static gchar *pci_list = "";
 static gchar *input_list = NULL;
 static gchar *storage_list = NULL;
 static gchar *battery_list = NULL;
+static gchar *meminfo = NULL, *lginterval = NULL;
 
 #define WALK_UNTIL(x)   while((*buf != '\0') && (*buf != x)) buf++
 
@@ -113,7 +114,6 @@ static gchar *battery_list = NULL;
 typedef struct _Processor	Processor;
 
 #include <arch/this/processor.h>
-
 #include <arch/this/pci.h>
 #include <arch/common/printers.h>
 #include <arch/this/inputdevices.h>
@@ -121,6 +121,7 @@ typedef struct _Processor	Processor;
 #include <arch/this/storage.h>
 #include <arch/this/battery.h>
 #include <arch/this/sensors.h>
+#include <arch/this/devmemory.h>
 
 gchar *
 get_processor_name(void)
@@ -183,7 +184,19 @@ hi_more_info(gchar * entry)
 
     if (info)
 	return g_strdup(info);
-    return g_strdup("[Empty]");
+
+    return g_strdup("[TSC]");
+}
+
+gchar *
+hi_get_field(gchar * field)
+{
+    gchar *info = (gchar *) g_hash_table_lookup(moreinfo, field);
+
+    if (info)
+	return g_strdup(info);
+
+    return g_strdup(field);
 }
 
 void
@@ -199,6 +212,7 @@ void
 scan_memory(gboolean reload)
 {
     SCAN_START();
+    __scan_memory();
     SCAN_END();
 }
 
@@ -271,7 +285,13 @@ callback_processors()
 gchar *
 callback_memory()
 {
-    return g_strdup("[Memory]\nNot implemented=\n");
+    return g_strdup_printf("[Memory]\n"
+                           "%s\n"
+                           "[$ShellParam$]\n"
+                           "ViewType=2\n"
+                           "RescanInterval=2000\n"
+                           "%s\n",
+                           meminfo, lginterval);
 }
 
 gchar *
@@ -358,6 +378,5 @@ hi_module_get_weight(void)
 void
 hi_module_init(void)
 {
-    moreinfo = g_hash_table_new(g_str_hash, g_str_equal);
+    moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 }
-

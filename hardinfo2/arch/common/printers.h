@@ -78,6 +78,6 @@ __scan_printers(void)
 	}
     } else {
 	printer_list = g_strdup("[Printers]\n"
-	                        "No printers found");
+	                        "No printers found=\n");
     }
 }

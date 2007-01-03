@@ -16,6 +16,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <config.h>
 #include <gtk/gtk.h>
 #include <stock.h>
 #include <iconcache.h>
@@ -68,6 +69,8 @@ void stock_icons_init(void)
 {
     gint i;
     guint n_stock_icons = G_N_ELEMENTS(stock_icons);
+
+    DEBUG("initializing stock icons");
 
     icon_factory = gtk_icon_factory_new();
 
