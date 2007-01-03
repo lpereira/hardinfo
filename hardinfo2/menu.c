@@ -1,6 +1,6 @@
 /*
  * HardInfo
- * Copyright(C) 2003-2006 Leandro A. F. Pereira.
+ * Copyright(C) 2003-2007 Leandro A. F. Pereira.
  *
  * menu.c is based on UI Manager tutorial by Ryan McDougall
  * Copyright(C) 2005 Ryan McDougall.

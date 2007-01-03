@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@linuxmag.com.br>
+ *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@linuxmag.com.br>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ main(int argc, char **argv)
     /* show version information and quit */
     if (params.show_version) {
         g_print("HardInfo version " VERSION "\n");
-        g_print("Copyright (C) 2003-2006 Leandro A. F. Pereira. See COPYING for details.\n\n");
+        g_print("Copyright (C) 2003-2007 Leandro A. F. Pereira. See COPYING for details.\n\n");
     
         g_print("Compile-time options:\n"
                 "  Release version:   %s (%s)\n"
