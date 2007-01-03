@@ -16,6 +16,12 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+struct _Processor {
+    gchar *vendor_id, *model_name;
+    gint cache_size;
+    gfloat bogomips;
+};
+
 static GSList *
 __scan_processors(void)
 {
@@ -36,7 +42,7 @@ __scan_processors(void)
 	    tmp[1] = g_strstrip(tmp[1]);
 
 	    get_str("vendor_id", processor->vendor_id);
-	    get_float("# processors", processor->processors);
+	    get_float("# processors", processor->cache_size);
 	    get_int("bogomips per cpu", processor->bogomips);
 
 	}
@@ -44,6 +50,7 @@ __scan_processors(void)
     }
     
     processor->model_name = g_strconcat("S390 ", processor->vendor_id, NULL);
+    g_free(processor->vendor_id);
 
     fclose(cpuinfo);
 
@@ -56,11 +63,12 @@ processor_get_info(GSList *processors)
         Processor *processor = (Processor *)processors->data;
         
 	return g_strdup_printf("[Processor]\n"
+                               "Model=%s\n"
 	                       "Processors=%d\n"
 	                       "BogoMips per CPU=%.2f"
 	                       "Byte Order=%s\n",
 			       processor->model_name,
-			       processor->processors,
+			       processor->cache_size,
 			       processor->bogomips,
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
                                "Little Endian"

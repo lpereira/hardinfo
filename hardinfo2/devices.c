@@ -77,7 +77,7 @@ static GSList *processors = NULL;
 static gchar *printer_list = NULL;
 static gchar *pci_list = "";
 static gchar *input_list = NULL;
-static gchar *storage_list = "";
+static gchar *storage_list = NULL;
 static gchar *battery_list = NULL;
 
 #define WALK_UNTIL(x)   while((*buf != '\0') && (*buf != x)) buf++
@@ -111,21 +111,6 @@ static gchar *battery_list = NULL;
 #include <vendor.h>
 
 typedef struct _Processor	Processor;
-struct _Processor {
-    gchar *model_name;
-    gchar *vendor_id;
-    gchar *flags;
-    gint cache_size;
-    gfloat bogomips, cpu_mhz;
-
-    gchar *has_fpu;
-    gchar *bug_fdiv, *bug_hlt, *bug_f00f, *bug_coma;
-    
-    gint model, family, stepping;
-    gchar *strmodel;
-    
-    gint id;
-};
 
 #include <arch/this/processor.h>
 
@@ -255,8 +240,8 @@ void
 scan_storage(gboolean reload)
 {
     SCAN_START();
-    if (*storage_list)
-        g_free(storage_list);
+    g_free(storage_list);
+    storage_list = g_strdup("");
     
     __scan_ide_devices();
     __scan_scsi_devices();

@@ -16,6 +16,17 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+struct _Processor {
+    gchar *model_name;
+    gchar *vendor_id;
+    gchar *flags;
+    gfloat bogomips, cpu_mhz;
+
+    gchar *has_fpu;
+    
+    gchar *strmodel;
+};
+
 static GSList *
 __scan_processors(void)
 {

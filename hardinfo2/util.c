@@ -401,7 +401,7 @@ static void module_register_methods(ShellModule *module)
             g_hash_table_insert(__module_methods, method_name, method.function);
             g_free(name);
             
-            DEBUG("registering method %s", method_name);
+            DEBUG("Registered method: %s", method_name);
             
             if (!(*(++methods)).name)
                 break;
@@ -417,6 +417,8 @@ gchar *module_call_method(gchar *method)
     if (__module_methods == NULL) {
         return NULL;
     }
+    
+    DEBUG("Calling method: %s", method);
 
     function = g_hash_table_lookup(__module_methods, method);
     return function ? g_strdup(function()) :
@@ -803,7 +805,8 @@ void tree_view_save_image(gchar *filename)
 
 static gboolean __idle_free_do(gpointer ptr)
 {
-    DEBUG("collecting garbage: %p", ptr);
+    DEBUG("Collecting Garbage: %p", ptr);
+    DEBUG("              Data: %20s", (gchar*)ptr);
 
     g_free(ptr);
 
@@ -852,13 +855,9 @@ void module_entry_reload(ShellModuleEntry *module_entry)
 
 void module_entry_scan(ShellModuleEntry *module_entry)
 {
-    shell_status_update(idle_free(g_strdup_printf("Scanning: %s...", module_entry->name)));
-
     if (module_entry->scan_func) {
         module_entry->scan_func(FALSE);
     }
-
-    shell_status_update("Done.");
 }
 
 gchar *module_entry_function(ShellModuleEntry *module_entry)

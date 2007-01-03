@@ -16,6 +16,13 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+struct _Processor {
+    gchar *model_name;
+    gchar *vendor_id;
+    gfloat bogomips;
+    gchar *strmodel;
+};
+
 static GSList *
 __scan_processors(void)
 {
@@ -54,10 +61,11 @@ processor_get_info(GSList *processors)
 {
         Processor *processor = (Processor *)processors->data;
         
-	return g_strdup_printf("[Processor] %s\n"
-	                       "Arch=%s\n"
+	return g_strdup_printf("[Processor]\n"
+                               "Model=%s\n"
+	                       "Architecture=%s\n"
 	                       "Family=%sMHz\n"
-			       "BogoMips=%s\n"
+			       "BogoMIPS=%s\n"
 	                       "Byte Order=%s\n",
 			       processor->model_name,
 			       processor->vendor_id,

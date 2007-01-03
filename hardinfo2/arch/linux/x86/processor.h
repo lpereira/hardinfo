@@ -16,6 +16,22 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+struct _Processor {
+    gchar *model_name;
+    gchar *vendor_id;
+    gchar *flags;
+    gint cache_size;
+    gfloat bogomips, cpu_mhz;
+
+    gchar *has_fpu;
+    gchar *bug_fdiv, *bug_hlt, *bug_f00f, *bug_coma;
+    
+    gint model, family, stepping;
+    gchar *strmodel;
+    
+    gint id;
+};
+
 /*
  * This function is partly based on x86cpucaps
  * by Osamu Kayasono <jacobi@jcom.home.ne.jp>
