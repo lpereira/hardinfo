@@ -122,8 +122,8 @@ hi_get_field(gchar * field)
     } else if (g_str_equal(field, "Date/Time")) {
 	time_t t = time(NULL);
 
-	tmp = g_new0(gchar, 32);
-	strftime(tmp, 32, "%D / %R", localtime(&t));
+	tmp = g_new0(gchar, 64);
+	strftime(tmp, 64, "%c", localtime(&t));
     } else if (g_str_equal(field, "Load Average")) {
 	tmp = computer_get_formatted_loadavg();
     } else {

@@ -141,9 +141,7 @@ get_processor_name(void)
 gchar *
 get_storage_devices(void)
 {
-    if (!*storage_list) {
-        scan_storage(FALSE);
-    }
+    scan_storage(FALSE);
     
     return storage_list;
 }

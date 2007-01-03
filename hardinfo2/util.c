@@ -805,8 +805,8 @@ void tree_view_save_image(gchar *filename)
 
 static gboolean __idle_free_do(gpointer ptr)
 {
-    DEBUG("Collecting Garbage: %p", ptr);
-    DEBUG("              Data: %20s", (gchar*)ptr);
+    DEBUG("GC memory at %p: %s", ptr,
+          g_utf8_validate((gchar*)ptr, 3, NULL) ? (gchar*)ptr : "[non string data]");
 
     g_free(ptr);
 
