@@ -48,7 +48,7 @@ static void __scan_memory()
         
         tmp = g_strconcat(lginterval,
                           "LoadGraphInterval$", newkeys[0], "=500\n",
-                          "UpdateInterval$", newkeys[0], "=500\n", NULL);
+                          "UpdateInterval$", newkeys[0], "=1000\n", NULL);
         g_free(lginterval);
         lginterval = tmp;
 

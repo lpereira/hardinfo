@@ -22,8 +22,6 @@ static gboolean
 remove_input_devices(gpointer key, gpointer value, gpointer data)
 {
     if (!strncmp((gchar *) key, "INP", 3)) {
-	g_free((gchar *) key);
-	g_free((GtkTreeIter *) value);
 	return TRUE;
     }
 

@@ -35,6 +35,7 @@ enum {
     COMPUTER_SUMMARY,
     COMPUTER_OPERATING_SYSTEM,
     COMPUTER_KERNEL_MODULES,
+    COMPUTER_BOOTS,
     COMPUTER_LANGUAGE,
     COMPUTER_FILESYSTEMS,
     COMPUTER_SHARES,
@@ -47,6 +48,7 @@ enum {
 gchar *callback_summary();
 gchar *callback_os();
 gchar *callback_modules();
+gchar *callback_boots();
 gchar *callback_locales();
 gchar *callback_fs();
 gchar *callback_shares();
@@ -58,6 +60,7 @@ gchar *callback_users();
 void scan_summary(gboolean reload);
 void scan_os(gboolean reload);
 void scan_modules(gboolean reload);
+void scan_boots(gboolean reload);
 void scan_locales(gboolean reload);
 void scan_fs(gboolean reload);
 void scan_shares(gboolean reload);
@@ -69,6 +72,7 @@ static ModuleEntry entries[] = {
     { "Summary",		"summary.png",		callback_summary,	scan_summary },
     { "Operating System",	"os.png",		callback_os,		scan_os },
     { "Kernel Modules",		"module.png",		callback_modules,	scan_modules },
+    { "Boots",			"boot.png",		callback_boots,		scan_boots },
     { "Languages",		"language.png",		callback_locales,	scan_locales },
     { "Filesystems",		"dev_removable.png",	callback_fs,		scan_fs },
     { "Shared Directories",	"shares.png",		callback_shares,	scan_shares },
@@ -155,9 +159,16 @@ void scan_modules(gboolean reload)
     SCAN_END();
 }
 
+void scan_boots(gboolean reload)
+{
+    SCAN_START();
+    SCAN_END();
+}
+
 void scan_locales(gboolean reload)
 {
     SCAN_START();
+    scan_os(FALSE);
     scan_languages(computer->os);
     SCAN_END();
 }
@@ -269,6 +280,11 @@ gchar *callback_modules()
                            "[$ShellParam$]\n"
                            "ViewType=1",
                            module_list);
+}
+
+gchar *callback_boots()
+{
+    return g_strdup("[Duh]\nNot implemented yet=\n");
 }
 
 gchar *callback_locales()

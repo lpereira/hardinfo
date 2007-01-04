@@ -816,9 +816,9 @@ static gboolean __idle_free_do(gpointer ptr)
 
 gpointer idle_free(gpointer ptr)
 {
-    DEBUG("Will free mem @ %p in 5000ms", ptr);
+    DEBUG("Will free mem @ %p in 10000ms", ptr);
     
-    g_timeout_add(5000, __idle_free_do, ptr);
+    g_timeout_add(10000, __idle_free_do, ptr);
     
     return ptr;
 }
@@ -834,7 +834,7 @@ void module_entry_scan_all_except(ModuleEntry *entries, gint except_entry)
         if (i == except_entry)
             continue;
             
-        shell_status_update(idle_free(g_strdup_printf("Scanning: %s...", entry.name)));
+        shell_status_update(idle_free(g_strdup_printf("<b>Scanning:</b> %s...", entry.name)));
         
         if ((scan_callback = entry.scan_callback)) {
             scan_callback(FALSE);

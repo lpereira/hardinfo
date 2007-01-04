@@ -20,11 +20,6 @@ static gboolean
 remove_usb_devices(gpointer key, gpointer value, gpointer data)
 {
     if (!strncmp((gchar *) key, "USB", 3)) {
-	GtkTreeIter *iter = (GtkTreeIter *) data;
-
-	g_free((gchar *) value);
-	g_free(iter);
-
 	return TRUE;
     }
     return FALSE;
