@@ -389,3 +389,17 @@ hi_module_init(void)
     computer = g_new0(Computer, 1);
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
+
+ModuleAbout *
+hi_module_get_about(void)
+{
+    static ModuleAbout ma[] = {
+      {
+          .author	= "Leandro A. F. Pereira (leandro@linuxmag.com.br)",
+          .version	= VERSION,
+          .license	= "GNU GPL version 2"
+      }
+    };
+    
+    return ma;
+}

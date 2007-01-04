@@ -223,3 +223,17 @@ ModuleEntry *hi_module_get_entries(void)
 {
     return entries;
 }
+
+ModuleAbout *
+hi_module_get_about(void)
+{
+    static ModuleAbout ma[] = {
+      {
+          .author	= "Leandro A. F. Pereira (leandro@linuxmag.com.br)",
+          .version	= VERSION,
+          .license	= "GNU GPL version 2"
+      }
+    };
+    
+    return ma;
+}

@@ -19,7 +19,10 @@
 #ifndef __CALLBACKS_H__
 #define __CALLBACKS_H__
 
+#include <gtk/gtk.h>
+
 void cb_about();
+void cb_about_module(GtkAction *action);
 void cb_generate_report();
 void cb_save_graphic();
 void cb_quit();
@@ -28,6 +31,7 @@ void cb_copy_to_clipboard();
 void cb_side_pane();
 void cb_toolbar();
 void cb_open_web_page();
+void cb_open_online_docs();
 void cb_report_bug();
 
 #endif	/* __CALLBACKS_H__ */

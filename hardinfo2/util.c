@@ -555,6 +555,17 @@ static void module_free(ShellModule *module)
     g_free(module);
 }
 
+ModuleAbout *module_get_about(ShellModule *module)
+{
+    ModuleAbout *(*get_about)(void);
+    
+    if (g_module_symbol(module->dll, "hi_module_get_about", (gpointer) &get_about)) {
+        return get_about();
+    }
+    
+    return NULL;
+}
+
 static GSList *modules_check_deps(GSList *modules)
 {
     GSList      *mm;

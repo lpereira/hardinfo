@@ -33,6 +33,7 @@ static GtkActionEntry entries[] =
   { "InformationMenuAction", NULL, "_Information" },                  /* name, stock id, label */
   { "ViewMenuAction", NULL, "_View" },
   { "HelpMenuAction", NULL, "_Help" },
+  { "HelpMenuModulesAction", NULL, "About _Modules" },
   { "MainMenuBarAction", NULL, "" },
   
   { "ReportAction", HI_STOCK_REPORT,                    /* name, stock id */
@@ -55,6 +56,11 @@ static GtkActionEntry entries[] =
     NULL,
     G_CALLBACK(cb_refresh) },
 
+  { "OnlineDocsAction", GTK_STOCK_HELP,
+    "Contents (online)", "F1",
+    NULL,
+    G_CALLBACK(cb_open_online_docs) },
+
   { "HomePageAction", HI_STOCK_INTERNET,
     "_Open HardInfo Web Site", NULL,
     NULL,
@@ -66,7 +72,7 @@ static GtkActionEntry entries[] =
     G_CALLBACK(cb_report_bug) },
 
   { "AboutAction", GTK_STOCK_ABOUT,
-    "_About", NULL,    
+    "_About HardInfo", NULL,    
     "Displays program version information",
     G_CALLBACK(cb_about) },
 

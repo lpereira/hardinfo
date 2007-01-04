@@ -68,6 +68,11 @@ void cb_open_web_page()
     open_url("http://hardinfo.berlios.de");
 }
 
+void cb_open_online_docs()
+{
+    open_url("http://hardinfo.berlios.de/wiki/Documentation");
+}
+
 void cb_report_bug()
 {
     open_url("http://hardinfo.berlios.de/web/BugReports");
@@ -114,6 +119,46 @@ void cb_toolbar()
     
     visible = shell_action_get_active("ToolbarAction");
     shell_ui_manager_set_visible("/MainMenuBarAction", visible);
+}
+
+void cb_about_module(GtkAction *action)
+{
+    Shell *shell = shell_get_main_shell();
+    GSList *modules = shell->tree->modules;
+    ModuleAbout *ma;
+    gchar *name;
+
+    g_object_get(G_OBJECT(action), "tooltip", &name, NULL);
+    
+    for (; modules; modules = modules->next) {
+        ShellModule *sm = (ShellModule *)modules->data;
+        
+        if (!g_str_equal(sm->name, name))
+            continue;
+            
+        if ((ma = module_get_about(sm))) {
+            GtkWidget *about;
+
+            about = gtk_about_dialog_new();
+            gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), sm->name);
+            gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), ma->version);
+            gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
+                                           idle_free(g_strdup_printf("Written by %s", ma->author)));
+            
+            gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
+                                          idle_free(g_strdup_printf("Licensed under %s", ma->license)));
+                                          
+            gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), sm->icon);
+            gtk_dialog_run(GTK_DIALOG(about));
+            gtk_widget_destroy(about);
+        } else {
+            g_warning("No about information is associated with this module.");
+        }
+        
+        break;
+    }
+    
+    g_free(name);
 }
 
 void cb_about()

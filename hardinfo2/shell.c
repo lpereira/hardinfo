@@ -28,6 +28,8 @@
 #include <menu.h>
 #include <stock.h>
 
+#include <callbacks.h>
+
 /*
  * Internal Prototypes ********************************************************
  */
@@ -371,8 +373,10 @@ static void view_menu_select_entry(gpointer data, gpointer data2)
     gtk_tree_path_free(path);
 }
 
-static void add_module_to_view_menu(gchar * name, GdkPixbuf * pixbuf)
+static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 {
+    gchar *about_module = g_strdup_printf("AboutModule%s", name);
+
     stock_icon_register_pixbuf(pixbuf, name);
 
     GtkActionEntry entries[] = {
@@ -384,14 +388,27 @@ static void add_module_to_view_menu(gchar * name, GdkPixbuf * pixbuf)
 	   NULL,			/* tooltip */
   	   NULL,			/* callback */
 	 },
+	 {
+	   about_module,
+	   name,
+	   name,
+	   NULL,
+	   name,
+	   (GCallback) cb_about_module,
+	 },
     };
 
-    gtk_action_group_add_actions(shell->action_group, entries, 1, NULL);
+    gtk_action_group_add_actions(shell->action_group, entries, 2, NULL);
 
     gtk_ui_manager_add_ui(shell->ui_manager,
 			  gtk_ui_manager_new_merge_id(shell->ui_manager),
 			  "/menubar/ViewMenu/LastSep",
 			  name, name, GTK_UI_MANAGER_MENU, TRUE);
+			  
+    gtk_ui_manager_add_ui(shell->ui_manager,
+			  gtk_ui_manager_new_merge_id(shell->ui_manager),
+			  "/menubar/HelpMenu/HelpMenuModules/LastSep",
+			  about_module, about_module, GTK_UI_MANAGER_AUTO, TRUE);
 }
 
 static void
@@ -435,7 +452,7 @@ static void add_modules_to_gui(gpointer data, gpointer user_data)
 			   -1);
     }
 
-    add_module_to_view_menu(module->name, module->icon);
+    add_module_to_menu(module->name, module->icon);
 
     if (module->entries) {
 	ShellModuleEntry *entry;

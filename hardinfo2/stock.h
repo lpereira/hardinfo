@@ -21,6 +21,8 @@
 
 #define HI_STOCK_REPORT		"hi-stock-report"
 #define HI_STOCK_INTERNET	"hi-stock-internet"
+#define HI_STOCK_MODULE		"hi-stock-module"
+#define HI_STOCK_ABOUT_MODULES	"hi-stock-about-modules"
 
 void stock_icons_init(void);
 void stock_icon_register(gchar *filename, gchar *stock_id);

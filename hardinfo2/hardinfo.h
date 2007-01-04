@@ -23,6 +23,7 @@
 #include <shell.h>
 
 typedef struct _ModuleEntry		ModuleEntry;
+typedef struct _ModuleAbout		ModuleAbout;
 typedef struct _FileTypes		FileTypes;
 typedef struct _ProgramParameters	ProgramParameters;
 
@@ -54,6 +55,12 @@ struct _ModuleEntry {
     gpointer	 scan_callback;
 };
 
+struct _ModuleAbout {
+    gchar	*author;
+    gchar	*version;
+    gchar	*license;
+};
+
 /* String utility functions */
 inline void  remove_quotes(gchar *str);
 inline void  strend(gchar *str, gchar chr);
@@ -79,6 +86,7 @@ void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
+ModuleAbout *module_get_about(ShellModule *module);
 
 void	      module_entry_scan_all_except(ModuleEntry *entries, gint except_entry);
 void	      module_entry_scan_all(ModuleEntry *entries);
