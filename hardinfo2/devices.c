@@ -397,3 +397,12 @@ hi_module_get_about(void)
     
     return ma;
 }
+
+gchar **
+hi_module_get_dependencies(void)
+{
+    static gchar *deps[] = { "computer.so", NULL };
+    
+    return deps;
+}
+

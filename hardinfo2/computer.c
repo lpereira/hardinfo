@@ -357,6 +357,24 @@ gchar *callback_users()
                            "%s\n", human_users, sys_users);
 }
 
+gchar *get_is_linux_24(void)
+{
+    scan_os(FALSE);
+    return strstr(computer->os->kernel, "Linux 2.4") ? "" : NULL;
+}
+
+ShellModuleMethod*
+hi_exported_methods(void)
+{
+    static ShellModuleMethod m[] = {
+      { "isLinux2.4",	get_is_linux_24 },
+      { NULL }
+    };
+    
+    return m;
+}
+
+
 ModuleEntry *
 hi_module_get_entries(void)
 {

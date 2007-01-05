@@ -21,7 +21,14 @@ static GHashTable *memlabels;
 static void __scan_memory()
 {
     gchar **keys, *tmp;
+    static gint linux24_offset = -1;
     gint i;
+    
+    if (linux24_offset == -1) {
+        linux24_offset = idle_free(module_call_method("computer::isLinux2.4")) ?
+                         3 : 0;
+        DEBUG("linux24_offset=%d", linux24_offset);
+    }
     
     g_file_get_contents("/proc/meminfo", &meminfo, NULL, NULL);
     
@@ -33,7 +40,7 @@ static void __scan_memory()
     meminfo = g_strdup("");
     lginterval = g_strdup("");
     
-    for (i = 0; keys[i]; i++) {
+    for (i = linux24_offset; keys[i]; i++) {
         gchar **newkeys = g_strsplit(keys[i], ":", 0);
         
         if (!newkeys[0]) {

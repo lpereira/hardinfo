@@ -816,20 +816,24 @@ void tree_view_save_image(gchar *filename)
 
 static gboolean __idle_free_do(gpointer ptr)
 {
-    DEBUG("Freeing mem @ %p: %s", ptr,
-          g_utf8_validate((gchar*)ptr, 3, NULL) ?
-                          (gchar*)ptr : "[non string data]");
+    if (ptr) {
+        DEBUG("Freeing mem @ %p: %s", ptr,
+              g_utf8_validate((gchar*)ptr, 3, NULL) ?
+                              (gchar*)ptr : "[non string data]");
 
-    g_free(ptr);
+        g_free(ptr);
+    }
 
     return FALSE;
 }
 
 gpointer idle_free(gpointer ptr)
 {
-    DEBUG("Will free mem @ %p in 10000ms", ptr);
-    
-    g_timeout_add(10000, __idle_free_do, ptr);
+    if (ptr) {
+        DEBUG("Will free mem @ %p in 10000ms", ptr);
+        
+        g_timeout_add(10000, __idle_free_do, ptr);
+    }
     
     return ptr;
 }
