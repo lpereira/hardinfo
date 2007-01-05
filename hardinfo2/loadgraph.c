@@ -102,6 +102,7 @@ void load_graph_set_color(LoadGraph *lg, LoadGraphColor color)
 {
     lg->color = color;
     gdk_rgb_gc_set_foreground(lg->trace, lg->color);
+    gdk_rgb_gc_set_foreground(lg->fill, lg->color - 0x303030);
 }
 
 void load_graph_destroy(LoadGraph *lg)
@@ -111,6 +112,7 @@ void load_graph_destroy(LoadGraph *lg)
     gdk_pixmap_unref(lg->buf);
     g_object_unref(lg->trace);
     g_object_unref(lg->grid);
+    g_object_unref(lg->fill);
     g_object_unref(lg->layout);
     g_free(lg);
 }
@@ -139,6 +141,7 @@ void load_graph_configure_expose(LoadGraph *lg)
     /* create the graphic contexts */
     lg->grid = gdk_gc_new(GDK_DRAWABLE(lg->buf));
     lg->trace = gdk_gc_new(GDK_DRAWABLE(lg->buf));
+    lg->fill = gdk_gc_new(GDK_DRAWABLE(lg->buf));
 
     /* the default color is green */
     load_graph_set_color(lg, LG_COLOR_GREEN);
@@ -151,9 +154,16 @@ void load_graph_configure_expose(LoadGraph *lg)
     gdk_rgb_gc_set_foreground(lg->grid, 0x707070);
 
     gdk_gc_set_line_attributes(lg->trace, 
-                               2, GDK_LINE_SOLID,
-                               GDK_CAP_NOT_LAST,
+                               1, GDK_LINE_SOLID,
+                               GDK_CAP_PROJECTING,
                                GDK_JOIN_ROUND);
+
+#if 0	/* old-style fill */
+    gdk_gc_set_line_attributes(lg->fill, 
+                               1, GDK_LINE_SOLID,
+                               GDK_CAP_BUTT,
+                               GDK_JOIN_BEVEL);
+#endif
 
     /* configures the expose event */
     g_signal_connect(G_OBJECT(lg->area), "expose-event", 
@@ -191,35 +201,55 @@ _draw(LoadGraph *lg)
     gdk_draw_rectangle(draw, lg->area->style->black_gc,
                        TRUE, 0, 0, lg->width, lg->height);
                       
-    /* horizontal bars; 25%, 50% and 75% */ 
-    d = lg->height / 4;
-    gdk_draw_line(draw, lg->grid, 0, d, lg->width, d);
-    d = lg->height / 2;
-    gdk_draw_line(draw, lg->grid, 0, d, lg->width, d);
-    d = 3 * (lg->height / 4);
-    gdk_draw_line(draw, lg->grid, 0, d, lg->width, d);
-
     /* vertical bars */
     for (i = lg->width, d = 0; i > 1; i--, d++)
         if ((d % 45) == 0 && d)
             gdk_draw_line(draw, lg->grid, i, 0, i, lg->height);
 
+    /* horizontal bars and labels; 25%, 50% and 75% */ 
+    _draw_label_and_line(lg,                   -1, lg->max_value);
+    _draw_label_and_line(lg,       lg->height / 4, 3 * (lg->max_value / 4));
+    _draw_label_and_line(lg,       lg->height / 2, lg->max_value / 2);
+    _draw_label_and_line(lg, 3 * (lg->height / 4), lg->max_value / 4);
+
     /* the graph */
+    GdkPoint *points = g_new0(GdkPoint, lg->size + 1);
+    
+    for (i = 0; i < lg->size; i++) {
+        points[i].x = i * 4;
+        points[i].y = lg->height - lg->data[i] * lg->scale;
+    }
+    
+    points[0].x = points[1].x = 0;
+    points[0].y = points[i].y = lg->height;
+    points[i].x = points[i-1].x = lg->width;
+    
+    gdk_draw_polygon(draw, lg->fill, TRUE, points, lg->size + 1);
+    gdk_draw_polygon(draw, lg->trace, FALSE, points, lg->size + 1);
+    
+    g_free(points);
+    
+#if 0	/* old-style drawing */
     for (i = 0; i < lg->size; i++) {    
           gint this = lg->height - lg->data[i] * lg->scale;
           gint next = lg->height - lg->data[i+1] * lg->scale;
+          gint i4 = i * 4;
     
-          gdk_draw_line(draw, lg->trace, i * 4, this, i * 4 + 2,
-                        (this + next) / 2);
-          gdk_draw_line(draw, lg->trace, i * 4 + 2, (this + next) / 2,
-                        i * 4 + 4, next); 
+          gdk_draw_line(draw, lg->fill, i4,     this, i4,     lg->height);
+          gdk_draw_line(draw, lg->fill, i4 + 2, this, i4 + 2, lg->height);
     }
+
+    for (i = 0; i < lg->size; i++) {    
+          gint this = lg->height - lg->data[i] * lg->scale;
+          gint next = lg->height - lg->data[i+1] * lg->scale;
+          gint i4 = i * 4;
     
-    /* horizontal bars; 25%, 50% and 75% */ 
-    _draw_label_and_line(lg, -1, lg->max_value);
-    _draw_label_and_line(lg, lg->height / 4, 3 * (lg->max_value / 4));
-    _draw_label_and_line(lg, lg->height / 2, lg->max_value / 2);
-    _draw_label_and_line(lg, 3 * (lg->height / 4), lg->max_value / 4);
+          gdk_draw_line(draw, lg->trace, i4, this, i4 + 2,
+                        (this + next) / 2);
+          gdk_draw_line(draw, lg->trace, i4 + 2, (this + next) / 2,
+                        i4 + 4, next); 
+    }
+#endif
 
     gtk_widget_queue_draw(lg->area);
 }

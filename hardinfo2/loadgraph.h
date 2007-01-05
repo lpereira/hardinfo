@@ -39,6 +39,7 @@ struct _LoadGraph {
 
     GdkGC         *grid;
     GdkGC         *trace;
+    GdkGC	  *fill;
 
     gint     	  *data;
     gfloat         scale;
