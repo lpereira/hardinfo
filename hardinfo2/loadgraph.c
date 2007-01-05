@@ -103,6 +103,7 @@ void load_graph_set_color(LoadGraph *lg, LoadGraphColor color)
     lg->color = color;
     gdk_rgb_gc_set_foreground(lg->trace, lg->color);
     gdk_rgb_gc_set_foreground(lg->fill, lg->color - 0x303030);
+    gdk_rgb_gc_set_foreground(lg->grid, lg->color - 0x404040);
 }
 
 void load_graph_destroy(LoadGraph *lg)
@@ -151,7 +152,9 @@ void load_graph_configure_expose(LoadGraph *lg)
                                1, GDK_LINE_ON_OFF_DASH,
                                GDK_CAP_NOT_LAST,
                                GDK_JOIN_ROUND);
+#if 0	/* old-style grid */
     gdk_rgb_gc_set_foreground(lg->grid, 0x707070);
+#endif
 
     gdk_gc_set_line_attributes(lg->trace, 
                                1, GDK_LINE_SOLID,
@@ -201,16 +204,6 @@ _draw(LoadGraph *lg)
     gdk_draw_rectangle(draw, lg->area->style->black_gc,
                        TRUE, 0, 0, lg->width, lg->height);
                       
-    /* vertical bars */
-    for (i = lg->width, d = 0; i > 1; i--, d++)
-        if ((d % 45) == 0 && d)
-            gdk_draw_line(draw, lg->grid, i, 0, i, lg->height);
-
-    /* horizontal bars and labels; 25%, 50% and 75% */ 
-    _draw_label_and_line(lg,                   -1, lg->max_value);
-    _draw_label_and_line(lg,       lg->height / 4, 3 * (lg->max_value / 4));
-    _draw_label_and_line(lg,       lg->height / 2, lg->max_value / 2);
-    _draw_label_and_line(lg, 3 * (lg->height / 4), lg->max_value / 4);
 
     /* the graph */
     GdkPoint *points = g_new0(GdkPoint, lg->size + 1);
@@ -228,6 +221,17 @@ _draw(LoadGraph *lg)
     gdk_draw_polygon(draw, lg->trace, FALSE, points, lg->size + 1);
     
     g_free(points);
+
+    /* vertical bars */
+    for (i = lg->width, d = 0; i > 1; i--, d++)
+        if ((d % 45) == 0 && d)
+            gdk_draw_line(draw, lg->grid, i, 0, i, lg->height);
+
+    /* horizontal bars and labels; 25%, 50% and 75% */ 
+    _draw_label_and_line(lg,                   -1, lg->max_value);
+    _draw_label_and_line(lg,       lg->height / 4, 3 * (lg->max_value / 4));
+    _draw_label_and_line(lg,       lg->height / 2, lg->max_value / 2);
+    _draw_label_and_line(lg, 3 * (lg->height / 4), lg->max_value / 4);
     
 #if 0	/* old-style drawing */
     for (i = 0; i < lg->size; i++) {    
