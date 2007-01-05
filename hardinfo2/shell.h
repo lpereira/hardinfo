@@ -90,6 +90,7 @@ struct _ShellTree {
     GtkWidget		*scroll;
     GtkWidget		*view;
     GtkTreeModel	*model;
+    GtkTreeSelection	*selection;
 
     GSList		*modules;
 };
@@ -97,9 +98,10 @@ struct _ShellTree {
 struct _ShellInfoTree {
     GtkWidget		*scroll;
     GtkWidget		*view;
-    GtkTreeModel	*model;
+    GtkTreeModel        *model;
+    GtkTreeSelection	*selection;
     
-    GtkTreeViewColumn	*col_progress, *col_value;
+    GtkTreeViewColumn	 *col_progress, *col_value;
 };
 
 struct _ShellModule {
@@ -134,7 +136,6 @@ struct _ShellModuleEntry {
 struct _ShellFieldUpdate {
     ShellModuleEntry	*entry;
     gchar		*field_name;
-    gboolean		 loadgraph;
 };
 
 void		shell_init(GSList *modules);

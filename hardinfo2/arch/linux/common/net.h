@@ -194,13 +194,14 @@ scan_net_interfaces_24(void)
             get_net_info(ifacename, &ni);
 
             devid = g_strdup_printf("NET%s", ifacename);
-	    network_interfaces = g_strdup_printf("%s$%s$%s=Sent %.2fMiB, received %.2fMiB (%s)\n",
+	    network_interfaces = g_strdup_printf("%s$%s$%s=Sent %.2fMiB, received %.2fMiB%s\n",
                                                   network_interfaces,
                                                   devid,
                                                   ifacename,
                                                   trans_mb,
                                                   recv_mb,
-						  ni.ip[0] ? ni.ip : "No IP address");
+						  ni.ip[0] ?
+						  (gchar*)idle_free(g_strdup_printf(" (%s)", ni.ip)) : "");
             
             detailed = g_strdup_printf("[Network Adapter Properties]\n"
                                         "Interface Type=%s\n"

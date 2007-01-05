@@ -47,7 +47,10 @@ struct _LoadGraph {
     gint	   width, height;
     LoadGraphColor color;    
     
-    gint	   max_value;
+    gint	   max_value, remax_count;
+    
+    PangoLayout   *layout;
+    gchar	  *suffix;
 };
 
 LoadGraph 	*load_graph_new(gint size);
@@ -56,9 +59,10 @@ void		 load_graph_configure_expose(LoadGraph *lg);
 GtkWidget 	*load_graph_get_framed(LoadGraph *lg);
 
 void		 load_graph_update(LoadGraph *lg, gint value);
-void		 load_graph_set_max(LoadGraph *lg, gint value);
-int		 load_graph_get_max(LoadGraph *lg);
 void		 load_graph_set_color(LoadGraph *lg, LoadGraphColor color);
 void		 load_graph_clear(LoadGraph *lg);
+
+void		 load_graph_set_data_suffix(LoadGraph *lg, gchar *suffix);
+gchar 		*load_graph_get_data_suffix(LoadGraph *lg);
 
 #endif	/* __LOADGRAPH_H__ */

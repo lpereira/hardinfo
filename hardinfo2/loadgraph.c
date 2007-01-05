@@ -33,6 +33,9 @@ LoadGraph *load_graph_new(gint size)
     
     lg = g_new0(LoadGraph, 1);
     
+    size++;
+    
+    lg->suffix = g_strdup("");
     lg->area = gtk_drawing_area_new();
     lg->size = size;
     lg->data = g_new0(gint, size);
@@ -42,22 +45,26 @@ LoadGraph *load_graph_new(gint size)
     lg->width  = size * 4;
     lg->height = size * 2;
     
-    lg->max_value = -1;
+    lg->max_value = 1;
+    lg->remax_count = 0;
 
+    lg->layout = pango_layout_new(gtk_widget_get_pango_context (lg->area));
+    
     gtk_widget_set_size_request(lg->area, lg->width, lg->height);
     gtk_widget_show(lg->area);
     
     return lg;
 }
 
-int load_graph_get_max(LoadGraph *lg)
+void load_graph_set_data_suffix(LoadGraph *lg, gchar *suffix)
 {
-    return lg->max_value;
+    g_free(lg->suffix);
+    lg->suffix = g_strdup(suffix);
 }
 
-void load_graph_set_max(LoadGraph *lg, gint value)
+gchar *load_graph_get_data_suffix(LoadGraph *lg)
 {
-    lg->max_value = value;
+    return lg->suffix;
 }
 
 GtkWidget *load_graph_get_framed(LoadGraph *lg)
@@ -85,7 +92,9 @@ void load_graph_clear(LoadGraph *lg)
         lg->data[i] = 0;
 
     lg->scale = 1.0;
-//    lg->max_value = -1;
+    lg->max_value = 1;
+    lg->remax_count = 0;
+    
     _draw(lg);
 }
 
@@ -102,6 +111,7 @@ void load_graph_destroy(LoadGraph *lg)
     gdk_pixmap_unref(lg->buf);
     g_object_unref(lg->trace);
     g_object_unref(lg->grid);
+    g_object_unref(lg->layout);
     g_free(lg);
 }
 
@@ -151,6 +161,27 @@ void load_graph_configure_expose(LoadGraph *lg)
 }
 
 static void
+_draw_label_and_line(LoadGraph *lg, gint position, gint value)
+{
+    gchar *tmp;
+    
+    /* draw lines */
+    if (position > 0)
+        gdk_draw_line(GDK_DRAWABLE(lg->buf), lg->grid, 0, position, lg->width, position);
+    else
+        position = -1 * position;
+    
+    /* draw label */
+    tmp = g_strdup_printf("<span size=\"x-small\">%d%s</span>", value, lg->suffix);
+
+    pango_layout_set_markup(lg->layout, tmp, -1);
+    pango_layout_set_width(lg->layout, lg->area->allocation.width * PANGO_SCALE);
+    gdk_draw_layout(GDK_DRAWABLE(lg->buf), lg->trace, 2, position, lg->layout);
+
+    g_free(tmp);
+}
+
+static void
 _draw(LoadGraph *lg)
 {
     GdkDrawable *draw = GDK_DRAWABLE(lg->buf);
@@ -184,21 +215,13 @@ _draw(LoadGraph *lg)
                         i * 4 + 4, next); 
     }
     
-    gtk_widget_queue_draw(lg->area);
-}
+    /* horizontal bars; 25%, 50% and 75% */ 
+    _draw_label_and_line(lg, -1, lg->max_value);
+    _draw_label_and_line(lg, lg->height / 4, 3 * (lg->max_value / 4));
+    _draw_label_and_line(lg, lg->height / 2, lg->max_value / 2);
+    _draw_label_and_line(lg, 3 * (lg->height / 4), lg->max_value / 4);
 
-static inline int
-_max(LoadGraph *lg)
-{
-    gint i;
-    gint max = 1.0;
-    
-    for (i = 0; i < lg->size; i++) {
-        if (lg->data[i] > max)
-            max = lg->data[i];
-    }
-    
-    return max;
+    gtk_widget_queue_draw(lg->area);
 }
 
 void
@@ -209,14 +232,6 @@ load_graph_update(LoadGraph *lg, gint value)
     if (value < 0)
         return;
     
-    if (lg->max_value < 0) {
-      lg->scale = (gfloat)lg->height / (gfloat)_max(lg);
-    } else {
-      lg->scale = (gfloat)lg->height / (gfloat)lg->max_value;
-      
-      g_print("using max value %d; scale is %f\n", lg->max_value, lg->scale);
-    }
-
     /* shift-right our data */
     for (i = 0; i < lg->size; i++) {
         lg->data[i] = lg->data[i+1];
@@ -225,6 +240,27 @@ load_graph_update(LoadGraph *lg, gint value)
     /* insert the updated value */
     lg->data[i] = value;
     
+    /* calculates the maximum value */
+    if (lg->remax_count++ > 20) {
+        /* only finds the maximum amongst the data every 20 times */
+        lg->remax_count = 0;
+        
+        gint max = lg->data[0];
+        for (i = 1; i < lg->size; i++) {
+            if (lg->data[i] > max)
+               max = lg->data[i];
+        }
+        
+        lg->max_value = max;
+    } else {
+        /* otherwise, select the maximum between the current maximum
+           and the supplied value */
+        lg->max_value = MAX(value, lg->max_value);
+    }
+
+    /* recalculates the scale; always use 90% of it */
+    lg->scale = 0.90 * ((gfloat)lg->height / (gfloat)lg->max_value);
+
     /* redraw */
     _draw(lg);
 }

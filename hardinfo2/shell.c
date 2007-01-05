@@ -38,7 +38,7 @@ static void create_window();
 static ShellTree *tree_new(void);
 static ShellInfoTree *info_tree_new(gboolean extra);
 
-static void module_selected(GtkTreeSelection * ts, gpointer data);
+static void module_selected(gpointer data);
 static void module_selected_show_info(ShellModuleEntry * entry,
 				      gboolean reload);
 static void info_selected(GtkTreeSelection * ts, gpointer data);
@@ -275,13 +275,10 @@ void shell_do_reload(void)
     shell_action_set_enabled("ReportAction", FALSE);
 
     if (shell->selected) {
-	GtkTreeSelection *ts;
-
-	ts = gtk_tree_view_get_selection(GTK_TREE_VIEW(shell->tree->view));
 	shell_status_set_enabled(TRUE);
 	
 	module_entry_reload(shell->selected);
-	module_selected(ts, NULL);
+	module_selected(NULL);
     }
 
     shell_action_set_enabled("RefreshAction", TRUE);
@@ -303,8 +300,7 @@ void shell_status_update(const gchar * message)
 
 static void destroy_me(void)
 {
-    gtk_main_quit();
-    exit(0);
+    cb_quit();
 }
 
 static void create_window(void)
@@ -360,14 +356,12 @@ static void create_window(void)
 
 static void view_menu_select_entry(gpointer data, gpointer data2)
 {
-    GtkTreeSelection *ts;
     GtkTreePath *path;
     GtkTreeIter *iter = (GtkTreeIter *) data2;
 
-    ts = gtk_tree_view_get_selection(GTK_TREE_VIEW(shell->tree->view));
     path = gtk_tree_model_get_path(shell->tree->model, iter);
 
-    gtk_tree_selection_select_path(ts, path);
+    gtk_tree_selection_select_path(shell->tree->selection, path);
     gtk_tree_view_set_cursor(GTK_TREE_VIEW(shell->tree->view), path, NULL,
 			     FALSE);
     gtk_tree_path_free(path);
@@ -545,36 +539,28 @@ static gboolean update_field(gpointer data)
 
     /* if the entry is still selected, update it */
     if (fu->entry->selected && fu->entry->fieldfunc) {
-	gchar *value = fu->entry->fieldfunc(fu->field_name);
-	GtkTreeIter *iter =
-	    g_hash_table_lookup(update_tbl, fu->field_name);
+	GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
+	                                        fu->field_name);
+        
+        if (iter) {
+            GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
+            gchar *value = fu->entry->fieldfunc(fu->field_name);
 
-	/* this function is also used to feed the load graph when ViewType =
-	   SHELL_VIEW_LOAD_GRAPH */
-	if (fu->loadgraph && shell->view_type == SHELL_VIEW_LOAD_GRAPH) {
-	    GtkTreeSelection *ts;
+            /*
+             * this function is also used to feed the load graph when ViewType
+             * is SHELL_VIEW_LOAD_GRAPH
+             */
+            if (shell->view_type == SHELL_VIEW_LOAD_GRAPH &&
+                gtk_tree_selection_iter_is_selected(shell->info->selection,
+                                                    iter)) {
+                load_graph_update(shell->loadgraph, atoi(value));
+            }
 
-	    ts = gtk_tree_view_get_selection(GTK_TREE_VIEW
-					     (shell->info->view));
-					     
-	    if (iter && gtk_tree_selection_iter_is_selected(ts, iter)) {
-		load_graph_update(shell->loadgraph, atoi(value));
-	    }
-
-	    g_free(value);
-
-	    return TRUE;
-	}
-
-	if (iter) {
-	    GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
-
-	    gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE,
-			       value, -1);
-	    g_free(value);
-
-	    return TRUE;
-	}
+            gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
+            
+            g_free(value);
+            return TRUE;
+        }
     }
 
     /* otherwise, cleanup and destroy the timeout */
@@ -591,13 +577,11 @@ static gboolean reload_section(gpointer data)
     /* if the entry is still selected, update it */
     if (entry->selected) {
 	GtkTreePath *path = NULL;
-	GtkTreeSelection *ts;
 	GtkTreeIter iter;
 
 	/* gets the current selected path */
-	ts = gtk_tree_view_get_selection(GTK_TREE_VIEW(shell->info->view));
 	if (gtk_tree_selection_get_selected
-	    (ts, &shell->info->model, &iter))
+	    (shell->info->selection, &shell->info->model, &iter))
 	    path = gtk_tree_model_get_path(shell->info->model, &iter);
 
 	/* update the information, clear the treeview and populate it again */
@@ -607,7 +591,7 @@ static gboolean reload_section(gpointer data)
 
 	/* if there was a selection, reselect it */
 	if (path) {
-	    gtk_tree_selection_select_path(ts, path);
+	    gtk_tree_selection_select_path(shell->info->selection, path);
 	    gtk_tree_path_free(path);
 	}
     }
@@ -722,26 +706,12 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 
 		fu->field_name = g_strdup(strchr(key, '$') + 1);
 		fu->entry = entry;
-		fu->loadgraph = FALSE;
 
 		g_timeout_add(ms, update_field, fu);
-	    } else if (g_str_has_prefix(key, "LoadGraphInterval")) {
-		gint ms;
-		ShellFieldUpdate *fu = g_new0(ShellFieldUpdate, 1);
-
-		ms = g_key_file_get_integer(key_file, group, key, NULL);
-
-		fu->field_name = g_strdup(strchr(key, '$') + 1);
-		fu->entry = entry;
-		fu->loadgraph = TRUE;
-		
-		g_timeout_add(ms, update_field, fu);
-	    } else if (g_str_equal(key, "LoadGraphMaxValue")) {
-		gint max_value;
-
-		max_value =
-		    g_key_file_get_integer(key_file, group, key, NULL);
-		load_graph_set_max(shell->loadgraph, max_value);
+	    } else if (g_str_equal(key, "LoadGraphSuffix")) {
+                gchar *suffix = g_key_file_get_value(key_file, group, key, NULL);
+		load_graph_set_data_suffix(shell->loadgraph, suffix);
+		g_free(suffix);
 	    } else if (g_str_equal(key, "ReloadInterval")) {
 		gint ms;
 
@@ -1041,7 +1011,7 @@ static void info_selected_show_extra(gchar * data)
     }
 }
 
-static void module_selected(GtkTreeSelection * ts, gpointer data)
+static void module_selected(gpointer data)
 {
     ShellTree *shelltree = shell->tree;
     GtkTreeModel *model = GTK_TREE_MODEL(shelltree->model);
@@ -1057,7 +1027,7 @@ static void module_selected(GtkTreeSelection * ts, gpointer data)
 
     /* Gets the currently selected item on the left-side TreeView; if there is no
        selection, silently return */
-    if (!gtk_tree_selection_get_selected(ts, &model, &parent))
+    if (!gtk_tree_selection_get_selected(shelltree->selection, &model, &parent))
 	return;
 
     /* Mark the currently selected module as "unselected"; this is used to kill the 
@@ -1137,6 +1107,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     GtkTreeStore *store;
     GtkTreeViewColumn *column;
     GtkCellRenderer *cr_text, *cr_pbuf, *cr_progress;
+    GtkTreeSelection *sel;
 
     info = g_new0(ShellInfoTree, 1);
 
@@ -1186,19 +1157,18 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 				       INFO_TREE_COL_VALUE);
     gtk_tree_view_column_set_visible(column, FALSE);
 
-    if (!extra) {
-	GtkTreeSelection *sel;
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
-	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+    if (!extra)
 	g_signal_connect(G_OBJECT(sel), "changed",
 			 (GCallback) info_selected, info);
-    }
-
+    
     gtk_container_add(GTK_CONTAINER(scroll), treeview);
 
     info->scroll = scroll;
     info->view = treeview;
     info->model = model;
+    info->selection = sel;
 
     gtk_widget_show_all(scroll);
 
@@ -1253,6 +1223,7 @@ static ShellTree *tree_new()
     shelltree->view = treeview;
     shelltree->model = model;
     shelltree->modules = NULL;
+    shelltree->selection = sel;
 
     gtk_widget_show_all(scroll);
 

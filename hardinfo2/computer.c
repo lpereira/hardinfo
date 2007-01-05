@@ -395,7 +395,7 @@ hi_module_get_about(void)
 {
     static ModuleAbout ma[] = {
       {
-          .author	= "Leandro A. F. Pereira (leandro@linuxmag.com.br)",
+          .author	= "Leandro A. F. Pereira",
           .version	= VERSION,
           .license	= "GNU GPL version 2"
       }

@@ -185,7 +185,7 @@ hi_more_info(gchar * entry)
     if (info)
 	return g_strdup(info);
 
-    return g_strdup("[TSC]");
+    return g_strdup("?");
 }
 
 gchar *
@@ -289,6 +289,7 @@ callback_memory()
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ViewType=2\n"
+                           "LoadGraphSuffix= kB\n"
                            "RescanInterval=2000\n"
                            "%s\n",
                            meminfo,
@@ -380,6 +381,7 @@ void
 hi_module_init(void)
 {
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+    __init_memory_labels();
 }
 
 ModuleAbout *
@@ -387,7 +389,7 @@ hi_module_get_about(void)
 {
     static ModuleAbout ma[] = {
       {
-          .author	= "Leandro A. F. Pereira (leandro@linuxmag.com.br)",
+          .author	= "Leandro A. F. Pereira",
           .version	= VERSION,
           .license	= "GNU GPL version 2"
       }

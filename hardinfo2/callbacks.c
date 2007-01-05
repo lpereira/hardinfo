@@ -127,7 +127,7 @@ void cb_about_module(GtkAction *action)
     GSList *modules = shell->tree->modules;
     ModuleAbout *ma;
     gchar *name;
-
+    
     g_object_get(G_OBJECT(action), "tooltip", &name, NULL);
     
     for (; modules; modules = modules->next) {
@@ -140,7 +140,8 @@ void cb_about_module(GtkAction *action)
             GtkWidget *about;
 
             about = gtk_about_dialog_new();
-            gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), sm->name);
+            gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about),
+                                      idle_free(g_strdup_printf("%s Module", sm->name)));
             gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), ma->version);
             gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
                                            idle_free(g_strdup_printf("Written by %s", ma->author)));
@@ -152,7 +153,7 @@ void cb_about_module(GtkAction *action)
             gtk_dialog_run(GTK_DIALOG(about));
             gtk_widget_destroy(about);
         } else {
-            g_warning("No about information is associated with this module.");
+            g_warning("No about information is associated with the %s module.", name);
         }
         
         break;
