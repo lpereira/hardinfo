@@ -93,6 +93,7 @@ void	      module_entry_scan_all(ModuleEntry *entries);
 void	      module_entry_reload(ShellModuleEntry *module_entry);
 void	      module_entry_scan(ShellModuleEntry *module_entry);
 gchar	     *module_entry_function(ShellModuleEntry *module_entry);
+const gchar  *module_entry_get_note(ShellModuleEntry *module_entry);
 
 /* BinReloc stuff */
 gboolean binreloc_init(gboolean try_hardcoded);

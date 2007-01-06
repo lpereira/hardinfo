@@ -176,6 +176,7 @@ gboolean binreloc_init(gboolean try_hardcoded)
     /* If the runtime data directories we previously found, don't even try
        to find them again. */
     if (params.path_data && params.path_lib) {
+        DEBUG("data and lib path already found.");
 	return TRUE;
     }
 
@@ -187,9 +188,13 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	if (error) {
 	    g_error_free(error);
 	}
+	
+	DEBUG("%strying hardcoded paths.", try_hardcoded ? "" : "binreloc init failed. ");
     } else {
 	/* If we were able to initialize BinReloc, build the default data
 	   and library paths. */
+        DEBUG("done, trying to use binreloc paths.");
+	   
 	tmp = gbr_find_data_dir(PREFIX);
 	params.path_data = g_build_filename(tmp, "hardinfo", NULL);
 	g_free(tmp);
@@ -199,10 +204,16 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	g_free(tmp);
     }
 
+    DEBUG("searching for runtime data on these locations:");
+    DEBUG("  lib: %s", params.path_lib);
+    DEBUG(" data: %s", params.path_data);
+
     /* Try to see if the uidefs.xml file isn't missing. This isn't the
        definitive test, but it should do okay for most situations. */
     tmp = g_build_filename(params.path_data, "uidefs.xml", NULL);
     if (!g_file_test(tmp, G_FILE_TEST_EXISTS)) {
+        DEBUG("runtime data not found");
+    
 	g_free(params.path_data);
 	g_free(params.path_lib);
 	g_free(tmp);
@@ -212,15 +223,18 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	if (try_hardcoded) {
 	    /* We tried the hardcoded paths, but still was unable to find the
 	       runtime data. Give up. */
+            DEBUG("giving up");
 	    return FALSE;
 	} else {
 	    /* Even though BinReloc worked OK, the runtime data was not found.
 	       Try the hardcoded paths. */
+            DEBUG("trying to find elsewhere");
 	    return binreloc_init(TRUE);
 	}
     }
     g_free(tmp);
 
+    DEBUG("runtime data found!");
     /* We found the runtime data; hope everything is fine */
     return TRUE;
 }
@@ -472,6 +486,8 @@ static ShellModule *module_load(gchar *filename)
 
         module->weight = weight_func ? weight_func() : 0;
         module->name   = name_func();
+        
+        DEBUG("%p", module->name);
 
         entries = get_module_entries();
         while (entries[i].name) {
@@ -501,6 +517,8 @@ static ShellModule *module_load(gchar *filename)
         module_register_methods(module);
     } else {
       failed:
+        DEBUG("loading module %s failed", filename);
+        
         g_free(module->name);
         g_free(module);
         module = NULL;
@@ -536,10 +554,12 @@ static void module_entry_free(gpointer data, gpointer user_data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *)data;
 
-    g_free(entry->name);
-    g_object_unref(entry->icon);
+    if (entry) {
+        /*g_free(entry->name);*/
+        g_object_unref(entry->icon);
 
-    g_free(entry);
+        g_free(entry);
+    }
 }
 
 static void module_free(ShellModule *module)
@@ -587,7 +607,7 @@ static GSList *modules_check_deps(GSList *modules)
                 ShellModule *m;
                 gboolean    found = FALSE;
                 
-                DEBUG("  depends on: %s", deps[i]);
+                DEBUG("  %s depends on %s", module->name, deps[i]);
                 
                 for (l = modules; l; l = l->next) {
                     m = (ShellModule *)l->data;
@@ -601,9 +621,14 @@ static GSList *modules_check_deps(GSList *modules)
                     g_free(name);
                 }
                 
+                DEBUG("     dependency %s", found ? "found" : "not found");
+                
                 if (!found) {
                     if (params.autoload_deps) {
-                        modules = g_slist_append(modules, module_load(deps[i]));
+                        ShellModule *mod = module_load(deps[i]);
+                        
+                        if (mod)
+                            modules = g_slist_append(modules, mod);
                         modules = modules_check_deps(modules);	/* re-check dependencies */
                     
                         break;
@@ -624,7 +649,10 @@ static GSList *modules_check_deps(GSList *modules)
                                                NULL);
                                                
                         if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-                            modules = g_slist_append(modules, module_load(deps[i]));
+                            ShellModule *mod = module_load(deps[i]);
+                            
+                            if (mod)
+                                modules = g_slist_append(modules, mod);
                             modules = modules_check_deps(modules);	/* re-check dependencies */
                         } else {
                             modules = g_slist_remove(modules, module);
@@ -637,6 +665,8 @@ static GSList *modules_check_deps(GSList *modules)
                     }
                 }
             }
+        } else {
+            DEBUG("  no dependencies needed");
         }
     }
     
@@ -886,4 +916,9 @@ gchar *module_entry_function(ShellModuleEntry *module_entry)
     
     return g_strdup("[Error]\n"
                     "Invalid module=");
+}
+
+const gchar *module_entry_get_note(ShellModuleEntry *module_entry)
+{
+    return module_entry->notefunc(module_entry->number);
 }

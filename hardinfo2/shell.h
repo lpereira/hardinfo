@@ -24,6 +24,7 @@
 typedef struct _Shell			Shell;
 typedef struct _ShellTree		ShellTree;
 typedef struct _ShellInfoTree		ShellInfoTree;
+typedef struct _ShellNote		ShellNote;
 
 typedef struct _ShellModule		ShellModule;
 typedef struct _ShellModuleMethod	ShellModuleMethod;
@@ -75,6 +76,7 @@ struct _Shell {
     ShellTree		*tree;
     ShellInfoTree	*info, *moreinfo;
     ShellModuleEntry	*selected;
+    ShellNote		*note;
     LoadGraph		*loadgraph;
 
     GtkActionGroup	*action_group;
@@ -102,6 +104,11 @@ struct _ShellInfoTree {
     GtkTreeSelection	*selection;
     
     GtkTreeViewColumn	 *col_progress, *col_value;
+};
+
+struct _ShellNote {
+    GtkWidget		*frame;
+    GtkWidget		*label;
 };
 
 struct _ShellModule {
@@ -154,6 +161,7 @@ void		shell_action_set_property(const gchar *action_name,
                                           gboolean setting);
 
 void		shell_set_side_pane_visible(gboolean setting);
+void		shell_set_note_from_entry(ShellModuleEntry *entry);
 void		shell_ui_manager_set_visible(const gchar *path,
                                              gboolean setting);
 

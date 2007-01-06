@@ -303,6 +303,41 @@ static void destroy_me(void)
     cb_quit();
 }
 
+static void close_note(GtkWidget *widget, gpointer user_data)
+{
+    gtk_widget_hide(shell->note->frame);
+}
+
+static ShellNote *note_new(void)
+{
+    ShellNote *note;
+    GtkWidget *hbox, *icon, *button;
+    
+    note = g_new0(ShellNote, 1);
+    note->label = gtk_label_new("");
+    note->frame = gtk_frame_new(NULL);
+    button = gtk_button_new();
+    
+    icon = icon_cache_get_image("close.png");
+    gtk_widget_show(icon);
+    gtk_container_add(GTK_CONTAINER(button), icon);
+    gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    g_signal_connect(G_OBJECT(button), "clicked", (GCallback) close_note, NULL);
+    
+    hbox = gtk_hbox_new(FALSE, 3);
+    icon = icon_cache_get_image("dialog-information.png");
+    
+    gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), note->label, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+    
+    gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
+    gtk_container_add(GTK_CONTAINER(note->frame), hbox);
+    gtk_widget_show_all(hbox);
+    
+    return note;
+}
+
 static void create_window(void)
 {
     GtkWidget *vbox, *hbox;
@@ -342,13 +377,20 @@ static void create_window(void)
     gtk_box_pack_end(GTK_BOX(vbox), shell->hpaned, TRUE, TRUE, 0);
     gtk_paned_set_position(GTK_PANED(shell->hpaned), 210);
 
-    shell->vpaned = gtk_vpaned_new();
-    gtk_widget_show(shell->vpaned);
-    gtk_paned_add2(GTK_PANED(shell->hpaned), shell->vpaned);
+    vbox = gtk_vbox_new(FALSE, 5);
+    gtk_widget_show(vbox);
+    gtk_paned_add2(GTK_PANED(shell->hpaned), vbox);
+    
+    shell->note = note_new();
+    gtk_box_pack_end(GTK_BOX(vbox), shell->note->frame, FALSE, FALSE, 0);
 
+    shell->vpaned = gtk_vpaned_new();
+    gtk_box_pack_start(GTK_BOX(vbox), shell->vpaned, TRUE, TRUE, 0);
+    gtk_widget_show(shell->vpaned);
+    
     shell->notebook = gtk_notebook_new();
     gtk_paned_add2(GTK_PANED(shell->vpaned), shell->notebook);
-
+  
     gtk_widget_show(shell->window);
     while (gtk_events_pending())
 	gtk_main_iteration();
@@ -476,6 +518,7 @@ static void add_modules_to_gui(gpointer data, gpointer user_data)
     }
 }
 
+
 void shell_init(GSList * modules)
 {
     if (shell) {
@@ -487,14 +530,14 @@ void shell_init(GSList * modules)
 
     create_window();
 
+    shell_action_set_property("CopyAction", "is-important", TRUE);
+    shell_action_set_property("RefreshAction", "is-important", TRUE);
+    shell_action_set_property("ReportAction", "is-important", TRUE);
+
     shell->tree = tree_new();
     shell->info = info_tree_new(FALSE);
     shell->moreinfo = info_tree_new(TRUE);
     shell->loadgraph = load_graph_new(75);
-
-    shell_action_set_property("CopyAction", "is-important", TRUE);
-    shell_action_set_property("RefreshAction", "is-important", TRUE);
-    shell_action_set_property("ReportAction", "is-important", TRUE);
 
     gtk_paned_pack1(GTK_PANED(shell->hpaned), shell->tree->scroll,
 		    SHELL_PACK_RESIZE, SHELL_PACK_SHRINK);
@@ -522,6 +565,7 @@ void shell_init(GSList * modules)
 
     load_graph_configure_expose(shell->loadgraph);
     gtk_widget_hide(shell->notebook);
+    gtk_widget_hide(shell->note->frame);
 
     shell_status_update("Done.");
     shell_status_set_enabled(FALSE);
@@ -915,6 +959,22 @@ static void update_progress()
                             GTK_TREE_MODEL(sortable));
 }
 
+void shell_set_note_from_entry(ShellModuleEntry *entry)
+{
+    if (entry->notefunc) {
+        const gchar *note = module_entry_get_note(entry);
+        
+        if (note) {
+            gtk_label_set_markup(GTK_LABEL(shell->note->label), note);
+            gtk_widget_show(shell->note->frame);
+        } else {
+            gtk_widget_hide(shell->note->frame);
+        }
+    } else {
+        gtk_widget_hide(shell->note->frame);
+    }
+}
+
 static void
 module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
@@ -969,6 +1029,8 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     if (shell->view_type == SHELL_VIEW_PROGRESS) {
 	update_progress();
     }
+    
+    shell_set_note_from_entry(entry);
 
     g_strfreev(groups);
     g_key_file_free(key_file);

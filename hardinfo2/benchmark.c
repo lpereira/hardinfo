@@ -206,7 +206,7 @@ const gchar *hi_note_func(gint entry)
 	return "Results in seconds. Lower is better.";
     }
 
-    return "";
+    return NULL;
 }
 
 gchar *hi_module_get_name(void)
