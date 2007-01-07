@@ -45,13 +45,15 @@ static void info_selected(GtkTreeSelection * ts, gpointer data);
 static void info_selected_show_extra(gchar * data);
 static gboolean reload_section(gpointer data);
 static gboolean rescan_section(gpointer data);
+static gboolean update_field(gpointer data);
 
 /*
  * Globals ********************************************************************
  */
 
-static Shell *shell = NULL;
+static Shell      *shell = NULL;
 static GHashTable *update_tbl = NULL;
+static GSList     *update_sfusrc = NULL;
 
 /*
  * Code :) ********************************************************************
@@ -267,19 +269,17 @@ void shell_status_set_enabled(gboolean setting)
 
 void shell_do_reload(void)
 {
-    if (!params.gui_running)
+    if (!params.gui_running || !shell->selected)
 	return;
 
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("ReportAction", FALSE);
 
-    if (shell->selected) {
-	shell_status_set_enabled(TRUE);
-	
-	module_entry_reload(shell->selected);
-	module_selected(NULL);
-    }
+    shell_status_set_enabled(TRUE);
+    
+    module_entry_reload(shell->selected);
+    module_selected(NULL);
 
     shell_action_set_enabled("RefreshAction", TRUE);
     shell_action_set_enabled("CopyAction", TRUE);
@@ -580,32 +580,30 @@ void shell_init(GSList * modules)
 static gboolean update_field(gpointer data)
 {
     ShellFieldUpdate *fu = (ShellFieldUpdate *) data;
-
+    GtkTreeIter *iter = g_hash_table_lookup(update_tbl, fu->field_name);
+    
     /* if the entry is still selected, update it */
-    if (fu->entry->selected && fu->entry->fieldfunc) {
-	GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
-	                                        fu->field_name);
-        
-        if (iter) {
-            GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
-            gchar *value = fu->entry->fieldfunc(fu->field_name);
+    if (iter && fu->entry->selected && fu->entry->fieldfunc) {
+        GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
+        gchar *value = fu->entry->fieldfunc(fu->field_name);
 
-            /*
-             * this function is also used to feed the load graph when ViewType
-             * is SHELL_VIEW_LOAD_GRAPH
-             */
-            if (shell->view_type == SHELL_VIEW_LOAD_GRAPH &&
-                gtk_tree_selection_iter_is_selected(shell->info->selection,
-                                                    iter)) {
-                load_graph_update(shell->loadgraph, atoi(value));
-            }
-
-            gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
-            
-            g_free(value);
-            return TRUE;
+        /*
+         * this function is also used to feed the load graph when ViewType
+         * is SHELL_VIEW_LOAD_GRAPH
+         */
+        if (shell->view_type == SHELL_VIEW_LOAD_GRAPH &&
+            gtk_tree_selection_iter_is_selected(shell->info->selection,
+                                                iter)) {
+            load_graph_update(shell->loadgraph, atoi(value));
         }
+
+        gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
+        
+        g_free(value);
+        return TRUE;
     }
+    
+    DEBUG("destroying ShellFieldUpdate for field %s", fu->field_name);
 
     /* otherwise, cleanup and destroy the timeout */
     g_free(fu->field_name);
@@ -743,15 +741,20 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 	    gchar *key = keys[i];
 
 	    if (g_str_has_prefix(key, "UpdateInterval")) {
+		ShellFieldUpdate	*fu = g_new0(ShellFieldUpdate, 1);
+		ShellFieldUpdateSource	*sfutbl;
 		gint ms;
-		ShellFieldUpdate *fu = g_new0(ShellFieldUpdate, 1);
 
 		ms = g_key_file_get_integer(key_file, group, key, NULL);
 
 		fu->field_name = g_strdup(strchr(key, '$') + 1);
 		fu->entry = entry;
 
-		g_timeout_add(ms, update_field, fu);
+                sfutbl = g_new0(ShellFieldUpdateSource, 1);
+                sfutbl->source_id = g_timeout_add(ms, update_field, fu);
+                sfutbl->sfu       = fu;
+                
+		update_sfusrc = g_slist_prepend(update_sfusrc, sfutbl);
 	    } else if (g_str_equal(key, "LoadGraphSuffix")) {
                 gchar *suffix = g_key_file_get_value(key_file, group, key, NULL);
 		load_graph_set_data_suffix(shell->loadgraph, suffix);
@@ -991,14 +994,36 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     /* reset the view type to normal */
     set_view_type(SHELL_VIEW_NORMAL);
 
-    /* recreate the iter hash table only if we're not reloading the module section */
+    /* recreate the iter hash table */
     if (!reload) {
-	if (update_tbl != NULL) {
-	    g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true,
-					NULL);
-	}
-	update_tbl =
-	    g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+        if (update_tbl) {
+            DEBUG("cleaning update_tbl");
+            g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true,
+                                        NULL);
+        } else {
+            update_tbl =
+                g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+        }
+    }
+    
+    if (update_sfusrc) {
+        GSList *sfusrc;
+        
+        for (sfusrc = update_sfusrc; sfusrc; sfusrc = sfusrc->next) {
+            ShellFieldUpdateSource *src = (ShellFieldUpdateSource *)sfusrc->data;
+            GSource *source;
+            
+            source = g_main_context_find_source_by_id(NULL, sfusrc->source_id);
+            if (source) {
+                g_free(src->sfu->field_name);
+                g_free(src->sfu);
+                g_free(src);
+                g_source_destroy(source);
+            }
+        }
+        
+        g_slist_free(update_sfusrc);
+        update_sfusrc = NULL;
     }
 
     store = GTK_TREE_STORE(shell->info->model);

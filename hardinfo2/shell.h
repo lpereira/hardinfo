@@ -31,6 +31,7 @@ typedef struct _ShellModuleMethod	ShellModuleMethod;
 typedef struct _ShellModuleEntry	ShellModuleEntry;
 
 typedef struct _ShellFieldUpdate	ShellFieldUpdate;
+typedef struct _ShellFieldUpdateSource	ShellFieldUpdateSource;
 
 typedef enum {
     SHELL_ORDER_DESCENDING,
@@ -143,6 +144,11 @@ struct _ShellModuleEntry {
 struct _ShellFieldUpdate {
     ShellModuleEntry	*entry;
     gchar		*field_name;
+};
+
+struct _ShellFieldUpdateSource {
+    guint		 source_id;
+    ShellFieldUpdate	*sfu;
 };
 
 void		shell_init(GSList *modules);
