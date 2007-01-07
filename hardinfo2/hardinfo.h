@@ -56,9 +56,10 @@ struct _ModuleEntry {
 };
 
 struct _ModuleAbout {
-    gchar	*author;
-    gchar	*version;
-    gchar	*license;
+    const gchar *description;
+    const gchar	*author;
+    const gchar	*version;
+    const gchar	*license;
 };
 
 /* String utility functions */

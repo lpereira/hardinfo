@@ -144,10 +144,14 @@ void cb_about_module(GtkAction *action)
                                       idle_free(g_strdup_printf("%s Module", sm->name)));
             gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), ma->version);
             gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
-                                           idle_free(g_strdup_printf("Written by %s", ma->author)));
-            
-            gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-                                          idle_free(g_strdup_printf("Licensed under %s", ma->license)));
+                                           idle_free(g_strdup_printf("Written by %s\n"
+                                                     "Licensed under %s",
+                                                     ma->author,
+                                                     ma->license)));
+
+            if (ma->description)
+                gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
+                                              ma->description);
                                           
             gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), sm->icon);
             gtk_dialog_run(GTK_DIALOG(about));

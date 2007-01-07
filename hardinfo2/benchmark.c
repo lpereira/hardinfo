@@ -230,6 +230,7 @@ hi_module_get_about(void)
     static ModuleAbout ma[] = {
       {
           .author	= "Leandro A. F. Pereira",
+          .description	= "Perform tasks and compare with other systems",
           .version	= VERSION,
           .license	= "GNU GPL version 2"
       }

@@ -1011,15 +1011,11 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
         
         for (sfusrc = update_sfusrc; sfusrc; sfusrc = sfusrc->next) {
             ShellFieldUpdateSource *src = (ShellFieldUpdateSource *)sfusrc->data;
-            GSource *source;
-            
-            source = g_main_context_find_source_by_id(NULL, src->source_id);
-            if (source) {
-                g_free(src->sfu->field_name);
-                g_free(src->sfu);
-                g_free(src);
-                g_source_destroy(source);
-            }
+
+            g_source_remove(src->source_id);
+            g_free(src->sfu->field_name);
+            g_free(src->sfu);
+            g_free(src);
         }
         
         g_slist_free(update_sfusrc);
