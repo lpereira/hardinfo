@@ -1013,7 +1013,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
             ShellFieldUpdateSource *src = (ShellFieldUpdateSource *)sfusrc->data;
             GSource *source;
             
-            source = g_main_context_find_source_by_id(NULL, sfusrc->source_id);
+            source = g_main_context_find_source_by_id(NULL, src->source_id);
             if (source) {
                 g_free(src->sfu->field_name);
                 g_free(src->sfu);
