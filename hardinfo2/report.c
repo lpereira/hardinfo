@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <shell.h>
+#include <iconcache.h>
 #include <hardinfo.h>
 #include <config.h>
 
@@ -630,10 +631,11 @@ static ReportDialog
     GtkWidget *button8;
     GtkWidget *button7;
     GtkWidget *label;
+    GtkWidget *hbox;
     
     GtkTreeViewColumn *column;
     GtkCellRenderer *cr_text, *cr_pbuf, *cr_toggle; 
-
+    
     rd = g_new0(ReportDialog, 1);
 
     dialog = gtk_dialog_new();
@@ -650,14 +652,21 @@ static ReportDialog
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
     
+    hbox = gtk_hbox_new(FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, FALSE, FALSE, 0);
+    
     label = gtk_label_new("<big><b>Generate Report</b></big>\n" \
                           "Please choose the information that you wish " \
                           "to view in your report:");
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-    gtk_widget_show(label);
-    gtk_box_pack_start(GTK_BOX(dialog1_vbox), label, FALSE, FALSE, 0);
+    
+    gtk_box_pack_start(GTK_BOX(hbox),
+                       icon_cache_get_image("report-large.png"),
+                       FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+    gtk_widget_show_all(hbox);
     
     scrolledwindow2 = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_show(scrolledwindow2);

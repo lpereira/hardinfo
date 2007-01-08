@@ -603,6 +603,17 @@ static gboolean update_field(gpointer data)
         return TRUE;
     }
     
+    if (update_sfusrc) {
+        GSList *sfu;
+        
+        for (sfu = update_sfusrc; sfu; sfu = sfu->next) {
+            g_free(sfu->data);
+        }
+        
+        g_slist_free(update_sfusrc);
+        update_sfusrc = NULL;
+    }
+    
     DEBUG("destroying ShellFieldUpdate for field %s", fu->field_name);
 
     /* otherwise, cleanup and destroy the timeout */

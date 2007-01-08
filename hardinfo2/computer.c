@@ -374,7 +374,6 @@ hi_exported_methods(void)
     return m;
 }
 
-
 ModuleEntry *
 hi_module_get_entries(void)
 {

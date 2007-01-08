@@ -40,6 +40,7 @@ struct _NetInfo {
     unsigned char mac[8];
     char ip[16];
     char mask[16];
+    char broadcast[16];
 };
 
 void get_net_info(char *if_name, NetInfo *netinfo)
@@ -84,6 +85,15 @@ void get_net_info(char *if_name, NetInfo *netinfo)
     } else {
         sprintf(netinfo->mask, "%s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
     }
+
+    /* Broadcast Address */
+    strcpy(ifr.ifr_name, if_name);
+    if (ioctl(fd, SIOCGIFBRDADDR, &ifr) < 0) {
+        netinfo->broadcast[0] = 0;
+    } else {
+        sprintf(netinfo->broadcast, "%s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+    }
+
     shutdown(fd, 0);
 }
 
@@ -205,8 +215,9 @@ scan_net_interfaces_24(void)
             
             detailed = g_strdup_printf("[Network Adapter Properties]\n"
                                         "Interface Type=%s\n"
-                                        "Hardware Address=%02x:%02x:%02x:%02x:%02x:%02x\n"
+                                        "Hardware Address (MAC)=%02x:%02x:%02x:%02x:%02x:%02x\n"
                                         "MTU=%d\n"
+                                        "[Transfer Details]\n"
                                         "Bytes Received=%ld (%.2fMiB)\n"
                                         "Bytes Sent=%ld (%.2fMiB)\n",
                                         net_get_iface_type(ifacename),
@@ -216,12 +227,17 @@ scan_net_interfaces_24(void)
                                         ni.mtu,
                                         recv_bytes, recv_mb,
                                         trans_bytes, trans_mb);
-            if (ni.ip[0]) {
-                 detailed = g_strconcat(detailed, "IP=", ni.ip, "\n", NULL);
-            }
-              
-            if (ni.mask[0]) {
-                 detailed = g_strconcat(detailed, "Mask=", ni.mask, "\n", NULL);
+                                        
+            if (ni.ip[0] || ni.mask[0] || ni.broadcast[0]) {
+                 detailed = g_strdup_printf("%s\n"
+                                            "[Internet Protocol (IPv4)]\n"
+                                            "IP Address=%s\n"
+                                            "Mask=%s\n"
+                                            "Broadcast Address=%s\n",
+                                            detailed,
+                                            ni.ip[0]        ? ni.ip        : "Not set",
+                                            ni.mask[0]      ? ni.mask      : "Not set",
+                                            ni.broadcast[0] ? ni.broadcast : "Not set");
             }
               
             g_hash_table_insert(moreinfo, devid, detailed);

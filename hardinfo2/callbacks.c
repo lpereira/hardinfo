@@ -70,7 +70,7 @@ void cb_open_web_page()
 
 void cb_open_online_docs()
 {
-    open_url("http://hardinfo.berlios.de/wiki/Documentation");
+    open_url("http://hardinfo.berlios.de/web/Documentation");
 }
 
 void cb_report_bug()
