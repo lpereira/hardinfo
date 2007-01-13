@@ -224,6 +224,22 @@ ModuleEntry *hi_module_get_entries(void)
     return entries;
 }
 
+gchar *get_all_results(void)
+{
+    return "";
+}
+
+ShellModuleMethod*
+hi_exported_methods(void)
+{
+    static ShellModuleMethod m[] = {
+      { "getAllResults", get_all_results },
+      { NULL }
+    };
+    
+    return m;
+}
+
 ModuleAbout *
 hi_module_get_about(void)
 {

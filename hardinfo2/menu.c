@@ -41,6 +41,11 @@ static GtkActionEntry entries[] =
     NULL, 			                        /* tooltip */ 
     G_CALLBACK(cb_generate_report) },
   
+  { "SyncManagerAction", HI_STOCK_SYNC_MENU,
+    "_Open SyncManager...", NULL,
+    NULL,
+    G_CALLBACK(cb_sync_manager) },
+
   { "CopyAction", GTK_STOCK_COPY,
     "_Copy to Clipboard", "<control>C",
     NULL,

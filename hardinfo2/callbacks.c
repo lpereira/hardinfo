@@ -25,8 +25,14 @@
 
 #include <shell.h>
 #include <report.h>
+#include <syncmanager.h>
 
 #include <config.h>
+
+void cb_sync_manager()
+{
+    sync_manager_show();
+}
 
 void cb_save_graphic()
 {

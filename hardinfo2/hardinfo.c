@@ -72,15 +72,15 @@ main(int argc, char **argv)
     /* list all module names */
     if (params.list_modules) {
         g_print("Modules:\n"
-                 "%-20s%-15s%-12s%-20s\n", "File Name", "Name", "Version", "Author");
+                 "%-20s%-15s%-12s\n", "File Name", "Name", "Version");
         
         for (modules = modules_load_all(); modules; modules = modules->next) {
            ShellModule *module = (ShellModule *) modules->data;
            ModuleAbout *ma = module_get_about(module);
            gchar *name = g_path_get_basename(g_module_name(module->dll));
             
-           g_print("%-20s%-15s%-12s%-20s\n",
-                   name, module->name, ma->version, ma->author);
+           g_print("%-20s%-15s%-12s\n",
+                   name, module->name, ma->version);
             
            g_free(name);
         }

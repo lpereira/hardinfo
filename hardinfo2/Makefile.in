@@ -7,7 +7,7 @@ CFLAGS = -fPIC -pipe -Wall -g $(GTK_CFLAGS) $(GLADE_CFLAGS) -I.
 
 OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o sha1.o md5.o \
 		menu.o stock.o callbacks.o expr.o report.o blowfish.o binreloc.o \
-		vendor.o socket.o fbench.o
+		vendor.o socket.o fbench.o syncmanager.o
 MODULES = computer.so devices.so benchmark.so 
 
 all:	$(OBJECTS) $(MODULES)

@@ -386,8 +386,7 @@ report_get_filename(void)
     if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
         gchar *ext = file_chooser_get_extension(dialog, file_types);
         filename = file_chooser_build_filename(dialog, ext);        
-    }
-  
+    }  
     gtk_widget_destroy (dialog);
     return filename;
 }

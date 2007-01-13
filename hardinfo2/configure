@@ -120,7 +120,7 @@ GTK2=-1
 MIN_VERSION="2.6.0"
 echo -n "Checking for GTK version >= ${MIN_VERSION}... "
 for i in `which pkg-config`; do
-	pkg-config --errors-to-stdout gtk+-2.0 \
+	$i --errors-to-stdout gtk+-2.0 \
 		--atleast-version=$MIN_VERSION > /dev/null
 	case $? in
 		0)
@@ -144,6 +144,35 @@ if [ $GTK2 -eq -1 ]; then
 	exit
 fi
 
+# ---------------------------------------------------------------------------
+
+SOUP=-1
+MIN_VERSION="2.2"
+echo -n "Checking for libsoup version >= ${MIN_VERSION}... "
+for i in `which pkg-config`; do
+	$i --errors-to-stdout libsoup-2.2 \
+		--atleast-version=$MIN_VERSION > /dev/null
+	case $? in
+		0)
+			SOUP_FLAGS=`pkg-config libsoup-2.2 --cflags`
+			SOUP_LIBS=`pkg-config libsoup-2.2 --libs`
+			echo "found `pkg-config libsoup-2.2 --modversion`"
+			SOUP=1
+			break ;;
+		*)
+			echo "not found." ;;
+	esac
+done
+
+# --------------------------------------------------------------------------
+
+if [ $SOUP -eq -1 ]; then
+	echo -e "\nYou need the libsoup library, including the development stuff."
+	echo "If you're using Debian, running the command as root:"
+	echo -e "\n\taptitude install libsoup2.2-dev\n"
+	echo "Will do the trick."
+fi
+
 # --------------------------------------------------------------------------
 
 echo -e "\nWriting config.h..."
@@ -164,7 +193,7 @@ echo "#define PREFIX \"/usr/share/hardinfo/\"" >> config.h
 echo "#define LIBPREFIX \"/usr/lib/hardinfo/\"" >> config.h
 
 if [ "$RELEASE" == "1" ]; then
-	echo "#define DEBUG(...)" >> config.h
+	echo "#define DEBUG(...) (void)" >> config.h
 else
 	echo '#define DEBUG(msg,...) fprintf(stderr, "*** %s:%d (%s) *** " msg "\n", \'  >> config.h
         echo '                               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)' >> config.h
@@ -180,8 +209,8 @@ rm -f Makefile
 
 echo "GTK_LIBS = ${GTK_LIBS}" > Makefile
 echo "GTK_CFLAGS = ${GTK_FLAGS}" >> Makefile
-echo "GLADE_LIBS = ${GLADE_LIBS}" >> Makefile
-echo "GLADE_CFLAGS = ${GLADE_FLAGS}" >> Makefile
+echo "SOUP_LIBS = ${SOUP_LIBS}" >> Makefile
+echo "SOUP_CFLAGS = ${SOUP_CFLAGS}" >> Makefile
 echo "PACKAGE = `basename ${PWD}`" >> Makefile
 echo "ARCHOPTS = " >> Makefile
 

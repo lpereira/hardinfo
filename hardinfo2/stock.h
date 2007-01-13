@@ -23,6 +23,7 @@
 #define HI_STOCK_INTERNET	"hi-stock-internet"
 #define HI_STOCK_MODULE		"hi-stock-module"
 #define HI_STOCK_ABOUT_MODULES	"hi-stock-about-modules"
+#define HI_STOCK_SYNC_MENU	"hi-stock-sync-menu"
 
 void stock_icons_init(void);
 void stock_icon_register(gchar *filename, gchar *stock_id);

@@ -335,6 +335,13 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
  
     g_option_context_free(ctx);
 
+    if (*argc >= 2) {
+        g_print("Unrecognized arguments.\n"
+                "Try ``%s --help'' for more information.\n",
+                *(argv)[0]);
+        exit(1);
+    }
+
     param->create_report = create_report;
     param->report_format = REPORT_FORMAT_TEXT;
     param->show_version  = show_version;
@@ -343,7 +350,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->autoload_deps = autoload_deps;
     
     if (report_format && g_str_equal(report_format, "html"))
-        param->report_format = REPORT_FORMAT_HTML;
+        param->report_format = REPORT_FORMAT_HTML;    
 }
 
 gboolean ui_init(int *argc, char ***argv)
@@ -770,11 +777,16 @@ void tree_view_save_image(gchar *filename)
     
     gboolean		 tv_enabled;
 
+    /* present the window */
+    gtk_window_present(GTK_WINDOW(shell->window));
+    
     /* if the treeview is disabled, we need to enable it so we get the
        correct colors when saving. we make it insensitive later on if it
        was this way before entering this function */    
     tv_enabled = GTK_WIDGET_IS_SENSITIVE(widget);
     gtk_widget_set_sensitive(widget, TRUE);
+    
+    gtk_widget_queue_draw(widget);
 
     /* unselect things in the information treeview */
     gtk_range_set_value(GTK_RANGE
@@ -879,7 +891,7 @@ void module_entry_scan_all_except(ModuleEntry *entries, gint except_entry)
         if (i == except_entry)
             continue;
             
-        shell_status_update(idle_free(g_strdup_printf("<b>Scanning:</b> %s...", entry.name)));
+        shell_status_update(idle_free(g_strdup_printf("Scanning: %s...", entry.name)));
         
         if ((scan_callback = entry.scan_callback)) {
             scan_callback(FALSE);

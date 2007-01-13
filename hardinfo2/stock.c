@@ -29,6 +29,7 @@ static struct {
     { "internet.png",		HI_STOCK_INTERNET },
     { "module.png",		HI_STOCK_MODULE },
     { "about-modules.png",	HI_STOCK_ABOUT_MODULES },
+    { "syncmanager-small.png",	HI_STOCK_SYNC_MENU },
 };
 
 static GtkIconFactory *icon_factory;
