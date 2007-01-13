@@ -1,7 +1,7 @@
 
 CC = gcc -O3 $(ARCHOPTS) 
 CCSLOW = gcc -O0
-CFLAGS = -fPIC -pipe -Wall -g $(GTK_CFLAGS) $(GLADE_CFLAGS) -I.
+CFLAGS = -fPIC -pipe -Wall -g $(GTK_CFLAGS) $(GLADE_CFLAGS) $(SOUP_CFLAGS) -I.
 
 # ----------------------------------------------------------------------------
 
@@ -12,7 +12,7 @@ MODULES = computer.so devices.so benchmark.so
 
 all:	$(OBJECTS) $(MODULES)
 	$(CC) $(CFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) $(GTK_FLAGS) \
-		$(GLADE_LIBS) $(GLADE_FLAGS) 
+		$(GLADE_LIBS) $(GLADE_FLAGS) $(SOUP_LIBS) $(SOUP_FLAGS)
 
 md5.o:
 	$(CCSLOW) $(CFLAGS) -c md5.c -o $@

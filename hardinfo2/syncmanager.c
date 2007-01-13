@@ -1,6 +1,11 @@
 #include "syncmanager.h"
 #include "iconcache.h"
 #include "hardinfo.h"
+#include "config.h"
+
+#include <libsoup/soup.h>
+#include <libsoup/soup-xmlrpc-message.h>
+#include <libsoup/soup-xmlrpc-response.h>
 
 typedef struct _SyncDialog	SyncDialog;
 typedef struct _SyncNetArea	SyncNetArea;
@@ -12,7 +17,9 @@ struct _SyncNetArea {
 
 struct _SyncNetAction {
     gchar	*name;
-    gboolean	(*do_action)(SyncDialog *sd);
+    gboolean	(*do_action)(SyncDialog *sd, gpointer sna);
+    
+    GError	*error;
 };
 
 struct _SyncDialog {
@@ -26,9 +33,16 @@ struct _SyncDialog {
     GtkWidget		*scroll_box;
     
     SyncNetArea		*sna;
+    
+    gboolean		 flag_cancel : 1;
 };
 
 static GSList		*entries = NULL;
+static SoupSession	*session = NULL;
+static GQuark		 err_quark;
+
+#define XMLRPC_SERVER_URI   		"http://hardinfo.berlios.de/xmlrpc/"
+#define XMLRPC_SERVER_API_VERSION	1
 
 #define LABEL_SYNC_DEFAULT  "<big><b>Synchronize with Central Database</b></big>\n" \
                             "The following information may be synchronized " \
@@ -57,6 +71,8 @@ void sync_manager_add_entry(SyncEntry *entry)
 void sync_manager_show(void)
 {
     SyncDialog *sd = sync_dialog_new();
+    
+    err_quark = g_quark_from_static_string("syncmanager");
 
     if (gtk_dialog_run(GTK_DIALOG(sd->dialog)) == GTK_RESPONSE_ACCEPT) {
         sync_dialog_start_sync(sd);
@@ -65,33 +81,159 @@ void sync_manager_show(void)
     sync_dialog_destroy(sd);
 }
 
-static gboolean _action_wait(SyncDialog *sd)
+static SoupXmlrpcValue *_soup_get_xmlrpc_value(SoupMessage *msg, SyncNetAction *sna)
 {
-    nonblock_sleep(1000);
+    SoupXmlrpcResponse *response = NULL;
+    SoupXmlrpcValue *value = NULL;
+    
+    sna->error = NULL;
+    
+    if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
+        sna->error = g_error_new(err_quark, 1, "%s (error #%d)",
+                                 msg->reason_phrase, msg->status_code);
+        goto bad;
+    }
+    
+    response = soup_xmlrpc_message_parse_response(SOUP_XMLRPC_MESSAGE(msg));
+    if (!response) {
+        sna->error = g_error_new(err_quark, 2, "Could not parse XMLRPC response");
+        goto bad;
+    }
+    
+    value = soup_xmlrpc_response_get_value(response);
+    if (!value) {
+        sna->error = g_error_new(err_quark, 3, "No response value in XMLRPC response");
+    }
+    
+bad:
+    return value;
+}
+
+static long _soup_get_xmlrpc_value_int(SoupMessage *msg, SyncNetAction *sna)
+{
+    SoupXmlrpcValue *value;
+    long int_value = -1;
+    
+    value = _soup_get_xmlrpc_value(msg, sna);
+    if (!value) {
+        if (!sna->error)
+            sna->error = GINT_TO_POINTER(1);
+        goto very_bad;
+    }
+
+    if (!soup_xmlrpc_value_get_int(value, &int_value)) {
+        if (!sna->error)
+            sna->error = g_error_new(err_quark, 4,
+                                     "Could not extract result from XMLRPC response");
+            
+        goto bad;
+    }
+    
+bad:
+    /* FIXME: free value? */
+very_bad:
+    return int_value;
+}
+
+static gboolean _soup_xmlrpc_call(gchar *method, SyncNetAction *sna,
+                                  SoupMessageCallbackFn callback)
+{
+    SoupXmlrpcMessage *msg;
+    
+    sna->error = NULL;
+    
+    msg = soup_xmlrpc_message_new(XMLRPC_SERVER_URI);
+    if (!msg)
+        return FALSE;
+        
+    soup_xmlrpc_message_start_call(msg, method);
+    soup_xmlrpc_message_end_call(msg);
+    
+    soup_xmlrpc_message_persist(msg);
+    
+    soup_session_queue_message(session, SOUP_MESSAGE(msg),
+                               callback, sna);
+    gtk_main();
+    
     return TRUE;
 }
 
-static gboolean _action_wait_fail(SyncDialog *sd)
+static void _action_check_api_version_got_response(SoupMessage *msg, gpointer user_data)
 {
-    nonblock_sleep(2000);
+    SyncNetAction *sna = (SyncNetAction *) user_data;
+    long version = _soup_get_xmlrpc_value_int(msg, sna);
+    
+    if (version != XMLRPC_SERVER_API_VERSION) {
+        if (!sna->error)
+            sna->error = g_error_new(err_quark, 5, "Server says it supports API version %ld, but " \
+                                                   "this version of HardInfo only supports API "  \
+                                                   "version %d.", version, XMLRPC_SERVER_API_VERSION);
+    }
+
+    gtk_main_quit();
+}
+
+static gboolean _action_check_api_version(SyncDialog *sd, gpointer user_data)
+{
+    SyncNetAction *sna = (SyncNetAction *) user_data;
+
+    if (!_soup_xmlrpc_call("server.getAPIVersion", sna,
+                           _action_check_api_version_got_response))
+        return FALSE;
+    
+    return sna->error ? FALSE : TRUE;
+}
+
+static void _action_get_benchmarks_got_response(SoupMessage *msg, gpointer user_data)
+{
+    SyncNetAction *sna = (SyncNetAction *) user_data;
+    
+    _soup_get_xmlrpc_value_int(msg, sna);
+
+    gtk_main_quit();
+}
+
+static gboolean _action_get_benchmarks(SyncDialog *sd, gpointer user_data)
+{
+    SyncNetAction *sna = (SyncNetAction *) user_data;
+
+    if (!_soup_xmlrpc_call("benchmark.getResults", sna,
+                           _action_get_benchmarks_got_response))
+        return FALSE;
+    
+    return sna->error ? FALSE : TRUE;
+}
+
+static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
+{
+    SyncDialog *sd = (SyncDialog *) data;
+    
+    if (session) {
+        soup_session_abort(session);
+    }
+    
+    sd->flag_cancel = TRUE;
+    gtk_main_quit();
+    
     return FALSE;
 }
 
 static void sync_dialog_start_sync(SyncDialog *sd)
 {
     SyncNetAction actions[] = {
-        { "Contacting HardInfo central database",	_action_wait },
-        { "Sending benchmark results (1/3)",		_action_wait },
-        { "Sending benchmark results (2/3)",		_action_wait },
-        { "Sending benchmark results (3/3)",		_action_wait },
-        { "Receiving benchmark results",		_action_wait },
-        { "This should fail!",				_action_wait_fail },
+        { "Contacting HardInfo Central Database",	_action_check_api_version },
+        { "Receiving benchmark results",		_action_get_benchmarks },
         { "Sync finished",				NULL },
     };
+    
+    if (!session) {
+        session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 5, NULL);
+    }
 
     gtk_widget_hide(sd->button_sync);
-    gtk_widget_set_sensitive(sd->button_cancel, FALSE);
     sync_dialog_netarea_show(sd);
+    g_signal_connect(G_OBJECT(sd->button_cancel), "clicked",
+                     (GCallback)_cancel_sync, sd);
 
     sync_dialog_netarea_start_actions(sd, actions, G_N_ELEMENTS(actions));
     
@@ -139,20 +281,42 @@ static void sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[
         gtk_main_iteration();
     
     for (i = 0; i < n; i++) {
-        gchar *bold;
+        gchar *markup;
         
-        bold = g_strdup_printf("<b>%s</b>", sna[i].name);
-        gtk_label_set_markup(GTK_LABEL(labels[i]), bold);
-        g_free(bold);
+        if (sd->flag_cancel) {
+            markup = g_strdup_printf("<s>%s</s> <i>(canceled)</i>", sna[i].name);
+            gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
+            g_free(markup);
+
+            gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]),
+                                      icon_cache_get_pixbuf("dialog-error.png"));
+            break;
+        }
+        
+        markup = g_strdup_printf("<b>%s</b>", sna[i].name);
+        gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
+        g_free(markup);
         
         gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]), curr_icon);
     
-        if (sna[i].do_action && !sna[i].do_action(sd)) {
+        if (sna[i].do_action && !sna[i].do_action(sd, &sna[i])) {
+            markup = g_strdup_printf("<b><s>%s</s></b> <i>(failed)</i>", sna[i].name);
+            gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
+            g_free(markup);
+
             gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]),
                                       icon_cache_get_pixbuf("dialog-error.png"));
-            g_warning("Failed while performing \"%s\". Please file a bug report " \
-                      "if this problem persists. (Use the Help\342\206\222Report" \
-                      " bug option.)", sna[i].name);
+            if (sna[i].error) {
+                g_warning("Failed while performing \"%s\". Please file a bug report " \
+                          "if this problem persists. (Use the Help\342\206\222Report" \
+                          " bug option.)\n\nDetails: %s",
+                          sna[i].name, sna[i].error->message);
+                g_error_free(sna[i].error);
+            } else {
+                g_warning("Failed while performing \"%s\". Please file a bug report " \
+                          "if this problem persists. (Use the Help\342\206\222Report" \
+                          " bug option.)", sna[i].name);
+            }
             break;
         }
 
@@ -182,7 +346,6 @@ static void sync_dialog_netarea_destroy(SyncNetArea *sna)
 {
     g_return_if_fail(sna != NULL);
 
-    gtk_widget_destroy(sna->vbox);
     g_free(sna);
 }
 

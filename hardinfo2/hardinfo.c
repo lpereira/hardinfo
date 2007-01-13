@@ -116,6 +116,10 @@ main(int argc, char **argv)
         stock_icons_init();
     
         shell_init(modules);
+        
+        DEBUG("initializing GLib thread");
+        if (!g_thread_supported())
+            g_thread_init (NULL);
   
         DEBUG("entering gtk+ main loop");
         gtk_main();

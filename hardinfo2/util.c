@@ -422,8 +422,6 @@ static void module_register_methods(ShellModule *module)
             g_hash_table_insert(__module_methods, method_name, method.function);
             g_free(name);
             
-            DEBUG("Registered method: %s", method_name);
-            
             if (!(*(++methods)).name)
                 break;
         }
@@ -439,8 +437,6 @@ gchar *module_call_method(gchar *method)
         return NULL;
     }
     
-    DEBUG("Calling method: %s", method);
-
     function = g_hash_table_lookup(__module_methods, method);
     return function ? g_strdup(function()) :
                       g_strdup_printf("{Unknown method: \"%s\"}", method);
@@ -494,8 +490,6 @@ static ShellModule *module_load(gchar *filename)
         module->weight = weight_func ? weight_func() : 0;
         module->name   = name_func();
         
-        DEBUG("%p", module->name);
-
         entries = get_module_entries();
         while (entries[i].name) {
             ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
@@ -605,16 +599,12 @@ static GSList *modules_check_deps(GSList *modules)
 
         module = (ShellModule *) mm->data;
         
-        DEBUG("check deps: %s", module->name);
-        
         if (g_module_symbol(module->dll, "hi_module_get_dependencies",
                             (gpointer) & get_deps)) {
             for (i = 0, deps = get_deps(); deps[i]; i++) {
                 GSList      *l;
                 ShellModule *m;
                 gboolean    found = FALSE;
-                
-                DEBUG("  %s depends on %s", module->name, deps[i]);
                 
                 for (l = modules; l; l = l->next) {
                     m = (ShellModule *)l->data;
@@ -627,8 +617,6 @@ static GSList *modules_check_deps(GSList *modules)
                 
                     g_free(name);
                 }
-                
-                DEBUG("     dependency %s", found ? "found" : "not found");
                 
                 if (!found) {
                     if (params.autoload_deps) {
@@ -672,8 +660,6 @@ static GSList *modules_check_deps(GSList *modules)
                     }
                 }
             }
-        } else {
-            DEBUG("  no dependencies needed");
         }
     }
     
@@ -859,10 +845,6 @@ void tree_view_save_image(gchar *filename)
 static gboolean __idle_free_do(gpointer ptr)
 {
     if (ptr) {
-        DEBUG("Freeing mem @ %p: %s", ptr,
-              g_utf8_validate((gchar*)ptr, 3, NULL) ?
-                              (gchar*)ptr : "[non string data]");
-
         g_free(ptr);
     }
 
@@ -872,8 +854,6 @@ static gboolean __idle_free_do(gpointer ptr)
 gpointer idle_free(gpointer ptr)
 {
     if (ptr) {
-        DEBUG("Will free mem @ %p in 10000ms", ptr);
-        
         g_timeout_add(10000, __idle_free_do, ptr);
     }
     
