@@ -20,6 +20,7 @@
 #include <iconcache.h>
 #include <shell.h>
 #include <config.h>
+#include <syncmanager.h>
 
 enum {
     BENCHMARK_ZLIB,
@@ -43,7 +44,6 @@ gchar *callback_bfsh();
 gchar *callback_md5();
 gchar *callback_fib();
 gchar *callback_sha1();
-
 
 static ModuleEntry entries[] = {
     {"CPU ZLib", "compress.png", callback_zlib, scan_zlib},
@@ -254,3 +254,24 @@ hi_module_get_about(void)
     
     return ma;
 }
+
+static gchar *bla()
+{
+    return g_strdup("ola mundo!");
+}
+
+void
+hi_module_init(void)
+{
+    static SyncEntry se[] = {
+      {
+          .fancy_name = "Benchmark results",
+          .name       = "BenchmarkResults",
+          .save_to    = "/tmp/bla.txt",
+          .get_data   = bla
+      }
+    };
+    
+    sync_manager_add_entry(se);
+}
+

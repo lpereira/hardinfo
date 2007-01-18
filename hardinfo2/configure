@@ -141,7 +141,7 @@ if [ $GTK2 -eq -1 ]; then
 	echo "If you're using Debian, running the command as root:"
 	echo -e "\n\taptitude install libgtk2.0-dev\n"
 	echo "Will do the trick."
-	exit
+	exit 1
 fi
 
 # ---------------------------------------------------------------------------
@@ -171,6 +171,7 @@ if [ $SOUP -eq -1 ]; then
 	echo "If you're using Debian, running the command as root:"
 	echo -e "\n\taptitude install libsoup2.2-dev\n"
 	echo "Will do the trick."
+	exit 1
 fi
 
 # --------------------------------------------------------------------------

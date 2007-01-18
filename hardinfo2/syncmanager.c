@@ -39,6 +39,7 @@ struct _SyncNetAction {
     gchar	*name;
     gboolean	(*do_action)(SyncDialog *sd, gpointer sna);
     
+    SyncEntry	*entry;
     GError	*error;
 };
 
@@ -91,6 +92,9 @@ static void		 sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction *s
 
 void sync_manager_add_entry(SyncEntry *entry)
 {
+    DEBUG("registering syncmanager entry ''%s''", entry->fancy_name);
+
+    entry->selected = TRUE;
     entries = g_slist_prepend(entries, entry);
 }
 
@@ -234,96 +238,36 @@ static gboolean _action_check_api_version(SyncDialog *sd, gpointer user_data)
     return sna->error ? FALSE : TRUE;
 }
 
-static void _action_get_benchmarks_got_response(SoupMessage *msg, gpointer user_data)
+static void _action_send_data_got_response(SoupMessage *msg, gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
     
+    /* FIXME: save things if needed */
     _soup_get_xmlrpc_value_int(msg, sna);
 
     gtk_main_quit();
 }
 
-static gboolean _action_get_benchmarks(SyncDialog *sd, gpointer user_data)
-{
-    SyncNetAction *sna = (SyncNetAction *) user_data;
-
-    if (!_soup_xmlrpc_call("benchmark.getResults", sna,
-                           _action_get_benchmarks_got_response))
-        return FALSE;
-    
-    return sna->error ? FALSE : TRUE;
-}
-
-static long sync_manager_get_user_id()
-{
-    GKeyFile *kf;
-    gchar *syncconf = g_build_filename(g_get_home_dir(),
-                                       ".hardinfo", "sync.conf", NULL);
-    gint user_id = -1;
-    
-    kf = g_key_file_new();
-    if (kf && g_key_file_load_from_file(kf, syncconf, 0, NULL)) {
-        user_id = g_key_file_get_integer(kf, "syncmanager", "userid", NULL);
-        g_key_file_free(kf);
-    }
-    
-    g_free(syncconf);
-    
-    return user_id;
-}
-
-static void sync_manager_set_user_id(long user_id)
-{
-    GKeyFile *kf;
-    gchar *syncconf = g_build_filename(g_get_home_dir(),
-                                       ".hardinfo", "sync.conf", NULL);
-    
-    kf = g_key_file_new();
-    if (kf) {
-        gchar *data;
-        
-        g_key_file_set_integer(kf, "syncmanager", "userid", user_id);
-        
-        data = g_key_file_to_data(kf, NULL, NULL);
-        g_file_set_contents(syncconf, data, -1, NULL);
-        
-        g_free(data);
-        g_key_file_free(kf);
-    }
-    
-    g_free(syncconf);
-}
-
-static void _action_send_benchmarks_got_response(SoupMessage *msg, gpointer user_data)
+static gboolean _action_send_data(SyncDialog *sd, gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
     
-    sync_manager_set_user_id(_soup_get_xmlrpc_value_int(msg, sna));
+    if (sna->entry) {
+        gchar *str_data = sna->entry->get_data();
 
-    gtk_main_quit();
-}
-
-static gboolean _action_send_benchmarks(SyncDialog *sd, gpointer user_data)
-{
-    SyncNetAction *sna = (SyncNetAction *) user_data;
-    long user_id = sync_manager_get_user_id();
-    
-    gchar *temp = user_id == -1 ? NULL : g_strdup_printf("%ld", user_id);
-
-    if (!_soup_xmlrpc_call_with_parameters("benchmark.addResult", sna,
-                                           _action_send_benchmarks_got_response,
-                                           "CPU SHA1",
-                                           "Athlon XP 3200+",
-                                           "0",
-                                           VERSION,
-                                           ARCH,
-                                           temp,
-                                           NULL)) {
-        g_free(temp);
-        return FALSE;
+        if (!_soup_xmlrpc_call_with_parameters("sync.sendData", sna,
+                                               _action_send_data_got_response,
+                                               VERSION, ARCH,
+                                               sna->entry->name,
+                                               str_data, NULL)) {
+            g_free(str_data);
+            
+            return FALSE;
+        }
+        
+        g_free(str_data);
     }
     
-    g_free(temp);
     return sna->error ? FALSE : TRUE;
 }
 
@@ -341,14 +285,38 @@ static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
     return FALSE;
 }
 
+static SyncNetAction *sync_manager_get_selected_actions(gint *n)
+{
+    gint i;
+    GSList *entry;
+    SyncNetAction *actions;
+    SyncNetAction  action_check_api = { "Contacting HardInfo Central Database",
+                                        _action_check_api_version },
+                   action_clean_up  = { "Cleaning up", NULL };
+    
+    actions = g_new0(SyncNetAction, 2 + g_slist_length(entries));
+    
+    for (entry = entries, i = 1; entry; entry = entry->next) {
+        SyncEntry *e = (SyncEntry *) entry->data;
+        
+        if (e->selected) {
+            SyncNetAction sna = { e->fancy_name, _action_send_data, e };
+        
+            actions[i++] = sna;
+        }
+    }
+
+    actions[0]   = action_check_api;
+    actions[i++] = action_clean_up;
+
+    *n = i;
+    return actions;
+}
+
 static void sync_dialog_start_sync(SyncDialog *sd)
 {
-    SyncNetAction actions[] = {
-        { "Contacting HardInfo Central Database",	_action_check_api_version },
-        { "Receiving benchmark results",		_action_get_benchmarks },
-        { "Sending benchmark results",			_action_send_benchmarks },
-        { "Cleaning up",				NULL },
-    };
+    gint           nactions;
+    SyncNetAction *actions;
     
     if (!session) {
         session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
@@ -359,7 +327,9 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     g_signal_connect(G_OBJECT(sd->button_cancel), "clicked",
                      (GCallback)_cancel_sync, sd);
 
-    sync_dialog_netarea_start_actions(sd, actions, G_N_ELEMENTS(actions));
+    actions = sync_manager_get_selected_actions(&nactions);
+    sync_dialog_netarea_start_actions(sd, actions, nactions);
+    g_free(actions);
     
     gtk_widget_hide(sd->button_cancel);
     gtk_widget_show(sd->button_close);
@@ -497,13 +467,49 @@ static void sync_dialog_netarea_hide(SyncDialog *sd)
     gtk_window_reshow_with_initial_size(GTK_WINDOW(sd->dialog));
 }
 
+static void populate_store(GtkListStore *store)
+{
+    GSList *entry;
+    SyncEntry *e;
+    
+    gtk_list_store_clear(store);
+    
+    for (entry = entries; entry; entry = entry->next) {
+        GtkTreeIter iter;
+        
+        e = (SyncEntry *) entry->data;
+
+        gtk_list_store_append(store, &iter);
+        gtk_list_store_set(store, &iter, 0, TRUE, 1, e->fancy_name, 2, e, -1);
+    }
+}
+
+static void
+sel_toggle(GtkCellRendererToggle *cellrenderertoggle,
+           gchar 		 *path_str,
+	   GtkTreeModel		 *model)
+{
+    GtkTreeIter  iter;
+    GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
+    SyncEntry *se;
+    gboolean active;
+    
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, 0, &active, 2, &se, -1);
+    
+    se->selected = !active;
+    
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, se->selected, -1);
+    gtk_tree_path_free(path);
+}
+
 static SyncDialog *sync_dialog_new(void)
 {
     SyncDialog *sd;
     GtkWidget *dialog;
     GtkWidget *dialog1_vbox;
     GtkWidget *scrolledwindow2;
-//    GtkWidget *treeview2;
+    GtkWidget *treeview2;
     GtkWidget *dialog1_action_area;
     GtkWidget *button8;
     GtkWidget *button7;
@@ -511,8 +517,10 @@ static SyncDialog *sync_dialog_new(void)
     GtkWidget *label;
     GtkWidget *hbox;
     
-//    GtkTreeViewColumn *column;
-//    GtkCellRenderer *cr_text, *cr_pbuf, *cr_toggle; 
+    GtkTreeViewColumn *column;
+    GtkTreeModel *model;
+    GtkListStore *store;
+    GtkCellRenderer *cr_text, *cr_toggle; 
     
     sd = g_new0(SyncDialog, 1);
     sd->sna = sync_dialog_netarea_new();
@@ -521,7 +529,6 @@ static SyncDialog *sync_dialog_new(void)
     gtk_window_set_title(GTK_WINDOW(dialog), "SyncManager");
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
-//    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
     gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_type_hint(GTK_WINDOW(dialog),
 			     GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -557,7 +564,10 @@ static SyncDialog *sync_dialog_new(void)
 				   GTK_POLICY_AUTOMATIC);
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
 					(scrolledwindow2), GTK_SHADOW_IN);
-/*
+
+    store = gtk_list_store_new(3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+    model = GTK_TREE_MODEL(store);
+
     treeview2 = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview2), FALSE);
     gtk_widget_show(treeview2);
@@ -568,21 +578,14 @@ static SyncDialog *sync_dialog_new(void)
 
     cr_toggle = gtk_cell_renderer_toggle_new();
     gtk_tree_view_column_pack_start(column, cr_toggle, FALSE);
-    g_signal_connect(cr_toggle, "toggled", G_CALLBACK(report_dialog_sel_toggle), sd);
-    gtk_tree_view_column_add_attribute(column, cr_toggle, "active",
-				       TREE_COL_SEL);
-
-    cr_pbuf = gtk_cell_renderer_pixbuf_new();
-    gtk_tree_view_column_pack_start(column, cr_pbuf, FALSE);
-    gtk_tree_view_column_add_attribute(column, cr_pbuf, "pixbuf",
-				       TREE_COL_PBUF);
+    g_signal_connect(cr_toggle, "toggled", G_CALLBACK(sel_toggle), model);
+    gtk_tree_view_column_add_attribute(column, cr_toggle, "active", 0);
 
     cr_text = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(column, cr_text, TRUE);
-    gtk_tree_view_column_add_attribute(column, cr_text, "markup",
-				       TREE_COL_NAME);
-  */  
-
+    gtk_tree_view_column_add_attribute(column, cr_text, "markup", 1);
+    
+    populate_store(store);
 
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
     gtk_widget_show(dialog1_action_area);
@@ -613,8 +616,6 @@ static SyncDialog *sync_dialog_new(void)
     sd->button_close = button6;
     sd->scroll_box = scrolledwindow2;
     sd->label = label;
-    //gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview2));
-    //set_all_active(sd, TRUE);
 
     return sd;
 }

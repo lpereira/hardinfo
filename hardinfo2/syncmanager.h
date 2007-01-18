@@ -24,9 +24,13 @@
 typedef struct _SyncEntry	SyncEntry;
 
 struct _SyncEntry {
-  gchar	*name;
+  gchar *name;
+  gchar	*fancy_name;
   gchar	*save_to;
+
   gchar	*(*get_data)(void);
+  
+  gboolean selected;
 };
 
 void sync_manager_add_entry(SyncEntry *entry);

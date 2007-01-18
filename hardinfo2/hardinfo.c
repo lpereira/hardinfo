@@ -34,6 +34,10 @@ main(int argc, char **argv)
     GSList *modules;
     
     DEBUG("HardInfo version " VERSION ". Debug version.");
+
+    DEBUG("g_thread_init()");
+    if (!g_thread_supported())
+        g_thread_init (NULL);
     
     /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);
@@ -117,9 +121,6 @@ main(int argc, char **argv)
     
         shell_init(modules);
         
-        DEBUG("initializing GLib thread");
-        if (!g_thread_supported())
-            g_thread_init (NULL);
   
         DEBUG("entering gtk+ main loop");
         gtk_main();
