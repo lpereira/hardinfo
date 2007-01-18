@@ -1,3 +1,21 @@
+/*
+ *    HardInfo - Displays System Information
+ *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@linuxmag.com.br>
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, version 2.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ */
+
 #include "syncmanager.h"
 #include "iconcache.h"
 #include "hardinfo.h"
@@ -6,6 +24,8 @@
 #include <libsoup/soup.h>
 #include <libsoup/soup-xmlrpc-message.h>
 #include <libsoup/soup-xmlrpc-response.h>
+
+#include <stdarg.h>
 
 typedef struct _SyncDialog	SyncDialog;
 typedef struct _SyncNetArea	SyncNetArea;
@@ -41,7 +61,7 @@ static GSList		*entries = NULL;
 static SoupSession	*session = NULL;
 static GQuark		 err_quark;
 
-#define XMLRPC_SERVER_URI   		"http://hardinfo.berlios.de/xmlrpc/"
+#define XMLRPC_SERVER_URI   		"http://condor/xmlrpc/"
 #define XMLRPC_SERVER_API_VERSION	1
 
 #define LABEL_SYNC_DEFAULT  "<big><b>Synchronize with Central Database</b></big>\n" \
@@ -62,6 +82,12 @@ static void		 sync_dialog_netarea_show(SyncDialog *sd);
 static void		 sync_dialog_netarea_hide(SyncDialog *sd);
 static void		 sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction *sna,
                                                            gint n);
+
+#define SNA_ERROR(code,message,...) if (!sna->error) {                                         \
+                                            sna->error = g_error_new(err_quark, code, message, \
+                                                         ##__VA_ARGS__);                       \
+                                    }
+
 
 void sync_manager_add_entry(SyncEntry *entry)
 {
@@ -89,20 +115,19 @@ static SoupXmlrpcValue *_soup_get_xmlrpc_value(SoupMessage *msg, SyncNetAction *
     sna->error = NULL;
     
     if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
-        sna->error = g_error_new(err_quark, 1, "%s (error #%d)",
-                                 msg->reason_phrase, msg->status_code);
+        SNA_ERROR(1, "%s (error #%d)", msg->reason_phrase, msg->status_code);
         goto bad;
     }
-    
+
     response = soup_xmlrpc_message_parse_response(SOUP_XMLRPC_MESSAGE(msg));
     if (!response) {
-        sna->error = g_error_new(err_quark, 2, "Could not parse XMLRPC response");
+        SNA_ERROR(2, "Could not parse XML-RPC response");
         goto bad;
     }
     
     value = soup_xmlrpc_response_get_value(response);
     if (!value) {
-        sna->error = g_error_new(err_quark, 3, "No response value in XMLRPC response");
+        SNA_ERROR(3, "No response value in XML-RPC response");
     }
     
 bad:
@@ -116,22 +141,15 @@ static long _soup_get_xmlrpc_value_int(SoupMessage *msg, SyncNetAction *sna)
     
     value = _soup_get_xmlrpc_value(msg, sna);
     if (!value) {
-        if (!sna->error)
-            sna->error = GINT_TO_POINTER(1);
-        goto very_bad;
+        SNA_ERROR(4, "Could not extract result from XML-RPC response");
+        goto bad;
     }
 
     if (!soup_xmlrpc_value_get_int(value, &int_value)) {
-        if (!sna->error)
-            sna->error = g_error_new(err_quark, 4,
-                                     "Could not extract result from XMLRPC response");
-            
-        goto bad;
+        SNA_ERROR(4, "Could not extract result from XML-RPC response");
     }
-    
+
 bad:
-    /* FIXME: free value? */
-very_bad:
     return int_value;
 }
 
@@ -158,16 +176,48 @@ static gboolean _soup_xmlrpc_call(gchar *method, SyncNetAction *sna,
     return TRUE;
 }
 
+static gboolean _soup_xmlrpc_call_with_parameters(gchar *method, SyncNetAction *sna,
+                                                  SoupMessageCallbackFn callback,
+                                                  ...)
+{
+    SoupXmlrpcMessage *msg;
+    gchar *argument;
+    va_list ap;
+    
+    sna->error = NULL;
+    
+    msg = soup_xmlrpc_message_new(XMLRPC_SERVER_URI);
+    if (!msg)
+        return FALSE;
+        
+    soup_xmlrpc_message_start_call(msg, method);
+    
+    va_start(ap, callback);
+    while ((argument = va_arg(ap, gchar *))) {
+        soup_xmlrpc_message_start_param(msg);
+        soup_xmlrpc_message_write_string(msg, argument);
+        soup_xmlrpc_message_end_param(msg);
+    }
+    va_end(ap);
+    
+    soup_xmlrpc_message_end_call(msg);
+    soup_xmlrpc_message_persist(msg);
+    
+    soup_session_queue_message(session, SOUP_MESSAGE(msg), callback, sna);
+    gtk_main();
+    
+    return TRUE;
+}
+
 static void _action_check_api_version_got_response(SoupMessage *msg, gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
     long version = _soup_get_xmlrpc_value_int(msg, sna);
     
     if (version != XMLRPC_SERVER_API_VERSION) {
-        if (!sna->error)
-            sna->error = g_error_new(err_quark, 5, "Server says it supports API version %ld, but " \
-                                                   "this version of HardInfo only supports API "  \
-                                                   "version %d.", version, XMLRPC_SERVER_API_VERSION);
+        SNA_ERROR(5, "Server says it supports API version %ld, but " \
+                     "this version of HardInfo only supports API "  \
+                     "version %d.", version, XMLRPC_SERVER_API_VERSION);
     }
 
     gtk_main_quit();
@@ -204,6 +254,79 @@ static gboolean _action_get_benchmarks(SyncDialog *sd, gpointer user_data)
     return sna->error ? FALSE : TRUE;
 }
 
+static long sync_manager_get_user_id()
+{
+    GKeyFile *kf;
+    gchar *syncconf = g_build_filename(g_get_home_dir(),
+                                       ".hardinfo", "sync.conf", NULL);
+    gint user_id = -1;
+    
+    kf = g_key_file_new();
+    if (kf && g_key_file_load_from_file(kf, syncconf, 0, NULL)) {
+        user_id = g_key_file_get_integer(kf, "syncmanager", "userid", NULL);
+        g_key_file_free(kf);
+    }
+    
+    g_free(syncconf);
+    
+    return user_id;
+}
+
+static void sync_manager_set_user_id(long user_id)
+{
+    GKeyFile *kf;
+    gchar *syncconf = g_build_filename(g_get_home_dir(),
+                                       ".hardinfo", "sync.conf", NULL);
+    
+    kf = g_key_file_new();
+    if (kf) {
+        gchar *data;
+        
+        g_key_file_set_integer(kf, "syncmanager", "userid", user_id);
+        
+        data = g_key_file_to_data(kf, NULL, NULL);
+        g_file_set_contents(syncconf, data, -1, NULL);
+        
+        g_free(data);
+        g_key_file_free(kf);
+    }
+    
+    g_free(syncconf);
+}
+
+static void _action_send_benchmarks_got_response(SoupMessage *msg, gpointer user_data)
+{
+    SyncNetAction *sna = (SyncNetAction *) user_data;
+    
+    sync_manager_set_user_id(_soup_get_xmlrpc_value_int(msg, sna));
+
+    gtk_main_quit();
+}
+
+static gboolean _action_send_benchmarks(SyncDialog *sd, gpointer user_data)
+{
+    SyncNetAction *sna = (SyncNetAction *) user_data;
+    long user_id = sync_manager_get_user_id();
+    
+    gchar *temp = user_id == -1 ? NULL : g_strdup_printf("%ld", user_id);
+
+    if (!_soup_xmlrpc_call_with_parameters("benchmark.addResult", sna,
+                                           _action_send_benchmarks_got_response,
+                                           "CPU SHA1",
+                                           "Athlon XP 3200+",
+                                           "0",
+                                           VERSION,
+                                           ARCH,
+                                           temp,
+                                           NULL)) {
+        g_free(temp);
+        return FALSE;
+    }
+    
+    g_free(temp);
+    return sna->error ? FALSE : TRUE;
+}
+
 static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
 {
     SyncDialog *sd = (SyncDialog *) data;
@@ -223,11 +346,12 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     SyncNetAction actions[] = {
         { "Contacting HardInfo Central Database",	_action_check_api_version },
         { "Receiving benchmark results",		_action_get_benchmarks },
-        { "Sync finished",				NULL },
+        { "Sending benchmark results",			_action_send_benchmarks },
+        { "Cleaning up",				NULL },
     };
     
     if (!session) {
-        session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 5, NULL);
+        session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
     }
 
     gtk_widget_hide(sd->button_sync);
@@ -311,6 +435,7 @@ static void sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[
                           "if this problem persists. (Use the Help\342\206\222Report" \
                           " bug option.)\n\nDetails: %s",
                           sna[i].name, sna[i].error->message);
+                
                 g_error_free(sna[i].error);
             } else {
                 g_warning("Failed while performing \"%s\". Please file a bug report " \
@@ -419,6 +544,7 @@ static SyncDialog *sync_dialog_new(void)
                        FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_widget_show_all(hbox);
+    
 
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), sd->sna->vbox, TRUE, TRUE, 0);
 
@@ -456,6 +582,7 @@ static SyncDialog *sync_dialog_new(void)
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
   */  
+
 
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
     gtk_widget_show(dialog1_action_area);

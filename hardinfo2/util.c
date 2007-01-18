@@ -26,6 +26,9 @@
 
 #include <binreloc.h>
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #define KiB 1024
 #define MiB 1048576
 #define GiB 1073741824
@@ -350,7 +353,13 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->autoload_deps = autoload_deps;
     
     if (report_format && g_str_equal(report_format, "html"))
-        param->report_format = REPORT_FORMAT_HTML;    
+        param->report_format = REPORT_FORMAT_HTML;
+        
+    gchar *confdir = g_build_filename(g_get_home_dir(), ".hardinfo", NULL);
+    if (!g_file_test(confdir, G_FILE_TEST_EXISTS)) {
+        mkdir(confdir, 0744);
+    }
+    g_free(confdir);    
 }
 
 gboolean ui_init(int *argc, char ***argv)
