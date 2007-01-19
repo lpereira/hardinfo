@@ -28,7 +28,8 @@ enum {
     BENCHMARK_MD5,
     BENCHMARK_SHA1,
     BENCHMARK_BLOWFISH,
-    BENCHMARK_RAYTRACE
+    BENCHMARK_RAYTRACE,
+    BENCHMARK_N_ENTRIES
 } Entries;
 
 void scan_zlib(gboolean reload);
@@ -100,19 +101,20 @@ static gchar *benchmark_include_results(gchar * results,
 				       SHELL_ORDER_ASCENDING);
 }
 
-#include <arch/common/fib.h>
-#include <arch/common/zlib.h>
-#include <arch/common/md5.h>
-#include <arch/common/sha1.h>
-#include <arch/common/blowfish.h>
-#include <arch/common/raytrace.h>
-
+static gdouble bench_results[BENCHMARK_N_ENTRIES];
 static gchar *bench_zlib = NULL,
     *bench_fib = NULL,
     *bench_md5 = NULL,
     *bench_sha1 = NULL,
     *bench_fish = NULL,
     *bench_ray = NULL;
+
+#include <arch/common/fib.h>
+#include <arch/common/zlib.h>
+#include <arch/common/md5.h>
+#include <arch/common/sha1.h>
+#include <arch/common/blowfish.h>
+#include <arch/common/raytrace.h>
 
 gchar *callback_zlib()
 {
@@ -224,22 +226,6 @@ ModuleEntry *hi_module_get_entries(void)
     return entries;
 }
 
-gchar *get_all_results(void)
-{
-    return "";
-}
-
-ShellModuleMethod*
-hi_exported_methods(void)
-{
-    static ShellModuleMethod m[] = {
-      { "getAllResults", get_all_results },
-      { NULL }
-    };
-    
-    return m;
-}
-
 ModuleAbout *
 hi_module_get_about(void)
 {
@@ -255,9 +241,37 @@ hi_module_get_about(void)
     return ma;
 }
 
-static gchar *bla()
+static gchar *get_benchmark_results()
 {
-    return g_strdup("ola mundo!");
+    void (*scan_callback)(gboolean rescan);
+    
+    gint i = G_N_ELEMENTS(entries) - 1;
+    gchar *machine = module_call_method("devices::getProcessorName");
+    gchar *param = g_strdup_printf("[param]\n"
+                                   "machine=%s\n"
+                                   "nbenchmarks=%d\n",
+                                   machine, i);
+    gchar *result = param;
+    
+    for (; i >= 0; i--) {
+        if ((scan_callback = entries[i].scan_callback)) {
+            scan_callback(FALSE);
+        
+            result = g_strdup_printf("%s\n"
+                                     "[bench%d]\n"
+                                     "name=%s\n"
+                                     "value=%f\n",
+                                     result,
+                                     i,
+                                     entries[i].name,
+                                     bench_results[i]);
+        }
+    }
+    
+    g_free(machine);
+    g_free(param);
+    
+    return result;
 }
 
 void
@@ -267,8 +281,8 @@ hi_module_init(void)
       {
           .fancy_name = "Benchmark results",
           .name       = "BenchmarkResults",
-          .save_to    = "/tmp/bla.txt",
-          .get_data   = bla
+          .save_to    = "benchmarks.conf",
+          .get_data   = get_benchmark_results
       }
     };
     

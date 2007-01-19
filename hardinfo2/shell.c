@@ -264,6 +264,8 @@ void shell_status_set_enabled(gboolean setting)
     else {
 	gtk_widget_hide(shell->progress);
 	shell_view_set_enabled(TRUE);
+	
+	shell_status_update("Done.");
     }
 }
 

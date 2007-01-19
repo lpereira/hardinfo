@@ -80,6 +80,8 @@ benchmark_zlib(void)
     
     g_timer_destroy(timer);
     g_free(bdata_path);
+    
+    bench_results[BENCHMARK_ZLIB] = 65536.0 / elapsed;
 
     gchar *retval = g_strdup_printf("[Results]\n"
                                     "<i>This Machine</i>=%.3f KiB/s\n",

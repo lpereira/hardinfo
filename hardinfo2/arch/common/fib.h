@@ -43,6 +43,8 @@ benchmark_fib(void)
     g_timer_stop(timer);
     elapsed = g_timer_elapsed(timer, NULL);
     g_timer_destroy(timer);
+    
+    bench_results[BENCHMARK_FIB] = elapsed;
 
     gchar *retval = g_strdup_printf("[Results]\n"
                            "<i>This Machine</i>=%.3f s\n", elapsed);

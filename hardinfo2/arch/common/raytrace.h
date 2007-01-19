@@ -40,6 +40,8 @@ benchmark_raytrace(void)
     }
     
     g_timer_destroy(timer);
+    
+    bench_results[BENCHMARK_RAYTRACE] = elapsed;
 
     gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
                            "<i>This Machine</i>=%.2f\n", elapsed);

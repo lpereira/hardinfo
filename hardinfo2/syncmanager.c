@@ -60,6 +60,7 @@ struct _SyncDialog {
 
 static GSList		*entries = NULL;
 static SoupSession	*session = NULL;
+static GMainLoop	*loop;
 static GQuark		 err_quark;
 
 #define XMLRPC_SERVER_URI   		"http://condor/xmlrpc/"
@@ -105,7 +106,13 @@ void sync_manager_show(void)
     err_quark = g_quark_from_static_string("syncmanager");
 
     if (gtk_dialog_run(GTK_DIALOG(sd->dialog)) == GTK_RESPONSE_ACCEPT) {
+        shell_view_set_enabled(FALSE);
+        shell_status_set_enabled(TRUE);
+        
         sync_dialog_start_sync(sd);
+        
+        shell_status_set_enabled(FALSE);
+        shell_view_set_enabled(TRUE);
     }   
 
     sync_dialog_destroy(sd);
@@ -134,6 +141,7 @@ static SoupXmlrpcValue *_soup_get_xmlrpc_value(SoupMessage *msg, SyncNetAction *
         SNA_ERROR(3, "No response value in XML-RPC response");
     }
     
+    /* g_object_unref(response); */
 bad:
     return value;
 }
@@ -157,6 +165,25 @@ bad:
     return int_value;
 }
 
+static gchar* _soup_get_xmlrpc_value_string(SoupMessage *msg, SyncNetAction *sna)
+{
+    SoupXmlrpcValue *value;
+    gchar *string = NULL;
+    
+    value = _soup_get_xmlrpc_value(msg, sna);
+    if (!value) {
+        SNA_ERROR(4, "Could not extract result from XML-RPC response");
+        goto bad;
+    }
+
+    if (!soup_xmlrpc_value_get_string(value, &string)) {
+        SNA_ERROR(4, "Could not extract result from XML-RPC response");
+    }
+
+bad:
+    return string;
+}
+
 static gboolean _soup_xmlrpc_call(gchar *method, SyncNetAction *sna,
                                   SoupMessageCallbackFn callback)
 {
@@ -168,6 +195,7 @@ static gboolean _soup_xmlrpc_call(gchar *method, SyncNetAction *sna,
     if (!msg)
         return FALSE;
         
+    DEBUG("calling xmlrpc method %s", method);
     soup_xmlrpc_message_start_call(msg, method);
     soup_xmlrpc_message_end_call(msg);
     
@@ -175,7 +203,7 @@ static gboolean _soup_xmlrpc_call(gchar *method, SyncNetAction *sna,
     
     soup_session_queue_message(session, SOUP_MESSAGE(msg),
                                callback, sna);
-    gtk_main();
+    g_main_run(loop);
     
     return TRUE;
 }
@@ -194,6 +222,7 @@ static gboolean _soup_xmlrpc_call_with_parameters(gchar *method, SyncNetAction *
     if (!msg)
         return FALSE;
         
+    DEBUG("calling xmlrpc method %s", method);
     soup_xmlrpc_message_start_call(msg, method);
     
     va_start(ap, callback);
@@ -201,6 +230,8 @@ static gboolean _soup_xmlrpc_call_with_parameters(gchar *method, SyncNetAction *
         soup_xmlrpc_message_start_param(msg);
         soup_xmlrpc_message_write_string(msg, argument);
         soup_xmlrpc_message_end_param(msg);
+        
+        DEBUG("with parameter: %s", argument);
     }
     va_end(ap);
     
@@ -208,7 +239,7 @@ static gboolean _soup_xmlrpc_call_with_parameters(gchar *method, SyncNetAction *
     soup_xmlrpc_message_persist(msg);
     
     soup_session_queue_message(session, SOUP_MESSAGE(msg), callback, sna);
-    gtk_main();
+    g_main_run(loop);
     
     return TRUE;
 }
@@ -224,7 +255,7 @@ static void _action_check_api_version_got_response(SoupMessage *msg, gpointer us
                      "version %d.", version, XMLRPC_SERVER_API_VERSION);
     }
 
-    gtk_main_quit();
+    g_main_quit(loop);
 }
 
 static gboolean _action_check_api_version(SyncDialog *sd, gpointer user_data)
@@ -241,11 +272,25 @@ static gboolean _action_check_api_version(SyncDialog *sd, gpointer user_data)
 static void _action_send_data_got_response(SoupMessage *msg, gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
+    gchar *string;
     
-    /* FIXME: save things if needed */
-    _soup_get_xmlrpc_value_int(msg, sna);
+    string = _soup_get_xmlrpc_value_string(msg, sna);
+    DEBUG("received string: %s\n", string);
+    
+    if (sna->entry->save_to) {
+        gchar *filename = g_build_filename(g_get_home_dir(), ".hardinfo",
+                                           sna->entry->save_to, NULL);
+        
+        DEBUG("saving to %s", filename);
 
-    gtk_main_quit();
+        g_file_set_contents(filename, string, -1, NULL);
+        g_free(filename);
+    } else {
+        DEBUG("not saving :(");
+    }
+
+    g_free(string);
+    g_main_quit(loop);
 }
 
 static gboolean _action_send_data(SyncDialog *sd, gpointer user_data)
@@ -280,7 +325,7 @@ static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
     }
     
     sd->flag_cancel = TRUE;
-    gtk_main_quit();
+    g_main_quit(loop);
     
     return FALSE;
 }
@@ -321,6 +366,8 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     if (!session) {
         session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
     }
+    
+    loop = g_main_loop_new(NULL, TRUE);
 
     gtk_widget_hide(sd->button_sync);
     sync_dialog_netarea_show(sd);
@@ -335,7 +382,8 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     gtk_widget_show(sd->button_close);
 
     /* wait for the user to close the dialog */    
-    gtk_main();
+    g_main_run(loop);
+    g_main_loop_unref(loop);
 }
 
 static void sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[], gint n)
@@ -503,6 +551,11 @@ sel_toggle(GtkCellRendererToggle *cellrenderertoggle,
     gtk_tree_path_free(path);
 }
 
+static void close_clicked(void)
+{
+    g_main_quit(loop);
+}
+
 static SyncDialog *sync_dialog_new(void)
 {
     SyncDialog *sd;
@@ -605,7 +658,7 @@ static SyncDialog *sync_dialog_new(void)
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
 
     button6 = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-    g_signal_connect(G_OBJECT(button6), "clicked", (GCallback)gtk_main_quit, NULL);
+    g_signal_connect(G_OBJECT(button6), "clicked", (GCallback)close_clicked, NULL);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button6,
 				 GTK_RESPONSE_ACCEPT);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);

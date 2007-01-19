@@ -61,6 +61,8 @@ benchmark_fish(void)
     
     g_timer_destroy(timer);
     g_free(bdata_path);
+    
+    bench_results[BENCHMARK_BLOWFISH] = elapsed;
 
     gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
                            "<i>This Machine</i>=%.2f\n", elapsed);
