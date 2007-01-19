@@ -62,23 +62,38 @@ static gchar *__benchmark_include_results(gchar * results,
 {
     GKeyFile *conf;
     gchar **machines;
+    gchar *path;
     int i;
 
     conf = g_key_file_new();
-    g_key_file_load_from_file(conf,
-                              idle_free(g_build_filename(params.path_data, "benchmark.conf", NULL)),
-                              0, NULL);
+    
+    path = g_build_filename(params.path_data, "benchmark.conf", NULL);
+    g_key_file_load_from_file(conf, path, 0, NULL);
 
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
-	gchar *value =
-	    g_key_file_get_value(conf, benchmark, machines[i], NULL);
-	results =
-	    g_strconcat(results, machines[i], "=", value, "\n", NULL);
+	gchar *value = g_key_file_get_value(conf, benchmark, machines[i], NULL);
+	results = g_strconcat(results, machines[i], "=", value, "\n", NULL);
 	g_free(value);
     }
 
     g_strfreev(machines);
+    g_free(path);
+    g_key_file_free(conf);
+
+    conf = g_key_file_new();
+    path = g_build_filename(g_get_home_dir(), ".hardinfo", "benchmark.conf", NULL);
+    g_key_file_load_from_file(conf, path, 0, NULL);
+
+    machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
+    for (i = 0; machines && machines[i]; i++) {
+	gchar *value = g_key_file_get_value(conf, benchmark, machines[i], NULL);
+	results = g_strconcat(results, machines[i], "=", value, "\n", NULL);
+	g_free(value);
+    }
+
+    g_strfreev(machines);
+    g_free(path);
     g_key_file_free(conf);
 
     return g_strdup_printf("[$ShellParam$]\n"
@@ -281,7 +296,7 @@ hi_module_init(void)
       {
           .fancy_name = "Benchmark results",
           .name       = "BenchmarkResults",
-          .save_to    = "benchmarks.conf",
+          .save_to    = "benchmark.conf",
           .get_data   = get_benchmark_results
       }
     };

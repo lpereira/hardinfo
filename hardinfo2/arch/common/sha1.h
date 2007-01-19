@@ -62,6 +62,6 @@ benchmark_sha1(void)
 
     gchar *retval = g_strdup_printf("[Results]\n"
                            "<i>This Machine</i>=%.2f MiB/s\n", 312.0 / elapsed);
-    return benchmark_include_results_reverse(retval, "SHA1");
+    return benchmark_include_results_reverse(retval, "CPU SHA1");
 }
 

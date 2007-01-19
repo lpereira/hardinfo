@@ -63,7 +63,7 @@ static SoupSession	*session = NULL;
 static GMainLoop	*loop;
 static GQuark		 err_quark;
 
-#define XMLRPC_SERVER_URI   		"http://condor/xmlrpc/"
+#define XMLRPC_SERVER_URI   		"http://hardinfo.berlios.de/xmlrpc/"
 #define XMLRPC_SERVER_API_VERSION	1
 
 #define LABEL_SYNC_DEFAULT  "<big><b>Synchronize with Central Database</b></big>\n" \
@@ -326,6 +326,8 @@ static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
     
     sd->flag_cancel = TRUE;
     g_main_quit(loop);
+    
+    gtk_widget_set_sensitive(widget, FALSE);
     
     return FALSE;
 }

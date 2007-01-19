@@ -66,5 +66,5 @@ benchmark_fish(void)
 
     gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
                            "<i>This Machine</i>=%.2f\n", elapsed);
-    return benchmark_include_results(retval, "Blowfish");
+    return benchmark_include_results(retval, "CPU Blowfish");
 }

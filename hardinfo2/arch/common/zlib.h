@@ -86,5 +86,5 @@ benchmark_zlib(void)
     gchar *retval = g_strdup_printf("[Results]\n"
                                     "<i>This Machine</i>=%.3f KiB/s\n",
                                     65536.0 / elapsed);
-    return benchmark_include_results_reverse(retval, "ZLib");
+    return benchmark_include_results_reverse(retval, "CPU ZLib");
 }

@@ -48,5 +48,5 @@ benchmark_fib(void)
 
     gchar *retval = g_strdup_printf("[Results]\n"
                            "<i>This Machine</i>=%.3f s\n", elapsed);
-    return benchmark_include_results(retval, "Fibonacci");
+    return benchmark_include_results(retval, "CPU Fibonacci");
 }
