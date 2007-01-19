@@ -1,12 +1,13 @@
 <ui>
   <menubar>
     <menu name="InformationMenu" action="InformationMenuAction">
+      <menuitem name="Report" action="ReportAction" />
+      <separator/>
       <menuitem name="Copy" action="CopyAction" />
       <menuitem name="SaveGraph" action="SaveGraphAction" />
       <separator/>
       <menuitem name="SyncManager" action="SyncManagerAction" />
-      <menuitem name="Report" action="ReportAction" />
-      <separator name="LastSep"/>
+      <separator/>
       <menuitem name="Quit" action="QuitAction" />
     </menu>
     <menu name="ViewMenu" action="ViewMenuAction">

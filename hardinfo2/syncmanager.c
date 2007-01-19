@@ -68,9 +68,7 @@ static GQuark		 err_quark;
 
 #define LABEL_SYNC_DEFAULT  "<big><b>Synchronize with Central Database</b></big>\n" \
                             "The following information may be synchronized " \
-                            "with the HardInfo central database. <i>No information " \
-                            "that ultimately identify this computer will be " \
-                            "sent.</i>"
+                            "with the HardInfo central database."
 #define LABEL_SYNC_SYNCING  "<big><b>Synchronizing</b></big>\n" \
                             "This may take some time."
 
@@ -269,7 +267,7 @@ static gboolean _action_check_api_version(SyncDialog *sd, gpointer user_data)
     return sna->error ? FALSE : TRUE;
 }
 
-static void _action_send_data_got_response(SoupMessage *msg, gpointer user_data)
+static void _action_call_function_got_response(SoupMessage *msg, gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
     gchar *string;
@@ -293,24 +291,29 @@ static void _action_send_data_got_response(SoupMessage *msg, gpointer user_data)
     g_main_quit(loop);
 }
 
-static gboolean _action_send_data(SyncDialog *sd, gpointer user_data)
+static gboolean _action_call_function(SyncDialog *sd, gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
     
     if (sna->entry) {
-        gchar *str_data = sna->entry->get_data();
+        gchar *str_data = NULL;
+    
+        if (sna->entry->get_data)
+            str_data = sna->entry->get_data();
 
-        if (!_soup_xmlrpc_call_with_parameters("sync.sendData", sna,
-                                               _action_send_data_got_response,
+        if (!_soup_xmlrpc_call_with_parameters("sync.callFunction", sna,
+                                               _action_call_function_got_response,
                                                VERSION, ARCH,
                                                sna->entry->name,
                                                str_data, NULL)) {
-            g_free(str_data);
+            if (str_data)
+                g_free(str_data);
             
             return FALSE;
         }
         
-        g_free(str_data);
+        if (str_data)
+            g_free(str_data);
     }
     
     return sna->error ? FALSE : TRUE;
@@ -347,7 +350,7 @@ static SyncNetAction *sync_manager_get_selected_actions(gint *n)
         SyncEntry *e = (SyncEntry *) entry->data;
         
         if (e->selected) {
-            SyncNetAction sna = { e->fancy_name, _action_send_data, e };
+            SyncNetAction sna = { e->fancy_name, _action_call_function, e };
         
             actions[i++] = sna;
         }
@@ -581,7 +584,7 @@ static SyncDialog *sync_dialog_new(void)
     sd->sna = sync_dialog_netarea_new();
 
     dialog = gtk_dialog_new();
-    gtk_window_set_title(GTK_WINDOW(dialog), "SyncManager");
+    gtk_window_set_title(GTK_WINDOW(dialog), "Network Updater");
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
     gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);

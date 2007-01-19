@@ -42,7 +42,7 @@ static GtkActionEntry entries[] =
     G_CALLBACK(cb_generate_report) },
   
   { "SyncManagerAction", HI_STOCK_SYNC_MENU,
-    "_Open SyncManager...", NULL,
+    "_Network Updater...", NULL,
     NULL,
     G_CALLBACK(cb_sync_manager) },
 

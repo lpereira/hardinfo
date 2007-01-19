@@ -294,13 +294,20 @@ hi_module_init(void)
 {
     static SyncEntry se[] = {
       {
-          .fancy_name = "Benchmark results",
-          .name       = "BenchmarkResults",
-          .save_to    = "benchmark.conf",
+          .fancy_name = "Send Benchmark results",
+          .name       = "SendBenchmarkResults",
+          .save_to    = NULL,
           .get_data   = get_benchmark_results
+      },
+      {
+          .fancy_name = "Receive Benchmark results",
+          .name       = "RecvBenchmarkResults",
+          .save_to    = "benchmark.conf",
+          .get_data   = NULL
       }
     };
     
-    sync_manager_add_entry(se);
+    sync_manager_add_entry(&se[0]);
+    sync_manager_add_entry(&se[1]);
 }
 
