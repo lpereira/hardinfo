@@ -16,7 +16,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static gchar *
+static void
 benchmark_zlib(void)
 {
     GModule *libz;
@@ -30,8 +30,7 @@ benchmark_zlib(void)
             libz = g_module_open("/usr/lib/libz.so", G_MODULE_BIND_LAZY);
             if (!libz) {
                 g_warning("Cannot load ZLib: %s", g_module_error());
-                return g_strdup("[Error]\n"
-                       "ZLib not found=");
+                return;
             }
 	}
 
@@ -39,8 +38,7 @@ benchmark_zlib(void)
 	    || !g_module_symbol(libz, "compressBound", (gpointer) & compressBound)) {
 	    
             g_module_close(libz);
-	    return g_strdup("[Error]\n"
-	           "Invalid Z-Lib found=");
+	    return;
 	}
     }
 
@@ -56,8 +54,7 @@ benchmark_zlib(void)
     bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);
-        return g_strdup("[Error]\n"
-                        PREFIX "benchmark.data not found=\n");
+        return;
     }     
     
     shell_status_update("Compressing 64MB with default options...");
@@ -82,9 +79,4 @@ benchmark_zlib(void)
     g_free(bdata_path);
     
     bench_results[BENCHMARK_ZLIB] = 65536.0 / elapsed;
-
-    gchar *retval = g_strdup_printf("[Results]\n"
-                                    "<i>This Machine</i>=%.3f KiB/s\n",
-                                    65536.0 / elapsed);
-    return benchmark_include_results_reverse(retval, "CPU ZLib");
 }

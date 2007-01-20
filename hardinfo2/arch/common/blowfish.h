@@ -18,7 +18,7 @@
 
 #include <blowfish.h>
 
-gchar *
+static void
 benchmark_fish(void)
 {
     BLOWFISH_CTX ctx;
@@ -39,8 +39,7 @@ benchmark_fish(void)
     bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);
-        return g_strdup("[Error]\n"
-                        PREFIX "benchmark.data not found=\n");
+        return;
     }     
     
     shell_view_set_enabled(FALSE);
@@ -63,8 +62,4 @@ benchmark_fish(void)
     g_free(bdata_path);
     
     bench_results[BENCHMARK_BLOWFISH] = elapsed;
-
-    gchar *retval = g_strdup_printf("[Results <i>(in seconds; lower is better)</i>]\n"
-                           "<i>This Machine</i>=%.2f\n", elapsed);
-    return benchmark_include_results(retval, "CPU Blowfish");
 }

@@ -26,7 +26,7 @@ fib(gulong n)
     return fib(n - 1) + fib(n - 2);
 }
 
-static gchar *
+static void
 benchmark_fib(void)
 {
     GTimer *timer = g_timer_new();
@@ -45,8 +45,4 @@ benchmark_fib(void)
     g_timer_destroy(timer);
     
     bench_results[BENCHMARK_FIB] = elapsed;
-
-    gchar *retval = g_strdup_printf("[Results]\n"
-                           "<i>This Machine</i>=%.3f s\n", elapsed);
-    return benchmark_include_results(retval, "CPU Fibonacci");
 }

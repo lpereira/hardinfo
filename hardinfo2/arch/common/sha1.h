@@ -17,7 +17,7 @@
  */
 #include <sha1.h>
 
-gchar *
+static void
 benchmark_sha1(void)
 {
     SHA1_CTX ctx;
@@ -35,8 +35,7 @@ benchmark_sha1(void)
     bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);
-        return g_strdup("[Error]\n"
-                        PREFIX "benchmark.data not found=\n");
+        return;
     }     
     
     shell_view_set_enabled(FALSE);
@@ -59,9 +58,5 @@ benchmark_sha1(void)
     g_free(bdata_path);
     
     bench_results[BENCHMARK_SHA1] = 312.0 / elapsed;
-
-    gchar *retval = g_strdup_printf("[Results]\n"
-                           "<i>This Machine</i>=%.2f MiB/s\n", 312.0 / elapsed);
-    return benchmark_include_results_reverse(retval, "CPU SHA1");
 }
 
