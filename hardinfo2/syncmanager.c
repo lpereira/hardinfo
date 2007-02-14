@@ -79,7 +79,9 @@ static void		 sync_dialog_start_sync(SyncDialog *sd);
 static SyncNetArea	*sync_dialog_netarea_new(void);
 static void		 sync_dialog_netarea_destroy(SyncNetArea *sna);
 static void		 sync_dialog_netarea_show(SyncDialog *sd);
+#if 0
 static void		 sync_dialog_netarea_hide(SyncDialog *sd);
+#endif
 static void		 sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction *sna,
                                                            gint n);
 
@@ -283,8 +285,6 @@ static void _action_call_function_got_response(SoupMessage *msg, gpointer user_d
 
         g_file_set_contents(filename, string, -1, NULL);
         g_free(filename);
-    } else {
-        DEBUG("not saving :(");
     }
 
     g_free(string);
@@ -363,13 +363,32 @@ static SyncNetAction *sync_manager_get_selected_actions(gint *n)
     return actions;
 }
 
+static SoupUri *sync_manager_get_proxy(void)
+{
+    const gchar *conf;
+    
+    if (!(conf = g_getenv("HTTP_PROXY"))) {
+      if (!(conf = g_getenv("http_proxy"))) {
+        return NULL;
+      }
+    }
+    
+    return soup_uri_new(conf);
+}
+
 static void sync_dialog_start_sync(SyncDialog *sd)
 {
     gint           nactions;
     SyncNetAction *actions;
     
     if (!session) {
-        session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
+        SoupUri *proxy = sync_manager_get_proxy();
+        
+        session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10,
+                                                      SOUP_SESSION_PROXY_URI, proxy, NULL);
+        
+        if (proxy)
+            g_object_unref(proxy);
     }
     
     loop = g_main_loop_new(NULL, TRUE);
@@ -509,6 +528,7 @@ static void sync_dialog_netarea_show(SyncDialog *sd)
     gtk_window_reshow_with_initial_size(GTK_WINDOW(sd->dialog));
 }
 
+#if 0
 static void sync_dialog_netarea_hide(SyncDialog *sd)
 {
     g_return_if_fail(sd && sd->sna);
@@ -519,6 +539,7 @@ static void sync_dialog_netarea_hide(SyncDialog *sd)
     gtk_label_set_markup(GTK_LABEL(sd->label), LABEL_SYNC_DEFAULT);
     gtk_window_reshow_with_initial_size(GTK_WINDOW(sd->dialog));
 }
+#endif
 
 static void populate_store(GtkListStore *store)
 {

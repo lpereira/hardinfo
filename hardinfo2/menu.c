@@ -28,6 +28,8 @@
 #include <callbacks.h>
 #include <hardinfo.h>
 
+#include "uidefs.h"
+
 static GtkActionEntry entries[] = 
 {
   { "InformationMenuAction", NULL, "_Information" },                  /* name, stock id, label */
@@ -136,7 +138,7 @@ void menu_init(Shell *shell)
     
     /* Read in the UI from our XML file */
     error = NULL;
-    gtk_ui_manager_add_ui_from_file(menu_manager, idle_free(g_build_filename(params.path_data, "uidefs.xml", NULL)), &error);
+    gtk_ui_manager_add_ui_from_string(menu_manager, uidefs_str, -1, &error);
     
     if (error) {
         g_error("Building menus failed: %s", error->message);

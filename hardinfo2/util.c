@@ -213,7 +213,7 @@ gboolean binreloc_init(gboolean try_hardcoded)
 
     /* Try to see if the uidefs.xml file isn't missing. This isn't the
        definitive test, but it should do okay for most situations. */
-    tmp = g_build_filename(params.path_data, "uidefs.xml", NULL);
+    tmp = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_test(tmp, G_FILE_TEST_EXISTS)) {
         DEBUG("runtime data not found");
     
