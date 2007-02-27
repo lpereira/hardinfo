@@ -17,7 +17,7 @@
  */
 
 static void
-__scan_battery(void)
+__scan_battery_acpi(void)
 {
     gchar *acpi_path;
 
@@ -125,5 +125,37 @@ __scan_battery(void)
     }
     
     g_free(acpi_path);
+}
 
+static void
+__scan_battery_apm(void)
+{
+    FILE *procapm;
+    int percentage;
+    char trash[10];
+    
+    procapm = fopen("/proc/apm", "r");
+    if (!procapm)
+        return;
+
+    fscanf(procapm, "%s %s %s %s %s %s %d%%",
+           trash, trash, trash, trash, trash, trash, &percentage);
+    fclose(procapm);
+
+    battery_list = g_strdup_printf("%s\n[Battery (APM)]\n"
+                                   "Charge=%d%%\n",
+                                   battery_list,
+                                   percentage);
+}
+
+static void
+__scan_battery(void)
+{
+    if (battery_list) {
+      g_free(battery_list);
+    }
+    battery_list = g_strdup("");
+
+    __scan_battery_acpi();
+    __scan_battery_apm();
 }
