@@ -50,7 +50,6 @@ computer_get_formatted_uptime()
     /* FIXME: Use ngettext */
 #define plural(x) ((x > 1) ? "s" : "")
 
-
     if (ui->days < 1) {
 	if (ui->hours < 1) {
 	    tmp =

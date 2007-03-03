@@ -33,6 +33,36 @@
 #define MiB 1048576
 #define GiB 1073741824
 
+gchar *seconds_to_string(unsigned int seconds)
+{
+    unsigned int hours, minutes, days;
+
+    minutes  = seconds / 60;
+    hours    = minutes / 60;
+    minutes %= 60;
+    days     = hours / 24;
+    hours   %= 24;
+
+#define plural(x) ((x > 1) ? "s" : "")
+            
+    if (days < 1) {
+        if (hours < 1) {
+            return g_strdup_printf("%d minute%s", minutes,
+                                         plural(minutes));
+        } else {
+            return g_strdup_printf("%d hour%s, %d minute%s",
+                                    hours,
+                                    plural(hours), minutes,
+                                    plural(minutes));
+        }
+    }
+    
+    return g_strdup_printf("%d day%s, %d hour%s and %d minute%s",
+                           days, plural(days), hours,
+                           plural(hours), minutes,
+                           plural(minutes));
+}
+
 inline gchar *size_human_readable(gfloat size)
 {
     if (size < KiB)

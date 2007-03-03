@@ -87,7 +87,8 @@ void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
-ModuleAbout *module_get_about(ShellModule *module);
+ModuleAbout  *module_get_about(ShellModule *module);
+gchar        *seconds_to_string(unsigned int seconds);
 
 void	      module_entry_scan_all_except(ModuleEntry *entries, gint except_entry);
 void	      module_entry_scan_all(ModuleEntry *entries);

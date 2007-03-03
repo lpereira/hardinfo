@@ -16,6 +16,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <time.h>
+
 static void
 __scan_battery_acpi(void)
 {
@@ -130,22 +132,52 @@ __scan_battery_acpi(void)
 static void
 __scan_battery_apm(void)
 {
-    FILE *procapm;
-    int percentage;
-    char trash[10];
+    FILE                *procapm;
+    static char         *sremaining = NULL, *stotal = NULL;
+    static unsigned int  last_time = 0;
+    static int           percentage = 0;
+    int                  ac_bat;
+    float                apm_bios_ver, apm_drv_ver;
+    char                 trash[10];
     
-    procapm = fopen("/proc/apm", "r");
-    if (!procapm)
-        return;
-
-    fscanf(procapm, "%s %s %s %s %s %s %d%%",
-           trash, trash, trash, trash, trash, trash, &percentage);
-    fclose(procapm);
+    if (last_time == 0) {
+        last_time = time(NULL);
+        sremaining = g_strdup("Estimating");
+        stotal     = g_strdup("Estimating");
+    }
+    
+    if ((procapm = fopen("/proc/apm", "r"))) {
+        int old_percentage = percentage;
+        
+        fscanf(procapm, "%f %f %s 0x%x %s %s %d%%",
+               &apm_drv_ver, &apm_bios_ver, trash,
+               &ac_bat, trash, trash, &percentage);
+        fclose(procapm);
+        
+        if (old_percentage - percentage > 0) {
+            g_free(sremaining);
+            g_free(stotal);
+                        
+            int secs_remaining = (time(NULL) - last_time) * percentage /
+                                 (old_percentage - percentage);
+            sremaining = seconds_to_string(secs_remaining);
+            stotal = seconds_to_string((secs_remaining * 100) / percentage);
+            
+            last_time = time(NULL);
+        }
+    }
 
     battery_list = g_strdup_printf("%s\n[Battery (APM)]\n"
-                                   "Charge=%d%%\n",
+                                   "Charge=%d%%\n"
+                                   "Remaining Charge=%s of %s\n"
+                                   "Using=%s\n"
+                                   "APM driver version=%.2f\n"
+                                   "APM BIOS version=%.2f\n",
                                    battery_list,
-                                   percentage);
+                                   percentage,
+                                   sremaining, stotal,
+                                   ac_bat ? "AC Power" : "Battery",
+                                   apm_drv_ver, apm_bios_ver);
 }
 
 static void
