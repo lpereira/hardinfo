@@ -66,7 +66,6 @@ main(int argc, char **argv)
     }
 
     /* initialize the binreloc library, so we can load program data */
-    DEBUG("initializing binreloc");
     if (!binreloc_init(FALSE))
         g_error("Failed to find runtime data.\n\n"
                 "\342\200\242 Is HardInfo correctly installed?\n"
@@ -95,7 +94,6 @@ main(int argc, char **argv)
     if (!params.create_report) {
         /* we only try to open the UI if the user didn't asked for a 
            report. */
-        DEBUG("initializing gtk+");
         params.gui_running = ui_init(&argc, &argv);
 
         /* as a fallback, if GTK+ initialization failed, run in report
@@ -121,7 +119,6 @@ main(int argc, char **argv)
     
         shell_init(modules);
         
-  
         DEBUG("entering gtk+ main loop");
         gtk_main();
     } else if (params.create_report) {

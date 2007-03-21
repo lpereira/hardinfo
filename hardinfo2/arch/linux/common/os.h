@@ -75,7 +75,9 @@ detect_desktop_environment(OperatingSystem * os)
 	   obtain the version. */
 	version = popen("gnome-panel --version", "r");
 	if (version) {
-	    fscanf(version, "Gnome gnome-panel %d.%d", &maj, &min);
+	    char gnome[10];
+	    
+	    fscanf(version, "%s gnome-panel %d.%d", gnome, &maj, &min);
 	    if (pclose(version))
 	        goto unknown;
 	} else {

@@ -27,6 +27,8 @@ char *uidefs_str = "<ui>" \
 "<menuitem name=\"WebPage\" action=\"HomePageAction\"/>" \
 "<menuitem name=\"ReportBug\" action=\"ReportBugAction\"/>" \
 "<separator/>" \
+"<menuitem name=\"Donate\" action=\"DonateAction\"/>" \
+"<separator/>" \
 "<menu name=\"HelpMenuModules\" action=\"HelpMenuModulesAction\">" \
 "<separator name=\"LastSep\"/>" \
 "</menu>" \

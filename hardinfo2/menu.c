@@ -78,6 +78,11 @@ static GtkActionEntry entries[] =
     NULL,
     G_CALLBACK(cb_report_bug) },
 
+  { "DonateAction", HI_STOCK_DONATE,
+    "_Donate to the project", NULL,
+    NULL,
+    G_CALLBACK(cb_donate) },
+
   { "AboutAction", GTK_STOCK_ABOUT,
     "_About HardInfo", NULL,    
     "Displays program version information",

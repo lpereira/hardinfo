@@ -86,7 +86,7 @@ static void get_processor_strfamily(Processor * processor)
 	    }
 	} else if (family == 6) {
 	    if (model == 1) {
-		processor->strmodel = g_strdup("AMD Athlon (K7");
+		processor->strmodel = g_strdup("AMD Athlon (K7)");
 	    } else if (model == 2) {
 		processor->strmodel = g_strdup("AMD Athlon (K75)");
 	    } else if (model == 3) {
@@ -211,51 +211,50 @@ static GSList *__scan_processors(void)
 static struct {
     char *name, *meaning;
 } flag_meaning[] = {
-    {
-    "3dnow", "3DNow! Technology"}, {
-    "3dnowext", "Extended 3DNow! Technology"}, {
-    "fpu", "Floating Point Unit"}, {
-    "vme", "Virtual 86 Mode Extension"}, {
-    "de", "Debug Extensions - I/O breakpoints"}, {
-    "pse", "Page Size Extensions (4MB pages)"}, {
-    "tsc", "Time Stamp Counter and RDTSC instruction"}, {
-    "msr", "Model Specific Registers"}, {
-    "pae", "Physical Address Extensions (36-bit address, 2MB pages)"}, {
-    "mce", "Machine Check Architeture"}, {
-    "cx8", "CMPXCHG8 instruction"}, {
-    "apic", "Advanced Programmable Interrupt Controller"}, {
-    "sep", "Fast System Call (SYSENTER/SYSEXIT instructions)"}, {
-    "mtrr", "Memory Type Range Registers"}, {
-    "pge", "Page Global Enable"}, {
-    "mca", "Machine Check Architecture"}, {
-    "cmov", "Conditional Move instruction"}, {
-    "pat", "Page Attribute Table"}, {
-    "pse36", "36bit Page Size Extensions"}, {
-    "psn", "96 bit Processor Serial Number"}, {
-    "mmx", "MMX technology"}, {
-    "mmxext", "Extended MMX Technology"}, {
-    "cflush", "Cache Flush"}, {
-    "dtes", "Debug Trace Store"}, {
-    "fxsr", "FXSAVE and FXRSTOR instructions"}, {
-    "kni", "Streaming SIMD instructions"}, {
-    "xmm", "Streaming SIMD instructions"}, {
-    "ht", "HyperThreading"}, {
-    "mp", "Multiprocessing Capable"}, {
-    "sse", "SSE instructions"}, {
-    "sse2", "SSE2 (WNI) instructions"}, {
-    "acc", "Automatic Clock Control"}, {
-    "ia64", "IA64 Instructions"}, {
-    "syscall", "SYSCALL and SYSEXIT instructions"}, {
-    "nx", "No-execute Page Protection"}, {
-    "xd", "Execute Disable"}, {
-    "clflush", "Cache Line Flush instruction"}, {
-    "acpi", "Thermal Monitor and Software Controlled Clock Facilities"}, {
-    "dts", "Debug Store"}, {
-    "ss", "Self Snoop"}, {
-    "tm", "Thermal Monitor"}, {
-    "pbe", "Pending Break Enable"}, {
-    "pb", "Pending Break Enable"}, {
-    NULL, NULL}
+	{ "3dnow",	"3DNow! Technology"				},
+	{ "3dnowext",	"Extended 3DNow! Technology"			},
+	{ "fpu",	"Floating Point Unit"				},
+	{ "vme",	"Virtual 86 Mode Extension"			},
+	{ "de",		"Debug Extensions - I/O breakpoints"		},
+	{ "pse",	"Page Size Extensions (4MB pages)"		},
+	{ "tsc",	"Time Stamp Counter and RDTSC instruction"	},
+	{ "msr",	"Model Specific Registers"			},
+	{ "pae",	"Physical Address Extensions"			},
+	{ "mce",	"Machine Check Architeture"			},
+	{ "cx8",	"CMPXCHG8 instruction"				},
+	{ "apic",	"Advanced Programmable Interrupt Controller"	},
+	{ "sep",	"Fast System Call (SYSENTER/SYSEXIT)"		},
+	{ "mtrr",	"Memory Type Range Registers"			},
+	{ "pge",	"Page Global Enable"				},
+	{ "mca",	"Machine Check Architecture"			},
+	{ "cmov",	"Conditional Move instruction"			},
+	{ "pat",	"Page Attribute Table"				},
+	{ "pse36",	"36bit Page Size Extensions"			},
+	{ "psn",	"96 bit Processor Serial Number"		},
+	{ "mmx",	"MMX technology"				},
+	{ "mmxext",	"Extended MMX Technology"			},
+	{ "cflush",	"Cache Flush"					},
+	{ "dtes",	"Debug Trace Store"				},
+	{ "fxsr",	"FXSAVE and FXRSTOR instructions"		},
+	{ "kni",	"Streaming SIMD instructions"			},
+	{ "xmm",	"Streaming SIMD instructions"			},
+	{ "ht",		"HyperThreading"				},
+	{ "mp",		"Multiprocessing Capable"			},
+	{ "sse",	"SSE instructions"				},
+	{ "sse2",	"SSE2 (WNI) instructions"			},
+	{ "acc",	"Automatic Clock Control"			},
+	{ "ia64",	"IA64 Instructions"				},
+	{ "syscall",	"SYSCALL and SYSEXIT instructions"		},
+	{ "nx",		"No-execute Page Protection"			},
+	{ "xd",		"Execute Disable"				},
+	{ "clflush",	"Cache Line Flush instruction"			},
+	{ "acpi",	"Thermal Monitor and Software Controlled Clock"	},
+	{ "dts",	"Debug Store"					},
+	{ "ss",		"Self Snoop"					},
+	{ "tm",		"Thermal Monitor"				},
+	{ "pbe",	"Pending Break Enable"				},
+	{ "pb",		"Pending Break Enable"				},
+	{ NULL,		NULL						},
 };
 
 gchar *processor_get_capabilities_from_flags(gchar * strflags)
@@ -295,12 +294,12 @@ static gchar *processor_get_detailed_info(Processor * processor)
     tmp = processor_get_capabilities_from_flags(processor->flags);
     ret = g_strdup_printf("[Processor]\n"
 			  "Name=%s\n"
-			  "Specification=%s\n"
-			  "Family, model, stepping=%d, %d, %d\n"
+			  "Family, model, stepping=%d, %d, %d (%s)\n"
 			  "Vendor=%s\n"
+			  "[Configuration]\n"
 			  "Cache Size=%dkb\n"
 			  "Frequency=%.2fMHz\n"
-			  "BogoMips=%.2f\n"
+			  "BogoMIPS=%.2f\n"
 			  "Byte Order=%s\n"
 			  "[Features]\n"
 			  "FDIV Bug=%s\n"
@@ -308,12 +307,13 @@ static gchar *processor_get_detailed_info(Processor * processor)
 			  "F00F Bug=%s\n"
 			  "Coma Bug=%s\n"
 			  "Has FPU=%s\n"
-			  "[Capabilities]\n" "%s",
-			  processor->strmodel,
+			  "[Capabilities]\n"
+			  "%s",
 			  processor->model_name,
 			  processor->family,
 			  processor->model,
 			  processor->stepping,
+			  processor->strmodel,
 			  vendor_get_name(processor->vendor_id),
 			  processor->cache_size,
 			  processor->cpu_mhz, processor->bogomips,

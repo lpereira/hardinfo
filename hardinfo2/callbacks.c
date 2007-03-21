@@ -84,6 +84,11 @@ void cb_report_bug()
     open_url("http://hardinfo.berlios.de/web/BugReports");
 }
 
+void cb_donate()
+{
+    open_url("http://hardinfo.berlios.de/web/Donate");
+}
+
 void cb_refresh()
 {
     shell_do_reload();

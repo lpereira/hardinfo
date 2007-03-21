@@ -77,7 +77,6 @@ install:	all
 	cp -Lr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
 
 	@echo '[01;34m*** Installing misc data...[00m'
-	cp uidefs.xml ${DESTDIR}/usr/share/hardinfo
 	cp benchmark.conf ${DESTDIR}/usr/share/hardinfo
 	cp benchmark.data ${DESTDIR}/usr/share/hardinfo
 

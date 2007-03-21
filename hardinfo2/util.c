@@ -206,6 +206,8 @@ gboolean binreloc_init(gboolean try_hardcoded)
     GError *error = NULL;
     gchar *tmp;
 
+    DEBUG("initializing binreloc (hardcoded = %d)", try_hardcoded);
+    
     /* If the runtime data directories we previously found, don't even try
        to find them again. */
     if (params.path_data && params.path_lib) {
@@ -394,6 +396,8 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 
 gboolean ui_init(int *argc, char ***argv)
 {
+    DEBUG("initializing gtk+ UI");
+
     g_set_application_name("HardInfo");
     g_log_set_handler(NULL,
 		      G_LOG_LEVEL_WARNING | G_LOG_FLAG_FATAL |
