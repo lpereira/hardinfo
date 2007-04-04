@@ -66,7 +66,7 @@ static GQuark		 err_quark;
 #define XMLRPC_SERVER_URI   		"http://hardinfo.berlios.de/xmlrpc/"
 #define XMLRPC_SERVER_API_VERSION	1
 
-#define LABEL_SYNC_DEFAULT  "<big><b>Synchronize&nbsp;with&nbsp;Central&nbsp;Database</b></big>\n" \
+#define LABEL_SYNC_DEFAULT  "<big><b>Synchronize with Central Database</b></big>\n" \
                             "The following information may be synchronized " \
                             "with the HardInfo central database."
 #define LABEL_SYNC_SYNCING  "<big><b>Synchronizing</b></big>\n" \

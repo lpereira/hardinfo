@@ -66,6 +66,7 @@ scan_languages(OperatingSystem * os)
 
 	    retval = g_strdup_printf("%s$%s$%s=%s\n", retval, name, name, title);
 
+#define FIELD(f) f ? f : "(Unknown)"
 	    currlocale = g_strdup_printf("[Locale Information]\n"
 					 "Name=%s (%s)\n"
 					 "Source=%s\n"
@@ -75,10 +76,13 @@ scan_languages(OperatingSystem * os)
 					 "Territory=%s\n"
 					 "Revision=%s\n"
 					 "Date=%s\n"
-					 "Codeset=%s\n", name, title,
-					 source, address, email, language,
-					 territory, revision, date,
-					 codeset);
+					 "Codeset=%s\n",
+					 FIELD(name), FIELD(title),
+					 FIELD(source), FIELD(address),
+					 FIELD(email), FIELD(language),
+					 FIELD(territory), FIELD(revision),
+					 FIELD(date), FIELD(codeset));
+#undef FIELD
 
 	    g_hash_table_insert(moreinfo, g_strdup(name), currlocale);
 

@@ -136,6 +136,8 @@ struct _OperatingSystem {
 
     gchar *desktop;
     gchar *username;
+    
+    gchar *boots;
 };
 
 struct _MemoryInfo {

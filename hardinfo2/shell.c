@@ -802,8 +802,8 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		    gtk_tree_store_set(GTK_TREE_STORE(shell->info->model),
 				       iter, INFO_TREE_COL_PBUF,
 				       icon_cache_get_pixbuf_at_size(file,
-								     24,
-								     24),
+								     22,
+								     22),
 				       -1);
 		    g_free(file);
 		}
@@ -1010,9 +1010,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     /* recreate the iter hash table */
     if (!reload) {
         if (update_tbl) {
-            DEBUG("cleaning update_tbl");
-            g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true,
-                                        NULL);
+            g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true, NULL);
         } else {
             update_tbl =
                 g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);

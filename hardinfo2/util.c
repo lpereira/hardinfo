@@ -411,8 +411,9 @@ void open_url(gchar * url)
     const gchar *browsers[] = {
 	  "xdg-open", "gnome-open", "kfmclient openURL",
 	  "sensible-browser", "firefox", "epiphany",
-	  "galeon", "mozilla", "opera", "konqueror",
-	  "netscape", "links -g", NULL
+	  "iceweasel", "seamonkey", "galeon", "mozilla",
+	  "opera", "konqueror", "netscape", "links -g",
+	  NULL
     };
     gint i;
 
@@ -623,7 +624,8 @@ ModuleAbout *module_get_about(ShellModule *module)
 {
     ModuleAbout *(*get_about)(void);
     
-    if (g_module_symbol(module->dll, "hi_module_get_about", (gpointer) &get_about)) {
+    if (g_module_symbol(module->dll, "hi_module_get_about",
+                        (gpointer) &get_about)) {
         return get_about();
     }
     
@@ -907,9 +909,10 @@ void module_entry_scan_all_except(ModuleEntry *entries, gint except_entry)
 {
     ModuleEntry entry;
     gint        i = 0;
-
     void        (*scan_callback)(gboolean reload);
     
+    shell_view_set_enabled(FALSE);
+
     for (entry = entries[0]; entry.name; entry = entries[++i]) {
         if (i == except_entry)
             continue;
@@ -921,6 +924,7 @@ void module_entry_scan_all_except(ModuleEntry *entries, gint except_entry)
         }
     }
     
+    shell_view_set_enabled(TRUE);
     shell_status_update("Done.");
 }
 

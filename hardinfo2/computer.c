@@ -101,6 +101,7 @@ static Computer *computer = NULL;
 #include <arch/this/nfs.h>
 #include <arch/this/net.h>
 #include <arch/common/users.h>
+#include <arch/this/boots.h>
 
 gchar *
 hi_more_info(gchar * entry)
@@ -162,6 +163,7 @@ void scan_modules(gboolean reload)
 void scan_boots(gboolean reload)
 {
     SCAN_START();
+    scan_boots_real();
     SCAN_END();
 }
 
@@ -284,7 +286,7 @@ gchar *callback_modules()
 
 gchar *callback_boots()
 {
-    return g_strdup("[Duh]\nNot implemented yet=\n");
+    return g_strdup(computer->os->boots);
 }
 
 gchar *callback_locales()

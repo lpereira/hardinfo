@@ -67,7 +67,7 @@ static ModuleEntry entries[] = {
     {"Printers",	"printer.png",		callback_printers,	scan_printers,},
     {"Battery",		"battery.png",		callback_battery,	scan_battery},
     {"Sensors",		"therm.png",		callback_sensors,	scan_sensors},
-    {"Input Devices",	"keyboard.png",		callback_input,		scan_input},
+    {"Input Devices",	"inputdevices.png",	callback_input,		scan_input},
     {"Storage",		"hdd.png",		callback_storage,	scan_storage},
     { NULL }
 };
