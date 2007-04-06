@@ -26,6 +26,7 @@
 #include <libsoup/soup-xmlrpc-response.h>
 
 #include <stdarg.h>
+#include <string.h>
 
 typedef struct _SyncDialog	SyncDialog;
 typedef struct _SyncNetArea	SyncNetArea;
@@ -283,7 +284,19 @@ static void _action_call_function_got_response(SoupMessage *msg, gpointer user_d
         
         DEBUG("saving to %s", filename);
 
+#ifdef g_file_set_contents
         g_file_set_contents(filename, string, -1, NULL);
+#else
+        {
+            FILE *f;
+            
+            f = fopen(filename, "w+");
+            if (f) {
+              fwrite(string, 1, strlen(string), f);
+              fclose(f);
+            }
+        }
+#endif
         g_free(filename);
     }
 
