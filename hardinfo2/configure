@@ -147,7 +147,7 @@ fi
 # ---------------------------------------------------------------------------
 
 SOUP=-1
-MIN_VERSION="2.2"
+MIN_VERSION="2.2.7"
 echo -n "Checking for libsoup version >= ${MIN_VERSION}... "
 for i in `which pkg-config`; do
 	$i --errors-to-stdout libsoup-2.2 \

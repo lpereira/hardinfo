@@ -386,9 +386,10 @@ static void sync_dialog_start_sync(SyncDialog *sd)
         
         session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10,
                                                       SOUP_SESSION_PROXY_URI, proxy, NULL);
-        
+        /* Crashes if we unref the proxy? O_o
         if (proxy)
             g_object_unref(proxy);
+        */
     }
     
     loop = g_main_loop_new(NULL, TRUE);
@@ -402,11 +403,14 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     sync_dialog_netarea_start_actions(sd, actions, nactions);
     g_free(actions);
     
-    gtk_widget_hide(sd->button_cancel);
-    gtk_widget_show(sd->button_close);
+    if (sd->flag_cancel) {
+      gtk_widget_hide(sd->button_cancel);
+      gtk_widget_show(sd->button_close);
 
-    /* wait for the user to close the dialog */    
-    g_main_run(loop);
+      /* wait for the user to close the dialog */    
+      g_main_run(loop);
+    }
+    
     g_main_loop_unref(loop);
 }
 
@@ -469,6 +473,8 @@ static void sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[
             markup = g_strdup_printf("<b><s>%s</s></b> <i>(failed)</i>", sna[i].name);
             gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
             g_free(markup);
+            
+            sd->flag_cancel = TRUE;
 
             gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]),
                                       icon_cache_get_pixbuf("dialog-error.png"));
