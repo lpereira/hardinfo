@@ -299,6 +299,10 @@ static void _action_call_function_got_response(SoupMessage *msg, gpointer user_d
 #endif
         g_free(filename);
     }
+    
+    if (sna->entry->callback) {
+        sna->entry->callback(sna->entry, string);
+    }
 
     g_free(string);
     g_main_quit(loop);

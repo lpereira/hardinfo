@@ -520,7 +520,6 @@ static void add_modules_to_gui(gpointer data, gpointer user_data)
     }
 }
 
-
 void shell_init(GSList * modules)
 {
     if (shell) {

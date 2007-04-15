@@ -154,8 +154,8 @@ for i in `which pkg-config`; do
 		--atleast-version=$MIN_VERSION > /dev/null
 	case $? in
 		0)
-			SOUP_FLAGS=`pkg-config libsoup-2.2 --cflags`
-			SOUP_LIBS=`pkg-config libsoup-2.2 --libs`
+			SOUP_FLAGS=`pkg-config libsoup-2.2 --cflags --static`
+			SOUP_LIBS=`pkg-config libsoup-2.2 --libs --static`
 			echo "found `pkg-config libsoup-2.2 --modversion`"
 			SOUP=1
 			break ;;

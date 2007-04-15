@@ -29,6 +29,7 @@ struct _SyncEntry {
   gchar	*save_to;
 
   gchar	*(*get_data)(void);
+  void   (*callback)(SyncEntry *entry, const gchar *response);
   
   gboolean selected;
 };
