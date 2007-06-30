@@ -153,7 +153,7 @@ static SoupXmlrpcValue *_soup_get_xmlrpc_value(SoupMessage *msg, SyncNetAction *
         SNA_ERROR(3, "No response value in XML-RPC response");
     }
     
-    /* g_object_unref(response); */
+    /*g_object_unref(response);*/
 bad:
     return value;
 }
@@ -413,10 +413,9 @@ static void sync_dialog_start_sync(SyncDialog *sd)
         
         session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10,
                                                       SOUP_SESSION_PROXY_URI, proxy, NULL);
-        /* Crashes if we unref the proxy? O_o
-        if (proxy)
-            g_object_unref(proxy);
-        */
+        /* Crashes if we unref the proxy? O_o */
+        /*if (proxy)
+            g_object_unref(proxy);*/
     }
     
     loop = g_main_loop_new(NULL, TRUE);

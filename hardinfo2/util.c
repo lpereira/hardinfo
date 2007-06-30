@@ -600,7 +600,7 @@ static void module_entry_free(gpointer data, gpointer user_data)
     ShellModuleEntry *entry = (ShellModuleEntry *)data;
 
     if (entry) {
-        /*g_free(entry->name);*/
+        g_free(entry->name);
         g_object_unref(entry->icon);
 
         g_free(entry);
@@ -611,7 +611,7 @@ static void module_free(ShellModule *module)
 {
     g_free(module->name);
     g_object_unref(module->icon);
-    /*g_module_close(module->dll);*/
+    g_module_close(module->dll);
 
     DEBUG("module_free: module->entries, %p\n", module->entries);
     g_slist_foreach(module->entries, (GFunc)module_entry_free, NULL);
