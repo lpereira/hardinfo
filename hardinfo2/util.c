@@ -899,7 +899,7 @@ static gboolean __idle_free_do(gpointer ptr)
 gpointer idle_free(gpointer ptr)
 {
     if (ptr) {
-        g_timeout_add(10000, __idle_free_do, ptr);
+        g_timeout_add(15000, __idle_free_do, ptr);
     }
     
     return ptr;

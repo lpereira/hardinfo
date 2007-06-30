@@ -279,7 +279,7 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 	    }
 	}
 
-	tmp = g_strdup_printf("%s%s=%s\n", (gchar*)idle_free(tmp), flags[j], meaning);
+	tmp = g_strdup_printf("%s%s=%s\n", tmp, flags[j], meaning);
 	j++;
     }
 
@@ -347,7 +347,7 @@ static gchar *processor_get_info(GSList * processors)
 	    processor = (Processor *) l->data;
 
 	    tmp = g_strdup_printf("%s$CPU%d$%s=%.2fMHz\n",
-				  (gchar*)idle_free(tmp), processor->id,
+				  tmp, processor->id,
 				  processor->model_name,
 				  processor->cpu_mhz);
 

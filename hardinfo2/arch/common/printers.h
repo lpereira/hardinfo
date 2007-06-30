@@ -73,7 +73,7 @@ __scan_printers(void)
 	    printer_list = g_strdup_printf("%s\n"
 					   "$PRN%d$" 
                                            "%s=%s\n",
-					   (char*)idle_free(printer_list),
+					   printer_list,
 					   i,						
 					   printers[i],
                                            g_str_equal(default_printer, printers[i]) ?

@@ -37,8 +37,9 @@ scan_modules_do(void)
 
     if (module_list) {
         g_free(module_list);
-        module_list = NULL;
     }
+    
+    module_list = g_strdup("");
 
     g_hash_table_foreach_remove(moreinfo, remove_module_devices, NULL);
 
@@ -99,7 +100,7 @@ scan_modules_do(void)
 
 	/* append this module to the list of modules */
 	module_list = g_strdup_printf("%s$%s$%s=%s\n",
-				      module_list ? (char*)idle_free(module_list) : "",
+				      module_list,
 				      hashkey,
 				      modname,
 				      description ? description : "");
