@@ -19,10 +19,7 @@
 static gboolean
 remove_usb_devices(gpointer key, gpointer value, gpointer data)
 {
-    if (!strncmp((gchar *) key, "USB", 3)) {
-	return TRUE;
-    }
-    return FALSE;
+    return g_str_has_prefix(key, "USB");
 }
 
 static gchar *usb_list = NULL;

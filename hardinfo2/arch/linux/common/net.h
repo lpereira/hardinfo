@@ -134,12 +134,7 @@ net_get_iface_type(gchar *name)
 static gboolean
 remove_net_devices(gpointer key, gpointer value, gpointer data)
 {
-    if (!strncmp((gchar *) key, "NET", 4)) {
-	g_free((gchar *) key);
-	g_free((GtkTreeIter *) value);
-	return TRUE;
-    }
-    return FALSE;
+    return g_str_has_prefix(key, "NET");
 }
 
 static void

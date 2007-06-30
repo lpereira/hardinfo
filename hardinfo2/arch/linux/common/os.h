@@ -162,8 +162,6 @@ computer_get_os(void)
 	}
 
 	if (g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS)) {
-
-
 	    FILE *distro_ver;
 	    char buf[128];
 

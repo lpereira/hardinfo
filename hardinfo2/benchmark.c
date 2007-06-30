@@ -22,6 +22,9 @@
 #include <config.h>
 #include <syncmanager.h>
 
+#include <sys/time.h>
+#include <sys/resource.h>
+
 enum {
     BENCHMARK_ZLIB,
     BENCHMARK_FIB,
@@ -151,45 +154,53 @@ gchar *callback_sha1()
     return benchmark_include_results_reverse(bench_results[BENCHMARK_SHA1], "CPU SHA1");
 }
 
+#define RUN_WITH_HIGH_PRIORITY(fn)			\
+  do {							\
+    int old_priority = getpriority(PRIO_PROCESS, 0);	\
+    setpriority(PRIO_PROCESS, 0, -20);			\
+    fn();						\
+    setpriority(PRIO_PROCESS, 0, old_priority);		\
+  } while (0);
+
 void scan_zlib(gboolean reload)
 {
     SCAN_START();
-    benchmark_zlib();
+    RUN_WITH_HIGH_PRIORITY(benchmark_zlib);
     SCAN_END();
 }
 
 void scan_raytr(gboolean reload)
 {
     SCAN_START();
-    benchmark_raytrace();
+    RUN_WITH_HIGH_PRIORITY(benchmark_raytrace);
     SCAN_END();
 }
 
 void scan_bfsh(gboolean reload)
 {
     SCAN_START();
-    benchmark_fish();
+    RUN_WITH_HIGH_PRIORITY(benchmark_fish);
     SCAN_END();
 }
 
 void scan_md5(gboolean reload)
 {
     SCAN_START();
-    benchmark_md5();
+    RUN_WITH_HIGH_PRIORITY(benchmark_md5);
     SCAN_END();
 }
 
 void scan_fib(gboolean reload)
 {
     SCAN_START();
-    benchmark_fib();
+    RUN_WITH_HIGH_PRIORITY(benchmark_fib);
     SCAN_END();
 }
 
 void scan_sha1(gboolean reload)
 {
     SCAN_START();
-    benchmark_sha1();
+    RUN_WITH_HIGH_PRIORITY(benchmark_sha1);
     SCAN_END();
 }
 

@@ -21,10 +21,7 @@ static gchar *storage_icons = "";
 static gboolean
 remove_scsi_devices(gpointer key, gpointer value, gpointer data)
 {
-    if (!strncmp((gchar *) key, "SCSI", 4)) {
-	return TRUE;
-    }
-    return FALSE;
+    return g_str_has_prefix(key, "SCSI");
 }
 
 /* SCSI support by Pascal F.Martin <pascalmartin@earthlink.net> */
@@ -147,10 +144,7 @@ __scan_scsi_devices(void)
 static gboolean
 remove_ide_devices(gpointer key, gpointer value, gpointer data)
 {
-    if (!strncmp((gchar *) key, "IDE", 3)) {
-	return TRUE;
-    }
-    return FALSE;
+    return g_str_has_prefix(key, "IDE");
 }
 
 void

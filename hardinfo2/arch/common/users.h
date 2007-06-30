@@ -4,14 +4,7 @@ static gchar *sys_users = NULL,
 static gboolean
 remove_users(gpointer key, gpointer value, gpointer data)
 {
-    if (!strncmp((gchar *) key, "USER", 4)) {
-	/*
-         * g_free((gchar *) key);
-	 * g_free((GtkTreeIter *) value);
-         */
-	return TRUE;
-    }
-    return FALSE;
+    return g_str_has_prefix(key, "USER");
 }
 
 static void

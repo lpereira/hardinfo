@@ -168,12 +168,7 @@ GSList *math_string_to_infix(gchar *string)
 	} else if (strchr("-.1234567890", *expr)) {
 	    gfloat value;
 
-	    sscanf(expr, "%f", &value);
-
-	    while (*expr && strchr(".1234567890", *expr))
-		expr++;
-	    expr--;
-
+	    expr += sscanf(expr, "%f", &value);
 	    infix = g_slist_append(infix, new_value(value));
 	} else if (!isspace(*expr)) {
 	    g_print("Invalid token: [%c][%d]\n", *expr, *expr);

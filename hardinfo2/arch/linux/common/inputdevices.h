@@ -21,11 +21,7 @@ static gchar *input_icons = NULL;
 static gboolean
 remove_input_devices(gpointer key, gpointer value, gpointer data)
 {
-    if (!strncmp((gchar *) key, "INP", 3)) {
-	return TRUE;
-    }
-
-    return FALSE;
+    return g_str_has_prefix(key, "INP");
 }
 
 static struct {

@@ -162,9 +162,6 @@ static void read_sensors_hwmon(void)
 	    read_sensor_labels(driver);
 	}
 
-	sensors = g_strdup_printf("%s[Driver Info]\n"
-				  "Name=%s\n", sensors, driver);
-
 	sensors = g_strconcat(sensors, "[Cooling Fans]\n", NULL);
 	for (count = 1;; count++) {
 	    path_sensor =
@@ -258,9 +255,8 @@ static void read_sensors_acpi(void)
 
 	if ((tz = g_dir_open(path_tz, 0, NULL))) {
 	    const gchar *entry;
+	    gchar *temp = "";
 
-	    sensors =
-		g_strdup_printf("%s\n[ACPI Thermal Zone]\n", sensors);
 
 	    while ((entry = g_dir_read_name(tz))) {
 		gchar *path =
@@ -272,12 +268,17 @@ static void read_sensors_acpi(void)
 
 		    sscanf(contents, "temperature: %d C", &temperature);
 
-		    sensors = g_strdup_printf("%s\n%s=%d\302\260C\n",
-					      sensors, entry, temperature);
+		    temp = g_strdup_printf("%s\n%s=%d\302\260C\n",
+					      temp, entry, temperature);
 
 		    g_free(contents);
 		}
 	    }
+
+	    if (*temp != '\0')
+    	        sensors =
+	    	    g_strdup_printf("%s\n[ACPI Thermal Zone]\n%s",
+	    	                    sensors, temp);
 
 	    g_dir_close(tz);
 	}

@@ -209,4 +209,11 @@ __scan_battery(void)
 
     __scan_battery_acpi();
     __scan_battery_apm();
+    
+    if (*battery_list == '\0') {
+        g_free(battery_list);
+        
+        battery_list = g_strdup("[No batteries]\n"
+                                "No batteries found on this system=\n");
+    }
 }

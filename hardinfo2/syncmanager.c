@@ -631,11 +631,15 @@ static SyncDialog *sync_dialog_new(void)
 
     dialog = gtk_dialog_new();
     gtk_window_set_title(GTK_WINDOW(dialog), "Network Updater");
-    gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+    gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+    gtk_window_set_icon(GTK_WINDOW(dialog),
+			icon_cache_get_pixbuf("syncmanager.png"));
     gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
     gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_type_hint(GTK_WINDOW(dialog),
 			     GDK_WINDOW_TYPE_HINT_DIALOG);
+
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
     dialog1_vbox = GTK_DIALOG(dialog)->vbox;
     gtk_box_set_spacing(GTK_BOX(dialog1_vbox), 5);

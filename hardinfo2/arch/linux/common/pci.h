@@ -24,14 +24,8 @@ __scan_pci(void)
     gchar *category = NULL, *name = NULL;
     gint n = 0;
 
-    //if (g_file_test("/usr/bin/gksudo", G_FILE_TEST_EXISTS)) {
-    //  lspci = popen("gksudo '/bin/lspci -v'", "r");
-    //} else {
-    lspci = popen(LSPCI, "r");
-    //}
-
-    if (!lspci) {
-	return;
+    if (!(lspci = popen(LSPCI, "r"))) {
+      goto pci_error;
     }
 
     gchar *icon;
@@ -190,6 +184,7 @@ __scan_pci(void)
     }
     
     if (pclose(lspci)) {
+pci_error:
         /* error (no pci, perhaps?) */
         pci_list = g_strconcat(pci_list, "No PCI devices found=\n", NULL);
     } else if (strhash) {
