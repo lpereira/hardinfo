@@ -275,10 +275,9 @@ static void _action_call_function_got_response(SoupMessage *msg, gpointer user_d
     SyncNetAction *sna = (SyncNetAction *) user_data;
     gchar *string;
     
-    string = _soup_get_xmlrpc_value_string(msg, sna);
-    DEBUG("received string: %s\n", string);
-    
-    if (sna->entry->save_to) {
+    if ((string = _soup_get_xmlrpc_value_string(msg, sna)) &&
+        sna->entry->save_to) {
+        DEBUG("received string: %s\n", string);
         gchar *filename = g_build_filename(g_get_home_dir(), ".hardinfo",
                                            sna->entry->save_to, NULL);
         
@@ -496,10 +495,13 @@ static void sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[
             gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]),
                                       icon_cache_get_pixbuf("dialog-error.png"));
             if (sna[i].error) {
-                g_warning("Failed while performing \"%s\". Please file a bug report " \
-                          "if this problem persists. (Use the Help\342\206\222Report" \
-                          " bug option.)\n\nDetails: %s",
-                          sna[i].name, sna[i].error->message);
+                if (sna[i].error->code != 1) {
+                    /* the user has not cancelled something... */
+                    g_warning("Failed while performing \"%s\". Please file a bug report " \
+                              "if this problem persists. (Use the Help\342\206\222Report" \
+                              " bug option.)\n\nDetails: %s",
+                              sna[i].name, sna[i].error->message);
+                }
                 
                 g_error_free(sna[i].error);
             } else {
