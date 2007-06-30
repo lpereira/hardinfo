@@ -99,7 +99,7 @@ scan_modules_do(void)
 
 	/* append this module to the list of modules */
 	module_list = g_strdup_printf("%s$%s$%s=%s\n",
-				      module_list ? module_list : "",
+				      module_list ? (char*)idle_free(module_list) : "",
 				      hashkey,
 				      modname,
 				      description ? description : "");

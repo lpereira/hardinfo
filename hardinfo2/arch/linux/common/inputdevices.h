@@ -88,10 +88,10 @@ __scan_input_devices(void)
 	
 	    tmp = g_strdup_printf("INP%d", ++n);
 	    input_list = g_strdup_printf("%s$%s$%s=\n",
-					 input_list,
+					 (char*)idle_free(input_list),
 					 tmp, name);
 	    input_icons = g_strdup_printf("%sIcon$%s$%s=%s\n",
-				 	  input_icons,
+				 	  (char*)idle_free(input_icons),
 					  tmp, name,
 					  input_devices[d].icon);
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
@@ -106,13 +106,13 @@ __scan_input_devices(void)
 	    if (url) {
 	    	strhash = g_strdup_printf("%s"
 					  "Vendor=%s (%s)\n",
-					  strhash,
+					  (char*)idle_free(strhash),
 					  vendor_get_name(name),
 					  url);
 	    } else {
 	    	strhash = g_strdup_printf("%s"
 					  "Vendor=%x\n",
-					  strhash,
+					  (char*)idle_free(strhash),
 					  vendor);
 	    }
 
@@ -120,7 +120,7 @@ __scan_input_devices(void)
 				      "Product=0x%x\n"
 				      "Version=0x%x\n"
 				      "Connected to=%s\n",
-				      strhash, product, version, phys);
+				      (char*)idle_free(strhash), product, version, phys);
 	    g_hash_table_insert(moreinfo, tmp, strhash);
 
 	    g_free(phys);

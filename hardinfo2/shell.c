@@ -365,14 +365,14 @@ static void create_window(void)
     gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 3);
 
     shell->progress = gtk_progress_bar_new();
-    gtk_widget_set_size_request(shell->progress, 70, 10);
+    gtk_widget_set_size_request(shell->progress, 80, 10);
     gtk_widget_hide(shell->progress);
-    gtk_box_pack_end(GTK_BOX(hbox), shell->progress, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), shell->progress, FALSE, FALSE, 5);
 
     shell->status = gtk_label_new("");
     gtk_misc_set_alignment(GTK_MISC(shell->status), 0.0, 0.5);
     gtk_widget_show(shell->status);
-    gtk_box_pack_start(GTK_BOX(hbox), shell->status, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), shell->status, FALSE, FALSE, 5);
 
     shell->hpaned = gtk_hpaned_new();
     gtk_widget_show(shell->hpaned);

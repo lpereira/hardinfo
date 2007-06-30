@@ -68,14 +68,22 @@ __scan_printers(void)
     }
     
     if (noprinters > 0) {
-	printer_list = g_strdup_printf("[Printers (CUPS)]\n");
+	printer_list = g_strdup_printf("[$ShellParam$]\n"
+                                       "ViewType=1\n"
+				       "[Printers (CUPS)]\n");
 	for (i = 0; i < noprinters; i++) {
-	    printer_list = g_strconcat(printer_list, printers[i],
-				       g_str_equal(default_printer, printers[i]) ?
-				       "=<i>(Default)</i>\n" : "=\n",
-				       NULL);
+	    printer_list = g_strdup_printf("%s\n"
+					   "$PRN%d$" 
+                                           "%s=%s\n",
+					   (char*)idle_free(printer_list),
+					   i,						
+					   printers[i],
+                                           g_str_equal(default_printer, printers[i]) ?
+				           "<i>(Default)</i>" : "");
 	    g_free(printers[i]);
 	}
+	
+	g_free(printers);
     } else {
 	printer_list = g_strdup("[Printers]\n"
 	                        "No printers found=\n");
