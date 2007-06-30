@@ -68,9 +68,7 @@ __scan_printers(void)
     }
     
     if (noprinters > 0) {
-	printer_list = g_strdup_printf("[$ShellParam$]\n"
-                                       "ViewType=1\n"
-				       "[Printers (CUPS)]\n");
+	printer_list = g_strdup_printf("[Printers (CUPS)]\n");
 	for (i = 0; i < noprinters; i++) {
 	    printer_list = g_strdup_printf("%s\n"
 					   "$PRN%d$" 
