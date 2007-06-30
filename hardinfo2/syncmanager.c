@@ -21,6 +21,7 @@
 #include "hardinfo.h"
 #include "config.h"
 
+#ifdef HAS_LIBSOUP
 #include <libsoup/soup.h>
 #include <libsoup/soup-xmlrpc-message.h>
 #include <libsoup/soup-xmlrpc-response.h>
@@ -90,18 +91,26 @@ static void		 sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction *s
                                             sna->error = g_error_new(err_quark, code, message, \
                                                          ##__VA_ARGS__);                       \
                                     }
+#endif	/* HAS_LIBSOUP */
 
 
 void sync_manager_add_entry(SyncEntry *entry)
 {
+#ifdef HAS_LIBSOUP
     DEBUG("registering syncmanager entry ''%s''", entry->fancy_name);
 
     entry->selected = TRUE;
     entries = g_slist_prepend(entries, entry);
+#else
+    DEBUG("libsoup support is disabled.");
+#endif	/* HAS_LIBSOUP */
 }
 
 void sync_manager_show(void)
 {
+#ifndef HAS_LIBSOUP
+    g_warning("HardInfo was compiled without libsoup support. (Network Manager requires it.)");
+#else	/* !HAS_LIBSOUP */
     SyncDialog *sd = sync_dialog_new();
     
     err_quark = g_quark_from_static_string("syncmanager");
@@ -117,8 +126,10 @@ void sync_manager_show(void)
     }   
 
     sync_dialog_destroy(sd);
+#endif /* HAS_LIBSOUP */
 }
 
+#ifdef HAS_LIBSOUP
 static SoupXmlrpcValue *_soup_get_xmlrpc_value(SoupMessage *msg, SyncNetAction *sna)
 {
     SoupXmlrpcResponse *response = NULL;
@@ -736,3 +747,4 @@ static void sync_dialog_destroy(SyncDialog *sd)
     sync_dialog_netarea_destroy(sd->sna);
     g_free(sd);
 }
+#endif /* HAS_LIBSOUP */

@@ -167,11 +167,7 @@ done
 # --------------------------------------------------------------------------
 
 if [ $SOUP -eq -1 ]; then
-	echo -e "\nYou need the libsoup library, including the development stuff."
-	echo "If you're using Debian, running the command as root:"
-	echo -e "\n\taptitude install libsoup2.2-dev\n"
-	echo "Will do the trick."
-	exit 1
+	echo "Disabling libsoup support. (Network Manager won't be available.)"
 fi
 
 # --------------------------------------------------------------------------
@@ -192,6 +188,10 @@ echo "#define HOSTNAME \"`hostname`\"" >> config.h
 
 echo "#define PREFIX \"/usr/share/hardinfo/\"" >> config.h
 echo "#define LIBPREFIX \"/usr/lib/hardinfo/\"" >> config.h
+
+if [ "$SOUP" == "1" ]; then
+	echo "#define HAS_LIBSOUP" >> config.h
+fi
 
 if [ "$RELEASE" == "1" ]; then
 	echo "#define DEBUG(...)" >> config.h
