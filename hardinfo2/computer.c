@@ -120,8 +120,9 @@ hi_get_field(gchar * field)
     gchar *tmp;
 
     if (g_str_equal(field, "Memory")) {
-	MemoryInfo *mi = idle_free(computer_get_memory());
+	MemoryInfo *mi = computer_get_memory();
 	tmp = g_strdup_printf("%dMB (%dMB used)", mi->total, mi->used);
+	g_free(mi);
     } else if (g_str_equal(field, "Uptime")) {
 	tmp = computer_get_formatted_uptime();
     } else if (g_str_equal(field, "Date/Time")) {

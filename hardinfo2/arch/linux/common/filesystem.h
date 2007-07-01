@@ -23,15 +23,23 @@
 
 static gchar *fs_list = NULL;
 
+static gboolean
+remove_filesystem_entries(gpointer key, gpointer value, gpointer data)
+{
+    return g_str_has_prefix(key, "FS");
+}
+
 static void
 scan_filesystems(void)
 {
     FILE *mtab;
     gchar buf[1024];
     struct statfs sfs;
+    int count = 0;
 
     g_free(fs_list);
     fs_list = g_strdup("");
+    g_hash_table_foreach_remove(moreinfo, remove_filesystem_entries, NULL);
 
     mtab = fopen("/etc/mtab", "r");
     if (!mtab)
@@ -71,7 +79,7 @@ scan_filesystems(void)
 					  strstr(tmp[3], "rw") ? "Read-Write" :
 					  "Read-Only", tmp[1], strsize, strused,
 					  stravail);
-		g_hash_table_insert(moreinfo, g_strdup(tmp[0]), strhash);
+		g_hash_table_insert(moreinfo, g_strdup_printf("FS%d", ++count), strhash);
 
 		fs_list = g_strdup_printf("%s$%s$%s=%s total, %s free\n",
 					  fs_list,

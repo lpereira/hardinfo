@@ -149,16 +149,20 @@ void cb_about_module(GtkAction *action)
             
         if ((ma = module_get_about(sm))) {
             GtkWidget *about;
+            gchar *text;
 
             about = gtk_about_dialog_new();
-            gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about),
-                                      idle_free(g_strdup_printf("%s Module", sm->name)));
+
+            text = g_strdup_printf("%s Module", sm->name);
+            gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), text);
+            g_free(text);
+            
             gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), ma->version);
-            gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
-                                           idle_free(g_strdup_printf("Written by %s\n"
-                                                     "Licensed under %s",
-                                                     ma->author,
-                                                     ma->license)));
+
+            text = g_strdup_printf("Written by %s\nLicensed under %s",
+                                   ma->author, ma->license);
+            gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), text);
+            g_free(text);
 
             if (ma->description)
                 gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),

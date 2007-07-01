@@ -886,9 +886,10 @@ void tree_view_save_image(gchar *filename)
     gtk_widget_set_sensitive(widget, tv_enabled);
 }
 
-
 static gboolean __idle_free_do(gpointer ptr)
 {
+    DEBUG("bla %p", ptr);
+
     if (ptr) {
         g_free(ptr);
     }
@@ -896,10 +897,16 @@ static gboolean __idle_free_do(gpointer ptr)
     return FALSE;
 }
 
+#if RELEASE == 1
 gpointer idle_free(gpointer ptr)
+#else
+gpointer __idle_free(gpointer ptr, gchar *f, gint l)
+#endif
 {
+    DEBUG("file: %s, line: %d, ptr %p", f, l, ptr);
+
     if (ptr) {
-        g_timeout_add(15000, __idle_free_do, ptr);
+        g_timeout_add(10000, __idle_free_do, ptr);
     }
     
     return ptr;
@@ -910,6 +917,7 @@ void module_entry_scan_all_except(ModuleEntry *entries, gint except_entry)
     ModuleEntry entry;
     gint        i = 0;
     void        (*scan_callback)(gboolean reload);
+    gchar       *text;
     
     shell_view_set_enabled(FALSE);
 
@@ -917,7 +925,9 @@ void module_entry_scan_all_except(ModuleEntry *entries, gint except_entry)
         if (i == except_entry)
             continue;
             
-        shell_status_update(idle_free(g_strdup_printf("Scanning: %s...", entry.name)));
+        text = g_strdup_printf("Scanning: %s...", entry.name);
+        shell_status_update(text);
+        g_free(text);
         
         if ((scan_callback = entry.scan_callback)) {
             scan_callback(FALSE);

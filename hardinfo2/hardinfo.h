@@ -81,7 +81,13 @@ gchar    *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
 gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 
 /* Misc utility functions */
-gpointer      idle_free(gpointer ptr);
+#if RELEASE == 1
+gpointer idle_free(gpointer ptr);
+#else
+gpointer __idle_free(gpointer ptr, gchar *f, gint l);
+#define  idle_free(p) __idle_free(p, __FILE__, __LINE__)
+#endif	/* RELEASE == 1 */
+
 inline gchar *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);

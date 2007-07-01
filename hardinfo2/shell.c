@@ -1131,6 +1131,8 @@ static void module_selected(gpointer data)
     /* Get the current selection and shows its related info */
     gtk_tree_model_get(model, &parent, TREE_COL_DATA, &entry, -1);
     if (entry && !entry->selected) {
+        gchar *title;
+    
 	shell_status_set_enabled(TRUE);
 	shell_status_update("Updating...");
 
@@ -1158,8 +1160,9 @@ static void module_selected(gpointer data)
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);
 
-	gtk_window_set_title(GTK_WINDOW(shell->window),
-                             idle_free(g_strdup_printf("%s - System Information", entry->name)));
+        title = g_strdup_printf("%s - System Information", entry->name);
+	gtk_window_set_title(GTK_WINDOW(shell->window), title);
+	g_free(title);
 
 	shell_action_set_enabled("RefreshAction", TRUE);
 	shell_action_set_enabled("CopyAction", TRUE);

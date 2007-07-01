@@ -5,7 +5,7 @@ char *uidefs_str = "<ui>" \
 "	<menubar>" \
 "		<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
-"		<separator/>" \
+/*"		<separator/>" \ */
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \
 /*
  * Save Image is not ready for prime time. Yet.
