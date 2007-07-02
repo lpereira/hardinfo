@@ -182,7 +182,7 @@ scan_net_interfaces_24(void)
 	    gint trash;
 	    gchar ifacename[16];
 	    gchar *buf = buffer;
-	    gchar *iface_type, *iface_icon;
+	    gchar *iface_type, *iface_icon, *ip;
 	    gint i;
 
 	    buf = g_strstrip(buf);
@@ -208,14 +208,16 @@ scan_net_interfaces_24(void)
             get_net_info(ifacename, &ni);
 
             devid = g_strdup_printf("NET%s", ifacename);
+            
+            ip = g_strdup_printf(" (%s)", ni.ip);
 	    network_interfaces = g_strdup_printf("%s$%s$%s=Sent %.2fMiB, received %.2fMiB%s\n",
                                                   network_interfaces,
                                                   devid,
                                                   ifacename,
                                                   trans_mb,
                                                   recv_mb,
-						  ni.ip[0] ?
-						  (gchar*)idle_free(g_strdup_printf(" (%s)", ni.ip)) : "");
+						  ni.ip[0] ? ip: "");
+            g_free(ip);
             
             net_get_iface_type(ifacename, &iface_type, &iface_icon);
 	    network_icons = g_strdup_printf("%sIcon$%s$%s=%s.png\n",
