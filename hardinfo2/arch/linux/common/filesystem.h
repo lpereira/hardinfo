@@ -81,9 +81,9 @@ scan_filesystems(void)
 					  stravail);
 		g_hash_table_insert(moreinfo, g_strdup_printf("FS%d", ++count), strhash);
 
-		fs_list = g_strdup_printf("%s$%s$%s=%s total, %s free\n",
+		fs_list = g_strdup_printf("%s$FS%d$%s=%s total, %s free\n",
 					  fs_list,
-					  tmp[0], tmp[0], strsize, stravail);
+					  count, tmp[0], strsize, stravail);
 
 		g_free(strsize);
 		g_free(stravail);

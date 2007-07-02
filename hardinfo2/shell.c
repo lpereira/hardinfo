@@ -1260,7 +1260,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 			 (GCallback) info_selected, info);
     
     gtk_container_add(GTK_CONTAINER(scroll), treeview);
-
+    
     info->scroll = scroll;
     info->view = treeview;
     info->model = model;
