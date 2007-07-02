@@ -16,7 +16,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static gchar *network_interfaces = NULL;
+static gchar *network_interfaces = NULL,
+             *network_icons = NULL;
 
 #include <sys/ioctl.h>
 #include <net/if.h>
@@ -100,26 +101,27 @@ void get_net_info(char *if_name, NetInfo *netinfo)
 static struct {
     char *type;
     char *label;
+    char *icon;
 } netdev2type[] = {
-    { "eth",	"Ethernet" },
-    { "lo",	"Loopback" },
-    { "ppp",	"Point-to-Point" },
-    { "ath",	"Wireless" },
-    { "wlan",	"Wireless" },
-    { "tun",    "Virtual Point-to-Point (TUN)" },
-    { "tap",    "Ethernet (TAP)" },
-    { "plip",   "Parallel Line Internet Protocol" },
-    { "irlan",  "Infrared" },
-    { "slip",   "Serial Line Internet Protocol" },
-    { "isdn",	"Integrated Services Digital Network" },
-    { "sit",	"IPv6-over-IPv4 Tunnel" },
-    { "vmnet8", "VMWare Virtual Network Interface (NAT)" },
-    { "vmnet",  "VMWare Virtual Network Interface" },
-    { NULL,	"Unknown" },
+    { "eth",	"Ethernet",				  "network" },
+    { "lo",	"Loopback",				  "network-generic" },
+    { "ppp",	"Point-to-Point",			  "modem" },
+    { "ath",	"Wireless",				  "wireless" },
+    { "wlan",	"Wireless",				  "wireless" },
+    { "tun",    "Virtual Point-to-Point (TUN)",		  "network-generic" },
+    { "tap",    "Ethernet (TAP)",			  "network-generic" },
+    { "plip",   "Parallel Line Internet Protocol",	  "network" },
+    { "irlan",  "Infrared",				  "network-generic" },
+    { "slip",   "Serial Line Internet Protocol",	  "network-generic" },
+    { "isdn",	"Integrated Services Digital Network",	  "modem" },
+    { "sit",	"IPv6-over-IPv4 Tunnel",		  "network-generic" },
+    { "vmnet8", "VMWare Virtual Network Interface (NAT)", "computer" },
+    { "vmnet",  "VMWare Virtual Network Interface",	  "computer"},
+    { NULL,	"Unknown",				  "network-generic" },
 };
 
-static const gchar *
-net_get_iface_type(gchar *name)
+static void
+net_get_iface_type(gchar *name, gchar **type, gchar **icon)
 {
     int i;
     
@@ -128,7 +130,8 @@ net_get_iface_type(gchar *name)
             break;
     }
     
-    return netdev2type[i].label;
+    *type = netdev2type[i].label;
+    *icon = netdev2type[i].icon;
 }
 
 static gboolean
@@ -166,7 +169,12 @@ scan_net_interfaces_24(void)
         g_free(network_interfaces);
     }
     
+    if (network_icons) {
+        g_free(network_icons);
+    }
+    
     network_interfaces = g_strdup("[Network Interfaces]\n");
+    network_icons = g_strdup("");
 
     proc_net = fopen("/proc/net/dev", "r");
     while (fgets(buffer, 256, proc_net)) {
@@ -174,6 +182,7 @@ scan_net_interfaces_24(void)
 	    gint trash;
 	    gchar ifacename[16];
 	    gchar *buf = buffer;
+	    gchar *iface_type, *iface_icon;
 	    gint i;
 
 	    buf = g_strstrip(buf);
@@ -208,6 +217,11 @@ scan_net_interfaces_24(void)
 						  ni.ip[0] ?
 						  (gchar*)idle_free(g_strdup_printf(" (%s)", ni.ip)) : "");
             
+            net_get_iface_type(ifacename, &iface_type, &iface_icon);
+	    network_icons = g_strdup_printf("%sIcon$%s$%s=%s.png\n",
+	                                    network_icons, devid,
+	                                    ifacename, iface_icon);
+            
             detailed = g_strdup_printf("[Network Adapter Properties]\n"
                                         "Interface Type=%s\n"
                                         "Hardware Address (MAC)=%02x:%02x:%02x:%02x:%02x:%02x\n"
@@ -215,7 +229,7 @@ scan_net_interfaces_24(void)
                                         "[Transfer Details]\n"
                                         "Bytes Received=%ld (%.2fMiB)\n"
                                         "Bytes Sent=%ld (%.2fMiB)\n",
-                                        net_get_iface_type(ifacename),
+                                        iface_type,
                                         ni.mac[0], ni.mac[1],
                                         ni.mac[2], ni.mac[3],
                                         ni.mac[4], ni.mac[5],

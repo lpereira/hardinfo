@@ -343,10 +343,11 @@ gchar *callback_display()
 
 gchar *callback_network()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
+    return g_strdup_printf("%s\n"
+                           "[$ShellParam$]\n"
                            "ReloadInterval=3000\n"
                            "ViewType=1\n"
-                           "%s", network_interfaces);
+                           "%s", network_interfaces, network_icons);
 }
 
 gchar *callback_users()
