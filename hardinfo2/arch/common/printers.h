@@ -70,14 +70,12 @@ __scan_printers(void)
     if (noprinters > 0) {
 	printer_list = g_strdup_printf("[Printers (CUPS)]\n");
 	for (i = 0; i < noprinters; i++) {
-	    printer_list = g_strdup_printf("%s\n"
-					   "$PRN%d$" 
-                                           "%s=%s\n",
-					   printer_list,
-					   i,						
-					   printers[i],
-                                           g_str_equal(default_printer, printers[i]) ?
-				           "<i>(Default)</i>" : "");
+	    printer_list = h_strdup_cprintf("\n$PRN%d$%s=%s\n",
+					    printer_list,
+					    i,						
+					    printers[i],
+                                            g_str_equal(default_printer, printers[i]) ?
+				            "<i>(Default)</i>" : "");
 	    g_free(printers[i]);
 	}
 	

@@ -16,7 +16,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-static gchar *storage_icons = "";
+static gchar *storage_icons = NULL;
 
 static gboolean
 remove_scsi_devices(gpointer key, gpointer value, gpointer data)
@@ -110,8 +110,8 @@ __scan_scsi_devices(void)
 	    }
 	    
 	    gchar *devid = g_strdup_printf("SCSI%d", n);
-	    storage_list = g_strdup_printf("%s$%s$%s=\n", storage_list, devid, model);
-	    storage_icons = g_strdup_printf("%sIcon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
+	    storage_list = h_strdup_cprintf("$%s$%s=\n", storage_list, devid, model);
+	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
 
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
 					     "Model=%s\n"
@@ -159,7 +159,7 @@ __scan_ide_devices(void)
     /* remove old devices from global device table */
     g_hash_table_foreach_remove(moreinfo, remove_ide_devices, NULL);
 
-    storage_list = g_strdup_printf("%s\n[IDE Disks]\n", storage_list);
+    storage_list = g_strconcat(storage_list, "\n[IDE Disks]\n", NULL);
 
     iface = 'a';
     for (i = 0; i <= 16; i++) {
@@ -205,26 +205,26 @@ __scan_ide_devices(void)
       	                       gchar *media_type = g_strstrip(strstr(buf, "Does "));
       	                       gchar **ttmp = g_strsplit(media_type, " ", 0);
   	                   
-      	                       capab = g_strdup_printf("%s\nCan %s#%d=%s\n",
-  	                                               capab ? capab : "",
+      	                       capab = h_strdup_cprintf("\nCan %s#%d=%s\n",
+  	                                               capab,
   	                                               ttmp[1], ++nn, ttmp[2]);
   	                                           
                                g_strfreev(ttmp);
                            } else if (strstr(buf, "Buffer-Underrun-Free")) {
-                               capab = g_strdup_printf("%s\nSupports BurnProof=%s\n",
-                                                       capab ? capab : "",
+                               capab = h_strdup_cprintf("\nSupports BurnProof=%s\n",
+                                                       capab,
                                                        strstr(buf, "Does not") ? "No" : "Yes");
                            } else if (strstr(buf, "multi-session")) {
-                               capab = g_strdup_printf("%s\nCan read multi-session CDs=%s\n",
-                                                       capab ? capab : "",
+                               capab = h_strdup_cprintf("\nCan read multi-session CDs=%s\n",
+                                                       capab,
                                                        strstr(buf, "Does not") ? "No" : "Yes");
                            } else if (strstr(buf, "audio CDs")) {
-                               capab = g_strdup_printf("%s\nCan play audio CDs=%s\n",
-                                                       capab ? capab : "",
+                               capab = h_strdup_cprintf("\nCan play audio CDs=%s\n",
+                                                       capab,
                                                        strstr(buf, "Does not") ? "No" : "Yes");
                            } else if (strstr(buf, "PREVENT/ALLOW")) {
-                               capab = g_strdup_printf("%s\nCan lock media=%s\n",
-                                                       capab ? capab : "",
+                               capab = h_strdup_cprintf("\nCan lock media=%s\n",
+                                                       capab,
                                                        strstr(buf, "Does not") ? "No" : "Yes");
                            }
   	               } else if ((strstr(buf, "read") || strstr(buf, "write")) && strstr(buf, "kB/s")) {
@@ -242,7 +242,6 @@ __scan_ide_devices(void)
 	        
 	        g_free(tmp);
 	    }
-
 	    g_free(device);
 
 	    device = g_strdup_printf("/proc/ide/hd%c/cache", iface);
@@ -282,9 +281,9 @@ __scan_ide_devices(void)
 
 	    gchar *devid = g_strdup_printf("IDE%d", n);
 
-	    storage_list = g_strdup_printf("%s$%s$%s=\n", storage_list,
+	    storage_list = h_strdup_cprintf("$%s$%s=\n", storage_list,
 					 devid, model);
-	    storage_icons = g_strdup_printf("%sIcon$%s$%s=%s.png\n", storage_icons, devid,
+	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid,
 	                                  model, g_str_equal(media, "cdrom") ? \
 	                                         "cdrom" : "hdd");
 
@@ -301,14 +300,14 @@ __scan_ide_devices(void)
 					     media,
 					     cache);
             if (driver) {
-                strhash = g_strdup_printf("%s%s\n", strhash, driver);
+                strhash = h_strdup_cprintf("%s\n", strhash, driver);
                 
                 g_free(driver);
                 driver = NULL;
             }
             
 	    if (pgeometry && lgeometry) {
-		strhash = g_strdup_printf("%s[Geometry]\n"
+		strhash = h_strdup_cprintf("[Geometry]\n"
 					  "Physical=%s\n"
 					  "Logical=%s\n",
 					  strhash, pgeometry, lgeometry);
@@ -320,14 +319,14 @@ __scan_ide_devices(void)
             }
             
             if (capab) {
-                strhash = g_strdup_printf("%s[Capabilities]\n%s", strhash, capab);
+                strhash = h_strdup_cprintf("[Capabilities]\n%s", strhash, capab);
                 
                 g_free(capab);
                 capab = NULL;
             }
             
             if (speed) {
-                strhash = g_strdup_printf("%s[Speeds]\n%s", strhash, speed);
+                strhash = h_strdup_cprintf("[Speeds]\n%s", strhash, speed);
                 
                 g_free(speed);
                 speed = NULL;

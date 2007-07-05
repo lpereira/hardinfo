@@ -25,7 +25,7 @@ scan_boots_real(void)
     scan_os(FALSE);
 
     if (!computer->os->boots)
-      computer->os->boots = "[Boots]\n";
+      computer->os->boots = g_strdup("[Boots]\n");
     else
       return;
     
@@ -48,7 +48,7 @@ scan_boots_real(void)
           }
 
           tmp = g_strsplit(buffer, " ", 5);
-          computer->os->boots = g_strdup_printf("%s\n%s=Kernel %s",
+          computer->os->boots = h_strdup_cprintf("\n%s=Kernel %s",
                                                 computer->os->boots,
                                                 tmp[4],
                                                 tmp[3]);

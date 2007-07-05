@@ -60,32 +60,24 @@ __scan_pci(void)
 	    g_strfreev(list);
 
 	    if (irq)
-		strdevice = g_strdup_printf("%sIRQ=%d\n", strdevice, irq);
+		strdevice = h_strdup_cprintf("IRQ=%d\n", strdevice, irq);
 	    if (freq)
-		strdevice =
-		    g_strdup_printf("%sFrequency=%dMHz\n", strdevice,
-				    freq);
+		strdevice = h_strdup_cprintf("Frequency=%dMHz\n", strdevice, freq);
 	    if (latency)
-		strdevice =
-		    g_strdup_printf("%sLatency=%d\n", strdevice, latency);
+		strdevice = h_strdup_cprintf("Latency=%d\n", strdevice, latency);
 
-	    strdevice =
-		g_strdup_printf("%sBus Master=%s\n", strdevice,
-				bus_master ? "Yes" : "No");
+	    strdevice = h_strdup_cprintf("Bus Master=%s\n", strdevice, bus_master ? "Yes" : "No");
 	} else if (!strncmp(buf, "Subsystem", 9)) {
 	    WALK_UNTIL(' ');
 	    buf++;
-	    strdevice =
-		g_strdup_printf("%sOEM Vendor=%s\n", strdevice, buf);
+	    strdevice = h_strdup_cprintf("OEM Vendor=%s\n", strdevice, buf);
 	} else if (!strncmp(buf, "Capabilities", 12)
 		   && !strstr(buf, "only to root") && 
 		      !strstr(buf, "access denied")) {
 	    WALK_UNTIL(' ');
 	    WALK_UNTIL(']');
 	    buf++;
-	    strdevice =
-		g_strdup_printf("%sCapability#%d=%s\n", strdevice, ++x,
-				buf);
+	    strdevice = h_strdup_cprintf("Capability#%d=%s\n", strdevice, ++x, buf);
 	} else if (!strncmp(buf, "Memory at", 9) && strstr(buf, "[size=")) {
 	    gint mem;
 	    gchar unit;
@@ -98,7 +90,7 @@ __scan_pci(void)
 	    WALK_UNTIL('[');
 	    sscanf(buf, "[size=%d%c", &mem, &unit);
 
-	    strdevice = g_strdup_printf("%sMemory#%d=%d%cB (%s%s)\n",
+	    strdevice = h_strdup_cprintf("Memory#%d=%d%cB (%s%s)\n",
 					strdevice, ++x,
 					mem,
 					(unit == ']') ? ' ' : unit,
@@ -112,7 +104,7 @@ __scan_pci(void)
 	    sscanf(buf, "I/O ports at %x [size=%d]", &io_addr, &io_size);
 
 	    strdevice =
-		g_strdup_printf("%sI/O ports at#%d=0x%x - 0x%x\n",
+		h_strdup_cprintf("I/O ports at#%d=0x%x - 0x%x\n",
 				strdevice, ++x, io_addr,
 				io_addr + io_size);
 	} else if ((buf[0] >= '0' && buf[0] <= '9') && (buf[4] == ':' || buf[2] == ':')) {
@@ -168,16 +160,14 @@ __scan_pci(void)
             
             const gchar *url = vendor_get_url(name);
             if (url) {
-                strdevice = g_strdup_printf("%s"
-                                            "Vendor=%s (%s)\n",
+                strdevice = h_strdup_cprintf("Vendor=%s (%s)\n",
                                             strdevice,
                                             vendor_get_name(name),
                                             url);
             }
             
             
-	    pci_list = g_strdup_printf("%s$PCI%d$%s=%s\n", pci_list, n, category,
-				name);
+	    pci_list = h_strdup_cprintf("$PCI%d$%s=%s\n", pci_list, n, category, name);
 
 	    n++;
 	}

@@ -176,7 +176,7 @@ void SHA1Init(SHA1_CTX * context)
 
 /* Run your data through this. */
 
-void SHA1Update(SHA1_CTX * context, guchar *data, guint32 len)
+void SHA1Update(SHA1_CTX * context, guchar * data, guint32 len)
 {
     guint32 i, j;
 
@@ -206,7 +206,7 @@ void SHA1Final(guchar digest[20], SHA1_CTX * context)
 
     for (i = 0; i < 8; i++) {
 	finalcount[i] = (guchar) ((context->count[(i >= 4 ? 0 : 1)]
-					  >> ((3 - (i & 3)) * 8)) & 255);	/* Endian independent */
+				   >> ((3 - (i & 3)) * 8)) & 255);	/* Endian independent */
     }
     SHA1Update(context, (guchar *) "\200", 1);
     while ((context->count[0] & 504) != 448) {
@@ -236,8 +236,8 @@ void g_assert(int a)
     /* Bah, who needs testing anyway... ;) */
 }
 
-static void base32_encode_exactly(guchar *buf, gint len,
-				  guchar *encbuf, gint enclen)
+static void base32_encode_exactly(guchar * buf, gint len,
+				  guchar * encbuf, gint enclen)
 {
     gint i = 0;
     guchar *ip = buf + len;
@@ -252,26 +252,26 @@ static void base32_encode_exactly(guchar *buf, gint len,
 	    i >>= 5;		/* upper <234>, input #4 */
 	    /* FALLTHROUGH */
     case 4:
-	    i |= ((guint32) *--ip) << 3;	/* had 3 bits in `i' */
+	    i |= ((guint32) * --ip) << 3;	/* had 3 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #6 */
 	    i >>= 5;		/* upper <401234>, input #3 */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #5 */
 	    i >>= 5;		/* upper <4>, input #3 */
 	    /* FALLTHROUGH */
     case 3:
-	    i |= ((guint32) *--ip) << 1;	/* had 1 bits in `i' */
+	    i |= ((guint32) * --ip) << 1;	/* had 1 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #4 */
 	    i >>= 5;		/* upper <1234>, input #2 */
 	    /* FALLTHROUGH */
     case 2:
-	    i |= ((guint32) *--ip) << 4;	/* had 4 bits in `i' */
+	    i |= ((guint32) * --ip) << 4;	/* had 4 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #3 */
 	    i >>= 5;		/* upper <3401234>, input #1 */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #2 */
 	    i >>= 5;		/* upper <34>, input #1 */
 	    /* FALLTHROUGH */
     case 1:
-	    i |= ((guint32) *--ip) << 2;	/* had 2 bits in `i' */
+	    i |= ((guint32) * --ip) << 2;	/* had 2 bits in `i' */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #1 */
 	    i >>= 5;		/* upper <01234>, input #0 */
 	    *--op = b32_alphabet[i & 0x1f];	/* Output #0 */

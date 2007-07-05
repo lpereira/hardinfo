@@ -23,64 +23,63 @@
 #include "vendor.h"
 
 static const Vendor vendors[] = {
-    { "ATI",			"ATI Technologies, Inc.","www.ati.com" },
-    { "nVidia",			"NVIDIA Corporation",	"www.nvidia.com" },
-    { "3Com",			"3Com",			"www.3com.com" },
-    { "Intel"	,		"Intel Corp.",		"www.intel.com" },
-    { "Cirrus Logic",		"Cirrus Logic",		"www.cirrus.com" },
-    { "VIA Technologies",	"VIA Technologies",	"www.via.com.tw" },
-    { "VIA",			"VIA Technologies",	"www.via.com.tw" },
-    { "hp",			"Hewlett-Packard",	"www.hp.com" },
-    { "NEC Corporation",	"NEC Coporation",	"www.nec.com" },
-    { "MAXTOR",			"MAXTOR",		"www.maxtor.com" },
-    { "SAMSUNG",		"SAMSUNG",		"www.samsung.com" },
-    { "PIONEER",		"PIONEER",		"www.pioneer-eur.com" },
-    { "PLEXTOR",		"PLEXTOR",		"www.plextor.be" },
-    { "Realtek Semiconductor",	"Realtek",		"www.realtek.com.tw" },
-    { "TOSHIBA",		"TOSHIBA",		"www.toshiba.com" },
-    { "LITE-ON",		"LITE-ON",		"www.liteonit.com" },
-    { "WDC",			"Western Digital",	"www.wdc.com" },
-    { "HL-DT-ST",		"LG Electronics",	"www.lge.com" },
-    { "ST",			"SEAGATE",		"www.seagate.com" },
-    { "Lexmark",		"Lexmark",		"www.lexmark.com" },
-    { "_NEC",			"NEC Corporation",	"www.nec.com" },
-    { "Creative Labs",		"Creative Labs",	"www.creative.com" },
-    { "Brooktree",		"Conexant",		"www.brooktree.com" },
-    { "Atheros",		"Atheros Communications","www.atheros.com" },
-    { "MATSHITA",		"Panasonic",		"www.panasonic.com" },
-    { "Silicon Image",		"Silicon Image, Inc.",	"www.siliconimage.com" }, 
-    { "KYE",			"KYE Systems Corp.",	"www.genius-kye.com" },
-    { "Broadcom",		"Broadcom Corp.",	"www.broadcom.com" },
-    { "Apple",			"Apple Computer, Inc.",	"www.apple.com" },
-    { "IBM",			"IBM Corp.",		"www.ibm.com" },
-    { "Dell",			"Dell Computer Corp.",	"www.dell.com" },
-    { "Logitech",		"Logitech International SA", "www.logitech.com" },
-    { "FUJITSU",		"Fujitsu",		"www.fujitsu.com" },
-    { "CDU",			"Sony",			"www.sony.com" },
-    { NULL,			NULL,			NULL },
+    {"ATI", "ATI Technologies, Inc.", "www.ati.com"},
+    {"nVidia", "NVIDIA Corporation", "www.nvidia.com"},
+    {"3Com", "3Com", "www.3com.com"},
+    {"Intel", "Intel Corp.", "www.intel.com"},
+    {"Cirrus Logic", "Cirrus Logic", "www.cirrus.com"},
+    {"VIA Technologies", "VIA Technologies", "www.via.com.tw"},
+    {"VIA", "VIA Technologies", "www.via.com.tw"},
+    {"hp", "Hewlett-Packard", "www.hp.com"},
+    {"NEC Corporation", "NEC Coporation", "www.nec.com"},
+    {"MAXTOR", "MAXTOR", "www.maxtor.com"},
+    {"SAMSUNG", "SAMSUNG", "www.samsung.com"},
+    {"PIONEER", "PIONEER", "www.pioneer-eur.com"},
+    {"PLEXTOR", "PLEXTOR", "www.plextor.be"},
+    {"Realtek Semiconductor", "Realtek", "www.realtek.com.tw"},
+    {"TOSHIBA", "TOSHIBA", "www.toshiba.com"},
+    {"LITE-ON", "LITE-ON", "www.liteonit.com"},
+    {"WDC", "Western Digital", "www.wdc.com"},
+    {"HL-DT-ST", "LG Electronics", "www.lge.com"},
+    {"ST", "SEAGATE", "www.seagate.com"},
+    {"Lexmark", "Lexmark", "www.lexmark.com"},
+    {"_NEC", "NEC Corporation", "www.nec.com"},
+    {"Creative Labs", "Creative Labs", "www.creative.com"},
+    {"Brooktree", "Conexant", "www.brooktree.com"},
+    {"Atheros", "Atheros Communications", "www.atheros.com"},
+    {"MATSHITA", "Panasonic", "www.panasonic.com"},
+    {"Silicon Image", "Silicon Image, Inc.", "www.siliconimage.com"},
+    {"KYE", "KYE Systems Corp.", "www.genius-kye.com"},
+    {"Broadcom", "Broadcom Corp.", "www.broadcom.com"},
+    {"Apple", "Apple Computer, Inc.", "www.apple.com"},
+    {"IBM", "IBM Corp.", "www.ibm.com"},
+    {"Dell", "Dell Computer Corp.", "www.dell.com"},
+    {"Logitech", "Logitech International SA", "www.logitech.com"},
+    {"FUJITSU", "Fujitsu", "www.fujitsu.com"},
+    {"CDU", "Sony", "www.sony.com"},
+    {NULL, NULL, NULL},
 };
 
-const gchar *vendor_get_name(const gchar *id)
+const gchar *vendor_get_name(const gchar * id)
 {
-  int i;
-  
-  for (i = 0; vendors[i].id; i++) {
-    if (strstr(id, vendors[i].id))
-      return vendors[i].name;
-  }
-  
-  return id;
+    int i;
+
+    for (i = 0; vendors[i].id; i++) {
+	if (strstr(id, vendors[i].id))
+	    return vendors[i].name;
+    }
+
+    return id;
 }
 
-const gchar *vendor_get_url(const gchar *id)
+const gchar *vendor_get_url(const gchar * id)
 {
-  int i;
-  
-  for (i = 0; vendors[i].id; i++) {
-    if (strstr(id, vendors[i].id))
-      return vendors[i].url;
-  }
-  
-  return NULL;
-}
+    int i;
 
+    for (i = 0; vendors[i].id; i++) {
+	if (strstr(id, vendors[i].id))
+	    return vendors[i].url;
+    }
+
+    return NULL;
+}

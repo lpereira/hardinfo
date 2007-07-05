@@ -27,8 +27,9 @@ static void __scan_memory()
     if (offset == -1) {
         /* gah. linux 2.4 adds three lines of data we don't need in
            /proc/meminfo */
-        offset = strstr(idle_free(module_call_method("computer::getOSKernel")),
-                        "Linux 2.4") ? 3 : 0;
+        gchar *os_kernel = module_call_method("computer::getOSKernel");
+        offset = strstr(os_kernel, "Linux 2.4") ? 3 : 0;
+        g_free(os_kernel);
     }
     
     g_file_get_contents("/proc/meminfo", &meminfo, NULL, NULL);

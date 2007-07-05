@@ -1,5 +1,5 @@
 
-CC = gcc $(ARCHOPTS)  -O3 -fomit-frame-pointer -funroll-loops
+CC = gcc $(ARCHOPTS) -g
 CCSLOW = gcc -O0 -g
 CFLAGS = -fPIC -pipe -Wall -g $(GTK_CFLAGS) $(GLADE_CFLAGS) $(SOUP_CFLAGS) -I.
 

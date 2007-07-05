@@ -69,17 +69,17 @@ void scan_network(gboolean reload);
 void scan_users(gboolean reload);
 
 static ModuleEntry entries[] = {
-    { "Summary",		"summary.png",		callback_summary,	scan_summary },
-    { "Operating System",	"os.png",		callback_os,		scan_os },
-    { "Kernel Modules",		"module.png",		callback_modules,	scan_modules },
-    { "Boots",			"boot.png",		callback_boots,		scan_boots },
-    { "Languages",		"language.png",		callback_locales,	scan_locales },
-    { "Filesystems",		"dev_removable.png",	callback_fs,		scan_fs },
-    { "Shared Directories",	"shares.png",		callback_shares,	scan_shares },
-    { "Display",		"monitor.png",		callback_display,	scan_display },
-    { "Network Interfaces",	"network.png",		callback_network,	scan_network },
-    { "Users",			"users.png",		callback_users,		scan_users },
-    { NULL },
+    {"Summary", "summary.png", callback_summary, scan_summary},
+    {"Operating System", "os.png", callback_os, scan_os},
+    {"Kernel Modules", "module.png", callback_modules, scan_modules},
+    {"Boots", "boot.png", callback_boots, scan_boots},
+    {"Languages", "language.png", callback_locales, scan_locales},
+    {"Filesystems", "dev_removable.png", callback_fs, scan_fs},
+    {"Shared Directories", "shares.png", callback_shares, scan_shares},
+    {"Display", "monitor.png", callback_display, scan_display},
+    {"Network Interfaces", "network.png", callback_network, scan_network},
+    {"Users", "users.png", callback_users, scan_users},
+    {NULL},
 };
 
 #include "computer.h"
@@ -103,8 +103,7 @@ static Computer *computer = NULL;
 #include <arch/common/users.h>
 #include <arch/this/boots.h>
 
-gchar *
-hi_more_info(gchar * entry)
+gchar *hi_more_info(gchar * entry)
 {
     gchar *info = (gchar *) g_hash_table_lookup(moreinfo, entry);
 
@@ -114,8 +113,7 @@ hi_more_info(gchar * entry)
     return g_strdup_printf("[%s]", entry);
 }
 
-gchar *
-hi_get_field(gchar * field)
+gchar *hi_get_field(gchar * field)
 {
     gchar *tmp;
 
@@ -214,75 +212,84 @@ void scan_users(gboolean reload)
 
 gchar *callback_summary()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-                           "UpdateInterval$Memory=1000\n"
-                           "UpdateInterval$Date/Time=1000\n"
-                           "#ReloadInterval=5000\n"
-                           "[Computer]\n"
-                           "Processor=%s\n"
-                           "Memory=...\n"
-                           "Operating System=%s\n"
-                           "User Name=%s\n"
-                           "Date/Time=...\n"
-                           "[Display]\n"
-                           "Resolution=%dx%d pixels\n"
-                           "OpenGL Renderer=%s\n"
-                           "X11 Vendor=%s\n"
-                           "[Multimedia]\n"
-                           "\n%s\n"
-                           "[Input Devices]\n%s\n"
-                           "\n%s\n"
-                           "\n%s\n",
-                           (gchar*)idle_free(module_call_method("devices::getProcessorName")),
-                           computer->os->distro,
-                           computer->os->username,
-                           computer->display->width,
-                           computer->display->height,
-                           computer->display->ogl_renderer,
-                           computer->display->vendor,
-                           (gchar*)idle_free(computer_get_alsacards(computer)),
-                           (gchar*)idle_free(module_call_method("devices::getInputDevices")),
-                           (gchar*)idle_free(module_call_method("devices::getPrinters")),
-                           (gchar*)idle_free(module_call_method("devices::getStorageDevices")));
+    gchar *processor_name =
+	module_call_method("devices::getProcessorName"), *alsa_cards =
+	computer_get_alsacards(computer), *input_devices =
+	module_call_method("devices::getInputDevices"), *printers =
+	module_call_method("devices::getPrinters"), *storage_devices =
+	module_call_method("devices::getStorageDevices"), *summary;
+
+    summary = g_strdup_printf("[$ShellParam$]\n"
+			      "UpdateInterval$Memory=1000\n"
+			      "UpdateInterval$Date/Time=1000\n"
+			      "#ReloadInterval=5000\n"
+			      "[Computer]\n"
+			      "Processor=%s\n"
+			      "Memory=...\n"
+			      "Operating System=%s\n"
+			      "User Name=%s\n"
+			      "Date/Time=...\n"
+			      "[Display]\n"
+			      "Resolution=%dx%d pixels\n"
+			      "OpenGL Renderer=%s\n"
+			      "X11 Vendor=%s\n"
+			      "[Multimedia]\n"
+			      "\n%s\n"
+			      "[Input Devices]\n%s\n"
+			      "\n%s\n"
+			      "\n%s\n",
+			      processor_name,
+			      computer->os->distro,
+			      computer->os->username,
+			      computer->display->width,
+			      computer->display->height,
+			      computer->display->ogl_renderer,
+			      computer->display->vendor,
+			      alsa_cards,
+			      input_devices, printers, storage_devices);
+    g_free(processor_name);
+    g_free(alsa_cards);
+    g_free(input_devices);
+    g_free(printers);
+    g_free(storage_devices);
+
+    return summary;
 }
 
 gchar *callback_os()
 {
     return g_strdup_printf("[$ShellParam$]\n"
-                           "UpdateInterval$Uptime=10000\n"
-                           "UpdateInterval$Load Average=1000\n"
-                           "[Version]\n"
-                           "Kernel=%s\n"
-                           "Compiled=%s\n"
-                           "C Library=%s\n"
-                           "Distribution=%s\n"
-                           "[Current Session]\n"
-                           "Computer Name=%s\n"
-                           "User Name=%s\n"
-                           "#Language=%s\n"
-                           "Home Directory=%s\n"
-                           "Desktop Environment=%s\n"
-                           "[Misc]\n"
-                           "Uptime=...\n"
-                           "Load Average=...",
-                           computer->os->kernel,
-                           computer->os->compiled_date,
-                           computer->os->libc,
-                           computer->os->distro,
-                           computer->os->hostname,
-                           computer->os->username,
-                           computer->os->language,
-                           computer->os->homedir,
-                           computer->os->desktop);
+			   "UpdateInterval$Uptime=10000\n"
+			   "UpdateInterval$Load Average=1000\n"
+			   "[Version]\n"
+			   "Kernel=%s\n"
+			   "Compiled=%s\n"
+			   "C Library=%s\n"
+			   "Distribution=%s\n"
+			   "[Current Session]\n"
+			   "Computer Name=%s\n"
+			   "User Name=%s\n"
+			   "#Language=%s\n"
+			   "Home Directory=%s\n"
+			   "Desktop Environment=%s\n"
+			   "[Misc]\n"
+			   "Uptime=...\n"
+			   "Load Average=...",
+			   computer->os->kernel,
+			   computer->os->compiled_date,
+			   computer->os->libc,
+			   computer->os->distro,
+			   computer->os->hostname,
+			   computer->os->username,
+			   computer->os->language,
+			   computer->os->homedir, computer->os->desktop);
 }
 
 gchar *callback_modules()
 {
     return g_strdup_printf("[Loaded Modules]\n"
-                           "%s"
-                           "[$ShellParam$]\n"
-                           "ViewType=1",
-                           module_list);
+			   "%s"
+			   "[$ShellParam$]\n" "ViewType=1", module_list);
 }
 
 gchar *callback_boots()
@@ -293,72 +300,72 @@ gchar *callback_boots()
 gchar *callback_locales()
 {
     return g_strdup_printf("[$ShellParam$]\n"
-                           "ViewType=1\n"
-                           "[Available Languages]\n"
-                           "%s", computer->os->languages);
+			   "ViewType=1\n"
+			   "[Available Languages]\n"
+			   "%s", computer->os->languages);
 }
 
 gchar *callback_fs()
 {
     return g_strdup_printf("[$ShellParam$]\n"
-                           "ViewType=1\n"
-                           "ReloadInterval=5000\n"
-                           "[Mounted File Systems]\n%s\n", fs_list);
+			   "ViewType=1\n"
+			   "ReloadInterval=5000\n"
+			   "[Mounted File Systems]\n%s\n", fs_list);
 }
 
 gchar *callback_shares()
 {
     return g_strdup_printf("[SAMBA]\n"
-                           "%s\n"
-                           "[NFS]\n"
-                           "%s", smb_shares_list, nfs_shares_list);
+			   "%s\n"
+			   "[NFS]\n"
+			   "%s", smb_shares_list, nfs_shares_list);
 }
 
 gchar *callback_display()
 {
     return g_strdup_printf("[Display]\n"
-                           "Resolution=%dx%d pixels\n"
-                           "Vendor=%s\n"
-                           "Version=%s\n"
-                           "[Monitors]\n"
-                           "%s"
-                           "[Extensions]\n"
-                           "%s"
-                           "[OpenGL]\n"
-                           "Vendor=%s\n"
-                           "Renderer=%s\n"
-                           "Version=%s\n"
-                           "Direct Rendering=%s\n",
-                           computer->display->width,
-                           computer->display->height,
-                           computer->display->vendor,
-                           computer->display->version,
-                           computer->display->monitors,
-                           computer->display->extensions,
-                           computer->display->ogl_vendor,
-                           computer->display->ogl_renderer,
-                           computer->display->ogl_version,
-                           computer->display->dri ? "Yes" : "No");
+			   "Resolution=%dx%d pixels\n"
+			   "Vendor=%s\n"
+			   "Version=%s\n"
+			   "[Monitors]\n"
+			   "%s"
+			   "[Extensions]\n"
+			   "%s"
+			   "[OpenGL]\n"
+			   "Vendor=%s\n"
+			   "Renderer=%s\n"
+			   "Version=%s\n"
+			   "Direct Rendering=%s\n",
+			   computer->display->width,
+			   computer->display->height,
+			   computer->display->vendor,
+			   computer->display->version,
+			   computer->display->monitors,
+			   computer->display->extensions,
+			   computer->display->ogl_vendor,
+			   computer->display->ogl_renderer,
+			   computer->display->ogl_version,
+			   computer->display->dri ? "Yes" : "No");
 }
 
 gchar *callback_network()
 {
     return g_strdup_printf("%s\n"
-                           "[$ShellParam$]\n"
-                           "ReloadInterval=3000\n"
-                           "ViewType=1\n"
-                           "%s", network_interfaces, network_icons);
+			   "[$ShellParam$]\n"
+			   "ReloadInterval=3000\n"
+			   "ViewType=1\n"
+			   "%s", network_interfaces, network_icons);
 }
 
 gchar *callback_users()
 {
     return g_strdup_printf("[$ShellParam$]\n"
-                           "ReloadInterval=10000\n"
-                           "ViewType=1\n"
-                           "[Human Users]\n"
-                           "%s\n"
-                           "[System Users]\n"
-                           "%s\n", human_users, sys_users);
+			   "ReloadInterval=10000\n"
+			   "ViewType=1\n"
+			   "[Human Users]\n"
+			   "%s\n"
+			   "[System Users]\n"
+			   "%s\n", human_users, sys_users);
 }
 
 gchar *get_os_kernel(void)
@@ -367,61 +374,54 @@ gchar *get_os_kernel(void)
     return computer->os->kernel;
 }
 
-ShellModuleMethod*
-hi_exported_methods(void)
+ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
-      { "getOSKernel", get_os_kernel },
-      { NULL }
+	{"getOSKernel", get_os_kernel},
+	{NULL}
     };
-    
+
     return m;
 }
 
-ModuleEntry *
-hi_module_get_entries(void)
+ModuleEntry *hi_module_get_entries(void)
 {
     return entries;
 }
 
-gchar *
-hi_module_get_name(void)
+gchar *hi_module_get_name(void)
 {
     return g_strdup("Computer");
 }
 
-guchar
-hi_module_get_weight(void)
+guchar hi_module_get_weight(void)
 {
     return 80;
 }
 
-gchar **
-hi_module_get_dependencies(void)
+gchar **hi_module_get_dependencies(void)
 {
     static gchar *deps[] = { "devices.so", NULL };
-    
+
     return deps;
 }
 
-void
-hi_module_init(void)
+void hi_module_init(void)
 {
     computer = g_new0(Computer, 1);
-    moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+    moreinfo =
+	g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 }
 
-ModuleAbout *
-hi_module_get_about(void)
+ModuleAbout *hi_module_get_about(void)
 {
     static ModuleAbout ma[] = {
-      {
-          .author	= "Leandro A. F. Pereira",
-          .description	= "Gathers high-level computer information",
-          .version	= VERSION,
-          .license	= "GNU GPL version 2"
-      }
+	{
+	 .author = "Leandro A. F. Pereira",
+	 .description = "Gathers high-level computer information",
+	 .version = VERSION,
+	 .license = "GNU GPL version 2"}
     };
-    
+
     return ma;
 }

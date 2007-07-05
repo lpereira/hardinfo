@@ -15,7 +15,7 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
- 
+
 #include <report.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,130 +24,127 @@
 #include <hardinfo.h>
 #include <config.h>
 
-static ReportDialog	*report_dialog_new(GtkTreeModel *model, GtkWidget *parent);
-static void		 set_all_active(ReportDialog *rd, gboolean setting);
+static ReportDialog *report_dialog_new(GtkTreeModel * model,
+				       GtkWidget * parent);
+static void set_all_active(ReportDialog * rd, gboolean setting);
 
 static FileTypes file_types[] = {
-  { "HTML (*.html)",		"text/html",	".html",	report_context_html_new },
-  { "Plain Text (*.txt)",	"text/plain",	".txt",		report_context_text_new },
-  { NULL,			NULL,		NULL,		NULL }
+    {"HTML (*.html)", "text/html", ".html", report_context_html_new},
+    {"Plain Text (*.txt)", "text/plain", ".txt", report_context_text_new},
+    {NULL, NULL, NULL, NULL}
 };
 
-void
-report_header(ReportContext *ctx)
+void report_header(ReportContext * ctx)
 {
     ctx->header(ctx);
 }
 
-void
-report_footer(ReportContext *ctx)
+void report_footer(ReportContext * ctx)
 {
     ctx->footer(ctx);
 }
 
-void
-report_title(ReportContext *ctx, gchar *text)
+void report_title(ReportContext * ctx, gchar * text)
 {
     ctx->title(ctx, text);
 }
 
-void
-report_subtitle(ReportContext *ctx, gchar *text)
+void report_subtitle(ReportContext * ctx, gchar * text)
 {
     ctx->subtitle(ctx, text);
 }
 
-void
-report_subsubtitle(ReportContext *ctx, gchar *text)
+void report_subsubtitle(ReportContext * ctx, gchar * text)
 {
     ctx->subsubtitle(ctx, text);
 }
 
-void
-report_key_value(ReportContext *ctx, gchar *key, gchar *value)
+void report_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
     ctx->keyvalue(ctx, key, value);
 }
 
-void
-report_context_configure(ReportContext *ctx, GKeyFile *keyfile)
+void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 {
     /* FIXME: sometime in the future we'll save images in the report. this
-              flag will be set if we should support that.
-              
-              so i don't forget how to encode the images inside the html files:
-              http://en.wikipedia.org/wiki/Data:_URI_scheme */
-              
+       flag will be set if we should support that.
+
+       so i don't forget how to encode the images inside the html files:
+       http://en.wikipedia.org/wiki/Data:_URI_scheme */
+
     ctx->is_image_enabled = (g_key_file_get_boolean(keyfile,
-                                                    "$ShellParam$",
-                                                    "ViewType",
-                                                    NULL) == SHELL_VIEW_PROGRESS);
+						    "$ShellParam$",
+						    "ViewType",
+						    NULL) ==
+			     SHELL_VIEW_PROGRESS);
 }
 
-void
-report_table(ReportContext *ctx, gchar *text)
+void report_table(ReportContext * ctx, gchar * text)
 {
-    GKeyFile	 *key_file = g_key_file_new();
-    gchar	**groups;
-    gint          i;
+    GKeyFile *key_file = g_key_file_new();
+    gchar **groups;
+    gint i;
 
     g_key_file_load_from_data(key_file, text, strlen(text), 0, NULL);
     groups = g_key_file_get_groups(key_file, NULL);
-    
+
     for (i = 0; groups[i]; i++) {
-	gchar   *group, *tmpgroup;
+	gchar *group, *tmpgroup;
 	gchar **keys;
-	gint    j;
-	
+	gint j;
+
 	if (groups[i][0] == '$') {
 	    report_context_configure(ctx, key_file);
 	    continue;
-        }
-	
-        group = groups[i];
+	}
 
-        tmpgroup = g_strdup(group);
-        strend(group, '#');
+	group = groups[i];
 
-        report_subsubtitle(ctx, group);
-	
+	tmpgroup = g_strdup(group);
+	strend(group, '#');
+
+	report_subsubtitle(ctx, group);
+
 #if 0
-        if (ctx->is_image_enabled) {
-            report_embed_image(ctx, key_file, group);
-        } else {
-#endif        	
-            keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
-            for (j = 0; keys[j]; j++) {
-                gchar *key = keys[j];
-                gchar *value;
+	if (ctx->is_image_enabled) {
+	    report_embed_image(ctx, key_file, group);
+	} else {
+#endif
+	    keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
+	    for (j = 0; keys[j]; j++) {
+		gchar *key = keys[j];
+		gchar *value;
 
-                value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
-           
-                if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-                        strend(key, '#');
+		value =
+		    g_key_file_get_value(key_file, tmpgroup, key, NULL);
 
-                        if (g_str_equal(value, "...")) {
-                            g_free(value);
-                            if (!(value = ctx->entry->fieldfunc(key))) {
-                                value = g_strdup("...");
-                            }
-                        }
+		if (g_utf8_validate(key, -1, NULL)
+		    && g_utf8_validate(value, -1, NULL)) {
+		    strend(key, '#');
 
-                        if (*key == '$') {
-                            report_key_value(ctx, strchr(key + 1, '$') + 1, value);
-                        } else {
-                            report_key_value(ctx, key, value);
-                        }
-                                            
-                }
+		    if (g_str_equal(value, "...")) {
+			g_free(value);
+			if (!(value = ctx->entry->fieldfunc(key))) {
+			    value = g_strdup("...");
+			}
+		    }
 
-                g_free(value);
-            }
+		    if (*key == '$') {
+			report_key_value(ctx, strchr(key + 1, '$') + 1,
+					 value);
+		    } else {
+			report_key_value(ctx, key, value);
+		    }
 
-            g_strfreev(keys);
+		}
+
+		g_free(value);
+	    }
+
+	    g_strfreev(keys);
 #if 0
-        }
-#endif	
+	}
+#endif
 	g_free(tmpgroup);
     }
 
@@ -155,397 +152,381 @@ report_table(ReportContext *ctx, gchar *text)
     g_key_file_free(key_file);
 }
 
-static void
-report_html_header(ReportContext *ctx)
+static void report_html_header(ReportContext * ctx)
 {
     if (ctx->output)
-        g_free(ctx->output);
-    
-    ctx->output = g_strdup_printf("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Final//EN\">\n" \
-                                  "<html><head>\n" \
-              	                  "<title>HardInfo (%s) System Report</title>\n" \
-                                  "<style>\n" \
-        	                  "    body    { background: #fff }\n" \
-        	                  "    .title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n" \
-        	                  "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n" \
-        	                  "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n" \
-        	                  "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n" \
-        	                  "    .value  { font: 80%% sans-serif; color: #505050 }\n" \
-        	                  "</style>\n" \
-        	                  "</head><body>\n" \
-                                  "<table width=\"100%%\"><tbody>", VERSION);
+	g_free(ctx->output);
+
+    ctx->output =
+	g_strdup_printf
+	("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Final//EN\">\n"
+	 "<html><head>\n" "<title>HardInfo (%s) System Report</title>\n"
+	 "<style>\n" "    body    { background: #fff }\n"
+	 "    .title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n"
+	 "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n"
+	 "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n"
+	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n"
+	 "    .value  { font: 80%% sans-serif; color: #505050 }\n"
+	 "</style>\n" "</head><body>\n" "<table width=\"100%%\"><tbody>",
+	 VERSION);
 }
 
-static void
-report_html_footer(ReportContext *ctx)
+static void report_html_footer(ReportContext * ctx)
 {
     ctx->output = g_strconcat(ctx->output,
-                              "</tbody></table></body></html>",
-                              NULL);
+			      "</tbody></table></body></html>", NULL);
 }
 
-static void
-report_html_title(ReportContext *ctx, gchar *text)
+static void report_html_title(ReportContext * ctx, gchar * text)
 {
-    ctx->output = g_strdup_printf("%s" \
-                                  "<tr><td colspan=\"2\" class=\"titl" \
-                                  "e\">%s</td></tr>\n",
-                                  ctx->output, text);
+    ctx->output = g_strdup_printf("%s"
+				  "<tr><td colspan=\"2\" class=\"titl"
+				  "e\">%s</td></tr>\n", ctx->output, text);
 }
 
-static void
-report_html_subtitle(ReportContext *ctx, gchar *text)
+static void report_html_subtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = g_strdup_printf("%s" \
-                                  "<tr><td colspan=\"2\" class=\"stit" \
-                                  "le\">%s</td></tr>\n",
-                                  ctx->output, text);
+    ctx->output = g_strdup_printf("%s"
+				  "<tr><td colspan=\"2\" class=\"stit"
+				  "le\">%s</td></tr>\n",
+				  ctx->output, text);
 }
 
-static void
-report_html_subsubtitle(ReportContext *ctx, gchar *text)
+static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = g_strdup_printf("%s" \
-                                  "<tr><td colspan=\"2\" class=\"ssti" \
-                                  "tle\">%s</td></tr>\n",
-                                  ctx->output, text);
+    ctx->output = g_strdup_printf("%s"
+				  "<tr><td colspan=\"2\" class=\"ssti"
+				  "tle\">%s</td></tr>\n",
+				  ctx->output, text);
 }
 
 static void
-report_html_key_value(ReportContext *ctx, gchar *key, gchar *value)
+report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
-    ctx->output = g_strdup_printf("%s" \
-                                  "<tr><td class=\"field\">%s</td>" \
-                                  "<td class=\"value\">%s</td></tr>\n",
-                                  ctx->output, key, value);
+    ctx->output = g_strdup_printf("%s"
+				  "<tr><td class=\"field\">%s</td>"
+				  "<td class=\"value\">%s</td></tr>\n",
+				  ctx->output, key, value);
 }
 
-static void
-report_text_header(ReportContext *ctx)
+static void report_text_header(ReportContext * ctx)
 {
     if (ctx->output)
-        g_free(ctx->output);
-        
+	g_free(ctx->output);
+
     ctx->output = g_strdup("");
 }
 
-static void
-report_text_footer(ReportContext *ctx)
+static void report_text_footer(ReportContext * ctx)
 {
 }
 
-static void
-report_text_title(ReportContext *ctx, gchar *text)
+static void report_text_title(ReportContext * ctx, gchar * text)
 {
-    gchar *str = (gchar*)ctx->output;
+    gchar *str = (gchar *) ctx->output;
     int i = strlen(text);
-    
+
     str = g_strdup_printf("%s\n%s\n", str, text);
     for (; i; i--)
-        str = g_strconcat(str, "*", NULL);
-        
+	str = g_strconcat(str, "*", NULL);
+
     str = g_strconcat(str, "\n\n", NULL);
     ctx->output = str;
 }
 
-static void
-report_text_subtitle(ReportContext *ctx, gchar *text)
+static void report_text_subtitle(ReportContext * ctx, gchar * text)
 {
     gchar *str = ctx->output;
     int i = strlen(text);
-    
+
     str = g_strdup_printf("%s\n%s\n", str, text);
     for (; i; i--)
-        str = g_strconcat(str, "-", NULL);
-        
+	str = g_strconcat(str, "-", NULL);
+
     str = g_strconcat(str, "\n\n", NULL);
     ctx->output = str;
 }
 
-static void
-report_text_subsubtitle(ReportContext *ctx, gchar *text)
+static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
 {
     ctx->output = g_strdup_printf("%s-%s-\n", ctx->output, text);
 }
 
 static void
-report_text_key_value(ReportContext *ctx, gchar *key, gchar *value)
+report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
     if (strlen(value))
-        ctx->output = g_strdup_printf("%s%s\t\t: %s\n", ctx->output, key, value);
+	ctx->output =
+	    g_strdup_printf("%s%s\t\t: %s\n", ctx->output, key, value);
     else
-        ctx->output = g_strdup_printf("%s%s\n", ctx->output, key);
+	ctx->output = g_strdup_printf("%s%s\n", ctx->output, key);
 }
 
-static GSList *
-report_create_module_list_from_dialog(ReportDialog *rd)
+static GSList *report_create_module_list_from_dialog(ReportDialog * rd)
 {
-    ShellModule  *module;
-    GSList       *modules = NULL;
+    ShellModule *module;
+    GSList *modules = NULL;
     GtkTreeModel *model = rd->model;
-    GtkTreeIter   iter;
+    GtkTreeIter iter;
 
     gtk_tree_model_get_iter_first(model, &iter);
     do {
-        gboolean selected;
-        gchar *name;
+	gboolean selected;
+	gchar *name;
 
-        gtk_tree_model_get(model, &iter, TREE_COL_SEL, &selected, -1);
-        if (!selected)
-            continue;
-            
-        module = g_new0(ShellModule, 1);
-        
-        gtk_tree_model_get(model, &iter, TREE_COL_NAME, &name, -1);
-        module->name = name;
-        module->entries = NULL;
+	gtk_tree_model_get(model, &iter, TREE_COL_SEL, &selected, -1);
+	if (!selected)
+	    continue;
 
-        if (gtk_tree_model_iter_has_child(model, &iter)) {
-            ShellModuleEntry *entry;
-            
-            gint children = gtk_tree_model_iter_n_children(model, &iter);
-            gint i;
+	module = g_new0(ShellModule, 1);
 
-            for (i = 0; i < children; i++) {
-                GtkTreeIter child;
-                
-                gtk_tree_model_iter_nth_child(model, &child, &iter, i);
-                
-                gtk_tree_model_get(model, &child, TREE_COL_SEL, &selected, -1);
-                if (!selected)
-                    continue;
+	gtk_tree_model_get(model, &iter, TREE_COL_NAME, &name, -1);
+	module->name = name;
+	module->entries = NULL;
 
-                gtk_tree_model_get(model, &child, TREE_COL_DATA, &entry, -1);
-                module->entries = g_slist_append(module->entries, entry);
-            }
-        }
-        
-        modules = g_slist_append(modules, module);
+	if (gtk_tree_model_iter_has_child(model, &iter)) {
+	    ShellModuleEntry *entry;
+
+	    gint children = gtk_tree_model_iter_n_children(model, &iter);
+	    gint i;
+
+	    for (i = 0; i < children; i++) {
+		GtkTreeIter child;
+
+		gtk_tree_model_iter_nth_child(model, &child, &iter, i);
+
+		gtk_tree_model_get(model, &child, TREE_COL_SEL, &selected,
+				   -1);
+		if (!selected)
+		    continue;
+
+		gtk_tree_model_get(model, &child, TREE_COL_DATA, &entry,
+				   -1);
+		module->entries = g_slist_append(module->entries, entry);
+	    }
+	}
+
+	modules = g_slist_append(modules, module);
     } while (gtk_tree_model_iter_next(rd->model, &iter));
-    
+
     return modules;
 }
 
 static void
-report_create_inner_from_module_list(ReportContext *ctx, GSList *modules)
+report_create_inner_from_module_list(ReportContext * ctx, GSList * modules)
 {
     for (; modules; modules = modules->next) {
-        ShellModule *module = (ShellModule *) modules->data;
-        GSList *entries;
-        
-        if (!params.gui_running)
-            fprintf(stderr, "\033[40;32m%s\033[0m\n", module->name);
-        
-        report_title(ctx, module->name);
-        
-        for (entries = module->entries; entries; entries = entries->next) {
-            ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
-            
-            if (!params.gui_running) 
-                fprintf(stderr, "\033[2K\033[40;32;1m %s\033[0m\n", entry->name);
-            
-            ctx->entry = entry;
-            report_subtitle(ctx, entry->name);
-            module_entry_scan(entry);
-            report_table(ctx, module_entry_function(entry));
-        }
+	ShellModule *module = (ShellModule *) modules->data;
+	GSList *entries;
+
+	if (!params.gui_running)
+	    fprintf(stderr, "\033[40;32m%s\033[0m\n", module->name);
+
+	report_title(ctx, module->name);
+
+	for (entries = module->entries; entries; entries = entries->next) {
+	    ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
+
+	    if (!params.gui_running)
+		fprintf(stderr, "\033[2K\033[40;32;1m %s\033[0m\n",
+			entry->name);
+
+	    ctx->entry = entry;
+	    report_subtitle(ctx, entry->name);
+	    module_entry_scan(entry);
+	    report_table(ctx, module_entry_function(entry));
+	}
     }
 }
 
-void report_module_list_free(GSList *modules)
+void report_module_list_free(GSList * modules)
 {
     GSList *m;
-    
+
     for (m = modules; m; m = m->next) {
-        ShellModule *module = (ShellModule *) m->data;
-        
-        g_slist_free(module->entries);
+	ShellModule *module = (ShellModule *) m->data;
+
+	g_slist_free(module->entries);
     }
-    
+
     g_slist_free(modules);
 }
 
-static gchar *
-report_get_filename(void)
+static gchar *report_get_filename(void)
 {
     GtkWidget *dialog;
     gchar *filename = NULL;
 
     dialog = gtk_file_chooser_dialog_new("Save File",
-	                                 NULL,
-                                         GTK_FILE_CHOOSER_ACTION_SAVE,
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-                                         NULL);
-                                                   
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "hardinfo report");
-    
+					 NULL,
+					 GTK_FILE_CHOOSER_ACTION_SAVE,
+					 GTK_STOCK_CANCEL,
+					 GTK_RESPONSE_CANCEL,
+					 GTK_STOCK_SAVE,
+					 GTK_RESPONSE_ACCEPT, NULL);
+
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
+				      "hardinfo report");
+
     file_chooser_add_filters(dialog, file_types);
     file_chooser_open_expander(dialog);
-    
-    if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-        gchar *ext = file_chooser_get_extension(dialog, file_types);
-        filename = file_chooser_build_filename(dialog, ext);        
-    }  
-    gtk_widget_destroy (dialog);
+
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+	gchar *ext = file_chooser_get_extension(dialog, file_types);
+	filename = file_chooser_build_filename(dialog, ext);
+    }
+    gtk_widget_destroy(dialog);
     return filename;
 }
 
-ReportContext*
-report_context_html_new()
+ReportContext *report_context_html_new()
 {
     ReportContext *ctx;
-    
+
     ctx = g_new0(ReportContext, 1);
-    ctx->header      = report_html_header;
-    ctx->footer      = report_html_footer;
-    ctx->title       = report_html_title;
-    ctx->subtitle    = report_html_subtitle;
+    ctx->header = report_html_header;
+    ctx->footer = report_html_footer;
+    ctx->title = report_html_title;
+    ctx->subtitle = report_html_subtitle;
     ctx->subsubtitle = report_html_subsubtitle;
-    ctx->keyvalue    = report_html_key_value;
-    
+    ctx->keyvalue = report_html_key_value;
+
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_HTML;
-    
+
     return ctx;
 }
 
-ReportContext*
-report_context_text_new()
+ReportContext *report_context_text_new()
 {
     ReportContext *ctx;
-    
+
     ctx = g_new0(ReportContext, 1);
-    ctx->header      = report_text_header;
-    ctx->footer      = report_text_footer;
-    ctx->title       = report_text_title;
-    ctx->subtitle    = report_text_subtitle;
+    ctx->header = report_text_header;
+    ctx->footer = report_text_footer;
+    ctx->title = report_text_title;
+    ctx->subtitle = report_text_subtitle;
     ctx->subsubtitle = report_text_subsubtitle;
-    ctx->keyvalue    = report_text_key_value;
-    
+    ctx->keyvalue = report_text_key_value;
+
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_TEXT;
-    
+
     return ctx;
 }
 
-void
-report_context_free(ReportContext *ctx)
+void report_context_free(ReportContext * ctx)
 {
     g_free(ctx->output);
     g_free(ctx);
 }
 
-void
-report_create_from_module_list(ReportContext *ctx, GSList *modules)
+void report_create_from_module_list(ReportContext * ctx, GSList * modules)
 {
     report_header(ctx);
-    
+
     report_create_inner_from_module_list(ctx, modules);
     report_module_list_free(modules);
 
     report_footer(ctx);
 }
 
-gchar *
-report_create_from_module_list_format(GSList *modules, ReportFormat format)
+gchar *report_create_from_module_list_format(GSList * modules,
+					     ReportFormat format)
 {
-    ReportContext	*(*create_context)();
-    ReportContext	*ctx;
-    gchar		*retval;
-    
+    ReportContext *(*create_context) ();
+    ReportContext *ctx;
+    gchar *retval;
+
     if (format >= N_REPORT_FORMAT)
-        return NULL;
-    
+	return NULL;
+
     create_context = file_types[format].data;
     if (!create_context)
-        return NULL;
-        
+	return NULL;
+
     ctx = create_context();
 
     report_create_from_module_list(ctx, modules);
     retval = g_strdup(ctx->output);
-    
+
     report_context_free(ctx);
-    
+
     return retval;
 }
 
-static gboolean
-report_generate(ReportDialog *rd)
+static gboolean report_generate(ReportDialog * rd)
 {
-    GSList		*modules;
-    ReportContext	*ctx;
-    ReportContext	*(*create_context)();
-    gchar		*file;
-    FILE		*stream;
-    
+    GSList *modules;
+    ReportContext *ctx;
+    ReportContext *(*create_context) ();
+    gchar *file;
+    FILE *stream;
+
     if (!(file = report_get_filename()))
-        return FALSE;
+	return FALSE;
 
     if (!(stream = fopen(file, "w+"))) {
-        g_free(file);
-        return FALSE;
+	g_free(file);
+	return FALSE;
     }
-    
+
     create_context = file_types_get_data_by_name(file_types, file);
-    
+
     if (!create_context) {
-        g_warning("Cannot create ReportContext. Programming bug?");
-        g_free(file);
-        return FALSE;
+	g_warning("Cannot create ReportContext. Programming bug?");
+	g_free(file);
+	return FALSE;
     }
 
     ctx = create_context();
     modules = report_create_module_list_from_dialog(rd);
-    
+
     report_create_from_module_list(ctx, modules);
     fputs(ctx->output, stream);
     fclose(stream);
-    
+
     if (ctx->format == REPORT_FORMAT_HTML) {
-        GtkWidget *dialog;
-        dialog = gtk_message_dialog_new(NULL,
-                    		        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_QUESTION,
-                                        GTK_BUTTONS_NONE,
-                                        "Open the report with your web browser?");
+	GtkWidget *dialog;
+	dialog = gtk_message_dialog_new(NULL,
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_QUESTION,
+					GTK_BUTTONS_NONE,
+					"Open the report with your web browser?");
 	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 			       GTK_STOCK_NO, GTK_RESPONSE_REJECT,
-			       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-			       NULL);
+			       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
 	    open_url(file);
 
 	gtk_widget_destroy(dialog);
     }
-    
+
     report_context_free(ctx);
     g_free(file);
-    
+
     return TRUE;
 }
 
-void
-report_dialog_show(GtkTreeModel *model, GtkWidget *parent)
+void report_dialog_show(GtkTreeModel * model, GtkWidget * parent)
 {
     gboolean success;
     ReportDialog *rd = report_dialog_new(model, parent);
 
     if (gtk_dialog_run(GTK_DIALOG(rd->dialog)) == GTK_RESPONSE_ACCEPT) {
 	shell_status_update("Generating report...");
-        gtk_widget_hide(rd->dialog);
-        shell_view_set_enabled(FALSE);
-        shell_status_set_enabled(TRUE);
+	gtk_widget_hide(rd->dialog);
+	shell_view_set_enabled(FALSE);
+	shell_status_set_enabled(TRUE);
 
 	success = report_generate(rd);
 
-        shell_status_set_enabled(FALSE);
-        
-        if (success) 
-  	    shell_status_update("Report saved.");
-        else
-            shell_status_update("Error while creating the report.");
+	shell_status_set_enabled(FALSE);
+
+	if (success)
+	    shell_status_update("Report saved.");
+	else
+	    shell_status_update("Error while creating the report.");
     }
 
     set_all_active(rd, FALSE);
@@ -554,69 +535,69 @@ report_dialog_show(GtkTreeModel *model, GtkWidget *parent)
 }
 
 static void
-set_children_active(GtkTreeModel *model, GtkTreeIter *iter, gboolean setting)
+set_children_active(GtkTreeModel * model, GtkTreeIter * iter,
+		    gboolean setting)
 {
     if (gtk_tree_model_iter_has_child(model, iter)) {
-        gint children = gtk_tree_model_iter_n_children(model, iter);
+	gint children = gtk_tree_model_iter_n_children(model, iter);
 
-        gtk_tree_store_set(GTK_TREE_STORE(model), iter, TREE_COL_SEL, setting, -1);
-        
-        for (children--; children >= 0; children--) {
-            GtkTreeIter child;
-            
-            gtk_tree_model_iter_nth_child(model, &child, iter, children);
-            gtk_tree_store_set(GTK_TREE_STORE(model), &child, TREE_COL_SEL, setting, -1);
-        }
+	gtk_tree_store_set(GTK_TREE_STORE(model), iter, TREE_COL_SEL,
+			   setting, -1);
+
+	for (children--; children >= 0; children--) {
+	    GtkTreeIter child;
+
+	    gtk_tree_model_iter_nth_child(model, &child, iter, children);
+	    gtk_tree_store_set(GTK_TREE_STORE(model), &child, TREE_COL_SEL,
+			       setting, -1);
+	}
     }
 }
 
-static void
-set_all_active(ReportDialog *rd, gboolean setting)
+static void set_all_active(ReportDialog * rd, gboolean setting)
 {
     GtkTreeIter iter;
     GtkTreeModel *model = rd->model;
-    
+
     gtk_tree_model_get_iter_first(model, &iter);
-    
+
     do {
-         set_children_active(model, &iter, setting);
+	set_children_active(model, &iter, setting);
     } while (gtk_tree_model_iter_next(model, &iter));
 }
 
-static void
-report_dialog_sel_none(GtkWidget *widget, ReportDialog *rd)
+static void report_dialog_sel_none(GtkWidget * widget, ReportDialog * rd)
 {
     set_all_active(rd, FALSE);
 }
 
-static void
-report_dialog_sel_all(GtkWidget *widget, ReportDialog *rd)
+static void report_dialog_sel_all(GtkWidget * widget, ReportDialog * rd)
 {
     set_all_active(rd, TRUE);
 }
 
 static void
-report_dialog_sel_toggle(GtkCellRendererToggle *cellrenderertoggle,
-			 gchar		       *path_str,
-			 ReportDialog          *rd)
+report_dialog_sel_toggle(GtkCellRendererToggle * cellrenderertoggle,
+			 gchar * path_str, ReportDialog * rd)
 {
     GtkTreeModel *model = rd->model;
-    GtkTreeIter  iter;
+    GtkTreeIter iter;
     GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
     gboolean active;
-    
+
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_model_get(model, &iter, TREE_COL_SEL, &active, -1);
-    
+
     active = !active;
-    gtk_tree_store_set(GTK_TREE_STORE(model), &iter, TREE_COL_SEL, active, -1);
+    gtk_tree_store_set(GTK_TREE_STORE(model), &iter, TREE_COL_SEL, active,
+		       -1);
     set_children_active(model, &iter, active);
 
     gtk_tree_path_free(path);
 }
 
 static ReportDialog
-*report_dialog_new(GtkTreeModel *model, GtkWidget *parent)
+    * report_dialog_new(GtkTreeModel * model, GtkWidget * parent)
 {
     ReportDialog *rd;
     GtkWidget *dialog;
@@ -631,10 +612,10 @@ static ReportDialog
     GtkWidget *button7;
     GtkWidget *label;
     GtkWidget *hbox;
-    
+
     GtkTreeViewColumn *column;
-    GtkCellRenderer *cr_text, *cr_pbuf, *cr_toggle; 
-    
+    GtkCellRenderer *cr_text, *cr_pbuf, *cr_toggle;
+
     rd = g_new0(ReportDialog, 1);
 
     dialog = gtk_dialog_new();
@@ -642,7 +623,8 @@ static ReportDialog
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
-    gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_position(GTK_WINDOW(dialog),
+			    GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_type_hint(GTK_WINDOW(dialog),
 			     GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -650,26 +632,27 @@ static ReportDialog
     gtk_box_set_spacing(GTK_BOX(dialog1_vbox), 5);
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
-    
+
     hbox = gtk_hbox_new(FALSE, 5);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, FALSE, FALSE, 0);
-    
-    label = gtk_label_new("<big><b>Generate Report</b></big>\n" \
-                          "Please choose the information that you wish " \
-                          "to view in your report:");
+
+    label = gtk_label_new("<big><b>Generate Report</b></big>\n"
+			  "Please choose the information that you wish "
+			  "to view in your report:");
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-    
+
     gtk_box_pack_start(GTK_BOX(hbox),
-                       icon_cache_get_image("report-large.png"),
-                       FALSE, FALSE, 0);
+		       icon_cache_get_image("report-large.png"),
+		       FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_widget_show_all(hbox);
-    
+
     scrolledwindow2 = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_show(scrolledwindow2);
-    gtk_box_pack_start(GTK_BOX(dialog1_vbox), scrolledwindow2, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(dialog1_vbox), scrolledwindow2, TRUE, TRUE,
+		       0);
     gtk_widget_set_size_request(scrolledwindow2, -1, 200);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow2),
 				   GTK_POLICY_AUTOMATIC,
@@ -681,13 +664,14 @@ static ReportDialog
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview2), FALSE);
     gtk_widget_show(treeview2);
     gtk_container_add(GTK_CONTAINER(scrolledwindow2), treeview2);
-    
+
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview2), column);
 
     cr_toggle = gtk_cell_renderer_toggle_new();
     gtk_tree_view_column_pack_start(column, cr_toggle, FALSE);
-    g_signal_connect(cr_toggle, "toggled", G_CALLBACK(report_dialog_sel_toggle), rd);
+    g_signal_connect(cr_toggle, "toggled",
+		     G_CALLBACK(report_dialog_sel_toggle), rd);
     gtk_tree_view_column_add_attribute(column, cr_toggle, "active",
 				       TREE_COL_SEL);
 
@@ -700,7 +684,7 @@ static ReportDialog
     gtk_tree_view_column_pack_start(column, cr_text, TRUE);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
-    
+
     hbuttonbox3 = gtk_hbutton_box_new();
     gtk_widget_show(hbuttonbox3);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbuttonbox3, FALSE, TRUE, 0);
@@ -711,13 +695,15 @@ static ReportDialog
     gtk_widget_show(button3);
     gtk_container_add(GTK_CONTAINER(hbuttonbox3), button3);
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
-    g_signal_connect(button3, "clicked", G_CALLBACK(report_dialog_sel_none), rd);
+    g_signal_connect(button3, "clicked",
+		     G_CALLBACK(report_dialog_sel_none), rd);
 
     button6 = gtk_button_new_with_mnemonic("Select _All");
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(hbuttonbox3), button6);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
-    g_signal_connect(button6, "clicked", G_CALLBACK(report_dialog_sel_all), rd);
+    g_signal_connect(button6, "clicked", G_CALLBACK(report_dialog_sel_all),
+		     rd);
 
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
     gtk_widget_show(dialog1_action_area);
@@ -736,13 +722,13 @@ static ReportDialog
 				 GTK_RESPONSE_ACCEPT);
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
 
-    rd->dialog		= dialog;
-    rd->btn_cancel	= button8;
-    rd->btn_generate	= button7;
-    rd->btn_sel_all	= button6;
-    rd->btn_sel_none	= button3;
-    rd->treeview	= treeview2;
-    rd->model		= model;
+    rd->dialog = dialog;
+    rd->btn_cancel = button8;
+    rd->btn_generate = button7;
+    rd->btn_sel_all = button6;
+    rd->btn_sel_none = button3;
+    rd->treeview = treeview2;
+    rd->model = model;
 
     gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview2));
     set_all_active(rd, TRUE);

@@ -45,9 +45,9 @@ scan_users_do(void)
       uid = atoi(tmp[2]);
       strend(tmp[4], ',');
       if (uid >= 1000 && uid <= 65530) {
-        human_users = g_strdup_printf("%s$%s$%s=%s\n", human_users, key, tmp[0], tmp[4]);
+        human_users = h_strdup_cprintf("$%s$%s=%s\n", human_users, key, tmp[0], tmp[4]);
       } else {
-        sys_users = g_strdup_printf("%s$%s$%s=%s\n", sys_users, key, tmp[0], tmp[4]);
+        sys_users = h_strdup_cprintf("$%s$%s=%s\n", sys_users, key, tmp[0], tmp[4]);
       }      
       
       g_strfreev(tmp);

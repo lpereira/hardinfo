@@ -147,8 +147,7 @@ static void read_sensors_hwmon(void)
     gchar *path_hwmon, *path_sensor, *tmp, *driver, *name, *mon;
     hwmon = 0;
 
-    path_hwmon =
-	g_strdup_printf("/sys/class/hwmon/hwmon%d/device/", hwmon);
+    path_hwmon = g_strdup_printf("/sys/class/hwmon/hwmon%d/device/", hwmon);
     while (g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
 	tmp = g_strdup_printf("%sdriver", path_hwmon);
 	driver = g_file_read_link(tmp, NULL);
@@ -174,7 +173,7 @@ static void read_sensors_hwmon(void)
 	    mon = g_strdup_printf("fan%d", count);
 	    name = get_sensor_label(mon);
 	    if (!g_str_equal(name, "ignore")) {
-		sensors = g_strdup_printf("%s%s=%.0fRPM\n",
+		sensors = h_strdup_cprintf("%s=%.0fRPM\n",
 					  sensors, name,
 					  adjust_sensor(mon, atof(tmp)));
 	    }
@@ -197,7 +196,7 @@ static void read_sensors_hwmon(void)
 	    mon = g_strdup_printf("temp%d", count);
 	    name = get_sensor_label(mon);
 	    if (!g_str_equal(name, "ignore")) {
-		sensors = g_strdup_printf("%s%s=%.2f\302\260C\n",
+		sensors = h_strdup_cprintf("%s=%.2f\302\260C\n",
 					  sensors, name,
 					  adjust_sensor(mon,
 							atof(tmp) /
@@ -223,7 +222,7 @@ static void read_sensors_hwmon(void)
 	    mon = g_strdup_printf("in%d", count);
 	    name = get_sensor_label(mon);
 	    if (!g_str_equal(name, "ignore")) {
-		sensors = g_strdup_printf("%s%s=%.3fV\n",
+		sensors = h_strdup_cprintf("%s=%.3fV\n",
 					  sensors, name,
 					  adjust_sensor(mon,
 							atof(tmp) /
@@ -268,7 +267,7 @@ static void read_sensors_acpi(void)
 
 		    sscanf(contents, "temperature: %d C", &temperature);
 
-		    temp = g_strdup_printf("%s\n%s=%d\302\260C\n",
+		    temp = h_strdup_cprintf("\n%s=%d\302\260C\n",
 					      temp, entry, temperature);
 
 		    g_free(contents);
@@ -277,7 +276,7 @@ static void read_sensors_acpi(void)
 
 	    if (*temp != '\0')
     	        sensors =
-	    	    g_strdup_printf("%s\n[ACPI Thermal Zone]\n%s",
+	    	    h_strdup_cprintf("\n[ACPI Thermal Zone]\n%s",
 	    	                    sensors, temp);
 
 	    g_dir_close(tz);
@@ -296,7 +295,7 @@ static void read_sensors_omnibook(void)
 
         sscanf(contents, "CPU temperature: %d C", &temperature);
 
-        sensors = g_strdup_printf("%s\n[Omnibook]\n"
+        sensors = h_strdup_cprintf("\n[Omnibook]\n"
                                   "CPU temperature=%d\302\260C\n",
                                   sensors, temperature);
 
@@ -335,8 +334,7 @@ static void read_sensors_hddtemp(void)
 		 * 2 -> 41
 		 * 3 -> C
 		 */
-		old = g_strdup_printf("%s\n"
-				      "%s (%s)=%s\302\260%s\n",
+		old = h_strdup_cprintf("\n%s (%s)=%s\302\260%s\n",
 				      old,
 				      fields[1], fields[0],
 				      fields[2], fields[3]);

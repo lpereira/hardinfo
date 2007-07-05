@@ -269,7 +269,7 @@ static double spectral_line[9];
 static double s[max_surfaces][5];
 static double od_sa[2][2];
 
-/*static char outarr[8][80];*/	/* Computed output of program goes here */
+				/*static char outarr[8][80];*//* Computed output of program goes here */
 
 int itercount;			/* The iteration counter for the main loop
 				   in the program is made global so that
@@ -736,9 +736,10 @@ void fbench()
 }
 
 #ifdef __FBENCH_TEST__
-int main(void) {
-	fbench();
+int main(void)
+{
+    fbench();
 
-	return 0;
+    return 0;
 }
 #endif

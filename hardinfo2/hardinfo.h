@@ -96,6 +96,9 @@ GSList       *modules_load_all(void);
 ModuleAbout  *module_get_about(ShellModule *module);
 gchar        *seconds_to_string(unsigned int seconds);
 
+gchar        *h_strdup_cprintf(const gchar *format, gchar *source, ...);
+gchar	     *h_strconcat(gchar *string1, ...);
+
 void	      module_entry_scan_all_except(ModuleEntry *entries, gint except_entry);
 void	      module_entry_scan_all(ModuleEntry *entries);
 void	      module_entry_reload(ShellModuleEntry *module_entry);

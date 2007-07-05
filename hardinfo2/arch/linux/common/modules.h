@@ -39,8 +39,7 @@ scan_modules_do(void)
         g_free(module_list);
     }
     
-    module_list = g_strdup("");
-
+    module_list = NULL;
     g_hash_table_foreach_remove(moreinfo, remove_module_devices, NULL);
 
     lsmod = popen("/sbin/lsmod", "r");
@@ -99,7 +98,7 @@ scan_modules_do(void)
 	}
 
 	/* append this module to the list of modules */
-	module_list = g_strdup_printf("%s$%s$%s=%s\n",
+	module_list = h_strdup_cprintf("$%s$%s=%s\n",
 				      module_list,
 				      hashkey,
 				      modname,
@@ -130,7 +129,7 @@ scan_modules_do(void)
 	if (deps && strlen(deps)) {
 	    gchar **tmp = g_strsplit(deps, ",", 0);
 
-	    strmodule = g_strconcat(strmodule,
+	    strmodule = h_strconcat(strmodule,
                                     "\n[Dependencies]\n",
                                     g_strjoinv("=\n", tmp),
                                     "=\n", NULL);

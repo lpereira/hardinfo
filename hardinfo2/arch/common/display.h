@@ -108,14 +108,14 @@ get_x11_info(DisplayInfo *di)
         gint n_monitors = gdk_screen_get_n_monitors(screen);
         gint i;
         
-        di->monitors = "";
+        di->monitors = NULL;
         for (i = 0; i < n_monitors; i++) {
             GdkRectangle rect;
             
             gdk_screen_get_monitor_geometry(screen, i, &rect);
             
-            di->monitors = g_strdup_printf("%sMonitor %d=%dx%d pixels\n",
-                                           di->monitors, i, rect.width, rect.height);
+            di->monitors = h_strdup_cprintf("Monitor %d=%dx%d pixels\n",
+                                            di->monitors, i, rect.width, rect.height);
         }
       } else {
           di->monitors = "";

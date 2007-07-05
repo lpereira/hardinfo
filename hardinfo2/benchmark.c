@@ -56,7 +56,7 @@ static ModuleEntry entries[] = {
     {"CPU SHA1", "module.png", callback_sha1, scan_sha1},
     {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
     {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr},
-    { NULL }
+    {NULL}
 };
 
 static gchar *__benchmark_include_results(gdouble result,
@@ -65,24 +65,29 @@ static gchar *__benchmark_include_results(gdouble result,
 {
     GKeyFile *conf;
     gchar **machines;
-    gchar *path, *results = "";
+    gchar *path, *results = g_strdup("");
     int i;
 
     conf = g_key_file_new();
-    
-    path = g_build_filename(g_get_home_dir(), ".hardinfo", "benchmark.conf", NULL);
+
+    path =
+	g_build_filename(g_get_home_dir(), ".hardinfo", "benchmark.conf",
+			 NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-        DEBUG("local benchmark.conf not found, trying system-wide");
-        g_free(path);  
-        path = g_build_filename(params.path_data, "benchmark.conf", NULL);
+	DEBUG("local benchmark.conf not found, trying system-wide");
+	g_free(path);
+	path = g_build_filename(params.path_data, "benchmark.conf", NULL);
     }
 
     g_key_file_load_from_file(conf, path, 0, NULL);
 
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
-	gchar *value = g_key_file_get_value(conf, benchmark, machines[i], NULL);
+	gchar *value;
+	
+	value   = g_key_file_get_value(conf, benchmark, machines[i], NULL);
 	results = g_strconcat(results, machines[i], "=", value, "\n", NULL);
+	
 	g_free(value);
     }
 
@@ -126,32 +131,38 @@ static gdouble bench_results[BENCHMARK_N_ENTRIES];
 
 gchar *callback_zlib()
 {
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_ZLIB], "CPU ZLib");
+    return benchmark_include_results_reverse(bench_results[BENCHMARK_ZLIB],
+					     "CPU ZLib");
 }
 
 gchar *callback_raytr()
 {
-    return benchmark_include_results(bench_results[BENCHMARK_RAYTRACE], "FPU Raytracing");
+    return benchmark_include_results(bench_results[BENCHMARK_RAYTRACE],
+				     "FPU Raytracing");
 }
 
 gchar *callback_bfsh()
 {
-    return benchmark_include_results(bench_results[BENCHMARK_BLOWFISH], "CPU Blowfish");
+    return benchmark_include_results(bench_results[BENCHMARK_BLOWFISH],
+				     "CPU Blowfish");
 }
 
 gchar *callback_md5()
 {
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_MD5], "CPU MD5");
+    return benchmark_include_results_reverse(bench_results[BENCHMARK_MD5],
+					     "CPU MD5");
 }
 
 gchar *callback_fib()
 {
-    return benchmark_include_results(bench_results[BENCHMARK_FIB], "CPU Fibonacci");
+    return benchmark_include_results(bench_results[BENCHMARK_FIB],
+				     "CPU Fibonacci");
 }
 
 gchar *callback_sha1()
 {
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_SHA1], "CPU SHA1");
+    return benchmark_include_results_reverse(bench_results[BENCHMARK_SHA1],
+					     "CPU SHA1");
 }
 
 #define RUN_WITH_HIGH_PRIORITY(fn)			\
@@ -209,7 +220,7 @@ const gchar *hi_note_func(gint entry)
     switch (entry) {
     case BENCHMARK_ZLIB:
 	return "Results in KiB/second. Higher is better.";
-	
+
     case BENCHMARK_MD5:
     case BENCHMARK_SHA1:
 	return "Results in MiB/second. Higher is better.";
@@ -238,73 +249,64 @@ ModuleEntry *hi_module_get_entries(void)
     return entries;
 }
 
-ModuleAbout *
-hi_module_get_about(void)
+ModuleAbout *hi_module_get_about(void)
 {
     static ModuleAbout ma[] = {
-      {
-          .author	= "Leandro A. F. Pereira",
-          .description	= "Perform tasks and compare with other systems",
-          .version	= VERSION,
-          .license	= "GNU GPL version 2"
-      }
+	{
+	 .author = "Leandro A. F. Pereira",
+	 .description = "Perform tasks and compare with other systems",
+	 .version = VERSION,
+	 .license = "GNU GPL version 2"}
     };
-    
+
     return ma;
 }
 
 static gchar *get_benchmark_results()
 {
-    void (*scan_callback)(gboolean rescan);
-    
+    void (*scan_callback) (gboolean rescan);
+
     gint i = G_N_ELEMENTS(entries) - 1;
     gchar *machine = module_call_method("devices::getProcessorName");
     gchar *param = g_strdup_printf("[param]\n"
-                                   "machine=%s\n"
-                                   "nbenchmarks=%d\n",
-                                   machine, i);
+				   "machine=%s\n" "nbenchmarks=%d\n",
+				   machine, i);
     gchar *result = param;
-    
+
     for (; i >= 0; i--) {
-        if ((scan_callback = entries[i].scan_callback)) {
-            scan_callback(FALSE);
-        
-            result = g_strdup_printf("%s\n"
-                                     "[bench%d]\n"
-                                     "name=%s\n"
-                                     "value=%f\n",
-                                     result,
-                                     i,
-                                     entries[i].name,
-                                     bench_results[i]);
-        }
+	if ((scan_callback = entries[i].scan_callback)) {
+	    scan_callback(FALSE);
+
+	    result = g_strdup_printf("%s\n"
+				     "[bench%d]\n"
+				     "name=%s\n"
+				     "value=%f\n",
+				     result,
+				     i, entries[i].name, bench_results[i]);
+	}
     }
-    
+
     g_free(machine);
     g_free(param);
-    
+
     return result;
 }
 
-void
-hi_module_init(void)
+void hi_module_init(void)
 {
     static SyncEntry se[] = {
-      {
-          .fancy_name = "Send Benchmark Results",
-          .name       = "SendBenchmarkResults",
-          .save_to    = NULL,
-          .get_data   = get_benchmark_results
-      },
-      {
-          .fancy_name = "Receive Benchmark Results",
-          .name       = "RecvBenchmarkResults",
-          .save_to    = "benchmark.conf",
-          .get_data   = NULL
-      }
+	{
+	 .fancy_name = "Send Benchmark Results",
+	 .name = "SendBenchmarkResults",
+	 .save_to = NULL,
+	 .get_data = get_benchmark_results},
+	{
+	 .fancy_name = "Receive Benchmark Results",
+	 .name = "RecvBenchmarkResults",
+	 .save_to = "benchmark.conf",
+	 .get_data = NULL}
     };
-    
+
     sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
 }
-

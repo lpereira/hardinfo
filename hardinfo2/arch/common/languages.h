@@ -20,7 +20,7 @@ void
 scan_languages(OperatingSystem * os)
 {
     FILE *locale;
-    gchar buf[512], *retval = "";
+    gchar buf[512], *retval = NULL;
 
     locale = popen("locale -va", "r");
     if (!locale)
@@ -64,7 +64,7 @@ scan_languages(OperatingSystem * os)
 	} else {
 	    gchar *currlocale;
 
-	    retval = g_strdup_printf("%s$%s$%s=%s\n", retval, name, name, title);
+	    retval = h_strdup_cprintf("$%s$%s=%s\n", retval, name, name, title);
 
 #define FIELD(f) f ? f : "(Unknown)"
 	    currlocale = g_strdup_printf("[Locale Information]\n"

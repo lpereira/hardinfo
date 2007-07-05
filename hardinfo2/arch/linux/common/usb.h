@@ -86,10 +86,10 @@ __scan_usb(void)
 	    
 
 	    if (classid == 9) {	/* hub */
-    	        usb_list = g_strdup_printf("%s[%s#%d]\n",
+    	        usb_list = h_strdup_cprintf("[%s#%d]\n",
 		      		           usb_list, product, n);
             } else { /* everything else */
-    	        usb_list = g_strdup_printf("%s$%s$%s=\n",
+    	        usb_list = h_strdup_cprintf("$%s$%s=\n",
 		      		           usb_list, tmp, product);
 
                 const gchar *url = vendor_get_url(manuf);

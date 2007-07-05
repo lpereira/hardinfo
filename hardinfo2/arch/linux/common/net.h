@@ -210,7 +210,7 @@ scan_net_interfaces_24(void)
             devid = g_strdup_printf("NET%s", ifacename);
             
             ip = g_strdup_printf(" (%s)", ni.ip);
-	    network_interfaces = g_strdup_printf("%s$%s$%s=Sent %.2fMiB, received %.2fMiB%s\n",
+	    network_interfaces = h_strdup_cprintf("$%s$%s=Sent %.2fMiB, received %.2fMiB%s\n",
                                                   network_interfaces,
                                                   devid,
                                                   ifacename,
@@ -220,7 +220,7 @@ scan_net_interfaces_24(void)
             g_free(ip);
             
             net_get_iface_type(ifacename, &iface_type, &iface_icon);
-	    network_icons = g_strdup_printf("%sIcon$%s$%s=%s.png\n",
+	    network_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n",
 	                                    network_icons, devid,
 	                                    ifacename, iface_icon);
             
@@ -240,8 +240,7 @@ scan_net_interfaces_24(void)
                                         trans_bytes, trans_mb);
                                         
             if (ni.ip[0] || ni.mask[0] || ni.broadcast[0]) {
-                 detailed = g_strdup_printf("%s\n"
-                                            "[Internet Protocol (IPv4)]\n"
+                 detailed = h_strdup_cprintf("\n[Internet Protocol (IPv4)]\n"
                                             "IP Address=%s\n"
                                             "Mask=%s\n"
                                             "Broadcast Address=%s\n",

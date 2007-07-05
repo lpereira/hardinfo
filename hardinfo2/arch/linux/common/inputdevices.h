@@ -87,10 +87,10 @@ __scan_input_devices(void)
 	    }
 	
 	    tmp = g_strdup_printf("INP%d", ++n);
-	    input_list = g_strdup_printf("%s$%s$%s=\n",
+	    input_list = h_strdup_cprintf("$%s$%s=\n",
 					 input_list,
 					 tmp, name);
-	    input_icons = g_strdup_printf("%sIcon$%s$%s=%s\n",
+	    input_icons = h_strdup_cprintf("Icon$%s$%s=%s\n",
 				 	  input_icons,
 					  tmp, name,
 					  input_devices[d].icon);
@@ -104,20 +104,17 @@ __scan_input_devices(void)
 
 	    const gchar *url = vendor_get_url(name);
 	    if (url) {
-	    	strhash = g_strdup_printf("%s"
-					  "Vendor=%s (%s)\n",
+	    	strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
 					  strhash,
 					  vendor_get_name(name),
 					  url);
 	    } else {
-	    	strhash = g_strdup_printf("%s"
-					  "Vendor=%x\n",
+	    	strhash = h_strdup_cprintf("Vendor=%x\n",
 					  strhash,
 					  vendor);
 	    }
 
-	    strhash = g_strdup_printf("%s"
-				      "Product=0x%x\n"
+	    strhash = h_strdup_cprintf("Product=0x%x\n"
 				      "Version=0x%x\n"
 				      "Connected to=%s\n",
 				      strhash, product, version, phys);

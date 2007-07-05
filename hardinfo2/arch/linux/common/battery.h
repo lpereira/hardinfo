@@ -92,7 +92,7 @@ __scan_battery_acpi(void)
           if (g_str_equal(present, "yes")) {
             charge_rate = atof(remaining) / atof(capacity);
           
-            battery_list = g_strdup_printf("%s\n[Battery: %s]\n"
+            battery_list = h_strdup_cprintf("\n[Battery: %s]\n"
                                            "State=%s (load: %s)\n"
                                            "Capacity=%s / %s (%.2f%%)\n"
                                            "Battery Technology=%s (%s)\n"
@@ -174,7 +174,7 @@ __scan_battery_apm(void)
     }
 
     if (stotal && sremaining) {
-        battery_list = g_strdup_printf("%s\n[Battery (APM)]\n"
+        battery_list = h_strdup_cprintf("\n[Battery (APM)]\n"
                                        "Charge=%d%%\n"
                                        "Remaining Charge=%s of %s\n"
                                        "Using=%s\n"
@@ -186,7 +186,7 @@ __scan_battery_apm(void)
                                        ac_status[ac_bat],
                                        apm_drv_ver, apm_bios_ver);
     } else {
-        battery_list = g_strdup_printf("%s\n[Battery (APM)]\n"
+        battery_list = h_strdup_cprintf("\n[Battery (APM)]\n"
                                        "Charge=%d%%\n"
                                        "Using=%s\n"
                                        "APM driver version=%s\n"

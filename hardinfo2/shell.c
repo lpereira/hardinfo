@@ -51,9 +51,9 @@ static gboolean update_field(gpointer data);
  * Globals ********************************************************************
  */
 
-static Shell      *shell = NULL;
+static Shell *shell = NULL;
 static GHashTable *update_tbl = NULL;
-static GSList     *update_sfusrc = NULL;
+static GSList *update_sfusrc = NULL;
 
 /*
  * Code :) ********************************************************************
@@ -251,7 +251,9 @@ void shell_view_set_enabled(gboolean setting)
     shell_action_set_enabled("RefreshAction", setting);
     shell_action_set_enabled("CopyAction", setting);
     shell_action_set_enabled("ReportAction", setting);
-    shell_action_set_enabled("SaveGraphAction", setting ? shell->view_type == SHELL_VIEW_PROGRESS : FALSE);
+    shell_action_set_enabled("SaveGraphAction",
+			     setting ? shell->view_type ==
+			     SHELL_VIEW_PROGRESS : FALSE);
 }
 
 void shell_status_set_enabled(gboolean setting)
@@ -264,7 +266,7 @@ void shell_status_set_enabled(gboolean setting)
     else {
 	gtk_widget_hide(shell->progress);
 	shell_view_set_enabled(TRUE);
-	
+
 	shell_status_update("Done.");
     }
 }
@@ -279,7 +281,7 @@ void shell_do_reload(void)
     shell_action_set_enabled("ReportAction", FALSE);
 
     shell_status_set_enabled(TRUE);
-    
+
     module_entry_reload(shell->selected);
     module_selected(NULL);
 
@@ -305,7 +307,7 @@ static void destroy_me(void)
     cb_quit();
 }
 
-static void close_note(GtkWidget *widget, gpointer user_data)
+static void close_note(GtkWidget * widget, gpointer user_data)
 {
     gtk_widget_hide(shell->note->frame);
 }
@@ -314,29 +316,30 @@ static ShellNote *note_new(void)
 {
     ShellNote *note;
     GtkWidget *hbox, *icon, *button;
-    
+
     note = g_new0(ShellNote, 1);
     note->label = gtk_label_new("");
     note->frame = gtk_frame_new(NULL);
     button = gtk_button_new();
-    
+
     icon = icon_cache_get_image("close.png");
     gtk_widget_show(icon);
     gtk_container_add(GTK_CONTAINER(button), icon);
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-    g_signal_connect(G_OBJECT(button), "clicked", (GCallback) close_note, NULL);
-    
+    g_signal_connect(G_OBJECT(button), "clicked", (GCallback) close_note,
+		     NULL);
+
     hbox = gtk_hbox_new(FALSE, 3);
     icon = icon_cache_get_image("dialog-information.png");
-    
+
     gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), note->label, FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-    
+
     gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
     gtk_container_add(GTK_CONTAINER(note->frame), hbox);
     gtk_widget_show_all(hbox);
-    
+
     return note;
 }
 
@@ -382,17 +385,17 @@ static void create_window(void)
     vbox = gtk_vbox_new(FALSE, 5);
     gtk_widget_show(vbox);
     gtk_paned_add2(GTK_PANED(shell->hpaned), vbox);
-    
+
     shell->note = note_new();
     gtk_box_pack_end(GTK_BOX(vbox), shell->note->frame, FALSE, FALSE, 0);
 
     shell->vpaned = gtk_vpaned_new();
     gtk_box_pack_start(GTK_BOX(vbox), shell->vpaned, TRUE, TRUE, 0);
     gtk_widget_show(shell->vpaned);
-    
+
     shell->notebook = gtk_notebook_new();
     gtk_paned_add2(GTK_PANED(shell->vpaned), shell->notebook);
-  
+
     gtk_widget_show(shell->window);
     while (gtk_events_pending())
 	gtk_main_iteration();
@@ -419,20 +422,20 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 
     GtkActionEntry entries[] = {
 	{
-           name,			/* name */
-	   name,			/* stockid */
-	   name,			/* label */
-	   NULL,			/* accelerator */
-	   NULL,			/* tooltip */
-  	   NULL,			/* callback */
+	 name,			/* name */
+	 name,			/* stockid */
+	 name,			/* label */
+	 NULL,			/* accelerator */
+	 NULL,			/* tooltip */
+	 NULL,			/* callback */
 	 },
-	 {
-	   about_module,
-	   name,
-	   name,
-	   NULL,
-	   name,
-	   (GCallback) cb_about_module,
+	{
+	 about_module,
+	 name,
+	 name,
+	 NULL,
+	 name,
+	 (GCallback) cb_about_module,
 	 },
     };
 
@@ -442,11 +445,12 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 			  gtk_ui_manager_new_merge_id(shell->ui_manager),
 			  "/menubar/ViewMenu/LastSep",
 			  name, name, GTK_UI_MANAGER_MENU, TRUE);
-			  
+
     gtk_ui_manager_add_ui(shell->ui_manager,
 			  gtk_ui_manager_new_merge_id(shell->ui_manager),
 			  "/menubar/HelpMenu/HelpMenuModules/LastSep",
-			  about_module, about_module, GTK_UI_MANAGER_AUTO, TRUE);
+			  about_module, about_module, GTK_UI_MANAGER_AUTO,
+			  TRUE);
 }
 
 static void
@@ -457,12 +461,12 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
 
     GtkActionEntry entries[] = {
 	{
-	   name,			/* name */
-	   name,			/* stockid */
-	   name,			/* label */
-	   NULL,			/* accelerator */
-	   NULL,			/* tooltip */
-	   (GCallback) view_menu_select_entry,	/* callback */
+	 name,			/* name */
+	 name,			/* stockid */
+	 name,			/* label */
+	 NULL,			/* accelerator */
+	 NULL,			/* tooltip */
+	 (GCallback) view_menu_select_entry,	/* callback */
 	 },
     };
 
@@ -582,39 +586,39 @@ static gboolean update_field(gpointer data)
 {
     ShellFieldUpdate *fu = (ShellFieldUpdate *) data;
     GtkTreeIter *iter = g_hash_table_lookup(update_tbl, fu->field_name);
-    
+
     /* if the entry is still selected, update it */
     if (iter && fu->entry->selected && fu->entry->fieldfunc) {
-        GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
-        gchar *value = fu->entry->fieldfunc(fu->field_name);
+	GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
+	gchar *value = fu->entry->fieldfunc(fu->field_name);
 
-        /*
-         * this function is also used to feed the load graph when ViewType
-         * is SHELL_VIEW_LOAD_GRAPH
-         */
-        if (shell->view_type == SHELL_VIEW_LOAD_GRAPH &&
-            gtk_tree_selection_iter_is_selected(shell->info->selection,
-                                                iter)) {
-            load_graph_update(shell->loadgraph, atoi(value));
-        }
+	/*
+	 * this function is also used to feed the load graph when ViewType
+	 * is SHELL_VIEW_LOAD_GRAPH
+	 */
+	if (shell->view_type == SHELL_VIEW_LOAD_GRAPH &&
+	    gtk_tree_selection_iter_is_selected(shell->info->selection,
+						iter)) {
+	    load_graph_update(shell->loadgraph, atoi(value));
+	}
 
-        gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
-        
-        g_free(value);
-        return TRUE;
+	gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
+
+	g_free(value);
+	return TRUE;
     }
-    
+
     if (update_sfusrc) {
-        GSList *sfu;
-        
-        for (sfu = update_sfusrc; sfu; sfu = sfu->next) {
-            g_free(sfu->data);
-        }
-        
-        g_slist_free(update_sfusrc);
-        update_sfusrc = NULL;
+	GSList *sfu;
+
+	for (sfu = update_sfusrc; sfu; sfu = sfu->next) {
+	    g_free(sfu->data);
+	}
+
+	g_slist_free(update_sfusrc);
+	update_sfusrc = NULL;
     }
-    
+
     DEBUG("destroying ShellFieldUpdate for field %s", fu->field_name);
 
     /* otherwise, cleanup and destroy the timeout */
@@ -665,9 +669,8 @@ static gboolean rescan_section(gpointer data)
 
 gint
 info_tree_compare_val_func(GtkTreeModel * model,
-		           GtkTreeIter * a,
-		           GtkTreeIter * b,
-		           gpointer userdata)
+			   GtkTreeIter * a,
+			   GtkTreeIter * b, gpointer userdata)
 {
     gint ret = 0;
     gchar *col1, *col2;
@@ -682,7 +685,7 @@ info_tree_compare_val_func(GtkTreeModel * model,
 	ret = (col1 == NULL) ? -1 : 1;
     } else {
 	ret = shell->_order_type ? (atof(col1) < atof(col2)) :
-	                           (atof(col1) > atof(col2));
+	    (atof(col1) > atof(col2));
     }
 
     g_free(col1);
@@ -695,7 +698,7 @@ static void set_view_type(ShellViewType viewtype)
 {
     /* reset to the default model */
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view),
-                            shell->info->model);
+			    shell->info->model);
 
     /* reset to the default view columns */
     gtk_tree_view_column_set_visible(shell->info->col_progress, FALSE);
@@ -709,10 +712,10 @@ static void set_view_type(ShellViewType viewtype)
 
     if (viewtype == shell->view_type)
 	return;
-	
+
     if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
-        viewtype = SHELL_VIEW_NORMAL;
-        
+	viewtype = SHELL_VIEW_NORMAL;
+
     shell->view_type = viewtype;
 
     switch (viewtype) {
@@ -734,7 +737,7 @@ static void set_view_type(ShellViewType viewtype)
 			       shell->loadgraph->height - 16);
 	break;
     case SHELL_VIEW_PROGRESS:
-        shell_action_set_enabled("SaveGraphAction", TRUE);
+	shell_action_set_enabled("SaveGraphAction", TRUE);
 	gtk_tree_view_column_set_visible(shell->info->col_progress, TRUE);
 	gtk_tree_view_column_set_visible(shell->info->col_value, FALSE);
 	gtk_widget_hide(shell->notebook);
@@ -753,8 +756,8 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 	    gchar *key = keys[i];
 
 	    if (g_str_has_prefix(key, "UpdateInterval")) {
-		ShellFieldUpdate	*fu = g_new0(ShellFieldUpdate, 1);
-		ShellFieldUpdateSource	*sfutbl;
+		ShellFieldUpdate *fu = g_new0(ShellFieldUpdate, 1);
+		ShellFieldUpdateSource *sfutbl;
 		gint ms;
 
 		ms = g_key_file_get_integer(key_file, group, key, NULL);
@@ -762,13 +765,14 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		fu->field_name = g_strdup(strchr(key, '$') + 1);
 		fu->entry = entry;
 
-                sfutbl = g_new0(ShellFieldUpdateSource, 1);
-                sfutbl->source_id = g_timeout_add(ms, update_field, fu);
-                sfutbl->sfu       = fu;
-                
+		sfutbl = g_new0(ShellFieldUpdateSource, 1);
+		sfutbl->source_id = g_timeout_add(ms, update_field, fu);
+		sfutbl->sfu = fu;
+
 		update_sfusrc = g_slist_prepend(update_sfusrc, sfutbl);
 	    } else if (g_str_equal(key, "LoadGraphSuffix")) {
-                gchar *suffix = g_key_file_get_value(key_file, group, key, NULL);
+		gchar *suffix =
+		    g_key_file_get_value(key_file, group, key, NULL);
 		load_graph_set_data_suffix(shell->loadgraph, suffix);
 		g_free(suffix);
 	    } else if (g_str_equal(key, "ReloadInterval")) {
@@ -785,8 +789,8 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		g_timeout_add(ms, rescan_section, entry);
 	    } else if (g_str_equal(key, "OrderType")) {
 		shell->_order_type = g_key_file_get_integer(key_file,
-		                                            group,
-                                                            key, NULL);
+							    group,
+							    key, NULL);
 	    } else if (g_str_equal(key, "ViewType")) {
 		set_view_type(g_key_file_get_integer(key_file, group,
 						     key, NULL));
@@ -814,7 +818,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 	    }
 	}
     } else {
-	g_warning("Unknown parameter group '%s'", group);
+	g_warning("Unknown parameter group: ``%s''", group);
     }
 }
 
@@ -841,19 +845,21 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	GtkTreeIter child;
 
 	value = g_key_file_get_value(key_file, group, key, NULL);
-	if (g_str_equal(value, "...") && entry->fieldfunc) {
+	if (entry->fieldfunc && value && g_str_equal(value, "...")) {
 	    g_free(value);
 	    value = entry->fieldfunc(key);
 	}
 
-	if (g_utf8_validate(key, -1, NULL)
+	if ((key && value) &&
+	    g_utf8_validate(key, -1, NULL)
 	    && g_utf8_validate(value, -1, NULL)) {
 	    if (ngroups == 1) {
 		gtk_tree_store_append(store, &child, NULL);
 	    } else {
 		gtk_tree_store_append(store, &child, &parent);
 	    }
-	    gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value, -1);
+	    gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value,
+			       -1);
 
 	    strend(key, '#');
 
@@ -922,7 +928,7 @@ static void update_progress()
     gdouble maxv = 0, maxp = 0, cur;
 
     gtk_tree_model_get_iter_first(model, &fiter);
-    
+
     /* finds the maximum value */
     iter = fiter;
     do {
@@ -936,27 +942,28 @@ static void update_progress()
 
     /* calculates the relative percentage and finds the maximum percentage */
     if (shell->_order_type == SHELL_ORDER_ASCENDING) {
-        iter = fiter;
-        do {
-            gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+	iter = fiter;
+	do {
+	    gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp,
+			       -1);
 
-            cur = 100 - 100 * atof(tmp) / maxv;
-            maxp = MAX(cur, maxp);
+	    cur = 100 - 100 * atof(tmp) / maxv;
+	    maxp = MAX(cur, maxp);
 
-            g_free(tmp);
-        } while (gtk_tree_model_iter_next(model, &iter));
+	    g_free(tmp);
+	} while (gtk_tree_model_iter_next(model, &iter));
 
-        maxp = 100 - maxp;
+	maxp = 100 - maxp;
     }
-    
+
     /* fix the maximum relative percentage */
     iter = fiter;
     do {
 	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 
-        cur = 100 * atof(tmp) / maxv;
-        if (shell->_order_type == SHELL_ORDER_ASCENDING)
-            cur = 100 - cur + maxp;
+	cur = 100 * atof(tmp) / maxv;
+	if (shell->_order_type == SHELL_ORDER_ASCENDING)
+	    cur = 100 - cur + maxp;
 
 	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur, -1);
 	g_free(tmp);
@@ -966,27 +973,27 @@ static void update_progress()
     GtkTreeSortable *sortable = GTK_TREE_SORTABLE(shell->info->model);
 
     gtk_tree_sortable_set_sort_func(sortable, INFO_TREE_COL_VALUE,
-                                    info_tree_compare_val_func, 0, NULL);
+				    info_tree_compare_val_func, 0, NULL);
     gtk_tree_sortable_set_sort_column_id(sortable,
-                                         INFO_TREE_COL_VALUE,
-                                         GTK_SORT_DESCENDING);
+					 INFO_TREE_COL_VALUE,
+					 GTK_SORT_DESCENDING);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view),
-                            GTK_TREE_MODEL(sortable));
+			    GTK_TREE_MODEL(sortable));
 }
 
-void shell_set_note_from_entry(ShellModuleEntry *entry)
+void shell_set_note_from_entry(ShellModuleEntry * entry)
 {
     if (entry->notefunc) {
-        const gchar *note = module_entry_get_note(entry);
-        
-        if (note) {
-            gtk_label_set_markup(GTK_LABEL(shell->note->label), note);
-            gtk_widget_show(shell->note->frame);
-        } else {
-            gtk_widget_hide(shell->note->frame);
-        }
+	const gchar *note = module_entry_get_note(entry);
+
+	if (note) {
+	    gtk_label_set_markup(GTK_LABEL(shell->note->label), note);
+	    gtk_widget_show(shell->note->frame);
+	} else {
+	    gtk_widget_hide(shell->note->frame);
+	}
     } else {
-        gtk_widget_hide(shell->note->frame);
+	gtk_widget_hide(shell->note->frame);
     }
 }
 
@@ -1008,28 +1015,31 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 
     /* recreate the iter hash table */
     if (!reload) {
-        if (update_tbl) {
-            g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true, NULL);
-        } else {
-            update_tbl =
-                g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-        }
+	if (update_tbl) {
+	    g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true,
+					NULL);
+	} else {
+	    update_tbl =
+		g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+				      g_free);
+	}
     }
-    
-    if (update_sfusrc) {
-        GSList *sfusrc;
-        
-        for (sfusrc = update_sfusrc; sfusrc; sfusrc = sfusrc->next) {
-            ShellFieldUpdateSource *src = (ShellFieldUpdateSource *)sfusrc->data;
 
-            g_source_remove(src->source_id);
-            g_free(src->sfu->field_name);
-            g_free(src->sfu);
-            g_free(src);
-        }
-        
-        g_slist_free(update_sfusrc);
-        update_sfusrc = NULL;
+    if (update_sfusrc) {
+	GSList *sfusrc;
+
+	for (sfusrc = update_sfusrc; sfusrc; sfusrc = sfusrc->next) {
+	    ShellFieldUpdateSource *src =
+		(ShellFieldUpdateSource *) sfusrc->data;
+
+	    g_source_remove(src->source_id);
+	    g_free(src->sfu->field_name);
+	    g_free(src->sfu);
+	    g_free(src);
+	}
+
+	g_slist_free(update_sfusrc);
+	update_sfusrc = NULL;
     }
 
     store = GTK_TREE_STORE(shell->info->model);
@@ -1038,9 +1048,10 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0,
 			      NULL);
     groups = g_key_file_get_groups(key_file, &ngroups);
-    
+
     for (i = 0; groups[i]; i++)
-        if (groups[i][0] == '$') ngroups--;
+	if (groups[i][0] == '$')
+	    ngroups--;
 
     for (i = 0; groups[i]; i++) {
 	gchar *group = groups[i];
@@ -1051,7 +1062,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	} else {
 	    group_handle_normal(key_file, entry, group, keys, ngroups);
 	}
-	
+
 	g_strfreev(keys);
     }
 
@@ -1060,7 +1071,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     if (shell->view_type == SHELL_VIEW_PROGRESS) {
 	update_progress();
     }
-    
+
     shell_set_note_from_entry(entry);
 
     g_strfreev(groups);
@@ -1120,7 +1131,8 @@ static void module_selected(gpointer data)
 
     /* Gets the currently selected item on the left-side TreeView; if there is no
        selection, silently return */
-    if (!gtk_tree_selection_get_selected(shelltree->selection, &model, &parent))
+    if (!gtk_tree_selection_get_selected
+	(shelltree->selection, &model, &parent))
 	return;
 
     /* Mark the currently selected module as "unselected"; this is used to kill the 
@@ -1131,8 +1143,8 @@ static void module_selected(gpointer data)
     /* Get the current selection and shows its related info */
     gtk_tree_model_get(model, &parent, TREE_COL_DATA, &entry, -1);
     if (entry && !entry->selected) {
-        gchar *title;
-    
+	gchar *title;
+
 	shell_status_set_enabled(TRUE);
 	shell_status_update("Updating...");
 
@@ -1160,7 +1172,7 @@ static void module_selected(gpointer data)
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);
 
-        title = g_strdup_printf("%s - System Information", entry->name);
+	title = g_strdup_printf("%s - System Information", entry->name);
 	gtk_window_set_title(GTK_WINDOW(shell->window), title);
 	g_free(title);
 
@@ -1258,9 +1270,9 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     if (!extra)
 	g_signal_connect(G_OBJECT(sel), "changed",
 			 (GCallback) info_selected, info);
-    
+
     gtk_container_add(GTK_CONTAINER(scroll), treeview);
-    
+
     info->scroll = scroll;
     info->view = treeview;
     info->model = model;

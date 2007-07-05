@@ -25,17 +25,17 @@ static struct {
     gchar *filename;
     gchar *stock_id;
 } stock_icons[] = {
-    { "report.png",		HI_STOCK_REPORT	},
-    { "internet.png",		HI_STOCK_INTERNET },
-    { "module.png",		HI_STOCK_MODULE },
-    { "about-modules.png",	HI_STOCK_ABOUT_MODULES },
-    { "syncmanager-small.png",	HI_STOCK_SYNC_MENU },
-    { "face-grin.png",		HI_STOCK_DONATE },
-};
+    {
+    "report.png", HI_STOCK_REPORT}, {
+    "internet.png", HI_STOCK_INTERNET}, {
+    "module.png", HI_STOCK_MODULE}, {
+    "about-modules.png", HI_STOCK_ABOUT_MODULES}, {
+    "syncmanager-small.png", HI_STOCK_SYNC_MENU}, {
+"face-grin.png", HI_STOCK_DONATE},};
 
 static GtkIconFactory *icon_factory;
 
-void stock_icon_register(gchar *filename, gchar *stock_id)
+void stock_icon_register(gchar * filename, gchar * stock_id)
 {
     GtkIconSet *icon_set;
     GtkIconSource *icon_source;
@@ -43,7 +43,8 @@ void stock_icon_register(gchar *filename, gchar *stock_id)
     icon_set = gtk_icon_set_new();
     icon_source = gtk_icon_source_new();
 
-    gtk_icon_source_set_pixbuf(icon_source, icon_cache_get_pixbuf(filename));
+    gtk_icon_source_set_pixbuf(icon_source,
+			       icon_cache_get_pixbuf(filename));
     gtk_icon_set_add_source(icon_set, icon_source);
     gtk_icon_source_free(icon_source);
 
@@ -52,7 +53,7 @@ void stock_icon_register(gchar *filename, gchar *stock_id)
     gtk_icon_set_unref(icon_set);
 }
 
-void stock_icon_register_pixbuf(GdkPixbuf *pixbuf, gchar *stock_id)
+void stock_icon_register_pixbuf(GdkPixbuf * pixbuf, gchar * stock_id)
 {
     GtkIconSet *icon_set;
     GtkIconSource *icon_source;
@@ -79,7 +80,8 @@ void stock_icons_init(void)
     icon_factory = gtk_icon_factory_new();
 
     for (i = 0; i < n_stock_icons; i++) {
-        stock_icon_register(stock_icons[i].filename, stock_icons[i].stock_id);
+	stock_icon_register(stock_icons[i].filename,
+			    stock_icons[i].stock_id);
     }
 
     gtk_icon_factory_add_default(icon_factory);
