@@ -264,7 +264,7 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
      * - Use binary search or something faster than this O(n) cruft
      */
     gchar **flags, **old;
-    gchar *tmp = "";
+    gchar *tmp = NULL;
     gint i, j = 0;
 
     flags = g_strsplit(strflags, " ", 0);
@@ -279,7 +279,7 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 	    }
 	}
 
-	tmp = g_strdup_printf("%s%s=%s\n", tmp, flags[j], meaning);
+	tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
 	j++;
     }
 

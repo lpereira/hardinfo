@@ -82,10 +82,10 @@ get_x11_info(DisplayInfo *di)
               if (g_str_has_prefix(tmp[0], "number of extensions")) {
                 int n;
                 
-                di->extensions = "";
+                di->extensions = g_strdup("");
                 
                 for (n = atoi(tmp[1]); n; n--) {
-                  di->extensions = g_strconcat(di->extensions, 
+                  di->extensions = h_strconcat(di->extensions, 
                                                g_strstrip(*(++output_lines)),
                                                "=\n",
                                                NULL);
