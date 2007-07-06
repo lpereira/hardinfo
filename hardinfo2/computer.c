@@ -212,12 +212,13 @@ void scan_users(gboolean reload)
 
 gchar *callback_summary()
 {
-    gchar *processor_name =
-	module_call_method("devices::getProcessorName"), *alsa_cards =
-	computer_get_alsacards(computer), *input_devices =
-	module_call_method("devices::getInputDevices"), *printers =
-	module_call_method("devices::getPrinters"), *storage_devices =
-	module_call_method("devices::getStorageDevices"), *summary;
+    gchar *processor_name, *alsa_cards, *input_devices, *printers, *storage_devices, *summary;
+    
+    processor_name  = module_call_method("devices::getProcessorName");
+    alsa_cards      = computer_get_alsacards(computer);
+    input_devices   = module_call_method("devices::getInputDevices");
+    printers        = module_call_method("devices::getPrinters");
+    storage_devices = module_call_method("devices::getStorageDevices");
 
     summary = g_strdup_printf("[$ShellParam$]\n"
 			      "UpdateInterval$Memory=1000\n"
@@ -247,6 +248,7 @@ gchar *callback_summary()
 			      computer->display->vendor,
 			      alsa_cards,
 			      input_devices, printers, storage_devices);
+
     g_free(processor_name);
     g_free(alsa_cards);
     g_free(input_devices);

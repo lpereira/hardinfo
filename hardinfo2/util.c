@@ -996,11 +996,11 @@ gchar *h_strdup_cprintf(const gchar * format, gchar * source, ...)
     if (source) {
 	retn = g_strconcat(source, buffer, NULL);
 	g_free(buffer);
+        g_free(source);
     } else {
 	retn = buffer;
     }
 
-    g_free(source);
 
     return retn;
 }
