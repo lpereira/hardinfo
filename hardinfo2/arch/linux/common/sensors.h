@@ -254,7 +254,7 @@ static void read_sensors_acpi(void)
 
 	if ((tz = g_dir_open(path_tz, 0, NULL))) {
 	    const gchar *entry;
-	    gchar *temp = "";
+	    gchar *temp = g_strdup("");
 
 
 	    while ((entry = g_dir_read_name(tz))) {
