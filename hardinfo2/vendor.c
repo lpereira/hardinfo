@@ -57,6 +57,7 @@ static const Vendor vendors[] = {
     {"Logitech", "Logitech International SA", "www.logitech.com"},
     {"FUJITSU", "Fujitsu", "www.fujitsu.com"},
     {"CDU", "Sony", "www.sony.com"},
+    {"SanDisk", "SanDisk", "www.sandisk.com"},
     {NULL, NULL, NULL},
 };
 
