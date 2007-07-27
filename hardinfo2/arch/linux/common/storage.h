@@ -335,7 +335,7 @@ __scan_ide_devices(void)
 	    g_hash_table_insert(moreinfo, devid, strhash);
 
 	    g_free(model);
-	    model = "";
+	    model = g_strdup("");
 	} else
 	    g_free(device);
 

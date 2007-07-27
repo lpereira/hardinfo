@@ -20,16 +20,15 @@ gchar *
 computer_get_alsacards(Computer * computer)
 {
     GSList *p;
-    gchar *tmp = "";
+    gchar *tmp = g_strdup("");
     gint n = 0;
 
     if (computer->alsa) {
 	for (p = computer->alsa->cards; p; p = p->next) {
 	    AlsaCard *ac = (AlsaCard *) p->data;
 
-	    tmp =
-		g_strdup_printf("Audio Adapter#%d=%s\n%s", ++n,
-				ac->friendly_name, tmp);
+	    tmp = h_strdup_cprintf("Audio Adapter#%d=%s\n",
+	                           tmp, ++n, ac->friendly_name);
 	}
     }
 
