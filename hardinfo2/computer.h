@@ -34,6 +34,7 @@ static struct {
     { DB_PREFIX "SuSE-release",		"suse" },
     { DB_PREFIX "sun-release",		"sun"  },
     { DB_PREFIX "zenwalk-version",	"zen"  },
+    { DB_PREFIX "puppyversion",		"ppy"  },
     /*
      * RedHat must be the *last* one to be checked, since
      * some distros (like Mandrake) includes a redhat-relase

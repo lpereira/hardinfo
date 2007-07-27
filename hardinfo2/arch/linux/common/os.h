@@ -185,6 +185,15 @@ computer_get_os(void)
 		    os->distro = g_strdup(buf);
 		}
 	    }
+	    
+	    if (g_str_equal(distro_db[i].codename, "ppy")) {
+	      gchar *tmp;
+	      
+	      tmp = g_strdup_printf("Puppy Linux %.2f", atof(os->distro) / 100.0);
+	      g_free(os->distro);
+	      os->distro = tmp;
+	    }
+	    
 	    os->distrocode = g_strdup(distro_db[i].codename);
 
 	    break;

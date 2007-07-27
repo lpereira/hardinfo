@@ -48,7 +48,9 @@ GdkPixbuf *icon_cache_get_pixbuf(const gchar * file)
 	g_free(path);
     }
 
-    g_object_ref(icon);
+    if (icon) {
+      g_object_ref(icon);
+    }
 
     return icon;
 }
@@ -81,7 +83,9 @@ GdkPixbuf *icon_cache_get_pixbuf_at_size(const gchar * file, gint wid,
 	g_free(path);
     }
 
-    g_object_ref(icon);
+    if (icon) {
+      g_object_ref(icon);
+    }
 
     return icon;
 }
