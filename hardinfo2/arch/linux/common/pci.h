@@ -21,16 +21,32 @@ __scan_pci(void)
 {
     FILE *lspci;
     gchar buffer[256], *buf, *strhash = NULL, *strdevice = NULL;
-    gchar *category = NULL, *name = NULL;
-    gint n = 0;
+    gchar *category = NULL, *name = NULL, *icon;
+    gint n = 0, x = 0;
 
-    if (!(lspci = popen(LSPCI, "r"))) {
-      goto pci_error;
+    buf = g_build_filename(g_get_home_dir(), ".hardinfo", "pci.ids", NULL);
+    if (!g_file_test(buf, G_FILE_TEST_EXISTS)) {
+      DEBUG("using system-provided PCI IDs");
+      g_free(buf);
+      if (!(lspci = popen(LSPCI, "r"))) {
+        goto pci_error;
+      }
+    } else {
+      gchar *tmp;
+      
+      tmp = g_strdup_printf("%s -i '%s'", LSPCI, buf);
+      g_free(buf);
+      buf = tmp;
+      
+      DEBUG("using updated PCI IDs (from %s)", buf);
+      if (!(lspci = popen(tmp, "r"))) {
+        g_free(buf);
+        goto pci_error;
+      } else {
+        g_free(buf);
+      }
     }
 
-    gchar *icon;
-    
-    int x = 0;			/* unique Memory, Capability and I/O port */
     while (fgets(buffer, 256, lspci)) {
 	buf = g_strstrip(buffer);
 
