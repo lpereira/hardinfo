@@ -1121,23 +1121,19 @@ static void module_selected(gpointer data)
     GtkTreeIter parent;
     ShellModuleEntry *entry;
     static ShellModuleEntry *current = NULL;
-    static gboolean updating = FALSE;
-
-    if (updating)
-	return;
-
-    updating = TRUE;
 
     /* Gets the currently selected item on the left-side TreeView; if there is no
        selection, silently return */
     if (!gtk_tree_selection_get_selected
-	(shelltree->selection, &model, &parent))
+	(shelltree->selection, &model, &parent)) {
 	return;
+    }
 
     /* Mark the currently selected module as "unselected"; this is used to kill the 
        update timeout. */
-    if (current)
+    if (current) {
 	current->selected = FALSE;
+    }
 
     /* Get the current selection and shows its related info */
     gtk_tree_model_get(model, &parent, TREE_COL_DATA, &entry, -1);
@@ -1188,7 +1184,6 @@ static void module_selected(gpointer data)
     }
 
     current = entry;
-    updating = FALSE;
 }
 
 static void info_selected(GtkTreeSelection * ts, gpointer data)
