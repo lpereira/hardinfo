@@ -1017,13 +1017,11 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     /* recreate the iter hash table */
     if (!reload) {
 	if (update_tbl) {
-	    g_hash_table_foreach_remove(update_tbl, (GHRFunc) gtk_true,
-					NULL);
-	} else {
-	    update_tbl =
-		g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-				      g_free);
-	}
+	    g_hash_table_destroy(update_tbl);
+        }
+
+        update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                           g_free, g_free);
     }
 
     if (update_sfusrc) {

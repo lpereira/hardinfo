@@ -366,7 +366,7 @@ static gchar *report_get_filename(void)
 					 GTK_RESPONSE_ACCEPT, NULL);
 
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
-				      "hardinfo report");
+				      "hardinfo_report");
 
     file_chooser_add_filters(dialog, file_types);
     file_chooser_open_expander(dialog);
