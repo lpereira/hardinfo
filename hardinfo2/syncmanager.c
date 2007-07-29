@@ -110,7 +110,7 @@ void sync_manager_show(void)
 {
 #ifndef HAS_LIBSOUP
     g_warning
-	("HardInfo was compiled without libsoup support. (Network Manager requires it.)");
+	("HardInfo was compiled without libsoup support. (Network Updater requires it.)");
 #else				/* !HAS_LIBSOUP */
     SyncDialog *sd = sync_dialog_new();
 
