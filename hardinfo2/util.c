@@ -1041,3 +1041,16 @@ gchar *h_strconcat(gchar * string1, ...)
 
     return concat;
 }
+
+static gboolean h_hash_table_remove_all_true(gpointer key, gpointer data, gpointer user_data)
+{
+    return TRUE;
+}
+
+void
+h_hash_table_remove_all(GHashTable *hash_table)
+{
+    g_hash_table_foreach_remove(hash_table,
+				h_hash_table_remove_all_true,
+				NULL);
+}

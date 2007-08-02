@@ -544,6 +544,8 @@ void shell_init(GSList * modules)
     shell->info = info_tree_new(FALSE);
     shell->moreinfo = info_tree_new(TRUE);
     shell->loadgraph = load_graph_new(75);
+    update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                       g_free, g_free);
 
     gtk_paned_pack1(GTK_PANED(shell->hpaned), shell->tree->scroll,
 		    SHELL_PACK_RESIZE, SHELL_PACK_SHRINK);
@@ -585,8 +587,14 @@ void shell_init(GSList * modules)
 
 static gboolean update_field(gpointer data)
 {
-    ShellFieldUpdate *fu = (ShellFieldUpdate *) data;
-    GtkTreeIter *iter = g_hash_table_lookup(update_tbl, fu->field_name);
+    ShellFieldUpdate *fu;
+    GtkTreeIter *iter;
+    
+    fu = (ShellFieldUpdate *) data;
+    g_return_val_if_fail(fu != NULL, FALSE);
+    
+    iter = g_hash_table_lookup(update_tbl, fu->field_name);
+    g_return_val_if_fail(iter != NULL, FALSE);
 
     /* if the entry is still selected, update it */
     if (iter && fu->entry->selected && fu->entry->fieldfunc) {
@@ -1002,9 +1010,8 @@ static void
 module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
     GKeyFile *key_file = g_key_file_new();
-    gchar *key_data;
-    gchar **groups;
     GtkTreeStore *store;
+    gchar *key_data, **groups;
     gint i;
     gsize ngroups;
 
@@ -1016,14 +1023,9 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 
     /* recreate the iter hash table */
     if (!reload) {
-	if (update_tbl) {
-	    g_hash_table_destroy(update_tbl);
-        }
-
-        update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                           NULL, g_free);
+        h_hash_table_remove_all(update_tbl);
     }
-
+    
     if (update_sfusrc) {
 	GSList *sfusrc;
 

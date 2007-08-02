@@ -98,6 +98,8 @@ gchar        *seconds_to_string(unsigned int seconds);
 
 gchar        *h_strdup_cprintf(const gchar *format, gchar *source, ...);
 gchar	     *h_strconcat(gchar *string1, ...);
+void          h_hash_table_remove_all (GHashTable *hash_table);
+
 
 void	      module_entry_scan_all_except(ModuleEntry *entries, gint except_entry);
 void	      module_entry_scan_all(ModuleEntry *entries);
