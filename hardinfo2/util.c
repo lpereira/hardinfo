@@ -707,7 +707,7 @@ static GSList *modules_check_deps(GSList * modules)
 			    ShellModule *mod = module_load(deps[i]);
 
 			    if (mod)
-				modules = g_slist_append(modules, mod);
+				modules = g_slist_prepend(modules, mod);
 			    modules = modules_check_deps(modules);	/* re-check dependencies */
 			} else {
 			    modules = g_slist_remove(modules, module);
@@ -743,7 +743,7 @@ static GSList *modules_load(gchar ** module_list)
 	    if (g_strrstr(filename, "." G_MODULE_SUFFIX) &&
 		module_in_module_list(filename, module_list) &&
 		((module = module_load(filename)))) {
-		modules = g_slist_append(modules, module);
+		modules = g_slist_prepend(modules, module);
 	    }
 	}
 

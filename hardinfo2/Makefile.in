@@ -61,7 +61,7 @@ install:	all
 	mkdir -p ${DESTDIR}/usr/bin
 	mkdir -p ${DESTDIR}/usr/local
 	mkdir -p ${DESTDIR}/usr/share/applications
-	mkdir -p ${DESTDIR}/usr/lib/hardinfo/modules
+	mkdir -p ${DESTDIR}${LIBDIR}/hardinfo/modules
 	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps
 
 	@echo '[01;34m*** Installing icon...[00m'
@@ -71,7 +71,7 @@ install:	all
 	cp hardinfo ${DESTDIR}/usr/bin/hardinfo
 
 	@echo '[01;34m*** Installing modules...[00m'
-	cp -Lr modules/*.so ${DESTDIR}/usr/lib/hardinfo/modules
+	cp -Lr modules/*.so ${DESTDIR}${LIBDIR}/hardinfo/modules
 
 	@echo '[01;34m*** Installing pixmaps...[00m'
 	cp -Lr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps

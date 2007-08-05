@@ -45,6 +45,7 @@ case $OS in
 esac	
 
 PROC=`uname -m`
+LIBDIR='/usr/lib'
 case $PROC in
 	i?86)
 		ln -sf linux/x86 arch/this
@@ -54,7 +55,8 @@ case $PROC in
 		ARCH="ARCH_PPC" ;;
 	x86_64)
 		ln -sf linux/x86_64 arch/this
-		ARCH="ARCH_x86_64" ;;
+		ARCH="ARCH_x86_64"
+		LIBDIR="/usr/lib64" ;;
 	mips*)
 		ln -sf linux/mips arch/this
 		ARCH="ARCH_MIPS" ;;
@@ -214,6 +216,7 @@ echo "SOUP_LIBS = ${SOUP_LIBS}" >> Makefile
 echo "SOUP_CFLAGS = ${SOUP_FLAGS}" >> Makefile
 echo "PACKAGE = `basename ${PWD}`" >> Makefile
 echo "ARCHOPTS = " >> Makefile
+echo "LIBDIR = $LIBDIR" >> Makefile
 
 cat Makefile.in >> Makefile
 

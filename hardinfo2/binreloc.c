@@ -21,6 +21,7 @@
 #include <limits.h>
 #include <string.h>
 #include "binreloc.h"
+#include "config.h"
 
 G_BEGIN_DECLS
 /** @internal
@@ -592,7 +593,12 @@ gchar *gbr_find_lib_dir(const gchar * default_lib_dir)
 	    return NULL;
     }
 
+#ifdef ARCH_x86_64
+    dir = g_build_filename(prefix, "lib64", NULL);
+#else
     dir = g_build_filename(prefix, "lib", NULL);
+#endif
+
     g_free(prefix);
     return dir;
 }
