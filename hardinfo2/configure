@@ -167,7 +167,7 @@ done
 # --------------------------------------------------------------------------
 
 if [ $SOUP -eq -1 ]; then
-	echo "Disabling libsoup support. (Network Manager won't be available.)"
+	echo "Disabling libsoup support. (Network Updater won't be available.)"
 fi
 
 # --------------------------------------------------------------------------
