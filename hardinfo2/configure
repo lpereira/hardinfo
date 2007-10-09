@@ -75,7 +75,7 @@ case $PROC in
         alpha)
                 ln -sf linux/alpha  arch/this
                 ARCH="ARCH_ALPHA" ;;
-        s390)
+        s390*)
                 ln -sf linux/s390  arch/this
                 ARCH="ARCH_S390" ;;
 	m68k)
