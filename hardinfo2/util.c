@@ -662,16 +662,11 @@ static GSList *modules_check_deps(GSList * modules)
 		ShellModule *m;
 		gboolean found = FALSE;
 
-		for (l = modules; l; l = l->next) {
+		for (l = modules; l && !found; l = l->next) {
 		    m = (ShellModule *) l->data;
-		    gchar *name =
-			g_path_get_basename(g_module_name(m->dll));
+		    gchar *name = g_path_get_basename(g_module_name(m->dll));
 
-		    if (g_str_equal(name, deps[i])) {
-			found = TRUE;
-			break;
-		    }
-
+		    found = g_str_equal(name, deps[i]);
 		    g_free(name);
 		}
 

@@ -72,22 +72,22 @@ void cb_save_graphic()
 
 void cb_open_web_page()
 {
-    open_url("http://hardinfo.berlios.de");
+    open_url("http://wiki.hardinfo.org");
 }
 
 void cb_open_online_docs()
 {
-    open_url("http://hardinfo.berlios.de/web/Documentation");
+    open_url("http://wiki.hardinfo.org/Documentation");
 }
 
 void cb_report_bug()
 {
-    open_url("http://hardinfo.berlios.de/web/BugReports");
+    open_url("http://wiki.hardinfo.org/BugReports");
 }
 
 void cb_donate()
 {
-    open_url("http://hardinfo.berlios.de/web/Donate");
+    open_url("http://wiki.hardinfo.org/Donate");
 }
 
 void cb_refresh()

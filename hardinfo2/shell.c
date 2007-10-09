@@ -419,8 +419,6 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 {
     gchar *about_module = g_strdup_printf("AboutModule%s", name);
 
-    stock_icon_register_pixbuf(pixbuf, name);
-
     GtkActionEntry entries[] = {
 	{
 	 name,			/* name */
@@ -440,6 +438,8 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 	 },
     };
 
+    stock_icon_register_pixbuf(pixbuf, name);
+
     gtk_action_group_add_actions(shell->action_group, entries, 2, NULL);
 
     gtk_ui_manager_add_ui(shell->ui_manager,
@@ -458,8 +458,6 @@ static void
 add_module_entry_to_view_menu(gchar * module, gchar * name,
 			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
 {
-    stock_icon_register_pixbuf(pixbuf, name);
-
     GtkActionEntry entries[] = {
 	{
 	 name,			/* name */
@@ -471,6 +469,7 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
 	 },
     };
 
+    stock_icon_register_pixbuf(pixbuf, name);
     gtk_action_group_add_actions(shell->action_group, entries, 1, iter);
 
     gtk_ui_manager_add_ui(shell->ui_manager,
