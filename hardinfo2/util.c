@@ -996,7 +996,6 @@ gchar *h_strdup_cprintf(const gchar * format, gchar * source, ...)
 	retn = buffer;
     }
 
-
     return retn;
 }
 

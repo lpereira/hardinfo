@@ -79,8 +79,12 @@ __scan_scsi_devices(void)
 	    model = g_strdup_printf("%s %s", vendor, model + 7);
 
 	} else if (!strncmp(buf, "Type:   ", 8)) {
-	    char *p = strstr(buf, "ANSI SCSI revi");
+	    char *p;
 	    gchar *type = NULL, *icon = NULL;
+
+            if (!(p = strstr(buf, "ANSI SCSI revision"))) {
+                p = strstr(buf, "ANSI  SCSI revision");
+            }
 
 	    if (p != NULL) {
 		while (*(--p) == ' ');

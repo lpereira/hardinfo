@@ -524,6 +524,11 @@ static void add_modules_to_gui(gpointer data, gpointer user_data)
     }
 }
 
+static void __tree_iter_destroy(gpointer data)
+{
+    gtk_tree_iter_free((GtkTreeIter *) data);
+}
+
 void shell_init(GSList * modules)
 {
     if (shell) {
@@ -544,7 +549,7 @@ void shell_init(GSList * modules)
     shell->moreinfo = info_tree_new(TRUE);
     shell->loadgraph = load_graph_new(75);
     update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                       g_free, g_free);
+                                       g_free, __tree_iter_destroy);
 
     gtk_paned_pack1(GTK_PANED(shell->hpaned), shell->tree->scroll,
 		    SHELL_PACK_RESIZE, SHELL_PACK_SHRINK);
