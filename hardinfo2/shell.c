@@ -24,6 +24,7 @@
 #include <hardinfo.h>
 
 #include <shell.h>
+#include <syncmanager.h>
 #include <iconcache.h>
 #include <menu.h>
 #include <stock.h>
@@ -104,7 +105,7 @@ void shell_action_set_property(const gchar * action_name,
 
 void shell_action_set_enabled(const gchar * action_name, gboolean setting)
 {
-    if (params.gui_running) {
+    if (params.gui_running && shell->action_group) {
 	GtkAction *action;
 
 	action =
@@ -587,6 +588,8 @@ void shell_init(GSList * modules)
     shell_action_set_enabled("SaveGraphAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
+    
+    shell_action_set_enabled("SyncManagerAction", sync_manager_count_entries() > 0);
 }
 
 static gboolean update_field(gpointer data)

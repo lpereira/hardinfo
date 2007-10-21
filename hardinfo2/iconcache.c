@@ -26,6 +26,8 @@ void icon_cache_init(void)
     DEBUG("initializing icon cache");
     if (!cache) {
 	cache = g_hash_table_new(g_str_hash, g_str_equal);
+    } else {
+        DEBUG("already initialized? huh?");
     }
 }
 

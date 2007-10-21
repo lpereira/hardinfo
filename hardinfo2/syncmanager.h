@@ -36,5 +36,6 @@ struct _SyncEntry {
 
 void sync_manager_add_entry(SyncEntry *entry);
 void sync_manager_show(void);
+gint sync_manager_count_entries(void);
 
 #endif	/* __SYNCMANAGER_H__ */
