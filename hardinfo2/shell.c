@@ -929,9 +929,6 @@ moreinfo_handle_normal(GKeyFile * key_file, gchar * group, gchar ** keys)
     }
 }
 
-/* FIXME: This code must be rewritten. Although it works, it is *very* slow and
-          too complex for  this simple  task.  I am lazy, so I'm not fixing it.
-          Be my guest to fix it. */
 static void update_progress()
 {
     GtkTreeModel *model = shell->info->model;
@@ -1157,18 +1154,17 @@ static void module_selected(gpointer data)
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->info->view));
 
 	/* urgh. why don't GTK do this when the model is cleared? */
-	gtk_range_set_value(GTK_RANGE
-			    (GTK_SCROLLED_WINDOW(shell->info->scroll)->
-			     vscrollbar), 0.0);
-	gtk_range_set_value(GTK_RANGE
-			    (GTK_SCROLLED_WINDOW(shell->info->scroll)->
-			     hscrollbar), 0.0);
-	gtk_range_set_value(GTK_RANGE
-			    (GTK_SCROLLED_WINDOW(shell->moreinfo->scroll)->
-			     vscrollbar), 0.0);
-	gtk_range_set_value(GTK_RANGE
-			    (GTK_SCROLLED_WINDOW(shell->moreinfo->scroll)->
-			     hscrollbar), 0.0);
+#define RANGE_SET_VALUE(tree,scrollbar,value) \
+  	  gtk_range_set_value(GTK_RANGE \
+	  		    (GTK_SCROLLED_WINDOW(shell->tree->scroll)-> \
+			     scrollbar), value);
+
+        RANGE_SET_VALUE(info, vscrollbar, 0.0);
+        RANGE_SET_VALUE(info, hscrollbar, 0.0);
+        RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
+        RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
+
+#undef RANGE_SET_VALUE
 
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);

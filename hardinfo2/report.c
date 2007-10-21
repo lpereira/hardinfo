@@ -161,6 +161,7 @@ static void report_html_header(ReportContext * ctx)
 	g_strdup_printf
 	("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Final//EN\">\n"
 	 "<html><head>\n" "<title>HardInfo (%s) System Report</title>\n"
+	 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
 	 "<style>\n" "    body    { background: #fff }\n"
 	 "    .title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n"
 	 "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n"
@@ -173,40 +174,39 @@ static void report_html_header(ReportContext * ctx)
 
 static void report_html_footer(ReportContext * ctx)
 {
-    ctx->output = g_strconcat(ctx->output,
+    ctx->output = h_strconcat(ctx->output,
 			      "</tbody></table></body></html>", NULL);
 }
 
 static void report_html_title(ReportContext * ctx, gchar * text)
 {
-    ctx->output = g_strdup_printf("%s"
-				  "<tr><td colspan=\"2\" class=\"titl"
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"2\" class=\"titl"
 				  "e\">%s</td></tr>\n", ctx->output, text);
 }
 
 static void report_html_subtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = g_strdup_printf("%s"
-				  "<tr><td colspan=\"2\" class=\"stit"
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"2\" class=\"stit"
 				  "le\">%s</td></tr>\n",
-				  ctx->output, text);
+				  ctx->output,
+				  text);
 }
 
 static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = g_strdup_printf("%s"
-				  "<tr><td colspan=\"2\" class=\"ssti"
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"2\" class=\"ssti"
 				  "tle\">%s</td></tr>\n",
-				  ctx->output, text);
+				  ctx->output,
+				  text);
 }
 
 static void
 report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
-    ctx->output = g_strdup_printf("%s"
-				  "<tr><td class=\"field\">%s</td>"
+    ctx->output = h_strdup_cprintf("<tr><td class=\"field\">%s</td>"
 				  "<td class=\"value\">%s</td></tr>\n",
-				  ctx->output, key, value);
+				  ctx->output,
+				  key, value);
 }
 
 static void report_text_header(ReportContext * ctx)
@@ -226,11 +226,11 @@ static void report_text_title(ReportContext * ctx, gchar * text)
     gchar *str = (gchar *) ctx->output;
     int i = strlen(text);
 
-    str = g_strdup_printf("%s\n%s\n", str, text);
+    str = h_strdup_cprintf("\n%s\n", str, text);
     for (; i; i--)
-	str = g_strconcat(str, "*", NULL);
+	str = h_strconcat(str, "*", NULL);
 
-    str = g_strconcat(str, "\n\n", NULL);
+    str = h_strconcat(str, "\n\n", NULL);
     ctx->output = str;
 }
 
@@ -239,17 +239,17 @@ static void report_text_subtitle(ReportContext * ctx, gchar * text)
     gchar *str = ctx->output;
     int i = strlen(text);
 
-    str = g_strdup_printf("%s\n%s\n", str, text);
+    str = h_strdup_cprintf("\n%s\n", str, text);
     for (; i; i--)
-	str = g_strconcat(str, "-", NULL);
+	str = h_strconcat(str, "-", NULL);
 
-    str = g_strconcat(str, "\n\n", NULL);
+    str = h_strconcat(str, "\n\n", NULL);
     ctx->output = str;
 }
 
 static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = g_strdup_printf("%s-%s-\n", ctx->output, text);
+    ctx->output = h_strdup_cprintf("-%s-\n", ctx->output, text);
 }
 
 static void
@@ -257,9 +257,9 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
     if (strlen(value))
 	ctx->output =
-	    g_strdup_printf("%s%s\t\t: %s\n", ctx->output, key, value);
+	    h_strdup_cprintf("%s\t\t: %s\n", ctx->output, key, value);
     else
-	ctx->output = g_strdup_printf("%s%s\n", ctx->output, key);
+	ctx->output = h_strdup_cprintf("%s\n", ctx->output, key);
 }
 
 static GSList *report_create_module_list_from_dialog(ReportDialog * rd)
