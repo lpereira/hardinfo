@@ -96,7 +96,11 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 
 gint sync_manager_count_entries(void)
 {
+#ifdef HAS_LIBSOUP
     return g_slist_length(entries);
+#else
+    return 0;
+#endif
 }
 
 void sync_manager_add_entry(SyncEntry * entry)

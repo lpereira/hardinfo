@@ -589,7 +589,11 @@ void shell_init(GSList * modules)
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
     
+#ifndef HAS_LIBSOUP
+    shell_action_set_enabled("SyncManagerAction", FALSE);
+#else
     shell_action_set_enabled("SyncManagerAction", sync_manager_count_entries() > 0);
+#endif
 }
 
 static gboolean update_field(gpointer data)
@@ -1127,6 +1131,8 @@ static void module_selected(gpointer data)
     GtkTreeIter parent;
     ShellModuleEntry *entry;
     static ShellModuleEntry *current = NULL;
+    static gboolean updating = FALSE;
+    
 
     /* Gets the currently selected item on the left-side TreeView; if there is no
        selection, silently return */
@@ -1139,6 +1145,12 @@ static void module_selected(gpointer data)
        update timeout. */
     if (current) {
 	current->selected = FALSE;
+    }
+
+    if (updating) {
+      return;
+    } else {
+      updating = TRUE;
     }
 
     /* Get the current selection and shows its related info */
@@ -1189,6 +1201,7 @@ static void module_selected(gpointer data)
     }
 
     current = entry;
+    updating = FALSE;
 }
 
 static void info_selected(GtkTreeSelection * ts, gpointer data)
