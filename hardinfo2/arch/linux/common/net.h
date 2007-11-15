@@ -147,13 +147,13 @@ scan_net_interfaces_24(void)
     NetInfo ni;
     gchar buffer[256];
     gchar *devid, *detailed;
-    gulong recv_bytes;
-    gulong recv_errors;
-    gulong recv_packets;
+    gdouble recv_bytes;
+    gdouble recv_errors;
+    gdouble recv_packets;
     
-    gulong trans_bytes;
-    gulong trans_errors;
-    gulong trans_packets;
+    gdouble trans_bytes;
+    gdouble trans_errors;
+    gdouble trans_packets;
     
     if (!g_file_test("/proc/net/dev", G_FILE_TEST_EXISTS)) {
         if (network_interfaces) {
@@ -196,21 +196,21 @@ scan_net_interfaces_24(void)
 	    buf = strchr(buf, ':') + 1;
 
 	    /* iface: bytes packets errs drop fifo frame compressed multicast */
-	    sscanf(buf, "%ld %ld %ld %d %d %d %d %d %ld %ld %ld",
+	    sscanf(buf, "%lf %lf %lf %d %d %d %d %d %lf %lf %lf",
 		   &recv_bytes, &recv_packets,
 		   &recv_errors, &trash, &trash, &trash, &trash,
 		   &trash, &trans_bytes, &trans_packets,
 		   &trans_errors);
 
-            gfloat recv_mb = recv_bytes / 1048576.0;
-            gfloat trans_mb = trans_bytes / 1048576.0;
+            gdouble recv_mb = recv_bytes / 1048576.0;
+            gdouble trans_mb = trans_bytes / 1048576.0;
             
             get_net_info(ifacename, &ni);
 
             devid = g_strdup_printf("NET%s", ifacename);
             
             ip = g_strdup_printf(" (%s)", ni.ip);
-	    network_interfaces = h_strdup_cprintf("$%s$%s=Sent %.2fMiB, received %.2fMiB%s\n",
+	    network_interfaces = h_strdup_cprintf("$%s$%s=Sent %.2lfMiB, received %.2lfMiB%s\n",
                                                   network_interfaces,
                                                   devid,
                                                   ifacename,
@@ -229,8 +229,8 @@ scan_net_interfaces_24(void)
                                         "Hardware Address (MAC)=%02x:%02x:%02x:%02x:%02x:%02x\n"
                                         "MTU=%d\n"
                                         "[Transfer Details]\n"
-                                        "Bytes Received=%ld (%.2fMiB)\n"
-                                        "Bytes Sent=%ld (%.2fMiB)\n",
+                                        "Bytes Received=%.0lf (%.2fMiB)\n"
+                                        "Bytes Sent=%.0lf (%.2fMiB)\n",
                                         iface_type,
                                         ni.mac[0], ni.mac[1],
                                         ni.mac[2], ni.mac[3],
