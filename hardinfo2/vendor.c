@@ -63,6 +63,8 @@ static const Vendor vendors[] = {
     {"Giga-byte", "Gigabyte", "www.gigabyte.com.tw"},
     {"C-Media", "C-Media Electronics", "www.cmedia.com.tw"},
     {"Avermedia", "AVerMedia Technologies", "www.aver.com"},
+    {"Philips", "Philips", "www.philips.com"},
+    {"RaLink", "Ralink Technology", "www.ralinktech.com"},
     {NULL, NULL, NULL},
 };
 

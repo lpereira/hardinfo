@@ -98,8 +98,8 @@ __scan_scsi_devices(void)
                     { "Direct-Access", "Disk", "hdd"},
                     { "Sequential-Access", "Tape", "tape"},
                     { "Printer", "Printer", "lpr"},
-                    { "WORM", "CD-ROM", "cd"},
-                    { "CD-ROM", "CD-ROM", "cd"},
+                    { "WORM", "CD-ROM", "cdrom"},
+                    { "CD-ROM", "CD-ROM", "cdrom"},
                     { "Scanner", "Scanner", "scanner"},
                     { NULL, "Generic", "scsi"} 
                 };
@@ -116,25 +116,35 @@ __scan_scsi_devices(void)
 	    gchar *devid = g_strdup_printf("SCSI%d", n);
 	    storage_list = h_strdup_cprintf("$%s$%s=\n", storage_list, devid, model);
 	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
-
+	    
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
-					     "Model=%s\n"
-					     "Vendor=%s (%s)\n"
-					     "Type=%s\n"
-					     "Revision=%s\n"
-					     "[SCSI Controller]\n"
-					     "Controller=scsi%d\n"
-					     "Channel=%d\n"
-					     "ID=%d\n" "LUN=%d\n",
-					     model,
-					     vendor_get_name(model),
-					     vendor_get_url(model),
-					     type,
-					     revision,
-					     scsi_controller,
-					     scsi_channel,
-					     scsi_id,
-					     scsi_lun);
+					     "Model=%s\n",model);
+	    
+	    const gchar *url = vendor_get_url(model);
+	    if (url) {
+	      strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
+                                         strhash,
+                                         vendor_get_name(model),
+                                         url);
+	    } else {
+	      strhash = h_strdup_cprintf("Vendor=%s\n",
+                                         strhash,
+                                         vendor_get_name(model));
+	    }
+
+            strhash = h_strdup_cprintf("Type=%s\n"
+	    			       "Revision=%s\n"
+				       "[SCSI Controller]\n"
+                                       "Controller=scsi%d\n"
+                                       "Channel=%d\n"
+                                       "ID=%d\n" "LUN=%d\n",
+                                       strhash,
+                                       type,
+                                       revision,
+                                       scsi_controller,
+                                       scsi_channel,
+                                       scsi_id,
+                                       scsi_lun);
 	    g_hash_table_insert(moreinfo, devid, strhash);
 
 	    g_free(model);
@@ -290,19 +300,31 @@ __scan_ide_devices(void)
 	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid,
 	                                  model, g_str_equal(media, "cdrom") ? \
 	                                         "cdrom" : "hdd");
-
+	    
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
-					     "Model=%s\n"
-					     "Vendor=%s (%s)\n"
-					     "Device Name=hd%c\n"
-					     "Media=%s\n"
-					     "Cache=%dkb\n",
-					     model,
-					     vendor_get_name(model),
-					     vendor_get_url(model),
-					     iface,
-					     media,
-					     cache);
+		                             "Model=%s\n",
+					     model);
+	    
+	    const gchar *url = vendor_get_url(model);
+	    
+	    if (url) {
+	      strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
+                                         strhash,
+                                         vendor_get_name(model),
+                                         url);
+	    } else {
+	      strhash = h_strdup_cprintf("Vendor=%s\n",
+                                         strhash,
+                                         vendor_get_name(model));
+	    }
+	    
+            strhash = h_strdup_cprintf("Device Name=hd%c\n"
+                                       "Media=%s\n"
+                                       "Cache=%dkb\n",
+                                       strhash,
+                                       iface,
+                                       media,
+                                       cache);
             if (driver) {
                 strhash = h_strdup_cprintf("%s\n", strhash, driver);
                 

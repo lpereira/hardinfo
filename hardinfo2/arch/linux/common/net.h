@@ -108,6 +108,7 @@ static struct {
     { "ppp",	"Point-to-Point",			  "modem" },
     { "ath",	"Wireless",				  "wireless" },
     { "wlan",	"Wireless",				  "wireless" },
+    { "ra",	"Wireless",				  "wireless" },
     { "tun",    "Virtual Point-to-Point (TUN)",		  "network-generic" },
     { "tap",    "Ethernet (TAP)",			  "network-generic" },
     { "plip",   "Parallel Line Internet Protocol",	  "network" },
