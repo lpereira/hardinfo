@@ -81,6 +81,10 @@ case $PROC in
 	m68k)
 		ln -sf linux/m68k arch/this
 		ARCH="ARCH_m68k" ;;
+	sh*)
+		ln -sf linux/sh arch/this
+		ARCH="ARCH_sh" ;;
+
 esac
 
 if [ "x$ARCH" == "x" ]; then
