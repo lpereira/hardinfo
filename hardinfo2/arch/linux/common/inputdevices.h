@@ -118,6 +118,12 @@ __scan_input_devices(void)
 				      "Version=0x%x\n"
 				      "Connected to=%s\n",
 				      strhash, product, version, phys);
+	    
+	    if (strstr(phys,"ir")) {
+		 strhash = h_strdup_cprintf("InfraRed port=yes\n",
+				 	     strhash);
+	    }
+	    
 	    g_hash_table_insert(moreinfo, tmp, strhash);
 
 	    g_free(phys);
