@@ -1254,7 +1254,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 				       INFO_TREE_COL_PBUF);
 
     cr_text = gtk_cell_renderer_text_new();
-    gtk_tree_view_column_pack_start(column, cr_text, FALSE);
+    gtk_tree_view_column_pack_start(column, cr_text, TRUE);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_NAME);
 
