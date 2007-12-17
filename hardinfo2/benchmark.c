@@ -102,7 +102,7 @@ static gchar *__benchmark_include_results(gdouble result,
 			   "OrderType=%d\n"
 			   "ViewType=3\n"
 			   "[%s]\n"
-			   "<i>This Machine</i>=%.3f\n"
+			   "<big><b>This Machine</b></big>=%.3f\n"
 			   "%s", order_type, benchmark, result, results);
 }
 
