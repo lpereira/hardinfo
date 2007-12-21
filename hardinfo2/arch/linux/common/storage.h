@@ -105,13 +105,18 @@ __scan_scsi_devices(void)
                     { NULL, "Generic", "scsi"} 
                 };
                 int i;
-
-                for (i = 0; type2icon[i].type != NULL; i++)
-                    if (strstr(buf + 8, type2icon[i].type))
-                        break;
-
-                type = type2icon[i].label;
-                icon = type2icon[i].icon;
+                
+                if (strstr(model, "Flash Disk")) {
+                  type = "Flash Disk";
+                  icon = "usbfldisk";
+                } else {
+                  for (i = 0; type2icon[i].type != NULL; i++)
+                      if (g_str_equal(buf + 8, type2icon[i].type))
+                          break;
+                          
+                  type = type2icon[i].label;
+                  icon = type2icon[i].icon;
+                }
 	    }
 	    
 	    gchar *devid = g_strdup_printf("SCSI%d", n);
