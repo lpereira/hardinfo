@@ -101,12 +101,13 @@ __scan_scsi_devices(void)
                     { "WORM", "CD-ROM", "cdrom"},
                     { "CD-ROM", "CD-ROM", "cdrom"},
                     { "Scanner", "Scanner", "scanner"},
+                    { "Flash Disk", "USB Flash Disk", "usbfldisk" },
                     { NULL, "Generic", "scsi"} 
                 };
                 int i;
 
                 for (i = 0; type2icon[i].type != NULL; i++)
-                    if (g_str_equal(buf + 8, type2icon[i].type))
+                    if (strstr(buf + 8, type2icon[i].type))
                         break;
 
                 type = type2icon[i].label;
