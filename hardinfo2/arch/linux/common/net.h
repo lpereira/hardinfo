@@ -109,6 +109,7 @@ static struct {
     { "ath",	"Wireless",				  "wireless" },
     { "wlan",	"Wireless",				  "wireless" },
     { "ra",	"Wireless",				  "wireless" },
+    { "wl",	"Wireless",				  "wireless" },
     { "tun",    "Virtual Point-to-Point (TUN)",		  "network-generic" },
     { "tap",    "Ethernet (TAP)",			  "network-generic" },
     { "plip",   "Parallel Line Internet Protocol",	  "network" },
@@ -118,6 +119,9 @@ static struct {
     { "sit",	"IPv6-over-IPv4 Tunnel",		  "network-generic" },
     { "vmnet8", "VMWare Virtual Network Interface (NAT)", "computer" },
     { "vmnet",  "VMWare Virtual Network Interface",	  "computer"},
+    { "pan",	"Personal Area Network (PAN)",		  "bluetooth"},
+    { "bnep",	"Bluetooth",				  "bluetooth"},
+    { "br",	"Bridge Interface",			  "network-generic" },
     { NULL,	"Unknown",				  "network-generic" },
 };
 
