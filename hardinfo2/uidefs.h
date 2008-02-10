@@ -3,7 +3,7 @@
 
 char *uidefs_str = "<ui>" \
 "	<menubar>" \
-"		<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
+"	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
 /*"		<separator/>" \ */
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \

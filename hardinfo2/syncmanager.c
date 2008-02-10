@@ -385,11 +385,9 @@ static SyncNetAction *sync_manager_get_selected_actions(gint * n)
     gint i;
     GSList *entry;
     SyncNetAction *actions;
-    SyncNetAction action_check_api =
-	{ "Contacting HardInfo Central Database",
-	_action_check_api_version
-    }, action_clean_up = {
-    "Cleaning up", NULL};
+    SyncNetAction
+      action_check_api = { "Contacting HardInfo Central Database", _action_check_api_version },
+      action_clean_up = { "Cleaning up", NULL};
 
     actions = g_new0(SyncNetAction, 2 + g_slist_length(entries));
 
