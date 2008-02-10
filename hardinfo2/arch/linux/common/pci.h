@@ -86,7 +86,12 @@ __scan_pci(void)
 	} else if (!strncmp(buf, "Subsystem", 9)) {
 	    WALK_UNTIL(' ');
 	    buf++;
-	    strdevice = h_strdup_cprintf("OEM Vendor=%s\n", strdevice, buf);
+	    const gchar *oem_vendor_url = vendor_get_url(buf);
+            if (oem_vendor_url) 
+                strdevice = h_strdup_cprintf("OEM Vendor=%s (%s)\n",
+                                            strdevice,
+                                            vendor_get_name(buf),
+                                            oem_vendor_url);
 	} else if (!strncmp(buf, "Capabilities", 12)
 		   && !strstr(buf, "only to root") && 
 		      !strstr(buf, "access denied")) {

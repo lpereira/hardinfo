@@ -66,7 +66,7 @@ detect_desktop_environment(OperatingSystem * os)
 {
     const gchar *tmp = g_getenv("GNOME_DESKTOP_SESSION_ID");
     FILE *version;
-    int maj, min;
+    char vers[16];
 
     if (tmp) {
 	/* FIXME: this might not be true, as the gnome-panel in path
@@ -77,7 +77,7 @@ detect_desktop_environment(OperatingSystem * os)
 	if (version) {
 	    char gnome[10];
 	    
-	    fscanf(version, "%s gnome-panel %d.%d", gnome, &maj, &min);
+	    fscanf(version, "%s gnome-panel %s", gnome, vers);
 	    if (pclose(version))
 	        goto unknown;
 	} else {
@@ -85,7 +85,7 @@ detect_desktop_environment(OperatingSystem * os)
 	}
 
 	os->desktop =
-	    g_strdup_printf("GNOME %d.%d (session name: %s)", maj, min,
+	    g_strdup_printf("GNOME %s (session name: %s)", vers,
 			    tmp);
     } else if (g_getenv("KDE_FULL_SESSION")) {
 	version = popen("kcontrol --version", "r");
@@ -94,14 +94,14 @@ detect_desktop_environment(OperatingSystem * os)
 
 	    fgets(buf, 32, version);
 
-	    fscanf(version, "KDE: %d.%d", &maj, &min);
+	    fscanf(version, "KDE: %s", vers);
 	    if (pclose(version))
 	        goto unknown;
 	} else {
 	    goto unknown;
 	}
 
-	os->desktop = g_strdup_printf("KDE %d.%d", maj, min);
+	os->desktop = g_strdup_printf("KDE %s", vers);
     } else {
       unknown:
 	if (!g_getenv("DISPLAY")) {

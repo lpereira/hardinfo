@@ -94,28 +94,33 @@ __scan_usb(void)
 
                 const gchar *url = vendor_get_url(manuf);
                 if (url) {
-                    gchar *tmp = g_strdup_printf("%s (%s)", manuf, url);
+                    gchar *tmp = g_strdup_printf("%s (%s)", vendor_get_name(manuf), url);
                     g_free(manuf);
                     manuf = tmp;
                 }
 
                 gchar *strhash = g_strdup_printf("[Device Information]\n"
-                                                 "Product=%s\n"
-                                                 "Manufacturer=%s\n"
-                                                 "[Port #%d]\n"
-                                                 "Speed=%.2fMbit/s\n"
-                                                 "Max Current=%s\n"
-                                                 "[Misc]\n"
-                                                 "USB Version=%.2f\n"
-                                                 "Revision=%.2f\n"
-                                                 "Class=0x%x\n"
-                                                 "Vendor=0x%x\n"
-                                                 "Product ID=0x%x\n"
-                                                 "Bus=%d\n" "Level=%d\n",
-                                                 product, manuf,
-                                                 port, speed, mxpwr,
-                                                 ver, rev, classid,
-                                                 vendor, prodid, bus, level);
+                                                 "Product=%s\n",
+						  product);
+		if (manuf && strlen(manuf))
+                      strhash = h_strdup_cprintf("Manufacturer=%s\n",
+						  strhash,
+						  manuf);
+
+                strhash = h_strdup_cprintf("[Port #%d]\n"
+                                           "Speed=%.2fMbit/s\n"
+                                           "Max Current=%s\n"
+                                           "[Misc]\n"
+                                           "USB Version=%.2f\n"
+                                           "Revision=%.2f\n"
+                                           "Class=0x%x\n"
+                                           "Vendor=0x%x\n"
+                                           "Product ID=0x%x\n"
+                                           "Bus=%d\n" "Level=%d\n",
+                                           strhash,
+                                           port, speed, mxpwr,
+                                           ver, rev, classid,
+                                           vendor, prodid, bus, level);
 
                 g_hash_table_insert(moreinfo, tmp, strhash);
             }
