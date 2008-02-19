@@ -6,4 +6,4 @@ Icon=/usr/share/hardinfo/pixmaps/logo.png
 Terminal=false
 Type=Application
 StartupNotify=true
-Categories=System
+Categories=System;
