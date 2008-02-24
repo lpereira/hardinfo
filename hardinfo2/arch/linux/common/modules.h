@@ -119,7 +119,7 @@ scan_modules_do(void)
 				    "License=%s\n",
 				    NONE_IF_NULL(filename),
 				    memory / 1024.0,
-				    NONE_IF_NULL(modname),
+				    modname,
 				    NONE_IF_NULL(description),
 				    NONE_IF_NULL(vermagic),
 				    NONE_IF_NULL(author),

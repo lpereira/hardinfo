@@ -31,9 +31,17 @@ static void read_sensor_labels(gchar * driver)
 					  g_free, g_free);
     sensor_compute = g_hash_table_new(g_str_hash, g_str_equal);
 
-    conf = fopen("/etc/sensors.conf", "r");
-    if (!conf)
-	return;
+    /* Try to open lm-sensors config file sensors3.conf */
+    conf = fopen("/etc/sensors3.conf", "r");
+
+    /* If it fails, try to open sensors.conf */
+    if (!conf) conf = fopen("/etc/sensors.conf", "r");
+
+    if (!conf) {
+        /* Cannot open config file. */
+        fprintf(stderr, "Cannot open /etc/sensors.conf file.\n");
+        return;
+    }
 
     while (fgets(buf, 256, conf)) {
 	line = buf;
@@ -100,7 +108,7 @@ static void read_sensor_labels(gchar * driver)
 		for (i = 1; chips[i]; i++) {
 		    strend(chips[i], '*');
 
-		    if (g_str_has_prefix(driver, chips[i] + 1)) {
+                     if (g_str_has_prefix(chips[i] + 1, driver)) {
 			lock = TRUE;
 			break;
 		    }

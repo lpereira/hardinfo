@@ -77,7 +77,7 @@ scan_languages(OperatingSystem * os)
 					 "Revision=%s\n"
 					 "Date=%s\n"
 					 "Codeset=%s\n",
-					 FIELD(name), FIELD(title),
+					 name, FIELD(title),
 					 FIELD(source), FIELD(address),
 					 FIELD(email), FIELD(language),
 					 FIELD(territory), FIELD(revision),
