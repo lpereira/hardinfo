@@ -39,7 +39,6 @@ static void read_sensor_labels(gchar * driver)
 
     if (!conf) {
         /* Cannot open config file. */
-        fprintf(stderr, "Cannot open /etc/sensors.conf file.\n");
         return;
     }
 

@@ -485,6 +485,10 @@ static void add_modules_to_gui(gpointer data, gpointer user_data)
     ShellModule *module = (ShellModule *) data;
     GtkTreeStore *store = GTK_TREE_STORE(shelltree->model);
     GtkTreeIter parent;
+    
+    if (!module) {
+        return;
+    }
 
     gtk_tree_store_append(store, &parent, NULL);
     gtk_tree_store_set(store, &parent, TREE_COL_NAME, module->name,

@@ -204,6 +204,7 @@ void cb_about()
 	"Raytracing benchmark by John Walker (see fbench.c for details)",
 	"Some code partly based on x86cpucaps by Osamu Kayasono",
 	"Vendor list based on GtkSysInfo by Pissens Sebastien",
+	"DMI support based on code by Stewart Adam",
 	NULL
     };
     const gchar *artists[] = {
@@ -216,7 +217,7 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
-				   "Copyright \302\251 2003-2007 "
+				   "Copyright \302\251 2003-2008 "
 				   "Leandro A. F. Pereira");
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				  "System information and benchmark tool");

@@ -36,6 +36,9 @@ enum {
     DEVICES_PRINTERS,
     DEVICES_BATTERY,
     DEVICES_SENSORS,
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+    DEVICES_DMI,
+#endif
     DEVICES_INPUT,
     DEVICES_STORAGE,
 } Entries;
@@ -49,6 +52,9 @@ gchar *callback_printers();
 gchar *callback_storage();
 gchar *callback_input();
 gchar *callback_usb();
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+gchar *callback_dmi();
+#endif
 
 void scan_processors(gboolean reload);
 void scan_memory(gboolean reload);
@@ -59,6 +65,9 @@ void scan_printers(gboolean reload);
 void scan_storage(gboolean reload);
 void scan_input(gboolean reload);
 void scan_usb(gboolean reload);
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+void scan_dmi(gboolean reload);
+#endif
 
 static ModuleEntry entries[] = {
     {"Processor", "processor.png", callback_processors, scan_processors},
@@ -68,6 +77,9 @@ static ModuleEntry entries[] = {
     {"Printers", "printer.png", callback_printers, scan_printers,},
     {"Battery", "battery.png", callback_battery, scan_battery},
     {"Sensors", "therm.png", callback_sensors, scan_sensors},
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+    {"DMI", "computer.png", callback_dmi, scan_dmi},
+#endif	/* x86 or x86_64 */
     {"Input Devices", "inputdevices.png", callback_input, scan_input},
     {"Storage", "hdd.png", callback_storage, scan_storage},
     {NULL}
@@ -123,6 +135,10 @@ typedef struct _Processor Processor;
 #include <arch/this/battery.h>
 #include <arch/this/sensors.h>
 #include <arch/this/devmemory.h>
+
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+#include <arch/this/dmi.h>
+#endif	/* x86 or x86_64 */
 
 gchar *get_processor_name(void)
 {
@@ -192,6 +208,15 @@ gchar *hi_get_field(gchar * field)
 
     return g_strdup(field);
 }
+
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+void scan_dmi(gboolean reload)
+{
+    SCAN_START();
+    __scan_dmi();
+    SCAN_END();
+}
+#endif
 
 void scan_processors(gboolean reload)
 {
@@ -265,6 +290,13 @@ gchar *callback_processors()
 {
     return processor_get_info(processors);
 }
+
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+gchar *callback_dmi()
+{
+    return dmi_info;
+}
+#endif
 
 gchar *callback_memory()
 {
