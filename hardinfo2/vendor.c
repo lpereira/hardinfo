@@ -49,6 +49,7 @@ static const Vendor vendors[] = {
     {"Atheros", "Atheros Communications", "www.atheros.com"},
     {"MATSHITA", "Panasonic", "www.panasonic.com"},
     {"Silicon Image", "Silicon Image, Inc.", "www.siliconimage.com"},
+    {"Silicon Integrated Image", "Silicon Image, Inc.", "www.siliconimage.com"},
     {"KYE", "KYE Systems Corp.", "www.genius-kye.com"},
     {"Broadcom", "Broadcom Corp.", "www.broadcom.com"},
     {"Apple", "Apple Computer, Inc.", "www.apple.com"},
@@ -68,6 +69,7 @@ static const Vendor vendors[] = {
     {"Siemens", "Siemens AG", "www.siemens.com"},
     {"HP", "Hewlett-Packard", "www.hp.com"},
     {"Hewlett-Packard", "Hewlett-Packard", "www.hp.com"},
+    {"TEAC", "TEAC America Inc.", "www.teac.com"},
     {NULL, NULL, NULL},
 };
 
