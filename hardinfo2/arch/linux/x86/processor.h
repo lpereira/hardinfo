@@ -208,6 +208,12 @@ static GSList *__scan_processors(void)
     return procs;
 }
 
+/*
+ * Sources: 
+ * - Linux' cpufeature.h
+ * - http://gentoo-wiki.com/Cpuinfo
+ * - Intel IA-32 Architecture Software Development Manual
+ */
 static struct {
     char *name, *meaning;
 } flag_meaning[] = {
@@ -293,6 +299,21 @@ static struct {
 	{ "pmm_en",	"PMM enabled"					},
 	{ "lahf_lm",	"LAHF/SAHF in long mode"			},
 	{ "cmp_legacy",	"HyperThreading not valid"			},
+	{ "lm",		"LAHF/SAHF in long mode"			},
+	{ "ds_cpl",	"CPL Qualified Debug Store"			},
+	{ "vmx",	"Virtualization support"			},
+	{ "svm",	"Virtualization support"			},
+	{ "est",	"Enhanced SpeedStep"				},
+	{ "tm2",	"Thermal Monitor 2"				},
+	{ "ssse3",	"Supplemental Streaming SIMD Extension 3"	},
+	{ "cx16",	"CMPXCHG16B instruction"			},
+	{ "xptr",	"Send Task Priority Messages"			},
+	{ "pebs",	"Precise Event Based Sampling"			},
+	{ "bts",	"Branch Trace Store"				},
+	{ "ida",	"Intel Dynamic Acceleration"			},
+	{ "arch_perfmon","Intel Architectural PerfMon"			},
+	{ "pni",	"Streaming SIMD Extension 3"			},
+	{ "rep_good",	"rep microcode works well on this CPU"		},
 	{ NULL,		NULL						},
 };
 
