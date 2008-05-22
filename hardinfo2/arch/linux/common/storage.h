@@ -36,6 +36,7 @@ __scan_scsi_devices(void)
     gint scsi_id;
     gint scsi_lun;
     gchar *vendor = NULL, *revision = NULL, *model = NULL;
+    gchar *scsi_storage_list;
 
     /* remove old devices from global device table */
     g_hash_table_foreach_remove(moreinfo, remove_scsi_devices, NULL);
@@ -43,7 +44,7 @@ __scan_scsi_devices(void)
     if (!g_file_test("/proc/scsi/scsi", G_FILE_TEST_EXISTS))
 	return;
 
-    storage_list = g_strconcat(storage_list, "\n[SCSI Disks]\n", NULL);
+    scsi_storage_list = g_strdup("\n[SCSI Disks]\n");
 
     proc_scsi = fopen("/proc/scsi/scsi", "r");
     while (fgets(buffer, 256, proc_scsi)) {
@@ -77,7 +78,6 @@ __scan_scsi_devices(void)
 	    while (*(--p) == ' ');
 	    *(++p) = 0;
 	    model = g_strdup_printf("%s %s", vendor, model + 7);
-
 	} else if (!strncmp(buf, "Type:   ", 8)) {
 	    char *p;
 	    gchar *type = NULL, *icon = NULL;
@@ -120,7 +120,7 @@ __scan_scsi_devices(void)
 	    }
 	    
 	    gchar *devid = g_strdup_printf("SCSI%d", n);
-	    storage_list = h_strdup_cprintf("$%s$%s=\n", storage_list, devid, model);
+	    scsi_storage_list = h_strdup_cprintf("$%s$%s=\n", scsi_storage_list, devid, model);
 	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
 	    
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
@@ -159,6 +159,11 @@ __scan_scsi_devices(void)
 	}
     }
     fclose(proc_scsi);
+    
+    if (n) {
+      storage_list = h_strconcat(storage_list, scsi_storage_list, NULL);
+      g_free(scsi_storage_list);
+    }
 }
 
 static gboolean
@@ -174,12 +179,12 @@ __scan_ide_devices(void)
     gchar *device, iface, *model, *media, *pgeometry = NULL, *lgeometry =
 	NULL;
     gint n = 0, i = 0, cache, nn = 0;
-    gchar *capab = NULL, *speed = NULL, *driver = NULL;
+    gchar *capab = NULL, *speed = NULL, *driver = NULL, *ide_storage_list;
 
     /* remove old devices from global device table */
     g_hash_table_foreach_remove(moreinfo, remove_ide_devices, NULL);
-
-    storage_list = g_strconcat(storage_list, "\n[IDE Disks]\n", NULL);
+    
+    ide_storage_list = g_strdup("\n[IDE Disks]\n");
 
     iface = 'a';
     for (i = 0; i <= 16; i++) {
@@ -301,7 +306,7 @@ __scan_ide_devices(void)
 
 	    gchar *devid = g_strdup_printf("IDE%d", n);
 
-	    storage_list = h_strdup_cprintf("$%s$%s=\n", storage_list,
+	    ide_storage_list = h_strdup_cprintf("$%s$%s=\n", ide_storage_list,
 					 devid, model);
 	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid,
 	                                  model, g_str_equal(media, "cdrom") ? \
@@ -372,5 +377,10 @@ __scan_ide_devices(void)
 	    g_free(device);
 
 	iface++;
+    }
+    
+    if (n) {
+      storage_list = h_strconcat(storage_list, ide_storage_list, NULL);
+      g_free(ide_storage_list);
     }
 }

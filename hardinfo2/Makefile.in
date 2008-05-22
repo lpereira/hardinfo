@@ -86,4 +86,5 @@ install:	all
 	@echo '[01;34m*** Done installing.[00m'
 
 installer:
-	makeinstaller
+	makepackage
+	
