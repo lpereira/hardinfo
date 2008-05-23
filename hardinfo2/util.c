@@ -1048,3 +1048,55 @@ h_hash_table_remove_all(GHashTable *hash_table)
 				h_hash_table_remove_all_true,
 				NULL);
 }
+
+gfloat
+h_sysfs_read_float(gchar *endpoint, gchar *entry)
+{
+	gchar *tmp, *buffer;
+	gfloat return_value = 0.0f;
+	
+	tmp = g_build_filename(endpoint, entry, NULL);
+	if (g_file_get_contents(tmp, &buffer, NULL, NULL))
+		return_value = atof(buffer);
+	
+	g_free(tmp);
+	g_free(buffer);
+	
+	return return_value;
+}
+
+gint
+h_sysfs_read_int(gchar *endpoint, gchar *entry)
+{
+	gchar *tmp, *buffer;
+	gint return_value = 0.0f;
+	
+	tmp = g_build_filename(endpoint, entry, NULL);
+	if (g_file_get_contents(tmp, &buffer, NULL, NULL))
+		return_value = atoi(buffer);
+	
+	g_free(tmp);
+	g_free(buffer);
+	
+	return return_value;
+}
+
+gchar *
+h_sysfs_read_string(gchar *endpoint, gchar *entry)
+{
+	gchar *tmp, *return_value;
+	
+	tmp = g_build_filename(endpoint, entry, NULL);
+	if (!g_file_get_contents(tmp, &return_value, NULL, NULL)) {
+		g_free(return_value);
+		
+		return_value = NULL;
+	} else {
+		return_value = g_strstrip(return_value);
+	}
+	
+	g_free(tmp);
+	
+	return return_value;
+}
+

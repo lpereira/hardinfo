@@ -119,6 +119,10 @@ extern   ProgramParameters params;
 /* Module stuff */
 gchar		*module_call_method(gchar *method);
 
+/* Sysfs stuff */
+gfloat		h_sysfs_read_float(gchar *endpoint, gchar *entry);
+gint		h_sysfs_read_int(gchar *endpoint, gchar *entry);
+gchar	       *h_sysfs_read_string(gchar *endpoint, gchar *entry);
 
 #define SCAN_START()  static gboolean scanned = FALSE; if (reload) scanned = FALSE; if (scanned) return;
 #define SCAN_END()    scanned = TRUE;

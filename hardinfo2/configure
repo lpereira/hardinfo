@@ -178,6 +178,23 @@ fi
 
 # --------------------------------------------------------------------------
 
+echo -n "Checking for Linux Wireless Extensions (CONFIG_NET_RADIO)... "
+if [ -e /proc/net/wireless ]; then
+	echo "found."
+	LINUX_WE=1
+else
+	echo "not found."
+	LINUX_WE=-1
+fi
+
+# --------------------------------------------------------------------------
+
+if [ $LINUX_WE -eq -1 ]; then
+	echo "Disabling Linux Wireless Extensions support."
+fi
+
+# --------------------------------------------------------------------------
+
 echo -e "\nWriting config.h..."
 rm -f config.h
 echo -e "#ifndef __CONFIG_H__\n#define __CONFIG_H__\n" > config.h
@@ -197,6 +214,10 @@ echo "#define LIBPREFIX \"/usr/lib/hardinfo/\"" >> config.h
 
 if [ "$SOUP" == "1" ]; then
 	echo "#define HAS_LIBSOUP" >> config.h
+fi
+
+if [ "$LINUX_WE" == "1" ]; then
+	echo "#define HAS_LINUX_WE" >> config.h
 fi
 
 if [ "$RELEASE" == "1" ]; then

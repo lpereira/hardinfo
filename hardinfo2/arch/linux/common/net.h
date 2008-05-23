@@ -15,23 +15,31 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-
+/*
+ * Wireless Extension Example
+ * http://www.krugle.org/examples/p-OZYzuisV6gyQIaTu/iwconfig.c
+ */
 static gchar *network_interfaces = NULL, *network_icons = NULL;
-
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <linux/sockios.h>
-#include <sys/socket.h>
 
 #include <stdio.h>
 #include <unistd.h>
-#include <string.h>		/* for strncpy */
+#include <string.h>
+
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
 #include <netinet/in.h>
+#include <linux/sockios.h>
+
 #include <arpa/inet.h>
 
+#ifdef HAS_LINUX_WE
+#include <linux/if.h>
+#include <linux/wireless.h>
+#else
+#include <net/if.h>
+#endif	/* HAS_LINUX_WE */
 
 typedef struct _NetInfo NetInfo;
 struct _NetInfo {
@@ -41,7 +49,79 @@ struct _NetInfo {
     char ip[16];
     char mask[16];
     char broadcast[16];
+
+#ifdef HAS_LINUX_WE
+    char wi_essid[IW_ESSID_MAX_SIZE + 1];   
+    int  wi_rate, wi_status;
+    int	 wi_quality_level, wi_signal_level, wi_noise_level;
+    gboolean is_wireless;
+#endif
 };
+
+#ifdef HAS_LINUX_WE
+void get_wireless_info(int fd, NetInfo *netinfo)
+{
+  FILE *wrls;
+  char wbuf[256];
+  struct iwreq wi_req;
+  int r, trash;
+
+  if ((wrls = fopen("/proc/net/wireless", "r"))) {
+      while (fgets(wbuf, 256, wrls)) {
+          if (strchr(wbuf, ':') && strstr(wbuf, netinfo->name)) {
+              gchar *buf1 = wbuf;
+              
+              netinfo->is_wireless = TRUE;
+              
+              buf1 = strchr(buf1, ':') + 1;
+              
+              if (strstr(buf1, ".")) {
+                  sscanf(buf1, "%d %d. %d %d %d %d %d %d %d %d",
+                         &(netinfo->wi_status),
+                         &(netinfo->wi_quality_level),
+                         &(netinfo->wi_signal_level),
+                         &(netinfo->wi_noise_level),
+                         &trash, &trash, &trash, &trash, &trash, &trash);
+              } else {
+                  sscanf(buf1, "%d %d %d %d %d %d %d %d %d %d",
+                         &(netinfo->wi_status),
+                         &(netinfo->wi_quality_level),
+                         &(netinfo->wi_signal_level),
+                         &(netinfo->wi_noise_level),
+                         &trash, &trash, &trash, &trash, &trash,
+                         &trash);
+              }
+              
+              break;
+          }
+      }
+      fclose(wrls);
+  }
+
+  if (!netinfo->is_wireless)
+    return;
+  
+  strncpy(wi_req.ifr_name, netinfo->name, 16);
+  
+  /* obtain essid */
+  wi_req.u.essid.pointer = netinfo->wi_essid;
+  wi_req.u.essid.length  = IW_ESSID_MAX_SIZE + 1;
+  wi_req.u.essid.flags   = 0;
+  
+  if ((r = ioctl(fd, SIOCGIWESSID, &wi_req) < 0)) {
+    strcpy(netinfo->wi_essid, "");
+  } else {
+    netinfo->wi_essid[wi_req.u.essid.length] = '\0';
+  }
+
+  /* obtain bit rate */
+  if ((r =ioctl(fd, SIOCGIWRATE, &wi_req) < 0)) {
+    netinfo->wi_rate = 0;
+  } else {
+    netinfo->wi_rate = wi_req.u.bitrate.value;
+  }                        
+}
+#endif /* HAS_LINUX_WE */
 
 void get_net_info(char *if_name, NetInfo * netinfo)
 {
@@ -99,6 +179,10 @@ void get_net_info(char *if_name, NetInfo * netinfo)
 		inet_ntoa(((struct sockaddr_in *) &ifr.ifr_addr)->
 			  sin_addr));
     }
+
+#ifdef HAS_LINUX_WE
+    get_wireless_info(fd, netinfo);
+#endif
 
     shutdown(fd, 0);
 }
@@ -163,10 +247,6 @@ static void scan_net_interfaces_24(void)
     gdouble trans_errors;
     gdouble trans_packets;
 
-    /* Variables for wireless connections */
-    gint wstatus;
-    gint wqlink, wqlevel, wqnoise;
-
     if (!g_file_test("/proc/net/dev", G_FILE_TEST_EXISTS)) {
 	if (network_interfaces) {
 	    g_free(network_interfaces);
@@ -191,8 +271,6 @@ static void scan_net_interfaces_24(void)
     proc_net = fopen("/proc/net/dev", "r");
     while (fgets(buffer, 256, proc_net)) {
 	if (strchr(buffer, ':')) {
-	    gchar wbuf[256], *wdetailed = NULL;
-	    FILE *wrls;
 	    gint trash;
 	    gchar ifacename[16];
 	    gchar *buf = buffer;
@@ -219,6 +297,12 @@ static void scan_net_interfaces_24(void)
 	    gdouble trans_mb = trans_bytes / 1048576.0;
 
 	    get_net_info(ifacename, &ni);
+#ifdef HAS_LINUX_WE
+	    if (ni.is_wireless) {
+	        iface_type = "Wireless";
+	        iface_icon = "wireless";
+	    }
+#endif
 
 	    devid = g_strdup_printf("NET%s", ifacename);
 
@@ -231,43 +315,10 @@ static void scan_net_interfaces_24(void)
 	    g_free(ip);
 
 	    net_get_iface_type(ifacename, &iface_type, &iface_icon);
+	    
 	    network_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n",
 					     network_icons, devid,
 					     ifacename, iface_icon);
-
-	    if ((wrls = fopen("/proc/net/wireless", "r"))) {
-		while (fgets(wbuf, 256, wrls)) {
-		    if (strchr(wbuf, ':') && strstr(wbuf, ifacename)) {
-			gchar *buf1 = wbuf;
-			
-			iface_type = "Wireless";
-			iface_icon = "wireless";
-			
-			buf1 = strchr(buf1, ':') + 1;
-			
-			if (strstr(buf1, ".")) {
-			    sscanf(buf1, "%d %d. %d %d %d %d %d %d %d %d",
-				   &wstatus, &wqlink, &wqlevel, &wqnoise,
-				   &trash, &trash, &trash, &trash, &trash,
-				   &trash);
-			} else {
-			    sscanf(buf1, "%d %d %d %d %d %d %d %d %d %d",
-				   &wstatus, &wqlink, &wqlevel, &wqnoise,
-				   &trash, &trash, &trash, &trash, &trash,
-				   &trash);
-			}
-			wdetailed =
-			    g_strdup_printf("\n[Wireless Information]\n"
-					     "Status=%d\n"
-					     "Quality Level=%d%%\n"
-					     "Signal Level=%d\n"
-					     "Noise Level=%d\n",
-					     wstatus, wqlink, wqlevel,
-					     wqnoise);
-		    }
-		}
-                fclose(wrls);
-	    }
 
 	    detailed = g_strdup_printf("[Network Adapter Properties]\n"
 				       "Interface Type=%s\n"
@@ -284,9 +335,23 @@ static void scan_net_interfaces_24(void)
 				       recv_bytes, recv_mb,
 				       trans_bytes, trans_mb);
             
-            if (wdetailed) {
-                detailed = h_strconcat(detailed, wdetailed, NULL);
+#ifdef HAS_LINUX_WE
+            if (ni.is_wireless) {
+              detailed = h_strdup_cprintf("\n[Wireless Properties]\n"
+                                          "Network Name (SSID)=%s\n"
+                                          "Bit Rate=%dMb/s\n"
+                                          "Status=%d\n"
+                                          "Link Quality=%d\n"
+                                          "Signal / Noise=%d / %d\n",
+                                          detailed,
+                                          ni.wi_essid,
+                                          ni.wi_rate / 1000000,
+                                          ni.wi_status,
+                                          ni.wi_quality_level,
+                                          ni.wi_signal_level,
+                                          ni.wi_noise_level);
             }
+#endif
 
 	    if (ni.ip[0] || ni.mask[0] || ni.broadcast[0]) {
 		detailed =
