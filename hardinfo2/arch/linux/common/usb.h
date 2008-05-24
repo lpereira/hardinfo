@@ -98,15 +98,15 @@ void __scan_usb_sysfs(void)
     const gchar *sysfs_path = "/sys/class/usb_endpoint";
     gint usb_device_number = 0;
 
+    if (!(sysfs = g_dir_open(sysfs_path, 0, NULL))) {
+	return;
+    }
+
     if (usb_list) {
 	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
 	g_free(usb_list);
     }
     usb_list = g_strdup("[USB Devices]\n");
-
-    if (!(sysfs = g_dir_open(sysfs_path, 0, NULL))) {
-	return;
-    }
 
     while ((filename = (gchar *) g_dir_read_name(sysfs))) {
 	gchar *endpoint =

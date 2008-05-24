@@ -52,13 +52,18 @@ struct _NetInfo {
 
 #ifdef HAS_LINUX_WE
     char wi_essid[IW_ESSID_MAX_SIZE + 1];   
-    int  wi_rate, wi_status;
+    int  wi_rate;
+    int  wi_mode, wi_status;
+    gboolean wi_has_txpower;
+    struct iw_param wi_txpower;
     int	 wi_quality_level, wi_signal_level, wi_noise_level;
     gboolean is_wireless;
 #endif
 };
 
 #ifdef HAS_LINUX_WE
+const gchar *wi_operation_modes[] = { "Auto", "Ad-Hoc", "Managed", "Master", "Repeater", "Secondary", "Unknown" };
+
 void get_wireless_info(int fd, NetInfo *netinfo)
 {
   FILE *wrls;
@@ -66,6 +71,8 @@ void get_wireless_info(int fd, NetInfo *netinfo)
   struct iwreq wi_req;
   int r, trash;
 
+  netinfo->is_wireless = FALSE;
+  
   if ((wrls = fopen("/proc/net/wireless", "r"))) {
       while (fgets(wbuf, 256, wrls)) {
           if (strchr(wbuf, ':') && strstr(wbuf, netinfo->name)) {
@@ -115,11 +122,33 @@ void get_wireless_info(int fd, NetInfo *netinfo)
   }
 
   /* obtain bit rate */
-  if ((r =ioctl(fd, SIOCGIWRATE, &wi_req) < 0)) {
+  if ((r = ioctl(fd, SIOCGIWRATE, &wi_req) < 0)) {
     netinfo->wi_rate = 0;
   } else {
     netinfo->wi_rate = wi_req.u.bitrate.value;
-  }                        
+  }
+  
+  /* obtain operation mode */
+  if ((r = ioctl(fd, SIOCGIWMODE, &wi_req) < 0)) {
+    netinfo->wi_mode = 0;
+  } else {
+    if (wi_req.u.mode >= 0 && wi_req.u.mode < 6) {
+      netinfo->wi_mode = wi_req.u.mode;
+    } else {
+      netinfo->wi_mode = 6;
+    }
+  }
+  
+#if WIRELESS_EXT >= 10
+  /* obtain txpower */
+  if ((r = ioctl(fd, SIOCGIWTXPOW, &wi_req) < 0)) {
+    netinfo->wi_has_txpower = FALSE;
+  } else {
+    netinfo->wi_has_txpower = TRUE;
+          
+    memcpy(&netinfo->wi_txpower, &wi_req.u.txpower, sizeof(struct iw_param));
+  }
+#endif	/* WIRELESS_EXT >= 10 */
 }
 #endif /* HAS_LINUX_WE */
 
@@ -181,7 +210,6 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     }
 
 #ifdef HAS_LINUX_WE
-    netinfo->is_wireless = FALSE;
     get_wireless_info(fd, netinfo);
 #endif
 
@@ -338,19 +366,36 @@ static void scan_net_interfaces_24(void)
             
 #ifdef HAS_LINUX_WE
             if (ni.is_wireless) {
+              gchar *txpower;
+              
+              if (ni.wi_has_txpower) {
+                if (ni.wi_txpower.flags & IW_TXPOW_MWATT)
+                  txpower = g_strdup_printf("%d mW", ni.wi_txpower.value);
+                else
+                  txpower = g_strdup_printf("%d dBm", ni.wi_txpower.value);
+              } else {
+                txpower = g_strdup("Radio Off");
+              }
+            
               detailed = h_strdup_cprintf("\n[Wireless Properties]\n"
                                           "Network Name (SSID)=%s\n"
                                           "Bit Rate=%dMb/s\n"
+                                          "Transmission Power=%s\n"
+                                          "Mode=%s\n"
                                           "Status=%d\n"
                                           "Link Quality=%d\n"
                                           "Signal / Noise=%d / %d\n",
                                           detailed,
                                           ni.wi_essid,
                                           ni.wi_rate / 1000000,
+                                          txpower,
+                                          wi_operation_modes[ni.wi_mode],
                                           ni.wi_status,
                                           ni.wi_quality_level,
                                           ni.wi_signal_level,
                                           ni.wi_noise_level);
+
+              g_free(txpower);
             }
 #endif
 
