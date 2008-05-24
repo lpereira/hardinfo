@@ -181,6 +181,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     }
 
 #ifdef HAS_LINUX_WE
+    netinfo->is_wireless = FALSE;
     get_wireless_info(fd, netinfo);
 #endif
 

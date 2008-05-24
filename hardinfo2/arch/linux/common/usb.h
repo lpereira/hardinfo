@@ -15,7 +15,10 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-
+/*
+ * FIXME:
+ * - listing with sysfs does not generate device hierarchy
+ */
 static gboolean
 remove_usb_devices(gpointer key, gpointer value, gpointer data)
 {
@@ -46,9 +49,11 @@ void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
     }
 
     if (!(product = h_sysfs_read_string(endpoint, "product"))) {
-    	product = 
-	    g_strdup_printf("Unknown USB %.2f device (class %d)", version,
-			    classid);
+	if (classid == 9) {
+	    product = g_strdup_printf("USB %.2f Hub", version);
+	} else {
+	    product = g_strdup_printf("Unknown USB %.2f Device (class %d)", version, classid);
+	}
     }
 
     const gchar *url = vendor_get_url(manufacturer);
