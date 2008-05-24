@@ -372,12 +372,19 @@ static void scan_net_interfaces_24(void)
               gchar *txpower;
               
               if (ni.wi_has_txpower) {
-                if (ni.wi_txpower.flags & IW_TXPOW_MWATT)
-                  txpower = g_strdup_printf("%d mW", ni.wi_txpower.value);
-                else
-                  txpower = g_strdup_printf("%d dBm", ni.wi_txpower.value);
+                gint mw, dbm;
+              
+                if (ni.wi_txpower.flags & IW_TXPOW_MWATT) {
+                  mw = ni.wi_txpower.value;
+                  dbm = (int) ceil(10.0 * log10((double) ni.wi_txpower.value));
+                } else {
+                  dbm = ni.wi_txpower.value;
+                  mw = (int) floor(pow(10.0, ((double) dbm / 10.0)));
+                }
+                
+                txpower = g_strdup_printf("%ddBm (%dmW)", dbm, mw);
               } else {
-                txpower = g_strdup("Radio Off");
+                txpower = g_strdup("Unknown");
               }
             
               detailed = h_strdup_cprintf("\n[Wireless Properties]\n"
