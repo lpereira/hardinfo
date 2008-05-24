@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # ToscoConf 0.04
-# Copyright (c) 2003-2004 Leandro Pereira <leandro@linuxmag.com.br>
+# Copyright (c) 2003-2004 Leandro Pereira <leandro@hardinfo.org>
 # All rights reserved.
 #
 # This script is in the Tosco Public License. It may be copied and/or
@@ -89,7 +89,7 @@ esac
 
 if [ "x$ARCH" == "x" ]; then
 	echo "Your architecture is not supported yet. Please send the"
-	echo "output of the following commands to leandro@linuxmag.com.br:"
+	echo "output of the following commands to leandro@hardinfo.org:"
 	echo ""
 	echo "  $ cat /proc/cpuinfo"
 	echo "  $ uname -a"
@@ -261,6 +261,6 @@ else
 	cat << EOF
 If you get errors, probably you don't have the right libraries,
 includes or utilities. However, if you're sure this is a bug in my
-code, please send a patch (use "diff -u") to <leandro@linuxmag.com.br>.
+code, please send a patch (use "diff -u") to <leandro@hardinfo.org>.
 EOF
 fi

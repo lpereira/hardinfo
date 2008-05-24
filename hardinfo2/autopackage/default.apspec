@@ -6,8 +6,8 @@ SoftwareVersion: 0.4.2.1
 DisplayName: HardInfo $SOFTWAREVERSION
 RootName: @tia.mat.br/hardinfo:$SOFTWAREVERSION
 Summary: System profiler and benchmark tool
-Maintainer: Leandro A. F. Pereira <leandro@linuxmag.com.br>
-Packager: Leandro A. F. Pereira <leandro@linuxmag.com.br>
+Maintainer: Leandro A. F. Pereira <leandro@hardinfo.org>
+Packager: Leandro A. F. Pereira <leandro@hardinfo.org>
 PackageVersion: 1
 CPUArchitectures: x86
 AutopackageTarget: 1.2
