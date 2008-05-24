@@ -243,9 +243,18 @@ static struct {
     { NULL, "Unknown", "network-generic" },
 };
 
-static void net_get_iface_type(gchar * name, gchar ** type, gchar ** icon)
+static void net_get_iface_type(gchar * name, gchar ** type, gchar ** icon, NetInfo *ni)
 {
     int i;
+
+#ifdef HAS_LINUX_WE
+    if (ni->is_wireless) {
+        *type = "Wireless";
+        *icon = "wireless";
+        
+        return;
+    }
+#endif
 
     for (i = 0; netdev2type[i].type; i++) {
 	if (g_str_has_prefix(name, netdev2type[i].type))
@@ -326,12 +335,6 @@ static void scan_net_interfaces_24(void)
 	    gdouble trans_mb = trans_bytes / 1048576.0;
 
 	    get_net_info(ifacename, &ni);
-#ifdef HAS_LINUX_WE
-	    if (ni.is_wireless) {
-	        iface_type = "Wireless";
-	        iface_icon = "wireless";
-	    }
-#endif
 
 	    devid = g_strdup_printf("NET%s", ifacename);
 
@@ -343,7 +346,7 @@ static void scan_net_interfaces_24(void)
 		 ni.ip[0] ? ip : "");
 	    g_free(ip);
 
-	    net_get_iface_type(ifacename, &iface_type, &iface_icon);
+	    net_get_iface_type(ifacename, &iface_type, &iface_icon, &ni);
 	    
 	    network_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n",
 					     network_icons, devid,
