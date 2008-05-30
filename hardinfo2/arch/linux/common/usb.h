@@ -143,7 +143,7 @@ int __scan_usb_procfs(void)
 	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
 	g_free(usb_list);
     }
-    usb_list = g_strdup("");
+    usb_list = g_strdup("[USB Devices]\n");
 
     while (fgets(buffer, 128, dev)) {
 	tmp = buffer;

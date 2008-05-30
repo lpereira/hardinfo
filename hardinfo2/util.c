@@ -705,8 +705,8 @@ static GSList *modules_check_deps(GSList * modules)
 				modules = g_slist_prepend(modules, mod);
 			    modules = modules_check_deps(modules);	/* re-check dependencies */
 			} else {
-			    modules = g_slist_remove(modules, module);
-			    module_free(module);
+			    g_error("HardInfo cannot run without loading the additional module.");
+			    exit(1);
 			}
 
 			gtk_widget_destroy(dialog);
