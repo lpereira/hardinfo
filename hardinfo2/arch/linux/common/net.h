@@ -148,6 +148,8 @@ void get_wireless_info(int fd, NetInfo *netinfo)
           
     memcpy(&netinfo->wi_txpower, &wi_req.u.txpower, sizeof(struct iw_param));
   }
+#else
+  netinfo->wi_has_txpower = FALSE;
 #endif	/* WIRELESS_EXT >= 10 */
 }
 #endif /* HAS_LINUX_WE */
