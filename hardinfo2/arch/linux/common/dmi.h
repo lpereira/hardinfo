@@ -67,7 +67,6 @@ gboolean dmi_get_info_dmidecode()
         continue;
 
       temp = g_strconcat("dmidecode -s ", info->param, NULL);
-      
       if ((dmi_pipe = popen(temp, "r"))) {
         g_free(temp);
 
@@ -82,6 +81,7 @@ gboolean dmi_get_info_dmidecode()
                                     info->name,
                                     buffer);
       } else {
+        g_free(temp);
         dmi_failed = TRUE;
         break;
       }
