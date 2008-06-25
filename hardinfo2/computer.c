@@ -127,7 +127,7 @@ gchar *hi_get_field(gchar * field)
 void scan_summary(gboolean reload)
 {
     SCAN_START();
-    module_entry_scan_all_except(entries, COMPUTER_SUMMARY);
+    module_entry_scan_all_except(entries, 0);
     computer->alsa = computer_get_alsainfo();
     SCAN_END();
 }
