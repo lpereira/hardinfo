@@ -31,19 +31,6 @@
 
 #include <vendor.h>
 
-enum {
-    COMPUTER_SUMMARY,
-    COMPUTER_OPERATING_SYSTEM,
-    COMPUTER_KERNEL_MODULES,
-    COMPUTER_BOOTS,
-    COMPUTER_LANGUAGE,
-    COMPUTER_FILESYSTEMS,
-    COMPUTER_SHARES,
-    COMPUTER_DISPLAY,
-    COMPUTER_NETWORK,
-    COMPUTER_USERS,
-} Entries;
-
 /* Callbacks */
 gchar *callback_summary();
 gchar *callback_os();

@@ -28,21 +28,6 @@
 #include <expr.h>
 #include <socket.h>
 
-enum {
-    DEVICES_PROCESSORS,
-    DEVICES_MEMORY,
-    DEVICES_PCI,
-    DEVICES_USB,
-    DEVICES_PRINTERS,
-    DEVICES_BATTERY,
-    DEVICES_SENSORS,
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
-    DEVICES_DMI,
-#endif
-    DEVICES_INPUT,
-    DEVICES_STORAGE,
-} Entries;
-
 gchar *callback_processors();
 gchar *callback_memory();
 gchar *callback_battery();
