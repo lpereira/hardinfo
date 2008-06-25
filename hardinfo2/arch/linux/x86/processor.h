@@ -168,7 +168,7 @@ static gchar *__cache_get_info_as_string(Processor *processor)
     ProcessorCache *cache;
     
     if (!processor->cache) {
-        return g_strdup("No cache information available=\n");
+        return g_strdup("Cache information not available=\n");
     }
     
     for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
@@ -395,8 +395,8 @@ static struct {
 	{ "cmp_legacy",	"HyperThreading not valid"			},
 	{ "lm",		"LAHF/SAHF in long mode"			},
 	{ "ds_cpl",	"CPL Qualified Debug Store"			},
-	{ "vmx",	"Virtualization support"			},
-	{ "svm",	"Virtualization support"			},
+	{ "vmx",	"Virtualization support (Intel)"		},
+	{ "svm",	"Virtualization support (AMD)"			},
 	{ "est",	"Enhanced SpeedStep"				},
 	{ "tm2",	"Thermal Monitor 2"				},
 	{ "ssse3",	"Supplemental Streaming SIMD Extension 3"	},
@@ -406,8 +406,16 @@ static struct {
 	{ "bts",	"Branch Trace Store"				},
 	{ "ida",	"Intel Dynamic Acceleration"			},
 	{ "arch_perfmon","Intel Architectural PerfMon"			},
-	{ "pni",	"Streaming SIMD Extension 3"			},
+	{ "pni",	"Streaming SIMD Extension 3 (Prescott New Instruction)"	},
 	{ "rep_good",	"rep microcode works well on this CPU"		},
+	{ "ts",		"Thermal Sensor"				},
+	{ "sse3",	"Streaming SIMD Extension 3"			},
+	{ "sse4",	"Streaming SIMD Extension 4"			},
+	{ "tni",	"Tejas New Instruction"				},
+	{ "nni",	"Nehalem New Instruction"			},
+	{ "tpr",	"Task Priority Register"			},
+	{ "vid",	"Voltage Identifier"				},
+	{ "fid", 	"Frequency Identifier"				},
 	{ NULL,		NULL						},
 };
 
