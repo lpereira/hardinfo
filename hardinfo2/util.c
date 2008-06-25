@@ -459,9 +459,9 @@ static void module_register_methods(ShellModule * module)
 
     if (g_module_symbol
 	(module->dll, "hi_exported_methods", (gpointer) & get_methods)) {
-	ShellModuleMethod *methods = get_methods();
-
-	while (TRUE) {
+	ShellModuleMethod *methods;
+	
+	for (methods = get_methods(); methods->name; methods++) {
 	    ShellModuleMethod method = *methods;
 	    gchar *name = g_path_get_basename(g_module_name(module->dll));
 
@@ -471,9 +471,6 @@ static void module_register_methods(ShellModule * module)
 	    g_hash_table_insert(__module_methods, method_name,
 				method.function);
 	    g_free(name);
-
-	    if (!(*(++methods)).name)
-		break;
 	}
     }
 
@@ -896,8 +893,6 @@ void tree_view_save_image(gchar * filename)
 
 static gboolean __idle_free_do(gpointer ptr)
 {
-    DEBUG("bla %p", ptr);
-
     if (ptr) {
 	g_free(ptr);
     }

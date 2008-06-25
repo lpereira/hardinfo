@@ -16,6 +16,17 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+typedef struct _ProcessorCache	ProcessorCache;
+
+struct _ProcessorCache {
+  gint level;
+  gint number_of_sets;
+  gint physical_line_partition;
+  gint size;
+  gchar *type;
+  gint ways_of_associativity;
+};
+
 struct _Processor {
     gchar *model_name;
     gchar *vendor_id;
@@ -30,6 +41,8 @@ struct _Processor {
     gchar *strmodel;
     
     gint id;
+    
+    GSList *cache;
 };
 
 /*
@@ -148,12 +161,91 @@ static void get_processor_strfamily(Processor * processor)
     }
 }
 
+static gchar *__cache_get_info_as_string(Processor *processor)
+{
+    gchar *result = g_strdup("");
+    GSList *cache_list;
+    ProcessorCache *cache;
+    
+    if (!processor->cache) {
+        return g_strdup("No cache information available=\n");
+    }
+    
+    for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
+        cache = (ProcessorCache *)cache_list->data;
+        
+        result = h_strdup_cprintf("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n",
+                                  result,
+                                  cache->level,
+                                  cache->type,
+                                  cache->ways_of_associativity,
+                                  cache->number_of_sets,
+                                  cache->size);
+    }
+    
+    return result;
+}
+
+static void __cache_obtain_info(Processor *processor, gint processor_number)
+{
+    ProcessorCache *cache;
+    gchar *endpoint, *entry, *index;
+    gint i;
+    
+    endpoint = g_strdup_printf("/sys/devices/system/cpu/cpu%d/cache", processor_number);
+    
+    for (i = 0; ; i++) {
+      cache = g_new0(ProcessorCache, 1);
+      
+      index = g_strdup_printf("index%d/", i);
+
+      entry = g_strconcat(index, "type", NULL);
+      cache->type = h_sysfs_read_string(endpoint, entry);
+      g_free(entry);
+      
+      if (!cache->type) {
+        g_free(cache);
+        g_free(index);
+        goto fail;
+      }
+
+      entry = g_strconcat(index, "level", NULL);
+      cache->level = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "number_of_sets", NULL);
+      cache->number_of_sets = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "physical_line_partition", NULL);
+      cache->physical_line_partition = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "size", NULL);
+      cache->size = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+
+      entry = g_strconcat(index, "ways_of_associativity", NULL);
+      cache->ways_of_associativity = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+      
+      g_free(index);
+
+      processor->cache = g_slist_append(processor->cache, cache);
+    }
+
+fail:    
+    g_free(endpoint);
+}
+
 static GSList *__scan_processors(void)
 {
     GSList *procs = NULL;
     Processor *processor = NULL;
     FILE *cpuinfo;
     gchar buffer[256];
+    gint processor_number = 0;
 
     cpuinfo = fopen("/proc/cpuinfo", "r");
     if (!cpuinfo)
@@ -169,6 +261,8 @@ static GSList *__scan_processors(void)
 	    }
 
 	    processor = g_new0(Processor, 1);
+	    
+	    __cache_obtain_info(processor, processor_number++);
 	}
 
 	if (tmp[0] && tmp[1]) {
@@ -349,9 +443,11 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 
 static gchar *processor_get_detailed_info(Processor * processor)
 {
-    gchar *tmp, *ret;
+    gchar *tmp, *ret, *cache_info;
 
     tmp = processor_get_capabilities_from_flags(processor->flags);
+    cache_info = __cache_get_info_as_string(processor);
+    
     ret = g_strdup_printf("[Processor]\n"
 			  "Name=%s\n"
 			  "Family, model, stepping=%d, %d, %d (%s)\n"
@@ -367,6 +463,8 @@ static gchar *processor_get_detailed_info(Processor * processor)
 			  "F00F Bug=%s\n"
 			  "Coma Bug=%s\n"
 			  "Has FPU=%s\n"
+			  "[Cache]\n"
+			  "%s\n"
 			  "[Capabilities]\n"
 			  "%s",
 			  processor->model_name,
@@ -387,10 +485,12 @@ static gchar *processor_get_detailed_info(Processor * processor)
 			  processor->bug_f00f ? processor->bug_f00f : "no",
 			  processor->bug_coma ? processor->bug_coma : "no",
 			  processor->has_fpu  ? processor->has_fpu  : "no",
+			  cache_info,
 			  tmp);
     g_free(tmp);
+    g_free(cache_info);
+    
     return ret;
-
 }
 
 static gchar *processor_get_info(GSList * processors)
