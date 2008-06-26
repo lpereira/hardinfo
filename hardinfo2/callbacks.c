@@ -208,10 +208,10 @@ void cb_about()
 	NULL
     };
     const gchar *artists[] = {
-	"The GNOME Project",
-	"Tango Project",
-	"VMWare Workstation",
 	"Jakub Szypulka",
+	"Tango Project",
+	"The GNOME Project",
+	"VMWare, Inc. (USB icon from VMWare Workstation 6)",
 	NULL
     };
 
