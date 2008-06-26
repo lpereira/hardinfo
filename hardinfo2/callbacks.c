@@ -210,6 +210,8 @@ void cb_about()
     const gchar *artists[] = {
 	"The GNOME Project",
 	"Tango Project",
+	"VMWare Workstation",
+	"Jakub Szypulka",
 	NULL
     };
 
