@@ -1,5 +1,4 @@
-static gchar *sys_users = NULL,
-             *human_users = NULL;
+static gchar *users = NULL;
 
 static gboolean
 remove_users(gpointer key, gpointer value, gpointer data)
@@ -17,15 +16,13 @@ scan_users_do(void)
     if (!passwd)
       return;
     
-    if (sys_users) {
-      g_free(sys_users);
-      g_free(human_users);
+    if (users) {
+      g_free(users);
 
       g_hash_table_foreach_remove(moreinfo, remove_users, NULL);
     }
   
-    sys_users = g_strdup("");
-    human_users = g_strdup("");
+    users = g_strdup("");
     
     while (fgets(buffer, 512, passwd)) {
       gchar **tmp;
@@ -44,11 +41,7 @@ scan_users_do(void)
 
       uid = atoi(tmp[2]);
       strend(tmp[4], ',');
-      if (uid >= 1000 && uid <= 65530) {
-        human_users = h_strdup_cprintf("$%s$%s=%s\n", human_users, key, tmp[0], tmp[4]);
-      } else {
-        sys_users = h_strdup_cprintf("$%s$%s=%s\n", sys_users, key, tmp[0], tmp[4]);
-      }      
+      users = h_strdup_cprintf("$%s$%s=%s\n", sys_users, key, tmp[0], tmp[4]);
       
       g_strfreev(tmp);
     }

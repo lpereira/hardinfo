@@ -351,10 +351,8 @@ gchar *callback_users()
     return g_strdup_printf("[$ShellParam$]\n"
 			   "ReloadInterval=10000\n"
 			   "ViewType=1\n"
-			   "[Human Users]\n"
-			   "%s\n"
-			   "[System Users]\n"
-			   "%s\n", human_users, sys_users);
+			   "[Users]\n"
+			   "%s\n", sys_users);
 }
 
 gchar *get_os_kernel(void)
