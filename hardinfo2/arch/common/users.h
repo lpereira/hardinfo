@@ -41,7 +41,7 @@ scan_users_do(void)
 
       uid = atoi(tmp[2]);
       strend(tmp[4], ',');
-      users = h_strdup_cprintf("$%s$%s=%s\n", sys_users, key, tmp[0], tmp[4]);
+      users = h_strdup_cprintf("$%s$%s=%s\n", users, key, tmp[0], tmp[4]);
       
       g_strfreev(tmp);
     }

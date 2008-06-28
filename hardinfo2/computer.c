@@ -352,7 +352,7 @@ gchar *callback_users()
 			   "ReloadInterval=10000\n"
 			   "ViewType=1\n"
 			   "[Users]\n"
-			   "%s\n", sys_users);
+			   "%s\n", users);
 }
 
 gchar *get_os_kernel(void)
