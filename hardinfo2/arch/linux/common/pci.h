@@ -16,6 +16,18 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/*
+ * TODO: This thing must be rewritten. We really should have a struct with all the
+ *       PCI stuff we'll present to the user, and hash them by the PCI ID
+ *       (domain:bus:device.function).
+ *       This way we'll have ways to better organize the output, instead of relying
+ *       on the order the information appears on lspci's output.
+ *       Also, the "Resources" thing might be better implemented (and we won't need
+ *       copies of information scattered everywhere like we do today).
+ */
+
+GHashTable *_pci_devices = NULL;
+
 void
 __scan_pci(void)
 {
@@ -23,6 +35,10 @@ __scan_pci(void)
     gchar buffer[256], *buf, *strhash = NULL, *strdevice = NULL;
     gchar *category = NULL, *name = NULL, *icon;
     gint n = 0, x = 0;
+    
+    if (!_pci_devices) {
+      _pci_devices = g_hash_table_new(g_str_hash, g_str_equal);
+    }
 
     buf = g_build_filename(g_get_home_dir(), ".hardinfo", "pci.ids", NULL);
     if (!g_file_test(buf, G_FILE_TEST_EXISTS)) {
@@ -169,6 +185,9 @@ __scan_pci(void)
             else icon = "pci";
             
 	    name = g_strdup(buf);
+            g_hash_table_insert(_pci_devices,
+                                g_strdup_printf("0000:%02x:%02x.%x", bus, device, function),
+                                name);
 
 	    strhash = g_strdup_printf("PCI%d", n);
 	    strdevice = g_strdup_printf("[Device Information]\n"
@@ -187,6 +206,9 @@ __scan_pci(void)
                                             url);
             }
             
+            g_hash_table_insert(_pci_devices,
+                                g_strdup_printf("0000:%02x:%02x.%x", bus, device, function),
+                                g_strdup(name));
             
 	    pci_list = h_strdup_cprintf("$PCI%d$%s=%s\n", pci_list, n, category, name);
 

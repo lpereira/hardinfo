@@ -118,6 +118,7 @@ extern   ProgramParameters params;
 
 /* Module stuff */
 gchar		*module_call_method(gchar *method);
+gchar           *module_call_method_param(gchar * method, gchar * parameter);
 
 /* Sysfs stuff */
 gfloat		h_sysfs_read_float(gchar *endpoint, gchar *entry);

@@ -29,11 +29,17 @@ remove_module_devices(gpointer key, gpointer value, gpointer data)
     return g_str_has_prefix(key, "MOD");
 }
 
+static GHashTable *_module_hash_table = NULL;
+
 static void
 scan_modules_do(void)
 {
     FILE *lsmod;
     gchar buffer[1024];
+
+    if (!_module_hash_table) {
+        _module_hash_table = g_hash_table_new(g_str_hash, g_str_equal);
+    }
 
     if (module_list) {
         g_free(module_list);
@@ -95,7 +101,15 @@ scan_modules_do(void)
 	if (description && g_str_equal(description, "&lt;none&gt;")) {
 	    g_free(description);
 	    description = g_strdup("");
-	}
+
+            g_hash_table_insert(_module_hash_table,
+                                g_strdup(modname),
+                                g_strdup_printf("Kernel module (%s)", modname));
+	} else {
+            g_hash_table_insert(_module_hash_table,
+                                g_strdup(modname),
+                                g_strdup(description));
+        }
 
 	/* append this module to the list of modules */
 	module_list = h_strdup_cprintf("$%s$%s=%s\n",

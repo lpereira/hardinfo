@@ -17,6 +17,41 @@
  */
 
 gchar *_resources = NULL;
+
+#if GLIB_CHECK_VERSION(2,14,0)
+static GRegex *_regex_pci = NULL,
+              *_regex_module = NULL;
+static gchar *_resource_obtain_name(gchar *name)
+{
+    gchar *temp;
+
+    if (!_regex_pci && !_regex_module) {
+      _regex_pci = g_regex_new("^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\\.[0-9a-fA-F]{1}$",
+                               0, 0, NULL);
+      _regex_module = g_regex_new("^[0-9a-zA-Z\\_\\-]+$", 0, 0, NULL);
+    }
+    
+    name = g_strstrip(name);
+    
+    if (g_regex_match(_regex_pci, name, 0, NULL)) {
+      temp = module_call_method_param("devices::getPCIDeviceDescription", name);
+      return temp ? temp : name;
+    }
+    
+    if (g_regex_match(_regex_module, name, 0, NULL)) {
+      temp = module_call_method_param("computer::getKernelModuleDescription", name);
+      return temp ? temp : name;
+    }
+    
+    return name;
+}
+#else
+static gchar *_resource_obtain_name(gchar *name)
+{
+    return name;
+}
+#endif
+
 void scan_device_resources(gboolean reload)
 {
     SCAN_START();
@@ -32,7 +67,8 @@ void scan_device_resources(gboolean reload)
       while (fgets(buffer, 256, io)) {
         gchar **temp = g_strsplit(buffer, ":", 2);
         
-        _resources = h_strdup_cprintf("%s=%s\n", _resources, temp[0], temp[1]);
+        _resources = h_strdup_cprintf("%s=%s\n", _resources,
+                                      temp[0], _resource_obtain_name(temp[1]));
         
         g_strfreev(temp);
       }
@@ -46,7 +82,8 @@ void scan_device_resources(gboolean reload)
       while (fgets(buffer, 256, io)) {
         gchar **temp = g_strsplit(buffer, ":", 2);
         
-        _resources = h_strdup_cprintf("%s=%s\n", _resources, temp[0], temp[1]);
+        _resources = h_strdup_cprintf("%s=%s\n", _resources,
+                                      temp[0], _resource_obtain_name(temp[1]));
         
         g_strfreev(temp);
       }
@@ -60,7 +97,8 @@ void scan_device_resources(gboolean reload)
       while (fgets(buffer, 256, io)) {
         gchar **temp = g_strsplit(buffer, ":", 2);
         
-        _resources = h_strdup_cprintf("%s=%s\n", _resources, temp[0], temp[1]);
+        _resources = h_strdup_cprintf("%s=%s\n", _resources,
+                                      temp[0], _resource_obtain_name(temp[1]));
         
         g_strfreev(temp);
       }

@@ -365,10 +365,27 @@ gchar *get_os_kernel(void)
     return computer->os->kernel;
 }
 
+gchar *get_kernel_module_description(gchar *module)
+{
+    gchar *description;
+    
+    if (!_module_hash_table) {
+        scan_modules(FALSE);
+    }
+    
+    description = g_hash_table_lookup(_module_hash_table, module);
+    if (!description) {
+        return g_strdup(module);
+    }
+    
+    return g_strdup(description);
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
 	{"getOSKernel", get_os_kernel},
+	{"getKernelModuleDescription", get_kernel_module_description},
 	{NULL}
     };
 

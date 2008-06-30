@@ -489,6 +489,19 @@ gchar *module_call_method(gchar * method)
 	g_strdup_printf("{Unknown method: \"%s\"}", method);
 }
 
+gchar *module_call_method_param(gchar * method, gchar * parameter)
+{
+    gchar *(*function) (gchar *param);
+
+    if (__module_methods == NULL) {
+	return NULL;
+    }
+
+    function = g_hash_table_lookup(__module_methods, method);
+    return function ? g_strdup(function(parameter)) :
+	g_strdup_printf("{Unknown method: \"%s\"}", method);
+}
+
 static ShellModule *module_load(gchar * filename)
 {
     ShellModule *module;

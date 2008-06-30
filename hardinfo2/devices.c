@@ -170,6 +170,21 @@ gchar *get_processor_count(void)
     return g_strdup_printf("%d", g_slist_length(processors));
 }
 
+gchar *get_pci_device_description(gchar *pci_id)
+{
+    gchar *description;
+    
+    if (!_pci_devices) {
+        scan_pci(FALSE);
+    }
+    
+    if ((description = g_hash_table_lookup(_pci_devices, pci_id))) {
+        return g_strdup(description);
+    }
+    
+    return NULL;
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
@@ -178,6 +193,7 @@ ShellModuleMethod *hi_exported_methods(void)
 	{"getStorageDevices", get_storage_devices},
 	{"getPrinters", get_printers},
 	{"getInputDevices", get_input_devices},
+	{"getPCIDeviceDescription", get_pci_device_description},
 	{NULL}
     };
 

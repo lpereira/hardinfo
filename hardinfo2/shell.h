@@ -124,7 +124,7 @@ struct _ShellModule {
 
 struct _ShellModuleMethod {
     gchar	*name;
-    gchar	*(*function) (void);
+    gpointer	function;
 };
 
 struct _ShellModuleEntry {
