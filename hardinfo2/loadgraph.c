@@ -103,7 +103,7 @@ void load_graph_set_color(LoadGraph * lg, LoadGraphColor color)
     lg->color = color;
     gdk_rgb_gc_set_foreground(lg->trace, lg->color);
     gdk_rgb_gc_set_foreground(lg->fill, lg->color - 0x303030);
-    gdk_rgb_gc_set_foreground(lg->grid, lg->color - 0x404040);
+    gdk_rgb_gc_set_foreground(lg->grid, 0xcdcdcd);
 }
 
 void load_graph_destroy(LoadGraph * lg)
@@ -148,6 +148,8 @@ void load_graph_configure_expose(LoadGraph * lg)
     gdk_gc_set_line_attributes(lg->grid,
 			       1, GDK_LINE_ON_OFF_DASH,
 			       GDK_CAP_NOT_LAST, GDK_JOIN_ROUND);
+    gdk_gc_set_dashes(lg->grid, 0, (gint8*)"\2\2", 2);
+    
 #if 0				/* old-style grid */
     gdk_rgb_gc_set_foreground(lg->grid, 0x707070);
 #endif
@@ -198,7 +200,7 @@ static void _draw(LoadGraph * lg)
     gint i, d;
 
     /* clears the drawing area */
-    gdk_draw_rectangle(draw, lg->area->style->black_gc,
+    gdk_draw_rectangle(draw, lg->area->style->white_gc,
 		       TRUE, 0, 0, lg->width, lg->height);
 
 
