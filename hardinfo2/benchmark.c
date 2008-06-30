@@ -310,3 +310,10 @@ void hi_module_init(void)
     sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
 }
+
+gchar **hi_module_get_dependencies(void)
+{
+    static gchar *deps[] = { "devices.so", NULL };
+
+    return deps;
+}

@@ -165,9 +165,15 @@ gchar *get_input_devices(void)
     return input_list;
 }
 
+gchar *get_processor_count(void)
+{
+    return g_strdup_printf("%d", g_slist_length(processors));
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
+        {"getProcessorCount", get_processor_count},
 	{"getProcessorName", get_processor_name},
 	{"getStorageDevices", get_storage_devices},
 	{"getPrinters", get_printers},
