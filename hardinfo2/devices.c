@@ -40,6 +40,7 @@ gchar *callback_usb();
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
 gchar *callback_dmi();
 #endif
+gchar *callback_device_resources();
 
 void scan_processors(gboolean reload);
 void scan_memory(gboolean reload);
@@ -53,6 +54,7 @@ void scan_usb(gboolean reload);
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
 void scan_dmi(gboolean reload);
 #endif
+void scan_device_resources(gboolean reload);
 
 static ModuleEntry entries[] = {
     {"Processor", "processor.png", callback_processors, scan_processors},
@@ -62,11 +64,12 @@ static ModuleEntry entries[] = {
     {"Printers", "printer.png", callback_printers, scan_printers,},
     {"Battery", "battery.png", callback_battery, scan_battery},
     {"Sensors", "therm.png", callback_sensors, scan_sensors},
+    {"Input Devices", "inputdevices.png", callback_input, scan_input},
+    {"Storage", "hdd.png", callback_storage, scan_storage},
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
     {"DMI", "computer.png", callback_dmi, scan_dmi},
 #endif	/* x86 or x86_64 */
-    {"Input Devices", "inputdevices.png", callback_input, scan_input},
-    {"Storage", "hdd.png", callback_storage, scan_storage},
+    {"Resources", "module.png", callback_device_resources, scan_device_resources},
     {NULL}
 };
 
@@ -120,6 +123,7 @@ typedef struct _Processor Processor;
 #include <arch/this/battery.h>
 #include <arch/this/sensors.h>
 #include <arch/this/devmemory.h>
+#include <arch/this/resources.h>
 
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
 #include <arch/this/dmi.h>
