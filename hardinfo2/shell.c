@@ -355,7 +355,7 @@ static void create_window(void)
     gtk_window_set_icon(GTK_WINDOW(shell->window),
 			icon_cache_get_pixbuf("logo.png"));
     gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
-    gtk_widget_set_size_request(shell->window, 600, 400);
+    gtk_widget_set_size_request(shell->window, 700, 480);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 
     vbox = gtk_vbox_new(FALSE, 0);
