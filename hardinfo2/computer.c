@@ -42,6 +42,7 @@ gchar *callback_shares();
 gchar *callback_display();
 gchar *callback_network();
 gchar *callback_users();
+gchar *callback_env_var();
 
 /* Scan callbacks */
 void scan_summary(gboolean reload);
@@ -54,6 +55,7 @@ void scan_shares(gboolean reload);
 void scan_display(gboolean reload);
 void scan_network(gboolean reload);
 void scan_users(gboolean reload);
+void scan_env_var(gboolean reload);
 
 static ModuleEntry entries[] = {
     {"Summary", "summary.png", callback_summary, scan_summary},
@@ -65,6 +67,7 @@ static ModuleEntry entries[] = {
     {"Shared Directories", "shares.png", callback_shares, scan_shares},
     {"Display", "monitor.png", callback_display, scan_display},
     {"Network Interfaces", "network.png", callback_network, scan_network},
+    {"Environment Variables", "environment.png", callback_env_var, scan_env_var},
     {"Users", "users.png", callback_users, scan_users},
     {NULL},
 };
@@ -89,6 +92,7 @@ static Computer *computer = NULL;
 #include <arch/this/net.h>
 #include <arch/common/users.h>
 #include <arch/this/boots.h>
+#include <arch/common/environment.h>
 
 gchar *hi_more_info(gchar * entry)
 {
