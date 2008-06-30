@@ -1,0 +1,8 @@
+hardinfo
+Makefile
+config.h
+modules/*
+*.so
+*.o
+*~
+arch/this
