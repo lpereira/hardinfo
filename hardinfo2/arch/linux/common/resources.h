@@ -21,12 +21,14 @@ gchar *_resources = NULL;
 #if GLIB_CHECK_VERSION(2,14,0)
 static GRegex *_regex_pci = NULL,
               *_regex_module = NULL;
+
 static gchar *_resource_obtain_name(gchar *name)
 {
     gchar *temp;
 
     if (!_regex_pci && !_regex_module) {
-      _regex_pci = g_regex_new("^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\\.[0-9a-fA-F]{1}$",
+      _regex_pci = g_regex_new("^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:"
+                               "[0-9a-fA-F]{2}\\.[0-9a-fA-F]{1}$",
                                0, 0, NULL);
       _regex_module = g_regex_new("^[0-9a-zA-Z\\_\\-]+$", 0, 0, NULL);
     }
