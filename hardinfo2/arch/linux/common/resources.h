@@ -37,15 +37,15 @@ static gchar *_resource_obtain_name(gchar *name)
     
     if (g_regex_match(_regex_pci, name, 0, NULL)) {
       temp = module_call_method_param("devices::getPCIDeviceDescription", name);
-      return temp ? temp : name;
+      return temp ? temp : g_strdup(name);
     }
     
     if (g_regex_match(_regex_module, name, 0, NULL)) {
       temp = module_call_method_param("computer::getKernelModuleDescription", name);
-      return temp ? temp : name;
+      return temp ? temp : g_strdup(name);
     }
     
-    return name;
+    return g_strdup(name);
 }
 #else
 static gchar *_resource_obtain_name(gchar *name)
@@ -68,11 +68,13 @@ void scan_device_resources(gboolean reload)
 
       while (fgets(buffer, 256, io)) {
         gchar **temp = g_strsplit(buffer, ":", 2);
+        gchar *name = _resource_obtain_name(temp[1]);
         
         _resources = h_strdup_cprintf("%s=%s\n", _resources,
-                                      temp[0], _resource_obtain_name(temp[1]));
+                                      temp[0], name);
         
         g_strfreev(temp);
+        g_free(name);
       }
 
       fclose(io);
@@ -83,11 +85,13 @@ void scan_device_resources(gboolean reload)
 
       while (fgets(buffer, 256, io)) {
         gchar **temp = g_strsplit(buffer, ":", 2);
+        gchar *name = _resource_obtain_name(temp[1]);
         
         _resources = h_strdup_cprintf("%s=%s\n", _resources,
-                                      temp[0], _resource_obtain_name(temp[1]));
+                                      temp[0], name);
         
         g_strfreev(temp);
+        g_free(name);
       }
 
       fclose(io);
@@ -98,11 +102,13 @@ void scan_device_resources(gboolean reload)
 
       while (fgets(buffer, 256, io)) {
         gchar **temp = g_strsplit(buffer, ":", 2);
+        gchar *name = _resource_obtain_name(temp[1]);
         
         _resources = h_strdup_cprintf("%s=%s\n", _resources,
-                                      temp[0], _resource_obtain_name(temp[1]));
+                                      temp[0], name);
         
         g_strfreev(temp);
+        g_free(name);
       }
 
       fclose(io);
