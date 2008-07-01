@@ -52,7 +52,7 @@ static gchar *_resource_obtain_name(gchar *name)
 #else
 static gchar *_resource_obtain_name(gchar *name)
 {
-    return name;
+    return g_strdup(name);
 }
 #endif
 

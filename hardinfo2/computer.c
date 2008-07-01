@@ -67,7 +67,7 @@ static ModuleEntry entries[] = {
     {"Shared Directories", "shares.png", callback_shares, scan_shares},
     {"Display", "monitor.png", callback_display, scan_display},
     {"Network Interfaces", "network.png", callback_network, scan_network},
-    {"Environment Variables", "environment.png", callback_env_var, scan_env_var},
+    {"Environment", "environment.png", callback_env_var, scan_env_var},
     {"Users", "users.png", callback_users, scan_users},
     {NULL},
 };
