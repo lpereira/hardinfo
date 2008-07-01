@@ -37,12 +37,14 @@ static gchar *_resource_obtain_name(gchar *name)
     
     if (g_regex_match(_regex_pci, name, 0, NULL)) {
       temp = module_call_method_param("devices::getPCIDeviceDescription", name);
-      return temp ? temp : g_strdup(name);
-    }
-    
-    if (g_regex_match(_regex_module, name, 0, NULL)) {
+      if (temp) {
+          return temp;
+      }
+    } else if (g_regex_match(_regex_module, name, 0, NULL)) {
       temp = module_call_method_param("computer::getKernelModuleDescription", name);
-      return temp ? temp : g_strdup(name);
+      if (temp) {
+          return temp;
+      }
     }
     
     return g_strdup(name);
@@ -121,4 +123,3 @@ gchar *callback_device_resources(void)
 {
     return _resources;
 }
-

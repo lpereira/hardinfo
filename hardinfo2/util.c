@@ -489,6 +489,7 @@ gchar *module_call_method(gchar * method)
 	g_strdup_printf("{Unknown method: \"%s\"}", method);
 }
 
+/* FIXME: varargs? */
 gchar *module_call_method_param(gchar * method, gchar * parameter)
 {
     gchar *(*function) (gchar *param);
