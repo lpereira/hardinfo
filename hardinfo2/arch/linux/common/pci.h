@@ -135,7 +135,7 @@ __scan_pci(void)
 					prefetch ? "prefetchable" :
 					"non-prefetchable");
 
-	} else if (!strncmp(buf, "I/O", 3)) {
+	} else if (!strncmp(buf, "I/O ports at", 12)) {
 	    guint io_addr, io_size;
 
 	    sscanf(buf, "I/O ports at %x [size=%d]", &io_addr, &io_size);
