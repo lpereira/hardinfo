@@ -61,60 +61,38 @@ void scan_device_resources(gboolean reload)
     SCAN_START();
     FILE *io;
     gchar buffer[256];
+    gint i;
+
+    struct {
+      gchar *file;
+      gchar *description;
+    } resources[] = {
+      { "/proc/ioports", "[I/O Ports]\n" },
+      { "/proc/iomem", "[Memory]\n" },
+      { "/proc/dma", "[DMA]\n" }
+    };
     
     g_free(_resources);
     _resources = g_strdup("");
     
-    if ((io = fopen("/proc/ioports", "r"))) {
-      _resources = h_strconcat(_resources, "[I/O Ports]\n", NULL);
+    for (i = 0; i < G_N_ELEMENTS(resources); i++) {
+      if ((io = fopen(resources[i].file, "r"))) {
+        _resources = h_strconcat(_resources, resources[i].description, NULL);
 
-      while (fgets(buffer, 256, io)) {
-        gchar **temp = g_strsplit(buffer, ":", 2);
-        gchar *name = _resource_obtain_name(temp[1]);
-        
-        _resources = h_strdup_cprintf("%s=%s\n", _resources,
-                                      temp[0], name);
-        
-        g_strfreev(temp);
-        g_free(name);
+        while (fgets(buffer, 256, io)) {
+          gchar **temp = g_strsplit(buffer, ":", 2);
+          gchar *name = _resource_obtain_name(temp[1]);
+
+          _resources = h_strdup_cprintf("<tt>%s</tt>=%s\n", _resources,
+                                        temp[0], name);
+
+          g_strfreev(temp);
+          g_free(name);
+        }
+
+        fclose(io);
       }
-
-      fclose(io);
     }
-    
-    if ((io = fopen("/proc/iomem", "r"))) {
-      _resources = h_strconcat(_resources, "[Memory]\n", NULL);
-
-      while (fgets(buffer, 256, io)) {
-        gchar **temp = g_strsplit(buffer, ":", 2);
-        gchar *name = _resource_obtain_name(temp[1]);
-        
-        _resources = h_strdup_cprintf("%s=%s\n", _resources,
-                                      temp[0], name);
-        
-        g_strfreev(temp);
-        g_free(name);
-      }
-
-      fclose(io);
-    }
-    
-    if ((io = fopen("/proc/dma", "r"))) {
-      _resources = h_strconcat(_resources, "[DMA]\n", NULL);
-
-      while (fgets(buffer, 256, io)) {
-        gchar **temp = g_strsplit(buffer, ":", 2);
-        gchar *name = _resource_obtain_name(temp[1]);
-        
-        _resources = h_strdup_cprintf("%s=%s\n", _resources,
-                                      temp[0], name);
-        
-        g_strfreev(temp);
-        g_free(name);
-      }
-
-      fclose(io);
-    }    
     
     SCAN_END();
 }
