@@ -143,7 +143,7 @@ __scan_pci(void)
 	    strdevice =
 		h_strdup_cprintf("I/O ports at#%d=0x%x - 0x%x\n",
 				strdevice, ++x, io_addr,
-				io_addr + io_size);
+				io_addr + io_size - 1);
 	} else if ((buf[0] >= '0' && buf[0] <= '9') && (buf[4] == ':' || buf[2] == ':')) {
 	    gint bus, device, function, domain;
 	    gpointer start, end;
