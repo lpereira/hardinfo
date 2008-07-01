@@ -69,7 +69,7 @@ static ModuleEntry entries[] = {
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
     {"DMI", "computer.png", callback_dmi, scan_dmi},
 #endif	/* x86 or x86_64 */
-    {"Resources", "module.png", callback_device_resources, scan_device_resources},
+    {"Resources", "resources.png", callback_device_resources, scan_device_resources},
     {NULL}
 };
 
