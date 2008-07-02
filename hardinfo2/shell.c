@@ -1315,7 +1315,7 @@ static ShellTree *tree_new()
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
 					(scroll), GTK_SHADOW_IN);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
-				   GTK_POLICY_AUTOMATIC,
+				   GTK_POLICY_NEVER,
 				   GTK_POLICY_AUTOMATIC);
 
     store = gtk_tree_store_new(TREE_NCOL, GDK_TYPE_PIXBUF, G_TYPE_STRING,
