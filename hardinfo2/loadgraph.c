@@ -103,7 +103,7 @@ void load_graph_set_color(LoadGraph * lg, LoadGraphColor color)
     lg->color = color;
     gdk_rgb_gc_set_foreground(lg->trace, lg->color);
     gdk_rgb_gc_set_foreground(lg->fill, lg->color - 0x303030);
-    gdk_rgb_gc_set_foreground(lg->grid, 0xcdcdcd);
+    gdk_rgb_gc_set_foreground(lg->grid, lg->color - 0xcdcdcd);
 }
 
 void load_graph_destroy(LoadGraph * lg)
@@ -125,7 +125,7 @@ static gboolean _expose(GtkWidget * widget, GdkEventExpose * event,
     GdkDrawable *draw = GDK_DRAWABLE(lg->buf);
 
     gdk_draw_drawable(lg->area->window,
-		      lg->area->style->white_gc,
+		      lg->area->style->black_gc,
 		      draw, 0, 0, 0, 0, lg->width, lg->height);
     return FALSE;
 }
@@ -200,7 +200,7 @@ static void _draw(LoadGraph * lg)
     gint i, d;
 
     /* clears the drawing area */
-    gdk_draw_rectangle(draw, lg->area->style->white_gc,
+    gdk_draw_rectangle(draw, lg->area->style->black_gc,
 		       TRUE, 0, 0, lg->width, lg->height);
 
 
