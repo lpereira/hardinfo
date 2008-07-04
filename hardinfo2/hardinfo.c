@@ -25,7 +25,6 @@
 #include <stock.h>
 
 #include <binreloc.h>
-#include <crash.h>
 
 ProgramParameters params = { 0 };
 
@@ -117,7 +116,6 @@ int main(int argc, char **argv)
 	/* initialize gui and start gtk+ main loop */
 	icon_cache_init();
 	stock_icons_init();
-	crash_install_handlers();
 
 	shell_init(modules);
 
