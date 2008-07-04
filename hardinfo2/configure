@@ -229,6 +229,7 @@ fi
 
 echo "#define ENABLE_BINRELOC 1" >> config.h
 echo "#define RELEASE $RELEASE" >> config.h
+echo "#define CRASH_DIALOG 1" >> config.h
 
 echo -e "\n#endif	/* __CONFIG_H__ */" >> config.h
 

@@ -125,9 +125,10 @@ crash_main(const char *arg)
 			       pid, g_strsignal(atol(tokens[1])));
 
 	output = g_string_new("");
-	crash_debug(pid, tokens[2], output);
 
+	crash_debug(pid, tokens[2], output);
 	crash_dialog_show(text, output->str);
+
 	g_string_free(output, TRUE);
 	g_free(text);
 	g_strfreev(tokens);
@@ -255,7 +256,7 @@ crash_create_debugger_file(void)
 }
 
 /*
- * ! \brief	launches debugger and attaches it to crashed publicit
+ * ! \brief	launches debugger and attaches it to crashed hardinfo
  */
 static void 
 crash_debug(unsigned long crash_pid,

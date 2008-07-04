@@ -39,6 +39,7 @@ struct _ProgramParameters {
   gchar  **use_modules;
   gchar   *path_lib;
   gchar   *path_data;
+  gchar   *argv0;
 };
 
 struct _FileTypes {

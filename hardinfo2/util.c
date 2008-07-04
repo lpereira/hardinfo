@@ -41,6 +41,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <crash.h>
+
 #define KiB 1024
 #define MiB 1048576
 #define GiB 1073741824
@@ -324,8 +326,19 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean autoload_deps = FALSE;
     static gchar *report_format = NULL;
     static gchar **use_modules = NULL;
+#ifdef CRASH_DIALOG
+    static gchar *crash_args = NULL;
+#endif
 
     static GOptionEntry options[] = {
+#ifdef CRASH_DIALOG
+    	{
+	 .long_name = "crash",
+	 .short_name = 'c',
+	 .arg = G_OPTION_ARG_STRING,
+	 .arg_data = &crash_args,
+	 .description = "invokes HardInfo crash handler; do not use directly"},
+#endif
 	{
 	 .long_name = "generate-report",
 	 .short_name = 'r',
@@ -387,6 +400,18 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->list_modules = list_modules;
     param->use_modules = use_modules;
     param->autoload_deps = autoload_deps;
+    param->argv0 = *(argv)[0];
+
+#ifdef CRASH_DIALOG
+    if (crash_args) {
+    	DEBUG("invoking crash handler: %s", crash_args);
+
+    	gtk_init(argc, argv);
+    	crash_main(crash_args);
+
+    	exit(0);
+    }
+#endif
 
     if (report_format && g_str_equal(report_format, "html"))
 	param->report_format = REPORT_FORMAT_HTML;
