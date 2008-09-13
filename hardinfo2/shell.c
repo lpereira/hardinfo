@@ -197,7 +197,7 @@ void shell_action_set_active(const gchar * action_name, gboolean setting)
 void shell_status_pulse(void)
 {
     if (params.gui_running) {
-	if (shell->_pulses++ == 20) {
+	if (shell->_pulses++ == 5) {
 	    /* we're pulsing for some time, disable the interface and change the cursor
 	       to a hourglass */
 	    shell_view_set_enabled(FALSE);
@@ -727,7 +727,7 @@ static void set_view_type(ShellViewType viewtype)
     /* reset to the default view columns */
     gtk_tree_view_column_set_visible(shell->info->col_progress, FALSE);
     gtk_tree_view_column_set_visible(shell->info->col_value, TRUE);
-
+    
     /* turn off the rules hint */
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
 
@@ -946,7 +946,7 @@ static void update_progress()
     GtkTreeStore *store = GTK_TREE_STORE(model);
     GtkTreeIter iter, fiter;
     gchar *tmp;
-    gdouble maxv = 0, maxp = 0, cur;
+    gdouble maxv = 0, maxp = 0, cur, floatval;
 
     gtk_tree_model_get_iter_first(model, &fiter);
 
@@ -965,8 +965,7 @@ static void update_progress()
     if (shell->_order_type == SHELL_ORDER_ASCENDING) {
 	iter = fiter;
 	do {
-	    gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp,
-			       -1);
+	    gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 
 	    cur = 100 - 100 * atof(tmp) / maxv;
 	    maxp = MAX(cur, maxp);
@@ -981,13 +980,18 @@ static void update_progress()
     iter = fiter;
     do {
 	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+	floatval = atof(tmp);
+	g_free(tmp);
+	
+	cur = 100 * floatval / maxv;
 
-	cur = 100 * atof(tmp) / maxv;
 	if (shell->_order_type == SHELL_ORDER_ASCENDING)
 	    cur = 100 - cur + maxp;
-
-	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur, -1);
-	g_free(tmp);
+	    
+        tmp = g_strdup_printf("%d", (int)floatval);
+	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur,
+                                         INFO_TREE_COL_VALUE, tmp, -1);
+        g_free(tmp);
     } while (gtk_tree_model_iter_next(model, &iter));
 
     /* now sort everything up. that wasn't as hard as i thought :) */
