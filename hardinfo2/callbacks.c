@@ -195,6 +195,7 @@ void cb_about()
 	"",
 	"Contributors:",
 	"Agney Lopes Roth Ferraz",
+	"Andrey Esin",
 	"SCSI support by Pascal F. Martin",
 	"",
 	"Based on work by:",

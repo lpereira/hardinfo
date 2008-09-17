@@ -988,7 +988,8 @@ static void update_progress()
 	if (shell->_order_type == SHELL_ORDER_ASCENDING)
 	    cur = 100 - cur + maxp;
 	    
-        tmp = g_strdup_printf("%d", (int)floatval);
+        tmp = g_strdup_printf("%.2f", floatval);
+        tmp = strreplace(tmp, ",", '.');
 	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur,
                                          INFO_TREE_COL_VALUE, tmp, -1);
         g_free(tmp);
