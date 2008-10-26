@@ -73,11 +73,9 @@ detect_desktop_environment(OperatingSystem * os)
 	   may not be the one that's running.
 	   see where the user's running panel is and run *that* to
 	   obtain the version. */
-	version = popen("gnome-panel --version", "r");
+	version = popen("gnome-about --gnome-version", "r");
 	if (version) {
-	    char gnome[10];
-	    
-	    fscanf(version, "%s gnome-panel %s", gnome, vers);
+	    fscanf(version, "Version: %s", vers);
 	    if (pclose(version))
 	        goto unknown;
 	} else {
