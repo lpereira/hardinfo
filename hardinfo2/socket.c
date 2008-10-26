@@ -99,7 +99,11 @@ int sock_read(Socket * s, gchar * buffer, gint size)
 	gint n;
 
 	n = read(s->sock, buffer, size);
-	buffer[n] = '\0';
+	if (n > 0) {
+            buffer[n] = '\0';
+        } else {
+            return 0;
+        }
 
 	return n;
     }
