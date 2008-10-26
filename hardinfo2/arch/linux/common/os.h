@@ -82,9 +82,7 @@ detect_desktop_environment(OperatingSystem * os)
 	    goto unknown;
 	}
 
-	os->desktop =
-	    g_strdup_printf("GNOME %s (session name: %s)", vers,
-			    tmp);
+	os->desktop = g_strdup_printf("GNOME %s", vers);
     } else if (g_getenv("KDE_FULL_SESSION")) {
 	version = popen("kcontrol --version", "r");
 	if (version) {
