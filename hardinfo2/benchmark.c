@@ -62,8 +62,8 @@ static ModuleEntry entries[] = {
 typedef struct _ParallelBenchTask ParallelBenchTask;
 
 struct _ParallelBenchTask {
-    unsigned int start, end;
-    gpointer data, callback;
+    guint	start, end;
+    gpointer	data, callback;
 };
 
 gpointer benchmark_parallel_for_dispatcher(gpointer data)
@@ -86,13 +86,15 @@ gpointer benchmark_parallel_for_dispatcher(gpointer data)
     return return_value;
 }
 
-void benchmark_parallel_for(unsigned int start,
-                            unsigned int end,
-                            void *callback,
-                            void *callback_data) {
-    char		*temp;
-    unsigned int	n_cores, iter_per_core, iter;
-    GSList		*threads = NULL, *t;
+gdouble benchmark_parallel_for(guint start, guint end,
+                               gpointer callback, gpointer callback_data) {
+    gchar	*temp;
+    guint	n_cores, iter_per_core, iter;
+    GSList	*threads = NULL, *t;
+    GTimer	*timer;
+    gdouble	elapsed_time;
+    
+    timer = g_timer_new();
     
     temp = module_call_method("devices::getProcessorCount");
     n_cores = temp ? 1 : atoi(temp);
@@ -102,20 +104,25 @@ void benchmark_parallel_for(unsigned int start,
     
     DEBUG("processor has %d cores; processing %d elements (%d per core)",
           n_cores, (end - start), iter_per_core);
-    
+          
+    g_timer_start(timer);
     for (iter = start; iter < end; iter += iter_per_core) {
         ParallelBenchTask *pbt = g_new0(ParallelBenchTask, 1);
+        GThread *thread;
         
         DEBUG("launching thread %d", 1 + (iter / iter_per_core));
         
         pbt->start    = iter == 0 ? 0 : iter + 1;
-        pbt->end      = (iter + iter_per_core) % (start - end);
+        pbt->end      = iter + iter_per_core;
         pbt->data     = callback_data;
         pbt->callback = callback;
         
-        threads = g_slist_prepend(threads,
-                                  g_thread_create((GThreadFunc) benchmark_parallel_for_dispatcher,
-                                                  pbt, TRUE, NULL));
+        if (pbt->end > end)
+            pbt->end = end;
+        
+        thread = g_thread_create((GThreadFunc) benchmark_parallel_for_dispatcher,
+                                 pbt, TRUE, NULL);
+        threads = g_slist_prepend(threads, thread);
         
         DEBUG("thread %d launched as context %p", 1 + (iter / iter_per_core), threads->data);
     }
@@ -126,9 +133,15 @@ void benchmark_parallel_for(unsigned int start,
         g_thread_join((GThread *)t->data);
     }
     
+    g_timer_stop(timer);
+    elapsed_time = g_timer_elapsed(timer, NULL);
+    
     g_slist_free(threads);
+    g_timer_destroy(timer);
     
     DEBUG("finishing");
+    
+    return elapsed_time;
 }
 
 static gchar *__benchmark_include_results(gdouble result,
@@ -142,9 +155,7 @@ static gchar *__benchmark_include_results(gdouble result,
 
     conf = g_key_file_new();
 
-    path =
-	g_build_filename(g_get_home_dir(), ".hardinfo", "benchmark.conf",
-			 NULL);
+    path = g_build_filename(g_get_home_dir(), ".hardinfo", "benchmark.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
 	DEBUG("local benchmark.conf not found, trying system-wide");
 	g_free(path);

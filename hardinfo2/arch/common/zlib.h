@@ -17,7 +17,7 @@
  */
 
 static gpointer
-parallel_zlib(unsigned int start, unsigned int end, void *data)
+parallel_zlib(unsigned int start, unsigned int end, void *data, GTimer *timer)
 {
     GModule *libz;
     gint i;
@@ -61,7 +61,6 @@ parallel_zlib(unsigned int start, unsigned int end, void *data)
 static void
 benchmark_zlib(void)
 {
-    GTimer *timer = g_timer_new();
     gdouble elapsed = 0;
     gchar *tmpsrc;
     gchar *bdata_path;
@@ -76,13 +75,8 @@ benchmark_zlib(void)
     
     shell_status_update("Compressing 64MB with default options...");
     
-    g_timer_start(timer);
-    benchmark_parallel_for(0, 1000, parallel_zlib, tmpsrc);
-    g_timer_stop(timer);
+    elapsed = benchmark_parallel_for(0, 1000, parallel_zlib, tmpsrc);
     
-    elapsed = g_timer_elapsed(timer, NULL);
-    
-    g_timer_destroy(timer);
     g_free(bdata_path);
     g_free(tmpsrc);
     
