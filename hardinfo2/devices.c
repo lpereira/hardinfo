@@ -167,6 +167,7 @@ gchar *get_input_devices(void)
 
 gchar *get_processor_count(void)
 {
+    scan_processors(FALSE);
     return g_strdup_printf("%d", g_slist_length(processors));
 }
 

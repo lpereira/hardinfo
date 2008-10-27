@@ -97,9 +97,9 @@ gdouble benchmark_parallel_for(guint start, guint end,
     timer = g_timer_new();
     
     temp = module_call_method("devices::getProcessorCount");
-    n_cores = temp ? 1 : atoi(temp);
+    n_cores = temp ? atoi(temp) : 1;
     g_free(temp);
-    
+
     iter_per_core = (end - start) / n_cores;
     
     DEBUG("processor has %d cores; processing %d elements (%d per core)",
