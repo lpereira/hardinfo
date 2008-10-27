@@ -18,6 +18,16 @@
 
 void fbench();	/* fbench.c */
 
+static gpointer
+parallel_raytrace(unsigned int start, unsigned int end, gpointer data)
+{
+    for (i = start; i <= end; i++) { 
+        fbench();
+    }
+    
+    return NULL;
+}
+
 static void
 benchmark_raytrace(void)
 {
@@ -28,17 +38,11 @@ benchmark_raytrace(void)
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing John Walker's FBENCH...");
     
-    for (i = 0; i <= 1000; i++) { 
-        g_timer_start(timer);
-        
-        fbench();
-        
-        g_timer_stop(timer);
-        elapsed += g_timer_elapsed(timer, NULL);
-        
-        shell_status_set_percentage(i/10);
-    }
+    g_timer_start(timer);
+    benchmark_parallel_for(0, 1000, parallel_raytrace, NULL);
+    g_timer_stop(timer);
     
+    elapsed = g_timer_elapsed(timer, NULL);
     g_timer_destroy(timer);
     
     bench_results[BENCHMARK_RAYTRACE] = elapsed;

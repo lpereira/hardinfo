@@ -59,6 +59,78 @@ static ModuleEntry entries[] = {
     {NULL}
 };
 
+typedef struct _ParallelBenchTask ParallelBenchTask;
+
+struct _ParallelBenchTask {
+    unsigned int start, end;
+    gpointer data, callback;
+};
+
+gpointer benchmark_parallel_for_dispatcher(gpointer data)
+{
+    ParallelBenchTask 	*pbt = (ParallelBenchTask *)data;
+    gpointer 		(*callback)(unsigned int start, unsigned int end, void *data);
+    gpointer		return_value;
+    
+    if ((callback = pbt->callback)) {
+        DEBUG("this is thread %p; items %d -> %d, data %p", g_thread_self(),
+              pbt->start, pbt->end, pbt->data);
+        return_value = callback(pbt->start, pbt->end, pbt->data);
+        DEBUG("this is thread %p; return value is %p", g_thread_self(), return_value);
+    } else {
+        DEBUG("this is thread %p; callback is NULL and it should't be!", g_thread_self());
+    }
+    
+    g_free(pbt);
+    
+    return return_value;
+}
+
+void benchmark_parallel_for(unsigned int start,
+                            unsigned int end,
+                            void *callback,
+                            void *callback_data) {
+    char		*temp;
+    unsigned int	n_cores, iter_per_core, iter;
+    GSList		*threads = NULL, *t;
+    
+    temp = module_call_method("devices::getProcessorCount");
+    n_cores = temp ? 1 : atoi(temp);
+    g_free(temp);
+    
+    iter_per_core = (end - start) / n_cores;
+    
+    DEBUG("processor has %d cores; processing %d elements (%d per core)",
+          n_cores, (end - start), iter_per_core);
+    
+    for (iter = start; iter < end; iter += iter_per_core) {
+        ParallelBenchTask *pbt = g_new0(ParallelBenchTask, 1);
+        
+        DEBUG("launching thread %d", 1 + (iter / iter_per_core));
+        
+        pbt->start    = iter == 0 ? 0 : iter + 1;
+        pbt->end      = (iter + iter_per_core) % (start - end);
+        pbt->data     = callback_data;
+        pbt->callback = callback;
+        
+        threads = g_slist_prepend(threads,
+                                  g_thread_create((GThreadFunc) benchmark_parallel_for_dispatcher,
+                                                  pbt, TRUE, NULL));
+        
+        DEBUG("thread %d launched as context %p", 1 + (iter / iter_per_core), threads->data);
+    }
+    
+    DEBUG("waiting for all threads to finish");
+    for (t = threads; t; t = t->next) {
+        DEBUG("waiting for thread with context %p", t->data);
+        g_thread_join((GThread *)t->data);
+    }
+    
+    g_slist_free(threads);
+    
+    DEBUG("finishing");
+}
+
 static gchar *__benchmark_include_results(gdouble result,
 					  const gchar * benchmark,
 					  ShellOrderType order_type)
