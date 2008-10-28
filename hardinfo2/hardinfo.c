@@ -34,11 +34,9 @@ int main(int argc, char **argv)
 
     DEBUG("HardInfo version " VERSION ". Debug version.");
 
-#ifdef HAS_LIBSOUP
     DEBUG("g_thread_init()");
     if (!g_thread_supported())
 	g_thread_init(NULL);
-#endif				/* HAS_LIBSOUP */
 
     /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);

@@ -235,7 +235,7 @@ echo -e "\n#endif	/* __CONFIG_H__ */" >> config.h
 echo "Writing Makefile..."
 rm -f Makefile
 
-echo "GTK_LIBS = ${GTK_LIBS}" > Makefile
+echo "GTK_LIBS = -lpthread -lgthread-2.0 -lrt ${GTK_LIBS}" > Makefile
 echo "GTK_CFLAGS = ${GTK_FLAGS}" >> Makefile
 echo "SOUP_LIBS = ${SOUP_LIBS}" >> Makefile
 echo "SOUP_CFLAGS = ${SOUP_FLAGS}" >> Makefile
