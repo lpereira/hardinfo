@@ -19,6 +19,7 @@
 struct _Processor {
     gchar *model_name;
     gchar *has_fpu;
+    gfloat cpu_mhz;
 };
 
 static GSList *
@@ -47,6 +48,8 @@ __scan_processors(void)
     }
 
     fclose(cpuinfo);
+
+    processor->cpu_mhz = 0.0f;
 
     return g_slist_append(NULL, processor);
 }

@@ -18,7 +18,7 @@
 
 struct _Processor {
     gchar *model_name;
-    gfloat bogomips;
+    gfloat bogomips, cpu_mhz;
     gchar *strmodel;
 };
 
@@ -52,6 +52,7 @@ __scan_processors(void)
     gchar *tmp = g_strconcat("Alpha ", processor->model_name, NULL);
     g_free(processor->model_name);
     processor->model_name = tmp;
+    processor->cpu_mhz = 0.0f;
 
     fclose(cpuinfo);
 

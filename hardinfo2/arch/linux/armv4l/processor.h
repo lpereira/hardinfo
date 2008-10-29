@@ -19,7 +19,7 @@
 struct _Processor {
     gchar *model_name;
     gchar *flags;
-    gfloat bogomips;
+    gfloat bogomips, cpu_mhz;
 
     gchar *has_fpu;
 };
@@ -52,6 +52,8 @@ __scan_processors(void)
 	}
 	g_strfreev(tmp);
     }
+
+    processor->cpu_mhz = 0.0f;
 
     fclose(cpuinfo);
 
