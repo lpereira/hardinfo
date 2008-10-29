@@ -282,18 +282,30 @@ gchar *callback_modules()
 {
     return g_strdup_printf("[Loaded Modules]\n"
 			   "%s"
-			   "[$ShellParam$]\n" "ViewType=1", module_list);
+			   "[$ShellParam$]\n"
+			   "ViewType=1\n"
+			   "ColumnTitle$TextValue=Name\n"
+			   "ColumnTitle$Value=Full Name\n"
+			   "ShowColumnHeaders=true\n", module_list);
 }
 
 gchar *callback_boots()
 {
-    return g_strdup(computer->os->boots);
+    return g_strdup_printf("[$ShellParam$]\n"
+			   "ColumnTitle$TextValue=Date\n"
+			   "ColumnTitle$Value=Kernel Version\n"
+			   "ShowColumnHeaders=true\n"
+			   "\n"
+			   "%s", computer->os->boots);
 }
 
 gchar *callback_locales()
 {
     return g_strdup_printf("[$ShellParam$]\n"
 			   "ViewType=1\n"
+			   "ColumnTitle$TextValue=Language Code\n"
+			   "ColumnTitle$Value=Name\n"
+			   "ShowColumnHeaders=true\n"
 			   "[Available Languages]\n"
 			   "%s", computer->os->languages);
 }
@@ -303,6 +315,9 @@ gchar *callback_fs()
     return g_strdup_printf("[$ShellParam$]\n"
 			   "ViewType=1\n"
 			   "ReloadInterval=5000\n"
+			   "ColumnTitle$TextValue=Mount Point\n"
+			   "ColumnTitle$Value=Total / Free Space\n"
+			   "ShowColumnHeaders=true\n"
 			   "[Mounted File Systems]\n%s\n", fs_list);
 }
 
@@ -347,6 +362,9 @@ gchar *callback_network()
 			   "[$ShellParam$]\n"
 			   "ReloadInterval=3000\n"
 			   "ViewType=1\n"
+			   "ColumnTitle$TextValue=Device\n"
+			   "ColumnTitle$Value=Statistics\n"
+			   "ShowColumnHeaders=true\n"
 			   "%s", network_interfaces, network_icons);
 }
 
