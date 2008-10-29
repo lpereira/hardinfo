@@ -65,6 +65,8 @@ typedef enum {
     INFO_TREE_COL_DATA,
     INFO_TREE_COL_PBUF,
     INFO_TREE_COL_PROGRESS,
+    INFO_TREE_COL_EXTRA1,
+    INFO_TREE_COL_EXTRA2,
     INFO_TREE_NCOL
 } ShellInfoTreeColumns;
 
@@ -104,7 +106,7 @@ struct _ShellInfoTree {
     GtkTreeModel        *model;
     GtkTreeSelection	*selection;
     
-    GtkTreeViewColumn	 *col_progress, *col_value;
+    GtkTreeViewColumn	 *col_progress, *col_value, *col_extra1, *col_extra2, *col_textvalue;
 };
 
 struct _ShellNote {

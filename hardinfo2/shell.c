@@ -724,7 +724,12 @@ static void set_view_type(ShellViewType viewtype)
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view),
 			    shell->info->model);
 
+    /* reset to the default header values */
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+
     /* reset to the default view columns */
+    gtk_tree_view_column_set_visible(shell->info->col_extra1, FALSE);
+    gtk_tree_view_column_set_visible(shell->info->col_extra2, FALSE);
     gtk_tree_view_column_set_visible(shell->info->col_progress, FALSE);
     gtk_tree_view_column_set_visible(shell->info->col_value, TRUE);
     
@@ -811,6 +816,34 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		ms = g_key_file_get_integer(key_file, group, key, NULL);
 
 		g_timeout_add(ms, rescan_section, entry);
+	    } else if (g_str_equal(key, "ShowColumnHeaders")) {
+		gboolean show;
+
+		show = g_key_file_get_boolean(key_file, group, key, NULL);
+
+		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), show);
+	    } else if (g_str_has_prefix(key, "ColumnTitle")) {
+                GtkTreeViewColumn *column;
+		gchar *value, *title = strchr(key, '$') + 1;
+
+                value = g_key_file_get_value(key_file, group, key, NULL);
+
+                if (g_str_equal(title, "Extra1")) {
+			column = shell->info->col_extra1;
+                } else if (g_str_equal(title, "Extra2")) {
+			column = shell->info->col_extra2;
+                } else if (g_str_equal(title, "Value")) {
+			column = shell->info->col_value;
+                } else if (g_str_equal(title, "TextValue")) {
+			column = shell->info->col_textvalue;
+                } else if (g_str_equal(title, "Progress")) {
+			column = shell->info->col_progress;
+                }
+
+                gtk_tree_view_column_set_title(column, value);
+                gtk_tree_view_column_set_visible(column, TRUE);
+
+                g_free(value);
 	    } else if (g_str_equal(key, "OrderType")) {
 		shell->_order_type = g_key_file_get_integer(key_file,
 							    group,
@@ -1249,12 +1282,26 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 
     store =
 	gtk_tree_store_new(INFO_TREE_NCOL, G_TYPE_STRING, G_TYPE_STRING,
-			   G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_FLOAT);
+			   G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_FLOAT,
+                           G_TYPE_STRING, G_TYPE_STRING);
     model = GTK_TREE_MODEL(store);
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
 
-    column = gtk_tree_view_column_new();
+    info->col_progress = column = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(column, "Results");
+    gtk_tree_view_column_set_min_width(column, 240);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+
+    cr_progress = gtk_cell_renderer_progress_new();
+    gtk_tree_view_column_pack_start(column, cr_progress, TRUE);
+    gtk_tree_view_column_add_attribute(column, cr_progress, "value",
+				       INFO_TREE_COL_PROGRESS);
+    gtk_tree_view_column_add_attribute(column, cr_progress, "text",
+				       INFO_TREE_COL_VALUE);
+    gtk_tree_view_column_set_visible(column, FALSE);
+
+    info->col_textvalue = column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     cr_pbuf = gtk_cell_renderer_pixbuf_new();
@@ -1267,6 +1314,22 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_NAME);
 
+    info->col_extra1 = column = gtk_tree_view_column_new();
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+
+    cr_text = gtk_cell_renderer_text_new();
+    gtk_tree_view_column_pack_start(column, cr_text, FALSE);
+    gtk_tree_view_column_add_attribute(column, cr_text, "markup",
+				       INFO_TREE_COL_EXTRA1);
+
+    info->col_extra2 = column = gtk_tree_view_column_new();
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+
+    cr_text = gtk_cell_renderer_text_new();
+    gtk_tree_view_column_pack_start(column, cr_text, FALSE);
+    gtk_tree_view_column_add_attribute(column, cr_text, "markup",
+				       INFO_TREE_COL_EXTRA2);
+
     info->col_value = column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
@@ -1274,17 +1337,6 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     gtk_tree_view_column_pack_start(column, cr_text, FALSE);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       INFO_TREE_COL_VALUE);
-
-    info->col_progress = column = gtk_tree_view_column_new();
-    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-
-    cr_progress = gtk_cell_renderer_progress_new();
-    gtk_tree_view_column_pack_start(column, cr_progress, TRUE);
-    gtk_tree_view_column_add_attribute(column, cr_progress, "value",
-				       INFO_TREE_COL_PROGRESS);
-    gtk_tree_view_column_add_attribute(column, cr_progress, "text",
-				       INFO_TREE_COL_VALUE);
-    gtk_tree_view_column_set_visible(column, FALSE);
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
