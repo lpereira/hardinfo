@@ -182,7 +182,7 @@ gchar *get_processor_frequency(void)
     if (p->cpu_mhz == 0.0f) {
         return g_strdup("Unknown");
     } else {
-        return g_strdup_printf("%d", p->cpu_mhz);
+        return g_strdup_printf("%.0f", p->cpu_mhz);
     }
 }
 
