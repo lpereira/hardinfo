@@ -724,9 +724,6 @@ static void set_view_type(ShellViewType viewtype)
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view),
 			    shell->info->model);
 
-    /* reset to the default header values */
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
-
     /* reset to the default view columns */
     gtk_tree_view_column_set_visible(shell->info->col_extra1, FALSE);
     gtk_tree_view_column_set_visible(shell->info->col_extra2, FALSE);
@@ -779,6 +776,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		     gchar * group, gchar ** keys)
 {
     if (g_str_equal(group, "$ShellParam$")) {
+        gboolean headers_visible = FALSE;
 	gint i;
 
 	for (i = 0; keys[i]; i++) {
@@ -817,11 +815,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 
 		g_timeout_add(ms, rescan_section, entry);
 	    } else if (g_str_equal(key, "ShowColumnHeaders")) {
-		gboolean show;
-
-		show = g_key_file_get_boolean(key_file, group, key, NULL);
-
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), show);
+		headers_visible = g_key_file_get_boolean(key_file, group, key, NULL);
 	    } else if (g_str_has_prefix(key, "ColumnTitle")) {
                 GtkTreeViewColumn *column;
 		gchar *value, *title = strchr(key, '$') + 1;
@@ -874,6 +868,8 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 					     (key_file, group, key, NULL));
 	    }
 	}
+
+        gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), headers_visible);
     } else {
 	g_warning("Unknown parameter group: ``%s''", group);
     }
@@ -1080,6 +1076,12 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     module_entry_scan(entry);
     key_data = module_entry_function(entry);
 
+    /* */
+    gdk_window_freeze_updates(shell->info->view->window);
+
+    g_object_ref(shell->info->model);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
+
     /* reset the view type to normal */
     set_view_type(SHELL_VIEW_NORMAL);
 
@@ -1106,11 +1108,6 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     }
 
     store = GTK_TREE_STORE(shell->info->model);
-
-    gdk_window_freeze_updates(shell->window->window);
-
-    g_object_ref(shell->info->model);
-    gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
 
     gtk_tree_store_clear(store);
 
@@ -1143,7 +1140,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	update_progress();
     }
 
-    gdk_window_thaw_updates(shell->window->window);
+    gdk_window_thaw_updates(shell->info->view->window);
     shell_set_note_from_entry(entry);
 
     g_strfreev(groups);
