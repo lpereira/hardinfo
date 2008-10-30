@@ -363,7 +363,8 @@ gchar *callback_network()
 			   "ReloadInterval=3000\n"
 			   "ViewType=1\n"
 			   "ColumnTitle$TextValue=Device\n"
-			   "ColumnTitle$Value=Statistics\n"
+			   "ColumnTitle$Value=IP Address\n"
+			   "ColumnTitle$Extra1=Statistics\n"
 			   "ShowColumnHeaders=true\n"
 			   "%s", network_interfaces, network_icons);
 }

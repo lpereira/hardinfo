@@ -907,16 +907,28 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	    value = entry->fieldfunc(key);
 	}
 
-	if ((key && value) &&
-	    g_utf8_validate(key, -1, NULL)
-	    && g_utf8_validate(value, -1, NULL)) {
+	if ((key && value) && g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
 	    if (ngroups == 1) {
 		gtk_tree_store_append(store, &child, NULL);
 	    } else {
 		gtk_tree_store_append(store, &child, &parent);
 	    }
-	    gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value,
-			       -1);
+
+	    if (strchr(value, '|')) {
+		gchar **columns = g_strsplit(value, "|", 0);
+
+		gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, columns[0], -1);
+		if (columns[1]) {
+			gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA1, columns[1], -1);
+			if (columns[2]) {
+				gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA2, columns[2], -1);
+			}
+		}
+
+		g_strfreev(columns);
+	    } else {
+	    	gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value, -1);
+	    }
 
 	    strend(key, '#');
 
@@ -1094,6 +1106,10 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     }
 
     store = GTK_TREE_STORE(shell->info->model);
+
+    g_object_ref(shell->info->model);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
+
     gtk_tree_store_clear(store);
 
     g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0,
@@ -1117,6 +1133,8 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	g_strfreev(keys);
     }
 
+    g_object_unref(shell->info->model);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), shell->info->model);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
 
     if (shell->view_type == SHELL_VIEW_PROGRESS) {
