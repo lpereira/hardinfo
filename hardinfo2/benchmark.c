@@ -90,9 +90,9 @@ gdouble benchmark_parallel_for(guint start, guint end,
                                gpointer callback, gpointer callback_data) {
     gchar	*temp;
     guint	n_cores, iter_per_core, iter;
+    gdouble	elapsed_time;
     GSList	*threads = NULL, *t;
     GTimer	*timer;
-    gdouble	elapsed_time;
     
     timer = g_timer_new();
     
@@ -122,7 +122,7 @@ gdouble benchmark_parallel_for(guint start, guint end,
         
         thread = g_thread_create((GThreadFunc) benchmark_parallel_for_dispatcher,
                                  pbt, TRUE, NULL);
-        threads = g_slist_prepend(threads, thread);
+        threads = g_slist_append(threads, thread);
         
         DEBUG("thread %d launched as context %p", 1 + (iter / iter_per_core), threads->data);
     }
@@ -139,7 +139,7 @@ gdouble benchmark_parallel_for(guint start, guint end,
     g_slist_free(threads);
     g_timer_destroy(timer);
     
-    DEBUG("finishing");
+    DEBUG("finishing; all threads took %d seconds to finish", elapsed_time);
     
     return elapsed_time;
 }
