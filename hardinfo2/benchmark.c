@@ -150,7 +150,7 @@ static gchar *__benchmark_include_results(gdouble result,
 {
     GKeyFile *conf;
     gchar **machines;
-    gchar *path, *results = g_strdup("");
+    gchar *path, *results = g_strdup(""), *return_value, *processor_frequency;
     int i;
 
     conf = g_key_file_new();
@@ -178,21 +178,24 @@ static gchar *__benchmark_include_results(gdouble result,
     g_free(path);
     g_key_file_free(conf);
 
-    DEBUG("results = %s", results);
-
-    return g_strdup_printf("[$ShellParam$]\n"
-			   "Zebra=1\n"
-			   "OrderType=%d\n"
-			   "ViewType=3\n"
-			   "ColumnTitle$Extra1=CPU Clock\n"
-			   "ColumnTitle$Extra2=Memory\n"
-			   "ColumnTitle$Progress=Results\n"
-			   "ColumnTitle$TextValue=CPU\n"
-			   "ShowColumnHeaders=true\n"
-			   "[%s]\n"
-			   "<big><b>This Machine</b></big>=%.3f|extra1|extra2\n"
-			   "%s", order_type, benchmark, result, results);
+    processor_frequency = module_call_method("devices::getProcessorFrequency");
+    return_value = g_strdup_printf("[$ShellParam$]\n"
+			   	   "Zebra=1\n"
+			   	   "OrderType=%d\n"
+	   			   "ViewType=3\n"
+	   			   "ColumnTitle$Extra1=CPU Clock\n"
+		   		   "ColumnTitle$Extra2=Memory\n"
+			   	   "ColumnTitle$Progress=Results\n"
+			   	   "ColumnTitle$TextValue=CPU\n"
+			   	   "ShowColumnHeaders=true\n"
+	   			   "[%s]\n"
+		   		   "<big><b>This Machine</b></big>=%.3f|%s MHz|extra2\n"
+			   	   "%s", order_type, benchmark, result, processor_frequency, results);
+    g_free(processor_frequency);
+    return return_value;
 }
+
+
 
 static gchar *benchmark_include_results_reverse(gdouble result,
 						const gchar * benchmark)

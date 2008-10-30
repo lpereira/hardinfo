@@ -1107,9 +1107,10 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 
     store = GTK_TREE_STORE(shell->info->model);
 
+    gdk_window_freeze_updates(shell->window->window);
+
     g_object_ref(shell->info->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
-    gdk_window_freeze_updates(shell->window->window);
 
     gtk_tree_store_clear(store);
 
