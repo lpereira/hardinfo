@@ -184,6 +184,11 @@ static gchar *__benchmark_include_results(gdouble result,
 			   "Zebra=1\n"
 			   "OrderType=%d\n"
 			   "ViewType=3\n"
+			   "ColumnTitle$Extra1=CPU Clock\n"
+			   "ColumnTitle$Extra2=Memory\n"
+			   "ColumnTitle$Progress=Results\n"
+			   "ColumnTitle$TextValue=CPU\n"
+			   "ShowColumnHeaders=true\n"
 			   "[%s]\n"
 			   "<big><b>This Machine</b></big>=%.3f\n"
 			   "%s", order_type, benchmark, result, results);
