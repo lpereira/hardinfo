@@ -1070,6 +1070,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     GKeyFile *key_file = g_key_file_new();
     GtkTreeStore *store;
     gchar *key_data, **groups;
+    gboolean has_shell_param = FALSE;
     gint i;
     gsize ngroups;
 
@@ -1125,13 +1126,18 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 
 	if (*group == '$') {
 	    group_handle_special(key_file, entry, group, keys);
+	    has_shell_param = TRUE;
 	} else {
 	    group_handle_normal(key_file, entry, group, keys, ngroups);
 	}
 
 	g_strfreev(keys);
     }
-
+    
+    if (!has_shell_param) {
+        gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+    }
+    
     g_object_unref(shell->info->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), shell->info->model);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
