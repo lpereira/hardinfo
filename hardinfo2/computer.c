@@ -316,7 +316,8 @@ gchar *callback_fs()
 			   "ViewType=1\n"
 			   "ReloadInterval=5000\n"
 			   "ColumnTitle$TextValue=Mount Point\n"
-			   "ColumnTitle$Value=Total / Free Space\n"
+			   "ColumnTitle$Value=Free\n"
+			   "ColumnTitle$Extra1=Total\n"
 			   "ShowColumnHeaders=true\n"
 			   "[Mounted File Systems]\n%s\n", fs_list);
 }

@@ -342,12 +342,11 @@ static void scan_net_interfaces_24(void)
 
 	    network_interfaces =
 		h_strdup_cprintf
-		("$%s$%s=%s|Sent %.2lfMiB, received %.2lfMiB|%s\n",
+		("$%s$%s=%s|Sent %.2lfMiB, received %.2lfMiB\n",
 		 network_interfaces, devid, ifacename, ni.ip[0] ? ni.ip : "",
 		 trans_mb, recv_mb);
-
 	    net_get_iface_type(ifacename, &iface_type, &iface_icon, &ni);
-	    
+
 	    network_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n",
 					     network_icons, devid,
 					     ifacename, iface_icon);

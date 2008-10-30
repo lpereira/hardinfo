@@ -1109,6 +1109,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 
     g_object_ref(shell->info->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
+    gdk_window_freeze_updates(shell->window->window);
 
     gtk_tree_store_clear(store);
 
@@ -1141,6 +1142,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	update_progress();
     }
 
+    gdk_window_thaw_updates(shell->window->window);
     shell_set_note_from_entry(entry);
 
     g_strfreev(groups);
