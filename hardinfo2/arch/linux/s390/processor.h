@@ -19,7 +19,7 @@
 struct _Processor {
     gchar *vendor_id, *model_name;
     gint cache_size;
-    gfloat bogomips;
+    gfloat bogomips, cpu_mhz;
 };
 
 static GSList *
@@ -48,6 +48,8 @@ __scan_processors(void)
 	}
 	g_strfreev(tmp);
     }
+
+    processor->cpu_mhz = 0.0f;
     
     processor->model_name = g_strconcat("S390 ", processor->vendor_id, NULL);
     g_free(processor->vendor_id);

@@ -168,7 +168,22 @@ gchar *get_input_devices(void)
 gchar *get_processor_count(void)
 {
     scan_processors(FALSE);
+
     return g_strdup_printf("%d", g_slist_length(processors));
+}
+
+gchar *get_processor_frequency(void)
+{
+    Processor *p;
+
+    scan_processors(FALSE);
+
+    p = (Processor *)processors->data;
+    if (p->cpu_mhz == 0.0f) {
+        return g_strdup("Unknown");
+    } else {
+        return g_strdup_printf("%.0f", p->cpu_mhz);
+    }
 }
 
 gchar *get_pci_device_description(gchar *pci_id)
@@ -191,6 +206,7 @@ ShellModuleMethod *hi_exported_methods(void)
     static ShellModuleMethod m[] = {
         {"getProcessorCount", get_processor_count},
 	{"getProcessorName", get_processor_name},
+	{"getProcessorFrequency", get_processor_frequency},
 	{"getStorageDevices", get_storage_devices},
 	{"getPrinters", get_printers},
 	{"getInputDevices", get_input_devices},

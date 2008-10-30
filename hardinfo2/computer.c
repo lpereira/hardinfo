@@ -315,8 +315,9 @@ gchar *callback_fs()
     return g_strdup_printf("[$ShellParam$]\n"
 			   "ViewType=1\n"
 			   "ReloadInterval=5000\n"
-			   "ColumnTitle$TextValue=Mount Point\n"
-			   "ColumnTitle$Value=Total / Free Space\n"
+			   "ColumnTitle$TextValue=Device\n"
+			   "ColumnTitle$Value=Free\n"
+			   "ColumnTitle$Extra1=Total\n"
 			   "ShowColumnHeaders=true\n"
 			   "[Mounted File Systems]\n%s\n", fs_list);
 }
@@ -363,7 +364,8 @@ gchar *callback_network()
 			   "ReloadInterval=3000\n"
 			   "ViewType=1\n"
 			   "ColumnTitle$TextValue=Device\n"
-			   "ColumnTitle$Value=Statistics\n"
+			   "ColumnTitle$Value=IP Address\n"
+			   "ColumnTitle$Extra1=Statistics\n"
 			   "ShowColumnHeaders=true\n"
 			   "%s", network_interfaces, network_icons);
 }

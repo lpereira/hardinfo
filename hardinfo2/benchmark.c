@@ -28,8 +28,7 @@
 enum {
     BENCHMARK_ZLIB,
     BENCHMARK_FIB,
-    BENCHMARK_MD5,
-    BENCHMARK_SHA1,
+    BENCHMARK_CRYPTOHASH,
     BENCHMARK_BLOWFISH,
     BENCHMARK_RAYTRACE,
     BENCHMARK_N_ENTRIES
@@ -38,22 +37,19 @@ enum {
 void scan_zlib(gboolean reload);
 void scan_raytr(gboolean reload);
 void scan_bfsh(gboolean reload);
-void scan_md5(gboolean reload);
+void scan_cryptohash(gboolean reload);
 void scan_fib(gboolean reload);
-void scan_sha1(gboolean reload);
 
 gchar *callback_zlib();
 gchar *callback_raytr();
 gchar *callback_bfsh();
-gchar *callback_md5();
 gchar *callback_fib();
-gchar *callback_sha1();
+gchar *callback_cryptohash();
 
 static ModuleEntry entries[] = {
     {"CPU ZLib", "compress.png", callback_zlib, scan_zlib},
     {"CPU Fibonacci", "module.png", callback_fib, scan_fib},
-    {"CPU MD5", "module.png", callback_md5, scan_md5},
-    {"CPU SHA1", "module.png", callback_sha1, scan_sha1},
+    {"CPU CryptoHash", "module.png", callback_cryptohash, scan_cryptohash},
     {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
     {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr},
     {NULL}
@@ -150,7 +146,7 @@ static gchar *__benchmark_include_results(gdouble result,
 {
     GKeyFile *conf;
     gchar **machines;
-    gchar *path, *results = g_strdup("");
+    gchar *path, *results = g_strdup(""), *return_value, *processor_frequency;
     int i;
 
     conf = g_key_file_new();
@@ -178,21 +174,24 @@ static gchar *__benchmark_include_results(gdouble result,
     g_free(path);
     g_key_file_free(conf);
 
-    DEBUG("results = %s", results);
-
-    return g_strdup_printf("[$ShellParam$]\n"
-			   "Zebra=1\n"
-			   "OrderType=%d\n"
-			   "ViewType=3\n"
-			   "ColumnTitle$Extra1=CPU Clock\n"
-			   "ColumnTitle$Extra2=Memory\n"
-			   "ColumnTitle$Progress=Results\n"
-			   "ColumnTitle$TextValue=CPU\n"
-			   "ShowColumnHeaders=true\n"
-			   "[%s]\n"
-			   "<big><b>This Machine</b></big>=%.3f\n"
-			   "%s", order_type, benchmark, result, results);
+    processor_frequency = module_call_method("devices::getProcessorFrequency");
+    return_value = g_strdup_printf("[$ShellParam$]\n"
+			   	   "Zebra=1\n"
+			   	   "OrderType=%d\n"
+	   			   "ViewType=3\n"
+	   			   "ColumnTitle$Extra1=CPU Clock\n"
+		   		   "ColumnTitle$Extra2=Memory\n"
+			   	   "ColumnTitle$Progress=Results\n"
+			   	   "ColumnTitle$TextValue=CPU\n"
+			   	   "ShowColumnHeaders=true\n"
+	   			   "[%s]\n"
+		   		   "<big><b>This Machine</b></big>=%.3f|%s MHz|extra2\n"
+			   	   "%s", order_type, benchmark, result, processor_frequency, results);
+    g_free(processor_frequency);
+    return return_value;
 }
+
+
 
 static gchar *benchmark_include_results_reverse(gdouble result,
 						const gchar * benchmark)
@@ -212,8 +211,7 @@ static gdouble bench_results[BENCHMARK_N_ENTRIES];
 
 #include <arch/common/fib.h>
 #include <arch/common/zlib.h>
-#include <arch/common/md5.h>
-#include <arch/common/sha1.h>
+#include <arch/common/cryptohash.h>
 #include <arch/common/blowfish.h>
 #include <arch/common/raytrace.h>
 
@@ -235,22 +233,16 @@ gchar *callback_bfsh()
 				     "CPU Blowfish");
 }
 
-gchar *callback_md5()
+gchar *callback_cryptohash()
 {
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_MD5],
-					     "CPU MD5");
+    return benchmark_include_results_reverse(bench_results[BENCHMARK_CRYPTOHASH],
+					     "CPU Cryptohash");
 }
 
 gchar *callback_fib()
 {
     return benchmark_include_results(bench_results[BENCHMARK_FIB],
 				     "CPU Fibonacci");
-}
-
-gchar *callback_sha1()
-{
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_SHA1],
-					     "CPU SHA1");
 }
 
 #define RUN_WITH_HIGH_PRIORITY(fn)			\
@@ -282,10 +274,10 @@ void scan_bfsh(gboolean reload)
     SCAN_END();
 }
 
-void scan_md5(gboolean reload)
+void scan_cryptohash(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_md5);
+    RUN_WITH_HIGH_PRIORITY(benchmark_cryptohash);
     SCAN_END();
 }
 
@@ -296,21 +288,13 @@ void scan_fib(gboolean reload)
     SCAN_END();
 }
 
-void scan_sha1(gboolean reload)
-{
-    SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_sha1);
-    SCAN_END();
-}
-
 const gchar *hi_note_func(gint entry)
 {
     switch (entry) {
     case BENCHMARK_ZLIB:
 	return "Results in KiB/second. Higher is better.";
 
-    case BENCHMARK_MD5:
-    case BENCHMARK_SHA1:
+    case BENCHMARK_CRYPTOHASH:
 	return "Results in MiB/second. Higher is better.";
 
     case BENCHMARK_RAYTRACE:
