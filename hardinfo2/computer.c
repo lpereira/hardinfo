@@ -315,7 +315,7 @@ gchar *callback_fs()
     return g_strdup_printf("[$ShellParam$]\n"
 			   "ViewType=1\n"
 			   "ReloadInterval=5000\n"
-			   "ColumnTitle$TextValue=Mount Point\n"
+			   "ColumnTitle$TextValue=Device\n"
 			   "ColumnTitle$Value=Free\n"
 			   "ColumnTitle$Extra1=Total\n"
 			   "ShowColumnHeaders=true\n"

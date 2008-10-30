@@ -1134,20 +1134,22 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	g_strfreev(keys);
     }
     
+    /* */
     if (!has_shell_param) {
         gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
     }
     
+    /* */
     g_object_unref(shell->info->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), shell->info->model);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
 
+    gdk_window_thaw_updates(shell->info->view->window);
+    shell_set_note_from_entry(entry);
+
     if (shell->view_type == SHELL_VIEW_PROGRESS) {
 	update_progress();
     }
-
-    gdk_window_thaw_updates(shell->info->view->window);
-    shell_set_note_from_entry(entry);
 
     g_strfreev(groups);
     g_key_file_free(key_file);
