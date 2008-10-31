@@ -51,9 +51,17 @@ scan_filesystems(void)
 
 	tmp = g_strsplit(buf, " ", 0);
 	if (!statfs(tmp[1], &sfs)) {
+		gfloat use_ratio;
+
 		size = (float) sfs.f_bsize * (float) sfs.f_blocks;
 		avail = (float) sfs.f_bsize * (float) sfs.f_bavail;
 		used = size - avail;
+
+		if (avail == 0.0f) {
+			use_ratio = 0.0f;
+		} else {
+			use_ratio = 100.0f * (used / size);
+		}
 
 		gchar *strsize = size_human_readable(size),
 		      *stravail = size_human_readable(avail),
@@ -81,9 +89,9 @@ scan_filesystems(void)
 					  stravail);
 		g_hash_table_insert(moreinfo, g_strdup_printf("FS%d", ++count), strhash);
 
-		fs_list = h_strdup_cprintf("$FS%d$%s=%s|%s\n",
+		fs_list = h_strdup_cprintf("$FS%d$%s=%.2f|%s|%s\n",
 					  fs_list,
-					  count, tmp[0], stravail, strsize);
+					  count, tmp[0], use_ratio, strsize, stravail);
 
 		g_free(strsize);
 		g_free(stravail);
