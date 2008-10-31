@@ -57,6 +57,10 @@ scan_filesystems(void)
 		avail = (float) sfs.f_bsize * (float) sfs.f_bavail;
 		used = size - avail;
 
+		if (size == 0.0f) {
+			continue;
+		}
+
 		if (avail == 0.0f) {
 			use_ratio = 100.0f;
 		} else {
