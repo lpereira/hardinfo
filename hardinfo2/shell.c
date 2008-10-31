@@ -1326,10 +1326,12 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     model = GTK_TREE_MODEL(store);
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
+    gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), TRUE);
 
     info->col_progress = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
     gtk_tree_view_column_set_min_width(column, 240);
+    gtk_tree_view_column_set_clickable(column, TRUE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     cr_progress = gtk_cell_renderer_progress_new();
@@ -1342,6 +1344,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 
     info->col_textvalue = column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_pbuf = gtk_cell_renderer_pixbuf_new();
     gtk_tree_view_column_pack_start(column, cr_pbuf, FALSE);
@@ -1356,6 +1359,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     info->col_extra1 = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_text = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(column, cr_text, FALSE);
@@ -1365,6 +1369,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     info->col_extra2 = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_text = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(column, cr_text, FALSE);
@@ -1373,6 +1378,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 
     info->col_value = column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_text = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(column, cr_text, FALSE);

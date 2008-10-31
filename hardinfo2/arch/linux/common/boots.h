@@ -48,7 +48,6 @@ scan_boots_real(void)
           }
 
           tmp = g_strsplit(buffer, " ", 0);
-
           computer->os->boots = h_strdup_cprintf("\n%s %s %s %s=%s|%s",
                                                 computer->os->boots,
 						tmp[4], tmp[5], tmp[6], tmp[7], tmp[3], tmp[8]);

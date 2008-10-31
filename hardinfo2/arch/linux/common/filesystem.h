@@ -58,7 +58,7 @@ scan_filesystems(void)
 		used = size - avail;
 
 		if (avail == 0.0f) {
-			use_ratio = 0.0f;
+			use_ratio = 100.0f;
 		} else {
 			use_ratio = 100.0f * (used / size);
 		}
