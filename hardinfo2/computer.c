@@ -293,6 +293,7 @@ gchar *callback_boots()
 {
     return g_strdup_printf("[$ShellParam$]\n"
 			   "ColumnTitle$TextValue=Date\n"
+			   "ColumnTitle$Extra1=Time\n"
 			   "ColumnTitle$Value=Kernel Version\n"
 			   "ShowColumnHeaders=true\n"
 			   "\n"
@@ -315,6 +316,7 @@ gchar *callback_fs()
     return g_strdup_printf("[$ShellParam$]\n"
 			   "ViewType=4\n"
 			   "ReloadInterval=5000\n"
+			   "Zebra=1\n"
 			   "NormalizePercentage=false\n"
 			   "ColumnTitle$Extra1=Total\n"
 			   "ColumnTitle$Extra2=Available\n"
