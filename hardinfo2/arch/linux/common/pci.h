@@ -99,6 +99,12 @@ __scan_pci(void)
 		strdevice = h_strdup_cprintf("Latency=%d\n", strdevice, latency);
 
 	    strdevice = h_strdup_cprintf("Bus Master=%s\n", strdevice, bus_master ? "Yes" : "No");
+	} else if (!strncmp(buf, "Kernel modules", 14)) {
+	    WALK_UNTIL(' ');
+	    WALK_UNTIL(':');
+	    buf++;
+	    
+	    strdevice = h_strdup_cprintf("Kernel modules=%s\n", strdevice, buf);
 	} else if (!strncmp(buf, "Subsystem", 9)) {
 	    WALK_UNTIL(' ');
 	    buf++;

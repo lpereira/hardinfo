@@ -201,7 +201,7 @@ echo -e "#ifndef __CONFIG_H__\n#define __CONFIG_H__\n" > config.h
 
 echo "#define VERSION \"$VERSION\"" >> config.h
 
-echo "#define LSPCI \"$LSPCI -v\"" >> config.h
+echo "#define LSPCI \"$LSPCI -vk\"" >> config.h
 echo "#define $ARCH" >> config.h
 echo "#define ARCH     \"$ARCH\"" >> config.h
 
