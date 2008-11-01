@@ -95,7 +95,7 @@ scan_filesystems(void)
 
 		fs_list = h_strdup_cprintf("$FS%d$%s=%.2f %% (%s of %s)|%s\n",
 					  fs_list,
-					  count, tmp[0], use_ratio, strsize, stravail, tmp[1]);
+					  count, tmp[0], use_ratio, stravail, strsize, tmp[1]);
 
 		g_free(strsize);
 		g_free(stravail);
