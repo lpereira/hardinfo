@@ -135,7 +135,7 @@ gdouble benchmark_parallel_for(guint start, guint end,
     g_slist_free(threads);
     g_timer_destroy(timer);
     
-    DEBUG("finishing; all threads took %d seconds to finish", elapsed_time);
+    DEBUG("finishing; all threads took %f seconds to finish", elapsed_time);
     
     return elapsed_time;
 }

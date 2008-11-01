@@ -135,6 +135,7 @@ struct _Processor {
 struct _OperatingSystem {
     gchar *kernel;
     gchar *libc;
+    gchar *gcc;
     gchar *distrocode, *distro;
     gchar *hostname;
     gchar *language;
