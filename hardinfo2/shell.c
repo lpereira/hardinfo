@@ -1164,6 +1164,16 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	update_progress();
     }
 
+#if GTK_CHECK_VERSION(2,12,0)
+    if (ngroups == 1) {
+        gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info->view),
+                                         FALSE);
+    } else {
+        gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info->view),
+                                         TRUE);
+    }
+#endif
+
     g_strfreev(groups);
     g_key_file_free(key_file);
     g_free(key_data);
