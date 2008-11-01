@@ -720,6 +720,15 @@ info_tree_compare_val_func(GtkTreeModel * model,
 
 static void set_view_type(ShellViewType viewtype)
 {
+    if (viewtype == shell->view_type)
+	return;
+
+    if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
+	viewtype = SHELL_VIEW_NORMAL;
+
+    shell->normalize_percentage = TRUE;
+    shell->view_type = viewtype;
+
     /* reset to the default model */
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view),
 			    shell->info->model);
@@ -736,14 +745,6 @@ static void set_view_type(ShellViewType viewtype)
     /* turn off the save graphic action */
     shell_action_set_enabled("SaveGraphAction", FALSE);
 
-    if (viewtype == shell->view_type)
-	return;
-
-    if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
-	viewtype = SHELL_VIEW_NORMAL;
-
-    shell->normalize_percentage = TRUE;
-    shell->view_type = viewtype;
 
     switch (viewtype) {
     default:
@@ -1033,8 +1034,11 @@ static void update_progress()
     /* fix the maximum relative percentage */
     iter = fiter;
     do {
+        char *strval;
+        
 	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 	floatval = atof(tmp);
+	strval = g_strdup(tmp);
 	g_free(tmp);
 	
 	cur = 100 * floatval / maxv;
@@ -1042,11 +1046,17 @@ static void update_progress()
 	if (shell->_order_type == SHELL_ORDER_ASCENDING)
 	    cur = 100 - cur + maxp;
 	    
-        tmp = g_strdup_printf("%.2f", floatval);
+        if (strchr(strval, ' ')) {
+            tmp = g_strdup_printf("%.2f%s", floatval, strchr(strval, ' '));
+        } else {
+            tmp = g_strdup_printf("%.2f", floatval);
+        }
+
         tmp = strreplace(tmp, ",", '.');
 	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur,
                                          INFO_TREE_COL_VALUE, tmp, -1);
         g_free(tmp);
+        g_free(strval);
     } while (gtk_tree_model_iter_next(model, &iter));
 
     /* now sort everything up. that wasn't as hard as i thought :) */

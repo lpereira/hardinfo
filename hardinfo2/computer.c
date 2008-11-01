@@ -320,9 +320,8 @@ gchar *callback_fs()
 			   "ReloadInterval=5000\n"
 			   "Zebra=1\n"
 			   "NormalizePercentage=false\n"
-			   "ColumnTitle$Extra1=Total\n"
-			   "ColumnTitle$Extra2=Available\n"
-			   "ColumnTitle$Progress=Usage %%\n"
+			   "ColumnTitle$Extra1=Mount Point\n"
+			   "ColumnTitle$Progress=Usage\n"
 			   "ColumnTitle$TextValue=Device\n"
 			   "ShowColumnHeaders=true\n"
 			   "[Mounted File Systems]\n%s\n", fs_list);
