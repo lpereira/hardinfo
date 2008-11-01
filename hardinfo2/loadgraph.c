@@ -37,12 +37,12 @@ LoadGraph *load_graph_new(gint size)
 
     lg->suffix = g_strdup("");
     lg->area = gtk_drawing_area_new();
-    lg->size = size;
-    lg->data = g_new0(gint, size);
+    lg->size = (size * 3) / 2;
+    lg->data = g_new0(gint, lg->size);
 
     lg->scale = 1.0;
 
-    lg->width = size * 4;
+    lg->width = size * 6;
     lg->height = size * 2;
 
     lg->max_value = 1;
