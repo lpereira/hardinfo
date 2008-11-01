@@ -742,6 +742,7 @@ static void set_view_type(ShellViewType viewtype)
     if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
 	viewtype = SHELL_VIEW_NORMAL;
 
+    shell->normalize_percentage = TRUE;
     shell->view_type = viewtype;
 
     switch (viewtype) {
@@ -762,11 +763,17 @@ static void set_view_type(ShellViewType viewtype)
 			       shell->hpaned->allocation.height -
 			       shell->loadgraph->height - 16);
 	break;
+    case SHELL_VIEW_PROGRESS_DUAL:
+	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
+	gtk_widget_show(shell->notebook);
+	/* fallthrough */
     case SHELL_VIEW_PROGRESS:
 	shell_action_set_enabled("SaveGraphAction", TRUE);
 	gtk_tree_view_column_set_visible(shell->info->col_progress, TRUE);
 	gtk_tree_view_column_set_visible(shell->info->col_value, FALSE);
-	gtk_widget_hide(shell->notebook);
+
+	if (viewtype == SHELL_VIEW_PROGRESS)
+		gtk_widget_hide(shell->notebook);
 	break;
     }
 }
@@ -797,6 +804,8 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		sfutbl->sfu = fu;
 
 		update_sfusrc = g_slist_prepend(update_sfusrc, sfutbl);
+	    } else if (g_str_equal(key, "NormalizePercentage")) {
+		shell->normalize_percentage = g_key_file_get_boolean(key_file, group, key, NULL);
 	    } else if (g_str_equal(key, "LoadGraphSuffix")) {
 		gchar *suffix =
 		    g_key_file_get_value(key_file, group, key, NULL);
@@ -992,15 +1001,19 @@ static void update_progress()
     gtk_tree_model_get_iter_first(model, &fiter);
 
     /* finds the maximum value */
-    iter = fiter;
-    do {
-	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
-
-	cur = atof(tmp);
-	maxv = MAX(maxv, cur);
-
-	g_free(tmp);
-    } while (gtk_tree_model_iter_next(model, &iter));
+    if (shell->normalize_percentage) {
+	iter = fiter;
+	do {
+		gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+	
+		cur = atof(tmp);
+		maxv = MAX(maxv, cur);
+	
+		g_free(tmp);
+	} while (gtk_tree_model_iter_next(model, &iter));
+    } else {
+	maxv = 100.0f;
+    }
 
     /* calculates the relative percentage and finds the maximum percentage */
     if (shell->_order_type == SHELL_ORDER_ASCENDING) {
@@ -1147,7 +1160,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gdk_window_thaw_updates(shell->info->view->window);
     shell_set_note_from_entry(entry);
 
-    if (shell->view_type == SHELL_VIEW_PROGRESS) {
+    if (shell->view_type == SHELL_VIEW_PROGRESS || shell->view_type == SHELL_VIEW_PROGRESS_DUAL) {
 	update_progress();
     }
 
@@ -1313,10 +1326,12 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     model = GTK_TREE_MODEL(store);
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
+    gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), TRUE);
 
     info->col_progress = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
     gtk_tree_view_column_set_min_width(column, 240);
+    gtk_tree_view_column_set_clickable(column, TRUE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     cr_progress = gtk_cell_renderer_progress_new();
@@ -1329,6 +1344,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 
     info->col_textvalue = column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_pbuf = gtk_cell_renderer_pixbuf_new();
     gtk_tree_view_column_pack_start(column, cr_pbuf, FALSE);
@@ -1343,6 +1359,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     info->col_extra1 = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_text = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(column, cr_text, FALSE);
@@ -1352,6 +1369,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
     info->col_extra2 = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_text = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(column, cr_text, FALSE);
@@ -1360,6 +1378,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 
     info->col_value = column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    gtk_tree_view_column_set_clickable(column, TRUE);
 
     cr_text = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(column, cr_text, FALSE);

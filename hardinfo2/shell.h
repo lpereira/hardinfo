@@ -48,6 +48,7 @@ typedef enum {
     SHELL_VIEW_DUAL,
     SHELL_VIEW_LOAD_GRAPH,
     SHELL_VIEW_PROGRESS,
+    SHELL_VIEW_PROGRESS_DUAL,
     SHELL_VIEW_N_VIEWS
 } ShellViewType;
 
@@ -86,6 +87,7 @@ struct _Shell {
     GtkUIManager	*ui_manager;
 
     ShellViewType	 view_type;
+    gboolean		 normalize_percentage;
     
     gint		_pulses;
     ShellOrderType	_order_type;
