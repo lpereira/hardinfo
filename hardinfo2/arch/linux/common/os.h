@@ -171,11 +171,13 @@ computer_get_os(void)
 	gchar buffer[128];
 
 	release = popen("lsb_release -d", "r");
-	fgets(buffer, 128, release);
-	pclose(release);
+	if (release) {
+            fgets(buffer, 128, release);
+            pclose(release);
 
-	os->distro = buffer;
-	os->distro = g_strdup(os->distro + strlen("Description:\t"));
+            os->distro = buffer;
+            os->distro = g_strdup(os->distro + strlen("Description:\t"));
+        }
     }
 
     for (i = 0;; i++) {

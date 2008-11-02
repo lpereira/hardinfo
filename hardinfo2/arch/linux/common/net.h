@@ -216,6 +216,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
 #endif
 
     shutdown(fd, 0);
+    close(fd);
 }
 
 static struct {
@@ -309,6 +310,9 @@ static void scan_net_interfaces_24(void)
     network_icons = g_strdup("");
 
     proc_net = fopen("/proc/net/dev", "r");
+    if (!proc_net)
+        return;
+
     while (fgets(buffer, 256, proc_net)) {
 	if (strchr(buffer, ':')) {
 	    gint trash;
