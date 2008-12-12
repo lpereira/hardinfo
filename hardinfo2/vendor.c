@@ -73,6 +73,7 @@ static const Vendor vendors[] = {
     {"Microsoft", "Microsoft Corp.", "www.microsoft.com"},
     {"Memorex", "Memorex Products, Inc.", "www.memorex.com"},
     {"eMPIA", "eMPIA Technology, Inc.", "www.empiatech.com.tw"},
+    {"Canon", "Canon Inc.", "www.canon.com"},
     {NULL, NULL, NULL},
 };
 
