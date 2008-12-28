@@ -287,15 +287,14 @@ gchar *callback_modules()
 			   "[$ShellParam$]\n"
 			   "ViewType=1\n"
 			   "ColumnTitle$TextValue=Name\n"
-			   "ColumnTitle$Value=Full Name\n"
+			   "ColumnTitle$Value=Description\n"
 			   "ShowColumnHeaders=true\n", module_list);
 }
 
 gchar *callback_boots()
 {
     return g_strdup_printf("[$ShellParam$]\n"
-			   "ColumnTitle$TextValue=Date\n"
-			   "ColumnTitle$Extra1=Time\n"
+			   "ColumnTitle$TextValue=Date & Time\n"
 			   "ColumnTitle$Value=Kernel Version\n"
 			   "ShowColumnHeaders=true\n"
 			   "\n"

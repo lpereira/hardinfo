@@ -115,11 +115,9 @@ void report_table(ReportContext * ctx, gchar * text)
 		gchar *key = keys[j];
 		gchar *value;
 
-		value =
-		    g_key_file_get_value(key_file, tmpgroup, key, NULL);
+		value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
 
-		if (g_utf8_validate(key, -1, NULL)
-		    && g_utf8_validate(value, -1, NULL)) {
+		if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
 		    strend(key, '#');
 
 		    if (g_str_equal(value, "...")) {
@@ -127,6 +125,10 @@ void report_table(ReportContext * ctx, gchar * text)
 			if (!(value = ctx->entry->fieldfunc(key))) {
 			    value = g_strdup("...");
 			}
+		    }
+		    
+		    if (strchr(value, '|')) {
+		        /* FIXME */
 		    }
 
 		    if (*key == '$') {

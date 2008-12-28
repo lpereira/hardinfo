@@ -118,7 +118,7 @@ __scan_input_devices(void)
 				      "Version=0x%x\n",
 				      strhash, product, version);
 	    
-            if (phis[1] != 0) {
+            if (phys[1] != 0) {
                  strhash = h_strdup_cprintf("Connected to=%s\n",
                                             strhash, phys);
             }

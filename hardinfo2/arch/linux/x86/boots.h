@@ -1,1 +1,1 @@
-../../../arch/linux/common/boots.h
+../../linux/common/boots.h
