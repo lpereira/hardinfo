@@ -64,8 +64,34 @@ void report_key_value(ReportContext * ctx, gchar * key, gchar * value)
     ctx->keyvalue(ctx, key, value);
 }
 
+gint report_get_visible_columns(ReportContext *ctx)
+{
+    gint columns;
+    
+    /* Column count starts at two, since we always have at least
+       two columns visible. */
+    columns = 2;
+
+    /* Either the Progress column or the Value column is available at
+       the same time. */    
+
+    if (ctx->columns & REPORT_COL_EXTRA1)
+      columns++;
+    
+    if (ctx->columns & REPORT_COL_EXTRA2)
+      columns++;
+    
+    if (ctx->columns & REPORT_COL_TEXTVALUE)
+      columns++;
+    
+    return columns;
+}
+
 void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 {
+    gchar **keys;
+    const gchar *group = "$ShellParam$";
+    
     /* FIXME: sometime in the future we'll save images in the report. this
        flag will be set if we should support that.
 
@@ -73,10 +99,53 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
        http://en.wikipedia.org/wiki/Data:_URI_scheme */
 
     ctx->is_image_enabled = (g_key_file_get_boolean(keyfile,
-						    "$ShellParam$",
+						    group,
 						    "ViewType",
-						    NULL) ==
-			     SHELL_VIEW_PROGRESS);
+						    NULL) == SHELL_VIEW_PROGRESS);
+
+    /* make only "Value" column visible ("Key" column is always visible) */
+    ctx->columns = REPORT_COL_VALUE;
+    ctx->show_column_headers = FALSE;
+    
+    keys = g_key_file_get_keys(keyfile, group, NULL, NULL);
+    if (keys) {
+      gint i = 0;
+      
+      for (; keys[i]; i++) {
+        gchar *key = keys[i];
+        
+        if (g_str_equal(key, "ShowColumnHeaders")) {
+          ctx->show_column_headers = g_key_file_get_boolean(keyfile, group, key, NULL);
+        } else if (g_str_has_prefix(key, "ColumnTitle")) {
+          gchar *value, *title = strchr(key, '$') + 1;
+          
+          value = g_key_file_get_value(keyfile, group, key, NULL);
+          if (g_str_equal(title, "Extra1")) {
+                  ctx->columns |= REPORT_COL_EXTRA1;
+          } else if (g_str_equal(title, "Extra2")) {
+                  ctx->columns |= REPORT_COL_EXTRA2;
+          } else if (g_str_equal(title, "Value")) {
+                  ctx->columns |= REPORT_COL_VALUE;
+          } else if (g_str_equal(title, "TextValue")) {
+                  ctx->columns |= REPORT_COL_TEXTVALUE;
+          } else if (g_str_equal(title, "Progress")) {
+                  ctx->columns |= REPORT_COL_PROGRESS;
+          }
+          
+          g_hash_table_replace(ctx->column_titles, title, g_strdup(value));
+          
+          g_free(value);
+        } else if (g_str_equal(key, "ViewType")) {
+          if (g_key_file_get_integer(keyfile, group, "ViewType", NULL) == SHELL_VIEW_PROGRESS) {
+            ctx->columns &= ~REPORT_COL_VALUE;
+            ctx->columns |= REPORT_COL_PROGRESS;
+          }     
+        }
+      }
+
+      g_strfreev(keys);    
+    }
+    
 }
 
 void report_table(ReportContext * ctx, gchar * text)
@@ -127,10 +196,6 @@ void report_table(ReportContext * ctx, gchar * text)
 			}
 		    }
 		    
-		    if (strchr(value, '|')) {
-		        /* FIXME */
-		    }
-
 		    if (*key == '$') {
 			report_key_value(ctx, strchr(key + 1, '$') + 1,
 					 value);
@@ -170,45 +235,81 @@ static void report_html_header(ReportContext * ctx)
 	 "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n"
 	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n"
 	 "    .value  { font: 80%% sans-serif; color: #505050 }\n"
-	 "</style>\n" "</head><body>\n" "<table width=\"100%%\"><tbody>",
+	 "</style>\n" "</head><body>\n",
 	 VERSION);
 }
 
 static void report_html_footer(ReportContext * ctx)
 {
     ctx->output = h_strconcat(ctx->output,
-			      "</tbody></table></body></html>", NULL);
+			      "</table></html>", NULL);
 }
 
 static void report_html_title(ReportContext * ctx, gchar * text)
 {
-    ctx->output = h_strdup_cprintf("<tr><td colspan=\"2\" class=\"titl"
-				  "e\">%s</td></tr>\n", ctx->output, text);
+    if (!ctx->first_table) {
+      ctx->output = h_strdup_cprintf("</table>", ctx->output);
+    }
+
+    ctx->output = h_strdup_cprintf("<h1 class=\"title\">%s</h1>", ctx->output, text);
 }
 
 static void report_html_subtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = h_strdup_cprintf("<tr><td colspan=\"2\" class=\"stit"
+    gint columns = report_get_visible_columns(ctx);
+
+    if (!ctx->first_table) {
+      ctx->output = h_strdup_cprintf("</table>", ctx->output);
+    } else {
+      ctx->first_table = FALSE;
+    }
+
+    ctx->output = h_strdup_cprintf("<table><tr><td colspan=\"%d\" class=\"stit"
 				  "le\">%s</td></tr>\n",
 				  ctx->output,
+				  columns,
 				  text);
 }
 
 static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = h_strdup_cprintf("<tr><td colspan=\"2\" class=\"ssti"
+    gint columns = report_get_visible_columns(ctx);
+
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\" class=\"ssti"
 				  "tle\">%s</td></tr>\n",
 				  ctx->output,
+				  columns,
 				  text);
 }
 
 static void
 report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
-    ctx->output = h_strdup_cprintf("<tr><td class=\"field\">%s</td>"
-				  "<td class=\"value\">%s</td></tr>\n",
-				  ctx->output,
-				  key, value);
+    gint columns = report_get_visible_columns(ctx);
+    gchar **values;
+    gint i;
+    
+    if (columns == 1) {
+      ctx->output = h_strdup_cprintf("<tr><td class=\"field\">%s</td>"
+                                    "<td class=\"value\">%s</td></tr>\n",
+                                    ctx->output,
+                                    key, value);
+      return;
+    }
+    
+    values = g_strsplit(value, "|", 0);
+    
+    ctx->output = h_strdup_cprintf("\n<tr>\n<td class=\"field\">%s</td>", ctx->output, key);
+    
+    for (i = 0; values[i]; i++) {
+      ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
+                                     ctx->output,
+                                     values[i]);
+    }
+    
+    g_strfreev(values);
+    
+    ctx->output = h_strdup_cprintf("</tr>\n", ctx->output);
 }
 
 static void report_text_header(ReportContext * ctx)
@@ -396,6 +497,9 @@ ReportContext *report_context_html_new()
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_HTML;
 
+    ctx->column_titles = g_hash_table_new(g_str_hash, g_str_equal);
+    ctx->first_table = TRUE;
+
     return ctx;
 }
 
@@ -413,12 +517,16 @@ ReportContext *report_context_text_new()
 
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_TEXT;
+    
+    ctx->column_titles = g_hash_table_new(g_str_hash, g_str_equal);
+    ctx->first_table = TRUE;
 
     return ctx;
 }
 
 void report_context_free(ReportContext * ctx)
 {
+    g_hash_table_destroy(ctx->column_titles);
     g_free(ctx->output);
     g_free(ctx);
 }

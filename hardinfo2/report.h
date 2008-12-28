@@ -27,6 +27,14 @@ typedef enum {
     N_REPORT_FORMAT
 } ReportFormat;
 
+typedef enum {
+    REPORT_COL_PROGRESS = 1<<0,
+    REPORT_COL_VALUE    = 1<<1,
+    REPORT_COL_EXTRA1   = 1<<2,
+    REPORT_COL_EXTRA2   = 1<<3,
+    REPORT_COL_TEXTVALUE= 1<<4
+} ReportColumn;
+
 typedef struct _ReportDialog	ReportDialog;
 typedef struct _ReportContext	ReportContext;
 
@@ -34,16 +42,21 @@ struct _ReportContext {
   ShellModuleEntry	*entry;
   gchar			*output;
   
-  void (*header)      (ReportContext *ctx);
-  void (*footer)      (ReportContext *ctx);
-  void (*title)       (ReportContext *ctx, gchar *text);
-  void (*subtitle)    (ReportContext *ctx, gchar *text);
-  void (*subsubtitle) (ReportContext *ctx, gchar *text);
-  void (*keyvalue)    (ReportContext *ctx, gchar *key, gchar *value);
+  void (*header)      	(ReportContext *ctx);
+  void (*footer)      	(ReportContext *ctx);
+  void (*title)      	(ReportContext *ctx, gchar *text);
+  void (*subtitle)    	(ReportContext *ctx, gchar *text);
+  void (*subsubtitle)	(ReportContext *ctx, gchar *text);
+  void (*keyvalue)   	(ReportContext *ctx, gchar *key, gchar *value);
   
   ReportFormat		format;
   
   gboolean		is_image_enabled;
+  gboolean		first_table;
+
+  gboolean		show_column_headers;
+  guint			columns;
+  GHashTable		*column_titles;
 };
 
 struct _ReportDialog {
