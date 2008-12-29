@@ -1,0 +1,39 @@
+
+- Report Generation
+
+    * Ability to create more detailed reports
+    * Public web page to host user's reports
+
+- Benchmark
+
+    * New benchmarks
+          o Video
+          o FPU+CPU
+          o Disk
+    * Change current benchmarks
+          o Remove CPU Zlib
+          o Remove CPU Fibonacci
+          * Add CPU N-Queens
+          * Add CPU Rubik Cube solver? :P
+
+- More information
+
+    * PCMCIA/Cardbus information
+    * S.M.A.R.T.
+    * Show USB devices as a tree instead of a list
+
+- i18n, build system
+
+    * GNU gettext
+    * Better build system (no more symlink mess)
+
+- Misc
+
+    * Remove (R), (TM), etc from processor strings as per
+      Wikipedia's Manual of Style [1]
+    * Round benchmark results to two decimal places at most,
+      or get rid of decimal places altogether.
+
+
+[1] http://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style_(trademarks)#General_rules
+
