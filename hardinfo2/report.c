@@ -152,6 +152,7 @@ void report_table(ReportContext * ctx, gchar * text)
     ctx->columns = REPORT_COL_VALUE;
     ctx->show_column_headers = FALSE;
 
+    /**/
     g_key_file_load_from_data(key_file, text, strlen(text), 0, NULL);
     groups = g_key_file_get_groups(key_file, NULL);
     
@@ -361,11 +362,30 @@ static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
 static void
 report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
-    if (strlen(value))
-	ctx->output =
-	    h_strdup_cprintf("%s\t\t: %s\n", ctx->output, key, value);
-    else
-	ctx->output = h_strdup_cprintf("%s\n", ctx->output, key);
+    gint columns = report_get_visible_columns(ctx);
+    gchar **values;
+    gint i;
+    
+    if (columns == 2) {
+      if (strlen(value))
+          ctx->output = h_strdup_cprintf("%s\t\t: %s\n", ctx->output, key, value);
+      else
+          ctx->output = h_strdup_cprintf("%s\n", ctx->output, key);
+    } else {
+      values = g_strsplit(value, "|", columns);
+      
+      ctx->output = h_strdup_cprintf("%s\t", ctx->output, key);
+      
+      for (i = columns - 2; i >= 0; i--) {
+        ctx->output = h_strdup_cprintf("%s\t",
+                                       ctx->output,
+                                       values[i]);
+      }
+
+      ctx->output = h_strdup_cprintf("\n", ctx->output);
+      
+      g_strfreev(values);
+    }
 }
 
 static GSList *report_create_module_list_from_dialog(ReportDialog * rd)
