@@ -1,7 +1,8 @@
 
+CCFLAGS = -fPIC -pipe -Wall -g 
+CFLAGS = $(GTK_CFLAGS) $(SOUP_CFLAGS) -I.
 CC = gcc $(ARCHOPTS) -g
 CCSLOW = gcc -O0 -g
-CFLAGS = -fPIC -pipe -Wall -g $(GTK_CFLAGS) $(SOUP_CFLAGS) -I.
 
 # ----------------------------------------------------------------------------
 
@@ -13,31 +14,31 @@ BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o
 MODULES = computer.so devices.so benchmark.so 
 
 all:	$(OBJECTS) $(MODULES)
-	$(CC) $(CFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
+	$(CC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
 		$(SOUP_LIBS)
 
 md5.o:
-	$(CCSLOW) $(CFLAGS) -c md5.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c md5.c -o $@
 
 blowfish.o:
-	$(CCSLOW) $(CFLAGS) -c blowfish.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c blowfish.c -o $@
 
 sha1.o:
-	$(CCSLOW) $(CFLAGS) -c sha1.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c sha1.c -o $@
 
 fbench.o:
-	$(CCSLOW) $(CFLAGS) -c fbench.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
 
 benchmark.so:	benchmark.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	make $(BENCHMARK_OBJECTS)
-	$(CCSLOW) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
 		$(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 
 %.so:	%.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
-	$(CC) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
+	$(CC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 	
 clean:
