@@ -630,7 +630,7 @@ static void module_entry_free(gpointer data, gpointer user_data)
     }
 }
 
-static void module_free(ShellModule * module)
+void module_free(ShellModule * module)
 {
     g_free(module->name);
     g_object_unref(module->icon);
