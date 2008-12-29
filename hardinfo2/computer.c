@@ -364,14 +364,16 @@ gchar *callback_display()
 gchar *callback_network()
 {
     return g_strdup_printf("%s\n"
-			   "[$ShellParam$]\n"
+                           "[$ShellParam$]\n"
 			   "ReloadInterval=3000\n"
 			   "ViewType=1\n"
 			   "ColumnTitle$TextValue=Device\n"
 			   "ColumnTitle$Value=IP Address\n"
 			   "ColumnTitle$Extra1=Statistics\n"
 			   "ShowColumnHeaders=true\n"
-			   "%s", network_interfaces, network_icons);
+			   "%s",
+			   network_interfaces,
+			   network_icons);
 }
 
 gchar *callback_users()

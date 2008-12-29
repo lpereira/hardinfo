@@ -73,15 +73,12 @@ gint report_get_visible_columns(ReportContext *ctx)
     columns = 2;
 
     /* Either the Progress column or the Value column is available at
-       the same time. */    
+       the same time. So we don't count them. */
 
     if (ctx->columns & REPORT_COL_EXTRA1)
       columns++;
     
     if (ctx->columns & REPORT_COL_EXTRA2)
-      columns++;
-    
-    if (ctx->columns & REPORT_COL_TEXTVALUE)
       columns++;
     
     return columns;
@@ -103,9 +100,6 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 						    "ViewType",
 						    NULL) == SHELL_VIEW_PROGRESS);
 
-    /* make only "Value" column visible ("Key" column is always visible) */
-    ctx->columns = REPORT_COL_VALUE;
-    ctx->show_column_headers = FALSE;
     
     keys = g_key_file_get_keys(keyfile, group, NULL, NULL);
     if (keys) {
@@ -154,8 +148,19 @@ void report_table(ReportContext * ctx, gchar * text)
     gchar **groups;
     gint i;
 
+    /* make only "Value" column visible ("Key" column is always visible) */
+    ctx->columns = REPORT_COL_VALUE;
+    ctx->show_column_headers = FALSE;
+
     g_key_file_load_from_data(key_file, text, strlen(text), 0, NULL);
     groups = g_key_file_get_groups(key_file, NULL);
+    
+    for (i = 0; groups[i]; i++) {
+	if (groups[i][0] == '$') {
+	    report_context_configure(ctx, key_file);
+	    break;
+	}
+    }
 
     for (i = 0; groups[i]; i++) {
 	gchar *group, *tmpgroup;
@@ -163,7 +168,6 @@ void report_table(ReportContext * ctx, gchar * text)
 	gint j;
 
 	if (groups[i][0] == '$') {
-	    report_context_configure(ctx, key_file);
 	    continue;
 	}
 
@@ -289,27 +293,26 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
     gchar **values;
     gint i;
     
-    if (columns == 1) {
+    if (columns == 2) {
       ctx->output = h_strdup_cprintf("<tr><td class=\"field\">%s</td>"
                                     "<td class=\"value\">%s</td></tr>\n",
                                     ctx->output,
                                     key, value);
-      return;
+    } else {
+      values = g_strsplit(value, "|", columns);
+      
+      ctx->output = h_strdup_cprintf("\n<tr>\n<td class=\"field\">%s</td>", ctx->output, key);
+      
+      for (i = columns - 2; i >= 0; i--) {
+        ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
+                                       ctx->output,
+                                       values[i]);
+      }
+
+      ctx->output = h_strdup_cprintf("</tr>\n", ctx->output);
+      
+      g_strfreev(values);
     }
-    
-    values = g_strsplit(value, "|", 0);
-    
-    ctx->output = h_strdup_cprintf("\n<tr>\n<td class=\"field\">%s</td>", ctx->output, key);
-    
-    for (i = 0; values[i]; i++) {
-      ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
-                                     ctx->output,
-                                     values[i]);
-    }
-    
-    g_strfreev(values);
-    
-    ctx->output = h_strdup_cprintf("</tr>\n", ctx->output);
 }
 
 static void report_text_header(ReportContext * ctx)
