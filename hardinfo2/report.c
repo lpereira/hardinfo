@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2003-2008 Leandro A. F. Pereira <leandro@hardinfo.org>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by

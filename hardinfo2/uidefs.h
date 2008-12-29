@@ -4,6 +4,9 @@
 char *uidefs_str = "<ui>" \
 "	<menubar>" \
 "	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
+/*"		<menuitem name=\"Open\" action=\"OpenAction\" />" \
+"		<menuitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
+"		<separator/>" \*/
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
 /*"		<separator/>" \ */
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \
