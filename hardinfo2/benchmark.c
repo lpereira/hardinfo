@@ -346,26 +346,32 @@ static gchar *get_benchmark_results()
 
     gint i = G_N_ELEMENTS(entries) - 1;
     gchar *machine = module_call_method("devices::getProcessorName");
-    gchar *param = g_strdup_printf("[param]\n"
-				   "machine=%s\n" "nbenchmarks=%d\n",
-				   machine, i);
-    gchar *result = param;
-
+    gchar *machineclock = module_call_method("devices::getProcessorFrequency");
+    gchar *machineram = module_call_method("devices::getMemoryTotal");
+    gchar *result = g_strdup_printf("[param]\n"
+				    "machine=%s\n"
+				    "machineclock=%s\n"
+				    "machineram=%s\n"
+				    "nbenchmarks=%d\n",
+				    machine,
+				    machineclock,
+				    machineram, i);
     for (; i >= 0; i--) {
 	if ((scan_callback = entries[i].scan_callback)) {
 	    scan_callback(FALSE);
 
-	    result = g_strdup_printf("%s\n"
-				     "[bench%d]\n"
-				     "name=%s\n"
-				     "value=%f\n",
-				     result,
-				     i, entries[i].name, bench_results[i]);
+	    result = h_strdup_cprintf("[bench%d]\n"
+				      "name=%s\n"
+				      "value=%f\n",
+				      result,
+				      i, entries[i].name, bench_results[i]);
 	}
     }
 
     g_free(machine);
-    g_free(param);
+    g_free(machineclock);
+    g_free(machineram);
+    g_free(result);
 
     return result;
 }

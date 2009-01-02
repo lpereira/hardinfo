@@ -201,12 +201,19 @@ gchar *get_pci_device_description(gchar *pci_id)
     return NULL;
 }
 
+gchar *get_memory_total(void)
+{
+    /* FIXME */
+    return g_strdup("0.0");
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
         {"getProcessorCount", get_processor_count},
 	{"getProcessorName", get_processor_name},
 	{"getProcessorFrequency", get_processor_frequency},
+	{"getMemoryTotal", get_memory_total},
 	{"getStorageDevices", get_storage_devices},
 	{"getPrinters", get_printers},
 	{"getInputDevices", get_input_devices},

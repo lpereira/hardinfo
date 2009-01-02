@@ -919,7 +919,8 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	    } else {
 		gtk_tree_store_append(store, &child, &parent);
 	    }
-
+	    
+	    /* FIXME: use g_key_file_get_string_list? */
 	    if (strchr(value, '|')) {
 		gchar **columns = g_strsplit(value, "|", 0);
 
