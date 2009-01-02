@@ -13,7 +13,9 @@ BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o
 
 MODULES = computer.so devices.so benchmark.so 
 
-all:	$(OBJECTS) $(MODULES)
+all:	$(OBJECTS) $(MODULES) hardinfo
+
+hardinfo:
 	$(CC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
 		$(SOUP_LIBS)
 
