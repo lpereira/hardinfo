@@ -95,12 +95,21 @@ gdouble benchmark_parallel_for(guint start, guint end,
     temp = module_call_method("devices::getProcessorCount");
     n_cores = temp ? atoi(temp) : 1;
     g_free(temp);
-
-    iter_per_core = (end - start) / n_cores;
+    
+    while (1) {
+        iter_per_core = (end - start) / n_cores;
+        
+        if (iter_per_core == 0) {
+          DEBUG("not enough items per core; disabling one");
+          n_cores--;
+        } else {
+          break;
+        }
+    }
     
     DEBUG("processor has %d cores; processing %d elements (%d per core)",
           n_cores, (end - start), iter_per_core);
-          
+    
     g_timer_start(timer);
     for (iter = start; iter < end; iter += iter_per_core) {
         ParallelBenchTask *pbt = g_new0(ParallelBenchTask, 1);
