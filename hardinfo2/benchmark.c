@@ -26,31 +26,31 @@
 #include <sys/resource.h>
 
 enum {
-    BENCHMARK_ZLIB,
     BENCHMARK_FIB,
     BENCHMARK_CRYPTOHASH,
     BENCHMARK_BLOWFISH,
     BENCHMARK_RAYTRACE,
+    BENCHMARK_NQUEENS,
     BENCHMARK_N_ENTRIES
 } Entries;
 
-void scan_zlib(gboolean reload);
 void scan_raytr(gboolean reload);
 void scan_bfsh(gboolean reload);
 void scan_cryptohash(gboolean reload);
 void scan_fib(gboolean reload);
+void scan_nqueens(gboolean reload);
 
-gchar *callback_zlib();
 gchar *callback_raytr();
 gchar *callback_bfsh();
 gchar *callback_fib();
 gchar *callback_cryptohash();
+gchar *callback_nqueens();
 
 static ModuleEntry entries[] = {
-    {"CPU ZLib", "compress.png", callback_zlib, scan_zlib},
     {"CPU Fibonacci", "module.png", callback_fib, scan_fib},
     {"CPU CryptoHash", "module.png", callback_cryptohash, scan_cryptohash},
     {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
+    {"CPU N-Queens", "nqueens.png", callback_nqueens, scan_nqueens},
     {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr},
     {NULL}
 };
@@ -209,15 +209,15 @@ static gchar *benchmark_include_results(gdouble result,
 static gdouble bench_results[BENCHMARK_N_ENTRIES];
 
 #include <arch/common/fib.h>
-#include <arch/common/zlib.h>
 #include <arch/common/cryptohash.h>
 #include <arch/common/blowfish.h>
 #include <arch/common/raytrace.h>
+#include <arch/common/nqueens.h>
 
-gchar *callback_zlib()
+gchar *callback_nqueens()
 {
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_ZLIB],
-					     "CPU ZLib");
+    return benchmark_include_results_reverse(bench_results[BENCHMARK_NQUEENS],
+					     "CPU N-Queens");
 }
 
 gchar *callback_raytr()
@@ -252,10 +252,10 @@ gchar *callback_fib()
     setpriority(PRIO_PROCESS, 0, old_priority);		\
   } while (0);
 
-void scan_zlib(gboolean reload)
+void scan_nqueens(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_zlib);
+    RUN_WITH_HIGH_PRIORITY(benchmark_nqueens);
     SCAN_END();
 }
 
@@ -290,15 +290,13 @@ void scan_fib(gboolean reload)
 const gchar *hi_note_func(gint entry)
 {
     switch (entry) {
-    case BENCHMARK_ZLIB:
-	return "Results in KiB/second. Higher is better.";
-
     case BENCHMARK_CRYPTOHASH:
 	return "Results in MiB/second. Higher is better.";
 
     case BENCHMARK_RAYTRACE:
     case BENCHMARK_BLOWFISH:
     case BENCHMARK_FIB:
+    case BENCHMARK_NQUEENS:
 	return "Results in seconds. Lower is better.";
     }
 

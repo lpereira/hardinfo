@@ -9,7 +9,7 @@ CCSLOW = gcc -O0 -g
 OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o  \
 		menu.o stock.o callbacks.o expr.o report.o binreloc.o \
 		vendor.o socket.o syncmanager.o
-BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o
+BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o nqueens.o
 
 MODULES = computer.so devices.so benchmark.so 
 
@@ -62,10 +62,15 @@ deb:	dist-clean
 	dpkg-buildpackage -rfakeroot -k${USER}
 
 install:	all
+	@echo '[01;34m*** Cleaning up installation...[00m'
+	rm -rf ${DESTDIR}${LIBDIR}/hardinfo/modules ${DESTDIR}/usr/share/hardinfo/pixmaps
+
 	@echo '[01;34m*** Creating directories...[00m'
 	mkdir -p ${DESTDIR}/usr/bin
 	mkdir -p ${DESTDIR}/usr/local
 	mkdir -p ${DESTDIR}/usr/share/applications
+	
+
 	mkdir -p ${DESTDIR}${LIBDIR}/hardinfo/modules
 	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps
 
