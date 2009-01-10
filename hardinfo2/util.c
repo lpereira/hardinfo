@@ -116,9 +116,11 @@ void widget_set_cursor(GtkWidget * widget, GdkCursorType cursor_type)
 {
     GdkCursor *cursor;
 
-    cursor = gdk_cursor_new(cursor_type);
-    gdk_window_set_cursor(GDK_WINDOW(widget->window), cursor);
-    gdk_cursor_unref(cursor);
+    if ((cursor = gdk_cursor_new(cursor_type))) {
+        gdk_window_set_cursor(GDK_WINDOW(widget->window), cursor);
+        gdk_display_flush(gtk_widget_get_display(widget));
+        gdk_cursor_unref(cursor);
+    }
 
     while (gtk_events_pending())
 	gtk_main_iteration();
