@@ -371,7 +371,6 @@ static gchar *get_benchmark_results()
     g_free(machine);
     g_free(machineclock);
     g_free(machineram);
-    g_free(result);
 
     return result;
 }

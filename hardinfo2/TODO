@@ -10,6 +10,7 @@
           o Video
           o FPU+CPU
           o Disk
+	  o Phoronix?
     * Change current benchmarks
           o Remove CPU Zlib
           o Remove CPU Fibonacci
@@ -21,6 +22,7 @@
     * PCMCIA/Cardbus information
     * S.M.A.R.T.
     * Show USB devices as a tree instead of a list
+    * x86info integration?
 
 - i18n, build system
 

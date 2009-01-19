@@ -231,11 +231,6 @@ void SHA1Final(guchar digest[20], SHA1_CTX * context)
 #ifdef SHA1_TEST
 static char *b32_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
-void g_assert(int a)
-{
-    /* Bah, who needs testing anyway... ;) */
-}
-
 static void base32_encode_exactly(guchar * buf, gint len,
 				  guchar * encbuf, gint enclen)
 {
@@ -313,7 +308,7 @@ int main(int argc, char **argv)
     }
     SHA1Final(digest, &context);
     fclose(file);
-/*
+
     for (i = 0; i < 5; i++) {
         for (j = 0; j < 4; j++) {
             printf("%02X", digest[i*4+j]);
@@ -321,7 +316,6 @@ int main(int argc, char **argv)
         putchar(' ');
     }
     putchar('\n');
-*/
 
     {
 	guchar tmp[33];
