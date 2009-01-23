@@ -161,8 +161,8 @@ void scan_arp(gboolean reload)
         __arp_table = h_strdup_cprintf("%s=%s|%s\n",
                                        __arp_table,
                                        g_strstrip(buffer),
-                                       g_strstrip(buffer + 41),
-                                       g_strstrip(buffer + 72));
+                                       g_strstrip(buffer + 72),
+                                       g_strstrip(buffer + 41));
       }
       
       pclose(arp);
@@ -191,10 +191,10 @@ void scan_connections(gboolean reload)
         if (g_str_has_prefix(buffer, "tcp") || g_str_has_prefix(buffer, "udp")) {
           __connections = h_strdup_cprintf("%s=%s|%s|%s\n",
                                            __connections,
-                                           buffer + 20,	/* local address */
-                                           buffer,	/* protocol */
-                                           buffer + 44,	/* foreign address */
-                                           buffer + 68);/* state */
+                                           g_strstrip(buffer + 20),	/* local address */
+                                           g_strstrip(buffer),		/* protocol */
+                                           g_strstrip(buffer + 44),	/* foreign address */
+                                           g_strstrip(buffer + 68));	/* state */
         }
       }
       
@@ -210,9 +210,9 @@ gchar *callback_arp()
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ReloadInterval=3000\n"
-                           "ColumnTitle$TextValue=Hardware Address\n"
-                           "ColumnTitle$Value=IP Address\n"
-                           "ColumnTitle$Extra1=Interface\n"
+                           "ColumnTitle$TextValue=IP Address\n"
+                           "ColumnTitle$Value=Interface\n"
+                           "ColumnTitle$Extra1=MAC Address\n"
                            "ShowColumnHeaders=true\n",
                            __arp_table);
 }
