@@ -51,7 +51,7 @@ void scan_arp(gboolean reload);
 
 static ModuleEntry entries[] = {
     {"Interfaces", "network.png", callback_network, scan_network},
-    {"Connections", "module.png", callback_connections, scan_connections},
+    {"IP Connections", "module.png", callback_connections, scan_connections},
     {"Routing Table", "network-generic.png", callback_route, scan_route},
     {"ARP Table", "module.png", callback_arp, scan_arp},
     {"DNS Servers", "module.png", callback_dns, scan_dns},
@@ -184,6 +184,18 @@ void scan_connections(gboolean reload)
     
     if ((netstat = popen("netstat -an", "r"))) {
       while (fgets(buffer, 256, netstat)) {
+        buffer[6] = 0;
+        buffer[43] = 0;
+        buffer[67] = 0;
+
+        if (g_str_has_prefix(buffer, "tcp") || g_str_has_prefix(buffer, "udp")) {
+          __connections = h_strdup_cprintf("%s=%s|%s|%s\n",
+                                           __connections,
+                                           buffer + 20,	/* local address */
+                                           buffer,	/* protocol */
+                                           buffer + 44,	/* foreign address */
+                                           buffer + 68);/* state */
+        }
       }
       
       pclose(netstat);
@@ -222,13 +234,15 @@ gchar *callback_dns()
 gchar *callback_connections()
 {
     return g_strdup_printf("[Connections]\n"
-                           "Local Address=Protocol|Foreign Address|State\n"
+                           "%s\n"
                            "[$ShellParam$]\n"
+                           "ReloadInterval=3000\n"
                            "ColumnTitle$TextValue=Local Address\n"
                            "ColumnTitle$Value=Protocol\n"
                            "ColumnTitle$Extra1=Foreign Address\n"
                            "ColumnTitle$Extra2=State\n"
-                           "ShowColumnHeaders=true\n");
+                           "ShowColumnHeaders=true\n",
+                           __connections);
 }
 
 gchar *callback_network()
