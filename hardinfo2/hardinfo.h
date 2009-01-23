@@ -65,7 +65,7 @@ struct _ModuleAbout {
 
 /* String utility functions */
 inline void  remove_quotes(gchar *str);
-inline void  strend(gchar *str, gchar chr);
+inline char *strend(gchar *str, gchar chr);
 inline void  remove_linefeed(gchar *str);
 gchar       *strreplace(gchar *string, gchar *replace, gchar new_char);
 

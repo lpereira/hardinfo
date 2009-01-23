@@ -86,14 +86,16 @@ inline gchar *size_human_readable(gfloat size)
     return g_strdup_printf("%.1f GiB", size / GiB);
 }
 
-inline void strend(gchar * str, gchar chr)
+inline char *strend(gchar * str, gchar chr)
 {
     if (!str)
-	return;
+	return NULL;
 
     char *p;
     if ((p = strchr(str, chr)))
 	*p = 0;
+
+    return str;
 }
 
 inline void remove_quotes(gchar * str)

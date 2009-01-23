@@ -16,6 +16,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
@@ -40,6 +41,7 @@ gchar *callback_dns();
 gchar *callback_connections();
 gchar *callback_shares();
 gchar *callback_arp();
+gchar *callback_statistics();
 
 /* Scan callbacks */
 void scan_network(gboolean reload);
@@ -48,6 +50,7 @@ void scan_dns(gboolean reload);
 void scan_connections(gboolean reload);
 void scan_shares(gboolean reload);
 void scan_arp(gboolean reload);
+void scan_statistics(gboolean reload);
 
 static ModuleEntry entries[] = {
     {"Interfaces", "network.png", callback_network, scan_network},
@@ -55,6 +58,7 @@ static ModuleEntry entries[] = {
     {"Routing Table", "network-generic.png", callback_route, scan_route},
     {"ARP Table", "module.png", callback_arp, scan_arp},
     {"DNS Servers", "module.png", callback_dns, scan_dns},
+    {"Statistics", "module.png", callback_statistics, scan_statistics},
     {"Shared Directories", "shares.png", callback_shares, scan_shares},
     {NULL},
 };
@@ -68,6 +72,52 @@ void scan_shares(gboolean reload)
     SCAN_START();
     scan_samba_shared_directories();
     scan_nfs_shared_directories();
+    SCAN_END();
+}
+
+static gchar *__statistics = NULL;
+void scan_statistics(gboolean reload)
+{
+    FILE *netstat;
+    gchar buffer[256];
+    
+    SCAN_START();
+    
+    g_free(__statistics);
+    __statistics = g_strdup("");
+    
+    if ((netstat = popen("netstat -s", "r"))) {
+      while (fgets(buffer, 256, netstat)) {
+        if (!isspace(buffer[0]) && strchr(buffer, ':')) {
+          gchar *tmp;
+          
+          tmp = g_ascii_strup(strend(buffer, ':'), -1);
+          
+          __statistics = h_strdup_cprintf("[%s]\n",
+                                          __statistics,
+                                          tmp);
+          
+          g_free(tmp);
+        } else if (isdigit(buffer[4])) {
+          gchar *tmp1 = buffer + 4,
+                *tmp2 = tmp1;
+          
+          while (*tmp2 && !isspace(*tmp2)) tmp2++;
+          *tmp2 = 0;
+          tmp2++;
+          
+          *tmp2 = toupper(*tmp2);
+          
+          __statistics = h_strdup_cprintf("%s=%s\n",
+                                          __statistics,
+                                          g_strstrip(tmp1),
+                                          g_strstrip(tmp2));
+        }
+      }
+      
+      pclose(netstat);
+    }
+    
     SCAN_END();
 }
 
@@ -273,6 +323,14 @@ gchar *callback_route()
                            "ColumnTitle$Extra2=Mask\n"
                            "ShowColumnHeaders=true\n",
                            __routing_table);
+}
+
+gchar *callback_statistics()
+{
+    return g_strdup_printf("%s\n"
+                           "[$ShellParam$]\n"
+                           "ReloadInterval=3000\n",
+                            __statistics);
 }
 
 gchar *hi_more_info(gchar * entry)
