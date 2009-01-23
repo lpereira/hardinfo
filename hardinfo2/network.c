@@ -53,12 +53,12 @@ void scan_arp(gboolean reload);
 void scan_statistics(gboolean reload);
 
 static ModuleEntry entries[] = {
-    {"Interfaces", "network.png", callback_network, scan_network},
-    {"IP Connections", "module.png", callback_connections, scan_connections},
-    {"Routing Table", "network-generic.png", callback_route, scan_route},
+    {"Interfaces", "network-interface.png", callback_network, scan_network},
+    {"IP Connections", "network-connections.png", callback_connections, scan_connections},
+    {"Routing Table", "network.png", callback_route, scan_route},
     {"ARP Table", "module.png", callback_arp, scan_arp},
-    {"DNS Servers", "module.png", callback_dns, scan_dns},
-    {"Statistics", "module.png", callback_statistics, scan_statistics},
+    {"DNS Servers", "dns.png", callback_dns, scan_dns},
+    {"Statistics", "network-statistics.png", callback_statistics, scan_statistics},
     {"Shared Directories", "shares.png", callback_shares, scan_shares},
     {NULL},
 };
