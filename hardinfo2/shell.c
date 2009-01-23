@@ -720,9 +720,6 @@ info_tree_compare_val_func(GtkTreeModel * model,
 
 static void set_view_type(ShellViewType viewtype)
 {
-    if (viewtype == shell->view_type)
-	return;
-
     if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
 	viewtype = SHELL_VIEW_NORMAL;
 
@@ -744,7 +741,6 @@ static void set_view_type(ShellViewType viewtype)
 
     /* turn off the save graphic action */
     shell_action_set_enabled("SaveGraphAction", FALSE);
-
 
     switch (viewtype) {
     default:

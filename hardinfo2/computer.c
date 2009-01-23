@@ -38,7 +38,6 @@ gchar *callback_modules();
 gchar *callback_boots();
 gchar *callback_locales();
 gchar *callback_fs();
-gchar *callback_shares();
 gchar *callback_display();
 gchar *callback_network();
 gchar *callback_users();
@@ -51,7 +50,6 @@ void scan_modules(gboolean reload);
 void scan_boots(gboolean reload);
 void scan_locales(gboolean reload);
 void scan_fs(gboolean reload);
-void scan_shares(gboolean reload);
 void scan_display(gboolean reload);
 void scan_network(gboolean reload);
 void scan_users(gboolean reload);
@@ -64,9 +62,7 @@ static ModuleEntry entries[] = {
     {"Boots", "boot.png", callback_boots, scan_boots},
     {"Languages", "language.png", callback_locales, scan_locales},
     {"Filesystems", "dev_removable.png", callback_fs, scan_fs},
-    {"Shared Directories", "shares.png", callback_shares, scan_shares},
     {"Display", "monitor.png", callback_display, scan_display},
-    {"Network Interfaces", "network.png", callback_network, scan_network},
     {"Environment Variables", "environment.png", callback_env_var, scan_env_var},
     {"Users", "users.png", callback_users, scan_users},
     {NULL},
@@ -87,9 +83,6 @@ static Computer *computer = NULL;
 #include <arch/this/uptime.h>
 #include <arch/this/os.h>
 #include <arch/this/filesystem.h>
-#include <arch/this/samba.h>
-#include <arch/this/nfs.h>
-#include <arch/this/net.h>
 #include <arch/common/users.h>
 #include <arch/this/boots.h>
 #include <arch/common/environment.h>
@@ -172,25 +165,10 @@ void scan_fs(gboolean reload)
     SCAN_END();
 }
 
-void scan_shares(gboolean reload)
-{
-    SCAN_START();
-    scan_samba_shared_directories();
-    scan_nfs_shared_directories();
-    SCAN_END();
-}
-
 void scan_display(gboolean reload)
 {
     SCAN_START();
     computer->display = computer_get_display();
-    SCAN_END();
-}
-
-void scan_network(gboolean reload)
-{
-    SCAN_START();
-    scan_net_interfaces();
     SCAN_END();
 }
 
@@ -326,14 +304,6 @@ gchar *callback_fs()
 			   "[Mounted File Systems]\n%s\n", fs_list);
 }
 
-gchar *callback_shares()
-{
-    return g_strdup_printf("[SAMBA]\n"
-			   "%s\n"
-			   "[NFS]\n"
-			   "%s", smb_shares_list, nfs_shares_list);
-}
-
 gchar *callback_display()
 {
     return g_strdup_printf("[Display]\n"
@@ -359,21 +329,6 @@ gchar *callback_display()
 			   computer->display->ogl_renderer,
 			   computer->display->ogl_version,
 			   computer->display->dri ? "Yes" : "No");
-}
-
-gchar *callback_network()
-{
-    return g_strdup_printf("%s\n"
-                           "[$ShellParam$]\n"
-			   "ReloadInterval=3000\n"
-			   "ViewType=1\n"
-			   "ColumnTitle$TextValue=Device\n"
-			   "ColumnTitle$Value=IP Address\n"
-			   "ColumnTitle$Extra1=Statistics\n"
-			   "ShowColumnHeaders=true\n"
-			   "%s",
-			   network_interfaces,
-			   network_icons);
 }
 
 gchar *callback_users()

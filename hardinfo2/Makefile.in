@@ -11,7 +11,7 @@ OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o  \
 		vendor.o socket.o syncmanager.o
 BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o nqueens.o
 
-MODULES = computer.so devices.so benchmark.so 
+MODULES = computer.so devices.so benchmark.so network.so
 
 all:	$(OBJECTS) $(MODULES) hardinfo
 
