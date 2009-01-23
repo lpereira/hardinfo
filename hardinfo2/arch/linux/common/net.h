@@ -224,26 +224,26 @@ static struct {
     char *label;
     char *icon;
 } netdev2type[] = {
-    { "eth", "Ethernet", "network" },
-    { "lo", "Loopback", "network-generic" },
+    { "eth", "Ethernet", "network-interface" },
+    { "lo", "Loopback", "network" },
     { "ppp", "Point-to-Point", "modem" },
     { "ath", "Wireless", "wireless" },
     { "wlan", "Wireless", "wireless" },
     { "ra", "Wireless", "wireless" },
     { "wl", "Wireless", "wireless" },
-    { "tun", "Virtual Point-to-Point (TUN)", "network-generic" },
-    { "tap", "Ethernet (TAP)", "network-generic" },
+    { "tun", "Virtual Point-to-Point (TUN)", "network" },
+    { "tap", "Ethernet (TAP)", "network" },
     { "plip", "Parallel Line Internet Protocol", "network" },
-    { "irlan", "Infrared", "network-generic" },
-    { "slip", "Serial Line Internet Protocol", "network-generic" },
+    { "irlan", "Infrared", "network" },
+    { "slip", "Serial Line Internet Protocol", "network" },
     { "isdn", "Integrated Services Digital Network", "modem" },
-    { "sit", "IPv6-over-IPv4 Tunnel", "network-generic" },
+    { "sit", "IPv6-over-IPv4 Tunnel", "network" },
     { "vmnet8", "VMWare Virtual Network Interface (NAT)", "computer" },
     { "vmnet", "VMWare Virtual Network Interface", "computer" },
     { "pan", "Personal Area Network (PAN)", "bluetooth" },
     { "bnep", "Bluetooth", "bluetooth" },
-    { "br", "Bridge Interface", "network-generic" },
-    { NULL, "Unknown", "network-generic" },
+    { "br", "Bridge Interface", "network" },
+    { NULL, "Unknown", "network" },
 };
 
 static void net_get_iface_type(gchar * name, gchar ** type, gchar ** icon, NetInfo *ni)
