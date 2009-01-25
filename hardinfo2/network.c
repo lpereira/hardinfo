@@ -234,9 +234,9 @@ void scan_connections(gboolean reload)
     
     if ((netstat = popen("netstat -an", "r"))) {
       while (fgets(buffer, 256, netstat)) {
-        buffer[6] = 0;
-        buffer[43] = 0;
-        buffer[67] = 0;
+        buffer[6] = '\0';
+        buffer[43] = '\0';
+        buffer[67] = '\0';
 
         if (g_str_has_prefix(buffer, "tcp") || g_str_has_prefix(buffer, "udp")) {
           __connections = h_strdup_cprintf("%s=%s|%s|%s\n",
