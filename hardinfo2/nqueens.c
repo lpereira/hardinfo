@@ -24,11 +24,13 @@ int nqueens(int y)
     int x;
     
     for (x = 0; x < QUEENS; x++) {
-	if (safe(row[y - 1] = x, y - 1))
-	    if (y < QUEENS)
+	if (safe((row[y - 1] = x), y - 1)) {
+	    if (y < QUEENS) {
 		nqueens(y + 1);
-	    else
+	    } else {
 	        break;
+            }
+        }
     }
     
     return 0;
