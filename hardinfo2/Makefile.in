@@ -31,6 +31,9 @@ sha1.o:
 fbench.o:
 	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
 
+nqueens.o:
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
+
 benchmark.so:	benchmark.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	make $(BENCHMARK_OBJECTS)
