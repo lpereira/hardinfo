@@ -1,8 +1,8 @@
 
 CCFLAGS = -fPIC -pipe -Wall -g 
 CFLAGS = $(GTK_CFLAGS) $(SOUP_CFLAGS) -I.
-CC = gcc $(ARCHOPTS) -g
-CCSLOW = gcc -O0 -g
+CCC = $(CC) $(ARCHOPTS) -g
+CCCSLOW = $(CC) -O0 -g
 
 # ----------------------------------------------------------------------------
 
@@ -16,34 +16,34 @@ MODULES = computer.so devices.so benchmark.so network.so
 all:	$(OBJECTS) $(MODULES) hardinfo
 
 hardinfo:
-	$(CC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
+	$(CCC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
 		$(SOUP_LIBS)
 
 md5.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c md5.c -o $@
+	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c md5.c -o $@
 
 blowfish.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c blowfish.c -o $@
+	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c blowfish.c -o $@
 
 sha1.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c sha1.c -o $@
+	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c sha1.c -o $@
 
 fbench.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
+	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
 
 nqueens.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
+	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
 
 benchmark.so:	benchmark.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	make $(BENCHMARK_OBJECTS)
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
+	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
 		$(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 
 %.so:	%.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
-	$(CC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
+	$(CCC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 	
 clean:
@@ -84,10 +84,10 @@ install:	all
 	cp hardinfo ${DESTDIR}/usr/bin/hardinfo
 
 	@echo '[01;34m*** Installing modules...[00m'
-	cp -Lr modules/*.so ${DESTDIR}${LIBDIR}/hardinfo/modules
+	cp -Lvr modules/*.so ${DESTDIR}${LIBDIR}/hardinfo/modules
 
 	@echo '[01;34m*** Installing pixmaps...[00m'
-	cp -Lr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
+	cp -Lvr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
 
 	@echo '[01;34m*** Installing misc data...[00m'
 	cp benchmark.conf ${DESTDIR}/usr/share/hardinfo
