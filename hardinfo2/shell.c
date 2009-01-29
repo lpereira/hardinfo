@@ -674,6 +674,8 @@ static gboolean reload_section(gpointer data)
 	/* if there was a selection, reselect it */
 	if (path) {
 	    gtk_tree_selection_select_path(shell->info->selection, path);
+            gtk_tree_view_set_cursor(GTK_TREE_VIEW(shell->tree->view), path, NULL,
+                                     FALSE);
 	    gtk_tree_path_free(path);
 	}
     }
@@ -735,6 +737,9 @@ static void set_view_type(ShellViewType viewtype)
     gtk_tree_view_column_set_visible(shell->info->col_extra2, FALSE);
     gtk_tree_view_column_set_visible(shell->info->col_progress, FALSE);
     gtk_tree_view_column_set_visible(shell->info->col_value, TRUE);
+    
+    /* turn off the column headers */
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
     
     /* turn off the rules hint */
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
