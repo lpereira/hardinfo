@@ -1,14 +1,14 @@
 
 CCFLAGS = -fPIC -pipe -Wall -g 
 CFLAGS = $(GTK_CFLAGS) $(SOUP_CFLAGS) -I.
-CCC = $(CC) $(ARCHOPTS) -g
-CCCSLOW = $(CC) -O0 -g
+CC = gcc $(ARCHOPTS) -g
+CCSLOW = gcc -O0 -g
 
 # ----------------------------------------------------------------------------
 
 OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o  \
 		menu.o stock.o callbacks.o expr.o report.o binreloc.o \
-		vendor.o socket.o syncmanager.o
+		vendor.o socket.o syncmanager.o stack.o
 BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o nqueens.o
 
 MODULES = computer.so devices.so benchmark.so network.so
@@ -16,34 +16,34 @@ MODULES = computer.so devices.so benchmark.so network.so
 all:	$(OBJECTS) $(MODULES) hardinfo
 
 hardinfo:
-	$(CCC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
+	$(CC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
 		$(SOUP_LIBS)
 
 md5.o:
-	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c md5.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c md5.c -o $@
 
 blowfish.o:
-	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c blowfish.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c blowfish.c -o $@
 
 sha1.o:
-	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c sha1.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c sha1.c -o $@
 
 fbench.o:
-	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
 
 nqueens.o:
-	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
 
 benchmark.so:	benchmark.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
 	make $(BENCHMARK_OBJECTS)
-	$(CCCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
 		$(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 
 %.so:	%.c
 	@echo "[01;34m--- Module: $< ($@)[00m"
-	$(CCC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
+	$(CC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 	
 clean:

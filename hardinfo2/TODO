@@ -12,9 +12,7 @@
           o Disk
 	  o Phoronix?
     * Change current benchmarks
-          o Remove CPU Zlib
           o Remove CPU Fibonacci
-          * Add CPU N-Queens
           * Add CPU Rubik Cube solver? :P
 
 - More information
