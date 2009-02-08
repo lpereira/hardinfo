@@ -303,7 +303,8 @@ gchar *callback_network()
 			   "ViewType=1\n"
 			   "ColumnTitle$TextValue=Device\n"
 			   "ColumnTitle$Value=IP Address\n"
-			   "ColumnTitle$Extra1=Statistics\n"
+			   "ColumnTitle$Extra1=Sent\n"
+			   "ColumnTitle$Extra2=Received\n"
 			   "ShowColumnHeaders=true\n"
 			   "%s",
 			   network_interfaces,
