@@ -608,9 +608,11 @@ static gboolean update_field(gpointer data)
     fu = (ShellFieldUpdate *) data;
     g_return_val_if_fail(fu != NULL, FALSE);
     
+    DEBUG("update_field [%s]", fu->field_name);
+    
     iter = g_hash_table_lookup(update_tbl, fu->field_name);
     g_return_val_if_fail(iter != NULL, FALSE);
-
+    
     /* if the entry is still selected, update it */
     if (iter && fu->entry->selected && fu->entry->fieldfunc) {
 	GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
@@ -643,8 +645,6 @@ static gboolean update_field(gpointer data)
 	update_sfusrc = NULL;
     }
 
-    DEBUG("destroying ShellFieldUpdate for field %s", fu->field_name);
-
     /* otherwise, cleanup and destroy the timeout */
     g_free(fu->field_name);
     g_free(fu);
@@ -661,6 +661,9 @@ static gboolean reload_section(gpointer data)
 	GtkTreePath *path = NULL;
 	GtkTreeIter iter;
 
+	/* avoid drawing the window while we reload */
+	gdk_window_freeze_updates(shell->window->window);
+	
 	/* gets the current selected path */
 	if (gtk_tree_selection_get_selected
 	    (shell->info->selection, &shell->info->model, &iter))
@@ -678,6 +681,9 @@ static gboolean reload_section(gpointer data)
                                      FALSE);
 	    gtk_tree_path_free(path);
 	}
+	
+	/* make the window drawable again */
+	gdk_window_thaw_updates(shell->window->window);
     }
 
     /* destroy the timeout: it'll be set up again */
