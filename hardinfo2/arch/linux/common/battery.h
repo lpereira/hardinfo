@@ -18,6 +18,82 @@
 
 #include <time.h>
 
+typedef struct _UPSFields UPSFields;
+
+struct _UPSFields {
+  gchar *key, *name;
+};
+
+const UPSFields ups_fields[] = {
+  { "UPS Status", NULL },
+  { "STATUS", "Status" },
+  { "TIMELEFT", "Time Left" },
+  { "LINEV", "Line Voltage" },
+  { "LOADPCT", "Load Percent" },
+
+  { "UPS Battery Information", NULL },
+  { "BATTV", "Battery Voltage" },
+  { "BCHARGE", "Battery Charge" },
+  { "BATTDATE", "Battery Date" },
+
+  { "UPS Information", NULL },
+  { "APCMODEL", "Model" },
+  { "FIRMWARE", "Firmware Version" },
+  { "SERIALNO", "Serial Number" },
+  { "UPSMODE", "UPS Mode" },
+  { "CABLE", "Cable" },
+  { "UPSNAME", "UPS Name" },
+
+  { "UPS Nominal Values", NULL },
+  { "NOMINV", "Voltage" },
+  { "NOMBATTV", "Battery Voltage" },
+  { "NOMPOWER", "Power" }
+};
+
+
+static void
+__scan_battery_apcupsd(void)
+{
+    GHashTable  *ups_data;
+    FILE	*apcaccess;
+    char	buffer[512];
+    int		i;
+
+    if ((apcaccess = popen("apcaccess", "r"))) {
+      /* first line isn't important */
+      if (fgets(buffer, 512, apcaccess)) {
+        /* allocate the key, value hash table */
+        ups_data = g_hash_table_new(g_str_hash, g_str_equal);
+
+        /* read up all the apcaccess' output, saving it in the key, value hash table */
+        while (fgets(buffer, 512, apcaccess)) {
+          buffer[9] = '\0';
+
+          g_hash_table_insert(ups_data,
+                              g_strdup(g_strstrip(buffer)),
+                              g_strdup(g_strstrip(buffer + 10)));
+        }
+
+        /* builds the ups info string, respecting the field order as found in ups_fields */
+        for (i = 0; i < G_N_ELEMENTS(ups_fields); i++) {
+          if (!ups_fields[i].name) {
+            /* there's no name: make a group with the key as its name */
+            battery_list = h_strdup_cprintf("[%s]\n", battery_list, ups_fields[i].key);
+          } else {
+            /* there's a name: adds a line */
+            battery_list = h_strdup_cprintf("%s=%s\n", battery_list,
+                                            ups_fields[i].name,
+                                            g_hash_table_lookup(ups_data, ups_fields[i].key));
+          }
+        }
+
+        g_hash_table_destroy(ups_data);
+      }
+
+      pclose(apcaccess);
+    }
+}
+
 static void
 __scan_battery_acpi(void)
 {
@@ -30,11 +106,6 @@ __scan_battery_acpi(void)
     gchar *model = NULL, *serial = NULL, *type = NULL;
     gchar *state = NULL, *rate = NULL;
     gchar *remaining = NULL;
-    
-    if (battery_list) {
-      g_free(battery_list);
-    }
-    battery_list = g_strdup("");
     
     acpi_path = g_strdup("/proc/acpi/battery");
     if (g_file_test(acpi_path, G_FILE_TEST_EXISTS)) {
@@ -209,6 +280,7 @@ __scan_battery(void)
 
     __scan_battery_acpi();
     __scan_battery_apm();
+    __scan_battery_apcupsd();
     
     if (*battery_list == '\0') {
         g_free(battery_list);
