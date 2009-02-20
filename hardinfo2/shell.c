@@ -1343,7 +1343,7 @@ static ShellInfoTree *info_tree_new(gboolean extra)
 					(scroll), GTK_SHADOW_IN);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
 				   GTK_POLICY_AUTOMATIC,
-				   GTK_POLICY_AUTOMATIC);
+				   GTK_POLICY_ALWAYS);
 
     store =
 	gtk_tree_store_new(INFO_TREE_NCOL, G_TYPE_STRING, G_TYPE_STRING,
