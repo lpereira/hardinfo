@@ -135,7 +135,7 @@ void scan_dns(gboolean reload)
     if ((resolv = fopen("/etc/resolv.conf", "r"))) {
       while (fgets(buffer, 256, resolv)) {
         if (g_str_has_prefix(buffer, "nameserver")) {
-          __nameservers = h_strdup_cprintf("%s=\n",
+          __nameservers = h_strdup_cprintf("%s\n",
                                            __nameservers,
                                            g_strstrip(buffer + sizeof("nameserver")));
         } 
@@ -356,7 +356,7 @@ gchar *hi_module_get_name(void)
 
 guchar hi_module_get_weight(void)
 {
-    return 85;
+    return 160;
 }
 
 void hi_module_init(void)

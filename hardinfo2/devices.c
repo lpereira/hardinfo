@@ -409,7 +409,7 @@ gchar *hi_module_get_name(void)
 
 guchar hi_module_get_weight(void)
 {
-    return 160;
+    return 85;
 }
 
 void hi_module_init(void)
