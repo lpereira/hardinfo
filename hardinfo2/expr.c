@@ -25,7 +25,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
-#include <expr.h>
+
+#include "expr.h"
+#include "config.h"
 
 static MathToken *new_operator(gchar op)
 {
@@ -90,8 +92,9 @@ GSList *math_infix_to_postfix(GSList * infix)
 	    stack[++t_sp] = t;
 	} else if (t->type == TOKEN_OPERATOR && t->val.op == ')') {
 	    for (top = stack[t_sp]; t_sp != 0 && top->val.op != '(';
-		 top = stack[t_sp])
-		postfix = g_slist_append(postfix, stack[t_sp--]);
+		 top = stack[t_sp]) {
+                postfix = g_slist_append(postfix, stack[t_sp--]);
+            }
 	    t_sp--;
 	} else if (t->type != TOKEN_OPERATOR) {
 	    postfix = g_slist_append(postfix, t);
@@ -107,7 +110,7 @@ GSList *math_infix_to_postfix(GSList * infix)
 
     while (t_sp)
 	postfix = g_slist_append(postfix, stack[t_sp--]);
-
+	
     return postfix;
 }
 
@@ -149,11 +152,11 @@ gfloat math_postfix_eval(GSList * postfix, gfloat at_value)
 
 	    op2 = stack[sp--];
 	    op1 = stack[sp];
-
+	    
 	    stack[sp] = __result(op1, op2, t->val.op);
 	}
     }
-
+    
     return stack[sp];
 }
 
@@ -161,17 +164,25 @@ GSList *math_string_to_infix(gchar * string)
 {
     GSList *infix = NULL;
     gchar *expr = string;
-
+    
     for (; *expr; expr++) {
 	if (strchr("+-/*^()", *expr)) {
 	    infix = g_slist_append(infix, new_operator(*expr));
 	} else if (strchr("@", *expr)) {
 	    infix = g_slist_append(infix, new_variable(*expr));
 	} else if (strchr("-.1234567890", *expr)) {
-	    gfloat value;
+	    gchar value[32], *v = value;
+	    gfloat floatval;
+	    
+	    do {
+	      *v++ = *expr++;
+	    } while (*expr && strchr("-.1234567890", *expr));
+	    expr--;
+	    *v = '\0';
+	    
+	    sscanf(value, "%f", &floatval);
 
-	    expr += sscanf(expr, "%f", &value);
-	    infix = g_slist_append(infix, new_value(value));
+	    infix = g_slist_append(infix, new_value(floatval));
 	} else if (!isspace(*expr)) {
 	    g_print("Invalid token: [%c][%d]\n", *expr, *expr);
 	    math_infix_free(infix, TRUE);
