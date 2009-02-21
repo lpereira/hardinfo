@@ -135,7 +135,7 @@ void scan_dns(gboolean reload)
     if ((resolv = fopen("/etc/resolv.conf", "r"))) {
       while (fgets(buffer, 256, resolv)) {
         if (g_str_has_prefix(buffer, "nameserver")) {
-          __nameservers = h_strdup_cprintf("%s\n",
+          __nameservers = h_strdup_cprintf("%s=\n",
                                            __nameservers,
                                            g_strstrip(buffer + sizeof("nameserver")));
         } 
