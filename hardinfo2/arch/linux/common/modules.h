@@ -36,6 +36,7 @@ scan_modules_do(void)
 {
     FILE *lsmod;
     gchar buffer[1024];
+    gchar *lsmod_path;
 
     if (!_module_hash_table) {
         _module_hash_table = g_hash_table_new(g_str_hash, g_str_equal);
@@ -48,9 +49,12 @@ scan_modules_do(void)
     module_list = NULL;
     g_hash_table_foreach_remove(moreinfo, remove_module_devices, NULL);
 
-    lsmod = popen("/sbin/lsmod", "r");
-    if (!lsmod)
+    lsmod_path = find_program("lsmod");
+    lsmod = popen(lsmod_path, "r");
+    if (!lsmod) {
+        g_free(lsmod_path); 
 	return;
+    }
 
     fgets(buffer, 1024, lsmod);	/* Discards the first line */
 
@@ -160,4 +164,6 @@ scan_modules_do(void)
 	g_free(filename);
     }
     pclose(lsmod);
+    
+    g_free(lsmod_path);
 }

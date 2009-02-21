@@ -104,24 +104,6 @@ echo ""
 
 # ---------------------------------------------------------------------------
 
-echo -n "Checking for lspci... "
-LSPCIPATH="/sbin/lspci /usr/sbin/lspci /bin/lspci /usr/bin/lspci `which lspci 2>/dev/null`"
-for i in $LSPCIPATH; do
-	if [ -x "$i" ]; then
-		LSPCI=$i
-		break
-	fi
-done
-
-if [ -e "$LSPCI" ]; then
-	echo $LSPCI
-else
-	echo "lspci cannot be found"
-	exit
-fi
-
-# ---------------------------------------------------------------------------
-
 GTK2=-1
 MIN_VERSION="2.6.0"
 echo -n "Checking for GTK version >= ${MIN_VERSION}... "
@@ -201,7 +183,6 @@ echo -e "#ifndef __CONFIG_H__\n#define __CONFIG_H__\n" > config.h
 
 echo "#define VERSION \"$VERSION\"" >> config.h
 
-echo "#define LSPCI \"$LSPCI -v\"" >> config.h
 echo "#define $ARCH" >> config.h
 echo "#define ARCH     \"$ARCH\"" >> config.h
 

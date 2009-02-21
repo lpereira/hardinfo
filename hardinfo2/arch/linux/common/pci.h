@@ -33,8 +33,14 @@ __scan_pci(void)
 {
     FILE *lspci;
     gchar buffer[256], *buf, *strhash = NULL, *strdevice = NULL;
-    gchar *category = NULL, *name = NULL, *icon;
+    gchar *category = NULL, *name = NULL, *icon, *lspci_path, *command_line;
     gint n = 0, x = 0;
+    
+    if ((lspci_path = find_program("lspci")) == NULL) {
+      goto pci_error;
+    } else {
+      command_line = g_strdup_printf("%s -v", lspci_path);
+    }
     
     if (!_pci_devices) {
       _pci_devices = g_hash_table_new(g_str_hash, g_str_equal);
@@ -44,13 +50,13 @@ __scan_pci(void)
     if (!g_file_test(buf, G_FILE_TEST_EXISTS)) {
       DEBUG("using system-provided PCI IDs");
       g_free(buf);
-      if (!(lspci = popen(LSPCI, "r"))) {
+      if (!(lspci = popen(command_line, "r"))) {
         goto pci_error;
       }
     } else {
       gchar *tmp;
       
-      tmp = g_strdup_printf("%s -i '%s'", LSPCI, buf);
+      tmp = g_strdup_printf("%s -i '%s'", command_line, buf);
       g_free(buf);
       buf = tmp;
       
@@ -232,4 +238,7 @@ pci_error:
         g_free(category);
         g_free(name);
     }
+    
+    g_free(lspci_path);
+    g_free(command_line);
 }

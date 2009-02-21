@@ -89,6 +89,8 @@ gpointer __idle_free(gpointer ptr, gchar *f, gint l);
 #define  idle_free(p) __idle_free(p, __FILE__, __LINE__)
 #endif	/* RELEASE == 1 */
 
+
+gchar	     *find_program(gchar *program_name);
 inline gchar *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);

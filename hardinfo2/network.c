@@ -80,42 +80,50 @@ void scan_statistics(gboolean reload)
 {
     FILE *netstat;
     gchar buffer[256];
+    gchar *netstat_path;
     
     SCAN_START();
     
     g_free(__statistics);
     __statistics = g_strdup("");
     
-    if ((netstat = popen("netstat -s", "r"))) {
-      while (fgets(buffer, 256, netstat)) {
-        if (!isspace(buffer[0]) && strchr(buffer, ':')) {
-          gchar *tmp;
-          
-          tmp = g_ascii_strup(strend(buffer, ':'), -1);
-          
-          __statistics = h_strdup_cprintf("[%s]\n",
-                                          __statistics,
-                                          tmp);
-          
-          g_free(tmp);
-        } else if (isdigit(buffer[4])) {
-          gchar *tmp1 = buffer + 4,
-                *tmp2 = tmp1;
-          
-          while (*tmp2 && !isspace(*tmp2)) tmp2++;
-          *tmp2 = 0;
-          tmp2++;
-          
-          *tmp2 = toupper(*tmp2);
-          
-          __statistics = h_strdup_cprintf("%s=%s\n",
-                                          __statistics,
-                                          g_strstrip(tmp1),
-                                          g_strstrip(tmp2));
+    if ((netstat_path = find_program("netstat"))) {
+      gchar *command_line = g_strdup_printf("%s -s", netstat_path);
+      
+      if ((netstat = popen(command_line, "r"))) {
+        while (fgets(buffer, 256, netstat)) {
+          if (!isspace(buffer[0]) && strchr(buffer, ':')) {
+            gchar *tmp;
+            
+            tmp = g_ascii_strup(strend(buffer, ':'), -1);
+            
+            __statistics = h_strdup_cprintf("[%s]\n",
+                                            __statistics,
+                                            tmp);
+            
+            g_free(tmp);
+          } else if (isdigit(buffer[4])) {
+            gchar *tmp1 = buffer + 4,
+                  *tmp2 = tmp1;
+            
+            while (*tmp2 && !isspace(*tmp2)) tmp2++;
+            *tmp2 = 0;
+            tmp2++;
+            
+            *tmp2 = toupper(*tmp2);
+            
+            __statistics = h_strdup_cprintf("%s=%s\n",
+                                            __statistics,
+                                            g_strstrip(tmp1),
+                                            g_strstrip(tmp2));
+          }
         }
+
+        pclose(netstat);
       }
       
-      pclose(netstat);
+      g_free(command_line);
+      g_free(netstat_path);
     }
     
     SCAN_END();
@@ -158,32 +166,40 @@ void scan_route(gboolean reload)
 {
     FILE *route;
     gchar buffer[256];
+    gchar *route_path;
     
     SCAN_START();
 
     g_free(__routing_table);
     __routing_table = g_strdup("");
     
-    if ((route = popen("route -n", "r"))) {
-      /* eat first two lines */
-      fgets(buffer, 256, route);
-      fgets(buffer, 256, route);
+    if ((route_path = find_program("route"))) {
+      gchar *command_line = g_strdup_printf("%s -n", route_path);
+      
+      if ((route = popen(command_line, "r"))) {
+        /* eat first two lines */
+        fgets(buffer, 256, route);
+        fgets(buffer, 256, route);
 
-      while (fgets(buffer, 256, route)) {
-        buffer[15] = '\0';
-        buffer[31] = '\0';
-        buffer[47] = '\0';
-        buffer[53] = '\0';
+        while (fgets(buffer, 256, route)) {
+          buffer[15] = '\0';
+          buffer[31] = '\0';
+          buffer[47] = '\0';
+          buffer[53] = '\0';
+          
+          __routing_table = h_strdup_cprintf("%s / %s=%s|%s|%s\n",
+                                             __routing_table,
+                                             g_strstrip(buffer), g_strstrip(buffer + 16),
+                                             g_strstrip(buffer + 72),
+                                             g_strstrip(buffer + 48),
+                                             g_strstrip(buffer + 32));
+        }
         
-        __routing_table = h_strdup_cprintf("%s / %s=%s|%s|%s\n",
-                                           __routing_table,
-                                           g_strstrip(buffer), g_strstrip(buffer + 16),
-                                           g_strstrip(buffer + 72),
-                                           g_strstrip(buffer + 48),
-                                           g_strstrip(buffer + 32));
+        pclose(route);
       }
       
-      pclose(route);
+      g_free(command_line);
+      g_free(route_path);
     }
     
     SCAN_END();
@@ -226,29 +242,37 @@ void scan_connections(gboolean reload)
 {
     FILE *netstat;
     gchar buffer[256];
+    gchar *netstat_path;
     
     SCAN_START();
 
     g_free(__connections);
     __connections = g_strdup("");
     
-    if ((netstat = popen("netstat -an", "r"))) {
-      while (fgets(buffer, 256, netstat)) {
-        buffer[6] = '\0';
-        buffer[43] = '\0';
-        buffer[67] = '\0';
+    if ((netstat_path = find_program("netstat"))) {
+      gchar *command_line = g_strdup_printf("%s -an", netstat_path);
+      
+      if ((netstat = popen("netstat -an", "r"))) {
+        while (fgets(buffer, 256, netstat)) {
+          buffer[6] = '\0';
+          buffer[43] = '\0';
+          buffer[67] = '\0';
 
-        if (g_str_has_prefix(buffer, "tcp") || g_str_has_prefix(buffer, "udp")) {
-          __connections = h_strdup_cprintf("%s=%s|%s|%s\n",
-                                           __connections,
-                                           g_strstrip(buffer + 20),	/* local address */
-                                           g_strstrip(buffer),		/* protocol */
-                                           g_strstrip(buffer + 44),	/* foreign address */
-                                           g_strstrip(buffer + 68));	/* state */
+          if (g_str_has_prefix(buffer, "tcp") || g_str_has_prefix(buffer, "udp")) {
+            __connections = h_strdup_cprintf("%s=%s|%s|%s\n",
+                                             __connections,
+                                             g_strstrip(buffer + 20),	/* local address */
+                                             g_strstrip(buffer),		/* protocol */
+                                             g_strstrip(buffer + 44),	/* foreign address */
+                                             g_strstrip(buffer + 68));	/* state */
+          }
         }
+        
+        pclose(netstat);
       }
       
-      pclose(netstat);
+      g_free(command_line);
+      g_free(netstat_path);
     }
     
     SCAN_END();

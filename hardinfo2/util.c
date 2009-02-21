@@ -45,6 +45,38 @@
 #define MiB 1048576
 #define GiB 1073741824
 
+gchar *find_program(gchar *program_name)
+{
+    int i;
+    char *temp;
+    static GHashTable *cache = NULL;
+    const char *path[] = { "/bin", "/sbin",
+		           "/usr/bin", "/usr/sbin",
+		           "/usr/local/bin", "/usr/local/sbin",
+		           NULL };
+    
+    if (!cache) {
+    	cache = g_hash_table_new(g_str_hash, g_str_equal);
+    }
+    
+    if ((temp = g_hash_table_lookup(cache, program_name))) {
+    	return g_strdup(temp);
+    }
+    
+    for (i = 0; path[i]; i++) {
+    	temp = g_build_filename(path[i], program_name, NULL);
+    	
+    	if (g_file_test(temp, G_FILE_TEST_IS_EXECUTABLE)) {
+    		g_hash_table_insert(cache, program_name, g_strdup(temp));
+		return temp;
+    	}
+    	
+    	g_free(temp);
+    }
+    
+    return NULL;
+}
+
 gchar *seconds_to_string(unsigned int seconds)
 {
     unsigned int hours, minutes, days;
