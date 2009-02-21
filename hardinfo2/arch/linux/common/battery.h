@@ -56,10 +56,12 @@ __scan_battery_apcupsd(void)
 {
     GHashTable  *ups_data;
     FILE	*apcaccess;
-    char	buffer[512];
+    char	buffer[512], *apcaccess_path;
     int		i;
 
-    if ((apcaccess = popen("apcaccess", "r"))) {
+    apcaccess_path = find_program("apcaccess");
+
+    if ((apcaccess = popen(apcaccess_path, "r"))) {
       /* first line isn't important */
       if (fgets(buffer, 512, apcaccess)) {
         /* allocate the key, value hash table */
@@ -92,6 +94,8 @@ __scan_battery_apcupsd(void)
 
       pclose(apcaccess);
     }
+    
+    g_free(apcaccess_path);
 }
 
 static void
