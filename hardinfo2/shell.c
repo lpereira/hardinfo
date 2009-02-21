@@ -652,6 +652,11 @@ static gboolean update_field(gpointer data)
     return FALSE;
 }
 
+#define RANGE_SET_VALUE(tree,scrollbar,value) \
+  	  gtk_range_set_value(GTK_RANGE \
+	  		    (GTK_SCROLLED_WINDOW(shell->tree->scroll)-> \
+			     scrollbar), value);
+
 static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *) data;
@@ -666,8 +671,9 @@ static gboolean reload_section(gpointer data)
 	
 	/* gets the current selected path */
 	if (gtk_tree_selection_get_selected
-	    (shell->info->selection, &shell->info->model, &iter))
+	    (shell->info->selection, &shell->info->model, &iter)) {
 	    path = gtk_tree_model_get_path(shell->info->model, &iter);
+        }
 
 	/* update the information, clear the treeview and populate it again */
 	module_entry_reload(entry);
@@ -726,7 +732,7 @@ info_tree_compare_val_func(GtkTreeModel * model,
     return ret;
 }
 
-static void set_view_type(ShellViewType viewtype)
+static void set_view_type(ShellViewType viewtype, gboolean reload)
 {
     if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
 	viewtype = SHELL_VIEW_NORMAL;
@@ -739,10 +745,12 @@ static void set_view_type(ShellViewType viewtype)
 			    shell->info->model);
 
     /* reset to the default view columns */
-    gtk_tree_view_column_set_visible(shell->info->col_extra1, FALSE);
-    gtk_tree_view_column_set_visible(shell->info->col_extra2, FALSE);
-    gtk_tree_view_column_set_visible(shell->info->col_progress, FALSE);
-    gtk_tree_view_column_set_visible(shell->info->col_value, TRUE);
+    if (!reload) {
+      gtk_tree_view_column_set_visible(shell->info->col_extra1, FALSE);
+      gtk_tree_view_column_set_visible(shell->info->col_extra2, FALSE);
+      gtk_tree_view_column_set_visible(shell->info->col_progress, FALSE);
+      gtk_tree_view_column_set_visible(shell->info->col_value, TRUE);
+    }
     
     /* turn off the rules hint */
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
@@ -754,7 +762,10 @@ static void set_view_type(ShellViewType viewtype)
     default:
     case SHELL_VIEW_NORMAL:
 	gtk_widget_hide(shell->notebook);
-        gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+	
+	if (!reload) {
+          gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+        }
 	break;
     case SHELL_VIEW_DUAL:
 	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
@@ -775,9 +786,12 @@ static void set_view_type(ShellViewType viewtype)
 	/* fallthrough */
     case SHELL_VIEW_PROGRESS:
 	shell_action_set_enabled("SaveGraphAction", TRUE);
-	gtk_tree_view_column_set_visible(shell->info->col_progress, TRUE);
-	gtk_tree_view_column_set_visible(shell->info->col_value, FALSE);
-
+	
+	if (!reload) {
+  	  gtk_tree_view_column_set_visible(shell->info->col_progress, TRUE);
+  	  gtk_tree_view_column_set_visible(shell->info->col_value, FALSE);
+        }
+        
 	if (viewtype == SHELL_VIEW_PROGRESS)
 		gtk_widget_hide(shell->notebook);
 	break;
@@ -786,7 +800,7 @@ static void set_view_type(ShellViewType viewtype)
 
 static void
 group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
-		     gchar * group, gchar ** keys)
+		     gchar * group, gchar ** keys, gboolean reload)
 {
     if (g_str_equal(group, "$ShellParam$")) {
         gboolean headers_visible = FALSE;
@@ -859,7 +873,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 							    key, NULL);
 	    } else if (g_str_equal(key, "ViewType")) {
 		set_view_type(g_key_file_get_integer(key_file, group,
-						     key, NULL));
+						     key, NULL), reload);
 	    } else if (g_str_has_prefix(key, "Icon")) {
 		GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
 							strchr(key,
@@ -1113,10 +1127,10 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
 
     /* reset the view type to normal */
-    set_view_type(SHELL_VIEW_NORMAL);
+    set_view_type(SHELL_VIEW_NORMAL, reload);
 
-    /* recreate the iter hash table */
     if (!reload) {
+        /* recreate the iter hash table */
         h_hash_table_remove_all(update_tbl);
     }
     
@@ -1154,7 +1168,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	gchar **keys = g_key_file_get_keys(key_file, group, NULL, NULL);
 
 	if (*group == '$') {
-	    group_handle_special(key_file, entry, group, keys);
+	    group_handle_special(key_file, entry, group, keys, reload);
 	    has_shell_param = TRUE;
 	} else {
 	    group_handle_normal(key_file, entry, group, keys, ngroups);
@@ -1276,17 +1290,10 @@ static void module_selected(gpointer data)
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->info->view));
 
 	/* urgh. why don't GTK do this when the model is cleared? */
-#define RANGE_SET_VALUE(tree,scrollbar,value) \
-  	  gtk_range_set_value(GTK_RANGE \
-	  		    (GTK_SCROLLED_WINDOW(shell->tree->scroll)-> \
-			     scrollbar), value);
-
         RANGE_SET_VALUE(info, vscrollbar, 0.0);
         RANGE_SET_VALUE(info, hscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
-
-#undef RANGE_SET_VALUE
 
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);
@@ -1304,7 +1311,7 @@ static void module_selected(gpointer data)
 	shell_action_set_enabled("CopyAction", FALSE);
 
 	gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
-	set_view_type(SHELL_VIEW_NORMAL);
+	set_view_type(SHELL_VIEW_NORMAL, FALSE);
     }
 
     current = entry;
