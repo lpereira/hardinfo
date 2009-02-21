@@ -55,11 +55,10 @@ gchar *find_program(gchar *program_name)
 		           "/usr/local/bin", "/usr/local/sbin",
 		           NULL };
     
+    /* we don't need to call stat() every time: cache the results */
     if (!cache) {
     	cache = g_hash_table_new(g_str_hash, g_str_equal);
-    }
-    
-    if ((temp = g_hash_table_lookup(cache, program_name))) {
+    } else if ((temp = g_hash_table_lookup(cache, program_name))) {
     	return g_strdup(temp);
     }
     
@@ -74,7 +73,8 @@ gchar *find_program(gchar *program_name)
     	g_free(temp);
     }
     
-    return NULL;
+    /* search has failed; use GLib's search (which uses $PATH env var) */
+    return g_find_program_in_path(program_name);
 }
 
 gchar *seconds_to_string(unsigned int seconds)
