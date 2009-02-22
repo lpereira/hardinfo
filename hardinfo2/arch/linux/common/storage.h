@@ -56,28 +56,13 @@ __scan_scsi_devices(void)
 
 	    n++;
 	} else if (!strncmp(buf, "Vendor: ", 8)) {
-	    char *p;
-	    char *rev = strstr(buf, "Rev: ");
-
-	    model = strstr(buf, "Model: ");
-
-	    if (model == NULL) {
-		model = buf + strlen(buf);
-	    }
-	    p = model;
-	    while (*(--p) == ' ');
-	    *(++p) = 0;
-	    vendor = g_strdup(buf + 8);
-
-	    if (rev != NULL) {
-		revision = g_strdup(rev + 5);
-	    } else {
-		rev = model + strlen(model);
-	    }
-	    p = rev;
-	    while (*(--p) == ' ');
-	    *(++p) = 0;
-	    model = g_strdup_printf("%s %s", vendor, model + 7);
+	    buf[17] = '\0';
+	    buf[41] = '\0';
+	    buf[53] = '\0';
+	    
+	    vendor   = g_strdup(g_strstrip(buf + 8));
+	    model    = g_strdup_printf("%s %s", vendor, g_strstrip(buf + 24));
+	    revision = g_strdup(g_strstrip(buf + 46));
 	} else if (!strncmp(buf, "Type:   ", 8)) {
 	    char *p;
 	    gchar *type = NULL, *icon = NULL;
@@ -124,7 +109,7 @@ __scan_scsi_devices(void)
 	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
 	    
 	    gchar *strhash = g_strdup_printf("[Device Information]\n"
-					     "Model=%s\n",model);
+					     "Model=%s\n", model);
 	    
 	    const gchar *url = vendor_get_url(model);
 	    if (url) {
