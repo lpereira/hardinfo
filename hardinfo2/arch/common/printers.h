@@ -34,10 +34,9 @@ struct _CUPSDest {
     CUPSOption *options;  
 };
 
-static int (*cupsGetDests) (CUPSDest **dests) = NULL;
-static int (*cupsFreeDests) (int num_dests, CUPSDest *dests) = NULL;
+static int (*cups_dests_get) (CUPSDest **dests) = NULL;
+static int (*cups_dests_free) (int num_dests, CUPSDest *dests) = NULL;
 static gboolean cups_init = FALSE;
-
 
 static gboolean
 remove_printer_devices(gpointer key, gpointer value, gpointer data)
@@ -51,7 +50,7 @@ __init_cups(void)
     static GModule *cups = NULL;
     const char *libcups[] = { "libcups", "libcups.so", "libcups.so.1", "libcups.so.2", NULL };
 
-    if (!(cupsGetDests && cupsFreeDests)) {
+    if (!(cups_dests_get && cups_dests_free)) {
         int i;
         
         for (i = 0; libcups[i] != NULL; i++) {
@@ -65,8 +64,8 @@ __init_cups(void)
 	    return;
 	}
 
-	if (!g_module_symbol(cups, "cupsGetDests", (gpointer) & cupsGetDests)
-	    || !g_module_symbol(cups, "cupsFreeDests", (gpointer) & cupsFreeDests)) {
+	if (!g_module_symbol(cups, "cupsGetDests", (gpointer) & cups_dests_get)
+	    || !g_module_symbol(cups, "cupsFreeDests", (gpointer) & cups_dests_free)) {
             g_module_close(cups);
 	    cups_init = FALSE;
 	}
@@ -140,20 +139,20 @@ __scan_printers(void)
     CUPSDest *dests;
     gchar *prn_id, *prn_moreinfo;
 
-    if (printer_list) {
-	g_free(printer_list);
-    }
+    g_free(printer_list);
 
     if (!cups_init) {
+        __init_cups();
+        
         printer_list = g_strdup("[Printers]\n"
                                 "No suitable CUPS library found=");
+        return;
     }
 
     /* remove old devices from global device table */
     g_hash_table_foreach_remove(moreinfo, remove_printer_devices, NULL);
 
-    num_dests = cupsGetDests(&dests);
-    
+    num_dests = cups_dests_get(&dests);
     if (num_dests > 0) {
 	printer_list = g_strdup_printf("[Printers (CUPS)]\n");
 	for (i = 0; i < num_dests; i++) {
@@ -207,7 +206,7 @@ __scan_printers(void)
             g_hash_table_destroy(options);
 	}
 	
-	cupsFreeDests(num_dests, dests);
+	cups_dests_free(num_dests, dests);
     } else {
 	printer_list = g_strdup("[Printers]\n"
 	                        "No printers found=\n");
