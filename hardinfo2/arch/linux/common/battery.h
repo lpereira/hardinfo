@@ -18,13 +18,9 @@
 
 #include <time.h>
 
-typedef struct _UPSFields UPSFields;
-
-struct _UPSFields {
+const struct {
   gchar *key, *name;
-};
-
-const UPSFields ups_fields[] = {
+} ups_fields[] = {
   { "UPS Status", NULL },
   { "STATUS", "Status" },
   { "TIMELEFT", "Time Left" },
