@@ -16,6 +16,14 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#ifndef __USE_XOPEN
+#define __USE_XOPEN
+#endif /* __USE_XOPEN */
+
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE
+#endif /* _XOPEN_SOURCE */
+
 #include <gtk/gtk.h>
 #include <config.h>
 #include <string.h>
@@ -227,7 +235,7 @@ ShellModuleMethod *hi_exported_methods(void)
 gchar *hi_more_info(gchar * entry)
 {
     gchar *info = (gchar *) g_hash_table_lookup(moreinfo, entry);
-
+    
     if (info)
 	return g_strdup(info);
 
@@ -368,6 +376,7 @@ gchar *callback_printers()
 {
     return g_strdup_printf("%s\n"
 			   "[$ShellParam$]\n"
+                           "ViewType=1\n"
 			   "ReloadInterval=5000", printer_list);
 }
 
@@ -429,6 +438,7 @@ void hi_module_init(void)
 
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     __init_memory_labels();
+    __init_cups();
 }
 
 ModuleAbout *hi_module_get_about(void)
