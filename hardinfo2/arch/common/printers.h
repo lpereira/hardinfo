@@ -74,6 +74,32 @@ __init_cups(void)
     cups_init = TRUE;
 }
 
+gchar *__cups_callback_ptype(gchar *strvalue)
+{
+  unsigned value = atoi(strvalue);
+  gchar *output = g_strdup("\n");
+  gint cap = 0;
+  
+  if (value & 0x0004)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Can do black and white printing\n", output, cap++);
+  if (value & 0x0008)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Can do color printing\n", output, cap++);
+  if (value & 0x0010)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Can do duplexing\n", output, cap++);
+  if (value & 0x0020)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Can do staple output\n", output, cap++);
+  if (value & 0x0040)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Can do copies\n", output, cap++);
+  if (value & 0x0080)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Can collate copies\n", output, cap++);
+  if (value & 0x80000)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Printer is rejecting jobs\n", output, cap++);
+  if (value & 0x1000000)
+    output = h_strdup_cprintf("\357\273\277#%d=\342\232\254 Printer was automatically discovered and added\n", output, cap++);
+
+  return output;
+}
+
 gchar *__cups_callback_state(gchar *value)
 {
   if (g_str_equal(value, "3")) {
@@ -110,6 +136,9 @@ const struct {
   { "Printer Information", NULL, NULL },
   { "printer-info", "Destination Name", NULL },
   { "printer-make-and-model", "Make and Model", NULL },
+  
+  { "Capabilities", NULL, NULL },
+  { "printer-type", "#", __cups_callback_ptype },
   
   { "Printer State", NULL, NULL },
   { "printer-state", "State", __cups_callback_state },
