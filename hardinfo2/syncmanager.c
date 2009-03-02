@@ -23,8 +23,6 @@
 
 #ifdef HAS_LIBSOUP
 #include <libsoup/soup.h>
-#include <libsoup/soup-xmlrpc-message.h>
-#include <libsoup/soup-xmlrpc-response.h>
 
 #include <stdarg.h>
 #include <string.h>
@@ -140,11 +138,10 @@ void sync_manager_show(void)
 }
 
 #ifdef HAS_LIBSOUP
-static SoupXmlrpcValue *_soup_get_xmlrpc_value(SoupMessage * msg,
-					       SyncNetAction * sna)
+static gint _soup_get_xmlrpc_value_int(SoupMessage * msg,
+				       SyncNetAction * sna)
 {
-    SoupXmlrpcResponse *response = NULL;
-    SoupXmlrpcValue *value = NULL;
+    gint int_value = -1;
 
     sna->error = NULL;
 
@@ -154,37 +151,11 @@ static SoupXmlrpcValue *_soup_get_xmlrpc_value(SoupMessage * msg,
 	goto bad;
     }
 
-    response =
-	soup_xmlrpc_message_parse_response(SOUP_XMLRPC_MESSAGE(msg));
-    if (!response) {
+    if (!soup_xmlrpc_extract_method_response(msg->response_body->data,
+					     msg->response_body->length,
+					     NULL,
+					     G_TYPE_INT, &int_value)) {
 	SNA_ERROR(2, "Could not parse XML-RPC response");
-	goto bad;
-    }
-
-    value = soup_xmlrpc_response_get_value(response);
-    if (!value) {
-	SNA_ERROR(3, "No response value in XML-RPC response");
-    }
-
-    /*g_object_unref(response); */
-  bad:
-    return value;
-}
-
-static long _soup_get_xmlrpc_value_int(SoupMessage * msg,
-				       SyncNetAction * sna)
-{
-    SoupXmlrpcValue *value;
-    long int_value = -1;
-
-    value = _soup_get_xmlrpc_value(msg, sna);
-    if (!value) {
-	SNA_ERROR(4, "Could not extract result from XML-RPC response");
-	goto bad;
-    }
-
-    if (!soup_xmlrpc_value_get_int(value, &int_value)) {
-	SNA_ERROR(4, "Could not extract result from XML-RPC response");
     }
 
   bad:
@@ -194,17 +165,21 @@ static long _soup_get_xmlrpc_value_int(SoupMessage * msg,
 static gchar *_soup_get_xmlrpc_value_string(SoupMessage * msg,
 					    SyncNetAction * sna)
 {
-    SoupXmlrpcValue *value;
     gchar *string = NULL;
 
-    value = _soup_get_xmlrpc_value(msg, sna);
-    if (!value) {
-	SNA_ERROR(4, "Could not extract result from XML-RPC response");
+    sna->error = NULL;
+
+    if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
+	SNA_ERROR(1, "%s (error #%d)", msg->reason_phrase,
+		  msg->status_code);
 	goto bad;
     }
 
-    if (!soup_xmlrpc_value_get_string(value, &string)) {
-	SNA_ERROR(4, "Could not extract result from XML-RPC response");
+    if (!soup_xmlrpc_extract_method_response(msg->response_body->data,
+					     msg->response_body->length,
+					     NULL,
+					     G_TYPE_STRING, &string)) {
+	SNA_ERROR(2, "Could not parse XML-RPC response");
     }
 
   bad:
@@ -212,23 +187,20 @@ static gchar *_soup_get_xmlrpc_value_string(SoupMessage * msg,
 }
 
 static gboolean _soup_xmlrpc_call(gchar * method, SyncNetAction * sna,
-				  SoupMessageCallbackFn callback)
+				  SoupSessionCallback callback)
 {
-    SoupXmlrpcMessage *msg;
+    SoupMessage *msg;
 
     sna->error = NULL;
 
-    msg = soup_xmlrpc_message_new(XMLRPC_SERVER_URI);
+    msg = soup_xmlrpc_request_new(XMLRPC_SERVER_URI, method,
+				  G_TYPE_INVALID);
     if (!msg)
 	return FALSE;
 
     DEBUG("calling xmlrpc method %s", method);
-    soup_xmlrpc_message_start_call(msg, method);
-    soup_xmlrpc_message_end_call(msg);
 
-    soup_xmlrpc_message_persist(msg);
-
-    soup_session_queue_message(session, SOUP_MESSAGE(msg), callback, sna);
+    soup_session_queue_message(session, msg, callback, sna);
     g_main_run(loop);
 
     return TRUE;
@@ -236,49 +208,51 @@ static gboolean _soup_xmlrpc_call(gchar * method, SyncNetAction * sna,
 
 static gboolean _soup_xmlrpc_call_with_parameters(gchar * method,
 						  SyncNetAction * sna,
-						  SoupMessageCallbackFn
+						  SoupSessionCallback
 						  callback, ...)
 {
-    SoupXmlrpcMessage *msg;
-    gchar *argument;
+    SoupMessage *msg;
+    GValueArray *parameters;
+    gchar *argument, *body;
     va_list ap;
 
     sna->error = NULL;
 
-    msg = soup_xmlrpc_message_new(XMLRPC_SERVER_URI);
+    msg = soup_message_new("POST", XMLRPC_SERVER_URI);
+
+    DEBUG("calling xmlrpc method %s", method);
     if (!msg)
 	return FALSE;
 
-    DEBUG("calling xmlrpc method %s", method);
-    soup_xmlrpc_message_start_call(msg, method);
-
+    parameters = g_value_array_new(1);
     va_start(ap, callback);
     while ((argument = va_arg(ap, gchar *))) {
-	soup_xmlrpc_message_start_param(msg);
-	soup_xmlrpc_message_write_string(msg, argument);
-	soup_xmlrpc_message_end_param(msg);
-
+	soup_value_array_append(parameters, G_TYPE_STRING, argument);
 	DEBUG("with parameter: %s", argument);
     }
     va_end(ap);
 
-    soup_xmlrpc_message_end_call(msg);
-    soup_xmlrpc_message_persist(msg);
+    body = soup_xmlrpc_build_method_call(method, parameters->values,
+					 parameters->n_values);
+    g_value_array_free(parameters);
+    soup_message_set_request(msg, "text/xml",
+			     SOUP_MEMORY_TAKE, body, strlen (body));
 
-    soup_session_queue_message(session, SOUP_MESSAGE(msg), callback, sna);
+    soup_session_queue_message(session, msg, callback, sna);
     g_main_run(loop);
 
     return TRUE;
 }
 
-static void _action_check_api_version_got_response(SoupMessage * msg,
+static void _action_check_api_version_got_response(SoupSession * session,
+						   SoupMessage * msg,
 						   gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
-    long version = _soup_get_xmlrpc_value_int(msg, sna);
+    gint version = _soup_get_xmlrpc_value_int(msg, sna);
 
     if (version != XMLRPC_SERVER_API_VERSION) {
-	SNA_ERROR(5, "Server says it supports API version %ld, but "
+	SNA_ERROR(5, "Server says it supports API version %d, but "
 		  "this version of HardInfo only supports API "
 		  "version %d.", version, XMLRPC_SERVER_API_VERSION);
     }
@@ -298,7 +272,8 @@ static gboolean _action_check_api_version(SyncDialog * sd,
     return sna->error ? FALSE : TRUE;
 }
 
-static void _action_call_function_got_response(SoupMessage * msg,
+static void _action_call_function_got_response(SoupSession * session,
+					       SoupMessage * msg,
 					       gpointer user_data)
 {
     SyncNetAction *sna = (SyncNetAction *) user_data;
@@ -312,19 +287,7 @@ static void _action_call_function_got_response(SoupMessage * msg,
 
 	DEBUG("saving to %s", filename);
 
-#ifdef g_file_set_contents
 	g_file_set_contents(filename, string, -1, NULL);
-#else
-	{
-	    FILE *f;
-
-	    f = fopen(filename, "w+");
-	    if (f) {
-		fwrite(string, 1, strlen(string), f);
-		fclose(f);
-	    }
-	}
-#endif
 	g_free(filename);
     }
 
@@ -409,7 +372,7 @@ static SyncNetAction *sync_manager_get_selected_actions(gint * n)
     return actions;
 }
 
-static SoupUri *sync_manager_get_proxy(void)
+static SoupURI *sync_manager_get_proxy(void)
 {
     const gchar *conf;
 
@@ -428,7 +391,7 @@ static void sync_dialog_start_sync(SyncDialog * sd)
     SyncNetAction *actions;
 
     if (!session) {
-	SoupUri *proxy = sync_manager_get_proxy();
+	SoupURI *proxy = sync_manager_get_proxy();
 
 	session =
 	    soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10,

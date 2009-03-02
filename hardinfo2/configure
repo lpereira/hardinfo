@@ -135,16 +135,16 @@ fi
 # ---------------------------------------------------------------------------
 
 SOUP=-1
-MIN_VERSION="2.2.7"
+MIN_VERSION="2.3.0.1"
 echo -n "Checking for libsoup version >= ${MIN_VERSION}... "
 for i in `which pkg-config`; do
-	$i --errors-to-stdout libsoup-2.2 \
+	$i --errors-to-stdout libsoup-2.4 \
 		--atleast-version=$MIN_VERSION > /dev/null
 	case $? in
 		0)
-			SOUP_FLAGS=`pkg-config libsoup-2.2 --cflags --static`
-			SOUP_LIBS=`pkg-config libsoup-2.2 --libs --static`
-			echo "found `pkg-config libsoup-2.2 --modversion`"
+			SOUP_FLAGS=`pkg-config libsoup-2.4 --cflags --static`
+			SOUP_LIBS=`pkg-config libsoup-2.4 --libs --static`
+			echo "found `pkg-config libsoup-2.4 --modversion`"
 			SOUP=1
 			break ;;
 		*)
