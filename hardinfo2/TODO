@@ -33,7 +33,15 @@
       Wikipedia's Manual of Style [1]
     * Round benchmark results to two decimal places at most,
       or get rid of decimal places altogether.
-
+    * Add preferences window
+	* Proxy configuration
+		* Use HTTP_PROXY variable;
+		* Use GNOME settings;
+		* Manual configuration.
+	* Default browser
+		* Auto-detect;
+		* Use GNOME settings;
+		* Manual configuration.
 
 [1] http://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style_(trademarks)#General_rules
 
