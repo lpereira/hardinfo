@@ -47,7 +47,7 @@ gchar *callback_cryptohash();
 gchar *callback_nqueens();
 
 static ModuleEntry entries[] = {
-    {"CPU Fibonacci", "module.png", callback_fib, scan_fib},
+    {"CPU Fibonacci", "nautilus.png", callback_fib, scan_fib},
     {"CPU CryptoHash", "cryptohash.png", callback_cryptohash, scan_cryptohash},
     {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
     {"CPU N-Queens", "nqueens.png", callback_nqueens, scan_nqueens},
