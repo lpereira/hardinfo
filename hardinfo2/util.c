@@ -73,8 +73,13 @@ gchar *find_program(gchar *program_name)
     	g_free(temp);
     }
     
-    /* search has failed; use GLib's search (which uses $PATH env var) */
-    return g_find_program_in_path(program_name);
+    /* our search has failed; use GLib's search (which uses $PATH env var) */
+    if ((temp = g_find_program_in_path(program_name)) {
+    	g_hash_table_insert(cache, program_name, g_strdup(temp));
+    	return temp;
+    }
+
+    return NULL;
 }
 
 gchar *seconds_to_string(unsigned int seconds)
