@@ -231,7 +231,7 @@ static gdouble bench_results[BENCHMARK_N_ENTRIES];
 gchar *callback_fft()
 {
     return benchmark_include_results(bench_results[BENCHMARK_FFT],
-				     "CPU FFT");
+				     "FPU FFT");
 }
 
 gchar *callback_nqueens()
