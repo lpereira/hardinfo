@@ -26,6 +26,7 @@
 #include <sys/resource.h>
 
 enum {
+    BENCHMARK_FFT,
     BENCHMARK_FIB,
     BENCHMARK_CRYPTOHASH,
     BENCHMARK_BLOWFISH,
@@ -34,12 +35,14 @@ enum {
     BENCHMARK_N_ENTRIES
 } Entries;
 
+void scan_fft(gboolean reload);
 void scan_raytr(gboolean reload);
 void scan_bfsh(gboolean reload);
 void scan_cryptohash(gboolean reload);
 void scan_fib(gboolean reload);
 void scan_nqueens(gboolean reload);
 
+gchar *callback_fft();
 gchar *callback_raytr();
 gchar *callback_bfsh();
 gchar *callback_fib();
@@ -47,10 +50,11 @@ gchar *callback_cryptohash();
 gchar *callback_nqueens();
 
 static ModuleEntry entries[] = {
-    {"CPU Fibonacci", "nautilus.png", callback_fib, scan_fib},
-    {"CPU CryptoHash", "cryptohash.png", callback_cryptohash, scan_cryptohash},
     {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
+    {"CPU CryptoHash", "cryptohash.png", callback_cryptohash, scan_cryptohash},
+    {"CPU Fibonacci", "nautilus.png", callback_fib, scan_fib},
     {"CPU N-Queens", "nqueens.png", callback_nqueens, scan_nqueens},
+    {"FPU FFT", "fft.png", callback_fft, scan_fft},
     {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr},
     {NULL}
 };
@@ -118,7 +122,7 @@ gdouble benchmark_parallel_for(guint start, guint end,
         DEBUG("launching thread %d", 1 + (iter / iter_per_core));
         
         pbt->start    = iter == 0 ? 0 : iter + 1;
-        pbt->end      = iter + iter_per_core;
+        pbt->end      = iter + iter_per_core - 1;
         pbt->data     = callback_data;
         pbt->callback = callback;
         
@@ -222,6 +226,13 @@ static gdouble bench_results[BENCHMARK_N_ENTRIES];
 #include <arch/common/blowfish.h>
 #include <arch/common/raytrace.h>
 #include <arch/common/nqueens.h>
+#include <arch/common/fft.h>
+
+gchar *callback_fft()
+{
+    return benchmark_include_results(bench_results[BENCHMARK_FFT],
+				     "CPU FFT");
+}
 
 gchar *callback_nqueens()
 {
@@ -260,6 +271,13 @@ gchar *callback_fib()
     fn();						\
     setpriority(PRIO_PROCESS, 0, old_priority);		\
   } while (0);
+
+void scan_fft(gboolean reload)
+{
+    SCAN_START();
+    RUN_WITH_HIGH_PRIORITY(benchmark_fft);
+    SCAN_END();
+}
 
 void scan_nqueens(gboolean reload)
 {
