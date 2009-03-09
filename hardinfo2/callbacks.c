@@ -196,7 +196,6 @@ void cb_about()
 	"Contributors:",
 	"Agney Lopes Roth Ferraz",
 	"Andrey Esin",
-	"SCSI support by Pascal F. Martin",
 	"",
 	"Based on work by:",
 	"MD5 implementation by Colin Plumb (see md5.c for details)",
@@ -207,6 +206,7 @@ void cb_about()
 	"Some code partly based on x86cpucaps by Osamu Kayasono",
 	"Vendor list based on GtkSysInfo by Pissens Sebastien",
 	"DMI support based on code by Stewart Adam",
+	"SCSI support based on code by Pascal F. Martin",
 	NULL
     };
     const gchar *artists[] = {
