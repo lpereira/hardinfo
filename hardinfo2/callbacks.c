@@ -203,6 +203,7 @@ void cb_about()
 	"SHA1 implementation by Steve Reid (see sha1.c for details)",
 	"Blowfish implementation by Paul Kocher (see blowfich.c for details)",
 	"Raytracing benchmark by John Walker (see fbench.c for details)",
+	"FFT benchmark by Scott Robert Ladd (see fftbench.c for details)",
 	"Some code partly based on x86cpucaps by Osamu Kayasono",
 	"Vendor list based on GtkSysInfo by Pissens Sebastien",
 	"DMI support based on code by Stewart Adam",
