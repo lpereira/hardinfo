@@ -461,10 +461,15 @@ void open_url(gchar * url)
 	"opera", "konqueror", "netscape", "links -g",
 	NULL
     };
-    gint i;
-
-    for (i = 0; browsers[i]; i++) {
-	gchar *cmdline = g_strdup_printf("%s '%s'", browsers[i], url);
+    gint i = 0;
+    gchar *browser = (gchar *)g_getenv("BROWSER");
+    
+    if (!browser || *browser == '\0') {
+    	browser = (gchar *)browsers[i++];
+    }
+    
+    do {
+	gchar *cmdline = g_strdup_printf("%s '%s'", browser, url);
 
 	if (g_spawn_command_line_async(cmdline, NULL)) {
 	    g_free(cmdline);
@@ -472,7 +477,9 @@ void open_url(gchar * url)
 	}
 
 	g_free(cmdline);
-    }
+    	
+    	browser = (gchar *)browsers[i++];
+    } while (browser);
 
     g_warning("Couldn't find a Web browser to open URL %s.", url);
 }
