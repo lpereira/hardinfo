@@ -309,7 +309,7 @@ static gboolean _action_call_function(SyncDialog * sd, gpointer user_data)
 	if (sna->entry->get_data)
 	    str_data = sna->entry->get_data();
 
-	if (!_soup_xmlrpc_call_with_parameters("sync.callFunction", sna,
+	if (!_soup_xmlrpc_call_with_parameters("sync.callFunctionEx", sna,
 					       _action_call_function_got_response,
 					       VERSION, ARCH,
 					       sna->entry->name,
