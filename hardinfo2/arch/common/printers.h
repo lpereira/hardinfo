@@ -76,31 +76,39 @@ __init_cups(void)
 
 gchar *__cups_callback_ptype(gchar *strvalue)
 {
-  unsigned value = atoi(strvalue);
-  gchar *output = g_strdup("\n");
-  
-  if (value & 0x0004)
-    output = h_strdup_cprintf("\342\232\254 Can do black and white printing=\n", output);
-  if (value & 0x0008)
-    output = h_strdup_cprintf("\342\232\254 Can do color printing=\n", output);
-  if (value & 0x0010)
-    output = h_strdup_cprintf("\342\232\254 Can do duplexing=\n", output);
-  if (value & 0x0020)
-    output = h_strdup_cprintf("\342\232\254 Can do staple output=\n", output);
-  if (value & 0x0040)
-    output = h_strdup_cprintf("\342\232\254 Can do copies=\n", output);
-  if (value & 0x0080)
-    output = h_strdup_cprintf("\342\232\254 Can collate copies=\n", output);
-  if (value & 0x80000)
-    output = h_strdup_cprintf("\342\232\254 Printer is rejecting jobs=\n", output);
-  if (value & 0x1000000)
-    output = h_strdup_cprintf("\342\232\254 Printer was automatically discovered and added=\n", output);
+  if (strvalue) {
+    unsigned value = atoi(strvalue);
+    gchar *output = g_strdup("\n");
+    
+    if (value & 0x0004)
+      output = h_strdup_cprintf("\342\232\254 Can do black and white printing=\n", output);
+    if (value & 0x0008)
+      output = h_strdup_cprintf("\342\232\254 Can do color printing=\n", output);
+    if (value & 0x0010)
+      output = h_strdup_cprintf("\342\232\254 Can do duplexing=\n", output);
+    if (value & 0x0020)
+      output = h_strdup_cprintf("\342\232\254 Can do staple output=\n", output);
+    if (value & 0x0040)
+      output = h_strdup_cprintf("\342\232\254 Can do copies=\n", output);
+    if (value & 0x0080)
+      output = h_strdup_cprintf("\342\232\254 Can collate copies=\n", output);
+    if (value & 0x80000)
+      output = h_strdup_cprintf("\342\232\254 Printer is rejecting jobs=\n", output);
+    if (value & 0x1000000)
+      output = h_strdup_cprintf("\342\232\254 Printer was automatically discovered and added=\n", output);
 
-  return output;
+    return output;
+  } else {
+    return g_strdup("Unknown");
+  }
 }
 
 gchar *__cups_callback_state(gchar *value)
 {
+  if (!value) {
+    return g_strdup("Unknown");
+  }
+
   if (g_str_equal(value, "3")) {
     return g_strdup("Idle");
   } else if (g_str_equal(value, "4")) {
@@ -117,15 +125,23 @@ gchar *__cups_callback_state_change_time(gchar *value)
   struct tm tm;
   char buf[255];
   
-  strptime(value, "%s", &tm);
-  strftime(buf, sizeof(buf), "%c", &tm);
+  if (value) {
+    strptime(value, "%s", &tm);
+    strftime(buf, sizeof(buf), "%c", &tm);
 
-  return g_strdup(buf);
+    return g_strdup(buf);
+  } else {
+    return g_strdup("Unknown");
+  }
 }
 
 gchar *__cups_callback_boolean(gchar *value)
 {
-  return g_strdup(g_str_equal(value, "1") ? "Yes" : "No");
+  if (value) {
+    return g_strdup(g_str_equal(value, "1") ? "Yes" : "No");
+  } else {
+    return g_strdup("Unknown");
+  }
 }
 
 const struct {
@@ -209,24 +225,27 @@ __scan_printers(void)
                                                 prn_moreinfo,
                                                 cups_fields[j].key);
               } else {
-                if (cups_fields[j].callback) {
-                  gchar *temp;
-                  
-                  temp = g_hash_table_lookup(options, cups_fields[j].key);
-                  temp = cups_fields[j].callback(temp);
+                gchar *temp;
                 
-                  prn_moreinfo = h_strdup_cprintf("%s=%s\n",
-                                                  prn_moreinfo,
-                                                  cups_fields[j].name,
-                                                  temp);
-                  
-                  g_free(temp);
+                temp = g_hash_table_lookup(options, cups_fields[j].key);
+                
+                if (cups_fields[j].callback) {
+                  temp = cups_fields[j].callback(temp);
                 } else {
-                  prn_moreinfo = h_strdup_cprintf("%s=%s\n",
-                                                  prn_moreinfo,
-                                                  cups_fields[j].name,
-                                                  g_hash_table_lookup(options, cups_fields[j].key));
+                  if (temp) {
+                    /* FIXME Do proper escaping */
+                    temp = g_strdup(strreplace(temp, "&=", ' '));
+                  } else {
+                    temp = g_strdup("Unknown");
+                  }
                 }
+                
+                prn_moreinfo = h_strdup_cprintf("%s=%s\n",
+                                                prn_moreinfo,
+                                                cups_fields[j].name,
+                                                temp);
+                
+                g_free(temp);
               }
             }
             
