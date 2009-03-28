@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     if (params.show_version) {
 	g_print("HardInfo version " VERSION "\n");
 	g_print
-	    ("Copyright (C) 2003-2008 Leandro A. F. Pereira. See COPYING for details.\n\n");
+	    ("Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n\n");
 
 	g_print("Compile-time options:\n"
 		"  Release version:   %s (%s)\n"
