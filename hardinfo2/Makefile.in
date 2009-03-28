@@ -31,6 +31,9 @@ sha1.o:
 fbench.o:
 	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
 
+fftbench.o:
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fftbench.c -o $@
+
 nqueens.o:
 	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
 
