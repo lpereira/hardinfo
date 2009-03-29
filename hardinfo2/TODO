@@ -34,6 +34,9 @@
     * Round benchmark results to two decimal places at most,
       or get rid of decimal places altogether.
     * Add preferences window
+	* Save/restore
+		* Window position
+		* Window size
 	* Proxy configuration
 		* Use HTTP_PROXY variable;
 		* Use GNOME settings;
