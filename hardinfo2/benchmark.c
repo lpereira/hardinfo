@@ -236,8 +236,8 @@ gchar *callback_fft()
 
 gchar *callback_nqueens()
 {
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_NQUEENS],
-					     "CPU N-Queens");
+    return benchmark_include_results(bench_results[BENCHMARK_NQUEENS],
+				     "CPU N-Queens");
 }
 
 gchar *callback_raytr()
@@ -255,7 +255,7 @@ gchar *callback_bfsh()
 gchar *callback_cryptohash()
 {
     return benchmark_include_results_reverse(bench_results[BENCHMARK_CRYPTOHASH],
-					     "CPU Cryptohash");
+					     "CPU CryptoHash");
 }
 
 gchar *callback_fib()
@@ -320,6 +320,7 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_CRYPTOHASH:
 	return "Results in MiB/second. Higher is better.";
 
+    case BENCHMARK_FFT:
     case BENCHMARK_RAYTRACE:
     case BENCHMARK_BLOWFISH:
     case BENCHMARK_FIB:
