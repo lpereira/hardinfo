@@ -1255,7 +1255,6 @@ static void module_selected(gpointer data)
     ShellModuleEntry *entry;
     static ShellModuleEntry *current = NULL;
     static gboolean updating = FALSE;
-    
 
     /* Gets the currently selected item on the left-side TreeView; if there is no
        selection, silently return */
