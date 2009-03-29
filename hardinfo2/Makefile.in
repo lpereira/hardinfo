@@ -13,9 +13,7 @@ BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o nqueens.o fftbench.o
 
 MODULES = computer.so devices.so benchmark.so network.so
 
-all:	$(OBJECTS) $(MODULES) hardinfo
-
-hardinfo:
+all:	$(OBJECTS) $(MODULES)
 	$(CC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
 		$(SOUP_LIBS)
 
@@ -38,14 +36,12 @@ nqueens.o:
 	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
 
 benchmark.so:	benchmark.c
-	@echo "[01;34m--- Module: $< ($@)[00m"
 	make $(BENCHMARK_OBJECTS)
 	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
 		$(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 
 %.so:	%.c
-	@echo "[01;34m--- Module: $< ($@)[00m"
 	$(CC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
 	ln -sf ../$@ modules
 	
@@ -68,38 +64,26 @@ deb:	dist-clean
 	dpkg-buildpackage -rfakeroot -k${USER}
 
 install:	all
-	@echo '[01;34m*** Cleaning up installation...[00m'
 	rm -rf ${DESTDIR}${LIBDIR}/hardinfo/modules ${DESTDIR}/usr/share/hardinfo/pixmaps
 
-	@echo '[01;34m*** Creating directories...[00m'
 	mkdir -p ${DESTDIR}/usr/bin
 	mkdir -p ${DESTDIR}/usr/local
 	mkdir -p ${DESTDIR}/usr/share/applications
-	
-
 	mkdir -p ${DESTDIR}${LIBDIR}/hardinfo/modules
 	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps
 
-	@echo '[01;34m*** Installing icon...[00m'
 	cp hardinfo.desktop ${DESTDIR}/usr/share/applications
 
-	@echo '[01;34m*** Installing executable...[00m'
 	cp hardinfo ${DESTDIR}/usr/bin/hardinfo
 
-	@echo '[01;34m*** Installing modules...[00m'
 	cp -Lvr modules/*.so ${DESTDIR}${LIBDIR}/hardinfo/modules
 
-	@echo '[01;34m*** Installing pixmaps...[00m'
 	cp -Lvr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
 
-	@echo '[01;34m*** Installing misc data...[00m'
 	cp benchmark.conf ${DESTDIR}/usr/share/hardinfo
 	cp benchmark.data ${DESTDIR}/usr/share/hardinfo
 
-	@echo '[01;34m*** Fixing permissions...[00m'
 	chmod 755 ${DESTDIR}/usr/bin/hardinfo
-
-	@echo '[01;34m*** Done installing.[00m'
 
 installer:
 	makepackage

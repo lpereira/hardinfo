@@ -846,7 +846,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 	    } else if (g_str_equal(key, "ShowColumnHeaders")) {
 		headers_visible = g_key_file_get_boolean(key_file, group, key, NULL);
 	    } else if (g_str_has_prefix(key, "ColumnTitle")) {
-                GtkTreeViewColumn *column;
+                GtkTreeViewColumn *column = NULL;
 		gchar *value, *title = strchr(key, '$') + 1;
 
                 value = g_key_file_get_value(key_file, group, key, NULL);
@@ -863,8 +863,10 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 			column = shell->info->col_progress;
                 }
 
-                gtk_tree_view_column_set_title(column, value);
-                gtk_tree_view_column_set_visible(column, TRUE);
+                if (column) {
+                  gtk_tree_view_column_set_title(column, value);
+                  gtk_tree_view_column_set_visible(column, TRUE);
+                }
 
                 g_free(value);
 	    } else if (g_str_equal(key, "OrderType")) {

@@ -40,7 +40,7 @@ scan_languages(OperatingSystem * os)
     while (fgets(buf, 512, locale)) {
 	if (!strncmp(buf, "locale:", 7)) {
 	    sscanf(buf, "locale: %s", name);
-	    fgets(buf, 128, locale);
+	    (void)fgets(buf, 128, locale);
 	} else if (strchr(buf, '|')) {
 	    gchar **tmp = g_strsplit(buf, "|", 2);
 

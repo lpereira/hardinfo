@@ -53,7 +53,7 @@ get_libc_version(void)
     libc = popen("/lib/libc.so.6", "r");
     if (!libc) goto err;
     
-    fgets(buf, 256, libc);
+    (void)fgets(buf, 256, libc);
     if (pclose(libc)) goto err;
     
     tmp = strstr(buf, "version ");
@@ -80,7 +80,7 @@ get_os_compiled_date(void)
     if (!procversion)
 	return g_strdup("Unknown");
 
-    fgets(buf, 512, procversion);
+    (void)fgets(buf, 512, procversion);
     fclose(procversion);
 
     return g_strdup(buf);
@@ -103,7 +103,7 @@ detect_desktop_environment(OperatingSystem * os)
 	   obtain the version. */
 	version = popen("gnome-about --gnome-version", "r");
 	if (version) {
-	    fscanf(version, "Version: %s", vers);
+	    (void)fscanf(version, "Version: %s", vers);
 	    if (pclose(version))
 	        goto unknown;
 	} else {
@@ -116,9 +116,9 @@ detect_desktop_environment(OperatingSystem * os)
 	if (version) {
 	    char buf[32];
 
-	    fgets(buf, 32, version);
+	    (void)fgets(buf, 32, version);
 
-	    fscanf(version, "KDE: %s", vers);
+	    (void)fscanf(version, "KDE: %s", vers);
 	    if (pclose(version))
 	        goto unknown;
 	} else {
@@ -172,7 +172,7 @@ computer_get_os(void)
 
 	release = popen("lsb_release -d", "r");
 	if (release) {
-            fgets(buffer, 128, release);
+            (void)fgets(buffer, 128, release);
             pclose(release);
 
             os->distro = buffer;
@@ -192,7 +192,7 @@ computer_get_os(void)
 	    char buf[128];
 
 	    distro_ver = fopen(distro_db[i].file, "r");
-	    fgets(buf, 128, distro_ver);
+	    (void)fgets(buf, 128, distro_ver);
 	    fclose(distro_ver);
 
 	    buf[strlen(buf) - 1] = 0;

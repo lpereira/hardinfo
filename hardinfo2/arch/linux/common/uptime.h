@@ -24,7 +24,7 @@ computer_get_uptime(void)
     gulong minutes;
 
     if ((procuptime = fopen("/proc/uptime", "r")) != NULL) {
-	fscanf(procuptime, "%lu", &minutes);
+	(void)fscanf(procuptime, "%lu", &minutes);
 	ui->minutes = minutes / 60;
 	fclose(procuptime);
     } else {

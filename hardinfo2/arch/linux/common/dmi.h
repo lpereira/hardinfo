@@ -70,7 +70,7 @@ gboolean dmi_get_info_dmidecode()
       if ((dmi_pipe = popen(temp, "r"))) {
         g_free(temp);
 
-        fgets(buffer, 256, dmi_pipe);
+        (void)fgets(buffer, 256, dmi_pipe);
         if (pclose(dmi_pipe)) {
           dmi_failed = TRUE;
           break;
@@ -120,7 +120,7 @@ gboolean dmi_get_info_sys()
         continue;
         
       if ((dmi_file = fopen(info->file, "r"))) {
-        fgets(buffer, 256, dmi_file);
+        (void)fgets(buffer, 256, dmi_file);
         fclose(dmi_file);
         
         dmi_info = h_strdup_cprintf("%s=%s\n",

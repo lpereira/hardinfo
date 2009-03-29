@@ -23,7 +23,7 @@ computer_get_loadinfo(void)
     FILE *procloadavg;
 
     procloadavg = fopen("/proc/loadavg", "r");
-    fscanf(procloadavg, "%f %f %f", &(li->load1), &(li->load5),
+    (void)fscanf(procloadavg, "%f %f %f", &(li->load1), &(li->load5),
 	   &(li->load15));
     fclose(procloadavg);
 

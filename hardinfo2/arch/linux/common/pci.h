@@ -33,7 +33,7 @@ __scan_pci(void)
 {
     FILE *lspci;
     gchar buffer[256], *buf, *strhash = NULL, *strdevice = NULL;
-    gchar *category = NULL, *name = NULL, *icon, *lspci_path, *command_line;
+    gchar *category = NULL, *name = NULL, *icon, *lspci_path, *command_line = NULL;
     gint n = 0, x = 0;
     
     if ((lspci_path = find_program("lspci")) == NULL) {

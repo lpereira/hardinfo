@@ -56,7 +56,7 @@ scan_modules_do(void)
 	return;
     }
 
-    fgets(buffer, 1024, lsmod);	/* Discards the first line */
+    (void)fgets(buffer, 1024, lsmod);	/* Discards the first line */
 
     while (fgets(buffer, 1024, lsmod)) {
 	gchar *buf, *strmodule, *hashkey;
