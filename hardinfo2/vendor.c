@@ -81,6 +81,10 @@ static const Vendor vendors[] = {
 const gchar *vendor_get_name(const gchar * id)
 {
     int i;
+    
+    if (!id) {
+      return NULL;
+    }
 
     for (i = 0; vendors[i].id; i++) {
 	if (strstr(id, vendors[i].id))
@@ -93,6 +97,10 @@ const gchar *vendor_get_name(const gchar * id)
 const gchar *vendor_get_url(const gchar * id)
 {
     int i;
+
+    if (!id) {
+      return NULL;
+    }
 
     for (i = 0; vendors[i].id; i++) {
 	if (strstr(id, vendors[i].id))
