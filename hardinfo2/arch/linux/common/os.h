@@ -28,11 +28,13 @@ get_default_gcc_version(void)
                                    NULL)) {
         char *return_value;
         
-        if (!(return_value = strstr(buf, "gcc version "))) {
+        if (!(return_value = strstr(buf, "gcc "))) {
             goto err;
         }
         
-        return_value += sizeof("gcc version");
+	return_value = strstr(return_value, " ") + 1;
+	return_value = strstr(return_value, " ") + 1;
+
         return_value = g_strdup_printf("GNU C Compiler version %s", return_value);
         
         g_free(buf);
@@ -112,7 +114,13 @@ detect_desktop_environment(OperatingSystem * os)
 
 	os->desktop = g_strdup_printf("GNOME %s", vers);
     } else if (g_getenv("KDE_FULL_SESSION")) {
-	version = popen("kcontrol --version", "r");
+
+	if (g_getenv("KDE_SESSION_VERSION") && strstr(g_getenv("KDE_SESSION_VERSION"),(gchar *)"4")) {
+	    version = popen("kwin --version", "r");
+	} else {
+	    version = popen("kcontrol --version", "r");
+	}
+
 	if (version) {
 	    char buf[32];
 
