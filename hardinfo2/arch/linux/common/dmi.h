@@ -75,11 +75,17 @@ gboolean dmi_get_info_dmidecode()
           dmi_failed = TRUE;
           break;
         }
-        
-        dmi_info = h_strdup_cprintf("%s=%s\n",
+
+      const gchar *url = vendor_get_url(buffer);
+      gchar *tmp;
+      if (url)
+	 tmp = g_strdup_printf("%s (%s)", vendor_get_name(buffer), url);
+
+	dmi_info = h_strdup_cprintf("%s=%s\n",
                                     dmi_info,
                                     info->name,
-                                    buffer);
+                                    url ? tmp : buffer);
+        
       } else {
         g_free(temp);
         dmi_failed = TRUE;
@@ -122,11 +128,16 @@ gboolean dmi_get_info_sys()
       if ((dmi_file = fopen(info->file, "r"))) {
         (void)fgets(buffer, 256, dmi_file);
         fclose(dmi_file);
-        
-        dmi_info = h_strdup_cprintf("%s=%s\n",
+
+      const gchar *url = vendor_get_url(buffer);
+      gchar *tmp;
+      if (url)
+  	 tmp = g_strdup_printf("%s (%s)", vendor_get_name(buffer), url);
+
+	dmi_info = h_strdup_cprintf("%s=%s\n",
                                     dmi_info,
                                     info->name,
-                                    buffer);
+                                    url ? tmp : buffer);
       } else {
         dmi_failed = TRUE;
         break;
