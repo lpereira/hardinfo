@@ -61,7 +61,8 @@ static const Vendor vendors[] = {
     {"SanDisk", "SanDisk", "www.sandisk.com"},
     {"ExcelStor", "ExcelStor Technology", "www.excelstor.com"},
     {"D-Link", "D-Link", "www.dlink.com.tw"},
-    {"Giga-byte", "Gigabyte", "www.gigabyte.com.tw"},
+    {"Giga-byte", "Giga-Byte Technology Co., Ltd", "www.gigabyte.com.tw"},
+    {"Gigabyte", "Giga-Byte Technology Co., Ltd", "www.gigabyte.com.tw"},
     {"C-Media", "C-Media Electronics", "www.cmedia.com.tw"},
     {"Avermedia", "AVerMedia Technologies", "www.aver.com"},
     {"Philips", "Philips", "www.philips.com"},
@@ -75,6 +76,13 @@ static const Vendor vendors[] = {
     {"eMPIA", "eMPIA Technology, Inc.", "www.empiatech.com.tw"},
     {"Canon", "Canon Inc.", "www.canon.com"},
     {"A4Tech", "A4tech Co., Ltd.", "www.a4tech.com"},
+    {"ALCOR", "Alcor", "www.alcor.org"},
+    {"Vimicro", "Vimicro Corp.", "www.vimicro.com"},
+    {"OTi", "Ours Technology Inc.", "www.oti.com.tw"},
+    {"BENQ", "BenQ Corp.", "www.benq.com"},
+    // BIOS manufacturers
+    {"American Megatrends", "American Megatrends, Inc.", "www.ami.com"},
+    {"Award", "Award Software International, Inc.", "www.award-bios.com"},
     {NULL, NULL, NULL},
 };
 
