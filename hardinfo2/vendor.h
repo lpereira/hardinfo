@@ -26,8 +26,8 @@ struct _Vendor {
   char *url;
 };
 
+void  vendor_init(void);
 const gchar *vendor_get_name(const gchar *id);
 const gchar *vendor_get_url(const gchar *id);
-
 
 #endif	/* __VENDOR_H__ */

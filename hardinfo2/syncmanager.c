@@ -107,7 +107,7 @@ void sync_manager_add_entry(SyncEntry * entry)
     DEBUG("registering syncmanager entry ''%s''", entry->fancy_name);
 
     entry->selected = TRUE;
-    entries = g_slist_prepend(entries, entry);
+    entries = g_slist_append(entries, entry);
 #else
     DEBUG("libsoup support is disabled.");
 #endif				/* HAS_LIBSOUP */

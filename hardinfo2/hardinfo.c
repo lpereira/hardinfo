@@ -23,6 +23,7 @@
 #include <hardinfo.h>
 #include <iconcache.h>
 #include <stock.h>
+#include <vendor.h>
 
 #include <binreloc.h>
 
@@ -109,6 +110,9 @@ int main(int argc, char **argv)
 	DEBUG("loading all modules");
 	modules = modules_load_all();
     }
+
+    /* initialize vendor database */
+    vendor_init();
 
     if (params.gui_running) {
 	/* initialize gui and start gtk+ main loop */

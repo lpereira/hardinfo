@@ -20,7 +20,11 @@
 
 #include <string.h>
 #include <gtk/gtk.h>
+
 #include "vendor.h"
+#include "syncmanager.h"
+#include "config.h"
+#include "hardinfo.h"
 
 static const Vendor vendors[] = {
     {"ATI", "ATI Technologies", "www.ati.com"},
@@ -80,24 +84,88 @@ static const Vendor vendors[] = {
     {"Vimicro", "Vimicro", "www.vimicro.com"},
     {"OTi", "Ours Technology", "www.oti.com.tw"},
     {"BENQ", "BenQ", "www.benq.com"},
-    // BIOS manufacturers
+    /* BIOS manufacturers */
     {"American Megatrends", "American Megatrends", "www.ami.com"},
     {"Award", "Award Software International", "www.award-bios.com"},
     {"Phoenix", "Phoenix Technologies", "www.phoenix.com"},
-    {NULL, NULL, NULL},
 };
+
+static GSList *vendor_list = NULL;
+
+void vendor_init(void)
+{
+    gint i;
+    gchar *path;
+    static SyncEntry se = {
+       .fancy_name = "Update vendor list",
+       .name = "RecvVendorList",
+       .save_to = "vendor.conf",
+       .get_data = NULL
+    };
+
+    DEBUG("initializing vendor list");
+    sync_manager_add_entry(&se);
+    
+    path = g_build_filename(g_get_home_dir(), ".hardinfo", "vendor.conf", NULL);
+    if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+      DEBUG("local vendor.conf not found, trying system-wise");
+      g_free(path);
+      path = g_build_filename(params.path_data, "vendor.conf", NULL);
+    }
+    
+    if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+      GKeyFile *vendors;
+      gchar *tmp;
+      gint num_vendors;
+      
+      DEBUG("loading vendor.conf");
+      
+      vendors = g_key_file_new();
+      if (g_key_file_load_from_file(vendors, path, 0, NULL)) {
+        num_vendors = g_key_file_get_integer(vendors, "vendors", "number", NULL);
+        
+        for (i = num_vendors; i >= 0; i--) {
+          Vendor *v = g_new0(Vendor, 1);
+          
+          tmp = g_strdup_printf("vendor%d", i);
+          
+          v->id   = g_key_file_get_string(vendors, tmp, "id", NULL);
+          v->name = g_key_file_get_string(vendors, tmp, "name", NULL);
+          v->url  = g_key_file_get_string(vendors, tmp, "url", NULL);
+          
+          vendor_list = g_slist_prepend(vendor_list, v);
+          
+          g_free(tmp);
+        }
+      }
+      
+      g_key_file_free(vendors);
+    } else {
+      DEBUG("system-wise vendor.conf not found, using internal database");
+      
+      for (i = G_N_ELEMENTS(vendors); i >= 0; i--) {
+        vendor_list = g_slist_prepend(vendor_list, (gpointer) &vendors[i]);
+      }
+    } 
+
+    g_free(path);
+}
 
 const gchar *vendor_get_name(const gchar * id)
 {
+    GSList *vendor;
     int i;
     
     if (!id) {
       return NULL;
     }
-
-    for (i = 0; vendors[i].id; i++) {
-	if (strstr(id, vendors[i].id))
-	    return vendors[i].name;
+    
+    for (vendor = vendor_list; vendor; vendor = vendor->next) {
+      Vendor *v = (Vendor *)vendor->data;
+      
+      if (v->id && id && strstr(id, v->id)) {
+        return g_strdup(v->name);
+      }
     }
 
     return id;
@@ -105,15 +173,19 @@ const gchar *vendor_get_name(const gchar * id)
 
 const gchar *vendor_get_url(const gchar * id)
 {
+    GSList *vendor;
     int i;
 
     if (!id) {
       return NULL;
     }
-
-    for (i = 0; vendors[i].id; i++) {
-	if (strstr(id, vendors[i].id))
-	    return vendors[i].url;
+    
+    for (vendor = vendor_list; vendor; vendor = vendor->next) {
+      Vendor *v = (Vendor *)vendor->data;
+      
+      if (v->id && id && strstr(id, v->id)) {
+        return g_strdup(v->url);
+      }
     }
 
     return NULL;
