@@ -76,16 +76,29 @@ gboolean dmi_get_info_dmidecode()
           break;
         }
 
-      const gchar *url = vendor_get_url(buffer);
-      gchar *tmp;
-      if (url)
-	 tmp = g_strdup_printf("%s (%s)", vendor_get_name(buffer), url);
-
-	dmi_info = h_strdup_cprintf("%s=%s\n",
-                                    dmi_info,
-                                    info->name,
-                                    url ? tmp : buffer);
-        
+        const gchar *url = vendor_get_url(buffer);
+        if (url) {
+          const gchar *vendor = vendor_get_name(buffer);
+          if (g_strstr_len(vendor, -1, g_strstrip(buffer)) ||
+              g_strstr_len(g_strstrip(buffer), -1, vendor)) {
+            dmi_info = h_strdup_cprintf("%s=%s (%s)\n",
+                                        dmi_info,
+                                        info->name,
+                                        g_strstrip(buffer),
+                                        url);
+          } else {
+            dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n",
+                                        dmi_info,
+                                        info->name,
+                                        g_strstrip(buffer),
+                                        vendor, url);
+          }
+        } else {
+          dmi_info = h_strdup_cprintf("%s=%s\n",
+                                      dmi_info,
+                                      info->name,
+                                      buffer);
+        }
       } else {
         g_free(temp);
         dmi_failed = TRUE;
@@ -128,16 +141,30 @@ gboolean dmi_get_info_sys()
       if ((dmi_file = fopen(info->file, "r"))) {
         (void)fgets(buffer, 256, dmi_file);
         fclose(dmi_file);
-
-      const gchar *url = vendor_get_url(buffer);
-      gchar *tmp;
-      if (url)
-  	 tmp = g_strdup_printf("%s (%s)", vendor_get_name(buffer), url);
-
-	dmi_info = h_strdup_cprintf("%s=%s\n",
-                                    dmi_info,
-                                    info->name,
-                                    url ? tmp : buffer);
+        
+        const gchar *url = vendor_get_url(buffer);
+        if (url) {
+          const gchar *vendor = vendor_get_name(buffer);
+          if (g_strstr_len(vendor, -1, g_strstrip(buffer)) ||
+              g_strstr_len(g_strstrip(buffer), -1, vendor)) {
+            dmi_info = h_strdup_cprintf("%s=%s (%s)\n",
+                                        dmi_info,
+                                        info->name,
+                                        g_strstrip(buffer),
+                                        url);
+          } else {
+            dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n",
+                                        dmi_info,
+                                        info->name,
+                                        g_strstrip(buffer),
+                                        vendor, url);
+          }
+        } else {
+          dmi_info = h_strdup_cprintf("%s=%s\n",
+                                      dmi_info,
+                                      info->name,
+                                      g_strstrip(buffer));
+        }
       } else {
         dmi_failed = TRUE;
         break;
