@@ -76,9 +76,9 @@ install:	all
 
 	cp hardinfo ${DESTDIR}/usr/bin/hardinfo
 
-	cp -Lvr modules/*.so ${DESTDIR}${LIBDIR}/hardinfo/modules
+	cp -Lr modules/*.so ${DESTDIR}${LIBDIR}/hardinfo/modules
 
-	cp -Lvr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
+	cp -Lr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
 
 	cp benchmark.conf ${DESTDIR}/usr/share/hardinfo
 	cp benchmark.data ${DESTDIR}/usr/share/hardinfo
