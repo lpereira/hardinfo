@@ -737,7 +737,7 @@ static ReportDialog
     GtkWidget *dialog1_vbox;
     GtkWidget *scrolledwindow2;
     GtkWidget *treeview2;
-    GtkWidget *hbuttonbox3;
+    GtkWidget *vbuttonbox3;
     GtkWidget *button3;
     GtkWidget *button6;
     GtkWidget *dialog1_action_area;
@@ -781,10 +781,14 @@ static ReportDialog
 		       FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_widget_show_all(hbox);
+    
+    hbox = gtk_hbox_new(FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, TRUE, TRUE, 0);
+    gtk_widget_show(hbox);
 
     scrolledwindow2 = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_show(scrolledwindow2);
-    gtk_box_pack_start(GTK_BOX(dialog1_vbox), scrolledwindow2, TRUE, TRUE,
+    gtk_box_pack_start(GTK_BOX(hbox), scrolledwindow2, TRUE, TRUE,
 		       0);
     gtk_widget_set_size_request(scrolledwindow2, -1, 200);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow2),
@@ -818,22 +822,23 @@ static ReportDialog
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
 
-    hbuttonbox3 = gtk_hbutton_box_new();
-    gtk_widget_show(hbuttonbox3);
-    gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbuttonbox3, FALSE, TRUE, 0);
-    gtk_button_box_set_layout(GTK_BUTTON_BOX(hbuttonbox3),
-			      GTK_BUTTONBOX_SPREAD);
+    vbuttonbox3 = gtk_vbutton_box_new();
+    gtk_widget_show(vbuttonbox3);
+    gtk_box_pack_start(GTK_BOX(hbox), vbuttonbox3, FALSE, TRUE, 0);
+    gtk_box_set_spacing(GTK_BOX(vbuttonbox3), 5);
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(vbuttonbox3),
+			      GTK_BUTTONBOX_START);
 
     button3 = gtk_button_new_with_mnemonic("Select _None");
     gtk_widget_show(button3);
-    gtk_container_add(GTK_CONTAINER(hbuttonbox3), button3);
+    gtk_container_add(GTK_CONTAINER(vbuttonbox3), button3);
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
     g_signal_connect(button3, "clicked",
 		     G_CALLBACK(report_dialog_sel_none), rd);
 
     button6 = gtk_button_new_with_mnemonic("Select _All");
     gtk_widget_show(button6);
-    gtk_container_add(GTK_CONTAINER(hbuttonbox3), button6);
+    gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
     g_signal_connect(button6, "clicked", G_CALLBACK(report_dialog_sel_all),
 		     rd);
