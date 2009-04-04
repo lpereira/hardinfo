@@ -325,7 +325,7 @@ gchar *callback_network()
                            "[$ShellParam$]\n"
 			   "ReloadInterval=3000\n"
 			   "ViewType=1\n"
-			   "ColumnTitle$TextValue=Device\n"
+			   "ColumnTitle$TextValue=Interface\n"
 			   "ColumnTitle$Value=IP Address\n"
 			   "ColumnTitle$Extra1=Sent\n"
 			   "ColumnTitle$Extra2=Received\n"
