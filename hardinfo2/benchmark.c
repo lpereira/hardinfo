@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2003-2009 Leandro A. F. Pereira <leandro@hardinfo.org>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -398,12 +398,12 @@ void hi_module_init(void)
 {
     static SyncEntry se[] = {
 	{
-	 .fancy_name = "Send Benchmark Results",
+	 .fancy_name = "Send benchmark results",
 	 .name = "SendBenchmarkResults",
 	 .save_to = NULL,
 	 .get_data = get_benchmark_results},
 	{
-	 .fancy_name = "Receive Benchmark Results",
+	 .fancy_name = "Receive benchmark results",
 	 .name = "RecvBenchmarkResults",
 	 .save_to = "benchmark.conf",
 	 .get_data = NULL}

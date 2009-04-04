@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2003-2009 Leandro A. F. Pereira <leandro@hardinfo.org>
  *
  *    List of vendors based on GtkSysInfo (c) Pissens Sebastien.
  *
