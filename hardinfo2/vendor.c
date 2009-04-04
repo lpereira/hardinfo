@@ -30,7 +30,7 @@ static const Vendor vendors[] = {
     {"ATI", "ATI Technologies", "www.ati.com"},
     {"nVidia", "NVIDIA", "www.nvidia.com"},
     {"3Com", "3Com", "www.3com.com"},
-    {"Intel", "Inte", "www.intel.com"},
+    {"Intel", "Intel", "www.intel.com"},
     {"Cirrus Logic", "Cirrus Logic", "www.cirrus.com"},
     {"VIA Technologies", "VIA Technologies", "www.via.com.tw"},
     {"VIA", "VIA Technologies", "www.via.com.tw"},
