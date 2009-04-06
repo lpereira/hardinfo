@@ -424,16 +424,14 @@ guchar hi_module_get_weight(void)
 void hi_module_init(void)
 {
     if (!g_file_test("/usr/share/misc/pci.ids", G_FILE_TEST_EXISTS)) {
-        static SyncEntry se[] = {
-            {
+        static SyncEntry se = {
              .fancy_name = "Update PCI ID listing",
              .name = "GetPCIIds",
              .save_to = "pci.ids",
              .get_data = NULL
-            }
         };
 
-        sync_manager_add_entry(&se[0]);
+        sync_manager_add_entry(&se);
     }
 
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
