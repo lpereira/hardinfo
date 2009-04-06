@@ -119,13 +119,13 @@ void vendor_init(void)
       gchar *tmp;
       gint num_vendors;
       
-      DEBUG("loading vendor.conf");
+      DEBUG("loading %s", path);
       
       vendors = g_key_file_new();
       if (g_key_file_load_from_file(vendors, path, 0, NULL)) {
         num_vendors = g_key_file_get_integer(vendors, "vendors", "number", NULL);
         
-        for (i = num_vendors--; i >= 0; i--) {
+        for (i = num_vendors - 1; i >= 0; i--) {
           Vendor *v = g_new0(Vendor, 1);
           
           tmp = g_strdup_printf("vendor%d", i);

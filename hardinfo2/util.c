@@ -1127,7 +1127,7 @@ gint
 h_sysfs_read_int(gchar *endpoint, gchar *entry)
 {
 	gchar *tmp, *buffer;
-	gint return_value = 0.0f;
+	gint return_value = 0;
 	
 	tmp = g_build_filename(endpoint, entry, NULL);
 	if (g_file_get_contents(tmp, &buffer, NULL, NULL))
