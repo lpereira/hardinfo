@@ -726,6 +726,15 @@ report_dialog_sel_toggle(GtkCellRendererToggle * cellrenderertoggle,
 		       -1);
     set_children_active(model, &iter, active);
 
+    if (active) {
+        GtkTreeIter parent;
+        
+        if (gtk_tree_model_iter_parent(model, &parent, &iter)) {
+            gtk_tree_store_set(GTK_TREE_STORE(model), &parent,
+                               TREE_COL_SEL, active, -1);
+        }
+    }
+
     gtk_tree_path_free(path);
 }
 
