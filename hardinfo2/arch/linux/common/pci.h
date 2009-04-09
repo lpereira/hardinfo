@@ -186,10 +186,6 @@ __scan_pci(void)
 	    category = g_strdup(buf);
 
 	    buf = end;
-	    start = buf;
-	    WALK_UNTIL('(');
-	    *buf = 0;
-	    buf = start + 1;
 
             if (strstr(category, "RAM memory")) icon = "mem";
             else if (strstr(category, "Multimedia")) icon = "media";
