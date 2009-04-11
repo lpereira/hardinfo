@@ -18,7 +18,7 @@
 
 #include <nqueens.h>
 
-static gpointer nqueens_for(unsigned int start, unsigned int end, void *data, GTimer *timer)
+static gpointer nqueens_for(unsigned int start, unsigned int end, void *data, gint thread_number)
 {
     unsigned int i;
     

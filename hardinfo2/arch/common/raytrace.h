@@ -19,7 +19,7 @@
 void fbench();	/* fbench.c */
 
 static gpointer
-parallel_raytrace(unsigned int start, unsigned int end, gpointer data)
+parallel_raytrace(unsigned int start, unsigned int end, gpointer data, gint thread_number)
 {
     unsigned int i;
     

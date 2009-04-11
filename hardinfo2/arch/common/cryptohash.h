@@ -39,12 +39,12 @@ static void inline sha1_step(char *data, glong srclen)
     SHA1Final(checksum, &ctx);
 }
 
-static gpointer cryptohash_for(unsigned int start, unsigned int end, void *data, GTimer *timer)
+static gpointer cryptohash_for(unsigned int start, unsigned int end, void *data, gint thread_number)
 {
     unsigned int i;
     
     for (i = start; i <= end; i++) { 
-        if (i % 2 == 0) {
+        if (i & 1) {
             md5_step(data, 65536);
         } else {
             sha1_step(data, 65536);

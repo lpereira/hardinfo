@@ -19,7 +19,7 @@
 #include <blowfish.h>
 
 static gpointer
-parallel_blowfish(unsigned int start, unsigned int end, void *data, GTimer *timer)
+parallel_blowfish(unsigned int start, unsigned int end, void *data, gint thread_number)
 {
     BLOWFISH_CTX ctx;
     unsigned int i;

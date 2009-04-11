@@ -62,6 +62,7 @@ static ModuleEntry entries[] = {
 typedef struct _ParallelBenchTask ParallelBenchTask;
 
 struct _ParallelBenchTask {
+    gint	thread_number;
     guint	start, end;
     gpointer	data, callback;
 };
@@ -69,13 +70,13 @@ struct _ParallelBenchTask {
 gpointer benchmark_parallel_for_dispatcher(gpointer data)
 {
     ParallelBenchTask 	*pbt = (ParallelBenchTask *)data;
-    gpointer 		(*callback)(unsigned int start, unsigned int end, void *data);
+    gpointer 		(*callback)(unsigned int start, unsigned int end, void *data, gint thread_number);
     gpointer		return_value;
     
     if ((callback = pbt->callback)) {
         DEBUG("this is thread %p; items %d -> %d, data %p", g_thread_self(),
               pbt->start, pbt->end, pbt->data);
-        return_value = callback(pbt->start, pbt->end, pbt->data);
+        return_value = callback(pbt->start, pbt->end, pbt->data, pbt->thread_number);
         DEBUG("this is thread %p; return value is %p", g_thread_self(), return_value);
     } else {
         DEBUG("this is thread %p; callback is NULL and it should't be!", g_thread_self());
@@ -89,7 +90,7 @@ gpointer benchmark_parallel_for_dispatcher(gpointer data)
 gdouble benchmark_parallel_for(guint start, guint end,
                                gpointer callback, gpointer callback_data) {
     gchar	*temp;
-    guint	n_cores, iter_per_core, iter;
+    guint	n_cores, iter_per_core, iter, thread_number = 0;
     gdouble	elapsed_time;
     GSList	*threads = NULL, *t;
     GTimer	*timer;
@@ -121,7 +122,8 @@ gdouble benchmark_parallel_for(guint start, guint end,
         
         DEBUG("launching thread %d", 1 + (iter / iter_per_core));
         
-        pbt->start    = iter == 0 ? 0 : iter + 1;
+        pbt->thread_number = thread_number++;
+        pbt->start    = iter == 0 ? 0 : iter;
         pbt->end      = iter + iter_per_core - 1;
         pbt->data     = callback_data;
         pbt->callback = callback;
