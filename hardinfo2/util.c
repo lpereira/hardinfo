@@ -364,6 +364,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean list_modules = FALSE;
     static gboolean autoload_deps = FALSE;
     static gchar *report_format = NULL;
+    static gchar *run_benchmark = NULL;
     static gchar **use_modules = NULL;
 
     static GOptionEntry options[] = {
@@ -379,6 +380,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &report_format,
 	 .description = "chooses a report format (text, html)"},
+	{
+	 .long_name = "run-benchmark",
+	 .short_name = 'b',
+	 .arg = G_OPTION_ARG_STRING,
+	 .arg_data = &run_benchmark,
+	 .description = "run benchmark; requires benchmark.so to be loaded"},
 	{
 	 .long_name = "list-modules",
 	 .short_name = 'l',
@@ -427,6 +434,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->show_version = show_version;
     param->list_modules = list_modules;
     param->use_modules = use_modules;
+    param->run_benchmark = run_benchmark;
     param->autoload_deps = autoload_deps;
     param->argv0 = *(argv)[0];
 
@@ -534,8 +542,7 @@ gchar *module_call_method(gchar * method)
     }
 
     function = g_hash_table_lookup(__module_methods, method);
-    return function ? g_strdup(function()) :
-	g_strdup_printf("{Unknown method: \"%s\"}", method);
+    return function ? g_strdup(function()) : NULL;
 }
 
 /* FIXME: varargs? */
@@ -548,8 +555,7 @@ gchar *module_call_method_param(gchar * method, gchar * parameter)
     }
 
     function = g_hash_table_lookup(__module_methods, method);
-    return function ? g_strdup(function(parameter)) :
-	g_strdup_printf("{Unknown method: \"%s\"}", method);
+    return function ? g_strdup(function(parameter)) : NULL;
 }
 
 static ShellModule *module_load(gchar * filename)

@@ -37,6 +37,7 @@ struct _ProgramParameters {
   gint     report_format;
   
   gchar  **use_modules;
+  gchar   *run_benchmark;
   gchar   *path_lib;
   gchar   *path_data;
   gchar   *argv0;

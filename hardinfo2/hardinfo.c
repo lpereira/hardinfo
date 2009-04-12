@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 	return 0;
     }
 
-    if (!params.create_report) {
+    if (!params.create_report && !params.run_benchmark) {
 	/* we only try to open the UI if the user didn't asked for a 
 	   report. */
 	params.gui_running = ui_init(&argc, &argv);
@@ -113,8 +113,18 @@ int main(int argc, char **argv)
 
     /* initialize vendor database */
     vendor_init();
-
-    if (params.gui_running) {
+    
+    if (params.run_benchmark) {
+        gchar *result;
+        
+        result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
+        if (!result) {
+          g_error("Unknown benchmark ``%s'' or benchmark.so not loaded", params.run_benchmark);
+        } else {
+          g_print("Benchmark result: %s\n", result);
+          g_free(result);
+        }
+    } else if (params.gui_running) {
 	/* initialize gui and start gtk+ main loop */
 	icon_cache_init();
 	stock_icons_init();
@@ -136,6 +146,8 @@ int main(int argc, char **argv)
 	g_print("%s", report);
 
 	g_free(report);
+    } else {
+        g_error("Don't know what to do. Exiting.");
     }
 
     DEBUG("finished");

@@ -135,7 +135,7 @@ gdouble benchmark_parallel_for(guint start, guint end,
                                  pbt, TRUE, NULL);
         threads = g_slist_append(threads, thread);
         
-        DEBUG("thread %d launched as context %p", 1 + (iter / iter_per_core), threads->data);
+        DEBUG("thread %d launched as context %p", thread_number, thread);
     }
     
     DEBUG("waiting for all threads to finish");
@@ -394,6 +394,37 @@ static gchar *get_benchmark_results()
     g_free(machineram);
 
     return result;
+}
+
+static gchar *run_benchmark(gchar *name)
+{
+    int i;
+    
+    DEBUG("name = %s", name);
+    
+    for (i = 0; entries[i].name; i++) {
+      if (g_str_equal(entries[i].name, name)) {
+        void (*scan_callback)(gboolean rescan);
+        
+        if ((scan_callback = entries[i].scan_callback)) {
+          scan_callback(FALSE);
+          
+          return g_strdup_printf("%f", bench_results[i]);
+        }
+      }
+    }
+    
+    return NULL;
+}
+
+ShellModuleMethod *hi_exported_methods(void)
+{
+    static ShellModuleMethod m[] = {
+        {"runBenchmark", run_benchmark},
+	{NULL}
+    };
+
+    return m;
 }
 
 void hi_module_init(void)
