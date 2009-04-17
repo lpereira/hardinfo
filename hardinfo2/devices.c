@@ -437,7 +437,7 @@ void hi_module_init(void)
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
     {
       static SyncEntry se = {
-        .fancy_name = "Update CPU flag database",
+        .fancy_name = "Update CPU feature database",
         .name = "RecvCPUFlags",
         .save_to = "cpuflags.conf",
         .get_data = NULL
