@@ -419,6 +419,54 @@ static struct {
 	{ NULL,		NULL						},
 };
 
+GHashTable *cpu_flags = NULL;
+
+static void cpu_flags_init(void)
+{
+    gint i;
+    gchar *path;
+    
+    cpu_flags = g_hash_table_new(g_str_hash, g_str_equal);
+    
+    path = g_build_filename(g_get_home_dir(), ".hardinfo", "cpuflags.conf", NULL);
+    if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+        DEBUG("using internal CPU flags database");
+
+        for (i = 0; flag_meaning[i].name != NULL; i++) {
+            g_hash_table_insert(cpu_flags, flag_meaning[i].name,
+                                flag_meaning[i].meaning);
+        }
+    } else {
+        GKeyFile *flags_file;
+        
+        DEBUG("using %s as CPU flags database", path);
+        
+        flags_file = g_key_file_new();
+        if (g_key_file_load_from_file(flags_file, path, 0, NULL)) {
+            gchar **flag_keys;
+            
+            flag_keys = g_key_file_get_keys(flags_file, "flags",
+                                            NULL, NULL);
+            for (i = 0; flag_keys[i]; i++) {
+                gchar *meaning;
+                
+                meaning = g_key_file_get_string(flags_file, "flags",
+                                                flag_keys[i], NULL);
+                                                
+                g_hash_table_insert(cpu_flags, g_strdup(flag_keys[i]), meaning);
+                
+                /* can't free meaning */
+            }
+            
+            g_strfreev(flag_keys);
+        } 
+        
+        g_key_file_free(flags_file);
+    }
+    
+    g_free(path);
+}
+
 gchar *processor_get_capabilities_from_flags(gchar * strflags)
 {
     /* FIXME:
@@ -427,21 +475,23 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
      */
     gchar **flags, **old;
     gchar *tmp = NULL;
-    gint i, j = 0;
+    gint j = 0;
+    
+    if (!cpu_flags) {
+        cpu_flags_init();
+    }
 
     flags = g_strsplit(strflags, " ", 0);
     old = flags;
 
     while (flags[j]) {
-	gchar *meaning = "";
-	for (i = 0; flag_meaning[i].name != NULL; i++) {
-	    if (g_str_equal(flags[j], flag_meaning[i].name)) {
-		meaning = flag_meaning[i].meaning;
-		break;
-	    }
-	}
-
-	tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
+	gchar *meaning = g_hash_table_lookup(cpu_flags, flags[j]);
+	
+	if (meaning) {
+  	  tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
+        } else {
+  	  tmp = h_strdup_cprintf("%s=\n", tmp, flags[j]);
+        }
 	j++;
     }
 

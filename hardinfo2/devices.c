@@ -434,6 +434,19 @@ void hi_module_init(void)
         sync_manager_add_entry(&se);
     }
 
+#if defined(ARCH_i386) || defined(ARCH_x86_64)
+    {
+      static SyncEntry se = {
+        .fancy_name = "Update CPU flag database",
+        .name = "RecvCPUFlags",
+        .save_to = "cpuflags.conf",
+        .get_data = NULL
+      };
+      
+      sync_manager_add_entry(&se);
+    }
+#endif	/* defined(ARCH_i386) || defined(ARCH_x86_64) */
+
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     __init_memory_labels();
     __init_cups();
