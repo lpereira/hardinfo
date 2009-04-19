@@ -77,7 +77,7 @@ scan_filesystems(void)
 		    g_free(strhash);
 		}
 		
-		strreplace(tmp[0], "#", '_');
+		strreplacechr(tmp[0], "#", '_');
 		
 		strhash = g_strdup_printf("[%s]\n"
 					  "Filesystem=%s\n"

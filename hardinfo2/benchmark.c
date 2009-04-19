@@ -155,6 +155,32 @@ gdouble benchmark_parallel_for(guint start, guint end,
     return elapsed_time;
 }
 
+static gchar *clean_cpuname(gchar *cpuname)
+{
+    gchar *ret = NULL, *tmp;
+    gchar *remove[] = {
+        "(R)", "(r)", "(TM)", "(tm)", "Processor",
+        "Technology", "processor", "CPU",
+        NULL
+    };
+    gint i;
+    
+    ret = g_strdup(cpuname);
+    for (i = 0; remove[i]; i++) {
+      tmp = strreplace(ret, remove[i], "");
+      g_free(ret);
+      ret = tmp;
+    }
+    
+    ret = strend(ret, '@');
+    ret = g_strstrip(ret);
+    
+    tmp = g_strdup(ret);
+    g_free(ret);
+
+    return tmp;
+}
+
 static gchar *__benchmark_include_results(gdouble result,
 					  const gchar * benchmark,
 					  ShellOrderType order_type)
@@ -177,12 +203,14 @@ static gchar *__benchmark_include_results(gdouble result,
 
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
-	gchar *value;
+	gchar *value, *cleaned_machine;
 	
 	value   = g_key_file_get_value(conf, benchmark, machines[i], NULL);
-	results = g_strconcat(results, machines[i], "=", value, "\n", NULL);
-	
+	cleaned_machine = clean_cpuname(machines[i]);
+	results = h_strconcat(results, cleaned_machine, "=", value, "\n", NULL);
+
 	g_free(value);
+	g_free(cleaned_machine);
     }
 
     g_strfreev(machines);

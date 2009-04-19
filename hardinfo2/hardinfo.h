@@ -68,7 +68,8 @@ struct _ModuleAbout {
 inline void  remove_quotes(gchar *str);
 inline char *strend(gchar *str, gchar chr);
 inline void  remove_linefeed(gchar *str);
-gchar       *strreplace(gchar *string, gchar *replace, gchar new_char);
+gchar       *strreplacechr(gchar *string, gchar *replace, gchar new_char);
+gchar       *strreplace(gchar *string, gchar *replace, gchar *replacement);
 
 /* Widget utility functions */
 void widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);

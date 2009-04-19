@@ -38,12 +38,12 @@ static gchar *_resource_obtain_name(gchar *name)
     if (g_regex_match(_regex_pci, name, 0, NULL)) {
       temp = module_call_method_param("devices::getPCIDeviceDescription", name);
       if (temp) {
-          return temp;
+          return g_strdup_printf("<b><small>PCI</small></b> %s", (gchar *)idle_free(temp));
       }
     } else if (g_regex_match(_regex_module, name, 0, NULL)) {
       temp = module_call_method_param("computer::getKernelModuleDescription", name);
       if (temp) {
-          return temp;
+          return g_strdup_printf("<b><small>Module</small></b> %s", (gchar *)idle_free(temp));
       }
     }
     

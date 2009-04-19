@@ -234,7 +234,7 @@ __scan_printers(void)
                 } else {
                   if (temp) {
                     /* FIXME Do proper escaping */
-                    temp = g_strdup(strreplace(temp, "&=", ' '));
+                    temp = g_strdup(strreplacechr(temp, "&=", ' '));
                   } else {
                     temp = g_strdup("Unknown");
                   }

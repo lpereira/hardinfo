@@ -493,7 +493,7 @@ void open_url(gchar * url)
 }
 
 /* Copyright: Jens Låås, SLU 2002 */
-gchar *strreplace(gchar * string, gchar * replace, gchar new_char)
+gchar *strreplacechr(gchar * string, gchar * replace, gchar new_char)
 {
     gchar *s;
     for (s = string; *s; s++)
@@ -501,6 +501,17 @@ gchar *strreplace(gchar * string, gchar * replace, gchar new_char)
 	    *s = new_char;
 
     return string;
+}
+
+gchar *strreplace(gchar *string, gchar *replace, gchar *replacement)
+{
+    gchar **tmp, *ret;
+    
+    tmp = g_strsplit(string, replace, 0);
+    ret = g_strjoinv(replacement, tmp);
+    g_strfreev(tmp);
+    
+    return ret;
 }
 
 static GHashTable *__module_methods = NULL;

@@ -1074,7 +1074,7 @@ static void update_progress()
             tmp = g_strdup_printf("%.2f", floatval);
         }
 
-        tmp = strreplace(tmp, ",", '.');
+        tmp = strreplacechr(tmp, ",", '.');
 	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur,
                                          INFO_TREE_COL_VALUE, tmp, -1);
         g_free(tmp);
