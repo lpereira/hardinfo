@@ -29,8 +29,6 @@
 
 - Misc
 
-    * Remove (R), (TM), etc from processor strings as per
-      Wikipedia's Manual of Style [1]
     * Round benchmark results to two decimal places at most,
       or get rid of decimal places altogether.
     * Add preferences window
@@ -45,6 +43,3 @@
 		* Auto-detect;
 		* Use GNOME settings;
 		* Manual configuration.
-
-[1] http://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style_(trademarks)#General_rules
-
