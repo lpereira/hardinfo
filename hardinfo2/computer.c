@@ -356,7 +356,7 @@ gchar *get_kernel_module_description(gchar *module)
     
     description = g_hash_table_lookup(_module_hash_table, module);
     if (!description) {
-        return g_strdup(module);
+        return NULL;
     }
     
     return g_strdup(description);
