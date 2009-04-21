@@ -416,6 +416,8 @@ static struct {
 	{ "tpr",	"Task Priority Register"			},
 	{ "vid",	"Voltage Identifier"				},
 	{ "fid", 	"Frequency Identifier"				},
+	{ "dtes64", 	"64-bit Debug Store"				},
+	{ "monitor", 	"Monitor/Mwait support"				},
 	{ NULL,		NULL						},
 };
 
