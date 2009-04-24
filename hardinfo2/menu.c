@@ -55,7 +55,7 @@ static GtkActionEntry entries[] = {
     {"ConnectToAction", GTK_STOCK_CONNECT,
      "_Connect to...", NULL,
      NULL,
-     G_CALLBACK(cb_sync_manager)},
+     G_CALLBACK(cb_connect_to)},
 
     {"CopyAction", GTK_STOCK_COPY,
      "_Copy to Clipboard", "<control>C",

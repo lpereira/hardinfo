@@ -35,5 +35,6 @@ void cb_open_online_docs();
 void cb_sync_manager();
 void cb_report_bug();
 void cb_donate();
+void cb_connect_to();
 
 #endif	/* __CALLBACKS_H__ */
