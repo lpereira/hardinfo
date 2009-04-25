@@ -34,6 +34,11 @@ void cb_sync_manager()
     sync_manager_show();
 }
 
+void cb_connect_to()
+{
+    remote_dialog_show();
+}
+
 void cb_save_graphic()
 {
     Shell *shell = shell_get_main_shell();
