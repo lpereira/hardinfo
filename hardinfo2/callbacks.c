@@ -31,12 +31,16 @@
 
 void cb_sync_manager()
 {
-    sync_manager_show();
+    Shell *shell = shell_get_main_shell();
+
+    sync_manager_show(shell->window);
 }
 
 void cb_connect_to()
 {
-    remote_dialog_show();
+    Shell *shell = shell_get_main_shell();
+
+    remote_dialog_show(shell->window);
 }
 
 void cb_save_graphic()

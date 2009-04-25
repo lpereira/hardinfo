@@ -72,7 +72,7 @@ static GQuark err_quark;
 #define LABEL_SYNC_SYNCING  "<big><b>Synchronizing</b></big>\n" \
                             "This may take some time."
 
-static SyncDialog *sync_dialog_new(void);
+static SyncDialog *sync_dialog_new(GtkWidget *parent);
 static void sync_dialog_destroy(SyncDialog * sd);
 static void sync_dialog_start_sync(SyncDialog * sd);
 
@@ -113,13 +113,13 @@ void sync_manager_add_entry(SyncEntry * entry)
 #endif				/* HAS_LIBSOUP */
 }
 
-void sync_manager_show(void)
+void sync_manager_show(GtkWidget *parent)
 {
 #ifndef HAS_LIBSOUP
     g_warning
 	("HardInfo was compiled without libsoup support. (Network Updater requires it.)");
 #else				/* !HAS_LIBSOUP */
-    SyncDialog *sd = sync_dialog_new();
+    SyncDialog *sd = sync_dialog_new(parent);
 
     err_quark = g_quark_from_static_string("syncmanager");
 
@@ -612,7 +612,7 @@ static void close_clicked(void)
     g_main_quit(loop);
 }
 
-static SyncDialog *sync_dialog_new(void)
+static SyncDialog *sync_dialog_new(GtkWidget *parent)
 {
     SyncDialog *sd;
     GtkWidget *dialog;
@@ -635,6 +635,7 @@ static SyncDialog *sync_dialog_new(void)
     sd->sna = sync_dialog_netarea_new();
 
     dialog = gtk_dialog_new();
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
     gtk_window_set_title(GTK_WINDOW(dialog), "Network Updater");
     gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
     gtk_window_set_icon(GTK_WINDOW(dialog),

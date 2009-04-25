@@ -65,13 +65,12 @@ struct _RemoteDialog {
   GtkWidget *btn_connect, *btn_cancel;
 };
 
-static RemoteDialog
-    * remote_dialog_new(GtkTreeModel * model, GtkWidget * parent);
+static RemoteDialog *remote_dialog_new(GtkWidget *parent);
 
-void remote_dialog_show(GtkTreeModel * model, GtkWidget * parent)
+void remote_dialog_show(GtkWidget *parent)
 {
     gboolean success;
-    RemoteDialog *rd = remote_dialog_new(model, parent);
+    RemoteDialog *rd = remote_dialog_new(parent);
 
     if (gtk_dialog_run(GTK_DIALOG(rd->dialog)) == GTK_RESPONSE_ACCEPT) {
 	shell_status_update("Generating remote...");
@@ -93,8 +92,7 @@ void remote_dialog_show(GtkTreeModel * model, GtkWidget * parent)
     g_free(rd);
 }
 
-static RemoteDialog
-    * remote_dialog_new(GtkTreeModel * model, GtkWidget * parent)
+static RemoteDialog *remote_dialog_new(GtkWidget *parent)
 {
     RemoteDialog *rd;
     GtkWidget *dialog;
@@ -161,7 +159,7 @@ static RemoteDialog
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
 					(scrolledwindow2), GTK_SHADOW_IN);
 
-    treeview2 = gtk_tree_view_new_with_model(model);
+    treeview2 = gtk_tree_view_new();
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview2), FALSE);
     gtk_widget_show(treeview2);
     gtk_container_add(GTK_CONTAINER(scrolledwindow2), treeview2);
