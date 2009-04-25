@@ -33,7 +33,7 @@
  *   - IP range scan
  *   - mDNS
  * - Allow the user to add/remove/edit a machine
- *   - Use ~/.ssh/hosts as a starting point?
+ *   - Use ~/.ssh/known_hosts as a starting point?
  *   - Different icons for different machines?
  *   - Make sure SSH can do port forwarding
  *   - Make sure the remote host has HardInfo installed, with the correct
@@ -56,7 +56,7 @@
  * - Use libsoup XML-RPC support to implement the remote mode
  * - Introduce a flag on the modules, stating their ability to be used locally/remotely
  *   (Benchmarks can't be used remotely; Displays won't work remotely [unless we use
-      X forwarding, but that'll be local X11 info anyway]).
+ *    X forwarding, but that'll be local X11 info anyway]).
  */
 
 typedef struct _RemoteDialog RemoteDialog;
@@ -67,29 +67,71 @@ struct _RemoteDialog {
 
 static RemoteDialog *remote_dialog_new(GtkWidget *parent);
 
+static void remote_connect(RemoteDialog *rd)
+{
+    
+}
+
 void remote_dialog_show(GtkWidget *parent)
 {
     gboolean success;
     RemoteDialog *rd = remote_dialog_new(parent);
 
     if (gtk_dialog_run(GTK_DIALOG(rd->dialog)) == GTK_RESPONSE_ACCEPT) {
-	shell_status_update("Generating remote...");
 	gtk_widget_hide(rd->dialog);
 	shell_view_set_enabled(FALSE);
 	shell_status_set_enabled(TRUE);
-
-//	success = remote_generate(rd);
-
+	
+	remote_connect(rd);
 	shell_status_set_enabled(FALSE);
-
-	if (success)
-	    shell_status_update("Remote saved.");
-	else
-	    shell_status_update("Error while creating the remote.");
     }
 
     gtk_widget_destroy(rd->dialog);
     g_free(rd);
+}
+
+static void populate_store(GtkListStore * store)
+{
+    GKeyFile *remote;
+    GtkTreeIter iter;
+    gchar *path;
+    
+    gtk_list_store_clear(store);
+
+    gtk_list_store_append(store, &iter);
+    gtk_list_store_set(store, &iter,
+                       0, icon_cache_get_pixbuf("home.png"),
+                       1, g_strdup("Local Computer"),
+                       2, GINT_TO_POINTER(-1),
+                       -1);
+
+    remote = g_key_file_new();
+    path = g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf", NULL);
+    if (g_key_file_load_from_file(remote, path, 0, NULL)) {
+        gint no_hosts, i;
+        
+        no_hosts = g_key_file_get_integer(remote, "$Global$", "no_hosts", NULL);
+        for (i = 0; i < no_hosts; i++) {
+            gchar *hostname;
+            gchar *hostgroup;
+            
+            hostgroup = g_strdup_printf("Host%d", i);
+            
+            hostname = g_key_file_get_string(remote, hostgroup, "name", NULL);
+        
+            gtk_list_store_append(store, &iter);
+            gtk_list_store_set(store, &iter,
+                               0, icon_cache_get_pixbuf("server.png"),
+                               1, hostname,
+                               2, GINT_TO_POINTER(i),
+                               -1);
+            
+            g_free(hostgroup);
+        }
+    }
+    
+    g_free(path);
+    g_key_file_free(remote);
 }
 
 static RemoteDialog *remote_dialog_new(GtkWidget *parent)
@@ -110,6 +152,8 @@ static RemoteDialog *remote_dialog_new(GtkWidget *parent)
 
     GtkTreeViewColumn *column;
     GtkCellRenderer *cr_text, *cr_pbuf, *cr_toggle;
+    GtkListStore *store;
+    GtkTreeModel *model;
 
     rd = g_new0(RemoteDialog, 1);
 
@@ -137,9 +181,8 @@ static RemoteDialog *remote_dialog_new(GtkWidget *parent)
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
-
     gtk_box_pack_start(GTK_BOX(hbox),
-		       icon_cache_get_image("network.png"),
+		       icon_cache_get_image("server-large.png"),
 		       FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_widget_show_all(hbox);
@@ -159,20 +202,16 @@ static RemoteDialog *remote_dialog_new(GtkWidget *parent)
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
 					(scrolledwindow2), GTK_SHADOW_IN);
 
-    treeview2 = gtk_tree_view_new();
+    store = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_INT);
+    model = GTK_TREE_MODEL(store);
+
+    treeview2 = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview2), FALSE);
     gtk_widget_show(treeview2);
     gtk_container_add(GTK_CONTAINER(scrolledwindow2), treeview2);
 
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview2), column);
-
-    cr_toggle = gtk_cell_renderer_toggle_new();
-    gtk_tree_view_column_pack_start(column, cr_toggle, FALSE);
-//    g_signal_connect(cr_toggle, "toggled",
-//		     G_CALLBACK(remote_dialog_sel_toggle), rd);
-    gtk_tree_view_column_add_attribute(column, cr_toggle, "active",
-				       TREE_COL_SEL);
 
     cr_pbuf = gtk_cell_renderer_pixbuf_new();
     gtk_tree_view_column_pack_start(column, cr_pbuf, FALSE);
@@ -184,6 +223,8 @@ static RemoteDialog *remote_dialog_new(GtkWidget *parent)
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
 
+    populate_store(store);
+    
     vbuttonbox3 = gtk_vbutton_box_new();
     gtk_widget_show(vbuttonbox3);
     gtk_box_pack_start(GTK_BOX(hbox), vbuttonbox3, FALSE, TRUE, 0);

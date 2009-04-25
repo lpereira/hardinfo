@@ -363,6 +363,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean show_version = FALSE;
     static gboolean list_modules = FALSE;
     static gboolean autoload_deps = FALSE;
+    static gboolean run_xmlrpc_server = FALSE;
     static gchar *report_format = NULL;
     static gchar *run_benchmark = NULL;
     static gchar **use_modules = NULL;
@@ -405,6 +406,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg_data = &autoload_deps,
 	 .description = "automatically load module dependencies"},
 	{
+	 .long_name = "xmlrpc-server",
+	 .short_name = 'x',
+	 .arg = G_OPTION_ARG_NONE,
+	 .arg_data = &run_xmlrpc_server,
+	 .description = "run in XML-RPC server mode"},
+	{
 	 .long_name = "version",
 	 .short_name = 'v',
 	 .arg = G_OPTION_ARG_NONE,
@@ -436,6 +443,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->use_modules = use_modules;
     param->run_benchmark = run_benchmark;
     param->autoload_deps = autoload_deps;
+    param->run_xmlrpc_server = run_xmlrpc_server;
     param->argv0 = *(argv)[0];
 
     if (report_format && g_str_equal(report_format, "html"))

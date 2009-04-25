@@ -33,6 +33,7 @@ struct _ProgramParameters {
   gboolean gui_running;
   gboolean list_modules;
   gboolean autoload_deps;
+  gboolean run_xmlrpc_server;
   
   gint     report_format;
   

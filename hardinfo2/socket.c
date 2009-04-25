@@ -120,6 +120,7 @@ int sock_write(Socket * s, gchar * str)
 
 void sock_close(Socket * s)
 {
+    shutdown(s->sock, 2);
     close(s->sock);
     g_free(s);
 }

@@ -24,6 +24,7 @@
 #include <iconcache.h>
 #include <stock.h>
 #include <vendor.h>
+#include <xmlrpc-server.h>
 
 #include <binreloc.h>
 
@@ -114,7 +115,10 @@ int main(int argc, char **argv)
     /* initialize vendor database */
     vendor_init();
     
-    if (params.run_benchmark) {
+    if (params.run_xmlrpc_server) {
+        xmlrpc_server_init();
+        xmlrpc_server_start();
+    } else if (params.run_benchmark) {
         gchar *result;
         
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
