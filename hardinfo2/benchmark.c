@@ -161,8 +161,7 @@ static gchar *clean_cpuname(gchar *cpuname)
     gchar *remove[] = {
         "(R)", "(r)", "(TM)", "(tm)", "Processor",
         "Technology", "processor", "CPU",
-        "-Core", "Core", "cpu", "Duo", "X2", "X3", "X4",
-        "Quad", "Dual", "Triple", "Genuine", "Authentic", NULL
+        "cpu", "Genuine", "Authentic", NULL
     };
     gint i;
     
