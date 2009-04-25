@@ -629,8 +629,14 @@ static gboolean report_generate(ReportDialog * rd)
 	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 			       GTK_STOCK_NO, GTK_RESPONSE_REJECT,
 			       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
-	    open_url(file);
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+	    gchar *temp;
+	    
+	    temp = g_strdup_printf("file://%s", file);
+	    open_url(temp);
+	    
+	    g_free(temp);
+        }
 
 	gtk_widget_destroy(dialog);
     }
