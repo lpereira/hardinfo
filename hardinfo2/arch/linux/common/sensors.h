@@ -263,7 +263,6 @@ static void read_sensors_acpi(void)
 	    const gchar *entry;
 	    gchar *temp = g_strdup("");
 
-
 	    while ((entry = g_dir_read_name(tz))) {
 		gchar *path =
 		    g_strdup_printf("%s/%s/temperature", path_tz, entry);

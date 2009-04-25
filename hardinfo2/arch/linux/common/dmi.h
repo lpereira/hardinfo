@@ -30,13 +30,13 @@ struct _DMIInfo {
 };
 
 DMIInfo dmi_info_table[] = {
-  { "$BIOS",	NULL,					NULL },
-  { "Date",	"/sys/class/dmi/id/bios_date",		"bios-release-date" },
-  { "Vendor",	"/sys/class/dmi/id/bios_vendor",	"bios-vendor" },
-  { "Version",	"/sys/class/dmi/id/bios_version",	"bios-version" },
-  { "$Board",	NULL,					NULL },
-  { "Name",	"/sys/class/dmi/id/board_name",		"baseboard-product-name" },
-  { "Vendor",	"/sys/class/dmi/id/board_vendor",	"baseboard-manufacturer" },
+  { "$BIOS",		NULL,					NULL },
+  { "Date",		"/sys/class/dmi/id/bios_date",		"bios-release-date" },
+  { "Vendor",		"/sys/class/dmi/id/bios_vendor",	"bios-vendor" },
+  { "Version",		"/sys/class/dmi/id/bios_version",	"bios-version" },
+  { "$Board",		NULL,					NULL },
+  { "Name",		"/sys/class/dmi/id/board_name",		"baseboard-product-name" },
+  { "Vendor",		"/sys/class/dmi/id/board_vendor",	"baseboard-manufacturer" },
 };
 
 static gchar *dmi_info = NULL;
