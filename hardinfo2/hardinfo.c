@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 	return 0;
     }
 
-    if (!params.create_report && !params.run_benchmark) {
+    if (!params.create_report && !params.run_benchmark && !params.run_xmlrpc_server) {
 	/* we only try to open the UI if the user didn't asked for a 
 	   report. */
 	params.gui_running = ui_init(&argc, &argv);
@@ -116,6 +116,8 @@ int main(int argc, char **argv)
     vendor_init();
     
     if (params.run_xmlrpc_server) {
+        g_type_init();
+    
         xmlrpc_server_init();
         xmlrpc_server_start();
     } else if (params.run_benchmark) {

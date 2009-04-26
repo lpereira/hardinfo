@@ -1075,9 +1075,22 @@ gchar *module_entry_function(ShellModuleEntry * module_entry)
     return g_strdup("[Error]\n" "Invalid module=");
 }
 
+gchar *module_entry_get_moreinfo(ShellModuleEntry * module_entry)
+{
+    if (module_entry->morefunc) {
+	return g_strdup(module_entry->morefunc(module_entry->name));
+    }
+
+    return NULL;
+}
+
 const gchar *module_entry_get_note(ShellModuleEntry * module_entry)
 {
-    return module_entry->notefunc(module_entry->number);
+    if (module_entry->notefunc) {
+	return module_entry->notefunc(module_entry->number);
+    }
+
+    return NULL;
 }
 
 gchar *h_strdup_cprintf(const gchar * format, gchar * source, ...)

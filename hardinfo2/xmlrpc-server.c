@@ -161,8 +161,8 @@ static void method_get_entry_list(SoupMessage * msg, GValueArray * params)
 
           soup_value_array_append(tuple, G_TYPE_STRING, module_entry->name);
           soup_value_array_append(tuple, G_TYPE_INT, module_entry->number);
+          
           soup_value_array_append(out, G_TYPE_VALUE_ARRAY, tuple);
-
           g_value_array_free(tuple);
       }
     }
@@ -209,7 +209,7 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
     }
     
     if (found) {
-        if (entry_number <= g_slist_length(module->entries)) {
+        if (entry_number < g_slist_length(module->entries)) {
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
@@ -227,27 +227,242 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
 static void method_entry_get_moreinfo(SoupMessage * msg,
 				      GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *module_name, *field_name, *answer = NULL;
+    gint entry_number;
+    gboolean found = FALSE;
+    
+    if (params->n_values != 2) {
+	args_error(msg, params, 2);
+	return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
+        type_error(msg, G_TYPE_STRING, params, 0);
+        return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
+        type_error(msg, G_TYPE_INT, params, 1);
+        return;
+    }
+    
+    for (modules = modules_get_list(); modules; modules = modules->next) {
+	module = (ShellModule *) modules->data;
+
+	if (!strncmp(module->name, module_name, strlen(module->name))) {
+	    found = TRUE;
+	    break;
+	}
+    }
+    
+    if (found) {
+        if (entry_number < g_slist_length(module->entries)) {
+          GSList *entry_node = g_slist_nth(module->entries, entry_number);
+          ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
+
+          answer = module_entry_get_moreinfo(entry);
+        }
+    }
+    
+    if (!answer) {
+        answer = g_strdup("");
+    }
+
+    soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
 }
 
 static void method_entry_reload(SoupMessage * msg, GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *module_name, *field_name;
+    gint entry_number;
+    gboolean found = FALSE, answer = FALSE;
+    
+    if (params->n_values != 3) {
+	args_error(msg, params, 3);
+	return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
+        type_error(msg, G_TYPE_STRING, params, 0);
+        return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
+        type_error(msg, G_TYPE_INT, params, 1);
+        return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 2, G_TYPE_STRING, &field_name)) {
+        type_error(msg, G_TYPE_STRING, params, 2);
+        return;
+    }
+
+    for (modules = modules_get_list(); modules; modules = modules->next) {
+	module = (ShellModule *) modules->data;
+
+	if (!strncmp(module->name, module_name, strlen(module->name))) {
+	    found = TRUE;
+	    break;
+	}
+    }
+    
+    if (found) {
+        if (entry_number < g_slist_length(module->entries)) {
+          GSList *entry_node = g_slist_nth(module->entries, entry_number);
+          ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
+
+          module_entry_reload(entry);
+          answer = TRUE;
+        }
+    }
+    
+    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, answer);
 }
 
 static void method_entry_scan(SoupMessage * msg, GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *module_name;
+    gint entry_number;
+    gboolean found = FALSE, answer = FALSE;
+    
+    if (params->n_values != 2) {
+	args_error(msg, params, 2);
+	return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
+        type_error(msg, G_TYPE_STRING, params, 0);
+        return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
+        type_error(msg, G_TYPE_STRING, params, 1);
+        return;
+    }
+
+    for (modules = modules_get_list(); modules; modules = modules->next) {
+	module = (ShellModule *) modules->data;
+
+	if (!strncmp(module->name, module_name, strlen(module->name))) {
+	    found = TRUE;
+	    break;
+	}
+    }
+    
+    if (found) {
+        if (entry_number < g_slist_length(module->entries)) {
+          GSList *entry_node = g_slist_nth(module->entries, entry_number);
+          ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
+
+          module_entry_scan(entry);
+          answer = TRUE;
+        }
+    }
+    
+    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, answer);
 }
 
 static void method_entry_function(SoupMessage * msg, GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *module_name, *answer = NULL;
+    gboolean found = FALSE;
+    gint entry_number;
+    
+    if (params->n_values != 2) {
+	args_error(msg, params, 2);
+	return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
+        type_error(msg, G_TYPE_STRING, params, 0);
+        return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
+        type_error(msg, G_TYPE_INT, params, 1);
+        return;
+    }
+
+    for (modules = modules_get_list(); modules; modules = modules->next) {
+	module = (ShellModule *) modules->data;
+
+	if (!strncmp(module->name, module_name, strlen(module->name))) {
+	    found = TRUE;
+	    break;
+	}
+    }
+    
+    if (found) {
+        if (entry_number < g_slist_length(module->entries)) {
+          GSList *entry_node = g_slist_nth(module->entries, entry_number);
+          ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
+
+          module_entry_scan(entry);
+          answer = module_entry_function(entry);
+        }
+    }
+    
+    if (!answer) {
+        answer = g_strdup("");
+    }
+
+    soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
 }
 
 static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *module_name, *answer = NULL;
+    gint entry_number;
+    gboolean found = FALSE;
+    
+    if (params->n_values != 2) {
+	args_error(msg, params, 2);
+	return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
+        type_error(msg, G_TYPE_STRING, params, 0);
+        return;
+    }
+    
+    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
+        type_error(msg, G_TYPE_INT, params, 1);
+        return;
+    }
+    
+    for (modules = modules_get_list(); modules; modules = modules->next) {
+	module = (ShellModule *) modules->data;
+
+	if (!strncmp(module->name, module_name, strlen(module->name))) {
+	    found = TRUE;
+	    break;
+	}
+    }
+    
+    if (found) {
+        if (entry_number < g_slist_length(module->entries)) {
+          GSList *entry_node = g_slist_nth(module->entries, entry_number);
+          ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
+
+          answer = g_strdup((gchar *)module_entry_get_note(entry));
+        }
+    }
+    
+    if (!answer) {
+        answer = g_strdup("");
+    }
+
+    soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
 }
 
 static void method_entry_scan_all(SoupMessage * msg, GValueArray * params)
@@ -403,7 +618,6 @@ int main(void)
 {
 #ifdef HAS_LIBSOUP
     g_type_init();
-    g_thread_init(NULL);
 
     xmlrpc_server_init();
     xmlrpc_server_start();
