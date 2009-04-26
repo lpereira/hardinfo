@@ -24,6 +24,8 @@
 #include <hardinfo.h>
 #include <config.h>
 
+#include "xmlrpc-client.h"
+
 /*
  * TODO
  *
@@ -67,9 +69,75 @@ struct _RemoteDialog {
 
 static RemoteDialog *remote_dialog_new(GtkWidget *parent);
 
+static gboolean remote_version_is_supported(void)
+{
+    shell_status_update("Obtaining remote server API version...");
+
+    switch (xmlrpc_get_integer("http://localhost:4242/xmlrpc", "server.getAPIVersion", NULL)) {
+    case -1:
+        g_warning("Remote Host didn't respond.");
+        break;
+    case 1:
+        return TRUE;
+    default:
+        g_warning("Remote Host has an unsupported API version.");
+    }
+
+    return FALSE;
+}
+
+static gboolean load_module_list()
+{
+    GValueArray *modules;
+    int i = 0;
+    
+    shell_status_update("Obtaining remote server module list...");
+    
+    modules = xmlrpc_get_array("http://localhost:4242/xmlrpc", "module.getModuleList", NULL);
+    if (!modules) {
+        return FALSE;
+    }
+    
+    for (; i < modules->n_values; i++) {
+        GValueArray *entries;
+        const gchar *module = g_value_get_string(&modules->values[i]);
+        int j = 0;
+        
+        DEBUG("%s", module);
+        
+        shell_status_pulse();
+        entries = xmlrpc_get_array("http://localhost:4242/xmlrpc", "module.getEntryList", "%s", module);
+        if (entries) {
+            for (; j < entries->n_values; j++) {
+                GValueArray *tuple = g_value_get_boxed(&entries->values[j]);
+                
+                DEBUG("--- %s [%s](%d)",
+                      g_value_get_string(&tuple->values[0]),
+                      g_value_get_string(&tuple->values[1]),
+                      j);
+            }
+            
+            g_value_array_free(entries);
+        }
+    }
+    
+    g_value_array_free(modules);
+    
+    return TRUE;
+}
+
 static void remote_connect(RemoteDialog *rd)
 {
-
+    xmlrpc_init();
+    
+    /* check API version */
+    if (remote_version_is_supported()) {
+        if (!load_module_list()) {
+            g_warning("Remote module list couldn't be loaded.");
+        }
+    }
+    
+    shell_status_update("Done.");
 }
 
 void remote_dialog_show(GtkWidget *parent)
@@ -83,6 +151,7 @@ void remote_dialog_show(GtkWidget *parent)
 	shell_status_set_enabled(TRUE);
 	
 	remote_connect(rd);
+	
 	shell_status_set_enabled(FALSE);
     }
 

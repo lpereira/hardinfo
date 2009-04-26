@@ -134,6 +134,7 @@ struct _ShellModuleMethod {
 struct _ShellModuleEntry {
     gchar		*name;
     GdkPixbuf		*icon;
+    gchar		*icon_file;
     gboolean		 selected;
     gint		 number;
     

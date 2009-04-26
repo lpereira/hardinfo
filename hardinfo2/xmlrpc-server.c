@@ -180,7 +180,7 @@ static void method_get_entry_list(SoupMessage * msg, GValueArray * params)
           tuple = soup_value_array_new();
 
           soup_value_array_append(tuple, G_TYPE_STRING, module_entry->name);
-          soup_value_array_append(tuple, G_TYPE_INT, module_entry->number);
+          soup_value_array_append(tuple, G_TYPE_STRING, module_entry->icon_file);
           
           soup_value_array_append(out, G_TYPE_VALUE_ARRAY, tuple);
           g_value_array_free(tuple);

@@ -637,6 +637,7 @@ static ShellModule *module_load(gchar * filename)
 	    if (params.gui_running) {
 		entry->icon = icon_cache_get_pixbuf(entries[i].icon);
 	    }
+	    entry->icon_file = entries[i].icon;
 
 	    g_module_symbol(module->dll, "hi_more_info",
 			    (gpointer) & (entry->morefunc));
