@@ -84,28 +84,6 @@ struct _MethodParameter {
   void *variable;
 };
 
-static gboolean validate_parameters(SoupMessage *msg, GValueArray *params,
-                                    ModuleParameter *module_params, gint n_params)
-{
-    int i;
-    
-    if (params->n_values != n_params) {
-        args_error(msg, params, n_params);
-        return FALSE;
-    }
-    
-    for (i = 0; i < n_params; i++) {
-        if (!soup_value_array_get_nth(params, i,
-                                      module_params[i].param_type,
-                                      module_params[i].variable)) {
-            type_error(msg, module_params[i].param_type, params, i);
-            return FALSE;
-        }
-    }
-    
-    return TRUE;
-}
-
 static void
 args_error(SoupMessage * msg, GValueArray * params, int expected)
 {
@@ -125,6 +103,28 @@ type_error(SoupMessage * msg, GType expected, GValueArray * params,
 			  bad_value + 1, g_type_name(expected),
 			  g_type_name(G_VALUE_TYPE
 				      (&params->values[bad_value])));
+}
+
+static gboolean validate_parameters(SoupMessage *msg, GValueArray *params,
+                                    MethodParameter *method_params, gint n_params)
+{
+    int i;
+    
+    if (params->n_values != n_params) {
+        args_error(msg, params, n_params);
+        return FALSE;
+    }
+    
+    for (i = 0; i < n_params; i++) {
+        if (!soup_value_array_get_nth(params, i,
+                                      method_params[i].param_type,
+                                      method_params[i].variable)) {
+            type_error(msg, method_params[i].param_type, params, i);
+            return FALSE;
+        }
+    }
+    
+    return TRUE;
 }
 
 static void method_get_module_list(SoupMessage * msg, GValueArray * params)
@@ -152,7 +152,7 @@ static void method_get_entry_list(SoupMessage * msg, GValueArray * params)
     GValueArray *out;
     gboolean found = FALSE;
     gchar *module_name;
-    MethodParam method_params[] = {
+    MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name }
     };
 
@@ -198,7 +198,7 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
     gchar *module_name, *field_name, *answer = NULL;
     gint entry_number;
     gboolean found = FALSE;
-    MethodParam method_params[] = {
+    MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name },
         { G_TYPE_INT, &entry_number },
         { G_TYPE_STRING, &field_name }
@@ -241,7 +241,7 @@ static void method_entry_get_moreinfo(SoupMessage * msg,
     gchar *module_name, *field_name, *answer = NULL;
     gint entry_number;
     gboolean found = FALSE;
-    MethodParam method_params[] = {
+    MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name },
         { G_TYPE_INT, &entry_number },
     };
@@ -282,7 +282,7 @@ static void method_entry_reload(SoupMessage * msg, GValueArray * params)
     gchar *module_name, *field_name;
     gint entry_number;
     gboolean found = FALSE, answer = FALSE;
-    MethodParam method_params[] = {
+    MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name },
         { G_TYPE_INT, &entry_number },
         { G_TYPE_STRING, &field_name },
@@ -321,7 +321,7 @@ static void method_entry_scan(SoupMessage * msg, GValueArray * params)
     gchar *module_name;
     gint entry_number;
     gboolean found = FALSE, answer = FALSE;
-    MethodParam method_params[] = {
+    MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name },
         { G_TYPE_INT, &entry_number },
     };
@@ -359,7 +359,7 @@ static void method_entry_function(SoupMessage * msg, GValueArray * params)
     gchar *module_name, *answer = NULL;
     gboolean found = FALSE;
     gint entry_number;
-    MethodParam method_params[] = {
+    MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name },
         { G_TYPE_INT, &entry_number },
     };
