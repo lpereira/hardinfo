@@ -1056,6 +1056,16 @@ void module_entry_scan(ShellModuleEntry * module_entry)
     }
 }
 
+gchar *module_entry_get_field(ShellModuleEntry * module_entry, gchar * field)
+{
+   if (module_entry->fieldfunc) {
+   	DEBUG("field=%s, entry=%s", field, module_entry->name);
+   	return module_entry->fieldfunc(field);
+   }
+   
+   return NULL;
+}
+
 gchar *module_entry_function(ShellModuleEntry * module_entry)
 {
     if (module_entry->func) {
