@@ -41,9 +41,6 @@ static void method_get_module_list(SoupMessage * msg,
 static void method_get_entry_list(SoupMessage * msg, GValueArray * params);
 static void method_entry_reload(SoupMessage * msg, GValueArray * params);
 static void method_entry_scan(SoupMessage * msg, GValueArray * params);
-static void method_entry_scan_all(SoupMessage * msg, GValueArray * params);
-static void method_entry_scan_all_except(SoupMessage * msg,
-					 GValueArray * params);
 static void method_entry_get_field(SoupMessage * msg,
 				   GValueArray * params);
 static void method_entry_get_moreinfo(SoupMessage * msg,
@@ -72,8 +69,6 @@ static const struct {
   { "module.entryGetNote",		method_entry_get_note },
   { "module.entryGetField",		method_entry_get_field },
   { "module.entryGetMoreInfo",		method_entry_get_moreinfo },
-  { "module.entryScanAll",		method_entry_scan_all },
-  { "module.entryScannAllExcept",	method_entry_scan_all_except },
   { "module.getAboutInfo",		method_get_about_info },
   { "module.callMethod",		method_call_method },
   { "module.callMethodParam",		method_call_method_param },
@@ -82,6 +77,34 @@ static const struct {
 
 static GHashTable *handlers = NULL;
 static GMainLoop *loop = NULL;
+
+typedef struct _MethodParameter MethodParameter;
+struct _MethodParameter {
+  int   param_type;
+  void *variable;
+};
+
+static gboolean validate_parameters(SoupMessage *msg, GValueArray *params,
+                                    ModuleParameter *module_params, gint n_params)
+{
+    int i;
+    
+    if (params->n_values != n_params) {
+        args_error(msg, params, n_params);
+        return FALSE;
+    }
+    
+    for (i = 0; i < n_params; i++) {
+        if (!soup_value_array_get_nth(params, i,
+                                      module_params[i].param_type,
+                                      module_params[i].variable)) {
+            type_error(msg, module_params[i].param_type, params, i);
+            return FALSE;
+        }
+    }
+    
+    return TRUE;
+}
 
 static void
 args_error(SoupMessage * msg, GValueArray * params, int expected)
@@ -129,15 +152,12 @@ static void method_get_entry_list(SoupMessage * msg, GValueArray * params)
     GValueArray *out;
     gboolean found = FALSE;
     gchar *module_name;
+    MethodParam method_params[] = {
+        { G_TYPE_STRING, &module_name }
+    };
 
-    if (params->n_values != 1) {
-	args_error(msg, params, 1);
-	return;
-    }
-
-    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
-	type_error(msg, G_TYPE_STRING, params, 0);
-	return;
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+        return;
     }
 
     for (modules = modules_get_list(); modules; modules = modules->next) {
@@ -178,24 +198,13 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
     gchar *module_name, *field_name, *answer = NULL;
     gint entry_number;
     gboolean found = FALSE;
-    
-    if (params->n_values != 3) {
-	args_error(msg, params, 2);
-	return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
-        type_error(msg, G_TYPE_STRING, params, 0);
-        return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
-        type_error(msg, G_TYPE_INT, params, 1);
-        return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 2, G_TYPE_STRING, &field_name)) {
-        type_error(msg, G_TYPE_STRING, params, 2);
+    MethodParam method_params[] = {
+        { G_TYPE_STRING, &module_name },
+        { G_TYPE_INT, &entry_number },
+        { G_TYPE_STRING, &field_name }
+    };
+
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
         return;
     }
 
@@ -232,22 +241,15 @@ static void method_entry_get_moreinfo(SoupMessage * msg,
     gchar *module_name, *field_name, *answer = NULL;
     gint entry_number;
     gboolean found = FALSE;
-    
-    if (params->n_values != 2) {
-	args_error(msg, params, 2);
-	return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
-        type_error(msg, G_TYPE_STRING, params, 0);
+    MethodParam method_params[] = {
+        { G_TYPE_STRING, &module_name },
+        { G_TYPE_INT, &entry_number },
+    };
+
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
         return;
     }
-    
-    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
-        type_error(msg, G_TYPE_INT, params, 1);
-        return;
-    }
-    
+
     for (modules = modules_get_list(); modules; modules = modules->next) {
 	module = (ShellModule *) modules->data;
 
@@ -280,24 +282,13 @@ static void method_entry_reload(SoupMessage * msg, GValueArray * params)
     gchar *module_name, *field_name;
     gint entry_number;
     gboolean found = FALSE, answer = FALSE;
-    
-    if (params->n_values != 3) {
-	args_error(msg, params, 3);
-	return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
-        type_error(msg, G_TYPE_STRING, params, 0);
-        return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
-        type_error(msg, G_TYPE_INT, params, 1);
-        return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 2, G_TYPE_STRING, &field_name)) {
-        type_error(msg, G_TYPE_STRING, params, 2);
+    MethodParam method_params[] = {
+        { G_TYPE_STRING, &module_name },
+        { G_TYPE_INT, &entry_number },
+        { G_TYPE_STRING, &field_name },
+    };
+
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
         return;
     }
 
@@ -330,19 +321,12 @@ static void method_entry_scan(SoupMessage * msg, GValueArray * params)
     gchar *module_name;
     gint entry_number;
     gboolean found = FALSE, answer = FALSE;
-    
-    if (params->n_values != 2) {
-	args_error(msg, params, 2);
-	return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
-        type_error(msg, G_TYPE_STRING, params, 0);
-        return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
-        type_error(msg, G_TYPE_STRING, params, 1);
+    MethodParam method_params[] = {
+        { G_TYPE_STRING, &module_name },
+        { G_TYPE_INT, &entry_number },
+    };
+
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
         return;
     }
 
@@ -375,22 +359,15 @@ static void method_entry_function(SoupMessage * msg, GValueArray * params)
     gchar *module_name, *answer = NULL;
     gboolean found = FALSE;
     gint entry_number;
-    
-    if (params->n_values != 2) {
-	args_error(msg, params, 2);
-	return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
-        type_error(msg, G_TYPE_STRING, params, 0);
-        return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
-        type_error(msg, G_TYPE_INT, params, 1);
-        return;
-    }
+    MethodParam method_params[] = {
+        { G_TYPE_STRING, &module_name },
+        { G_TYPE_INT, &entry_number },
+    };
 
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+        return;
+    }
+    
     for (modules = modules_get_list(); modules; modules = modules->next) {
 	module = (ShellModule *) modules->data;
 
@@ -417,6 +394,7 @@ static void method_entry_function(SoupMessage * msg, GValueArray * params)
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
 }
 
+
 static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
 {
     ShellModule *module;
@@ -424,19 +402,12 @@ static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
     gchar *module_name, *answer = NULL;
     gint entry_number;
     gboolean found = FALSE;
+    MethodParameter method_params[] = {
+        { G_TYPE_STRING, &module_name },
+        { G_TYPE_INT, &entry_number },
+    };
     
-    if (params->n_values != 2) {
-	args_error(msg, params, 2);
-	return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 0, G_TYPE_STRING, &module_name)) {
-        type_error(msg, G_TYPE_STRING, params, 0);
-        return;
-    }
-    
-    if (!soup_value_array_get_nth(params, 1, G_TYPE_INT, &entry_number)) {
-        type_error(msg, G_TYPE_INT, params, 1);
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
         return;
     }
     
@@ -463,17 +434,6 @@ static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
-}
-
-static void method_entry_scan_all(SoupMessage * msg, GValueArray * params)
-{
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
-}
-
-static void method_entry_scan_all_except(SoupMessage * msg,
-					 GValueArray * params)
-{
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
 }
 
 static void method_get_about_info(SoupMessage * msg, GValueArray * params)
