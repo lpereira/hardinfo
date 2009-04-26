@@ -156,7 +156,7 @@ static void method_get_entry_list(SoupMessage * msg, GValueArray * params)
         { G_TYPE_STRING, &module_name }
     };
 
-    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
 
@@ -204,7 +204,7 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
         { G_TYPE_STRING, &field_name }
     };
 
-    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
 
@@ -246,7 +246,7 @@ static void method_entry_get_moreinfo(SoupMessage * msg,
         { G_TYPE_INT, &entry_number },
     };
 
-    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
 
@@ -288,7 +288,7 @@ static void method_entry_reload(SoupMessage * msg, GValueArray * params)
         { G_TYPE_STRING, &field_name },
     };
 
-    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
 
@@ -326,7 +326,7 @@ static void method_entry_scan(SoupMessage * msg, GValueArray * params)
         { G_TYPE_INT, &entry_number },
     };
 
-    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
 
@@ -364,7 +364,7 @@ static void method_entry_function(SoupMessage * msg, GValueArray * params)
         { G_TYPE_INT, &entry_number },
     };
 
-    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
     
@@ -407,7 +407,7 @@ static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
         { G_TYPE_INT, &entry_number },
     };
     
-    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(params))) {
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
     
@@ -438,18 +438,87 @@ static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
 
 static void method_get_about_info(SoupMessage * msg, GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *module_name;
+    gint entry_number;
+    gboolean found = FALSE;
+    GValueArray *out;
+    MethodParameter method_params[] = {
+        { G_TYPE_STRING, &module_name },
+    };
+    
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
+        return;
+    }
+    
+    for (modules = modules_get_list(); modules; modules = modules->next) {
+	module = (ShellModule *) modules->data;
+
+	if (!strncmp(module->name, module_name, strlen(module->name))) {
+	    found = TRUE;
+	    break;
+	}
+    }
+    
+    out = soup_value_array_new();
+
+    if (found) {
+        ModuleAbout *about = module_get_about(module);
+
+        soup_value_array_append(out, G_TYPE_STRING, about->description);
+        soup_value_array_append(out, G_TYPE_STRING, about->author);
+        soup_value_array_append(out, G_TYPE_STRING, about->version);
+        soup_value_array_append(out, G_TYPE_STRING, about->license);
+    }
+
+    soup_xmlrpc_set_response(msg, G_TYPE_VALUE_ARRAY, out);
 }
 
 static void method_call_method(SoupMessage * msg, GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *method_name, *answer = NULL;
+    gint entry_number;
+    gboolean found = FALSE;
+    MethodParameter method_params[] = {
+        { G_TYPE_STRING, &method_name },
+    };
+    
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
+        return;
+    }
+    
+    if (!(answer = module_call_method(method_name))) {
+        answer = g_strdup("");
+    }
+
+    soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
 }
 
 static void method_call_method_param(SoupMessage * msg,
 				     GValueArray * params)
 {
-    soup_xmlrpc_set_response(msg, G_TYPE_BOOLEAN, FALSE);
+    ShellModule *module;
+    GSList *modules;
+    gchar *method_name, *parameter, *answer = NULL;
+    gint entry_number;
+    gboolean found = FALSE;
+    MethodParameter method_params[] = {
+        { G_TYPE_STRING, &method_name },
+        { G_TYPE_STRING, &parameter },
+    };
+    
+    if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
+        return;
+    }
+    
+    if (!(answer = module_call_method_param(method_name, parameter))) {
+        answer = g_strdup("");
+    }
+
+    soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
 }
 
 static void method_get_api_version(SoupMessage * msg, GValueArray * params)
