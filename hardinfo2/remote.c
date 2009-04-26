@@ -69,7 +69,7 @@ static RemoteDialog *remote_dialog_new(GtkWidget *parent);
 
 static void remote_connect(RemoteDialog *rd)
 {
-    
+
 }
 
 void remote_dialog_show(GtkWidget *parent)
@@ -114,19 +114,22 @@ static void populate_store(GtkListStore * store)
         for (i = 0; i < no_hosts; i++) {
             gchar *hostname;
             gchar *hostgroup;
+            gchar *icon;
             
             hostgroup = g_strdup_printf("Host%d", i);
             
             hostname = g_key_file_get_string(remote, hostgroup, "name", NULL);
+            icon = g_key_file_get_string(remote, hostgroup, "icon", NULL);
         
             gtk_list_store_append(store, &iter);
             gtk_list_store_set(store, &iter,
-                               0, icon_cache_get_pixbuf("server.png"),
+                               0, icon_cache_get_pixbuf(icon ? icon : "server.png"),
                                1, hostname,
                                2, GINT_TO_POINTER(i),
                                -1);
             
             g_free(hostgroup);
+            g_free(icon);
         }
     }
     

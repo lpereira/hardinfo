@@ -97,6 +97,7 @@ gchar	     *find_program(gchar *program_name);
 inline gchar *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
+GSList	     *modules_get_list(void);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
 ModuleAbout  *module_get_about(ShellModule *module);

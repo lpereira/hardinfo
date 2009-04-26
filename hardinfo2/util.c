@@ -807,6 +807,13 @@ static GSList *modules_check_deps(GSList * modules)
     return modules;
 }
 
+static GSList *modules_list = NULL;
+
+GSList *modules_get_list()
+{
+    return modules_list;
+}
+
 static GSList *modules_load(gchar ** module_list)
 {
     GDir *dir;
@@ -845,7 +852,8 @@ static GSList *modules_load(gchar ** module_list)
 	}
     }
 
-    return g_slist_sort(modules, module_cmp);
+    modules_list = g_slist_sort(modules, module_cmp);
+    return modules_list;
 }
 
 GSList *modules_load_selected(void)

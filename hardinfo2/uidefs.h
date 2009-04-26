@@ -5,6 +5,8 @@ char *uidefs_str = "<ui>" \
 "	<menubar>" \
 "	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
 "		<menuitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
+"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" \
+"		<separator/>" \
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
 "		<separator/>" \
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \
@@ -12,8 +14,6 @@ char *uidefs_str = "<ui>" \
  * Save Image is not ready for prime time. Yet.
  * "<menuitem name=\"SaveGraph\" action=\"SaveGraphAction\" />" \
  */
-"		<separator/>" \
-"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" \
 "		<separator/>" \
 "		<menuitem name=\"Quit\" action=\"QuitAction\" />" \
 "	</menu>" \
