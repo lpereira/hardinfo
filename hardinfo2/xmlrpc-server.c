@@ -231,6 +231,7 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
+    g_free(answer);
 }
 
 static void method_entry_get_moreinfo(SoupMessage * msg,
@@ -273,6 +274,7 @@ static void method_entry_get_moreinfo(SoupMessage * msg,
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
+    g_free(answer);
 }
 
 static void method_entry_reload(SoupMessage * msg, GValueArray * params)
@@ -392,6 +394,7 @@ static void method_entry_function(SoupMessage * msg, GValueArray * params)
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
+    g_free(answer);
 }
 
 
@@ -434,6 +437,7 @@ static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
+    g_free(answer);
 }
 
 static void method_get_about_info(SoupMessage * msg, GValueArray * params)
@@ -473,6 +477,7 @@ static void method_get_about_info(SoupMessage * msg, GValueArray * params)
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_VALUE_ARRAY, out);
+    g_value_array_free(out);
 }
 
 static void method_call_method(SoupMessage * msg, GValueArray * params)
@@ -495,6 +500,7 @@ static void method_call_method(SoupMessage * msg, GValueArray * params)
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
+    g_free(answer);
 }
 
 static void method_call_method_param(SoupMessage * msg,
@@ -519,6 +525,7 @@ static void method_call_method_param(SoupMessage * msg,
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
+    g_free(answer);
 }
 
 static void method_get_api_version(SoupMessage * msg, GValueArray * params)
