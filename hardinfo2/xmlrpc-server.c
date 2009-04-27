@@ -137,6 +137,8 @@ static void method_get_module_list(SoupMessage * msg, GValueArray * params)
     for (modules = modules_get_list(); modules; modules = modules->next) {
 	ShellModule *module = (ShellModule *) modules->data;
 
+        /* gchar *name = g_path_get_basename(g_module_name(module->dll)); */
+
 	soup_value_array_append(out, G_TYPE_STRING, module->name);
     }
 

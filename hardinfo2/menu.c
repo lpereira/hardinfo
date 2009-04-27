@@ -53,7 +53,7 @@ static GtkActionEntry entries[] = {
      G_CALLBACK(cb_sync_manager)},
      
     {"ConnectToAction", GTK_STOCK_CONNECT,
-     "_Connect to...", NULL,
+     "_Connect to", NULL,
      NULL,
      G_CALLBACK(cb_connect_to)},
 

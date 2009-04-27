@@ -113,6 +113,14 @@ void sync_manager_add_entry(SyncEntry * entry)
 #endif				/* HAS_LIBSOUP */
 }
 
+void sync_manager_clear_entries(void)
+{
+    DEBUG("clearing syncmanager entries");
+    
+    g_slist_free(entries);
+    entries = NULL;
+}
+
 void sync_manager_show(GtkWidget *parent)
 {
 #ifndef HAS_LIBSOUP

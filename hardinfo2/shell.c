@@ -249,6 +249,7 @@ void shell_view_set_enabled(gboolean setting)
 
     gtk_widget_set_sensitive(shell->hpaned, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
+    shell_action_set_enabled("ConnectToAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
     shell_action_set_enabled("CopyAction", setting);
     shell_action_set_enabled("ReportAction", setting);
@@ -419,6 +420,7 @@ static void view_menu_select_entry(gpointer data, gpointer data2)
 static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 {
     gchar *about_module = g_strdup_printf("AboutModule%s", name);
+    gint merge_id;
 
     GtkActionEntry entries[] = {
 	{
@@ -443,22 +445,27 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 
     gtk_action_group_add_actions(shell->action_group, entries, 2, NULL);
 
+    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
-			  gtk_ui_manager_new_merge_id(shell->ui_manager),
+                          merge_id,
 			  "/menubar/ViewMenu/LastSep",
 			  name, name, GTK_UI_MANAGER_MENU, TRUE);
-
+    shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
+        
+    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
-			  gtk_ui_manager_new_merge_id(shell->ui_manager),
+                          merge_id,
 			  "/menubar/HelpMenu/HelpMenuModules/LastSep",
 			  about_module, about_module, GTK_UI_MANAGER_AUTO,
 			  TRUE);
+    shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
 }
 
 static void
 add_module_entry_to_view_menu(gchar * module, gchar * name,
 			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
 {
+    gint merge_id;
     GtkActionEntry entries[] = {
 	{
 	 name,			/* name */
@@ -473,10 +480,12 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
     stock_icon_register_pixbuf(pixbuf, name);
     gtk_action_group_add_actions(shell->action_group, entries, 1, iter);
 
+    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
-			  gtk_ui_manager_new_merge_id(shell->ui_manager),
+                          merge_id,
 			  g_strdup_printf("/menubar/ViewMenu/%s", module),
 			  name, name, GTK_UI_MANAGER_AUTO, FALSE);
+    shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
 }
 
 static void add_modules_to_gui(gpointer data, gpointer user_data)
@@ -545,6 +554,7 @@ void shell_init(GSList * modules)
 
     create_window();
 
+    shell_action_set_property("ConnectToAction", "is-important", TRUE);
     shell_action_set_property("CopyAction", "is-important", TRUE);
     shell_action_set_property("RefreshAction", "is-important", TRUE);
     shell_action_set_property("ReportAction", "is-important", TRUE);

@@ -100,6 +100,7 @@ void          open_url(gchar *url);
 GSList	     *modules_get_list(void);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
+void	      module_unload_all(void);
 ModuleAbout  *module_get_about(ShellModule *module);
 gchar        *seconds_to_string(unsigned int seconds);
 
@@ -116,6 +117,7 @@ gchar	     *module_entry_function(ShellModuleEntry *module_entry);
 const gchar  *module_entry_get_note(ShellModuleEntry *module_entry);
 gchar        *module_entry_get_field(ShellModuleEntry * module_entry, gchar * field);
 gchar        *module_entry_get_moreinfo(ShellModuleEntry * module_entry);
+
 
 /* BinReloc stuff */
 gboolean binreloc_init(gboolean try_hardcoded);

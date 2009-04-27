@@ -98,6 +98,9 @@ static gboolean load_module_list()
         return FALSE;
     }
     
+    shell_status_update("Unloading local modules...");
+    module_unload_all();
+    
     for (; i < modules->n_values; i++) {
         GValueArray *entries;
         const gchar *module = g_value_get_string(&modules->values[i]);

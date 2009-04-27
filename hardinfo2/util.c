@@ -45,6 +45,8 @@
 #define MiB 1048576
 #define GiB 1073741824
 
+static GSList *modules_list = NULL;
+
 gchar *find_program(gchar *program_name)
 {
     int i;
@@ -577,6 +579,57 @@ gchar *module_call_method_param(gchar * method, gchar * parameter)
     return function ? g_strdup(function(parameter)) : NULL;
 }
 
+static gboolean remove_module_methods(gpointer key, gpointer value, gpointer data)
+{
+    return g_str_has_prefix(key, data);
+}
+
+static void module_unload(ShellModule * module)
+{
+    GSList *entry;
+    gchar *name;
+    
+    name = g_path_get_basename(g_module_name(module->dll));
+    g_hash_table_foreach_remove(__module_methods, remove_module_methods, name);
+    
+    g_module_close(module->dll);
+    g_free(module->name);
+    gdk_pixbuf_unref(module->icon);
+    
+    for (entry = module->entries; entry; entry = entry->next) {
+    	g_free(entry->data);
+    }
+    
+    g_slist_free(module->entries);
+    g_free(module);
+    g_free(name);
+}
+
+void module_unload_all(void)
+{
+    Shell *shell;
+    GSList *module, *merge_id;
+
+    shell = shell_get_main_shell();
+    
+    for (module = shell->tree->modules; module; module = module->next) {
+    	module_unload((ShellModule *)module->data);
+    }
+        
+    for (merge_id = shell->merge_ids; merge_id; merge_id = merge_id->next) {
+    	gtk_ui_manager_remove_ui(shell->ui_manager,
+			         GPOINTER_TO_INT(merge_id->data));
+    }
+    
+    gtk_tree_store_clear(GTK_TREE_STORE(shell->tree->model));
+    sync_manager_clear_entries();
+    
+    g_slist_free(shell->tree->modules);
+    g_slist_free(shell->merge_ids);
+    shell->merge_ids = NULL;
+    shell->tree->modules = NULL;
+}
+
 static ShellModule *module_load(gchar * filename)
 {
     ShellModule *module;
@@ -808,7 +861,6 @@ static GSList *modules_check_deps(GSList * modules)
     return modules;
 }
 
-static GSList *modules_list = NULL;
 
 GSList *modules_get_list()
 {

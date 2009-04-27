@@ -35,6 +35,7 @@ struct _SyncEntry {
 };
 
 void sync_manager_add_entry(SyncEntry *entry);
+void sync_manager_clear_entries(void);
 void sync_manager_show(GtkWidget *parent);
 gint sync_manager_count_entries(void);
 

@@ -85,6 +85,7 @@ struct _Shell {
 
     GtkActionGroup	*action_group;
     GtkUIManager	*ui_manager;
+    GSList		*merge_ids;
 
     ShellViewType	 view_type;
     gboolean		 normalize_percentage;

@@ -43,6 +43,8 @@ char *uidefs_str = "<ui>" \
 "		<placeholder name=\"ToolItems\">" \
 "			<toolitem name=\"Refresh\" action=\"RefreshAction\"/>" \
 "			<separator/>" \
+"   		        <toolitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
+"			<separator/>" \
 "			<toolitem name=\"Copy\" action=\"CopyAction\"/>" \
 "			<toolitem name=\"Report\" action=\"ReportAction\"/>" \
 "		</placeholder>" \
