@@ -82,6 +82,19 @@ void shell_ui_manager_set_visible(const gchar * path, gboolean setting)
 	gtk_widget_hide(widget);
 }
 
+void shell_clear_tree_models(Shell *shell)
+{
+    gtk_tree_store_clear(GTK_TREE_STORE(shell->tree->model));
+    gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
+    gtk_tree_store_clear(GTK_TREE_STORE(shell->moreinfo->model));
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+}
+
+void shell_clear_timeouts(Shell *shell)
+{
+    h_hash_table_remove_all(update_tbl);
+}
+
 void shell_action_set_property(const gchar * action_name,
 			       const gchar * property, gboolean setting)
 {
@@ -346,6 +359,11 @@ static ShellNote *note_new(void)
     return note;
 }
 
+void shell_reset_title(Shell *shell)
+{
+    gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
+}
+
 static void create_window(void)
 {
     GtkWidget *vbox, *hbox;
@@ -355,7 +373,7 @@ static void create_window(void)
     shell->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_icon(GTK_WINDOW(shell->window),
 			icon_cache_get_pixbuf("logo.png"));
-    gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
+    shell_reset_title(shell);
     gtk_window_set_default_size(GTK_WINDOW(shell->window), 800, 600);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 

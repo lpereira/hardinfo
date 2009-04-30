@@ -626,16 +626,10 @@ void module_unload_all(void)
 			         GPOINTER_TO_INT(merge_id->data));
     }
     
-    gtk_tree_store_clear(GTK_TREE_STORE(shell->tree->model));
     sync_manager_clear_entries();
-    
-    /* TODO FIXME clear shell::update_tbl */
-    
-    gtk_tree_store_clear(GTK_TREE_STORE(shell->tree->model));
-    gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
-    gtk_tree_store_clear(GTK_TREE_STORE(shell->moreinfo->model));
-    
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+    shell_clear_timeouts(shell);
+    shell_clear_tree_models(shell);
+    shell_reset_title(shell);
     
     g_slist_free(shell->tree->modules);
     g_slist_free(shell->merge_ids);
@@ -769,19 +763,6 @@ static void module_entry_free(gpointer data, gpointer user_data)
 
 	g_free(entry);
     }
-}
-
-void module_free(ShellModule * module)
-{
-    g_free(module->name);
-    g_object_unref(module->icon);
-    g_module_close(module->dll);
-
-    DEBUG("module_free: module->entries, %p\n", module->entries);
-    g_slist_foreach(module->entries, (GFunc) module_entry_free, NULL);
-    g_slist_free(module->entries);
-
-    g_free(module);
 }
 
 ModuleAbout *module_get_about(ShellModule * module)
