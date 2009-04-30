@@ -86,6 +86,46 @@ static gboolean remote_version_is_supported(void)
     return FALSE;
 }
 
+static gchar *remote_module_entry_func()
+{
+    Shell *shell = shell_get_main_shell();
+    
+    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryFunction",
+                             "%s%i", shell->selected_module_name, shell->selected->number);
+}
+
+static gchar *remote_module_entry_scan_func()
+{
+    Shell *shell = shell_get_main_shell();
+    
+    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryScan",
+                             "%s%i", shell->selected_module_name, shell->selected->number);
+}
+
+static gchar *remote_module_entry_field_func(gchar *entry)
+{
+    Shell *shell = shell_get_main_shell();
+    
+    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetField",
+                             "%s%i%s", shell->selected_module_name, shell->selected->number, entry);
+}
+
+static gchar *remote_module_entry_more_func(gchar *entry)
+{
+    Shell *shell = shell_get_main_shell();
+    
+    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetMoreInfo",
+                             "%s%i%s", shell->selected_module_name, shell->selected->number, entry);
+}
+
+static gchar *remote_module_entry_note_func(gint entry)
+{
+    Shell *shell = shell_get_main_shell();
+    
+    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetNote",
+                             "%s%i", shell->selected_module_name, shell->selected->number);
+}
+
 static gboolean load_module_list()
 {
     GValueArray *modules;
@@ -209,6 +249,86 @@ static void populate_store(GtkListStore * store)
     g_key_file_free(remote);
 }
 
+static GtkWidget *host_editor_dialog_new(GtkWidget *parent, gchar *title)
+{
+    GtkWidget *dialog, *dialog1_action_area, *button7, *button8;
+    
+    dialog = gtk_dialog_new();
+    gtk_window_set_title(GTK_WINDOW(dialog), title);
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+    gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
+    gtk_window_set_position(GTK_WINDOW(dialog),
+			    GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog),
+			     GDK_WINDOW_TYPE_HINT_DIALOG);
+
+    dialog1_action_area = GTK_DIALOG(dialog)->action_area;
+    gtk_widget_show(dialog1_action_area);
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
+			      GTK_BUTTONBOX_END);
+
+    button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+    gtk_widget_show(button8);
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
+				 GTK_RESPONSE_CANCEL);
+    GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
+
+    button7 = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+    gtk_widget_show(button7);
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
+				 GTK_RESPONSE_ACCEPT);
+    GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
+
+    return dialog;
+}
+
+static void remote_dialog_add(GtkWidget *button, gpointer data)
+{
+    RemoteDialog *rd = (RemoteDialog *)data;
+    GtkWidget *host_editor = host_editor_dialog_new(rd->dialog, "Add a host");
+
+    if (gtk_dialog_run(GTK_DIALOG(host_editor)) == GTK_RESPONSE_ACCEPT) {
+        DEBUG("saving");
+    }
+
+    gtk_widget_destroy(host_editor);
+}
+
+static void remote_dialog_edit(GtkWidget *button, gpointer data)
+{
+    RemoteDialog *rd = (RemoteDialog *)data;
+    GtkWidget *host_editor = host_editor_dialog_new(rd->dialog, "Edit a host");
+
+    if (gtk_dialog_run(GTK_DIALOG(host_editor)) == GTK_RESPONSE_ACCEPT) {
+        DEBUG("saving");
+    }
+
+    gtk_widget_destroy(host_editor);
+}
+
+static void remote_dialog_remove(GtkWidget *button, gpointer data)
+{
+    RemoteDialog *rd = (RemoteDialog *)data;
+    GtkWidget *dialog;
+
+    dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_QUESTION,
+                                    GTK_BUTTONS_NONE,
+                                    "Remove the host <b>%s</b>?", "selected.host.name");
+
+    gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+                           GTK_STOCK_NO, GTK_RESPONSE_REJECT,
+                           GTK_STOCK_DELETE, GTK_RESPONSE_ACCEPT, NULL);
+
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        DEBUG("removing");
+    }
+
+    gtk_widget_destroy(dialog);
+}
+
 static RemoteDialog *remote_dialog_new(GtkWidget *parent)
 {
     RemoteDialog *rd;
@@ -311,22 +431,22 @@ static RemoteDialog *remote_dialog_new(GtkWidget *parent)
     gtk_widget_show(button3);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button3);
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
-//    g_signal_connect(button3, "clicked",
-//		     G_CALLBACK(remote_dialog_sel_none), rd);
+    g_signal_connect(button3, "clicked",
+		     G_CALLBACK(remote_dialog_add), rd);
 
     button6 = gtk_button_new_with_mnemonic("_Edit");
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
-//    g_signal_connect(button6, "clicked", G_CALLBACK(remote_dialog_sel_all),
-//		     rd);
+    g_signal_connect(button6, "clicked", G_CALLBACK(remote_dialog_edit),
+		     rd);
 
     button6 = gtk_button_new_with_mnemonic("_Remove");
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
-//    g_signal_connect(button6, "clicked", G_CALLBACK(remote_dialog_sel_all),
-//		     rd);
+    g_signal_connect(button6, "clicked", G_CALLBACK(remote_dialog_remove),
+		     rd);
 
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
     gtk_widget_show(dialog1_action_area);

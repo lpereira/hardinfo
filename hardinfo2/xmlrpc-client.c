@@ -179,9 +179,9 @@ static void xmlrpc_response_get_array(SoupSession *s,
 }                                
 
 GValueArray *xmlrpc_get_array(gchar *addr,
-                                     gchar *method,
-                                     const gchar *param_types,
-                                     ...)
+                              gchar *method,
+                              const gchar *param_types,
+                              ...)
 {
     GValueArray *params, *answer = NULL;
     SoupMessage *msg;

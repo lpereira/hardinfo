@@ -92,6 +92,8 @@ struct _Shell {
     
     gint		_pulses;
     ShellOrderType	_order_type;
+    
+    gchar		*selected_module_name;
 };
 
 struct _ShellTree {

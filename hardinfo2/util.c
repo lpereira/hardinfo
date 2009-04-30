@@ -407,12 +407,14 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &autoload_deps,
 	 .description = "automatically load module dependencies"},
+#ifdef HAS_LIBSOUP
 	{
 	 .long_name = "xmlrpc-server",
 	 .short_name = 'x',
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &run_xmlrpc_server,
 	 .description = "run in XML-RPC server mode"},
+#endif	/* HAS_LIBSOUP */
 	{
 	 .long_name = "version",
 	 .short_name = 'v',
@@ -1112,7 +1114,6 @@ void module_entry_scan(ShellModuleEntry * module_entry)
 gchar *module_entry_get_field(ShellModuleEntry * module_entry, gchar * field)
 {
    if (module_entry->fieldfunc) {
-   	DEBUG("field=%s, entry=%s", field, module_entry->name);
    	return module_entry->fieldfunc(field);
    }
    
@@ -1122,16 +1123,16 @@ gchar *module_entry_get_field(ShellModuleEntry * module_entry, gchar * field)
 gchar *module_entry_function(ShellModuleEntry * module_entry)
 {
     if (module_entry->func) {
-	return g_strdup(module_entry->func());
+	return module_entry->func();
     }
 
-    return g_strdup("[Error]\n" "Invalid module=");
+    return NULL;
 }
 
-gchar *module_entry_get_moreinfo(ShellModuleEntry * module_entry)
+gchar *module_entry_get_moreinfo(ShellModuleEntry * module_entry, gchar * field)
 {
     if (module_entry->morefunc) {
-	return g_strdup(module_entry->morefunc(module_entry->name));
+	return module_entry->morefunc(field);
     }
 
     return NULL;
