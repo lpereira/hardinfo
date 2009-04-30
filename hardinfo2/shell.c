@@ -1261,15 +1261,14 @@ static void module_selected(gpointer data)
 {
     ShellTree *shelltree = shell->tree;
     GtkTreeModel *model = GTK_TREE_MODEL(shelltree->model);
-    GtkTreeIter parent;
+    GtkTreeIter iter, parent;
     ShellModuleEntry *entry;
     static ShellModuleEntry *current = NULL;
     static gboolean updating = FALSE;
 
     /* Gets the currently selected item on the left-side TreeView; if there is no
        selection, silently return */
-    if (!gtk_tree_selection_get_selected
-	(shelltree->selection, &model, &parent)) {
+    if (!gtk_tree_selection_get_selected(shelltree->selection, &model, &iter)) {
 	return;
     }
 
@@ -1286,12 +1285,17 @@ static void module_selected(gpointer data)
     }
 
     /* Get the current selection and shows its related info */
-    gtk_tree_model_get(model, &parent, TREE_COL_DATA, &entry, -1);
+    gtk_tree_model_get(model, &iter, TREE_COL_DATA, &entry, -1);
     if (entry && !entry->selected) {
+        GtkTreeIter parent;
 	gchar *title;
 
 	shell_status_set_enabled(TRUE);
 	shell_status_update("Updating...");
+	
+	g_free(shell->selected_module_name);
+	gtk_tree_model_iter_parent(model, &parent, &iter);
+        gtk_tree_model_get(model, &parent, TREE_COL_NAME, &shell->selected_module_name, -1);
 
 	entry->selected = TRUE;
 	shell->selected = entry;
@@ -1309,7 +1313,7 @@ static void module_selected(gpointer data)
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);
 
-	title = g_strdup_printf("%s - System Information", entry->name);
+	title = g_strdup_printf("%s - %s - System Information", shell->selected_module_name, entry->name);
 	gtk_window_set_title(GTK_WINDOW(shell->window), title);
 	g_free(title);
 
