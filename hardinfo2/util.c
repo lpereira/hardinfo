@@ -599,7 +599,10 @@ static void module_unload(ShellModule * module)
     gdk_pixbuf_unref(module->icon);
     
     for (entry = module->entries; entry; entry = entry->next) {
-    	g_free(entry->data);
+	ShellModuleEntry *e = (ShellModuleEntry *)entry->data;
+	
+	g_source_remove_by_user_data(e);
+    	g_free(e);
     }
     
     g_slist_free(module->entries);
@@ -626,10 +629,19 @@ void module_unload_all(void)
     gtk_tree_store_clear(GTK_TREE_STORE(shell->tree->model));
     sync_manager_clear_entries();
     
+    /* TODO FIXME clear shell::update_tbl */
+    
+    gtk_tree_store_clear(GTK_TREE_STORE(shell->tree->model));
+    gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
+    gtk_tree_store_clear(GTK_TREE_STORE(shell->moreinfo->model));
+    
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+    
     g_slist_free(shell->tree->modules);
     g_slist_free(shell->merge_ids);
     shell->merge_ids = NULL;
     shell->tree->modules = NULL;
+    shell->selected = NULL;
 }
 
 static ShellModule *module_load(gchar * filename)

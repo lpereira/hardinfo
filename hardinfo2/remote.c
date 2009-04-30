@@ -222,13 +222,13 @@ static void populate_store(GtkListStore * store)
     if (g_key_file_load_from_file(remote, path, 0, NULL)) {
         gint no_hosts, i;
         
-        no_hosts = g_key_file_get_integer(remote, "$Global$", "no_hosts", NULL);
+        no_hosts = g_key_file_get_integer(remote, "global", "no_hosts", NULL);
         for (i = 0; i < no_hosts; i++) {
             gchar *hostname;
             gchar *hostgroup;
             gchar *icon;
             
-            hostgroup = g_strdup_printf("Host%d", i);
+            hostgroup = g_strdup_printf("host%d", i);
             
             hostname = g_key_file_get_string(remote, hostgroup, "name", NULL);
             icon = g_key_file_get_string(remote, hostgroup, "icon", NULL);
