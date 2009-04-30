@@ -119,7 +119,16 @@ static gboolean validate_parameters(SoupMessage *msg, GValueArray *params,
         if (!soup_value_array_get_nth(params, i,
                                       method_params[i].param_type,
                                       method_params[i].variable)) {
+            int j;
+            
             type_error(msg, method_params[i].param_type, params, i);
+            
+            for (j = 0; j < i; j++) {
+                if (method_params[j].param_type == G_TYPE_STRING) {
+                    g_free(method_params[j].variable);
+                }
+            }
+            
             return FALSE;
         }
     }
@@ -247,6 +256,7 @@ static void method_entry_get_moreinfo(SoupMessage * msg,
     MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name },
         { G_TYPE_INT, &entry_number },
+        { G_TYPE_STRING, &field_name },
     };
 
     if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
@@ -267,7 +277,7 @@ static void method_entry_get_moreinfo(SoupMessage * msg,
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
-          answer = module_entry_get_moreinfo(entry);
+          answer = module_entry_get_moreinfo(entry, field_name);
         }
     }
     
@@ -594,7 +604,7 @@ static void xmlrpc_server_callback(SoupServer * server,
 	GValueArray *params;
 	void (*callback) (SoupMessage * msg, GValueArray * params);
 
-	DEBUG("received POST request");
+        DEBUG("POST %s", path);
 
 	if (!soup_xmlrpc_parse_method_call(msg->request_body->data,
 					   msg->request_body->length,
@@ -622,6 +632,58 @@ static void xmlrpc_server_callback(SoupServer * server,
 	soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
     }
 }
+
+static void icon_server_callback(SoupServer * server,
+		 	         SoupMessage * msg,
+				 const char *path,
+				 GHashTable * query,
+				 SoupClientContext * context,
+				 gpointer data)
+{
+    if (msg->method == SOUP_METHOD_GET) {
+        path = g_strrstr(path, "/");
+
+        DEBUG("GET %s", path);
+
+        if (!path || !g_str_has_suffix(path, ".png")) {
+            DEBUG("not an icon, invalid path, etc");
+            soup_message_set_status(msg, SOUP_STATUS_FORBIDDEN);
+            soup_message_set_response(msg,
+                                      "text/plain",
+                                      SOUP_MEMORY_STATIC,
+                                      "500 :(", 6);
+        } else {
+            gchar  *file, *icon;
+            gint   size;
+            
+            file = g_build_filename(params.path_data,
+                                    "pixmaps",
+                                    path + 1,
+                                    NULL);
+            
+            if (g_file_get_contents(file, &icon, &size, NULL)) {
+                DEBUG("icon found");
+                soup_message_set_status(msg, SOUP_STATUS_OK);
+                soup_message_set_response(msg,
+                                          "image/png",
+                                          SOUP_MEMORY_TAKE,
+                                          icon, size);
+            } else {
+                DEBUG("icon not found");
+                soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
+                soup_message_set_response(msg,
+                                          "text/plain",
+                                          SOUP_MEMORY_STATIC,
+                                          "404 :(", 6);
+            }
+
+            g_free(file);
+        }
+    } else {
+	DEBUG("received request of unknown method");
+	soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
+    }
+}
 #endif				/* HAS_LIBSOUP */
 
 void xmlrpc_server_start(void)
@@ -639,6 +701,8 @@ void xmlrpc_server_start(void)
     }
 
     soup_server_add_handler(server, "/xmlrpc", xmlrpc_server_callback,
+			    NULL, NULL);
+    soup_server_add_handler(server, "/icon/", icon_server_callback,
 			    NULL, NULL);
 
     DEBUG("starting server");
