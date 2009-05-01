@@ -90,22 +90,25 @@ static gchar *remote_module_entry_func()
 {
     Shell *shell = shell_get_main_shell();
     
+    shell_status_pulse();
     return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryFunction",
                              "%s%i", shell->selected_module_name, shell->selected->number);
 }
 
-static gchar *remote_module_entry_scan_func()
+static void remote_module_entry_scan_func()
 {
     Shell *shell = shell_get_main_shell();
     
-    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryScan",
-                             "%s%i", shell->selected_module_name, shell->selected->number);
+    shell_status_pulse();
+    xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryScan",
+                      "%s%i", shell->selected_module_name, shell->selected->number);
 }
 
 static gchar *remote_module_entry_field_func(gchar *entry)
 {
     Shell *shell = shell_get_main_shell();
     
+    shell_status_pulse();
     return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetField",
                              "%s%i%s", shell->selected_module_name, shell->selected->number, entry);
 }
@@ -114,6 +117,7 @@ static gchar *remote_module_entry_more_func(gchar *entry)
 {
     Shell *shell = shell_get_main_shell();
     
+    shell_status_pulse();
     return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetMoreInfo",
                              "%s%i%s", shell->selected_module_name, shell->selected->number, entry);
 }
@@ -121,32 +125,46 @@ static gchar *remote_module_entry_more_func(gchar *entry)
 static gchar *remote_module_entry_note_func(gint entry)
 {
     Shell *shell = shell_get_main_shell();
+    gchar *note;
     
-    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetNote",
+    shell_status_pulse();
+    note = xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetNote",
                              "%s%i", shell->selected_module_name, shell->selected->number);
+    if (!*note) {
+        g_free(note);
+        return NULL;
+    }
+    
+    return note;
 }
 
 static gboolean load_module_list()
 {
+    Shell *shell;
     GValueArray *modules;
     int i = 0;
     
-    shell_status_update("Obtaining remote server module list...");
+    shell_status_update("Unloading local modules...");
+    module_unload_all();
     
+    shell_status_update("Obtaining remote server module list...");
     modules = xmlrpc_get_array("http://localhost:4242/xmlrpc", "module.getModuleList", NULL);
     if (!modules) {
         return FALSE;
     }
     
-    shell_status_update("Unloading local modules...");
-    module_unload_all();
+    shell = shell_get_main_shell();
     
     for (; i < modules->n_values; i++) {
+        ShellModule *m;
+        ShellModuleEntry *e;
         GValueArray *entries;
         const gchar *module = g_value_get_string(&modules->values[i]);
         int j = 0;
         
-        DEBUG("%s", module);
+        m = g_new0(ShellModule, 1);
+        m->name = g_strdup(module);
+        m->icon = icon_cache_get_pixbuf("module.png");	/* FIXME */
         
         shell_status_pulse();
         entries = xmlrpc_get_array("http://localhost:4242/xmlrpc", "module.getEntryList", "%s", module);
@@ -154,15 +172,29 @@ static gboolean load_module_list()
             for (; j < entries->n_values; j++) {
                 GValueArray *tuple = g_value_get_boxed(&entries->values[j]);
                 
-                DEBUG("--- %s [%s](%d)",
-                      g_value_get_string(&tuple->values[0]),
-                      g_value_get_string(&tuple->values[1]),
-                      j);
+                e = g_new0(ShellModuleEntry, 1);
+                e->name = g_strdup(g_value_get_string(&tuple->values[0]));
+                e->icon = icon_cache_get_pixbuf(g_value_get_string(&tuple->values[1]));
+                e->icon_file = g_strdup(g_value_get_string(&tuple->values[1]));
+                e->number = j;
+                
+                e->func = remote_module_entry_func;
+                e->scan_func = remote_module_entry_scan_func;
+                e->fieldfunc = remote_module_entry_field_func;
+                e->morefunc = remote_module_entry_more_func;
+                e->notefunc = remote_module_entry_note_func;
+                
+                m->entries = g_slist_append(m->entries, e);
             }
             
             g_value_array_free(entries);
         }
+        
+        shell->tree->modules = g_slist_append(shell->tree->modules, m);
     }
+    
+    g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
+    gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
     
     g_value_array_free(modules);
     

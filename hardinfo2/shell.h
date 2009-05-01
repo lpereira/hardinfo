@@ -189,4 +189,9 @@ void		shell_view_set_enabled(gboolean setting);
 void		shell_clear_timeouts(Shell *shell);
 void		shell_clear_tree_models(Shell *shell);
 void		shell_reset_title(Shell *shell);
+
+void		shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree);
+
 #endif				/* __SHELL_H__ */
+
+

@@ -506,10 +506,10 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
 }
 
-static void add_modules_to_gui(gpointer data, gpointer user_data)
+void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 {
-    ShellTree *shelltree = (ShellTree *) user_data;
-    ShellModule *module = (ShellModule *) data;
+    ShellModule *module = (ShellModule *) _shell_module;
+    ShellTree *shelltree = (ShellTree *) _shell_tree;
     GtkTreeStore *store = GTK_TREE_STORE(shelltree->model);
     GtkTreeIter parent;
     
@@ -603,7 +603,7 @@ void shell_init(GSList * modules)
 
     shell->tree->modules = modules ? modules : modules_load_all();
 
-    g_slist_foreach(shell->tree->modules, add_modules_to_gui, shell->tree);
+    g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
 
     gtk_widget_show_all(shell->hpaned);
