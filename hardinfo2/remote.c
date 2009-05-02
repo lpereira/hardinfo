@@ -26,6 +26,8 @@
 
 #include "xmlrpc-client.h"
 
+#define XMLRPC_SERVER_VERSION		1
+
 /*
  * TODO
  *
@@ -71,16 +73,20 @@ static RemoteDialog *remote_dialog_new(GtkWidget *parent);
 
 static gboolean remote_version_is_supported(void)
 {
-    shell_status_update("Obtaining remote server API version...");
+    gint remote_ver;
 
-    switch (xmlrpc_get_integer("http://localhost:4242/xmlrpc", "server.getAPIVersion", NULL)) {
+    shell_status_update("Obtaining remote server API version...");
+    remote_ver = xmlrpc_get_integer("http://localhost:4242/xmlrpc", "server.getAPIVersion", NULL);
+
+    switch (remote_ver) {
     case -1:
         g_warning("Remote Host didn't respond.");
         break;
-    case 1:
+    case XMLRPC_SERVER_VERSION:
         return TRUE;
     default:
-        g_warning("Remote Host has an unsupported API version.");
+        g_warning("Remote Host has an unsupported API version (%d). Expected version is %d.",
+                  remote_ver, XMLRPC_SERVER_VERSION);
     }
 
     return FALSE;
@@ -89,17 +95,18 @@ static gboolean remote_version_is_supported(void)
 static gchar *remote_module_entry_func()
 {
     Shell *shell = shell_get_main_shell();
+    gchar *ret;
     
-    shell_status_pulse();
-    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryFunction",
-                             "%s%i", shell->selected_module_name, shell->selected->number);
+    ret = xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryFunction",
+                            "%s%i", shell->selected_module_name, shell->selected->number);
+    
+    return ret;
 }
 
 static void remote_module_entry_scan_func()
 {
     Shell *shell = shell_get_main_shell();
     
-    shell_status_pulse();
     xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryScan",
                       "%s%i", shell->selected_module_name, shell->selected->number);
 }
@@ -107,19 +114,23 @@ static void remote_module_entry_scan_func()
 static gchar *remote_module_entry_field_func(gchar *entry)
 {
     Shell *shell = shell_get_main_shell();
+    gchar *ret;
     
-    shell_status_pulse();
-    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetField",
-                             "%s%i%s", shell->selected_module_name, shell->selected->number, entry);
+    ret = xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetField",
+                            "%s%i%s", shell->selected_module_name, shell->selected->number, entry);
+    
+    return ret; 
 }
 
 static gchar *remote_module_entry_more_func(gchar *entry)
 {
     Shell *shell = shell_get_main_shell();
+    gchar *ret;
     
-    shell_status_pulse();
-    return xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetMoreInfo",
+    ret = xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetMoreInfo",
                              "%s%i%s", shell->selected_module_name, shell->selected->number, entry);
+    
+    return ret;
 }
 
 static gchar *remote_module_entry_note_func(gint entry)
@@ -127,10 +138,9 @@ static gchar *remote_module_entry_note_func(gint entry)
     Shell *shell = shell_get_main_shell();
     gchar *note;
     
-    shell_status_pulse();
     note = xmlrpc_get_string("http://localhost:4242/xmlrpc", "module.entryGetNote",
                              "%s%i", shell->selected_module_name, shell->selected->number);
-    if (!*note) {
+    if (note && *note == '\0') {
         g_free(note);
         return NULL;
     }
@@ -185,6 +195,8 @@ static gboolean load_module_list()
                 e->notefunc = remote_module_entry_note_func;
                 
                 m->entries = g_slist_append(m->entries, e);
+
+                shell_status_pulse();
             }
             
             g_value_array_free(entries);
@@ -228,6 +240,7 @@ void remote_dialog_show(GtkWidget *parent)
 	remote_connect(rd);
 	
 	shell_status_set_enabled(FALSE);
+	shell_view_set_enabled(TRUE);
     }
 
     gtk_widget_destroy(rd->dialog);

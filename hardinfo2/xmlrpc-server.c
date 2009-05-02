@@ -233,6 +233,7 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
+          DEBUG("[%s][%s]", module_name, field_name);
           answer = module_entry_get_field(entry, field_name);
         }
     }

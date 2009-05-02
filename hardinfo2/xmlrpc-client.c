@@ -27,11 +27,11 @@ static SoupSession	*session = NULL;
 void xmlrpc_init(void)
 {
     if (!loop) {
-      loop = g_main_loop_new(FALSE, TRUE);
+      loop = g_main_loop_new(FALSE, FALSE);
     }
     
     if (!session) {
-      session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
+      session = soup_session_sync_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
     }
 }    
 

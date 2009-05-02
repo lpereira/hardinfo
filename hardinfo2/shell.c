@@ -437,6 +437,7 @@ static void view_menu_select_entry(gpointer data, gpointer data2)
 
 static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 {
+    GtkAction *action;
     gchar *about_module = g_strdup_printf("AboutModule%s", name);
     gint merge_id;
 
@@ -461,6 +462,14 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 
     stock_icon_register_pixbuf(pixbuf, name);
 
+    if ((action = gtk_action_group_get_action(shell->action_group, name))) {
+        gtk_action_group_remove_action(shell->action_group, action);
+    }
+
+    if ((action = gtk_action_group_get_action(shell->action_group, about_module))) {
+        gtk_action_group_remove_action(shell->action_group, action);
+    }
+
     gtk_action_group_add_actions(shell->action_group, entries, 2, NULL);
 
     merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
@@ -483,6 +492,7 @@ static void
 add_module_entry_to_view_menu(gchar * module, gchar * name,
 			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
 {
+    GtkAction *action;
     gint merge_id;
     GtkActionEntry entries[] = {
 	{
@@ -496,6 +506,11 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
     };
 
     stock_icon_register_pixbuf(pixbuf, name);
+
+    if ((action = gtk_action_group_get_action(shell->action_group, name))) {
+        gtk_action_group_remove_action(shell->action_group, action);
+    }
+
     gtk_action_group_add_actions(shell->action_group, entries, 1, iter);
 
     merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
