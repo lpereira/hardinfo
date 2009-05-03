@@ -249,7 +249,6 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
-          DEBUG("[%s][%s]", module_name, field_name);
           answer = module_entry_get_field(entry, field_name);
         }
     }
@@ -482,8 +481,6 @@ static void method_get_about_info(SoupMessage * msg, GValueArray * params)
     if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
-    
-    DEBUG("module name = %s", module_name);
     
     for (modules = modules_get_list(); modules; modules = modules->next) {
 	module = (ShellModule *) modules->data;
