@@ -359,9 +359,18 @@ static ShellNote *note_new(void)
     return note;
 }
 
-void shell_reset_title(Shell *shell)
+void shell_set_title(Shell *shell, gchar *subtitle)
 {
-    gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
+    if (subtitle) {
+        gchar *tmp;
+
+        tmp = g_strdup_printf("%s - System Information", subtitle);
+        gtk_window_set_title(GTK_WINDOW(shell->window), tmp);
+        
+        g_free(tmp);
+    } else {
+        gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
+    }
 }
 
 static void create_window(void)
@@ -373,7 +382,7 @@ static void create_window(void)
     shell->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_icon(GTK_WINDOW(shell->window),
 			icon_cache_get_pixbuf("logo.png"));
-    shell_reset_title(shell);
+    shell_set_title(shell, NULL);
     gtk_window_set_default_size(GTK_WINDOW(shell->window), 800, 600);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 
@@ -1346,15 +1355,14 @@ static void module_selected(gpointer data)
 	shell_status_update("Done.");
 	shell_status_set_enabled(FALSE);
 
-	title = g_strdup_printf("%s - %s - System Information", shell->selected_module_name, entry->name);
-	gtk_window_set_title(GTK_WINDOW(shell->window), title);
+	title = g_strdup_printf("%s - %s", shell->selected_module_name, entry->name);
+	shell_set_title(shell, title);
 	g_free(title);
 
 	shell_action_set_enabled("RefreshAction", TRUE);
 	shell_action_set_enabled("CopyAction", TRUE);
     } else {
-	gtk_window_set_title(GTK_WINDOW(shell->window),
-			     "System Information");
+	shell_set_title(shell, NULL);
 	shell_action_set_enabled("RefreshAction", FALSE);
 	shell_action_set_enabled("CopyAction", FALSE);
 

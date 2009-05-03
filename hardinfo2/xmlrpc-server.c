@@ -145,10 +145,26 @@ static void method_get_module_list(SoupMessage * msg, GValueArray * params)
 
     for (modules = modules_get_list(); modules; modules = modules->next) {
 	ShellModule *module = (ShellModule *) modules->data;
+	gchar *icon_file, *tmp;
+	GValueArray *tuple;
+	
+        tuple = soup_value_array_new();
 
-        /* gchar *name = g_path_get_basename(g_module_name(module->dll)); */
+        tmp = g_path_get_basename(g_module_name(module->dll));
+        if ((icon_file = g_strrstr(tmp, G_MODULE_SUFFIX))) {
+            *icon_file = '\0';
+            icon_file = g_strconcat(tmp, "png", NULL);
+        } else {
+            icon_file = "";
+        }
 
-	soup_value_array_append(out, G_TYPE_STRING, module->name);
+        soup_value_array_append(tuple, G_TYPE_STRING, module->name);
+        soup_value_array_append(tuple, G_TYPE_STRING, icon_file);
+        
+        soup_value_array_append(out, G_TYPE_VALUE_ARRAY, tuple);
+
+        g_value_array_free(tuple);
+        g_free(tmp);
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_VALUE_ARRAY, out);
@@ -300,7 +316,6 @@ static void method_entry_reload(SoupMessage * msg, GValueArray * params)
     MethodParameter method_params[] = {
         { G_TYPE_STRING, &module_name },
         { G_TYPE_INT, &entry_number },
-        { G_TYPE_STRING, &field_name },
     };
 
     if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
@@ -403,11 +418,10 @@ static void method_entry_function(SoupMessage * msg, GValueArray * params)
     }
     
     if (!answer) {
-        answer = g_strdup("");
+        answer = "";
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
-    g_free(answer);
 }
 
 
@@ -468,6 +482,8 @@ static void method_get_about_info(SoupMessage * msg, GValueArray * params)
     if (!validate_parameters(msg, params, method_params, G_N_ELEMENTS(method_params))) {
         return;
     }
+    
+    DEBUG("module name = %s", module_name);
     
     for (modules = modules_get_list(); modules; modules = modules->next) {
 	module = (ShellModule *) modules->data;

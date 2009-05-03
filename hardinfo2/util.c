@@ -629,7 +629,7 @@ void module_unload_all(void)
     sync_manager_clear_entries();
     shell_clear_timeouts(shell);
     shell_clear_tree_models(shell);
-    shell_reset_title(shell);
+    shell_set_title(shell, NULL);
     
     g_slist_free(shell->tree->modules);
     g_slist_free(shell->merge_ids);
@@ -691,6 +691,9 @@ static ShellModule *module_load(gchar * filename)
 	module->weight = weight_func ? weight_func() : 0;
 	module->name = name_func();
 
+        g_module_symbol(module->dll, "hi_module_get_about",
+   	 	        (gpointer) & (module->aboutfunc));
+   	 	        
 	entries = get_module_entries();
 	while (entries[i].name) {
 	    ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
@@ -767,11 +770,8 @@ static void module_entry_free(gpointer data, gpointer user_data)
 
 ModuleAbout *module_get_about(ShellModule * module)
 {
-    ModuleAbout *(*get_about) (void);
-
-    if (g_module_symbol(module->dll, "hi_module_get_about",
-			(gpointer) & get_about)) {
-	return get_about();
+    if (module->aboutfunc) {
+    	return module->aboutfunc();
     }
 
     return NULL;
@@ -1092,6 +1092,7 @@ void module_entry_scan_all(ModuleEntry * entries)
 
 void module_entry_reload(ShellModuleEntry * module_entry)
 {
+
     if (module_entry->scan_func) {
 	module_entry->scan_func(TRUE);
     }

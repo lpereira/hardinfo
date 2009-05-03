@@ -23,6 +23,7 @@
 
 static GMainLoop	*loop = NULL;
 static SoupSession	*session = NULL;
+static gboolean		 lock = FALSE;
 
 void xmlrpc_init(void)
 {
@@ -31,7 +32,7 @@ void xmlrpc_init(void)
     }
     
     if (!session) {
-      session = soup_session_sync_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
+      session = soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10, NULL);
     }
 }    
 
@@ -51,6 +52,7 @@ static void xmlrpc_response_get_integer(SoupSession *s,
     }
     
     g_main_quit(loop);
+    lock = FALSE;
 }                                
 
 gint xmlrpc_get_integer(gchar *addr,
@@ -96,6 +98,10 @@ gint xmlrpc_get_integer(gchar *addr,
     soup_message_set_request(msg, "text/xml",
 			     SOUP_MEMORY_TAKE, body, strlen(body));
     
+    while (lock)
+      g_main_iteration(FALSE);
+
+    lock = TRUE;
     soup_session_queue_message(session, msg, xmlrpc_response_get_integer, &integer);
     g_main_run(loop);
     
@@ -114,6 +120,7 @@ static void xmlrpc_response_get_string(SoupSession *s,
     }
     
     g_main_quit(loop);
+    lock = FALSE;
 }                                
 
 gchar *xmlrpc_get_string(gchar *addr,
@@ -158,6 +165,10 @@ gchar *xmlrpc_get_string(gchar *addr,
     soup_message_set_request(msg, "text/xml",
 			     SOUP_MEMORY_TAKE, body, strlen(body));
     
+    while (lock)
+      g_main_iteration(FALSE);
+
+    lock = TRUE;
     soup_session_queue_message(session, msg, xmlrpc_response_get_string, &string);
     g_main_run(loop);
     
@@ -176,6 +187,7 @@ static void xmlrpc_response_get_array(SoupSession *s,
     }
     
     g_main_quit(loop);
+    lock = FALSE;
 }                                
 
 GValueArray *xmlrpc_get_array(gchar *addr,
@@ -220,6 +232,10 @@ GValueArray *xmlrpc_get_array(gchar *addr,
     soup_message_set_request(msg, "text/xml",
 			     SOUP_MEMORY_TAKE, body, strlen(body));
     
+    while (lock)
+      g_main_iteration(FALSE);
+
+    lock = TRUE;
     soup_session_queue_message(session, msg, xmlrpc_response_get_array, &answer);
     g_main_run(loop);
     

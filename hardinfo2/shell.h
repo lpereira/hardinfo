@@ -123,6 +123,7 @@ struct _ShellModule {
     gchar		*name;
     GdkPixbuf		*icon;
     GModule		*dll;
+    gpointer		*(*aboutfunc) ();
     
     guchar		 weight;
 
@@ -145,8 +146,8 @@ struct _ShellModuleEntry {
     void		(*scan_func) ();
 
     gchar		*(*fieldfunc) (gchar * entry);
-    gchar 		*(*morefunc) (gchar * entry);
-    gchar		*(*notefunc) (gint entry);
+    gchar 		*(*morefunc)  (gchar * entry);
+    gchar		*(*notefunc)  (gint entry);
 };
 
 struct _ShellFieldUpdate {
@@ -188,7 +189,7 @@ void		shell_view_set_enabled(gboolean setting);
 
 void		shell_clear_timeouts(Shell *shell);
 void		shell_clear_tree_models(Shell *shell);
-void		shell_reset_title(Shell *shell);
+void		shell_set_title(Shell *shell, char *subtitle);
 
 void		shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree);
 
