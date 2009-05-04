@@ -111,11 +111,11 @@ void ssh_close(SSHConn * conn)
 
     soup_uri_free(conn->uri);
     kill(conn->pid, SIGINT);
-    
+
     if (conn->askpass_path) {
-        DEBUG("unlinking %s", conn->askpass_path);
-        g_remove(conn->askpass_path);
-        g_free(conn->askpass_path);
+	DEBUG("unlinking %s", conn->askpass_path);
+	g_remove(conn->askpass_path);
+	g_free(conn->askpass_path);
     }
 
     g_free(conn);
@@ -125,10 +125,10 @@ static void ssh_conn_setup(gpointer user_data)
 {
     gchar *askpass_path = (gchar *) user_data;
     int fd;
-    
+
     if ((fd = open("/dev/tty", O_RDWR)) != -1) {
-        ioctl(fd, TIOCNOTTY, NULL);
-        close(fd);
+	ioctl(fd, TIOCNOTTY, NULL);
+	close(fd);
     }
 
     if (askpass_path) {
@@ -183,7 +183,29 @@ SSHConnResponse ssh_new(SoupURI * uri,
 	}
     }
 
+
     cmd_line = g_string_new("ssh -x");
+
+    if (uri->query && strlen(uri->query)) {
+	GHashTable *query;
+	GList *keys, *key;
+
+	query = soup_form_decode(uri->query);
+	keys = g_hash_table_get_keys(query);
+
+	for (key = keys; key; key = key->next) {
+	    gchar *param;
+
+	    g_string_append_printf(cmd_line, " -%s", (gchar *) key->data);
+
+	    if ((param = (gchar *) g_hash_table_lookup(query, key->data))) {
+		g_string_append_printf(cmd_line, "'%s'", param);
+	    }
+	}
+
+	g_list_free(keys);
+	g_hash_table_destroy(query);
+    }
 
     if (uri->user) {
 	g_string_append_printf(cmd_line, " -l '%s'", uri->user);
@@ -249,11 +271,11 @@ SSHConnResponse ssh_new(SoupURI * uri,
     g_string_free(cmd_line, TRUE);
 
     if (askpass_path) {
-        if (connection) {
-            connection->askpass_path = askpass_path;
-        } else {
-    	    g_free(askpass_path);
-        }
+	if (connection) {
+	    connection->askpass_path = askpass_path;
+	} else {
+	    g_free(askpass_path);
+	}
     }
 
     if (response != SSH_CONN_OK) {
@@ -276,11 +298,12 @@ int main(int argc, char **argv)
     SSHConnResponse r;
     SoupURI *u;
     char buffer[256];
-    
+
     if (argc < 2) {
-        g_print("Usage: %s URI command\n", argv[0]);
-        g_print("Example: %s ssh://user:password@host 'ls -la /'\n", argv[0]);
-        return 1;
+	g_print("Usage: %s URI command\n", argv[0]);
+	g_print("Example: %s ssh://user:password@host 'ls -la /'\n",
+		argv[0]);
+	return 1;
     }
 
     u = soup_uri_new(argv[1]);
