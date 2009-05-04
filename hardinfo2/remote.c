@@ -62,7 +62,6 @@
  *   (Benchmarks can't be used remotely; Displays won't work remotely [unless we use
  *    X forwarding, but that'll be local X11 info anyway]).
  */
-
 typedef struct _RemoteDialog RemoteDialog;
 struct _RemoteDialog {
     GtkWidget *dialog;
@@ -571,3 +570,4 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
 
     return rd;
 }
+
