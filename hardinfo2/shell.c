@@ -1073,8 +1073,10 @@ static void update_progress()
     gchar *tmp;
     gdouble maxv = 0, maxp = 0, cur, floatval;
 
-    gtk_tree_model_get_iter_first(model, &fiter);
-
+    if (!gtk_tree_model_get_iter_first(model, &fiter)) {
+        return;
+    }
+    
     /* finds the maximum value */
     if (shell->normalize_percentage) {
 	iter = fiter;
