@@ -62,17 +62,41 @@
  *   (Benchmarks can't be used remotely; Displays won't work remotely [unless we use
  *    X forwarding, but that'll be local X11 info anyway]).
  */
+
 typedef struct _RemoteDialog RemoteDialog;
+typedef struct _HostEditorDialog HostEditorDialog;
+
 struct _RemoteDialog {
+    GKeyFile *key_file;
+
     GtkWidget *dialog;
     GtkWidget *btn_connect, *btn_cancel;
+    GtkWidget *btn_add, *btn_edit, *btn_remove;
+
+    GtkListStore *tree_store;
+
+    gint selected_id;
+    gchar *selected_name;
+    GtkTreeIter *selected_iter;
+};
+
+struct _HostEditorDialog {
+    GtkWidget *dialog;
+    GtkWidget *notebook;
+    
+    GtkWidget *txt_hostname, *txt_port;
+    GtkWidget *txt_ssh_user, *txt_ssh_password;
+    
+    GtkWidget *cmb_type;
 };
 
 static RemoteDialog *remote_dialog_new(GtkWidget * parent);
+static void remote_dialog_destroy(RemoteDialog * rd);
 
-static gboolean remote_version_is_supported(void)
+static gboolean remote_version_is_supported(RemoteDialog * rd)
 {
     gint remote_ver;
+    GtkWidget *dialog;
 
     shell_status_update("Obtaining remote server API version...");
     remote_ver =
@@ -81,14 +105,29 @@ static gboolean remote_version_is_supported(void)
 
     switch (remote_ver) {
     case -1:
-	g_warning("Remote Host didn't respond.");
+	dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_ERROR,
+					GTK_BUTTONS_CLOSE,
+					"Remote host didn't respond.");
+
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
 	break;
     case XMLRPC_SERVER_VERSION:
 	return TRUE;
     default:
-	g_warning
-	    ("Remote Host has an unsupported API version (%d). Expected version is %d.",
-	     remote_ver, XMLRPC_SERVER_VERSION);
+	dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_ERROR,
+					GTK_BUTTONS_CLOSE,
+					"Remote Host has an unsupported "
+					"API version (%d). Expected "
+					"version is %d.",
+					remote_ver, XMLRPC_SERVER_VERSION);
+
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
     }
 
     return FALSE;
@@ -180,7 +219,7 @@ static ModuleAbout *remote_module_get_about()
     return NULL;
 }
 
-static gboolean load_module_list()
+static gboolean load_module_list(RemoteDialog * rd)
 {
     Shell *shell;
     GValueArray *modules;
@@ -204,15 +243,13 @@ static gboolean load_module_list()
 	ShellModuleEntry *e;
 	GValueArray *entries, *module;
 	int j = 0;
-	
+
 	module = g_value_get_boxed(&modules->values[i]);
-	DEBUG("%s - %s",
-	      g_value_get_string(&module->values[0]),
-	      g_value_get_string(&module->values[1]));
-	      
+
 	m = g_new0(ShellModule, 1);
 	m->name = g_strdup(g_value_get_string(&module->values[0]));
-        m->icon = icon_cache_get_pixbuf(g_value_get_string(&module->values[1]));
+	m->icon =
+	    icon_cache_get_pixbuf(g_value_get_string(&module->values[1]));
 	m->aboutfunc = (gpointer) remote_module_get_about;
 
 	shell_status_pulse();
@@ -264,9 +301,18 @@ static void remote_connect(RemoteDialog * rd)
     xmlrpc_init();
 
     /* check API version */
-    if (remote_version_is_supported()) {
-	if (!load_module_list()) {
-	    g_warning("Remote module list couldn't be loaded.");
+    if (remote_version_is_supported(rd)) {
+	if (!load_module_list(rd)) {
+	    GtkWidget *dialog;
+
+	    dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+					    GTK_DIALOG_DESTROY_WITH_PARENT,
+					    GTK_MESSAGE_ERROR,
+					    GTK_BUTTONS_CLOSE,
+					    "Cannot load remote module list.");
+
+	    gtk_dialog_run(GTK_DIALOG(dialog));
+	    gtk_widget_destroy(dialog);
 	}
     }
 
@@ -289,15 +335,15 @@ void remote_dialog_show(GtkWidget * parent)
 	shell_view_set_enabled(TRUE);
     }
 
-    gtk_widget_destroy(rd->dialog);
-    g_free(rd);
+    remote_dialog_destroy(rd);
 }
 
-static void populate_store(GtkListStore * store)
+static void populate_store(RemoteDialog * rd, GtkListStore * store)
 {
-    GKeyFile *remote;
     GtkTreeIter iter;
     gchar *path;
+    gchar **hosts;
+    gint i, no_groups;
 
     gtk_list_store_clear(store);
 
@@ -307,100 +353,360 @@ static void populate_store(GtkListStore * store)
 		       1, g_strdup("Local Computer"),
 		       2, GINT_TO_POINTER(-1), -1);
 
-    remote = g_key_file_new();
-    path =
-	g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf",
-			 NULL);
-    if (g_key_file_load_from_file(remote, path, 0, NULL)) {
-	gint no_hosts, i;
 
-	no_hosts =
-	    g_key_file_get_integer(remote, "global", "no_hosts", NULL);
-	for (i = 0; i < no_hosts; i++) {
-	    gchar *hostname;
-	    gchar *hostgroup;
-	    gchar *icon;
+    hosts = g_key_file_get_groups(rd->key_file, &no_groups);
+    DEBUG("%d hosts found", no_groups);
+    for (i = 0; i < no_groups; i++) {
+	gchar *icon;
 
-	    hostgroup = g_strdup_printf("host%d", i);
+	DEBUG("host #%d: %s", i, hosts[i]);
 
-	    hostname =
-		g_key_file_get_string(remote, hostgroup, "name", NULL);
-	    icon = g_key_file_get_string(remote, hostgroup, "icon", NULL);
+	icon = g_key_file_get_string(rd->key_file, hosts[i], "icon", NULL);
 
-	    gtk_list_store_append(store, &iter);
-	    gtk_list_store_set(store, &iter,
-			       0,
-			       icon_cache_get_pixbuf(icon ? icon :
-						     "server.png"), 1,
-			       hostname, 2, GINT_TO_POINTER(i), -1);
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+			   0,
+			   icon_cache_get_pixbuf(icon ? icon :
+						 "server.png"), 1,
+			   g_strdup(hosts[i]), 2, GINT_TO_POINTER(i), -1);
 
-	    g_free(hostgroup);
-	    g_free(icon);
-	}
+	g_free(icon);
     }
 
-    g_free(path);
-    g_key_file_free(remote);
+    g_strfreev(hosts);
 }
 
-static GtkWidget *host_editor_dialog_new(GtkWidget * parent, gchar * title)
+static void host_editor_combo_changed_cb(GtkComboBox * widget,
+					 gpointer user_data)
 {
-    GtkWidget *dialog, *dialog1_action_area, *button7, *button8;
+    HostEditorDialog *host_dlg = (HostEditorDialog *) user_data;
+    gint index;
+
+    index = gtk_combo_box_get_active(widget);
+    
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(host_dlg->notebook), index);
+}
+
+static HostEditorDialog *host_editor_dialog_new(GtkWidget * parent,
+						gchar * title)
+{
+    HostEditorDialog *host_dlg;
+
+    GtkWidget *dialog;
+    GtkWidget *dialog_vbox1;
+    GtkWidget *vbox1;
+    GtkWidget *table1;
+    GtkWidget *label4;
+    GtkWidget *label5;
+    GtkWidget *txt_hostname;
+    GtkWidget *alignment2;
+    GtkObject *spn_port_adj;
+    GtkWidget *spn_port;
+    GtkWidget *frame1;
+    GtkWidget *alignment3;
+    GtkWidget *notebook1;
+    GtkWidget *vbox2;
+    GtkWidget *hbox2;
+    GtkWidget *image1;
+    GtkWidget *label6;
+    GtkWidget *label1;
+    GtkWidget *vbox3;
+    GtkWidget *table2;
+    GtkWidget *txt_ssh_user;
+    GtkWidget *txt_ssh_password;
+    GtkWidget *label10;
+    GtkWidget *label11;
+    GtkWidget *hbox3;
+    GtkWidget *image2;
+    GtkWidget *label12;
+    GtkWidget *label2;
+    GtkWidget *hbox1;
+    GtkWidget *label3;
+    GtkWidget *cmb_type;
+    GtkWidget *dialog_action_area1;
+    GtkWidget *btn_cancel;
+    GtkWidget *btn_save;
 
     dialog = gtk_dialog_new();
     gtk_window_set_title(GTK_WINDOW(dialog), title);
-    gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
-    gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
     gtk_window_set_position(GTK_WINDOW(dialog),
 			    GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+    gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+    gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
+    gtk_window_set_skip_taskbar_hint(GTK_WINDOW(dialog), TRUE);
     gtk_window_set_type_hint(GTK_WINDOW(dialog),
 			     GDK_WINDOW_TYPE_HINT_DIALOG);
+    gtk_window_set_gravity(GTK_WINDOW(dialog), GDK_GRAVITY_CENTER);
 
-    dialog1_action_area = GTK_DIALOG(dialog)->action_area;
-    gtk_widget_show(dialog1_action_area);
-    gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
+    dialog_vbox1 = GTK_DIALOG(dialog)->vbox;
+    gtk_widget_show(dialog_vbox1);
+
+    vbox1 = gtk_vbox_new(FALSE, 4);
+    gtk_widget_show(vbox1);
+    gtk_box_pack_start(GTK_BOX(dialog_vbox1), vbox1, TRUE, TRUE, 0);
+    gtk_container_set_border_width(GTK_CONTAINER(vbox1), 5);
+
+    table1 = gtk_table_new(2, 2, FALSE);
+    gtk_widget_show(table1);
+    gtk_box_pack_start(GTK_BOX(vbox1), table1, TRUE, TRUE, 0);
+    gtk_container_set_border_width(GTK_CONTAINER(table1), 5);
+    gtk_table_set_row_spacings(GTK_TABLE(table1), 4);
+    gtk_table_set_col_spacings(GTK_TABLE(table1), 4);
+
+    label4 = gtk_label_new("Host name:");
+    gtk_widget_show(label4);
+    gtk_table_attach(GTK_TABLE(table1), label4, 0, 1, 0, 1,
+		     (GtkAttachOptions) (GTK_FILL),
+		     (GtkAttachOptions) (0), 0, 0);
+    gtk_misc_set_alignment(GTK_MISC(label4), 0, 0.5);
+
+    label5 = gtk_label_new("Port:");
+    gtk_widget_show(label5);
+    gtk_table_attach(GTK_TABLE(table1), label5, 0, 1, 1, 2,
+		     (GtkAttachOptions) (GTK_FILL),
+		     (GtkAttachOptions) (0), 0, 0);
+    gtk_misc_set_alignment(GTK_MISC(label5), 0, 0.5);
+
+    txt_hostname = gtk_entry_new();
+    gtk_widget_show(txt_hostname);
+    gtk_table_attach(GTK_TABLE(table1), txt_hostname, 1, 2, 0, 1,
+		     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		     (GtkAttachOptions) (0), 0, 0);
+    gtk_entry_set_invisible_char(GTK_ENTRY(txt_hostname), 9679);
+
+    alignment2 = gtk_alignment_new(0, 0.5, 0.03, 1);
+    gtk_widget_show(alignment2);
+    gtk_table_attach(GTK_TABLE(table1), alignment2, 1, 2, 1, 2,
+		     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		     (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+    spn_port_adj = gtk_adjustment_new(4242, 1025, 65535, 1, 10, 0);
+    spn_port = gtk_spin_button_new(GTK_ADJUSTMENT(spn_port_adj), 1, 0);
+    gtk_widget_show(spn_port);
+    gtk_container_add(GTK_CONTAINER(alignment2), spn_port);
+
+    frame1 = gtk_frame_new(NULL);
+    gtk_widget_show(frame1);
+    gtk_box_pack_start(GTK_BOX(vbox1), frame1, TRUE, TRUE, 0);
+    gtk_frame_set_shadow_type(GTK_FRAME(frame1), GTK_SHADOW_NONE);
+
+    alignment3 = gtk_alignment_new(0.5, 0.5, 1, 1);
+    gtk_widget_show(alignment3);
+    gtk_container_add(GTK_CONTAINER(frame1), alignment3);
+    gtk_alignment_set_padding(GTK_ALIGNMENT(alignment3), 0, 0, 12, 0);
+
+    notebook1 = gtk_notebook_new();
+    gtk_widget_show(notebook1);
+    gtk_container_add(GTK_CONTAINER(alignment3), notebook1);
+    GTK_WIDGET_UNSET_FLAGS(notebook1, GTK_CAN_FOCUS);
+    gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook1), FALSE);
+    gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook1), FALSE);
+
+    vbox2 = gtk_vbox_new(FALSE, 0);
+    gtk_widget_show(vbox2);
+    gtk_container_add(GTK_CONTAINER(notebook1), vbox2);
+
+    hbox2 = gtk_hbox_new(FALSE, 4);
+    gtk_widget_show(hbox2);
+    gtk_box_pack_start(GTK_BOX(vbox2), hbox2, TRUE, FALSE, 0);
+
+    image1 =
+	gtk_image_new_from_stock("gtk-dialog-info",
+				 GTK_ICON_SIZE_SMALL_TOOLBAR);
+    gtk_widget_show(image1);
+    gtk_box_pack_start(GTK_BOX(hbox2), image1, FALSE, FALSE, 0);
+    gtk_misc_set_alignment(GTK_MISC(image1), 0.5, 0);
+
+    label6 =
+	gtk_label_new
+	("<small><i>This method provides no authentication and no encryption.</i></small>");
+    gtk_widget_show(label6);
+    gtk_box_pack_start(GTK_BOX(hbox2), label6, FALSE, FALSE, 0);
+    gtk_label_set_use_markup(GTK_LABEL(label6), TRUE);
+    gtk_label_set_line_wrap(GTK_LABEL(label6), TRUE);
+    gtk_misc_set_alignment(GTK_MISC(label6), 0, 0.5);
+    gtk_label_set_width_chars(GTK_LABEL(label6), 36);
+
+    vbox3 = gtk_vbox_new(FALSE, 4);
+    gtk_widget_show(vbox3);
+    gtk_container_add(GTK_CONTAINER(notebook1), vbox3);
+    gtk_container_set_border_width(GTK_CONTAINER(vbox3), 5);
+
+    table2 = gtk_table_new(2, 2, FALSE);
+    gtk_widget_show(table2);
+    gtk_box_pack_start(GTK_BOX(vbox3), table2, TRUE, TRUE, 0);
+    gtk_table_set_row_spacings(GTK_TABLE(table2), 4);
+    gtk_table_set_col_spacings(GTK_TABLE(table2), 4);
+
+    txt_ssh_user = gtk_entry_new();
+    gtk_widget_show(txt_ssh_user);
+    gtk_table_attach(GTK_TABLE(table2), txt_ssh_user, 1, 2, 0, 1,
+		     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		     (GtkAttachOptions) (0), 0, 0);
+    gtk_entry_set_invisible_char(GTK_ENTRY(txt_ssh_user), 9679);
+
+    txt_ssh_password = gtk_entry_new();
+    gtk_widget_show(txt_ssh_password);
+    gtk_table_attach(GTK_TABLE(table2), txt_ssh_password, 1, 2, 1, 2,
+		     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		     (GtkAttachOptions) (0), 0, 0);
+    gtk_entry_set_visibility(GTK_ENTRY(txt_ssh_password), FALSE);
+    gtk_entry_set_invisible_char(GTK_ENTRY(txt_ssh_password), 9679);
+
+    label10 = gtk_label_new("User:");
+    gtk_widget_show(label10);
+    gtk_table_attach(GTK_TABLE(table2), label10, 0, 1, 0, 1,
+		     (GtkAttachOptions) (GTK_FILL),
+		     (GtkAttachOptions) (0), 0, 0);
+    gtk_misc_set_alignment(GTK_MISC(label10), 0, 0.5);
+
+    label11 = gtk_label_new("Password:");
+    gtk_widget_show(label11);
+    gtk_table_attach(GTK_TABLE(table2), label11, 0, 1, 1, 2,
+		     (GtkAttachOptions) (GTK_FILL),
+		     (GtkAttachOptions) (0), 0, 0);
+    gtk_misc_set_alignment(GTK_MISC(label11), 0, 0.5);
+
+    hbox3 = gtk_hbox_new(FALSE, 4);
+    gtk_widget_show(hbox3);
+    gtk_box_pack_end(GTK_BOX(vbox3), hbox3, TRUE, TRUE, 0);
+
+    image2 =
+	gtk_image_new_from_stock("gtk-dialog-warning",
+				 GTK_ICON_SIZE_SMALL_TOOLBAR);
+    gtk_widget_show(image2);
+    gtk_box_pack_start(GTK_BOX(hbox3), image2, FALSE, FALSE, 0);
+    gtk_misc_set_alignment(GTK_MISC(image2), 0.5, 0);
+
+    label12 =
+	gtk_label_new
+	("<small><i>The password will be saved in clear text on <b>~/.hardinfo/remote.conf</b>. Passwordless RSA keys can be used instead.</i></small>");
+    gtk_widget_show(label12);
+    gtk_box_pack_start(GTK_BOX(hbox3), label12, FALSE, FALSE, 0);
+    gtk_label_set_use_markup(GTK_LABEL(label12), TRUE);
+    gtk_label_set_line_wrap(GTK_LABEL(label12), TRUE);
+    gtk_misc_set_alignment(GTK_MISC(label12), 0, 0.5);
+    gtk_label_set_width_chars(GTK_LABEL(label12), 36);
+
+    hbox1 = gtk_hbox_new(FALSE, 4);
+    gtk_widget_show(hbox1);
+    gtk_frame_set_label_widget(GTK_FRAME(frame1), hbox1);
+
+    label3 = gtk_label_new("<b>Type:</b>");
+    gtk_widget_show(label3);
+    gtk_box_pack_start(GTK_BOX(hbox1), label3, FALSE, FALSE, 0);
+    gtk_label_set_use_markup(GTK_LABEL(label3), TRUE);
+
+    cmb_type = gtk_combo_box_new_text();
+    gtk_widget_show(cmb_type);
+    gtk_box_pack_start(GTK_BOX(hbox1), cmb_type, FALSE, TRUE, 0);
+    gtk_combo_box_append_text(GTK_COMBO_BOX(cmb_type),
+			      "Direct connection");
+    gtk_combo_box_append_text(GTK_COMBO_BOX(cmb_type), "SSH tunnel");
+
+    dialog_action_area1 = GTK_DIALOG(dialog)->action_area;
+    gtk_widget_show(dialog_action_area1);
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog_action_area1),
 			      GTK_BUTTONBOX_END);
 
-    button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-    gtk_widget_show(button8);
-    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
+    btn_cancel = gtk_button_new_from_stock("gtk-cancel");
+    gtk_widget_show(btn_cancel);
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), btn_cancel,
 				 GTK_RESPONSE_CANCEL);
-    GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
+    GTK_WIDGET_SET_FLAGS(btn_cancel, GTK_CAN_DEFAULT);
 
-    button7 = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-    gtk_widget_show(button7);
-    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
+    btn_save = gtk_button_new_from_stock("gtk-save");
+    gtk_widget_show(btn_save);
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), btn_save,
 				 GTK_RESPONSE_ACCEPT);
-    GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
+    GTK_WIDGET_SET_FLAGS(btn_save, GTK_CAN_DEFAULT);
 
-    return dialog;
+    host_dlg = g_new0(HostEditorDialog, 1);
+    host_dlg->dialog = dialog;
+    host_dlg->notebook = notebook1;
+    host_dlg->txt_hostname = txt_hostname;
+    host_dlg->txt_port = spn_port;
+    host_dlg->txt_ssh_user = txt_ssh_user;
+    host_dlg->txt_ssh_password = txt_ssh_password;
+    host_dlg->cmb_type = cmb_type;
+
+    gtk_combo_box_set_active(GTK_COMBO_BOX(host_dlg->cmb_type), 0);
+    g_signal_connect(G_OBJECT(cmb_type), "changed",
+		     G_CALLBACK(host_editor_combo_changed_cb), host_dlg);
+
+    return host_dlg;
 }
 
 static void remote_dialog_add(GtkWidget * button, gpointer data)
 {
     RemoteDialog *rd = (RemoteDialog *) data;
-    GtkWidget *host_editor =
+    HostEditorDialog *he =
 	host_editor_dialog_new(rd->dialog, "Add a host");
 
-    if (gtk_dialog_run(GTK_DIALOG(host_editor)) == GTK_RESPONSE_ACCEPT) {
+    if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
 	DEBUG("saving");
     }
 
-    gtk_widget_destroy(host_editor);
+    gtk_widget_destroy(he->dialog);
+    g_free(he);
 }
 
 static void remote_dialog_edit(GtkWidget * button, gpointer data)
 {
+    GtkWidget *dialog;
     RemoteDialog *rd = (RemoteDialog *) data;
-    GtkWidget *host_editor =
-	host_editor_dialog_new(rd->dialog, "Edit a host");
+    HostEditorDialog *he = host_editor_dialog_new(rd->dialog, "Edit a host");
+    gchar *host_type;
+    gint host_port;
+    
+    host_type = g_key_file_get_string(rd->key_file, rd->selected_name, "type", NULL);
+    if (!host_type || g_str_equal(host_type, "direct")) {
+        gtk_combo_box_set_active(GTK_COMBO_BOX(he->cmb_type), 0);
+    } else if (g_str_equal(host_type, "ssh")) {
+	gchar *username, *password;
 
-    if (gtk_dialog_run(GTK_DIALOG(host_editor)) == GTK_RESPONSE_ACCEPT) {
+        gtk_combo_box_set_active(GTK_COMBO_BOX(he->cmb_type), 1);
+
+	username = g_key_file_get_string(rd->key_file, rd->selected_name, "username", NULL);
+	if (username) {
+	    gtk_entry_set_text(GTK_ENTRY(he->txt_ssh_user), username);
+	    g_free(username);
+	}
+
+	password = g_key_file_get_string(rd->key_file, rd->selected_name, "password", NULL);
+	if (password) {
+	    gtk_entry_set_text(GTK_ENTRY(he->txt_ssh_password), password);
+	    g_free(password);
+	}
+    } else {
+	dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_ERROR,
+					GTK_BUTTONS_CLOSE,
+					"Host has invalid type (%s).",
+					host_type);
+
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+
+	goto bad;
+    }
+
+    gtk_entry_set_text(GTK_ENTRY(he->txt_hostname), rd->selected_name);
+    
+    host_port = g_key_file_get_integer(rd->key_file, rd->selected_name, "port", NULL);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(he->txt_port), host_port ? host_port : 4242);
+
+    if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
 	DEBUG("saving");
     }
 
-    gtk_widget_destroy(host_editor);
+  bad:
+    gtk_widget_destroy(he->dialog);
+    g_free(he);
+    g_free(host_type);
 }
 
 static void remote_dialog_remove(GtkWidget * button, gpointer data)
@@ -408,27 +714,80 @@ static void remote_dialog_remove(GtkWidget * button, gpointer data)
     RemoteDialog *rd = (RemoteDialog *) data;
     GtkWidget *dialog;
 
-    dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
-				    GTK_DIALOG_DESTROY_WITH_PARENT,
-				    GTK_MESSAGE_QUESTION,
-				    GTK_BUTTONS_NONE,
-				    "Remove the host <b>%s</b>?",
-				    "selected.host.name");
+    dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(rd->dialog),
+						GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_QUESTION,
+						GTK_BUTTONS_NONE,
+						"Remove the host <b>%s</b>?",
+						rd->selected_name);
 
     gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 			   GTK_STOCK_NO, GTK_RESPONSE_REJECT,
 			   GTK_STOCK_DELETE, GTK_RESPONSE_ACCEPT, NULL);
 
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-	DEBUG("removing");
+	g_key_file_remove_group(rd->key_file, rd->selected_name, NULL);
+	gtk_list_store_remove(rd->tree_store, rd->selected_iter);
     }
 
     gtk_widget_destroy(dialog);
 }
 
+static void remote_dialog_tree_sel_changed(GtkTreeSelection * sel,
+					   gpointer data)
+{
+    RemoteDialog *rd = (RemoteDialog *) data;
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+
+    if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+	gchar *name;
+	gint id;
+
+	gtk_tree_model_get(model, &iter, 1, &name, 2, &id, -1);
+
+	if (id != -1) {
+	    gtk_widget_set_sensitive(GTK_WIDGET(rd->btn_edit), TRUE);
+	    gtk_widget_set_sensitive(GTK_WIDGET(rd->btn_remove), TRUE);
+	} else {
+	    gtk_widget_set_sensitive(GTK_WIDGET(rd->btn_edit), FALSE);
+	    gtk_widget_set_sensitive(GTK_WIDGET(rd->btn_remove), FALSE);
+	}
+
+	g_free(rd->selected_name);
+
+	if (rd->selected_iter)
+	    gtk_tree_iter_free(rd->selected_iter);
+
+	rd->selected_id = id;
+	rd->selected_name = name;
+	rd->selected_iter = gtk_tree_iter_copy(&iter);
+    }
+}
+
+static void remote_dialog_destroy(RemoteDialog * rd)
+{
+    gchar *path, *remote_conf;
+    gsize length;
+
+    path =
+	g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf",
+			 NULL);
+
+    remote_conf = g_key_file_to_data(rd->key_file, &length, NULL);
+    g_file_set_contents(path, remote_conf, length, NULL);
+
+    gtk_widget_destroy(rd->dialog);
+
+    g_free(remote_conf);
+    g_free(path);
+    g_free(rd);
+}
+
 static RemoteDialog *remote_dialog_new(GtkWidget * parent)
 {
     RemoteDialog *rd;
+    gchar *path;
     GtkWidget *dialog;
     GtkWidget *dialog1_vbox;
     GtkWidget *scrolledwindow2;
@@ -439,11 +798,12 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     GtkWidget *dialog1_action_area;
     GtkWidget *button8;
     GtkWidget *button7;
+    GtkWidget *button2;
     GtkWidget *label;
     GtkWidget *hbox;
-
+    GtkTreeSelection *sel;
     GtkTreeViewColumn *column;
-    GtkCellRenderer *cr_text, *cr_pbuf, *cr_toggle;
+    GtkCellRenderer *cr_text, *cr_pbuf;
     GtkListStore *store;
     GtkTreeModel *model;
 
@@ -515,7 +875,6 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
 
-    populate_store(store);
 
     vbuttonbox3 = gtk_vbutton_box_new();
     gtk_widget_show(vbuttonbox3);
@@ -538,11 +897,11 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     g_signal_connect(button6, "clicked", G_CALLBACK(remote_dialog_edit),
 		     rd);
 
-    button6 = gtk_button_new_with_mnemonic("_Remove");
-    gtk_widget_show(button6);
-    gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
-    GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
-    g_signal_connect(button6, "clicked", G_CALLBACK(remote_dialog_remove),
+    button2 = gtk_button_new_with_mnemonic("_Remove");
+    gtk_widget_show(button2);
+    gtk_container_add(GTK_CONTAINER(vbuttonbox3), button2);
+    GTK_WIDGET_SET_FLAGS(button2, GTK_CAN_DEFAULT);
+    g_signal_connect(button2, "clicked", G_CALLBACK(remote_dialog_remove),
 		     rd);
 
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
@@ -550,7 +909,7 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
 
-    button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+    button8 = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
     gtk_widget_show(button8);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
 				 GTK_RESPONSE_CANCEL);
@@ -562,12 +921,31 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
 				 GTK_RESPONSE_ACCEPT);
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
 
+    gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview2));
+
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview2));
+
+    g_signal_connect(G_OBJECT(sel), "changed",
+		     (GCallback) remote_dialog_tree_sel_changed, rd);
+
     rd->dialog = dialog;
     rd->btn_cancel = button8;
     rd->btn_connect = button7;
+    rd->btn_add = button3;
+    rd->btn_edit = button6;
+    rd->btn_remove = button2;
+    rd->tree_store = store;
 
-    gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview2));
+    rd->key_file = g_key_file_new();
+    path =
+	g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf",
+			 NULL);
+    g_key_file_load_from_file(rd->key_file, path, 0, NULL);
+    g_free(path);
+
+    populate_store(rd, store);
+    gtk_widget_set_sensitive(GTK_WIDGET(rd->btn_edit), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(rd->btn_remove), FALSE);
 
     return rd;
 }
-
