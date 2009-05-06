@@ -123,7 +123,7 @@ struct _ShellModule {
     gchar		*name;
     GdkPixbuf		*icon;
     GModule		*dll;
-    gpointer		*(*aboutfunc) ();
+    gpointer		(*aboutfunc) ();
     
     guchar		 weight;
 
