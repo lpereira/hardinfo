@@ -195,7 +195,9 @@ void		shell_set_title(Shell *shell, char *subtitle);
 
 void		shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree);
 
-void		shell_save_hosts_file();
+void		shell_save_hosts_file(void);
+void		shell_update_remote_menu(void);
+
 #endif				/* __SHELL_H__ */
 
 

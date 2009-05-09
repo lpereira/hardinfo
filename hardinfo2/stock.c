@@ -31,6 +31,7 @@ static struct {
     { "about-modules.png", HI_STOCK_ABOUT_MODULES},
     { "syncmanager-small.png", HI_STOCK_SYNC_MENU},
     { "face-grin.png", HI_STOCK_DONATE},
+    { "server.png", HI_STOCK_SERVER},
 };
 
 static GtkIconFactory *icon_factory;

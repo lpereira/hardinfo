@@ -62,6 +62,11 @@ static GtkActionEntry entries[] = {
      "_Manage hosts...", NULL,
      NULL,
      G_CALLBACK(cb_manage_hosts)},
+    
+    {"LocalComputerAction", GTK_STOCK_HOME,
+     "_Local computer", NULL,
+     NULL,
+     G_CALLBACK(cb_local_computer)},
 
     {"CopyAction", GTK_STOCK_COPY,
      "_Copy to Clipboard", "<control>C",

@@ -15,6 +15,7 @@
 "		<menuitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
 "		<menuitem name=\"Manage\" action=\"ManageAction\" />" \
 "		<separator/>" \
+"		<menuitem name=\"LocalComputer\" action=\"LocalComputerAction\" />" \
 "		<separator name=\"RemoteLastSep\"/>" \
 "       </menu>" 
 
@@ -66,7 +67,6 @@ REMOTE_MENU_ITEMS
 "			<toolitem name=\"Report\" action=\"ReportAction\"/>" \
 "			<toolitem name=\"Copy\" action=\"CopyAction\"/>" \
 "			<separator/>" \
-"   		        <toolitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
 DEBUG_TOOLBAR_ITEMS \
 "		</placeholder>" \
 "	</toolbar>" \

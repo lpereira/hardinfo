@@ -50,6 +50,32 @@ void cb_manage_hosts()
     host_manager_show(shell->window);
 }
 
+void cb_connect_host(GtkAction * action)
+{
+    gchar *name;
+    
+    g_object_get(G_OBJECT(action), "name", &name, NULL);
+    remote_connect_host(name);
+
+    g_free(name);
+}
+
+void cb_local_computer()
+{
+    Shell *shell = shell_get_main_shell();
+
+    shell_status_update("Unloading modules...");
+    module_unload_all();
+    
+    shell_status_update("Loading local modules...");
+    shell->tree->modules = modules_load_all();
+
+    g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
+    gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
+    
+    shell_view_set_enabled(TRUE);
+}
+
 void cb_save_graphic()
 {
     Shell *shell = shell_get_main_shell();

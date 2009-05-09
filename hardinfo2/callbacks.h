@@ -37,5 +37,7 @@ void cb_report_bug();
 void cb_donate();
 void cb_connect_to();
 void cb_manage_hosts();
+void cb_connect_host(GtkAction * action);
+void cb_local_computer();
 
 #endif	/* __CALLBACKS_H__ */

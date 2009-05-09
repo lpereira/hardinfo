@@ -100,19 +100,21 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
                                    HostDialogMode mode);
 static void host_dialog_destroy(HostDialog *hd);
 
-static gboolean remote_version_is_supported(HostManager * rd)
+static gchar *xmlrpc_server_uri = NULL;
+
+static gboolean remote_version_is_supported()
 {
     gint remote_ver;
     GtkWidget *dialog;
 
     shell_status_update("Obtaining remote server API version...");
     remote_ver =
-	xmlrpc_get_integer("http://localhost:4242/xmlrpc",
+	xmlrpc_get_integer(xmlrpc_server_uri,
 			   "server.getAPIVersion", NULL);
 
     switch (remote_ver) {
     case -1:
-	dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+	dialog = gtk_message_dialog_new(NULL,
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR,
 					GTK_BUTTONS_CLOSE,
@@ -124,7 +126,7 @@ static gboolean remote_version_is_supported(HostManager * rd)
     case XMLRPC_SERVER_VERSION:
 	return TRUE;
     default:
-	dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+	dialog = gtk_message_dialog_new(NULL,
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR,
 					GTK_BUTTONS_CLOSE,
@@ -146,7 +148,7 @@ static gchar *remote_module_entry_func()
     gchar *ret;
 
     ret =
-	xmlrpc_get_string("http://localhost:4242/xmlrpc",
+	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryFunction", "%s%i",
 			  shell->selected_module_name,
 			  shell->selected->number);
@@ -163,12 +165,12 @@ static void remote_module_entry_scan_func(gboolean reload)
     Shell *shell = shell_get_main_shell();
 
     if (reload) {
-	xmlrpc_get_string("http://localhost:4242/xmlrpc",
+	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryReload", "%s%i",
 			  shell->selected_module_name,
 			  shell->selected->number);
     } else {
-	xmlrpc_get_string("http://localhost:4242/xmlrpc",
+	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryScan", "%s%i",
 			  shell->selected_module_name,
 			  shell->selected->number);
@@ -181,7 +183,7 @@ static gchar *remote_module_entry_field_func(gchar * entry)
     gchar *ret;
 
     ret =
-	xmlrpc_get_string("http://localhost:4242/xmlrpc",
+	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryGetField", "%s%i%s",
 			  shell->selected_module_name,
 			  shell->selected->number, entry);
@@ -195,7 +197,7 @@ static gchar *remote_module_entry_more_func(gchar * entry)
     gchar *ret;
 
     ret =
-	xmlrpc_get_string("http://localhost:4242/xmlrpc",
+	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryGetMoreInfo", "%s%i%s",
 			  shell->selected_module_name,
 			  shell->selected->number, entry);
@@ -209,7 +211,7 @@ static gchar *remote_module_entry_note_func(gint entry)
     gchar *note;
 
     note =
-	xmlrpc_get_string("http://localhost:4242/xmlrpc",
+	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryGetNote", "%s%i",
 			  shell->selected_module_name,
 			  shell->selected->number);
@@ -226,7 +228,7 @@ static ModuleAbout *remote_module_get_about()
     return NULL;
 }
 
-static gboolean load_module_list(HostManager * rd)
+static gboolean load_module_list()
 {
     Shell *shell;
     GValueArray *modules;
@@ -237,7 +239,7 @@ static gboolean load_module_list(HostManager * rd)
 
     shell_status_update("Obtaining remote server module list...");
     modules =
-	xmlrpc_get_array("http://localhost:4242/xmlrpc",
+	xmlrpc_get_array(xmlrpc_server_uri,
 			 "module.getModuleList", NULL);
     if (!modules) {
 	return FALSE;
@@ -261,7 +263,7 @@ static gboolean load_module_list(HostManager * rd)
 
 	shell_status_pulse();
 	entries =
-	    xmlrpc_get_array("http://localhost:4242/xmlrpc",
+	    xmlrpc_get_array(xmlrpc_server_uri,
 			     "module.getEntryList", "%s", m->name);
 	if (entries) {
 	    for (; j < entries->n_values; j++) {
@@ -303,16 +305,19 @@ static gboolean load_module_list(HostManager * rd)
     return TRUE;
 }
 
-static void remote_connect(HostManager * rd)
+static void remote_connect_direct(gchar *hostname,
+                                  gint port)
 {
     xmlrpc_init();
+    
+    g_free(xmlrpc_server_uri);
+    xmlrpc_server_uri = g_strdup_printf("http://%s:%d/xmlrpc", hostname, port);
 
-    /* check API version */
-    if (remote_version_is_supported(rd)) {
-	if (!load_module_list(rd)) {
+    if (remote_version_is_supported()) {
+	if (!load_module_list()) {
 	    GtkWidget *dialog;
 
-	    dialog = gtk_message_dialog_new(GTK_WINDOW(rd->dialog),
+	    dialog = gtk_message_dialog_new(NULL,
 					    GTK_DIALOG_DESTROY_WITH_PARENT,
 					    GTK_MESSAGE_ERROR,
 					    GTK_BUTTONS_CLOSE,
@@ -324,6 +329,53 @@ static void remote_connect(HostManager * rd)
     }
 
     shell_status_update("Done.");
+    shell_view_set_enabled(TRUE);
+}                                  
+
+static void remote_connect_ssh(gchar *hostname, 
+                               gint port,
+                               gchar *username,
+                               gchar *password)
+{
+    /* establish tunnel */
+    /* use remote_connect_direct */
+}                               
+
+void remote_connect_host(gchar *hostname)
+{
+    Shell *shell = shell_get_main_shell();
+    
+    if (!g_key_file_has_group(shell->hosts, hostname)) {
+        GtkWidget *dialog;
+
+        dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_CLOSE,
+                                        "Internal error.");
+
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        
+        return;
+    } else {
+        const gint port = g_key_file_get_integer(shell->hosts, hostname, "port", NULL);
+        gchar *type = g_key_file_get_string(shell->hosts, hostname, "type", NULL);
+        
+        if (g_str_equal(type, "ssh")) {
+            gchar *username = g_key_file_get_string(shell->hosts, hostname, "username", NULL);
+            gchar *password = g_key_file_get_string(shell->hosts, hostname, "password", NULL);
+            
+            remote_connect_ssh(hostname, port, username, password);
+            
+            g_free(username);
+            g_free(password);
+        } else {
+            remote_connect_direct(hostname, port);
+        }
+        
+        g_free(type);
+    }
 }
 
 void connect_dialog_show(GtkWidget * parent)
@@ -331,7 +383,18 @@ void connect_dialog_show(GtkWidget * parent)
     HostDialog *he = host_dialog_new(parent, "Connect to", HOST_DIALOG_MODE_CONNECT);
 
     if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
-        DEBUG("connecting");
+        gchar *hostname = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_hostname));
+        const gint selected_type = gtk_combo_box_get_active(GTK_COMBO_BOX(he->cmb_type));
+        const gint port = (int)gtk_spin_button_get_value(GTK_SPIN_BUTTON(he->txt_port));
+
+        if (selected_type == 1) {
+            gchar *username = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_user));
+            gchar *password = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_password));
+            
+            remote_connect_ssh(hostname, port, username, password);
+        } else {
+            remote_connect_direct(hostname, port);
+        }
     }
     
     host_dialog_destroy(he);
@@ -342,16 +405,7 @@ void host_manager_show(GtkWidget * parent)
     gboolean success;
     HostManager *rd = host_manager_new(parent);
 
-    if (gtk_dialog_run(GTK_DIALOG(rd->dialog)) == GTK_RESPONSE_ACCEPT) {
-	gtk_widget_hide(rd->dialog);
-	shell_view_set_enabled(FALSE);
-	shell_status_set_enabled(TRUE);
-
-	remote_connect(rd);
-
-	shell_status_set_enabled(FALSE);
-	shell_view_set_enabled(TRUE);
-    }
+    gtk_dialog_run(GTK_DIALOG(rd->dialog));
 
     host_manager_destroy(rd);
 }
@@ -798,7 +852,21 @@ static void host_manager_edit(GtkWidget * button, gpointer data)
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(he->txt_port), host_port ? host_port : 4242);
 
     if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
-	DEBUG("saving");
+        const gchar *type[] = { "direct", "ssh" };
+        const gint selected_type = gtk_combo_box_get_active(GTK_COMBO_BOX(he->cmb_type));
+        const gint port = (int)gtk_spin_button_get_value(GTK_SPIN_BUTTON(he->txt_port));
+        const gchar *hostname = gtk_entry_get_text(GTK_ENTRY(he->txt_hostname));
+
+        g_key_file_set_string(shell->hosts, hostname, "type", type[selected_type]);
+        g_key_file_set_integer(shell->hosts, hostname, "port", port);
+        
+        if (selected_type == 1) {
+            const gchar *username = gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_user));
+            const gchar *password = gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_password));
+            
+            g_key_file_set_string(shell->hosts, hostname, "username", username);
+            g_key_file_set_string(shell->hosts, hostname, "password", password);
+        }
     }
 
   bad:
@@ -869,6 +937,7 @@ static void host_manager_tree_sel_changed(GtkTreeSelection * sel,
 static void host_manager_destroy(HostManager * rd)
 {
     shell_save_hosts_file();
+    shell_update_remote_menu();
     gtk_widget_destroy(rd->dialog);
     
     g_free(rd);
@@ -887,7 +956,6 @@ static HostManager *host_manager_new(GtkWidget * parent)
     GtkWidget *button6;
     GtkWidget *dialog1_action_area;
     GtkWidget *button8;
-    GtkWidget *button7;
     GtkWidget *button2;
     GtkWidget *label;
     GtkWidget *hbox;
@@ -913,23 +981,6 @@ static HostManager *host_manager_new(GtkWidget * parent)
     gtk_box_set_spacing(GTK_BOX(dialog1_vbox), 5);
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
-
-/*
-    hbox = gtk_hbox_new(FALSE, 5);
-    gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, FALSE, FALSE, 0);
-
-    label = gtk_label_new("<big><b>Connect To</b></big>\n"
-			  "Please choose the remote computer to connect to:");
-    gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-    gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
-    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-
-    gtk_box_pack_start(GTK_BOX(hbox),
-		       icon_cache_get_image("server-large.png"),
-		       FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-    gtk_widget_show_all(hbox);
-*/
 
     hbox = gtk_hbox_new(FALSE, 5);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, TRUE, TRUE, 0);
@@ -1007,13 +1058,6 @@ static HostManager *host_manager_new(GtkWidget * parent)
 				 GTK_RESPONSE_CANCEL);
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
 
-/*
-    button7 = gtk_button_new_from_stock(GTK_STOCK_CONNECT);
-    gtk_widget_show(button7);
-    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
-				 GTK_RESPONSE_ACCEPT);
-    GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
-*/
     gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview2));
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview2));
@@ -1023,7 +1067,6 @@ static HostManager *host_manager_new(GtkWidget * parent)
 
     rd->dialog = dialog;
     rd->btn_cancel = button8;
-    rd->btn_connect = button7;
     rd->btn_add = button3;
     rd->btn_edit = button6;
     rd->btn_remove = button2;

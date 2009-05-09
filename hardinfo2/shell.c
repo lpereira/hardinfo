@@ -497,21 +497,68 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
 }
 
+static GSList *remote_merge_ids = NULL;
+static void
+add_host_to_view_menu(gchar *hostname)
+{
+    GtkAction *action;
+    gint merge_id;
+    GtkActionEntry entry = {
+       hostname,			/* name */
+       HI_STOCK_SERVER,			/* stockid */
+       hostname,			/* label */
+       NULL,				/* accelerator */
+       NULL,				/* tooltip */
+       (GCallback) cb_connect_host,	/* callback */
+    };
+
+    if ((action = gtk_action_group_get_action(shell->action_group, hostname))) {
+        gtk_action_group_remove_action(shell->action_group, action);
+    }
+
+    gtk_action_group_add_actions(shell->action_group, &entry, 1, NULL /*data */);
+
+    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
+    gtk_ui_manager_add_ui(shell->ui_manager,
+                          merge_id,
+                          "/menubar/RemoteMenu/RemoteLastSep",
+			  hostname, hostname, GTK_UI_MANAGER_AUTO, FALSE);
+    remote_merge_ids = g_slist_prepend(remote_merge_ids, GINT_TO_POINTER(merge_id));
+}
+
+void shell_update_remote_menu(void)
+{
+    GSList *merge_id;
+    gchar **hosts;
+    gint i;
+    
+    for (merge_id = remote_merge_ids; merge_id; merge_id = merge_id->next) {
+        gint id = GPOINTER_TO_INT(merge_id->data);
+        
+        gtk_ui_manager_remove_ui(shell->ui_manager, id);
+    }
+    
+    for (i = 0, hosts = g_key_file_get_groups(shell->hosts, NULL); hosts[i]; i++) {
+        add_host_to_view_menu(g_strdup(hosts[i]));
+    }
+    
+    g_strfreev(hosts);
+}
+
 static void
 add_module_entry_to_view_menu(gchar * module, gchar * name,
 			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
 {
     GtkAction *action;
     gint merge_id;
-    GtkActionEntry entries[] = {
-	{
-	 name,			/* name */
-	 name,			/* stockid */
-	 name,			/* label */
-	 NULL,			/* accelerator */
-	 NULL,			/* tooltip */
-	 (GCallback) view_menu_select_entry,	/* callback */
-	 },
+    gchar *path;
+    GtkActionEntry entry = {
+       name,			/* name */
+       name,			/* stockid */
+       name,			/* label */
+       NULL,			/* accelerator */
+       NULL,			/* tooltip */
+       (GCallback) view_menu_select_entry,	/* callback */
     };
 
     stock_icon_register_pixbuf(pixbuf, name);
@@ -520,14 +567,16 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
         gtk_action_group_remove_action(shell->action_group, action);
     }
 
-    gtk_action_group_add_actions(shell->action_group, entries, 1, iter);
+    gtk_action_group_add_actions(shell->action_group, &entry, 1, iter);
 
     merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
+    path = g_strdup_printf("/menubar/ViewMenu/%s", module);
     gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
-			  g_strdup_printf("/menubar/ViewMenu/%s", module),
+                          path,
 			  name, name, GTK_UI_MANAGER_AUTO, FALSE);
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
+    g_free(path);
 }
 
 void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
@@ -597,7 +646,7 @@ void shell_save_hosts_file(void)
     remote_conf = g_key_file_to_data(shell->hosts, &length, NULL);
     g_file_set_contents(path, remote_conf, length, NULL);
     
-    g_chmod(path, 0700);
+    g_chmod(path, 0600);
 
     g_free(remote_conf);
     g_free(path);
@@ -678,8 +727,9 @@ void shell_init(GSList * modules)
         g_free(path);
         
         g_atexit(shell_save_hosts_file);
-    }
 
+        shell_update_remote_menu();
+    }
 #endif
 }
 
