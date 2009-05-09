@@ -312,6 +312,8 @@ static void remote_connect_direct(gchar *hostname,
     
     g_free(xmlrpc_server_uri);
     xmlrpc_server_uri = g_strdup_printf("http://%s:%d/xmlrpc", hostname, port);
+    
+    shell_view_set_enabled(FALSE);
 
     if (remote_version_is_supported()) {
 	if (!load_module_list()) {

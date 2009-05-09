@@ -262,6 +262,7 @@ void shell_view_set_enabled(gboolean setting)
 
     gtk_widget_set_sensitive(shell->hpaned, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
+    shell_action_set_enabled("RemoteMenuAction", setting);
     shell_action_set_enabled("ConnectToAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
     shell_action_set_enabled("CopyAction", setting);

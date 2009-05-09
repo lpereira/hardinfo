@@ -58,7 +58,7 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_connect_to)},
 
-    {"ManageAction", GTK_STOCK_OPEN,
+    {"ManageAction", NULL,
      "_Manage hosts...", NULL,
      NULL,
      G_CALLBACK(cb_manage_hosts)},
