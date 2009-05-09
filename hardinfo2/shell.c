@@ -585,6 +585,20 @@ static void __tree_iter_destroy(gpointer data)
     gtk_tree_iter_free((GtkTreeIter *) data);
 }
 
+void shell_save_hosts_file(void)
+{
+    gchar *path, *remote_conf;
+    gsize length;
+
+    path = g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf", NULL);
+
+    remote_conf = g_key_file_to_data(shell->hosts, &length, NULL);
+    g_file_set_contents(path, remote_conf, length, NULL);
+
+    g_free(remote_conf);
+    g_free(path);
+}
+
 void shell_init(GSList * modules)
 {
     if (shell) {
@@ -600,6 +614,7 @@ void shell_init(GSList * modules)
     shell_action_set_property("CopyAction", "is-important", TRUE);
     shell_action_set_property("RefreshAction", "is-important", TRUE);
     shell_action_set_property("ReportAction", "is-important", TRUE);
+    shell_action_set_property("ReportBugAction", "is-important", TRUE);
 
     shell->tree = tree_new();
     shell->info = info_tree_new(FALSE);
@@ -649,6 +664,18 @@ void shell_init(GSList * modules)
     shell_action_set_enabled("SyncManagerAction", FALSE);
 #else
     shell_action_set_enabled("SyncManagerAction", sync_manager_count_entries() > 0);
+
+    {
+        gchar *path;
+
+        shell->hosts = g_key_file_new();
+        path = g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf", NULL);
+        g_key_file_load_from_file(shell->hosts, path, 0, NULL);
+        g_free(path);
+        
+        g_atexit(shell_save_hosts_file);
+    }
+
 #endif
 }
 

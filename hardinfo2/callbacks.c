@@ -40,7 +40,14 @@ void cb_connect_to()
 {
     Shell *shell = shell_get_main_shell();
 
-    remote_dialog_show(shell->window);
+    connect_dialog_show(shell->window);
+}
+
+void cb_manage_hosts()
+{
+    Shell *shell = shell_get_main_shell();
+    
+    host_manager_show(shell->window);
 }
 
 void cb_save_graphic()

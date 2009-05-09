@@ -36,5 +36,6 @@ void cb_sync_manager();
 void cb_report_bug();
 void cb_donate();
 void cb_connect_to();
+void cb_manage_hosts();
 
 #endif	/* __CALLBACKS_H__ */

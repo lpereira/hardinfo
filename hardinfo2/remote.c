@@ -63,12 +63,15 @@
  *    X forwarding, but that'll be local X11 info anyway]).
  */
 
-typedef struct _RemoteDialog RemoteDialog;
-typedef struct _HostEditorDialog HostEditorDialog;
+typedef struct _HostManager HostManager;
+typedef struct _HostDialog HostDialog;
 
-struct _RemoteDialog {
-    GKeyFile *key_file;
+typedef enum {
+  HOST_DIALOG_MODE_EDIT,
+  HOST_DIALOG_MODE_CONNECT
+} HostDialogMode;
 
+struct _HostManager {
     GtkWidget *dialog;
     GtkWidget *btn_connect, *btn_cancel;
     GtkWidget *btn_add, *btn_edit, *btn_remove;
@@ -80,7 +83,7 @@ struct _RemoteDialog {
     GtkTreeIter *selected_iter;
 };
 
-struct _HostEditorDialog {
+struct _HostDialog {
     GtkWidget *dialog;
     GtkWidget *notebook;
     
@@ -90,10 +93,14 @@ struct _HostEditorDialog {
     GtkWidget *cmb_type;
 };
 
-static RemoteDialog *remote_dialog_new(GtkWidget * parent);
-static void remote_dialog_destroy(RemoteDialog * rd);
+static HostManager *host_manager_new(GtkWidget * parent);
+static void host_manager_destroy(HostManager * rd);
+static HostDialog *host_dialog_new(GtkWidget * parent,
+                                   gchar * title,
+                                   HostDialogMode mode);
+static void host_dialog_destroy(HostDialog *hd);
 
-static gboolean remote_version_is_supported(RemoteDialog * rd)
+static gboolean remote_version_is_supported(HostManager * rd)
 {
     gint remote_ver;
     GtkWidget *dialog;
@@ -219,7 +226,7 @@ static ModuleAbout *remote_module_get_about()
     return NULL;
 }
 
-static gboolean load_module_list(RemoteDialog * rd)
+static gboolean load_module_list(HostManager * rd)
 {
     Shell *shell;
     GValueArray *modules;
@@ -296,7 +303,7 @@ static gboolean load_module_list(RemoteDialog * rd)
     return TRUE;
 }
 
-static void remote_connect(RemoteDialog * rd)
+static void remote_connect(HostManager * rd)
 {
     xmlrpc_init();
 
@@ -319,10 +326,21 @@ static void remote_connect(RemoteDialog * rd)
     shell_status_update("Done.");
 }
 
-void remote_dialog_show(GtkWidget * parent)
+void connect_dialog_show(GtkWidget * parent)
+{
+    HostDialog *he = host_dialog_new(parent, "Connect to", HOST_DIALOG_MODE_CONNECT);
+
+    if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
+        DEBUG("connecting");
+    }
+    
+    host_dialog_destroy(he);
+}
+
+void host_manager_show(GtkWidget * parent)
 {
     gboolean success;
-    RemoteDialog *rd = remote_dialog_new(parent);
+    HostManager *rd = host_manager_new(parent);
 
     if (gtk_dialog_run(GTK_DIALOG(rd->dialog)) == GTK_RESPONSE_ACCEPT) {
 	gtk_widget_hide(rd->dialog);
@@ -335,33 +353,28 @@ void remote_dialog_show(GtkWidget * parent)
 	shell_view_set_enabled(TRUE);
     }
 
-    remote_dialog_destroy(rd);
+    host_manager_destroy(rd);
 }
 
-static void populate_store(RemoteDialog * rd, GtkListStore * store)
+static void populate_store(HostManager * rd, GtkListStore * store)
 {
+    Shell *shell;
     GtkTreeIter iter;
     gchar *path;
     gchar **hosts;
     gint i, no_groups;
 
     gtk_list_store_clear(store);
-
-    gtk_list_store_append(store, &iter);
-    gtk_list_store_set(store, &iter,
-		       0, icon_cache_get_pixbuf("home.png"),
-		       1, g_strdup("Local Computer"),
-		       2, GINT_TO_POINTER(-1), -1);
-
-
-    hosts = g_key_file_get_groups(rd->key_file, &no_groups);
+    shell = shell_get_main_shell();
+    
+    hosts = g_key_file_get_groups(shell->hosts, &no_groups);
     DEBUG("%d hosts found", no_groups);
     for (i = 0; i < no_groups; i++) {
 	gchar *icon;
 
 	DEBUG("host #%d: %s", i, hosts[i]);
 
-	icon = g_key_file_get_string(rd->key_file, hosts[i], "icon", NULL);
+	icon = g_key_file_get_string(shell->hosts, hosts[i], "icon", NULL);
 
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
@@ -376,22 +389,52 @@ static void populate_store(RemoteDialog * rd, GtkListStore * store)
     g_strfreev(hosts);
 }
 
-static void host_editor_combo_changed_cb(GtkComboBox * widget,
+static GtkTreeModel *host_dialog_get_completion_model(void)
+{
+    Shell *shell;
+    GtkListStore *store;
+    GtkTreeIter iter;
+    gchar **groups;
+    gint i = 0;
+    
+    shell = shell_get_main_shell();
+    
+    store = gtk_list_store_new(1, G_TYPE_STRING);
+    for (groups = g_key_file_get_groups(shell->hosts, NULL); groups[i]; i++) {
+        gtk_list_store_append(store, &iter);
+        gtk_list_store_set(store, &iter, 0, g_strdup(groups[i]), -1);
+    }
+    g_strfreev(groups);
+    
+    return GTK_TREE_MODEL(store);
+}
+
+static void host_combo_changed_cb(GtkComboBox * widget,
 					 gpointer user_data)
 {
-    HostEditorDialog *host_dlg = (HostEditorDialog *) user_data;
+    HostDialog *host_dlg = (HostDialog *) user_data;
+    const gint default_ports[] = { 4242, 22 };
     gint index;
 
     index = gtk_combo_box_get_active(widget);
     
     gtk_notebook_set_current_page(GTK_NOTEBOOK(host_dlg->notebook), index);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(host_dlg->txt_port), default_ports[index]);
 }
 
-static HostEditorDialog *host_editor_dialog_new(GtkWidget * parent,
-						gchar * title)
+static void host_dialog_destroy(HostDialog *rd)
 {
-    HostEditorDialog *host_dlg;
+    gtk_widget_destroy(rd->dialog);
+    g_free(rd);
+}
 
+static HostDialog *host_dialog_new(GtkWidget * parent,
+                                   gchar * title,
+                                   HostDialogMode mode)
+{
+    HostDialog *host_dlg;
+    GtkEntryCompletion *completion;
+    GtkTreeModel *completion_model;
     GtkWidget *dialog;
     GtkWidget *dialog_vbox1;
     GtkWidget *vbox1;
@@ -400,8 +443,8 @@ static HostEditorDialog *host_editor_dialog_new(GtkWidget * parent,
     GtkWidget *label5;
     GtkWidget *txt_hostname;
     GtkWidget *alignment2;
-    GtkObject *spn_port_adj;
-    GtkWidget *spn_port;
+    GtkObject *txt_port_adj;
+    GtkWidget *txt_port;
     GtkWidget *frame1;
     GtkWidget *alignment3;
     GtkWidget *notebook1;
@@ -482,10 +525,10 @@ static HostEditorDialog *host_editor_dialog_new(GtkWidget * parent,
 		     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 		     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-    spn_port_adj = gtk_adjustment_new(4242, 1025, 65535, 1, 10, 0);
-    spn_port = gtk_spin_button_new(GTK_ADJUSTMENT(spn_port_adj), 1, 0);
-    gtk_widget_show(spn_port);
-    gtk_container_add(GTK_CONTAINER(alignment2), spn_port);
+    txt_port_adj = gtk_adjustment_new(4242, 1, 65535, 1, 10, 0);
+    txt_port = gtk_spin_button_new(GTK_ADJUSTMENT(txt_port_adj), 1, 0);
+    gtk_widget_show(txt_port);
+    gtk_container_add(GTK_CONTAINER(alignment2), txt_port);
 
     frame1 = gtk_frame_new(NULL);
     gtk_widget_show(frame1);
@@ -569,35 +612,36 @@ static HostEditorDialog *host_editor_dialog_new(GtkWidget * parent,
 		     (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment(GTK_MISC(label11), 0, 0.5);
 
-    hbox3 = gtk_hbox_new(FALSE, 4);
-    gtk_widget_show(hbox3);
-    gtk_box_pack_end(GTK_BOX(vbox3), hbox3, TRUE, TRUE, 0);
+    if (mode == HOST_DIALOG_MODE_EDIT) {
+        hbox3 = gtk_hbox_new(FALSE, 4);
+        gtk_widget_show(hbox3);
+        gtk_box_pack_end(GTK_BOX(vbox3), hbox3, TRUE, TRUE, 0);
 
-    image2 =
-	gtk_image_new_from_stock("gtk-dialog-warning",
-				 GTK_ICON_SIZE_SMALL_TOOLBAR);
-    gtk_widget_show(image2);
-    gtk_box_pack_start(GTK_BOX(hbox3), image2, FALSE, FALSE, 0);
-    gtk_misc_set_alignment(GTK_MISC(image2), 0.5, 0);
+        image2 =
+            gtk_image_new_from_stock("gtk-dialog-warning",
+                                     GTK_ICON_SIZE_SMALL_TOOLBAR);
+        gtk_widget_show(image2);
+        gtk_box_pack_start(GTK_BOX(hbox3), image2, FALSE, FALSE, 0);
+        gtk_misc_set_alignment(GTK_MISC(image2), 0.5, 0);
 
-    label12 =
-	gtk_label_new
-	("<small><i>The password will be saved in clear text on <b>~/.hardinfo/remote.conf</b>. Passwordless RSA keys can be used instead.</i></small>");
-    gtk_widget_show(label12);
-    gtk_box_pack_start(GTK_BOX(hbox3), label12, FALSE, FALSE, 0);
-    gtk_label_set_use_markup(GTK_LABEL(label12), TRUE);
-    gtk_label_set_line_wrap(GTK_LABEL(label12), TRUE);
-    gtk_misc_set_alignment(GTK_MISC(label12), 0, 0.5);
-    gtk_label_set_width_chars(GTK_LABEL(label12), 36);
+        label12 =
+            gtk_label_new
+            ("<small><i>The password will be saved in clear text on <b>~/.hardinfo/remote.conf</b>. Passwordless RSA keys can be used instead.</i></small>");
+        gtk_widget_show(label12);
+        gtk_box_pack_start(GTK_BOX(hbox3), label12, FALSE, FALSE, 0);
+        gtk_label_set_use_markup(GTK_LABEL(label12), TRUE);
+        gtk_label_set_line_wrap(GTK_LABEL(label12), TRUE);
+        gtk_misc_set_alignment(GTK_MISC(label12), 0, 0.5);
+        gtk_label_set_width_chars(GTK_LABEL(label12), 36);
+    }
 
     hbox1 = gtk_hbox_new(FALSE, 4);
     gtk_widget_show(hbox1);
     gtk_frame_set_label_widget(GTK_FRAME(frame1), hbox1);
 
-    label3 = gtk_label_new("<b>Type:</b>");
+    label3 = gtk_label_new("Type:");
     gtk_widget_show(label3);
     gtk_box_pack_start(GTK_BOX(hbox1), label3, FALSE, FALSE, 0);
-    gtk_label_set_use_markup(GTK_LABEL(label3), TRUE);
 
     cmb_type = gtk_combo_box_new_text();
     gtk_widget_show(cmb_type);
@@ -611,57 +655,111 @@ static HostEditorDialog *host_editor_dialog_new(GtkWidget * parent,
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog_action_area1),
 			      GTK_BUTTONBOX_END);
 
-    btn_cancel = gtk_button_new_from_stock("gtk-cancel");
+    btn_cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
     gtk_widget_show(btn_cancel);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), btn_cancel,
 				 GTK_RESPONSE_CANCEL);
     GTK_WIDGET_SET_FLAGS(btn_cancel, GTK_CAN_DEFAULT);
 
-    btn_save = gtk_button_new_from_stock("gtk-save");
+    if (mode == HOST_DIALOG_MODE_EDIT) {
+        btn_save = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+    } else if (mode == HOST_DIALOG_MODE_CONNECT) {
+        btn_save = gtk_button_new_from_stock(GTK_STOCK_CONNECT);
+    }
     gtk_widget_show(btn_save);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), btn_save,
 				 GTK_RESPONSE_ACCEPT);
     GTK_WIDGET_SET_FLAGS(btn_save, GTK_CAN_DEFAULT);
 
-    host_dlg = g_new0(HostEditorDialog, 1);
+    host_dlg = g_new0(HostDialog, 1);
     host_dlg->dialog = dialog;
     host_dlg->notebook = notebook1;
     host_dlg->txt_hostname = txt_hostname;
-    host_dlg->txt_port = spn_port;
+    host_dlg->txt_port = txt_port;
     host_dlg->txt_ssh_user = txt_ssh_user;
     host_dlg->txt_ssh_password = txt_ssh_password;
     host_dlg->cmb_type = cmb_type;
 
+    completion = gtk_entry_completion_new();
+    gtk_entry_set_completion(GTK_ENTRY(host_dlg->txt_hostname), completion);
+    g_object_unref(completion);
+    
+    completion_model = host_dialog_get_completion_model();
+    gtk_entry_completion_set_model(completion, completion_model);
+    g_object_unref(completion_model);
+    
+    gtk_entry_completion_set_text_column(completion, 0);
+    
     gtk_combo_box_set_active(GTK_COMBO_BOX(host_dlg->cmb_type), 0);
     g_signal_connect(G_OBJECT(cmb_type), "changed",
-		     G_CALLBACK(host_editor_combo_changed_cb), host_dlg);
+		     G_CALLBACK(host_combo_changed_cb), host_dlg);
 
     return host_dlg;
 }
 
-static void remote_dialog_add(GtkWidget * button, gpointer data)
+static void host_manager_add(GtkWidget * button, gpointer data)
 {
-    RemoteDialog *rd = (RemoteDialog *) data;
-    HostEditorDialog *he =
-	host_editor_dialog_new(rd->dialog, "Add a host");
+    Shell *shell = shell_get_main_shell();
+    HostManager *rd = (HostManager *) data;
+    HostDialog *he =
+	host_dialog_new(rd->dialog, "Add a host", HOST_DIALOG_MODE_EDIT);
 
+retry:
     if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
-	DEBUG("saving");
+        const gchar *hostname = gtk_entry_get_text(GTK_ENTRY(he->txt_hostname));
+
+        if (g_key_file_has_group(shell->hosts, hostname)) {
+            GtkWidget *dialog;
+            
+            dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(rd->dialog),
+                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                        GTK_MESSAGE_ERROR,
+                                                        GTK_BUTTONS_CLOSE,
+                                                        "Hostname <b>%s</b> already exists.", hostname);
+
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+            
+            goto retry;
+        } else {
+            GtkTreeIter iter;
+            const gchar *type[] = { "direct", "ssh" };
+            const gint selected_type = gtk_combo_box_get_active(GTK_COMBO_BOX(he->cmb_type));
+            const gint port = (int)gtk_spin_button_get_value(GTK_SPIN_BUTTON(he->txt_port));
+
+            g_key_file_set_string(shell->hosts, hostname, "type", type[selected_type]);
+            g_key_file_set_integer(shell->hosts, hostname, "port", port);
+            
+            if (selected_type == 1) {
+                const gchar *username = gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_user));
+                const gchar *password = gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_password));
+                
+                g_key_file_set_string(shell->hosts, hostname, "username", username);
+                g_key_file_set_string(shell->hosts, hostname, "password", password);
+            }
+
+            gtk_list_store_append(rd->tree_store, &iter);
+            gtk_list_store_set(rd->tree_store, &iter,
+                               0, icon_cache_get_pixbuf("server.png"),
+                               1, g_strdup(hostname),
+                               2, 0,
+                               -1);
+        }
     }
 
-    gtk_widget_destroy(he->dialog);
-    g_free(he);
+    host_dialog_destroy(he);
 }
 
-static void remote_dialog_edit(GtkWidget * button, gpointer data)
+static void host_manager_edit(GtkWidget * button, gpointer data)
 {
+    Shell *shell = shell_get_main_shell();
     GtkWidget *dialog;
-    RemoteDialog *rd = (RemoteDialog *) data;
-    HostEditorDialog *he = host_editor_dialog_new(rd->dialog, "Edit a host");
+    HostManager *rd = (HostManager *) data;
+    HostDialog *he = host_dialog_new(rd->dialog, "Edit a host", HOST_DIALOG_MODE_EDIT);
     gchar *host_type;
     gint host_port;
     
-    host_type = g_key_file_get_string(rd->key_file, rd->selected_name, "type", NULL);
+    host_type = g_key_file_get_string(shell->hosts, rd->selected_name, "type", NULL);
     if (!host_type || g_str_equal(host_type, "direct")) {
         gtk_combo_box_set_active(GTK_COMBO_BOX(he->cmb_type), 0);
     } else if (g_str_equal(host_type, "ssh")) {
@@ -669,13 +767,13 @@ static void remote_dialog_edit(GtkWidget * button, gpointer data)
 
         gtk_combo_box_set_active(GTK_COMBO_BOX(he->cmb_type), 1);
 
-	username = g_key_file_get_string(rd->key_file, rd->selected_name, "username", NULL);
+	username = g_key_file_get_string(shell->hosts, rd->selected_name, "username", NULL);
 	if (username) {
 	    gtk_entry_set_text(GTK_ENTRY(he->txt_ssh_user), username);
 	    g_free(username);
 	}
 
-	password = g_key_file_get_string(rd->key_file, rd->selected_name, "password", NULL);
+	password = g_key_file_get_string(shell->hosts, rd->selected_name, "password", NULL);
 	if (password) {
 	    gtk_entry_set_text(GTK_ENTRY(he->txt_ssh_password), password);
 	    g_free(password);
@@ -696,7 +794,7 @@ static void remote_dialog_edit(GtkWidget * button, gpointer data)
 
     gtk_entry_set_text(GTK_ENTRY(he->txt_hostname), rd->selected_name);
     
-    host_port = g_key_file_get_integer(rd->key_file, rd->selected_name, "port", NULL);
+    host_port = g_key_file_get_integer(shell->hosts, rd->selected_name, "port", NULL);
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(he->txt_port), host_port ? host_port : 4242);
 
     if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
@@ -704,14 +802,14 @@ static void remote_dialog_edit(GtkWidget * button, gpointer data)
     }
 
   bad:
-    gtk_widget_destroy(he->dialog);
-    g_free(he);
+    host_dialog_destroy(he);
     g_free(host_type);
 }
 
-static void remote_dialog_remove(GtkWidget * button, gpointer data)
+static void host_manager_remove(GtkWidget * button, gpointer data)
 {
-    RemoteDialog *rd = (RemoteDialog *) data;
+    Shell *shell = shell_get_main_shell();
+    HostManager *rd = (HostManager *) data;
     GtkWidget *dialog;
 
     dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(rd->dialog),
@@ -726,17 +824,20 @@ static void remote_dialog_remove(GtkWidget * button, gpointer data)
 			   GTK_STOCK_DELETE, GTK_RESPONSE_ACCEPT, NULL);
 
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-	g_key_file_remove_group(rd->key_file, rd->selected_name, NULL);
+	g_key_file_remove_group(shell->hosts, rd->selected_name, NULL);
 	gtk_list_store_remove(rd->tree_store, rd->selected_iter);
+	
+	gtk_widget_set_sensitive(rd->btn_edit, FALSE);
+	gtk_widget_set_sensitive(rd->btn_remove, FALSE);
     }
 
     gtk_widget_destroy(dialog);
 }
 
-static void remote_dialog_tree_sel_changed(GtkTreeSelection * sel,
+static void host_manager_tree_sel_changed(GtkTreeSelection * sel,
 					   gpointer data)
 {
-    RemoteDialog *rd = (RemoteDialog *) data;
+    HostManager *rd = (HostManager *) data;
     GtkTreeModel *model;
     GtkTreeIter iter;
 
@@ -765,28 +866,17 @@ static void remote_dialog_tree_sel_changed(GtkTreeSelection * sel,
     }
 }
 
-static void remote_dialog_destroy(RemoteDialog * rd)
+static void host_manager_destroy(HostManager * rd)
 {
-    gchar *path, *remote_conf;
-    gsize length;
-
-    path =
-	g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf",
-			 NULL);
-
-    remote_conf = g_key_file_to_data(rd->key_file, &length, NULL);
-    g_file_set_contents(path, remote_conf, length, NULL);
-
+    shell_save_hosts_file();
     gtk_widget_destroy(rd->dialog);
-
-    g_free(remote_conf);
-    g_free(path);
+    
     g_free(rd);
 }
 
-static RemoteDialog *remote_dialog_new(GtkWidget * parent)
+static HostManager *host_manager_new(GtkWidget * parent)
 {
-    RemoteDialog *rd;
+    HostManager *rd;
     gchar *path;
     GtkWidget *dialog;
     GtkWidget *dialog1_vbox;
@@ -807,10 +897,10 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     GtkListStore *store;
     GtkTreeModel *model;
 
-    rd = g_new0(RemoteDialog, 1);
+    rd = g_new0(HostManager, 1);
 
     dialog = gtk_dialog_new();
-    gtk_window_set_title(GTK_WINDOW(dialog), "Connect to Remote Computer");
+    gtk_window_set_title(GTK_WINDOW(dialog), "Remote Host Manager");
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
@@ -824,6 +914,7 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
 
+/*
     hbox = gtk_hbox_new(FALSE, 5);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, FALSE, FALSE, 0);
 
@@ -838,6 +929,7 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
 		       FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_widget_show_all(hbox);
+*/
 
     hbox = gtk_hbox_new(FALSE, 5);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, TRUE, TRUE, 0);
@@ -888,20 +980,20 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button3);
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
     g_signal_connect(button3, "clicked",
-		     G_CALLBACK(remote_dialog_add), rd);
+		     G_CALLBACK(host_manager_add), rd);
 
     button6 = gtk_button_new_with_mnemonic("_Edit");
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
-    g_signal_connect(button6, "clicked", G_CALLBACK(remote_dialog_edit),
+    g_signal_connect(button6, "clicked", G_CALLBACK(host_manager_edit),
 		     rd);
 
     button2 = gtk_button_new_with_mnemonic("_Remove");
     gtk_widget_show(button2);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button2);
     GTK_WIDGET_SET_FLAGS(button2, GTK_CAN_DEFAULT);
-    g_signal_connect(button2, "clicked", G_CALLBACK(remote_dialog_remove),
+    g_signal_connect(button2, "clicked", G_CALLBACK(host_manager_remove),
 		     rd);
 
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
@@ -915,18 +1007,19 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
 				 GTK_RESPONSE_CANCEL);
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
 
+/*
     button7 = gtk_button_new_from_stock(GTK_STOCK_CONNECT);
     gtk_widget_show(button7);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
-
+*/
     gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview2));
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview2));
 
     g_signal_connect(G_OBJECT(sel), "changed",
-		     (GCallback) remote_dialog_tree_sel_changed, rd);
+		     (GCallback) host_manager_tree_sel_changed, rd);
 
     rd->dialog = dialog;
     rd->btn_cancel = button8;
@@ -935,13 +1028,6 @@ static RemoteDialog *remote_dialog_new(GtkWidget * parent)
     rd->btn_edit = button6;
     rd->btn_remove = button2;
     rd->tree_store = store;
-
-    rd->key_file = g_key_file_new();
-    path =
-	g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf",
-			 NULL);
-    g_key_file_load_from_file(rd->key_file, path, 0, NULL);
-    g_free(path);
 
     populate_store(rd, store);
     gtk_widget_set_sensitive(GTK_WIDGET(rd->btn_edit), FALSE);

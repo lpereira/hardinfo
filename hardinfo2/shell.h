@@ -94,6 +94,8 @@ struct _Shell {
     ShellOrderType	_order_type;
     
     gchar		*selected_module_name;
+
+    GKeyFile		*hosts;
 };
 
 struct _ShellTree {
@@ -193,6 +195,7 @@ void		shell_set_title(Shell *shell, char *subtitle);
 
 void		shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree);
 
+void		shell_save_hosts_file();
 #endif				/* __SHELL_H__ */
 
 

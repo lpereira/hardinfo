@@ -1,15 +1,34 @@
 #ifndef __UIDEFS_H__
 #define __UIDEFS_H__ 
 
+#include "config.h"
+
+#if RELEASE
+#define DEBUG_TOOLBAR_ITEMS
+#else 		/* !RELEASE */
+#define DEBUG_TOOLBAR_ITEMS	"<separator/>" \
+                                "<toolitem name=\"ReportBug\" action=\"ReportBugAction\" />"
+#endif		/* !RELEASE */
+
+#ifdef HAS_LIBSOUP
+#define REMOTE_MENU_ITEMS "       <menu name=\"RemoteMenu\" action=\"RemoteMenuAction\">" \
+"		<menuitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
+"		<menuitem name=\"Manage\" action=\"ManageAction\" />" \
+"		<separator/>" \
+"		<separator name=\"RemoteLastSep\"/>" \
+"       </menu>" 
+
+#else		/* !HAS_LIBSOUP */
+#define REMOTE_MENU_ITEMS
+#endif		/* !HAS_LIBSOUP */
+
 char *uidefs_str = "<ui>" \
 "	<menubar>" \
 "	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
-"		<menuitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
-"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" \
-"		<separator/>" \
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
-"		<separator/>" \
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \
+"		<separator/>" \
+"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" \
 /*
  * Save Image is not ready for prime time. Yet.
  * "<menuitem name=\"SaveGraph\" action=\"SaveGraphAction\" />" \
@@ -25,6 +44,7 @@ char *uidefs_str = "<ui>" \
 "		<separator/>" \
 "		<separator name=\"LastSep\"/>" \
 "	</menu>" \
+REMOTE_MENU_ITEMS
 "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">" \
 "		<menuitem name=\"OnlineDocs\" action=\"OnlineDocsAction\"/>" \
 "		<separator/>" \
@@ -43,10 +63,11 @@ char *uidefs_str = "<ui>" \
 "		<placeholder name=\"ToolItems\">" \
 "			<toolitem name=\"Refresh\" action=\"RefreshAction\"/>" \
 "			<separator/>" \
-"   		        <toolitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
-"			<separator/>" \
-"			<toolitem name=\"Copy\" action=\"CopyAction\"/>" \
 "			<toolitem name=\"Report\" action=\"ReportAction\"/>" \
+"			<toolitem name=\"Copy\" action=\"CopyAction\"/>" \
+"			<separator/>" \
+"   		        <toolitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
+DEBUG_TOOLBAR_ITEMS \
 "		</placeholder>" \
 "	</toolbar>" \
 "</ui>";

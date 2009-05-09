@@ -32,6 +32,7 @@
 
 static GtkActionEntry entries[] = {
     {"InformationMenuAction", NULL, "_Information"},	/* name, stock id, label */
+    {"RemoteMenuAction", NULL, "_Remote"},
     {"ViewMenuAction", NULL, "_View"},
     {"HelpMenuAction", NULL, "_Help"},
     {"HelpMenuModulesAction", HI_STOCK_ABOUT_MODULES, "About _Modules"},
@@ -53,13 +54,18 @@ static GtkActionEntry entries[] = {
      G_CALLBACK(cb_sync_manager)},
      
     {"ConnectToAction", GTK_STOCK_CONNECT,
-     "_Connect to", NULL,
+     "_Connect to...", NULL,
      NULL,
      G_CALLBACK(cb_connect_to)},
 
+    {"ManageAction", GTK_STOCK_OPEN,
+     "_Manage hosts...", NULL,
+     NULL,
+     G_CALLBACK(cb_manage_hosts)},
+
     {"CopyAction", GTK_STOCK_COPY,
      "_Copy to Clipboard", "<control>C",
-     NULL,
+     "Copy to clipboard",
      G_CALLBACK(cb_copy_to_clipboard)},
 
     {"SaveGraphAction", GTK_STOCK_SAVE_AS,
