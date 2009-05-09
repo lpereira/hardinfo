@@ -590,10 +590,14 @@ void shell_save_hosts_file(void)
     gchar *path, *remote_conf;
     gsize length;
 
+    DEBUG("saving hosts file");
+
     path = g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf", NULL);
 
     remote_conf = g_key_file_to_data(shell->hosts, &length, NULL);
     g_file_set_contents(path, remote_conf, length, NULL);
+    
+    g_chmod(path, 0700);
 
     g_free(remote_conf);
     g_free(path);

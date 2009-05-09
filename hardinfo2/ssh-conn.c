@@ -174,7 +174,8 @@ SSHConnResponse ssh_new(SoupURI * uri,
 	    g_chmod(askpass_path, 0700);
 
 	    tmp = g_strdup_printf("#!/bin/sh\n"
-				  "echo '%s'\n", uri->password);
+				  "echo '%s'\n"
+				  "rm -f \"$0\"", uri->password);
 	    write(tmp_askpass, tmp, strlen(tmp));
 	    close(tmp_askpass);
 	    g_free(tmp);
