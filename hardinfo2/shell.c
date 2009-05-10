@@ -522,7 +522,7 @@ add_host_to_view_menu(gchar *hostname)
     merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
-                          "/menubar/RemoteMenu/RemoteLastSep",
+                          "/menubar/RemoteMenu/LocalComputer",
 			  hostname, hostname, GTK_UI_MANAGER_AUTO, FALSE);
     remote_merge_ids = g_slist_prepend(remote_merge_ids, GINT_TO_POINTER(merge_id));
 }

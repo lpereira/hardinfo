@@ -19,45 +19,35 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <shell.h>
-#include <iconcache.h>
-#include <hardinfo.h>
-#include <config.h>
 
+#include "config.h"
+#include "shell.h"
+#include "iconcache.h"
+#include "hardinfo.h"
 #include "xmlrpc-client.h"
+#include "ssh-conn.h"
 
 #define XMLRPC_SERVER_VERSION		1
 
 /*
  * TODO
  *
- * - Completely disable this feature if libsoup support isn't compiled in
- * - Add "Local Computer"
+ * - Add hi_deinit() to modules (so they can free up their memory)
+ * - Import / Export host list
  * - Detect machines on local network that runs SSH
  *   - IP range scan
  *   - mDNS
  * - Allow the user to add/remove/edit a machine
  *   - Use ~/.ssh/known_hosts as a starting point?
  *   - Different icons for different machines?
- *   - Make sure SSH can do port forwarding
- *   - Make sure the remote host has HardInfo installed, with the correct
- *     version.
- * - Allow the user to choose/guess the SSH authentication method
- *   - Plain old username / password
- *   - Passwordless RSA keys
- *   - RSA Keys with passwords
  * - Make sure SSH can do port forwarding
  * - Make sure the remote host has HardInfo installed
- * - Implement XML-RPC server (use libsoup; there's a example with libsoup's sources)
- *   - Create abstractions for common module operations
- *   - Use function pointers to choose between local and remote modes
- *   - Generate a random username/password to be passed to the XML-RPC server; use
- *     that username/password on the client; this is just to make sure nobody on the
- *     machine will be allowed to obtain information that might be sensitive. This
- *     will be passed with base64, so it can be sniffed; this needs root access anyway,
- *     so not really a problem.
+ * - Generate a random username/password to be passed to the XML-RPC server; use
+ *   that username/password on the client; this is just to make sure nobody on the
+ *   machine will be allowed to obtain information that might be sensitive. This
+ *   will be passed with base64, so it can be sniffed; this needs root access anyway,
+ *   so not really a problem.
  * - Determine if we're gonna use GIOChannels or create a communication thread
- * - Use libsoup XML-RPC support to implement the remote mode
  * - Introduce a flag on the modules, stating their ability to be used locally/remotely
  *   (Benchmarks can't be used remotely; Displays won't work remotely [unless we use
  *    X forwarding, but that'll be local X11 info anyway]).
@@ -100,7 +90,9 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
                                    HostDialogMode mode);
 static void host_dialog_destroy(HostDialog *hd);
 
+
 static gchar *xmlrpc_server_uri = NULL;
+static SSHConn *ssh_conn = NULL;
 
 static gboolean remote_version_is_supported()
 {
@@ -305,9 +297,11 @@ static gboolean load_module_list()
     return TRUE;
 }
 
-static void remote_connect_direct(gchar *hostname,
-                                  gint port)
+static gboolean remote_connect_direct(gchar *hostname,
+                                      gint port)
 {
+    gboolean retval = FALSE;
+    
     xmlrpc_init();
     
     g_free(xmlrpc_server_uri);
@@ -318,20 +312,24 @@ static void remote_connect_direct(gchar *hostname,
     if (remote_version_is_supported()) {
 	if (!load_module_list()) {
 	    GtkWidget *dialog;
+	    
+            dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_CLOSE,
+                                            "Cannot obtain module list from server.");
 
-	    dialog = gtk_message_dialog_new(NULL,
-					    GTK_DIALOG_DESTROY_WITH_PARENT,
-					    GTK_MESSAGE_ERROR,
-					    GTK_BUTTONS_CLOSE,
-					    "Cannot load remote module list.");
-
-	    gtk_dialog_run(GTK_DIALOG(dialog));
-	    gtk_widget_destroy(dialog);
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+	} else {
+	    retval = TRUE;
 	}
     }
 
     shell_status_update("Done.");
     shell_view_set_enabled(TRUE);
+    
+    return retval;
 }                                  
 
 static void remote_connect_ssh(gchar *hostname, 
@@ -339,8 +337,60 @@ static void remote_connect_ssh(gchar *hostname,
                                gchar *username,
                                gchar *password)
 {
+    GtkWidget *dialog;
+    SSHConnResponse ssh_response;
+    SoupURI *uri;
+    gchar *struri;
+    char buffer[32];
+    
     /* establish tunnel */
-    /* use remote_connect_direct */
+    if (ssh_conn) {
+        ssh_close(ssh_conn);
+        ssh_conn = NULL;
+    }
+    
+    shell_view_set_enabled(FALSE);
+    shell_status_update("Establishing SSH tunnel...");
+    struri = g_strdup_printf("ssh://%s:%s@%s:%d/?L4343:localhost:4242",
+                             username, password,
+                             hostname, port);
+    uri = soup_uri_new(struri);
+    ssh_response = ssh_new(uri, &ssh_conn, "hardinfo -x");
+    
+    if (ssh_response != SSH_CONN_OK) {
+        ssh_close(ssh_conn);
+    } else {
+        gint res;
+        gint bytes_read;
+        
+        memset(buffer, 0, sizeof(buffer));
+        res = ssh_read(ssh_conn->fd_read, buffer, sizeof(buffer), &bytes_read);
+        if (bytes_read != 0 && res > 0) {
+            if (strncmp(buffer, "XML-RPC server ready", 20) == 0) {
+                if (remote_connect_direct("localhost", 4343)) {
+                    goto ok;
+                }
+                
+                /* TODO FIXME Perhaps the server is already running; try to fix */                
+            }
+        }
+        
+        ssh_close(ssh_conn);
+    }
+    
+    /* TODO FIXME Show exact cause of error. */
+    dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_CLOSE,
+                                    "Cannot establish tunnel.");
+
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+    
+ok:
+    g_free(struri);
+    shell_view_set_enabled(TRUE);
 }                               
 
 void remote_connect_host(gchar *hostname)

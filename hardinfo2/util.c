@@ -594,7 +594,10 @@ static void module_unload(ShellModule * module)
     name = g_path_get_basename(g_module_name(module->dll));
     g_hash_table_foreach_remove(__module_methods, remove_module_methods, name);
     
-    g_module_close(module->dll);
+    if (module->dll) {
+    	g_module_close(module->dll);
+    }
+    
     g_free(module->name);
     gdk_pixbuf_unref(module->icon);
     
@@ -633,6 +636,7 @@ void module_unload_all(void)
     
     g_slist_free(shell->tree->modules);
     g_slist_free(shell->merge_ids);
+    
     shell->merge_ids = NULL;
     shell->tree->modules = NULL;
     shell->selected = NULL;

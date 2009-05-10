@@ -74,6 +74,7 @@ void cb_local_computer()
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
     
     shell_view_set_enabled(TRUE);
+    shell_status_update("Done.");
 }
 
 void cb_save_graphic()

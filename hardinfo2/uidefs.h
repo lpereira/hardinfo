@@ -16,7 +16,6 @@
 "		<menuitem name=\"Manage\" action=\"ManageAction\" />" \
 "		<separator/>" \
 "		<menuitem name=\"LocalComputer\" action=\"LocalComputerAction\" />" \
-"		<separator name=\"RemoteLastSep\"/>" \
 "       </menu>" 
 
 #else		/* !HAS_LIBSOUP */

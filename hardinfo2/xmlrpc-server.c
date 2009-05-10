@@ -720,6 +720,7 @@ void xmlrpc_server_start(void)
 			    NULL, NULL);
 
     DEBUG("starting server");
+    g_print("XML-RPC server ready\n");
     g_main_loop_run(loop);
 
     DEBUG("shutting down server");
