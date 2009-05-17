@@ -745,7 +745,9 @@ static gboolean update_field(gpointer data)
     DEBUG("update_field [%s]", fu->field_name);
     
     iter = g_hash_table_lookup(update_tbl, fu->field_name);
-    g_return_val_if_fail(iter != NULL, FALSE);
+    if (!iter) {
+        return FALSE;
+    }
     
     /* if the entry is still selected, update it */
     if (iter && fu->entry->selected && fu->entry->fieldfunc) {

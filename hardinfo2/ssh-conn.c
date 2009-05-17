@@ -32,26 +32,23 @@
 #include <string.h>
 #include <errno.h>
 #include <linux/termios.h>
-
+#include <sys/types.h>
+#include <sys/wait.h>
+       
 #include "ssh-conn.h"
 
-static const char *errors[] = {
+const char *ssh_conn_errors[] = {
     "OK",
-    "No URI",
+    "No URI specified",
     "Unknown protocol",
     "Unknown error",
     "Cannot spawn SSH",
     "Bad parameters",
-    "Permission denied",
+    "Permission denied (invalid credentials)",
     "Host key verification failed",
     "Connection refused",
     "Invalid username or password"
 };
-
-const char *ssh_strerror(SSHConnResponse errno)
-{
-    return errors[errno];
-}
 
 int ssh_write(SSHConn * conn,
 	      gconstpointer buffer, gint num_bytes, gint * bytes_written)
@@ -109,7 +106,10 @@ void ssh_close(SSHConn * conn)
     close(conn->fd_write);
     close(conn->fd_error);
 
-    soup_uri_free(conn->uri);
+    if (conn->uri) {
+        soup_uri_free(conn->uri);
+    }
+    
     kill(conn->pid, SIGINT);
 
     if (conn->askpass_path) {
@@ -227,42 +227,41 @@ SSHConnResponse ssh_new(SoupURI * uri,
     }
 
     connection = g_new0(SSHConn, 1);
+    connection->exit_status = -1;
 
     DEBUG("spawning SSH");
 
     if (!g_spawn_async_with_pipes(NULL, argv, NULL,
 				  G_SPAWN_SEARCH_PATH,
 				  ssh_conn_setup, askpass_path,
-				  (gint *) & connection->pid,
+				  &connection->pid,
 				  &connection->fd_write,
 				  &connection->fd_read,
 				  &connection->fd_error, NULL)) {
 	response = SSH_CONN_CANNOT_SPAWN_SSH;
 	goto end;
     }
-
+    
     memset(buffer, 0, sizeof(buffer));
     res = ssh_read(connection->fd_error, &buffer, sizeof(buffer),
 		   &bytes_read);
     DEBUG("bytes read: %d, result = %d", bytes_read, res);
-    if (bytes_read != 0 && res > 0) {
+    if (bytes_read > 0 && res == 1) {
 	DEBUG("Received (error channel): [%s]", buffer);
 
-	if (g_str_equal(buffer, "Permission denied")) {
+	if (g_str_has_prefix(buffer, "Permission denied")) {
 	    response = SSH_CONN_PERMISSION_DENIED;
-	} else if (g_str_equal(buffer, "Host key verification failed")) {
+	    goto end;
+	} else if (g_str_has_prefix(buffer, "Host key verification failed")) {
 	    response = SSH_CONN_HOST_KEY_CHECK_FAIL;
 	    goto end;
-	} else if (g_str_equal(buffer, "Connection refused")) {
+	} else if (g_str_has_prefix(buffer, "Connection refused")) {
 	    response = SSH_CONN_REFUSED;
-	    goto end;
-	} else if (g_str_has_prefix(buffer, "Host key fingerprint is")) {
-	    /* ok */
-	} else {
-	    response = SSH_CONN_UNKNOWN_ERROR;
 	    goto end;
 	}
     }
+    
+    DEBUG("no error detected; ssh conn established");
 
     connection->uri = soup_uri_copy(uri);
     response = SSH_CONN_OK;
@@ -280,14 +279,18 @@ SSHConnResponse ssh_new(SoupURI * uri,
     }
 
     if (response != SSH_CONN_OK) {
+        if (connection->uri) {
+            soup_uri_free(connection->uri);
+        }
+        
 	g_free(connection);
+
 	*conn_return = NULL;
     } else {
 	*conn_return = connection;
     }
 
-    DEBUG("response = %d (%s)",
-	  response, response == SSH_CONN_OK ? "OK" : "Error");
+    DEBUG("response = %d (%s)", response, ssh_conn_errors[response]);
 
     return response;
 }
@@ -309,7 +312,7 @@ int main(int argc, char **argv)
 
     u = soup_uri_new(argv[1]);
     r = ssh_new(u, &c, argv[2]);
-    g_print("Connection result: %s\n", errors[r]);
+    g_print("Connection result: %s\n", ssh_conn_errors[r]);
 
     if (r == SSH_CONN_OK) {
 	int bytes_read;

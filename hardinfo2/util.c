@@ -589,13 +589,15 @@ static gboolean remove_module_methods(gpointer key, gpointer value, gpointer dat
 static void module_unload(ShellModule * module)
 {
     GSList *entry;
-    gchar *name;
-    
-    name = g_path_get_basename(g_module_name(module->dll));
-    g_hash_table_foreach_remove(__module_methods, remove_module_methods, name);
     
     if (module->dll) {
+        gchar *name;
+        
+        name = g_path_get_basename(g_module_name(module->dll));
+        g_hash_table_foreach_remove(__module_methods, remove_module_methods, name);
+        
     	g_module_close(module->dll);
+    	g_free(name);
     }
     
     g_free(module->name);
@@ -610,7 +612,6 @@ static void module_unload(ShellModule * module)
     
     g_slist_free(module->entries);
     g_free(module);
-    g_free(name);
 }
 
 void module_unload_all(void)

@@ -94,6 +94,19 @@ static void host_dialog_destroy(HostDialog *hd);
 static gchar *xmlrpc_server_uri = NULL;
 static SSHConn *ssh_conn = NULL;
 
+void remote_disconnect_all(gboolean ssh)
+{
+    if (ssh && ssh_conn) {
+        ssh_close(ssh_conn);
+        ssh_conn = NULL; 
+    }
+    
+    if (xmlrpc_server_uri) {
+        g_free(xmlrpc_server_uri);
+        xmlrpc_server_uri = NULL;
+    }
+}
+
 static gboolean remote_version_is_supported()
 {
     gint remote_ver;
@@ -109,10 +122,18 @@ static gboolean remote_version_is_supported()
 	dialog = gtk_message_dialog_new(NULL,
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR,
-					GTK_BUTTONS_CLOSE,
-					"Remote host didn't respond.");
+					GTK_BUTTONS_NONE,
+					"Remote host didn't respond. Try again?");
 
-	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+			       GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
+			       "Try again", GTK_RESPONSE_ACCEPT, NULL);
+
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+             gtk_widget_destroy(dialog);
+             return remote_version_is_supported();
+	}
+	
 	gtk_widget_destroy(dialog);
 	break;
     case XMLRPC_SERVER_VERSION:
@@ -302,9 +323,9 @@ static gboolean remote_connect_direct(gchar *hostname,
 {
     gboolean retval = FALSE;
     
+    remote_disconnect_all(FALSE);
+
     xmlrpc_init();
-    
-    g_free(xmlrpc_server_uri);
     xmlrpc_server_uri = g_strdup_printf("http://%s:%d/xmlrpc", hostname, port);
     
     shell_view_set_enabled(FALSE);
@@ -323,7 +344,7 @@ static gboolean remote_connect_direct(gchar *hostname,
             gtk_widget_destroy(dialog);
 	} else {
 	    retval = TRUE;
-	}
+        }
     }
 
     shell_status_update("Done.");
@@ -342,12 +363,9 @@ static void remote_connect_ssh(gchar *hostname,
     SoupURI *uri;
     gchar *struri;
     char buffer[32];
+    gboolean error = FALSE;
     
-    /* establish tunnel */
-    if (ssh_conn) {
-        ssh_close(ssh_conn);
-        ssh_conn = NULL;
-    }
+    remote_disconnect_all(TRUE);
     
     shell_view_set_enabled(FALSE);
     shell_status_update("Establishing SSH tunnel...");
@@ -358,6 +376,7 @@ static void remote_connect_ssh(gchar *hostname,
     ssh_response = ssh_new(uri, &ssh_conn, "hardinfo -x");
     
     if (ssh_response != SSH_CONN_OK) {
+        error = TRUE;
         ssh_close(ssh_conn);
     } else {
         gint res;
@@ -365,32 +384,50 @@ static void remote_connect_ssh(gchar *hostname,
         
         memset(buffer, 0, sizeof(buffer));
         res = ssh_read(ssh_conn->fd_read, buffer, sizeof(buffer), &bytes_read);
-        if (bytes_read != 0 && res > 0) {
+        if (bytes_read != 0 && res == 1) {
             if (strncmp(buffer, "XML-RPC server ready", 20) == 0) {
-                if (remote_connect_direct("localhost", 4343)) {
-                    goto ok;
+                DEBUG("%s", buffer);
+                
+                if (remote_connect_direct("127.0.0.1", 4343)) {
+                    DEBUG("connected! :)");
+                    goto out;
                 }
                 
-                /* TODO FIXME Perhaps the server is already running; try to fix */                
+                DEBUG("unknown error while trying to connect... wtf?");
             }
+
+            /* TODO FIXME Perhaps the server is already running; try to fix */                
+            DEBUG("hardinfo already running there?");
         }
         
-        ssh_close(ssh_conn);
+        error = TRUE;
     }
     
-    /* TODO FIXME Show exact cause of error. */
-    dialog = gtk_message_dialog_new(NULL,
-                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    GTK_MESSAGE_ERROR,
-                                    GTK_BUTTONS_CLOSE,
-                                    "Cannot establish tunnel.");
+out:
+    if (error) {
+        dialog = gtk_message_dialog_new_with_markup(NULL,
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_CLOSE,
+                                                    "<b><big>Cannot establish tunnel.</big></b>\n"
+                                                    "<i>%s</i>\n\n"
+                                                    "Please verify that:\n"
+                                                    "\342\200\242 The hostname <b>%s</b> is correct;\n"
+                                                    "\342\200\242 There is a SSH server running on port <b>%d</b>;\n"
+                                                    "\342\200\242 Your username/password combination is correct.",
+                                                    ssh_response == SSH_CONN_OK ? "" : ssh_conn_errors[ssh_response],
+                                                    hostname, port);
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        
+        ssh_close(ssh_conn);
+        ssh_conn = NULL;
+    }
 
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-    
-ok:
+    soup_uri_free(uri);
     g_free(struri);
     shell_view_set_enabled(TRUE);
+    shell_status_update("Done.");
 }                               
 
 void remote_connect_host(gchar *hostname)
@@ -438,6 +475,8 @@ void connect_dialog_show(GtkWidget * parent)
         gchar *hostname = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_hostname));
         const gint selected_type = gtk_combo_box_get_active(GTK_COMBO_BOX(he->cmb_type));
         const gint port = (int)gtk_spin_button_get_value(GTK_SPIN_BUTTON(he->txt_port));
+        
+        gtk_widget_set_sensitive(he->dialog, FALSE);
 
         if (selected_type == 1) {
             gchar *username = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_user));

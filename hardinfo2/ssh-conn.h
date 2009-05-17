@@ -45,8 +45,10 @@ typedef enum {
 struct _SSHConn {
     SoupURI *uri;
     int fd_read, fd_write, fd_error;
-    pid_t pid;
+    GPid pid;
     gchar *askpass_path;
+    
+    gint exit_status;
 };
 
 SSHConnResponse ssh_new(SoupURI * uri,
@@ -57,6 +59,6 @@ int ssh_write(SSHConn * conn,
 	      gconstpointer buffer, gint num_bytes, gint * bytes_written);
 int ssh_read(gint fd, gpointer buffer, gint num_bytes, gint * bytes_read);
 
-const char *ssh_strerror(SSHConnResponse errno);
+const char *ssh_conn_errors[10];
 
 #endif				/* __SSH_CONN_H__ */
