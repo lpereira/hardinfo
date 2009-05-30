@@ -52,10 +52,21 @@ void cb_manage_hosts()
 
 void cb_connect_host(GtkAction * action)
 {
+    Shell *shell = shell_get_main_shell();
     gchar *name;
     
     g_object_get(G_OBJECT(action), "name", &name, NULL);
-    remote_connect_host(name);
+    
+    if (remote_connect_host(name)) {
+        gchar *tmp;
+        
+        tmp = g_strdup_printf("Remote: <b>%s</b>", name);
+        shell_set_remote_label(shell, tmp);
+        
+        g_free(tmp);
+    } else {
+        cb_local_computer();
+    }
 
     g_free(name);
 }
@@ -78,6 +89,7 @@ void cb_local_computer()
     
     shell_view_set_enabled(TRUE);
     shell_status_update("Done.");
+    shell_set_remote_label(shell, "Local");
 }
 
 void cb_save_graphic()

@@ -39,10 +39,9 @@ char *uidefs_str = "<ui>" \
 "	<menu name=\"ViewMenu\" action=\"ViewMenuAction\">" \
 "		<menuitem name=\"SidePane\" action=\"SidePaneAction\"/>" \
 "		<menuitem name=\"Toolbar\" action=\"ToolbarAction\"/>" \
-"		<separator/>" \
-"		<menuitem name=\"Refresh\" action=\"RefreshAction\"/>" \
-"		<separator/>" \
+"		<separator/>"\
 "		<separator name=\"LastSep\"/>" \
+"		<menuitem name=\"Refresh\" action=\"RefreshAction\"/>" \
 "	</menu>" \
 REMOTE_MENU_ITEMS
 "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">" \

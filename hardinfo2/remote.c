@@ -353,10 +353,10 @@ static gboolean remote_connect_direct(gchar *hostname,
     return retval;
 }                                  
 
-static void remote_connect_ssh(gchar *hostname, 
-                               gint port,
-                               gchar *username,
-                               gchar *password)
+static gboolean remote_connect_ssh(gchar *hostname, 
+                                   gint port,
+                                   gchar *username,
+                                   gchar *password)
 {
     GtkWidget *dialog;
     SSHConnResponse ssh_response;
@@ -428,11 +428,14 @@ out:
     g_free(struri);
     shell_view_set_enabled(TRUE);
     shell_status_update("Done.");
+    
+    return !error;
 }                               
 
-void remote_connect_host(gchar *hostname)
+gboolean remote_connect_host(gchar *hostname)
 {
     Shell *shell = shell_get_main_shell();
+    gboolean retval = FALSE;
     
     if (!g_key_file_has_group(shell->hosts, hostname)) {
         GtkWidget *dialog;
@@ -455,16 +458,18 @@ void remote_connect_host(gchar *hostname)
             gchar *username = g_key_file_get_string(shell->hosts, hostname, "username", NULL);
             gchar *password = g_key_file_get_string(shell->hosts, hostname, "password", NULL);
             
-            remote_connect_ssh(hostname, port, username, password);
+            retval = remote_connect_ssh(hostname, port, username, password);
             
             g_free(username);
             g_free(password);
         } else {
-            remote_connect_direct(hostname, port);
+            retval = remote_connect_direct(hostname, port);
         }
         
         g_free(type);
     }
+    
+    return retval;
 }
 
 void connect_dialog_show(GtkWidget * parent)
@@ -472,6 +477,7 @@ void connect_dialog_show(GtkWidget * parent)
     HostDialog *he = host_dialog_new(parent, "Connect to", HOST_DIALOG_MODE_CONNECT);
 
     if (gtk_dialog_run(GTK_DIALOG(he->dialog)) == GTK_RESPONSE_ACCEPT) {
+        gboolean connected;
         gchar *hostname = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_hostname));
         const gint selected_type = gtk_combo_box_get_active(GTK_COMBO_BOX(he->cmb_type));
         const gint port = (int)gtk_spin_button_get_value(GTK_SPIN_BUTTON(he->txt_port));
@@ -482,9 +488,21 @@ void connect_dialog_show(GtkWidget * parent)
             gchar *username = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_user));
             gchar *password = (gchar *)gtk_entry_get_text(GTK_ENTRY(he->txt_ssh_password));
             
-            remote_connect_ssh(hostname, port, username, password);
+            connected = remote_connect_ssh(hostname, port, username, password);
         } else {
-            remote_connect_direct(hostname, port);
+            connected = remote_connect_direct(hostname, port);
+        }
+        
+        if (connected) {
+            Shell *shell = shell_get_main_shell();
+            gchar *tmp;
+            
+            tmp = g_strdup_printf("Remote: <b>%s</b>", hostname);
+            shell_set_remote_label(shell, tmp);
+            
+            g_free(tmp);
+        } else {
+            cb_local_computer();
         }
     }
     
@@ -592,7 +610,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     GtkWidget *txt_port;
     GtkWidget *frame1;
     GtkWidget *alignment3;
-    GtkWidget *notebook1;
+    GtkWidget *notebook;
     GtkWidget *vbox2;
     GtkWidget *hbox2;
     GtkWidget *image1;
@@ -685,16 +703,16 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     gtk_container_add(GTK_CONTAINER(frame1), alignment3);
     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment3), 0, 0, 12, 0);
 
-    notebook1 = gtk_notebook_new();
-    gtk_widget_show(notebook1);
-    gtk_container_add(GTK_CONTAINER(alignment3), notebook1);
-    GTK_WIDGET_UNSET_FLAGS(notebook1, GTK_CAN_FOCUS);
-    gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook1), FALSE);
-    gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook1), FALSE);
+    notebook = gtk_notebook_new();
+    gtk_widget_show(notebook);
+    gtk_container_add(GTK_CONTAINER(alignment3), notebook);
+    GTK_WIDGET_UNSET_FLAGS(notebook, GTK_CAN_FOCUS);
+    gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), FALSE);
+    gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
 
     vbox2 = gtk_vbox_new(FALSE, 0);
     gtk_widget_show(vbox2);
-    gtk_container_add(GTK_CONTAINER(notebook1), vbox2);
+    gtk_container_add(GTK_CONTAINER(notebook), vbox2);
 
     hbox2 = gtk_hbox_new(FALSE, 4);
     gtk_widget_show(hbox2);
@@ -719,7 +737,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
 
     vbox3 = gtk_vbox_new(FALSE, 4);
     gtk_widget_show(vbox3);
-    gtk_container_add(GTK_CONTAINER(notebook1), vbox3);
+    gtk_container_add(GTK_CONTAINER(notebook), vbox3);
     gtk_container_set_border_width(GTK_CONTAINER(vbox3), 5);
 
     table2 = gtk_table_new(2, 2, FALSE);
@@ -818,7 +836,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
 
     host_dlg = g_new0(HostDialog, 1);
     host_dlg->dialog = dialog;
-    host_dlg->notebook = notebook1;
+    host_dlg->notebook = notebook;
     host_dlg->txt_hostname = txt_hostname;
     host_dlg->txt_port = txt_port;
     host_dlg->txt_ssh_user = txt_ssh_user;
@@ -1040,9 +1058,9 @@ static HostManager *host_manager_new(GtkWidget * parent)
     gchar *path;
     GtkWidget *dialog;
     GtkWidget *dialog1_vbox;
-    GtkWidget *scrolledwindow2;
-    GtkWidget *treeview2;
-    GtkWidget *vbuttonbox3;
+    GtkWidget *scrolledwindow;
+    GtkWidget *treeview;
+    GtkWidget *vbuttonbox;
     GtkWidget *button3;
     GtkWidget *button6;
     GtkWidget *dialog1_action_area;
@@ -1077,27 +1095,28 @@ static HostManager *host_manager_new(GtkWidget * parent)
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, TRUE, TRUE, 0);
     gtk_widget_show(hbox);
 
-    scrolledwindow2 = gtk_scrolled_window_new(NULL, NULL);
-    gtk_widget_show(scrolledwindow2);
-    gtk_box_pack_start(GTK_BOX(hbox), scrolledwindow2, TRUE, TRUE, 0);
-    gtk_widget_set_size_request(scrolledwindow2, -1, 200);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow2),
+    scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_show(scrolledwindow);
+    gtk_box_pack_start(GTK_BOX(hbox), scrolledwindow, TRUE, TRUE, 0);
+    gtk_widget_set_size_request(scrolledwindow, -1, 200);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
 				   GTK_POLICY_AUTOMATIC,
 				   GTK_POLICY_AUTOMATIC);
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
-					(scrolledwindow2), GTK_SHADOW_IN);
+					(scrolledwindow), GTK_SHADOW_IN);
 
     store =
 	gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_INT);
     model = GTK_TREE_MODEL(store);
 
-    treeview2 = gtk_tree_view_new_with_model(model);
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview2), FALSE);
-    gtk_widget_show(treeview2);
-    gtk_container_add(GTK_CONTAINER(scrolledwindow2), treeview2);
+    treeview = gtk_tree_view_new_with_model(model);
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
+    gtk_widget_show(treeview);
+    gtk_container_add(GTK_CONTAINER(scrolledwindow), treeview);
+    gtk_tree_view_set_reorderable(GTK_TREE_VIEW(treeview), TRUE);
 
     column = gtk_tree_view_column_new();
-    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview2), column);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     cr_pbuf = gtk_cell_renderer_pixbuf_new();
     gtk_tree_view_column_pack_start(column, cr_pbuf, FALSE);
@@ -1110,30 +1129,30 @@ static HostManager *host_manager_new(GtkWidget * parent)
 				       TREE_COL_NAME);
 
 
-    vbuttonbox3 = gtk_vbutton_box_new();
-    gtk_widget_show(vbuttonbox3);
-    gtk_box_pack_start(GTK_BOX(hbox), vbuttonbox3, FALSE, TRUE, 0);
-    gtk_box_set_spacing(GTK_BOX(vbuttonbox3), 5);
-    gtk_button_box_set_layout(GTK_BUTTON_BOX(vbuttonbox3),
+    vbuttonbox = gtk_vbutton_box_new();
+    gtk_widget_show(vbuttonbox);
+    gtk_box_pack_start(GTK_BOX(hbox), vbuttonbox, FALSE, TRUE, 0);
+    gtk_box_set_spacing(GTK_BOX(vbuttonbox), 5);
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(vbuttonbox),
 			      GTK_BUTTONBOX_START);
 
     button3 = gtk_button_new_with_mnemonic("_Add");
     gtk_widget_show(button3);
-    gtk_container_add(GTK_CONTAINER(vbuttonbox3), button3);
+    gtk_container_add(GTK_CONTAINER(vbuttonbox), button3);
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
     g_signal_connect(button3, "clicked",
 		     G_CALLBACK(host_manager_add), rd);
 
     button6 = gtk_button_new_with_mnemonic("_Edit");
     gtk_widget_show(button6);
-    gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
+    gtk_container_add(GTK_CONTAINER(vbuttonbox), button6);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
     g_signal_connect(button6, "clicked", G_CALLBACK(host_manager_edit),
 		     rd);
 
     button2 = gtk_button_new_with_mnemonic("_Remove");
     gtk_widget_show(button2);
-    gtk_container_add(GTK_CONTAINER(vbuttonbox3), button2);
+    gtk_container_add(GTK_CONTAINER(vbuttonbox), button2);
     GTK_WIDGET_SET_FLAGS(button2, GTK_CAN_DEFAULT);
     g_signal_connect(button2, "clicked", G_CALLBACK(host_manager_remove),
 		     rd);
@@ -1149,9 +1168,9 @@ static HostManager *host_manager_new(GtkWidget * parent)
 				 GTK_RESPONSE_CANCEL);
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
 
-    gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview2));
+    gtk_tree_view_collapse_all(GTK_TREE_VIEW(treeview));
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview2));
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
     g_signal_connect(G_OBJECT(sel), "changed",
 		     (GCallback) host_manager_tree_sel_changed, rd);

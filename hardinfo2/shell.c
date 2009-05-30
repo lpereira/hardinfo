@@ -60,6 +60,16 @@ static GSList *update_sfusrc = NULL;
  * Code :) ********************************************************************
  */
 
+void shell_set_remote_label(Shell *shell, gchar *label)
+{
+    gchar *tmp;
+    
+    tmp = g_strdup_printf("<small>%s</small> ", label);
+    gtk_label_set_markup(GTK_LABEL(shell->remote_label), tmp);
+    
+    g_free(tmp);
+}
+
 Shell *shell_get_main_shell(void)
 {
     return shell;
@@ -403,6 +413,16 @@ static void create_window(void)
     gtk_widget_hide(shell->progress);
     gtk_box_pack_end(GTK_BOX(hbox), shell->progress, FALSE, FALSE, 5);
 
+    shell->remote_label = gtk_label_new("");
+    gtk_label_set_use_markup(GTK_LABEL(shell->remote_label), TRUE);
+#ifdef HAS_LIBSOUP
+    gtk_widget_show(shell->remote_label);
+#else
+    gtk_widget_hide(shell->remote_label);
+#endif
+    shell_set_remote_label(shell, "Local");
+    gtk_box_pack_end(GTK_BOX(hbox), shell->remote_label, FALSE, FALSE, 0);
+
     shell->status = gtk_label_new("");
     gtk_misc_set_alignment(GTK_MISC(shell->status), 0.0, 0.5);
     gtk_widget_show(shell->status);
@@ -531,6 +551,7 @@ void shell_update_remote_menu(void)
 {
     GSList *merge_id;
     gchar **hosts;
+    gsize length;
     gint i;
     
     for (merge_id = remote_merge_ids; merge_id; merge_id = merge_id->next) {
@@ -539,7 +560,8 @@ void shell_update_remote_menu(void)
         gtk_ui_manager_remove_ui(shell->ui_manager, id);
     }
     
-    for (i = 0, hosts = g_key_file_get_groups(shell->hosts, NULL); hosts[i]; i++) {
+    hosts = g_key_file_get_groups(shell->hosts, &length);
+    for (i = length - 1; i >= 0; i--) {
         add_host_to_view_menu(g_strdup(hosts[i]));
     }
     
