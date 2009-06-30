@@ -106,6 +106,7 @@ __scan_battery_acpi(void)
     gchar *model = NULL, *serial = NULL, *type = NULL;
     gchar *state = NULL, *rate = NULL;
     gchar *remaining = NULL;
+    gchar *manufacturer = NULL;
     
     acpi_path = g_strdup("/proc/acpi/battery");
     if (g_file_test(acpi_path, G_FILE_TEST_EXISTS)) {
@@ -136,6 +137,7 @@ __scan_battery_acpi(void)
             GET_STR("model number", model);
             GET_STR("serial number", serial);
             GET_STR("battery type", type);
+	    GET_STR("OEM info", manufacturer);
             
             g_strfreev(tmp);
           }          
@@ -159,14 +161,22 @@ __scan_battery_acpi(void)
           }
           
           fclose(f);
+
+	 const gchar *url = vendor_get_url(manufacturer);
+	 if (url) {
+	   char *tmp = g_strdup_printf("%s (%s)", vendor_get_name(manufacturer), url);
+	   g_free(manufacturer);
+	   manufacturer = tmp;    
+	 }
           
           if (g_str_equal(present, "yes")) {
             charge_rate = atof(remaining) / atof(capacity);
-          
+
             battery_list = h_strdup_cprintf("\n[Battery: %s]\n"
                                            "State=%s (load: %s)\n"
                                            "Capacity=%s / %s (%.2f%%)\n"
                                            "Battery Technology=%s (%s)\n"
+					   "Manufacturer=%s\n"
                                            "Model Number=%s\n"
                                            "Serial Number=%s\n",
                                            battery_list,
@@ -174,6 +184,7 @@ __scan_battery_acpi(void)
                                            state, rate,
                                            remaining, capacity, charge_rate * 100.0,
                                            technology, type,
+					   manufacturer,
                                            model,
                                            serial);
           }
@@ -188,6 +199,7 @@ __scan_battery_acpi(void)
           g_free(state);
           g_free(remaining);
           g_free(rate);
+	  g_free(manufacturer);
 
           present = capacity = technology = type = \
                 model = serial = state = remaining = rate = NULL;
