@@ -71,7 +71,7 @@ static void get_processor_strfamily(Processor * processor)
 	    } else if (model == 9) {
 		processor->strmodel = g_strdup("Pentium M");
 	    } else {
-		processor->strmodel = g_strdup("Pentium III/Pentium III Xeon/Celeron");
+		processor->strmodel = g_strdup("Pentium III/Pentium III Xeon/Celeron/Core Duo/Core Duo 2");
 	    }
 	} else if (family > 6) {
 	    processor->strmodel = g_strdup("Pentium 4");
@@ -244,14 +244,14 @@ static GSList *__scan_processors(void)
     GSList *procs = NULL;
     Processor *processor = NULL;
     FILE *cpuinfo;
-    gchar buffer[256];
+    gchar buffer[512];
     gint processor_number = 0;
 
     cpuinfo = fopen("/proc/cpuinfo", "r");
     if (!cpuinfo)
 	return NULL;
 
-    while (fgets(buffer, 256, cpuinfo)) {
+    while (fgets(buffer, 512, cpuinfo)) {
 	gchar **tmp = g_strsplit(buffer, ":", 2);
 
 	if (g_str_has_prefix(tmp[0], "processor")) {
