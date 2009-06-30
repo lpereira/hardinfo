@@ -231,6 +231,7 @@ static struct {
     { "wlan", "Wireless", "wireless" },
     { "ra", "Wireless", "wireless" },
     { "wl", "Wireless", "wireless" },
+    { "wmaster", "Wireless", "wireless" },
     { "tun", "Virtual Point-to-Point (TUN)", "network" },
     { "tap", "Ethernet (TAP)", "network" },
     { "plip", "Parallel Line Internet Protocol", "network" },
@@ -243,6 +244,7 @@ static struct {
     { "pan", "Personal Area Network (PAN)", "bluetooth" },
     { "bnep", "Bluetooth", "bluetooth" },
     { "br", "Bridge Interface", "network" },
+    { "ham", "Hamachi Virtual Personal Network", "network"},
     { NULL, "Unknown", "network" },
 };
 
