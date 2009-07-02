@@ -88,6 +88,7 @@ static const Vendor vendors[] = {
     {"QUANTUM", "Quantum", "www.quantum.com"},
     {"Kingston", "Kingston", "www.kingston.com"},
     {"Chicony", "Chicony", "www.chicony.com.tw"},
+    {"Genius", "Genius", "www.genius.ru"},
     /* BIOS manufacturers */
     {"American Megatrends", "American Megatrends", "www.ami.com"},
     {"Award", "Award Software International", "www.award-bios.com"},
