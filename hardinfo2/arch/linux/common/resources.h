@@ -99,5 +99,5 @@ void scan_device_resources(gboolean reload)
 
 gchar *callback_device_resources(void)
 {
-    return _resources;
+    return g_strdup(_resources);
 }
