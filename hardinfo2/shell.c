@@ -1460,15 +1460,15 @@ static void module_selected(gpointer data)
         RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
 
-	shell_status_update("Done.");
-	shell_status_set_enabled(FALSE);
-
 	title = g_strdup_printf("%s - %s", shell->selected_module_name, entry->name);
 	shell_set_title(shell, title);
 	g_free(title);
 
 	shell_action_set_enabled("RefreshAction", TRUE);
 	shell_action_set_enabled("CopyAction", TRUE);
+
+	shell_status_update("Done.");
+	shell_status_set_enabled(FALSE);
     } else {
 	shell_set_title(shell, NULL);
 	shell_action_set_enabled("RefreshAction", FALSE);
