@@ -231,7 +231,7 @@ void scan_arp(gboolean reload)
                                        g_strstrip(buffer + 41));
       }
       
-      pclose(arp);
+      fclose(arp);
     }
     
     SCAN_END();

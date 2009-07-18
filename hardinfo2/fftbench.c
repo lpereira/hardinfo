@@ -70,6 +70,7 @@ static void lup_decompose(FFTBench *fftbench)
 
     int *perm = (int *) malloc(sizeof(double) * N);
     
+    fftbench->p = perm;
     a = fftbench->a;
     
     for (i = 0; i < N; ++i)
@@ -109,8 +110,6 @@ static void lup_decompose(FFTBench *fftbench)
 		a[i][j] -= a[i][k] * a[k][j];
 	}
     }
-
-    fftbench->p = perm;
 }
 
 static double *lup_solve(FFTBench *fftbench)
