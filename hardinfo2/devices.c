@@ -337,7 +337,7 @@ gchar *callback_processors()
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
 gchar *callback_dmi()
 {
-    return dmi_info;
+    return g_strdup(dmi_info);
 }
 #endif
 
