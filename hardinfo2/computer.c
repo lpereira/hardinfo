@@ -343,7 +343,7 @@ gchar *callback_users()
 gchar *get_os_kernel(void)
 {
     scan_os(FALSE);
-    return computer->os->kernel;
+    return g_strdup(computer->os->kernel);
 }
 
 gchar *get_kernel_module_description(gchar *module)
