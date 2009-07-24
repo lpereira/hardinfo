@@ -46,104 +46,105 @@ __scan_scsi_devices(void)
 
     scsi_storage_list = g_strdup("\n[SCSI Disks]\n");
 
-    proc_scsi = fopen("/proc/scsi/scsi", "r");
-    while (fgets(buffer, 256, proc_scsi)) {
-	buf = g_strstrip(buffer);
-	if (!strncmp(buf, "Host: scsi", 10)) {
-	    sscanf(buf,
-		   "Host: scsi%d Channel: %d Id: %d Lun: %d",
-		   &scsi_controller, &scsi_channel, &scsi_id, &scsi_lun);
+    if ((proc_scsi = fopen("/proc/scsi/scsi", "r"))) {
+        while (fgets(buffer, 256, proc_scsi)) {
+            buf = g_strstrip(buffer);
+            if (!strncmp(buf, "Host: scsi", 10)) {
+                sscanf(buf,
+                       "Host: scsi%d Channel: %d Id: %d Lun: %d",
+                       &scsi_controller, &scsi_channel, &scsi_id, &scsi_lun);
 
-	    n++;
-	} else if (!strncmp(buf, "Vendor: ", 8)) {
-	    buf[17] = '\0';
-	    buf[41] = '\0';
-	    buf[53] = '\0';
-	    
-	    vendor   = g_strdup(g_strstrip(buf + 8));
-	    model    = g_strdup_printf("%s %s", vendor, g_strstrip(buf + 24));
-	    revision = g_strdup(g_strstrip(buf + 46));
-	} else if (!strncmp(buf, "Type:   ", 8)) {
-	    char *p;
-	    gchar *type = NULL, *icon = NULL;
-
-            if (!(p = strstr(buf, "ANSI SCSI revision"))) {
-                p = strstr(buf, "ANSI  SCSI revision");
-            }
-
-	    if (p != NULL) {
-		while (*(--p) == ' ');
-		*(++p) = 0;
-
-                static struct {
-                    char *type;
-                    char *label;
-                    char *icon;
-                } type2icon[] = {
-                    { "Direct-Access", "Disk", "hdd"},
-                    { "Sequential-Access", "Tape", "tape"},
-                    { "Printer", "Printer", "lpr"},
-                    { "WORM", "CD-ROM", "cdrom"},
-                    { "CD-ROM", "CD-ROM", "cdrom"},
-                    { "Scanner", "Scanner", "scanner"},
-                    { "Flash Disk", "USB Flash Disk", "usbfldisk" },
-                    { NULL, "Generic", "scsi"} 
-                };
-                int i;
+                n++;
+            } else if (!strncmp(buf, "Vendor: ", 8)) {
+                buf[17] = '\0';
+                buf[41] = '\0';
+                buf[53] = '\0';
                 
-                if (strstr(model, "Flash Disk")) {
-                  type = "Flash Disk";
-                  icon = "usbfldisk";
-                } else {
-                  for (i = 0; type2icon[i].type != NULL; i++)
-                      if (g_str_equal(buf + 8, type2icon[i].type))
-                          break;
-                          
-                  type = type2icon[i].label;
-                  icon = type2icon[i].icon;
+                vendor   = g_strdup(g_strstrip(buf + 8));
+                model    = g_strdup_printf("%s %s", vendor, g_strstrip(buf + 24));
+                revision = g_strdup(g_strstrip(buf + 46));
+            } else if (!strncmp(buf, "Type:   ", 8)) {
+                char *p;
+                gchar *type = NULL, *icon = NULL;
+
+                if (!(p = strstr(buf, "ANSI SCSI revision"))) {
+                    p = strstr(buf, "ANSI  SCSI revision");
                 }
-	    }
-	    
-	    gchar *devid = g_strdup_printf("SCSI%d", n);
-	    scsi_storage_list = h_strdup_cprintf("$%s$%s=\n", scsi_storage_list, devid, model);
-	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
-	    
-	    gchar *strhash = g_strdup_printf("[Device Information]\n"
-					     "Model=%s\n", model);
-	    
-	    const gchar *url = vendor_get_url(model);
-	    if (url) {
-	      strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
-                                         strhash,
-                                         vendor_get_name(model),
-                                         url);
-	    } else {
-	      strhash = h_strdup_cprintf("Vendor=%s\n",
-                                         strhash,
-                                         vendor_get_name(model));
-	    }
 
-            strhash = h_strdup_cprintf("Type=%s\n"
-	    			       "Revision=%s\n"
-				       "[SCSI Controller]\n"
-                                       "Controller=scsi%d\n"
-                                       "Channel=%d\n"
-                                       "ID=%d\n" "LUN=%d\n",
-                                       strhash,
-                                       type,
-                                       revision,
-                                       scsi_controller,
-                                       scsi_channel,
-                                       scsi_id,
-                                       scsi_lun);
-	    g_hash_table_insert(moreinfo, devid, strhash);
+                if (p != NULL) {
+                    while (*(--p) == ' ');
+                    *(++p) = 0;
 
-	    g_free(model);
-	    g_free(revision);
-	    g_free(vendor);
-	}
+                    static struct {
+                        char *type;
+                        char *label;
+                        char *icon;
+                    } type2icon[] = {
+                        { "Direct-Access", "Disk", "hdd"},
+                        { "Sequential-Access", "Tape", "tape"},
+                        { "Printer", "Printer", "lpr"},
+                        { "WORM", "CD-ROM", "cdrom"},
+                        { "CD-ROM", "CD-ROM", "cdrom"},
+                        { "Scanner", "Scanner", "scanner"},
+                        { "Flash Disk", "USB Flash Disk", "usbfldisk" },
+                        { NULL, "Generic", "scsi"} 
+                    };
+                    int i;
+                    
+                    if (strstr(model, "Flash Disk")) {
+                      type = "Flash Disk";
+                      icon = "usbfldisk";
+                    } else {
+                      for (i = 0; type2icon[i].type != NULL; i++)
+                          if (g_str_equal(buf + 8, type2icon[i].type))
+                              break;
+                              
+                      type = type2icon[i].label;
+                      icon = type2icon[i].icon;
+                    }
+                }
+                
+                gchar *devid = g_strdup_printf("SCSI%d", n);
+                scsi_storage_list = h_strdup_cprintf("$%s$%s=\n", scsi_storage_list, devid, model);
+                storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
+                
+                gchar *strhash = g_strdup_printf("[Device Information]\n"
+                                                 "Model=%s\n", model);
+                
+                const gchar *url = vendor_get_url(model);
+                if (url) {
+                  strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
+                                             strhash,
+                                             vendor_get_name(model),
+                                             url);
+                } else {
+                  strhash = h_strdup_cprintf("Vendor=%s\n",
+                                             strhash,
+                                             vendor_get_name(model));
+                }
+
+                strhash = h_strdup_cprintf("Type=%s\n"
+                                           "Revision=%s\n"
+                                           "[SCSI Controller]\n"
+                                           "Controller=scsi%d\n"
+                                           "Channel=%d\n"
+                                           "ID=%d\n" "LUN=%d\n",
+                                           strhash,
+                                           type,
+                                           revision,
+                                           scsi_controller,
+                                           scsi_channel,
+                                           scsi_id,
+                                           scsi_lun);
+                g_hash_table_insert(moreinfo, devid, strhash);
+
+                g_free(model);
+                g_free(revision);
+                g_free(vendor);
+            }
+        }
+        fclose(proc_scsi);
     }
-    fclose(proc_scsi);
     
     if (n) {
       storage_list = h_strconcat(storage_list, scsi_storage_list, NULL);
