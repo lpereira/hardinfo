@@ -54,6 +54,8 @@ Socket *sock_connect(gchar * host, gint port)
 
 	return s;
     }
+    
+    close(sock);
 
     return NULL;
 }
