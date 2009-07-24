@@ -319,7 +319,6 @@ static void read_sensors_hddtemp(void)
     if ((s = sock_connect("127.0.0.1", 7634))) {
 	while (!len)
 	    len = sock_read(s, buffer, sizeof(buffer));
-	sock_close(s);
 
 	if (len > 2 && buffer[0] == '|' && buffer[1] == '/') {
 	    gchar **disks;
@@ -354,6 +353,7 @@ static void read_sensors_hddtemp(void)
 	g_free(old);
 	old = NULL;
     }
+    sock_close(s);
 
     if (old) {
 	sensors = g_strconcat(sensors, "\n", old, NULL);
