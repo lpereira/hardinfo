@@ -65,26 +65,23 @@ deb:	dist-clean
 	dpkg-buildpackage -rfakeroot -k${USER}
 
 install:	all
+	
 	rm -rf ${DESTDIR}${LIBDIR}/hardinfo/modules ${DESTDIR}/usr/share/hardinfo/pixmaps
 
-	mkdir -p ${DESTDIR}/usr/bin
-	mkdir -p ${DESTDIR}/usr/local
-	mkdir -p ${DESTDIR}/usr/share/applications
-	mkdir -p ${DESTDIR}${LIBDIR}/hardinfo/modules
-	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps
+	install -d ${DESTDIR}/usr/bin
+	install -d ${DESTDIR}/usr/local
+	install -d ${DESTDIR}/usr/share/applications
+	install -d ${DESTDIR}${LIBDIR}/hardinfo/modules
+	install -d ${DESTDIR}/usr/share/hardinfo/pixmaps
 
-	cp hardinfo.desktop ${DESTDIR}/usr/share/applications
-
-	cp hardinfo ${DESTDIR}/usr/bin/hardinfo
-
-	cp -Lr modules/*.so ${DESTDIR}${LIBDIR}/hardinfo/modules
-
-	cp -Lr pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
-
-	cp benchmark.conf ${DESTDIR}/usr/share/hardinfo
-	cp benchmark.data ${DESTDIR}/usr/share/hardinfo
-
-	chmod 755 ${DESTDIR}/usr/bin/hardinfo
+	install -m 644 hardinfo.desktop ${DESTDIR}/usr/share/applications
+	install -m 755 hardinfo ${DESTDIR}/usr/bin/hardinfo
+	
+	install -m 755 ${MODULES} ${DESTDIR}${LIBDIR}/hardinfo/modules
+	install -m 644 pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
+	
+	install -m 644 benchmark.conf ${DESTDIR}/usr/share/hardinfo
+	install -m 644 benchmark.data ${DESTDIR}/usr/share/hardinfo
 
 installer:
 	makepackage
