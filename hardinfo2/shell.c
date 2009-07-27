@@ -1460,7 +1460,7 @@ static void module_selected(gpointer data)
         RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
 
-	title = g_strdup_printf("%s - %s", shell->selected_module_name, entry->name);
+	title = g_strdup_printf("%s: %s", shell->selected_module_name, entry->name);
 	shell_set_title(shell, title);
 	g_free(title);
 

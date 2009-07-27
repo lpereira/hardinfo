@@ -70,7 +70,7 @@ static ModuleEntry entries[] = {
 void scan_shares(gboolean reload)
 {
     SCAN_START();
-    scan_samba_shared_directories();
+    scan_samba();
     scan_nfs_shared_directories();
     SCAN_END();
 }

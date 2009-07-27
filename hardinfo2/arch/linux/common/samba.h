@@ -17,57 +17,88 @@
  */
 
 static gchar *smb_shares_list = NULL;
+
+void scan_samba_from_string(gchar *str, gsize length);
+void scan_samba_usershares(void);
+
 void
-scan_samba_shared_directories(void)
+scan_samba(void)
+{
+    gchar *str;
+    gsize length;
+    
+    if (smb_shares_list) {
+        g_free(smb_shares_list);
+        smb_shares_list = g_strdup("");
+    }
+
+    if (g_file_get_contents("/etc/samba/smb.conf",
+                            &str, &length, NULL)) {
+        scan_samba_from_string(str, length);
+        g_free(str);                        
+    }
+
+    scan_samba_usershares();
+}
+
+void
+scan_samba_usershares(void)
+{
+    FILE *usershare_list;
+    
+    if ((usershare_list = popen("net usershare list", "r"))) {
+        char buffer[512];
+        
+        while (fgets(buffer, 512, usershare_list)) {
+            gchar *usershare, *cmdline;
+            gsize length;
+            
+            cmdline = g_strdup_printf("net usershare info %s",
+                                      strend(buffer, '\n'));
+            if (g_spawn_command_line_sync(cmdline,
+                                          &usershare, NULL,
+                                          NULL, NULL)) {
+                length = strlen(usershare);
+                scan_samba_from_string(usershare, length);
+                g_free(usershare);
+            }
+            
+            g_free(cmdline);
+        }
+        
+        pclose(usershare_list);
+    }
+}
+
+void
+scan_samba_from_string(gchar *str, gsize length)
 {
     GKeyFile *keyfile;
     GError *error = NULL;
     gchar **groups;
-    gchar *smbconf;
-    gsize length = -1;
     gint i = 0;
-
-    if (smb_shares_list) {
-        g_free(smb_shares_list);
-    }
     
     keyfile = g_key_file_new();
     
-    if (!g_file_get_contents("/etc/samba/smb.conf", &smbconf, &length, &error) || length == 0) {
-        smb_shares_list = g_strdup("Cannot open /etc/samba/smb.conf=\n");
-        if (error)
-            g_error_free(error);
-        goto cleanup;
-    }
-    
-    gchar *_smbconf = smbconf;
+    gchar *_smbconf = str;
     for (; *_smbconf; _smbconf++)
         if (*_smbconf == ';') *_smbconf = '\0';
     
-    if (!g_key_file_load_from_data(keyfile, smbconf, length, 0, &error)) {
+    if (!g_key_file_load_from_data(keyfile, str, length, 0, &error)) {
         smb_shares_list = g_strdup("Cannot parse smb.conf=\n");
         if (error)
             g_error_free(error);
         goto cleanup;
     }
 
-    smb_shares_list = g_strdup("");
-
     groups = g_key_file_get_groups(keyfile, NULL);
     while (groups[i]) {
-        if (g_key_file_has_key(keyfile, groups[i], "path", NULL) &&
-            g_key_file_has_key(keyfile, groups[i], "available", NULL)) {
-            
-            gchar *available = g_key_file_get_string(keyfile, groups[i], "available", NULL);
-        
-            if (g_str_equal(available, "yes")) {
-                gchar *path = g_key_file_get_string(keyfile, groups[i], "path", NULL);
-                smb_shares_list = g_strconcat(smb_shares_list, groups[i], "=",
-                                          path, "\n", NULL);
-                g_free(path);
-            }
-            
-            g_free(available);
+        if (g_key_file_has_key(keyfile, groups[i], "path", NULL)) {
+            gchar *path = g_key_file_get_string(keyfile, groups[i], "path", NULL);
+            smb_shares_list = h_strdup_cprintf("%s=%s\n",
+                                               smb_shares_list,
+                                               groups[i], path);
+            g_free(path);
         }
         
         i++;
@@ -77,6 +108,5 @@ scan_samba_shared_directories(void)
   
   cleanup:
     g_key_file_free(keyfile);
-    g_free(smbconf);
 }
 
