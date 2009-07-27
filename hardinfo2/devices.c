@@ -83,7 +83,7 @@ static ModuleEntry entries[] = {
 
 static GHashTable *moreinfo = NULL;
 static GSList *processors = NULL;
-static gchar *printer_list = NULL;
+static gchar *printer_list = NULL, *printer_icons = NULL;
 static gchar *pci_list = NULL;
 static gchar *input_list = NULL;
 static gchar *storage_list = NULL;
@@ -375,9 +375,10 @@ gchar *callback_sensors()
 gchar *callback_printers()
 {
     return g_strdup_printf("%s\n"
-			   "[$ShellParam$]\n"
+                           "[$ShellParam$]\n"
                            "ViewType=1\n"
-			   "ReloadInterval=5000", printer_list);
+			   "ReloadInterval=5000\n"
+			   "%s", printer_list, printer_icons);
 }
 
 gchar *callback_storage()

@@ -184,10 +184,12 @@ __scan_printers(void)
     gchar *prn_id, *prn_moreinfo;
 
     g_free(printer_list);
+    g_free(printer_icons);
 
     if (!cups_init) {
         __init_cups();
         
+        printer_icons = g_strdup("");
         printer_list = g_strdup("[Printers]\n"
                                 "No suitable CUPS library found=");
         return;
@@ -199,6 +201,7 @@ __scan_printers(void)
     num_dests = cups_dests_get(&dests);
     if (num_dests > 0) {
 	printer_list = g_strdup_printf("[Printers (CUPS)]\n");
+        printer_icons = g_strdup("");
 	for (i = 0; i < num_dests; i++) {
 	    GHashTable *options;
 	    
@@ -217,6 +220,10 @@ __scan_printers(void)
 					    prn_id,						
 					    dests[i].name,
 					    dests[i].is_default ? "<i>Default</i>" : "");
+            printer_icons = h_strdup_cprintf("\nIcon$%s$%s=printer.png",
+                                             printer_icons,
+                                             prn_id,
+                                             dests[i].name);
 
             prn_moreinfo = g_strdup("");
             for (j = 0; j < G_N_ELEMENTS(cups_fields); j++) {
