@@ -43,10 +43,8 @@ Socket *sock_connect(gchar * host, gint port)
 	server.sin_addr.s_addr = inet_addr(host);
 	server.sin_port = htons(port);
 
-	if (connect
-	    (sock, (struct sockaddr *) (void *) &server,
-	     sizeof(server)) < 0) {
-	    return NULL;
+	if (connect(sock, (struct sockaddr *) (void *) &server, sizeof(server)) < 0) {
+	     goto cleanup;
 	}
 
 	s = g_new0(Socket, 1);
@@ -54,7 +52,8 @@ Socket *sock_connect(gchar * host, gint port)
 
 	return s;
     }
-    
+
+cleanup:    
     close(sock);
 
     return NULL;
