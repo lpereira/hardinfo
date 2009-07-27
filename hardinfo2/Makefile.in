@@ -40,14 +40,12 @@ benchmark.so:	benchmark.c
 	make $(BENCHMARK_OBJECTS)
 	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
 		$(GTK_FLAGS) $(GTK_LIBS)
-	ln -sf ../$@ modules
 
 %.so:	%.c
 	$(CC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
-	ln -sf ../$@ modules
 	
 clean:
-	rm -rf .xvpics pixmaps/.xvpics *.o *.so hardinfo modules/*.so report
+	rm -rf .xvpics pixmaps/.xvpics *.o *.so hardinfo report
 	find . -name \*~ -exec rm -v {} \;
 	find . -name x86 -type l -exec rm -v {} \;
 
