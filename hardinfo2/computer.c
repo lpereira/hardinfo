@@ -42,6 +42,7 @@ gchar *callback_display();
 gchar *callback_network();
 gchar *callback_users();
 gchar *callback_env_var();
+gchar *callback_dev();
 
 /* Scan callbacks */
 void scan_summary(gboolean reload);
@@ -54,6 +55,7 @@ void scan_display(gboolean reload);
 void scan_network(gboolean reload);
 void scan_users(gboolean reload);
 void scan_env_var(gboolean reload);
+void scan_dev(gboolean reload);
 
 static ModuleEntry entries[] = {
     {"Summary", "summary.png", callback_summary, scan_summary},
@@ -64,6 +66,7 @@ static ModuleEntry entries[] = {
     {"Filesystems", "dev_removable.png", callback_fs, scan_fs},
     {"Display", "monitor.png", callback_display, scan_display},
     {"Environment Variables", "environment.png", callback_env_var, scan_env_var},
+    {"Development", "devel.png", callback_dev, scan_dev},
     {"Users", "users.png", callback_users, scan_users},
     {NULL},
 };
@@ -179,16 +182,113 @@ void scan_users(gboolean reload)
     SCAN_END();
 }
 
+static gchar *dev_list = NULL;
+void scan_dev(gboolean reload)
+{
+    SCAN_START();
+    
+    g_free(dev_list);
+    dev_list = g_strdup("[Programming Languages]\n"
+                        "None=yet\n");
+    
+    SCAN_END();
+}
+
+gchar *callback_dev()
+{
+    return dev_list;
+}
+
+/* Table based off imvirt by Thomas Liske <liske@ibh.de>
+   Copyright (c) 2008 IBH IT-Service GmbH under GPLv2. */
+gchar *computer_get_virtualization()
+{
+    gboolean found = FALSE;
+    gint i, j;
+    gchar *files[] = {
+        "/proc/scsi/scsi",
+        "/proc/cpuinfo",
+        "/var/log/dmesg",
+        NULL
+    };
+    struct {
+        gchar *str;
+        gchar *vmtype;
+    } vm_types[] = {
+        /* VMWare */
+        { "VMWare", "VMWare" },
+        { ": VMWare Virtual IDE CDROM Drive", "VMWare" },
+        /* QEMU */
+        { "QEMU", "QEMU" },
+        { "QEMU Virtual CPU", "QEMU" },
+        { ": QEMU HARDDISK", "QEMU" },
+        { ": QEMU CD-ROM", "QEMU" },
+        /* Generic Virtual Machine */
+        { ": Virtual HD,", "Virtual Machine (Unknown)" },
+        { ": Virtual CD,", "Virtual Machine (Unknown)" },
+        /* Virtual Box */
+        { "VBOX", "VirtualBox" },
+        { ": VBOX HARDDISK", "VirtualBox" },
+        { ": VBOX CD-ROM", "VirtualBox" },
+        /* Xen */
+        { "Xen virtual console", "Xen" },
+        { "Xen reported: ", "Xen" },
+        { "xen-vbd: registered block device", "Xen" },
+        { NULL }
+    };
+    
+    DEBUG("Detecting virtual machine");
+
+    if (g_file_test("/proc/xen", G_FILE_TEST_EXISTS)) {
+         DEBUG("/proc/xen found; assuming Xen");
+         return g_strdup("Xen");
+    }
+    
+    for (i = 0; files[i+1]; i++) {
+         gchar buffer[512];
+         FILE *file;
+         
+         if ((file = fopen(files[i], "r"))) {
+              while (fgets(buffer, 512, file)) {
+                  for (j = 0; vm_types[j+1].str; j++) {
+                      if (strstr(buffer, vm_types[j].str)) {
+                         found = TRUE;
+                         break;
+                      }
+                  }
+              }
+              
+              fclose(file);
+              
+              if (found) {
+                  DEBUG("%s found (by reading file %s)",
+                        vm_types[j].vmtype, files[i]);
+                  return g_strdup(vm_types[j].vmtype);
+              }
+         }
+         
+    }
+    
+    DEBUG("no virtual machine detected; assuming physical machine");
+    
+    return g_strdup("Physical machine");
+}
+
 gchar *callback_summary()
 {
-    gchar *processor_name, *alsa_cards, *input_devices, *printers, *storage_devices, *summary;
+    gchar *processor_name, *alsa_cards;
+    gchar *input_devices, *printers;
+    gchar *storage_devices, *summary;
+    gchar *virt;
     
     processor_name  = module_call_method("devices::getProcessorName");
     alsa_cards      = computer_get_alsacards(computer);
     input_devices   = module_call_method("devices::getInputDevices");
     printers        = module_call_method("devices::getPrinters");
     storage_devices = module_call_method("devices::getStorageDevices");
+    virt            = computer_get_virtualization();
 
+    DEBUG("%s", virt);
     summary = g_strdup_printf("[$ShellParam$]\n"
 			      "UpdateInterval$Memory=1000\n"
 			      "UpdateInterval$Date/Time=1000\n"
@@ -196,6 +296,7 @@ gchar *callback_summary()
 			      "[Computer]\n"
 			      "Processor=%s\n"
 			      "Memory=...\n"
+			      "Virtual Machine=%s\n"
 			      "Operating System=%s\n"
 			      "User Name=%s\n"
 			      "Date/Time=...\n"
@@ -209,6 +310,7 @@ gchar *callback_summary()
 			      "\n%s\n"
 			      "\n%s\n",
 			      processor_name,
+			      virt,
 			      computer->os->distro,
 			      computer->os->username,
 			      computer->display->width,
@@ -223,6 +325,7 @@ gchar *callback_summary()
     g_free(input_devices);
     g_free(printers);
     g_free(storage_devices);
+    g_free(virt);
 
     return summary;
 }
