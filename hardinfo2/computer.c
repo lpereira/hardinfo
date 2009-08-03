@@ -201,18 +201,22 @@ void scan_dev(gboolean reload)
        gchar *regex;
        gboolean stdout;
     } detect_lang[] = {
-       { "Compilers / Interpreters", NULL, FALSE },
+       { "Scripting Languages", NULL, FALSE },
        { "CPython", "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
        { "Perl", "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
        { "Ruby", "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
-       { "Haskell (GHC)", "ghc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
-       { "Java", "javac -version", "\\d+\\.\\d+\\.\\d+", FALSE },
-       { "C (GCC)", "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
-       { "CSharp (Mono)", "mcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
        { "Bash", "bash --version", "\\d+\\.\\d+\\.\\d+", TRUE},
+       { "Compilers", NULL, FALSE },
+       { "C (GCC)", "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { "Java", "javac -version", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { "CSharp (Mono)", "mcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
+       { "Vala", "valac --version", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { "Haskell (GHC)", "ghc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
        { "Tools", NULL, FALSE },
+       { "make", "make --version", "\\d+\\.\\d+", TRUE },
        { "GDB", "gdb --version", "\\d+\\.\\d+", TRUE },
        { "strace", "strace -V", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { "valgrind", "valgrind --version", "\\d+\\.\\d+\\.\\d+", TRUE },
     };
     
     g_free(dev_list);
