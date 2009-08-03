@@ -38,5 +38,5 @@ void scan_env_var(gboolean reload)
 
 gchar *callback_env_var(void)
 {
-    return _env;
+    return g_strdup(_env);
 }
