@@ -317,7 +317,7 @@ gchar *computer_get_virtualization()
          FILE *file;
          
          if ((file = fopen(files[i], "r"))) {
-              while (fgets(buffer, 512, file)) {
+              while (!found && fgets(buffer, 512, file)) {
                   for (j = 0; vm_types[j+1].str; j++) {
                       if (strstr(buffer, vm_types[j].str)) {
                          found = TRUE;
