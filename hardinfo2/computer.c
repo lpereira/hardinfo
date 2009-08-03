@@ -42,7 +42,9 @@ gchar *callback_display();
 gchar *callback_network();
 gchar *callback_users();
 gchar *callback_env_var();
+#if GLIB_CHECK_VERSION(2,14,0)
 gchar *callback_dev();
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 /* Scan callbacks */
 void scan_summary(gboolean reload);
@@ -55,7 +57,9 @@ void scan_display(gboolean reload);
 void scan_network(gboolean reload);
 void scan_users(gboolean reload);
 void scan_env_var(gboolean reload);
+#if GLIB_CHECK_VERSION(2,14,0)
 void scan_dev(gboolean reload);
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 static ModuleEntry entries[] = {
     {"Summary", "summary.png", callback_summary, scan_summary},
@@ -66,7 +70,9 @@ static ModuleEntry entries[] = {
     {"Filesystems", "dev_removable.png", callback_fs, scan_fs},
     {"Display", "monitor.png", callback_display, scan_display},
     {"Environment Variables", "environment.png", callback_env_var, scan_env_var},
+#if GLIB_CHECK_VERSION(2,14,0)
     {"Development", "devel.png", callback_dev, scan_dev},
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
     {"Users", "users.png", callback_users, scan_users},
     {NULL},
 };
@@ -182,7 +188,7 @@ void scan_users(gboolean reload)
     SCAN_END();
 }
 
-
+#if GLIB_CHECK_VERSION(2,14,0)
 static gchar *dev_list = NULL;
 void scan_dev(gboolean reload)
 {
@@ -259,6 +265,7 @@ gchar *callback_dev()
 {
     return g_strdup(dev_list);
 }
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 /* Table based off imvirt by Thomas Liske <liske@ibh.de>
    Copyright (c) 2008 IBH IT-Service GmbH under GPLv2. */
