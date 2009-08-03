@@ -182,21 +182,82 @@ void scan_users(gboolean reload)
     SCAN_END();
 }
 
+
 static gchar *dev_list = NULL;
 void scan_dev(gboolean reload)
 {
     SCAN_START();
     
+    int i;
+    struct {
+       gchar *compiler_name;
+       gchar *version_command;
+       gchar *regex;
+       gboolean stdout;
+    } detect_lang[] = {
+       { "Compilers / Interpreters", NULL, FALSE },
+       { "CPython", "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { "Perl", "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { "Ruby", "irb -v", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { "Haskell (GHC)", "ghc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { "Java", "java -version", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { "C (GCC)", "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { "CSharp (Mono)", "mcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
+       { "Bash", "bash --version", "\\d+\\.\\d+\\.\\d+", TRUE},
+       { "Tools", NULL, FALSE },
+       { "GDB", "gdb --version", "\\d+\\.\\d+", TRUE },
+       { "strace", "strace -V", "\\d+\\.\\d+\\.\\d+", TRUE },
+    };
+    
     g_free(dev_list);
-    dev_list = g_strdup("[Programming Languages]\n"
-                        "None=yet\n");
+    
+    dev_list = g_strdup("");
+    
+    for (i = 0; i < G_N_ELEMENTS(detect_lang); i++) {
+       gchar *version = NULL;
+       gchar *output;
+       GRegex *regex;
+       GMatchInfo *match_info;
+       gboolean found;
+       
+       if (!detect_lang[i].regex) {
+            dev_list = h_strdup_cprintf("[%s]\n", dev_list, detect_lang[i].compiler_name);
+            continue;
+       }
+       
+       if (detect_lang[i].stdout) {
+            found = g_spawn_command_line_sync(detect_lang[i].version_command, &output, NULL, NULL, NULL);
+       } else {
+            found = g_spawn_command_line_sync(detect_lang[i].version_command, NULL, &output, NULL, NULL);
+       }
+       
+       if (found) {
+           regex = g_regex_new(detect_lang[i].regex, 0, 0, NULL);
+
+           g_regex_match(regex, output, 0, &match_info);
+           if (g_match_info_matches(match_info)) {
+               version = g_match_info_fetch(match_info, 0);
+           }
+           
+           g_match_info_free(match_info);
+           g_regex_unref(regex);
+           g_free(output);
+       }
+       
+       if (version) {
+           dev_list = h_strdup_cprintf("%s=%s\n", dev_list, detect_lang[i].compiler_name, version);
+           g_free(version);
+       } else {
+           dev_list = h_strdup_cprintf("%s=Not found\n", dev_list, detect_lang[i].compiler_name);
+       }
+    }
     
     SCAN_END();
 }
 
 gchar *callback_dev()
 {
-    return dev_list;
+    return g_strdup(dev_list);
 }
 
 /* Table based off imvirt by Thomas Liske <liske@ibh.de>
@@ -211,29 +272,29 @@ gchar *computer_get_virtualization()
         "/var/log/dmesg",
         NULL
     };
-    struct {
+    const static struct {
         gchar *str;
         gchar *vmtype;
     } vm_types[] = {
         /* VMWare */
-        { "VMWare", "VMWare" },
-        { ": VMWare Virtual IDE CDROM Drive", "VMWare" },
+        { "VMWare", "Virtual (VMWare)" },
+        { ": VMWare Virtual IDE CDROM Drive", "Virtual (VMWare)" },
         /* QEMU */
-        { "QEMU", "QEMU" },
-        { "QEMU Virtual CPU", "QEMU" },
-        { ": QEMU HARDDISK", "QEMU" },
-        { ": QEMU CD-ROM", "QEMU" },
+        { "QEMU", "Virtual (QEMU)" },
+        { "QEMU Virtual CPU", "Virtual (QEMU)" },
+        { ": QEMU HARDDISK", "Virtual (QEMU)" },
+        { ": QEMU CD-ROM", "Virtual (QEMU)" },
         /* Generic Virtual Machine */
-        { ": Virtual HD,", "Virtual Machine (Unknown)" },
-        { ": Virtual CD,", "Virtual Machine (Unknown)" },
+        { ": Virtual HD,", "Virtual (Unknown)" },
+        { ": Virtual CD,", "Virtual (Unknown)" },
         /* Virtual Box */
-        { "VBOX", "VirtualBox" },
-        { ": VBOX HARDDISK", "VirtualBox" },
-        { ": VBOX CD-ROM", "VirtualBox" },
+        { "VBOX", "Virtual (VirtualBox)" },
+        { ": VBOX HARDDISK", "Virtual (VirtualBox)" },
+        { ": VBOX CD-ROM", "Virtual (VirtualBox)" },
         /* Xen */
-        { "Xen virtual console", "Xen" },
-        { "Xen reported: ", "Xen" },
-        { "xen-vbd: registered block device", "Xen" },
+        { "Xen virtual console", "Virtual (Xen)" },
+        { "Xen reported: ", "Virtual (Xen)" },
+        { "xen-vbd: registered block device", "Virtual (Xen)" },
         { NULL }
     };
     
@@ -288,7 +349,6 @@ gchar *callback_summary()
     storage_devices = module_call_method("devices::getStorageDevices");
     virt            = computer_get_virtualization();
 
-    DEBUG("%s", virt);
     summary = g_strdup_printf("[$ShellParam$]\n"
 			      "UpdateInterval$Memory=1000\n"
 			      "UpdateInterval$Date/Time=1000\n"
@@ -296,7 +356,7 @@ gchar *callback_summary()
 			      "[Computer]\n"
 			      "Processor=%s\n"
 			      "Memory=...\n"
-			      "Virtual Machine=%s\n"
+			      "Machine Type=%s\n"
 			      "Operating System=%s\n"
 			      "User Name=%s\n"
 			      "Date/Time=...\n"
