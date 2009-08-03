@@ -17,36 +17,6 @@
  */
 
 static gchar *
-get_default_gcc_version(void)
-{
-    char *buf;
-    
-    if (g_spawn_command_line_sync("gcc -v",
-                                   NULL,
-                                   &buf,
-                                   NULL,
-                                   NULL)) {
-        char *return_value;
-        
-        if (!(return_value = strstr(buf, "gcc "))) {
-            goto err;
-        }
-        
-	return_value = strstr(return_value, " ") + 1;
-	return_value = strstr(return_value, " ") + 1;
-
-        return_value = g_strdup_printf("GNU C Compiler version %s", return_value);
-        
-        g_free(buf);
-        
-        return return_value;
-    }
-
-err:
-    return g_strdup("Unknown");
-}
-
-static gchar *
 get_libc_version(void)
 {
     FILE *libc;
@@ -244,7 +214,6 @@ computer_get_os(void)
     os->username = g_strdup_printf("%s (%s)",
 				   g_get_user_name(), g_get_real_name());
     os->libc = get_libc_version();
-    os->gcc  = get_default_gcc_version();
     scan_languages(os);
     detect_desktop_environment(os);
 

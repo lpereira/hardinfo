@@ -399,7 +399,6 @@ gchar *callback_os()
 			   "Kernel=%s\n"
 			   "Compiled=%s\n"
 			   "C Library=%s\n"
-			   "Default C Compiler=%s\n"
 			   "Distribution=%s\n"
 			   "[Current Session]\n"
 			   "Computer Name=%s\n"
@@ -413,7 +412,6 @@ gchar *callback_os()
 			   computer->os->kernel,
 			   computer->os->compiled_date,
 			   computer->os->libc,
-			   computer->os->gcc,
 			   computer->os->distro,
 			   computer->os->hostname,
 			   computer->os->username,
