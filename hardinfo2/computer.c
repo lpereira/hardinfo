@@ -267,7 +267,11 @@ void scan_dev(gboolean reload)
 
 gchar *callback_dev()
 {
-    return g_strdup(dev_list);
+    return g_strdup_printf("[$ShellParam$]\n"
+			   "ColumnTitle$TextValue=Program\n"
+			   "ColumnTitle$Value=Version\n"
+			   "ShowColumnHeaders=true\n"
+                           "%s", dev_list);
 }
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
