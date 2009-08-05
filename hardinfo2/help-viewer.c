@@ -22,6 +22,7 @@
 #include <gtk/gtk.h>
 
 #include "config.h"
+#include "shell.h"
 #include "markdown-text-view.h"
 #include "help-viewer.h"
 
@@ -269,6 +270,7 @@ void help_viewer_open_page(HelpViewer *hv, const gchar *page)
 
 void help_viewer_destroy(HelpViewer *hv)
 {
+    Shell *shell;
     GSList *item;
 
     for (item = hv->back_stack; item; item = item->next) {
@@ -284,6 +286,9 @@ void help_viewer_destroy(HelpViewer *hv)
 
     g_free(hv->current_file);
     g_free(hv->help_directory);
+    
+    shell = shell_get_main_shell();
+    shell->help_viewer = NULL;
 }
 
 static gboolean destroy_me(GtkWidget *widget, gpointer data)
