@@ -19,17 +19,17 @@
 #include <string.h>
 #include <gtk/gtk.h>
 
-#include <config.h>
+#include "config.h"
 
-#include <hardinfo.h>
+#include "hardinfo.h"
 
-#include <shell.h>
-#include <syncmanager.h>
-#include <iconcache.h>
-#include <menu.h>
-#include <stock.h>
+#include "shell.h"
+#include "syncmanager.h"
+#include "iconcache.h"
+#include "menu.h"
+#include "stock.h"
 
-#include <callbacks.h>
+#include "callbacks.h"
 
 /*
  * Internal Prototypes ********************************************************

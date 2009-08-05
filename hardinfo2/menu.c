@@ -84,7 +84,7 @@ static GtkActionEntry entries[] = {
      G_CALLBACK(cb_refresh)},
 
     {"OnlineDocsAction", GTK_STOCK_HELP,
-     "Contents (online)", "F1",
+     "Contents", "F1",
      NULL,
      G_CALLBACK(cb_open_online_docs)},
 

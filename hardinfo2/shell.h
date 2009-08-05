@@ -19,7 +19,9 @@
 #define __SHELL_H__
 
 #include <gtk/gtk.h>
-#include <loadgraph.h>
+
+#include "loadgraph.h"
+#include "help-viewer.h"
 
 typedef struct _Shell			Shell;
 typedef struct _ShellTree		ShellTree;
@@ -97,6 +99,7 @@ struct _Shell {
     gchar		*selected_module_name;
 
     GKeyFile		*hosts;
+    HelpViewer		*help_viewer;
 };
 
 struct _ShellTree {

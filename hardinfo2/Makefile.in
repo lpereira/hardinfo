@@ -9,7 +9,8 @@ CCSLOW = gcc -O0 -g
 OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o  \
 		menu.o stock.o callbacks.o expr.o report.o binreloc.o \
 		vendor.o socket.o syncmanager.o remote.o xmlrpc-server.o \
-		xmlrpc-client.o ssh-conn.o
+		xmlrpc-client.o ssh-conn.o egg-markdown.o markdown-text-view.o \
+		help-viewer.o
 BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o nqueens.o fftbench.o
 
 MODULES = computer.so devices.so benchmark.so network.so
@@ -71,12 +72,17 @@ install:	all
 	install -d ${DESTDIR}/usr/share/applications
 	install -d ${DESTDIR}${LIBDIR}/hardinfo/modules
 	install -d ${DESTDIR}/usr/share/hardinfo/pixmaps
+	install -d ${DESTDIR}/usr/share/hardinfo/doc
 
 	install -m 644 hardinfo.desktop ${DESTDIR}/usr/share/applications
 	install -m 755 hardinfo ${DESTDIR}/usr/bin/hardinfo
 	
 	install -m 755 ${MODULES} ${DESTDIR}${LIBDIR}/hardinfo/modules
 	install -m 644 pixmaps/* ${DESTDIR}/usr/share/hardinfo/pixmaps
+	[ -e doc/*.hlp ] && install -m 644 doc/*.hlp \
+			${DESTDIR}/usr/share/hardinfo/doc || true
+	[ -e doc/*.png ] && install -m 644 doc/*.png \
+			${DESTDIR}/usr/share/hardinfo/doc || true
 	
 	install -m 644 benchmark.conf ${DESTDIR}/usr/share/hardinfo
 	install -m 644 benchmark.data ${DESTDIR}/usr/share/hardinfo

@@ -19,15 +19,16 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 
-#include <hardinfo.h>
-#include <callbacks.h>
-#include <iconcache.h>
+#include "hardinfo.h"
+#include "callbacks.h"
+#include "iconcache.h"
 
-#include <shell.h>
-#include <report.h>
-#include <syncmanager.h>
+#include "shell.h"
+#include "report.h"
+#include "syncmanager.h"
+#include "help-viewer.h"
 
-#include <config.h>
+#include "config.h"
 
 void cb_sync_manager()
 {
@@ -135,7 +136,18 @@ void cb_open_web_page()
 
 void cb_open_online_docs()
 {
-    open_url("http://wiki.hardinfo.org/Documentation");
+    Shell *shell;
+    
+    shell = shell_get_main_shell();
+    if (shell->help_viewer) {
+        help_viewer_open_page(shell->help_viewer, "index.hlp");
+    } else {
+        gchar *help_dir;
+        
+        help_dir = g_build_filename(params.path_data, "doc", NULL);
+        shell->help_viewer = help_viewer_new(help_dir, "index.hlp");
+        g_free(help_dir);
+    }
 }
 
 void cb_report_bug()
