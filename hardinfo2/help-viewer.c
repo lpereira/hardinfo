@@ -250,6 +250,15 @@ static void activate(GtkEntry *entry, gpointer data)
     do_search((HelpViewer *)data, (gchar *)gtk_entry_get_text(entry));
 }
 
+#if GTK_CHECK_VERSION(2,16,0)
+static void icon_press(GtkEntry *entry, gint position,
+                       GdkEventButton *event, gpointer data)
+{
+    if (position == GTK_ENTRY_ICON_SECONDARY)
+        activate(entry, data);
+}
+#endif	/* GTK_CHECK_VERSION(2,16,0) */ 
+
 static void home_clicked(GtkWidget *button, gpointer data)
 {
     HelpViewer *hv = (HelpViewer *)data;
@@ -438,6 +447,10 @@ help_viewer_new (const gchar *help_dir, const gchar *help_file)
 
     g_signal_connect(help_viewer, "delete-event", G_CALLBACK(destroy_me), hv);
     g_signal_connect(txt_search, "activate", G_CALLBACK(activate), hv);
+
+#if GTK_CHECK_VERSION(2,16,0)
+    g_signal_connect(txt_search, "icon-press", G_CALLBACK(icon_press), hv);
+#endif	/* GTK_CHECK_VERSION(2,16,0) */
                             
     if (!markdown_textview_load_file(MARKDOWN_TEXTVIEW(markdown_textview), help_file ? help_file : "index.hlp")) {
         GtkWidget	*dialog;
