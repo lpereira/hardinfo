@@ -320,7 +320,7 @@ void scan_gui(gboolean reload)
     if (params.gui_running) {
         RUN_WITH_HIGH_PRIORITY(benchmark_gui);
     } else {
-        benchmark_results[BENCHMARK_GUI] = 0.0f;
+        bench_results[BENCHMARK_GUI] = 0.0f;
     }
     SCAN_END();
 }
