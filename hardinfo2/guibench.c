@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 
+#include "iconcache.h"
 #include "config.h"
 
 #define N_ITERATIONS 100000
@@ -29,20 +30,24 @@ static double test_lines(GtkWindow *window);
 static double test_shapes(GtkWindow *window);
 static double test_filled_shapes(GtkWindow *window);
 static double test_text(GtkWindow *window);
+static double test_icons(GtkWindow *window);
 
 /*
 Results on a AMD Athlon 3200+ (Barton), 1GB RAM,
-nVidia Geforce 6200 with nvidia Xorg driver.
+nVidia Geforce 6200 with nvidia Xorg driver,
+running Linux 2.6.28, Xorg 1.6.0, Ubuntu 9.04
+desktop, GNOME 2.26.1, composite enabled.
 
-Test                Time           Iter/Sec       
-Line Drawing        3.9570     25271.7663 
-Shape Drawing       22.2499    4494.4065  
-Filled Shape Drawing4.0377     24766.2806 
-Text Drawing        59.1565    1690.4309  
+Test                  Time       Iter/Sec       
+Line Drawing          3.9570     25271.7663 
+Shape Drawing         22.2499    4494.4065  
+Filled Shape Drawing  4.0377     24766.2806 
+Text Drawing          59.1565    1690.4309  
+Icon Blitting	      51.720941	 1933.4528
 
 Results are normalized according to these values.
-So a value around 1.0 will be similar to this 
-computer.
+A guibench() result of 1000.0 is roughly equivalent
+to this same setup. 
 */
 
 static struct {
@@ -54,6 +59,7 @@ static struct {
   { test_shapes, "Shape Drawing", 4494.49 },
   { test_filled_shapes, "Filled Shape Drawing", 24766.28 },
   { test_text, "Text Drawing", 1690.43  },
+  { test_icons, "Icon Blitting", 1933.45 },
   { NULL, NULL }
 };
 
@@ -82,6 +88,53 @@ static gboolean keypress_event(GtkWidget *widget, GdkEventKey *event, gpointer u
     
     state = 0;
   }
+}
+
+static double test_icons(GtkWindow *window)
+{
+  GdkPixbuf *pixbufs[3];
+  GdkGC *gc;
+  GRand *rand;
+  GTimer *timer;
+  double time;
+  GdkWindow *gdk_window = GTK_WIDGET(window)->window;
+  int icons;
+  
+  gdk_window_clear(gdk_window);
+  
+  rand = g_rand_new();
+  gc = gdk_gc_new(GDK_DRAWABLE(gdk_window));
+  timer = g_timer_new();
+  
+  pixbufs[0] = icon_cache_get_pixbuf("logo.png");
+  pixbufs[1] = icon_cache_get_pixbuf("syncmanager.png");
+  pixbufs[2] = icon_cache_get_pixbuf("report-large.png");
+  
+  g_timer_start(timer);
+  for (icons = N_ITERATIONS; icons >= 0; icons--) {
+    int x, y, size;
+
+    x = g_rand_int_range(rand, 0, 800);
+    y = g_rand_int_range(rand, 0, 600);
+    
+    gdk_draw_pixbuf(GDK_DRAWABLE(gdk_window), gc,
+                    pixbufs[icons % G_N_ELEMENTS(pixbufs)],
+                    0, 0, x, y, 48, 48,
+                    GDK_RGB_DITHER_NONE, 0, 0);
+    
+    while (gtk_events_pending()) {
+      gtk_main_iteration();
+    }
+  }
+  g_timer_stop(timer);
+  
+  time = g_timer_elapsed(timer, NULL);
+  
+  g_rand_free(rand);
+  gdk_gc_destroy(gc);
+  g_timer_destroy(timer);
+  
+  return time;
 }
 
 static double test_text(GtkWindow *window)
@@ -294,5 +347,5 @@ double guibench(void)
   gtk_widget_destroy(window);
   g_free(phrase);
   
-  return score / i;
+  return (score / i) * 1000.0f;
 }

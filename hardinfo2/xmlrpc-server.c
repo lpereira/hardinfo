@@ -721,7 +721,12 @@ void xmlrpc_server_start(GMainLoop *main_loop)
 
     server = xmlrpc_server_new();
     if (!server) {
-	g_error("Cannot create XML-RPC server. Aborting");
+        if (main_loop) {
+            g_warning("Cannot create XML-RPC server.");
+            return;
+        } else {
+            g_error("Cannot create XML-RPC server. Aborting");
+        }
     }
 
     DEBUG("adding soup handlers for /xmlrpc");

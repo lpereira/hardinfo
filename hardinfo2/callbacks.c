@@ -361,4 +361,6 @@ void cb_quit(void)
     do {
 	gtk_main_quit();
     } while (gtk_main_level() > 1);
+    
+    exit(0);
 }
