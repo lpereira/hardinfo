@@ -1,10 +1,35 @@
 # HardInfo Documentation
 
 ## Introduction
-* [introduction.hlp What is HardInfo?]
 
-## Modules
-* [computer.hlp Computer]
-* [devices.hlp Devices]
-* [network.hlp Network]
-* [benchmarks.hlp Benchmarks]
+HardInfo can gather information about your system's hardware and operating system, perform benchmarks, and generate printable reports either in HTML or in plain text formats.
+
+## Feature Overview
+
+* Obtains information about basic hardware items;
+* Obtains information about basic operating system items;
+* Performs CPU and FPU benchmarks;
+* Allows [network-updater.hlp synchronization of benchmark results] with other HardInfo users;
+* Some tables can be [network-updater.hlp updated] from the Internet;
+* Can be used either in local or in [remote.hlp remote] mode;
+* Generates repots in HTML or plain text formats;
+* Can be used either with a GTK+ GUI or on a terminal.
+
+## Using
+
+* [report-generation.hlp Generating Reports]
+* [network-updater.hlp Using the Network Updater]
+* [remote.hlp Obtaining Information from a Remote Machine]
+* [benchmark.hlp Performing and Understanding Benchmarks]
+* [command-line.hlp Using HardInfo from the command line]
+
+## Improving
+
+* [bug-reporting.hlp How to Report Bugs]
+* [feature-requests.hlp How to Request a Feature]
+* [http://hardinfo.org/developer Developer Documentation]
+
+## Following
+
+* [http://twitter.com/hardinfo Twitter] (for GitHub commits)
+* [http://lists.hardinfo.org Mailing Lists]
