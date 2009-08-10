@@ -15,6 +15,8 @@
 "		<menuitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
 "		<menuitem name=\"Manage\" action=\"ManageAction\" />" \
 "		<separator/>" \
+"		<menuitem name=\"ActAsServer\" action=\"ActAsServerAction\" />" \
+"		<separator/>" \
 "		<menuitem name=\"LocalComputer\" action=\"LocalComputerAction\" />" \
 "       </menu>" 
 

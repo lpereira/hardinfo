@@ -571,12 +571,17 @@ void xmlrpc_server_init(void)
 {
 #ifdef HAS_LIBSOUP
     if (!loop) {
+        DEBUG("creating main loop");
 	loop = g_main_loop_new(NULL, FALSE);
+    } else {
+        DEBUG("using main loop instance %p", loop);
     }
 
     if (!handlers) {
 	int i;
 	handlers = g_hash_table_new(g_str_hash, g_str_equal);
+
+	DEBUG("registering handlers");
 
 	for (i = 0; handler_table[i].method_name; i++) {
 	    g_hash_table_insert(handlers,
@@ -700,12 +705,17 @@ static void icon_server_callback(SoupServer * server,
 }
 #endif				/* HAS_LIBSOUP */
 
-void xmlrpc_server_start(void)
+void xmlrpc_server_start(GMainLoop *main_loop)
 {
 #ifdef HAS_LIBSOUP
     SoupServer *server;
 
+    if (main_loop) {
+        loop = main_loop;
+    }
+    
     if (!loop || !handlers) {
+        DEBUG("initializing server");
 	xmlrpc_server_init();
     }
 
@@ -714,8 +724,10 @@ void xmlrpc_server_start(void)
 	g_error("Cannot create XML-RPC server. Aborting");
     }
 
+    DEBUG("adding soup handlers for /xmlrpc");
     soup_server_add_handler(server, "/xmlrpc", xmlrpc_server_callback,
 			    NULL, NULL);
+    DEBUG("adding soup handlers for /icon/");
     soup_server_add_handler(server, "/icon/", icon_server_callback,
 			    NULL, NULL);
 

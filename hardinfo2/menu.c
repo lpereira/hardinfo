@@ -123,6 +123,10 @@ static GtkToggleActionEntry toggle_entries[] = {
      "_Toolbar", NULL,
      NULL,
      G_CALLBACK(cb_toolbar)},
+    {"ActAsServerAction", NULL,
+      "_Accept connections", NULL,
+      NULL,
+      G_CALLBACK(cb_act_as_server) }
 };
 
 /* Implement a handler for GtkUIManager's "add_widget" signal. The UI manager
