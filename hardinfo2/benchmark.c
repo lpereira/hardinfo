@@ -372,6 +372,9 @@ const gchar *hi_note_func(gint entry)
     switch (entry) {
     case BENCHMARK_CRYPTOHASH:
 	return "Results in MiB/second. Higher is better.";
+    
+    case BENCHMARK_GUI:
+        return "Results in HIMarks. Higher is better.";
 
     case BENCHMARK_FFT:
     case BENCHMARK_RAYTRACE:

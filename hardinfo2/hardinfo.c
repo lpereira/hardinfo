@@ -119,7 +119,7 @@ int main(int argc, char **argv)
         g_type_init();
     
         xmlrpc_server_init();
-        xmlrpc_server_start();
+        xmlrpc_server_start(NULL);
     } else if (params.run_benchmark) {
         gchar *result;
         

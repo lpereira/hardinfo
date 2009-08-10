@@ -271,7 +271,7 @@ static double od_sa[2][2];
 
 				/*static char outarr[8][80];*//* Computed output of program goes here */
 
-int itercount;			/* The iteration counter for the main loop
+static int itercount;			/* The iteration counter for the main loop
 				   in the program is made global so that
 				   the compiler should not be allowed to
 				   optimise out the loop over the ray
@@ -280,7 +280,7 @@ int itercount;			/* The iteration counter for the main loop
 #ifndef ITERATIONS
 #define ITERATIONS 1000
 #endif
-int niter = ITERATIONS;		/* Iteration counter */
+static int niter = ITERATIONS;		/* Iteration counter */
 
 #if 0
 static char *refarr[] = {	/* Reference results.  These happen to
