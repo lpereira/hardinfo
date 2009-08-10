@@ -32,6 +32,7 @@ enum {
     BENCHMARK_NQUEENS,
     BENCHMARK_FFT,
     BENCHMARK_RAYTRACE,
+    BENCHMARK_GUI,
     BENCHMARK_N_ENTRIES
 } Entries;
 
@@ -41,6 +42,7 @@ void scan_bfsh(gboolean reload);
 void scan_cryptohash(gboolean reload);
 void scan_fib(gboolean reload);
 void scan_nqueens(gboolean reload);
+void scan_gui(gboolean reload);
 
 gchar *callback_fft();
 gchar *callback_raytr();
@@ -48,6 +50,7 @@ gchar *callback_bfsh();
 gchar *callback_fib();
 gchar *callback_cryptohash();
 gchar *callback_nqueens();
+gchar *callback_gui();
 
 static ModuleEntry entries[] = {
     {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
@@ -56,6 +59,7 @@ static ModuleEntry entries[] = {
     {"CPU N-Queens", "nqueens.png", callback_nqueens, scan_nqueens},
     {"FPU FFT", "fft.png", callback_fft, scan_fft},
     {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr},
+    {"GPU Drawing", "module.png", callback_gui, scan_gui},
     {NULL}
 };
 
@@ -257,6 +261,13 @@ static gdouble bench_results[BENCHMARK_N_ENTRIES];
 #include <arch/common/raytrace.h>
 #include <arch/common/nqueens.h>
 #include <arch/common/fft.h>
+#include <arch/common/drawing.h>
+
+gchar *callback_gui()
+{
+    return benchmark_include_results(bench_results[BENCHMARK_GUI],
+				     "GPU Drawing");
+}
 
 gchar *callback_fft()
 {
@@ -301,6 +312,18 @@ gchar *callback_fib()
     fn();						\
     setpriority(PRIO_PROCESS, 0, old_priority);		\
   } while (0);
+
+void scan_gui(gboolean reload)
+{
+    SCAN_START();
+    
+    if (params.gui_running) {
+        RUN_WITH_HIGH_PRIORITY(benchmark_gui);
+    } else {
+        benchmark_results[BENCHMARK_GUI] = 0.0f;
+    }
+    SCAN_END();
+}
 
 void scan_fft(gboolean reload)
 {
