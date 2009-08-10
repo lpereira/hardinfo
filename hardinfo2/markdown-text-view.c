@@ -620,8 +620,6 @@ static void markdown_textview_init(MarkdownTextView * self)
     egg_markdown_set_smart_quoting(self->markdown, TRUE);
 
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(self), GTK_WRAP_WORD);
-    gtk_text_view_set_justification(GTK_TEXT_VIEW(self),
-				    GTK_JUSTIFY_FILL);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(self), FALSE);
     gtk_text_view_set_left_margin(GTK_TEXT_VIEW(self), 10);
     gtk_text_view_set_right_margin(GTK_TEXT_VIEW(self), 10);
