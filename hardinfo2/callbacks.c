@@ -27,6 +27,7 @@
 #include "report.h"
 #include "syncmanager.h"
 #include "help-viewer.h"
+#include "xmlrpc-server.h"
 
 #include "config.h"
 
@@ -70,6 +71,29 @@ void cb_connect_host(GtkAction * action)
     }
 
     g_free(name);
+}
+
+static gboolean server_start_helper(gpointer server_loop)
+{
+     GMainLoop *loop = (GMainLoop *)server_loop;
+
+     xmlrpc_server_start(loop);
+     
+     return FALSE;
+}
+
+void cb_act_as_server()
+{
+    gboolean accepting;
+    static GMainLoop *server_loop = NULL;
+
+    accepting = shell_action_get_active("ActAsServerAction");
+    if (accepting) {
+       server_loop = g_main_loop_new(NULL, FALSE);
+       g_idle_add(server_start_helper, server_loop);
+    } else {
+       g_main_loop_quit(server_loop);
+    }
 }
 
 void cb_local_computer()
