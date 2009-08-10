@@ -18,14 +18,17 @@
 
 #include <gtk/gtk.h>
 
+#include "config.h"
+
 #define N_ITERATIONS 100000
+#define PHRASE "I \342\231\245 HardInfo"
 
 typedef double (*BenchCallback)(GtkWindow *window);
 
-double test_lines(GtkWindow *window);
-double test_shapes(GtkWindow *window);
-double test_filled_shapes(GtkWindow *window);
-double test_text(GtkWindow *window);
+static double test_lines(GtkWindow *window);
+static double test_shapes(GtkWindow *window);
+static double test_filled_shapes(GtkWindow *window);
+static double test_text(GtkWindow *window);
 
 /*
 Results on a AMD Athlon 3200+ (Barton), 1GB RAM,
@@ -54,7 +57,34 @@ static struct {
   { NULL, NULL }
 };
 
-double test_text(GtkWindow *window)
+static gchar *phrase = NULL;
+
+static gboolean keypress_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
+{
+  const int magic[] = { 0x1b, 0x33, 0x3a, 0x35, 0x51 };
+  const int states[] = { 0xff52, 0xff52, 0xff54, 0xff54,
+                         0xff51, 0xff53, 0xff51, 0xff53,
+                         0x62, 0x61 };
+  static int state = 0;
+  
+  if (event->keyval == states[state]) {
+    state++;
+  } else {
+    state = 0;
+  }
+  
+  if (state == G_N_ELEMENTS(states)) {
+    int i;
+    
+    for (i = 0; i < G_N_ELEMENTS(magic); i++) {
+      phrase[i + 6] = magic[i] ^ (states[i] & (states[i] >> 8));
+    }
+    
+    state = 0;
+  }
+}
+
+static double test_text(GtkWindow *window)
 {
   GRand *rand;
   GTimer *timer;
@@ -64,7 +94,6 @@ double test_text(GtkWindow *window)
   PangoFontDescription *font;
   GdkWindow *gdk_window = GTK_WIDGET(window)->window;
   int strings;
-  gchar *tmp;
   
   gdk_window_clear(gdk_window);
   
@@ -74,7 +103,7 @@ double test_text(GtkWindow *window)
   
   font = pango_font_description_new();
   layout = pango_layout_new(gtk_widget_get_pango_context(GTK_WIDGET(window)));
-  pango_layout_set_text(layout, "I \342\231\245 HardInfo", -1);
+  pango_layout_set_text(layout, phrase, -1);
   
   g_timer_start(timer);
   for (strings = N_ITERATIONS; strings >= 0; strings--) {
@@ -108,7 +137,7 @@ double test_text(GtkWindow *window)
   return time;
 }
 
-double test_filled_shapes(GtkWindow *window)
+static double test_filled_shapes(GtkWindow *window)
 {
   GRand *rand;
   GTimer *timer;
@@ -152,7 +181,7 @@ double test_filled_shapes(GtkWindow *window)
   return time;
 }
 
-double test_shapes(GtkWindow *window)
+static double test_shapes(GtkWindow *window)
 {
   GRand *rand;
   GTimer *timer;
@@ -195,7 +224,7 @@ double test_shapes(GtkWindow *window)
   return time;
 }
 
-double test_lines(GtkWindow *window)
+static double test_lines(GtkWindow *window)
 {
   GRand *rand;
   GTimer *timer;
@@ -243,12 +272,16 @@ double guibench(void)
   gdouble score = 0.0f;
   gint i;
 
+  phrase = g_strdup(PHRASE);
+
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request(window, 800, 600);
   gtk_window_set_title(GTK_WINDOW(window), "guibench");
   
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS);
   gtk_widget_show(window);
+  
+  g_signal_connect(window, "key-press-event", G_CALLBACK(keypress_event), NULL);
 
   for (i = 0; tests[i].title; i++) {
     double time;
@@ -259,6 +292,7 @@ double guibench(void)
   }
   
   gtk_widget_destroy(window);
+  g_free(phrase);
   
   return score / i;
 }
