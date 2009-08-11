@@ -11,35 +11,21 @@ OBJECTS = hardinfo.o shell.o util.o iconcache.o loadgraph.o  \
 		vendor.o socket.o syncmanager.o remote.o xmlrpc-server.o \
 		xmlrpc-client.o ssh-conn.o egg-markdown.o markdown-text-view.o \
 		help-viewer.o
-BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o nqueens.o fftbench.o guibench.o
+BENCHMARK_OBJECTS = fbench.o sha1.o blowfish.o md5.o nqueens.o fftbench.o guibench.o 
 
 MODULES = computer.so devices.so benchmark.so network.so
 
-all:	$(OBJECTS) $(MODULES)
+all:	hardinfo
+
+hardinfo: $(OBJECTS) $(MODULES)
 	$(CC) $(CCFLAGS) -o hardinfo -Wl,-export-dynamic $(OBJECTS) $(GTK_LIBS) \
 		$(SOUP_LIBS)
 
-md5.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c md5.c -o $@
-
-blowfish.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c blowfish.c -o $@
-
-sha1.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c sha1.c -o $@
-
-fbench.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fbench.c -o $@
-
-fftbench.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c fftbench.c -o $@
-
-nqueens.o:
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c nqueens.c -o $@
-
-benchmark.so:	benchmark.c
-	make $(BENCHMARK_OBJECTS)
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(BENCHMARK_OBJECTS) \
+$(BENCHMARK_OBJECTS):
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c $*.c -o $@
+	
+benchmark.so:	$(BENCHMARK_OBJECTS) benchmark.c
+	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $(BENCHMARK_OBJECTS) \
 		$(GTK_FLAGS) $(GTK_LIBS)
 
 %.so:	%.c
