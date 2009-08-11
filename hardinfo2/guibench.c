@@ -88,6 +88,8 @@ static gboolean keypress_event(GtkWidget *widget, GdkEventKey *event, gpointer u
     
     state = 0;
   }
+  
+  return FALSE;
 }
 
 static double test_icons(GtkWindow *window)
@@ -112,7 +114,7 @@ static double test_icons(GtkWindow *window)
   
   g_timer_start(timer);
   for (icons = N_ITERATIONS; icons >= 0; icons--) {
-    int x, y, size;
+    int x, y;
 
     x = g_rand_int_range(rand, 0, 800);
     y = g_rand_int_range(rand, 0, 600);
