@@ -24,9 +24,8 @@ hardinfo: $(OBJECTS) $(MODULES)
 $(BENCHMARK_OBJECTS):
 	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -c $*.c -o $@
 	
-benchmark.so:	$(BENCHMARK_OBJECTS) benchmark.c
-	$(CCSLOW) $(CCFLAGS) $(CFLAGS) -o $@ -shared $(BENCHMARK_OBJECTS) \
-		$(GTK_FLAGS) $(GTK_LIBS)
+benchmark.so:	benchmark.c $(BENCHMARK_OBJECTS)
+	$(CC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS) $(BENCHMARK_OBJECTS)
 
 %.so:	%.c
 	$(CC) $(CCFLAGS) $(CFLAGS) -o $@ -shared $< $(GTK_FLAGS) $(GTK_LIBS)
