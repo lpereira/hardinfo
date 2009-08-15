@@ -696,7 +696,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     frame1 = gtk_frame_new(NULL);
     gtk_widget_show(frame1);
     gtk_box_pack_start(GTK_BOX(vbox1), frame1, TRUE, TRUE, 0);
-    gtk_frame_set_shadow_type(GTK_FRAME(frame1), GTK_SHADOW_NONE);
+    gtk_frame_set_shadow_type(GTK_FRAME(frame1), GTK_SHADOW_ETCHED_IN);
 
     alignment3 = gtk_alignment_new(0.5, 0.5, 1, 1);
     gtk_widget_show(alignment3);
@@ -1127,7 +1127,6 @@ static HostManager *host_manager_new(GtkWidget * parent)
     gtk_tree_view_column_pack_start(column, cr_text, TRUE);
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
-
 
     vbuttonbox = gtk_vbutton_box_new();
     gtk_widget_show(vbuttonbox);

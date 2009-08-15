@@ -53,7 +53,7 @@ scan_samba_usershares(void)
             gchar *usershare, *cmdline;
             gsize length;
             
-            cmdline = g_strdup_printf("net usershare info %s",
+            cmdline = g_strdup_printf("net usershare info '%s'",
                                       strend(buffer, '\n'));
             if (g_spawn_command_line_sync(cmdline,
                                           &usershare, NULL,
