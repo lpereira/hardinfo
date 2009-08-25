@@ -204,8 +204,9 @@ void scan_dev(gboolean reload)
        { "Scripting Languages", NULL, FALSE },
        { "CPython", "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
        { "Perl", "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { "PHP", "php --version", "\\d+\\.\\d+\\.\\S+", TRUE},
        { "Ruby", "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
-       { "Bash", "bash --version", "\\d+\\.\\d+\\.\\d+", TRUE},
+       { "Bash", "bash --version", "\\d+\\.\\d+\\.\\S+", TRUE},
        { "Compilers", NULL, FALSE },
        { "C (GCC)", "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
        { "Java", "javac -version", "\\d+\\.\\d+\\.\\d+", FALSE },
@@ -213,11 +214,13 @@ void scan_dev(gboolean reload)
        { "CSharp (Mono)", "gmcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
        { "Vala", "valac --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { "Haskell (GHC)", "ghc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { "FreePascal", "fpc --version", "\\d+\\.\\d+\\.\\S+", TRUE },
        { "Tools", NULL, FALSE },
        { "make", "make --version", "\\d+\\.\\d+", TRUE },
-       { "GDB", "gdb --version", "\\d+\\.\\d+", TRUE },
+       { "GDB", "gdb --version", "\\d+\\.\\S+", TRUE },
        { "strace", "strace -V", "\\d+\\.\\d+\\.\\d+", TRUE },
-       { "valgrind", "valgrind --version", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { "valgrind", "valgrind --version", "\\d+\\.\\d+\\.\\S+", TRUE },
+       { "QMake", "qmake --version", "\\d+\\.\\S+", TRUE},
     };
     
     g_free(dev_list);
