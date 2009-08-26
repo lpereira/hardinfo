@@ -22,7 +22,7 @@ scan_languages(OperatingSystem * os)
     FILE *locale;
     gchar buf[512], *retval = NULL;
 
-    locale = popen("locale -va", "r");
+    locale = popen("locale -va && echo", "r");
     if (!locale)
 	return;
 
