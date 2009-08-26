@@ -16,6 +16,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <pwd.h>
+
 static gchar *users = NULL;
 
 static gboolean
@@ -27,43 +29,33 @@ remove_users(gpointer key, gpointer value, gpointer data)
 static void
 scan_users_do(void)
 {
-    FILE *passwd;
-    char buffer[512];
-    
-    passwd = fopen("/etc/passwd", "r");
-    if (!passwd)
-      return;
-    
+    struct passwd *passwd_;
+    passwd_ = getpwent();
+    if (!passwd_)
+        return;
+
     if (users) {
-      g_free(users);
-
-      g_hash_table_foreach_remove(moreinfo, remove_users, NULL);
+        g_free(users);
+        g_hash_table_foreach_remove(moreinfo, remove_users, NULL);
     }
-  
+
     users = g_strdup("");
-    
-    while (fgets(buffer, 512, passwd)) {
-      gchar **tmp;
-      gint uid;
-      
-      tmp = g_strsplit(buffer, ":", 0);
-      if (strlen(tmp[0]) > 1) {
-	gchar *key = g_strdup_printf("USER%s", tmp[0]);
-	gchar *val = g_strdup_printf("[User Information]\n"
-				    "User ID=%s\n"
-				    "Group ID=%s\n"
-				    "Home directory=%s\n"
-				    "Default shell=%s\n",
-				    tmp[2], tmp[3], tmp[5], tmp[6]);
-	g_hash_table_insert(moreinfo, key, val);
 
-	uid = atoi(tmp[2]);
-	strend(tmp[4], ',');
-	users = h_strdup_cprintf("$%s$%s=%s\n", users, key, tmp[0], tmp[4]);
-	
-	g_strfreev(tmp);
-      }
+    while (passwd_) {
+        gchar *key = g_strdup_printf("USER%s", passwd_->pw_name);
+        gchar *val = g_strdup_printf("[User Information]\n"
+                "User ID=%d\n"
+                "Group ID=%d\n"
+                "Home directory=%s\n"
+                "Default shell=%s\n",
+                (gint) passwd_->pw_uid,
+                (gint) passwd_->pw_gid,
+                passwd_->pw_dir,
+                passwd_->pw_shell);
+        g_hash_table_insert(moreinfo, key, val);
+
+        strend(passwd_->pw_gecos, ',');
+        users = h_strdup_cprintf("$%s$%s=%s\n", users, key, passwd_->pw_name, passwd_->pw_gecos);
+        passwd_ = getpwent();
     }
-    
-    fclose(passwd);
 }
