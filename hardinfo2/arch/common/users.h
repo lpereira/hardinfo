@@ -29,21 +29,22 @@ scan_users_do(void)
       gint uid;
       
       tmp = g_strsplit(buffer, ":", 0);
-      
-      gchar *key = g_strdup_printf("USER%s", tmp[0]);
-      gchar *val = g_strdup_printf("[User Information]\n"
-                                   "User ID=%s\n"
-                                   "Group ID=%s\n"
-                                   "Home directory=%s\n"
-                                   "Default shell=%s\n",
-                                   tmp[2], tmp[3], tmp[5], tmp[6]);
-      g_hash_table_insert(moreinfo, key, val);
+      if (strlen(tmp[0]) > 1) {
+	gchar *key = g_strdup_printf("USER%s", tmp[0]);
+	gchar *val = g_strdup_printf("[User Information]\n"
+				    "User ID=%s\n"
+				    "Group ID=%s\n"
+				    "Home directory=%s\n"
+				    "Default shell=%s\n",
+				    tmp[2], tmp[3], tmp[5], tmp[6]);
+	g_hash_table_insert(moreinfo, key, val);
 
-      uid = atoi(tmp[2]);
-      strend(tmp[4], ',');
-      users = h_strdup_cprintf("$%s$%s=%s\n", users, key, tmp[0], tmp[4]);
-      
-      g_strfreev(tmp);
+	uid = atoi(tmp[2]);
+	strend(tmp[4], ',');
+	users = h_strdup_cprintf("$%s$%s=%s\n", users, key, tmp[0], tmp[4]);
+	
+	g_strfreev(tmp);
+      }
     }
     
     fclose(passwd);
