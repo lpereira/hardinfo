@@ -416,7 +416,7 @@ gchar *callback_os()
 			   "UpdateInterval$Load Average=1000\n"
 			   "[Version]\n"
 			   "Kernel=%s\n"
-			   "Compiled=%s\n"
+			   "Version=%s\n"
 			   "C Library=%s\n"
 			   "Distribution=%s\n"
 			   "[Current Session]\n"
@@ -429,7 +429,7 @@ gchar *callback_os()
 			   "Uptime=...\n"
 			   "Load Average=...",
 			   computer->os->kernel,
-			   computer->os->compiled_date,
+			   computer->os->kernel_version,
 			   computer->os->libc,
 			   computer->os->distro,
 			   computer->os->hostname,

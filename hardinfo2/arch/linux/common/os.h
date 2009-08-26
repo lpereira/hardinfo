@@ -42,23 +42,6 @@ get_libc_version(void)
     return g_strdup("Unknown");
 }
 
-static gchar *
-get_os_compiled_date(void)
-{
-    FILE *procversion;
-    gchar buf[512];
-
-    procversion = fopen("/proc/sys/kernel/version", "r");
-    if (!procversion)
-	return g_strdup("Unknown");
-
-    (void)fgets(buf, 512, procversion);
-    fclose(procversion);
-
-    return g_strdup(buf);
-}
-
-
 #include <gdk/gdkx.h>
 
 void
@@ -140,8 +123,6 @@ computer_get_os(void)
 
     os = g_new0(OperatingSystem, 1);
 
-    os->compiled_date = get_os_compiled_date();
-
     /* Attempt to get the Distribution name; try using /etc/lsb-release first,
        then doing the legacy method (checking for /etc/$DISTRO-release files) */
     if (g_file_test("/etc/lsb-release", G_FILE_TEST_EXISTS)) {
@@ -206,6 +187,7 @@ computer_get_os(void)
 
     /* Kernel and hostname info */
     uname(&utsbuf);
+    os->kernel_version = g_strdup(utsbuf.version);
     os->kernel = g_strdup_printf("%s %s (%s)", utsbuf.sysname,
 				 utsbuf.release, utsbuf.machine);
     os->hostname = g_strdup(utsbuf.nodename);

@@ -140,7 +140,7 @@ struct _OperatingSystem {
     gchar *hostname;
     gchar *language;
     gchar *homedir;
-    gchar *compiled_date;
+    gchar *kernel_version;
 
     gchar *languages;
 
