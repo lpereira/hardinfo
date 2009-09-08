@@ -22,3 +22,4 @@ void xmlrpc_server_start(GMainLoop *main_loop);
 void xmlrpc_server_init(void);
 
 #endif	/* __XMLRPC_SERVER_H__ */
+

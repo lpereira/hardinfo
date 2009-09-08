@@ -40,20 +40,25 @@ void cb_sync_manager()
 
 void cb_connect_to()
 {
+#ifdef HAS_LIBSOUP
     Shell *shell = shell_get_main_shell();
 
     connect_dialog_show(shell->window);
+#endif /* HAS_LIBSOUP */
 }
 
 void cb_manage_hosts()
 {
+#ifdef HAS_LIBSOUP
     Shell *shell = shell_get_main_shell();
     
     host_manager_show(shell->window);
+#endif /* HAS_LIBSOUP */
 }
 
 void cb_connect_host(GtkAction * action)
 {
+#ifdef HAS_LIBSOUP
     Shell *shell = shell_get_main_shell();
     gchar *name;
     
@@ -71,19 +76,23 @@ void cb_connect_host(GtkAction * action)
     }
 
     g_free(name);
+#endif /* HAS_LIBSOUP */
 }
 
 static gboolean server_start_helper(gpointer server_loop)
 {
+#ifdef HAS_LIBSOUP
      GMainLoop *loop = (GMainLoop *)server_loop;
 
      xmlrpc_server_start(loop);
      
      return FALSE;
+#endif /* HAS_LIBSOUP */
 }
 
 void cb_act_as_server()
 {
+#ifdef HAS_LIBSOUP
     gboolean accepting;
     static GMainLoop *server_loop = NULL;
 
@@ -94,10 +103,12 @@ void cb_act_as_server()
     } else {
        g_main_loop_quit(server_loop);
     }
+#endif /* HAS_LIBSOUP */
 }
 
 void cb_local_computer()
 {
+#ifdef HAS_LIBSOUP
     Shell *shell = shell_get_main_shell();
 
     shell_status_update("Disconnecting...");
@@ -115,6 +126,7 @@ void cb_local_computer()
     shell_view_set_enabled(TRUE);
     shell_status_update("Done.");
     shell_set_remote_label(shell, "Local");
+#endif /* HAS_LIBSOUP */
 }
 
 void cb_save_graphic()

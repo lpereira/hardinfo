@@ -20,6 +20,9 @@
 #ifndef __XMLRPC_CLIENT_H__
 #define __XMLRPC_CLIENT_H__
 
+#include "config.h"
+
+#ifdef HAS_LIBSOUP
 #include <libsoup/soup.h>
 
 void xmlrpc_init(void);
@@ -35,5 +38,6 @@ GValueArray *xmlrpc_get_array(gchar *addr,
                               gchar *method,
                               const gchar *param_types,
                               ...);
+#endif /* HAS_LIBSOUP */
 
 #endif	/* __XMLRPC_CLIENT_H__ */

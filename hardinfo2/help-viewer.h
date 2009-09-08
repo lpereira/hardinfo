@@ -40,3 +40,4 @@ void help_viewer_open_page(HelpViewer *help_viewer, const gchar *page);
 void help_viewer_destroy(HelpViewer *help_viewer);
 
 #endif	/* __HELP_VIEWER_H__ */
+

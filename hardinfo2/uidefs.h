@@ -20,8 +20,12 @@
 "		<menuitem name=\"LocalComputer\" action=\"LocalComputerAction\" />" \
 "       </menu>" 
 
+#define SYNC_MANAGER_ITEMS "		<separator/>" \
+"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" 
+
 #else		/* !HAS_LIBSOUP */
 #define REMOTE_MENU_ITEMS
+#define SYNC_MANAGER_ITEMS
 #endif		/* !HAS_LIBSOUP */
 
 char *uidefs_str = "<ui>" \
@@ -29,8 +33,7 @@ char *uidefs_str = "<ui>" \
 "	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \
-"		<separator/>" \
-"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" \
+SYNC_MANAGER_ITEMS
 /*
  * Save Image is not ready for prime time. Yet.
  * "<menuitem name=\"SaveGraph\" action=\"SaveGraphAction\" />" \
@@ -45,7 +48,7 @@ char *uidefs_str = "<ui>" \
 "		<separator name=\"LastSep\"/>" \
 "		<menuitem name=\"Refresh\" action=\"RefreshAction\"/>" \
 "	</menu>" \
-REMOTE_MENU_ITEMS
+REMOTE_MENU_ITEMS \
 "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">" \
 "		<menuitem name=\"OnlineDocs\" action=\"OnlineDocsAction\"/>" \
 "		<separator/>" \

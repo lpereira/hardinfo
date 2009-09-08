@@ -25,6 +25,8 @@
 #ifndef __SSH_CONN_H__
 #define __SSH_CONN_H__
 
+#include "config.h"
+#ifdef HAS_LIBSOUP
 #include <libsoup/soup.h>
 
 typedef struct _SSHConn SSHConn;
@@ -60,5 +62,5 @@ int ssh_write(SSHConn * conn,
 int ssh_read(gint fd, gpointer buffer, gint num_bytes, gint * bytes_read);
 
 const char *ssh_conn_errors[10];
-
+#endif				/* HAS_LIBSOUP */
 #endif				/* __SSH_CONN_H__ */

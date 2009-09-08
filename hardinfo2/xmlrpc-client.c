@@ -21,6 +21,7 @@
 #include "config.h"
 #include "xmlrpc-client.h"
 
+#ifdef HAS_LIBSOUP
 static GMainLoop	*loop = NULL;
 static SoupSession	*session = NULL;
 static gboolean		 lock = FALSE;
@@ -241,3 +242,6 @@ GValueArray *xmlrpc_get_array(gchar *addr,
     
     return answer;
 }
+
+#endif	/* HAS_LIBSOUP */
+

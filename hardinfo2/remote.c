@@ -21,6 +21,9 @@
 #include <string.h>
 
 #include "config.h"
+
+#ifdef HAS_LIBSOUP
+
 #include "shell.h"
 #include "iconcache.h"
 #include "hardinfo.h"
@@ -1187,3 +1190,6 @@ static HostManager *host_manager_new(GtkWidget * parent)
 
     return rd;
 }
+
+#endif	/* HAS_LIBSOUP */
+

@@ -21,6 +21,7 @@
 
 #include "config.h"
 
+#include <glib.h>
 #ifdef HAS_LIBSOUP
 #include <stdio.h>
 #include <string.h>
