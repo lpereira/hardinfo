@@ -265,8 +265,8 @@ static gdouble bench_results[BENCHMARK_N_ENTRIES];
 
 gchar *callback_gui()
 {
-    return benchmark_include_results(bench_results[BENCHMARK_GUI],
-				     "GPU Drawing");
+    return benchmark_include_results_reverse(bench_results[BENCHMARK_GUI],
+                                             "GPU Drawing");
 }
 
 gchar *callback_fft()
