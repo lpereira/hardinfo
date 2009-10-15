@@ -230,6 +230,7 @@ void scan_dev(gboolean reload)
     for (i = 0; i < G_N_ELEMENTS(detect_lang); i++) {
        gchar *version = NULL;
        gchar *output;
+       gchar *temp;
        GRegex *regex;
        GMatchInfo *match_info;
        gboolean found;
@@ -264,6 +265,11 @@ void scan_dev(gboolean reload)
        } else {
            dev_list = h_strdup_cprintf("%s=Not found\n", dev_list, detect_lang[i].compiler_name);
        }
+       
+       temp = g_strdup_printf("Detecting version: %s",
+                              detect_lang[i].compiler_name);
+       shell_status_update(temp);
+       g_free(temp);
     }
     
     SCAN_END();

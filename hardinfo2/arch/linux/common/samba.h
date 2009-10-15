@@ -34,6 +34,7 @@ scan_samba(void)
 
     if (g_file_get_contents("/etc/samba/smb.conf",
                             &str, &length, NULL)) {
+        shell_status_update("Scanning SAMBA shares...");
         scan_samba_from_string(str, length);
         g_free(str);                        
     }
@@ -48,6 +49,8 @@ scan_samba_usershares(void)
     
     if ((usershare_list = popen("net usershare list", "r"))) {
         char buffer[512];
+        
+        shell_status_update("Scanning SAMBA user shares...");
         
         while (fgets(buffer, 512, usershare_list)) {
             gchar *usershare, *cmdline;
@@ -64,6 +67,8 @@ scan_samba_usershares(void)
             }
             
             g_free(cmdline);
+            
+            shell_status_pulse();
         }
         
         pclose(usershare_list);
@@ -93,6 +98,8 @@ scan_samba_from_string(gchar *str, gsize length)
 
     groups = g_key_file_get_groups(keyfile, NULL);
     while (groups[i]) {
+        shell_status_pulse();
+
         if (g_key_file_has_key(keyfile, groups[i], "path", NULL)) {
             gchar *path = g_key_file_get_string(keyfile, groups[i], "path", NULL);
             smb_shares_list = h_strdup_cprintf("%s=%s\n",
