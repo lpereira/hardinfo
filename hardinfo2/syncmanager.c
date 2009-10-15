@@ -441,12 +441,14 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 {
     gint i;
     GtkWidget **labels;
-    GtkWidget **icons;
-    GdkPixbuf *done_icon = icon_cache_get_pixbuf("status-done.png");
-    GdkPixbuf *curr_icon = icon_cache_get_pixbuf("status-curr.png");
+    GtkWidget **status_labels;
+    const gchar *done_str  = "\342\234\223";
+    const gchar *error_str = "\342\234\227";
+    const gchar *curr_str  = "\342\226\266";
+    const gchar *empty_str = "\302\240\302\240";
 
     labels = g_new0(GtkWidget *, n);
-    icons = g_new0(GtkWidget *, n);
+    status_labels = g_new0(GtkWidget *, n);
 
     for (i = 0; i < n; i++) {
 	GtkWidget *hbox;
@@ -454,16 +456,15 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 	hbox = gtk_hbox_new(FALSE, 5);
 
 	labels[i] = gtk_label_new(sna[i].name);
-	icons[i] = gtk_image_new();
-
-	gtk_widget_set_size_request(icons[i],
-				    gdk_pixbuf_get_width(done_icon),
-				    gdk_pixbuf_get_height(done_icon));
+	status_labels[i] = gtk_label_new(empty_str);
 
 	gtk_label_set_use_markup(GTK_LABEL(labels[i]), TRUE);
+	gtk_label_set_use_markup(GTK_LABEL(status_labels[i]), TRUE);
+	
 	gtk_misc_set_alignment(GTK_MISC(labels[i]), 0.0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(status_labels[i]), 1.0, 0.5);
 
-	gtk_box_pack_start(GTK_BOX(hbox), icons[i], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), status_labels[i], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), labels[i], TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(sd->sna->vbox), hbox, FALSE, FALSE, 3);
 
@@ -483,9 +484,7 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 	    gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
 	    g_free(markup);
 
-	    gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]),
-				      icon_cache_get_pixbuf
-				      ("dialog-error.png"));
+	    gtk_label_set_markup(GTK_LABEL(status_labels[i]), error_str);
 	    break;
 	}
 
@@ -493,7 +492,7 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 	gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
 	g_free(markup);
 
-	gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]), curr_icon);
+        gtk_label_set_markup(GTK_LABEL(status_labels[i]), curr_str);
 
 	if (sna[i].do_action && !sna[i].do_action(sd, &sna[i])) {
 	    markup =
@@ -504,9 +503,7 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 
 	    sd->flag_cancel = TRUE;
 
-	    gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]),
-				      icon_cache_get_pixbuf
-				      ("dialog-error.png"));
+	    gtk_label_set_markup(GTK_LABEL(status_labels[i]), error_str);
 	    if (sna[i].error) {
 		if (sna[i].error->code != 1) {
 		    /* the user has not cancelled something... */
@@ -527,12 +524,12 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 	    break;
 	}
 
-	gtk_image_set_from_pixbuf(GTK_IMAGE(icons[i]), done_icon);
+        gtk_label_set_markup(GTK_LABEL(status_labels[i]), done_str);
 	gtk_label_set_markup(GTK_LABEL(labels[i]), sna[i].name);
     }
 
     g_free(labels);
-    g_free(icons);
+    g_free(status_labels);
 }
 
 static SyncNetArea *sync_dialog_netarea_new(void)
