@@ -25,6 +25,7 @@
 #include "shell.h"
 #include "markdown-text-view.h"
 #include "help-viewer.h"
+#include "hardinfo.h"
 
 static void do_search(HelpViewer *hv, gchar *text);
 
@@ -92,12 +93,16 @@ static void link_clicked(MarkdownTextView *text_view, gchar *link, gpointer data
 {
     HelpViewer *hv = (HelpViewer *)data;
     
-    /* adds the current file to the back stack (before loading the new file */
-    hv->back_stack = g_slist_prepend(hv->back_stack, g_strdup(hv->current_file));
-    gtk_widget_set_sensitive(hv->btn_back, TRUE);
+    if (g_str_has_prefix(link, "http://")) {
+        open_url(link);
+    } else {
+        /* adds the current file to the back stack (before loading the new file */
+        hv->back_stack = g_slist_prepend(hv->back_stack, g_strdup(hv->current_file));
+        gtk_widget_set_sensitive(hv->btn_back, TRUE);
 
-    gtk_statusbar_pop(GTK_STATUSBAR(hv->status_bar), 1);
-    markdown_textview_load_file(text_view, link);
+        gtk_statusbar_pop(GTK_STATUSBAR(hv->status_bar), 1);
+        markdown_textview_load_file(text_view, link);
+    }
 }
 
 static void file_load_complete(MarkdownTextView *text_view, gchar *file, gpointer data)
