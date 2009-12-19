@@ -301,9 +301,9 @@ gchar *computer_get_virtualization()
         gchar *str;
         gchar *vmtype;
     } vm_types[] = {
-        /* VMWare */
-        { "VMWare", "Virtual (VMWare)" },
-        { ": VMWare Virtual IDE CDROM Drive", "Virtual (VMWare)" },
+        /* VMware */
+        { "VMware", "Virtual (VMware)" },
+        { ": VMware Virtual IDE CDROM Drive", "Virtual (VMware)" },
         /* QEMU */
         { "QEMU", "Virtual (QEMU)" },
         { "QEMU Virtual CPU", "Virtual (QEMU)" },
