@@ -151,8 +151,12 @@ computer_get_os(void)
 	    char buf[128];
 
 	    distro_ver = fopen(distro_db[i].file, "r");
-	    (void)fgets(buf, 128, distro_ver);
-	    fclose(distro_ver);
+	    if (distro_ver) {
+                (void)fgets(buf, 128, distro_ver);
+                fclose(distro_ver);
+            } else {
+                continue;
+            }
 
 	    buf[strlen(buf) - 1] = 0;
 
