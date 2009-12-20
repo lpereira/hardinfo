@@ -21,7 +21,13 @@ get_libc_version(void)
 {
     FILE *libc;
     gchar buf[256], *tmp, *p;
-    
+
+    if (g_file_test("/lib/ld-uClibc.so.0", G_FILE_TEST_EXISTS)) {
+      return g_strdup("uClibc Library");
+    } else if (!g_file_test("/lib/libc.so.6", G_FILE_TEST_EXISTS)) {
+      goto err;
+    }
+   
     libc = popen("/lib/libc.so.6", "r");
     if (!libc) goto err;
     

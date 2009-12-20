@@ -245,6 +245,11 @@ static struct {
     { "bnep", "Bluetooth", "bluetooth" },
     { "br", "Bridge Interface", "network" },
     { "ham", "Hamachi Virtual Personal Network", "network"},
+    { "net", "Ethernet", "network-interface" },
+    { "ifb", "Intermediate Functional Block", "network" },
+    { "gre", "GRE Network Tunnel", "network" },
+    { "msh", "Mesh Network", "wireless" },
+    { "wmaster", "Wireless Master Interface", "wireless" },
     { NULL, "Unknown", "network" },
 };
 
