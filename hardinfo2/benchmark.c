@@ -305,20 +305,85 @@ gchar *callback_fib()
 				     "CPU Fibonacci");
 }
 
-#define RUN_WITH_HIGH_PRIORITY(fn)			\
-  do {							\
-    int old_priority = getpriority(PRIO_PROCESS, 0);	\
-    setpriority(PRIO_PROCESS, 0, -20);			\
-    fn();						\
-    setpriority(PRIO_PROCESS, 0, old_priority);		\
-  } while (0);
+static gboolean do_benchmark_handler(GIOChannel *source,
+                                     GIOCondition condition,
+                                     gpointer data)
+{
+    double *result_ret = (double *)data;
+    GIOStatus status;
+    gchar *result;
+    
+    status = g_io_channel_read_line(source, &result, NULL, NULL, NULL);
+    if (status != G_IO_STATUS_NORMAL) {
+        DEBUG("error while reading benchmark result");
+
+        *result_ret = 0.0f;
+        gtk_main_quit();
+        return FALSE;
+    }
+    
+    *result_ret = atof(result);
+
+    g_free(result);
+    gtk_main_quit();
+    
+    return FALSE;
+}
+
+static void do_benchmark(void (*benchmark_function)(void), int entry)
+{
+    int old_priority = 0;
+    
+    if (params.gui_running) {
+       gchar *argv[] = { params.argv0, "-b", entries[entry].name,
+                         "-m", "benchmark.so", "-a", NULL };
+       gint bench_stdout;
+       
+       shell_view_set_enabled(FALSE);
+       shell_status_update("Benchmarking. Please avoid any I/O.");
+       while (gtk_events_pending()) {
+         gtk_main_iteration();
+       }
+       
+       if (g_spawn_async_with_pipes(NULL,
+                                    argv, NULL,
+                                    G_SPAWN_STDERR_TO_DEV_NULL,
+                                    NULL, NULL,
+                                    NULL,
+                                    NULL, &bench_stdout, NULL,
+                                    NULL)) {
+          GIOChannel *channel;
+          double result;
+          
+          channel = g_io_channel_unix_new(bench_stdout);
+          g_io_add_watch(channel, G_IO_IN, do_benchmark_handler, &result);
+          
+          gtk_main();
+          
+          bench_results[entry] = result;
+          
+          g_io_channel_unref(channel);
+          shell_status_set_enabled(TRUE);
+          shell_status_update("Done.");
+          
+          return;
+       }
+       
+       shell_status_set_enabled(TRUE);
+       shell_status_update("Done.");
+    }
+       
+    setpriority(PRIO_PROCESS, 0, -20);
+    benchmark_function();
+    setpriority(PRIO_PROCESS, 0, old_priority);
+}
 
 void scan_gui(gboolean reload)
 {
     SCAN_START();
     
     if (params.gui_running) {
-        RUN_WITH_HIGH_PRIORITY(benchmark_gui);
+        do_benchmark(benchmark_gui, BENCHMARK_GUI);
     } else {
         bench_results[BENCHMARK_GUI] = 0.0f;
     }
@@ -328,42 +393,42 @@ void scan_gui(gboolean reload)
 void scan_fft(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_fft);
+    do_benchmark(benchmark_fft, BENCHMARK_FFT);
     SCAN_END();
 }
 
 void scan_nqueens(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_nqueens);
+    do_benchmark(benchmark_nqueens, BENCHMARK_NQUEENS);
     SCAN_END();
 }
 
 void scan_raytr(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_raytrace);
+    do_benchmark(benchmark_raytrace, BENCHMARK_RAYTRACE);
     SCAN_END();
 }
 
 void scan_bfsh(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_fish);
+    do_benchmark(benchmark_fish, BENCHMARK_BLOWFISH);
     SCAN_END();
 }
 
 void scan_cryptohash(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_cryptohash);
+    do_benchmark(benchmark_cryptohash, BENCHMARK_CRYPTOHASH);
     SCAN_END();
 }
 
 void scan_fib(gboolean reload)
 {
     SCAN_START();
-    RUN_WITH_HIGH_PRIORITY(benchmark_fib);
+    do_benchmark(benchmark_fib, BENCHMARK_FIB);
     SCAN_END();
 }
 

@@ -127,7 +127,7 @@ int main(int argc, char **argv)
         if (!result) {
           g_error("Unknown benchmark ``%s'' or benchmark.so not loaded", params.run_benchmark);
         } else {
-          g_print("Benchmark result: %s\n", result);
+          g_print("%s\n", result);
           g_free(result);
         }
     } else if (params.gui_running) {
