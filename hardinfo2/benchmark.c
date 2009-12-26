@@ -395,13 +395,13 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
             case GTK_RESPONSE_ACCEPT:
               DEBUG("cancelling benchmark");
               
+              gtk_widget_destroy(bench_dialog);
               g_source_remove(watch_id);
               kill(bench_pid, SIGINT);
           }
           
           bench_results[entry] = benchmark_dialog->result;
           
-          gtk_widget_destroy(bench_dialog);
           g_io_channel_unref(channel);
           shell_status_set_enabled(TRUE);
           g_free(benchmark_dialog);
