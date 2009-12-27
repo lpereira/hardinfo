@@ -79,7 +79,7 @@ gpointer benchmark_parallel_for_dispatcher(gpointer data)
     ParallelBenchTask 	*pbt = (ParallelBenchTask *)data;
     gpointer 		(*callback)(unsigned int start, unsigned int end, void *data, gint thread_number);
     gpointer		return_value;
-    
+
     if ((callback = pbt->callback)) {
         DEBUG("this is thread %p; items %d -> %d, data %p", g_thread_self(),
               pbt->start, pbt->end, pbt->data);
@@ -88,9 +88,9 @@ gpointer benchmark_parallel_for_dispatcher(gpointer data)
     } else {
         DEBUG("this is thread %p; callback is NULL and it should't be!", g_thread_self());
     }
-    
+
     g_free(pbt);
-    
+
     return return_value;
 }
 
@@ -101,16 +101,16 @@ gdouble benchmark_parallel_for(guint start, guint end,
     gdouble	elapsed_time;
     GSList	*threads = NULL, *t;
     GTimer	*timer;
-    
+
     timer = g_timer_new();
-    
+
     temp = module_call_method("devices::getProcessorCount");
     n_cores = temp ? atoi(temp) : 1;
     g_free(temp);
-    
+
     while (1) {
         iter_per_core = (end - start) / n_cores;
-        
+
         if (iter_per_core == 0) {
           DEBUG("not enough items per core; disabling one");
           n_cores--;
@@ -118,47 +118,47 @@ gdouble benchmark_parallel_for(guint start, guint end,
           break;
         }
     }
-    
+
     DEBUG("processor has %d cores; processing %d elements (%d per core)",
           n_cores, (end - start), iter_per_core);
-    
+
     g_timer_start(timer);
     for (iter = start; iter < end; iter += iter_per_core) {
         ParallelBenchTask *pbt = g_new0(ParallelBenchTask, 1);
         GThread *thread;
-        
+
         DEBUG("launching thread %d", 1 + (iter / iter_per_core));
-        
+
         pbt->thread_number = thread_number++;
         pbt->start    = iter == 0 ? 0 : iter;
         pbt->end      = iter + iter_per_core - 1;
         pbt->data     = callback_data;
         pbt->callback = callback;
-        
+
         if (pbt->end > end)
             pbt->end = end;
-        
+
         thread = g_thread_create((GThreadFunc) benchmark_parallel_for_dispatcher,
                                  pbt, TRUE, NULL);
         threads = g_slist_append(threads, thread);
-        
+
         DEBUG("thread %d launched as context %p", thread_number, thread);
     }
-    
+
     DEBUG("waiting for all threads to finish");
     for (t = threads; t; t = t->next) {
         DEBUG("waiting for thread with context %p", t->data);
         g_thread_join((GThread *)t->data);
     }
-    
+
     g_timer_stop(timer);
     elapsed_time = g_timer_elapsed(timer, NULL);
-    
+
     g_slist_free(threads);
     g_timer_destroy(timer);
-    
+
     DEBUG("finishing; all threads took %f seconds to finish", elapsed_time);
-    
+
     return elapsed_time;
 }
 
@@ -171,17 +171,17 @@ static gchar *clean_cpuname(gchar *cpuname)
         "cpu", "Genuine", "Authentic", NULL
     };
     gint i;
-    
+
     ret = g_strdup(cpuname);
     for (i = 0; remove[i]; i++) {
       tmp = strreplace(ret, remove[i], "");
       g_free(ret);
       ret = tmp;
     }
-    
+
     ret = strend(ret, '@');
     ret = g_strstrip(ret);
-    
+
     tmp = g_strdup(ret);
     g_free(ret);
 
@@ -211,7 +211,7 @@ static gchar *__benchmark_include_results(gdouble result,
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
 	gchar *value, *cleaned_machine;
-	
+
 	value   = g_key_file_get_value(conf, benchmark, machines[i], NULL);
 	cleaned_machine = clean_cpuname(machines[i]);
 	results = h_strconcat(results, cleaned_machine, "=", value, "\n", NULL);
@@ -224,19 +224,32 @@ static gchar *__benchmark_include_results(gdouble result,
     g_free(path);
     g_key_file_free(conf);
 
-    processor_frequency = module_call_method("devices::getProcessorFrequency");
-    return_value = g_strdup_printf("[$ShellParam$]\n"
-			   	   "Zebra=1\n"
-			   	   "OrderType=%d\n"
-	   			   "ViewType=3\n"
-	   			   "ColumnTitle$Extra1=CPU Clock\n"
-			   	   "ColumnTitle$Progress=Results\n"
-			   	   "ColumnTitle$TextValue=CPU\n"
-			   	   "ShowColumnHeaders=true\n"
-	   			   "[%s]\n"
-		   		   "<big><b>This Machine</b></big>=%.3f|%s MHz\n"
-			   	   "%s", order_type, benchmark, result, processor_frequency, results);
-    g_free(processor_frequency);
+    if (result > 0.0f) {
+        processor_frequency = module_call_method("devices::getProcessorFrequency");
+        return_value = g_strdup_printf("[$ShellParam$]\n"
+			       	   "Zebra=1\n"
+			       	   "OrderType=%d\n"
+	       			   "ViewType=3\n"
+	       			   "ColumnTitle$Extra1=CPU Clock\n"
+			       	   "ColumnTitle$Progress=Results\n"
+			       	   "ColumnTitle$TextValue=CPU\n"
+			       	   "ShowColumnHeaders=true\n"
+	       			   "[%s]\n"
+		       		   "<big><b>This Machine</b></big>=%.3f|%s MHz\n"
+			       	   "%s", order_type, benchmark, result, processor_frequency, results);
+        g_free(processor_frequency);
+    } else {
+        return_value = g_strdup_printf("[$ShellParam$]\n"
+			       	   "Zebra=1\n"
+			       	   "OrderType=%d\n"
+	       			   "ViewType=3\n"
+	       			   "ColumnTitle$Extra1=CPU Clock\n"
+			       	   "ColumnTitle$Progress=Results\n"
+			       	   "ColumnTitle$TextValue=CPU\n"
+			       	   "ShowColumnHeaders=true\n"
+	       			   "[%s]\n"
+			       	   "%s", order_type, benchmark, results);
+    }
     return return_value;
 }
 
@@ -321,27 +334,27 @@ static gboolean do_benchmark_handler(GIOChannel *source,
     BenchmarkDialog *bench_dialog = (BenchmarkDialog*)data;
     GIOStatus status;
     gchar *result;
-    
+
     status = g_io_channel_read_line(source, &result, NULL, NULL, NULL);
     if (status != G_IO_STATUS_NORMAL) {
         DEBUG("error while reading benchmark result");
 
-        bench_dialog->result = 0.0f;
+        bench_dialog->result = -1.0f;
         gtk_widget_destroy(bench_dialog->dialog);
         return FALSE;
     }
-    
+
     bench_dialog->result = atof(result);
     gtk_widget_destroy(bench_dialog->dialog);
     g_free(result);
-    
+
     return FALSE;
 }
 
 static void do_benchmark(void (*benchmark_function)(void), int entry)
 {
     int old_priority = 0;
-    
+
     if (params.gui_running) {
        gchar *argv[] = { params.argv0, "-b", entries[entry].name,
                          "-m", "benchmark.so", "-a", NULL };
@@ -350,13 +363,13 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        GtkWidget *bench_dialog;
        GtkWidget *bench_image;
        BenchmarkDialog *benchmark_dialog;
-       
+
        shell_view_set_enabled(FALSE);
        shell_status_update("Benchmarking.");
-       
+
        bench_image = icon_cache_get_image("benchmark.png");
        gtk_widget_show(bench_image);
-       
+
        bench_dialog = gtk_message_dialog_new(GTK_WINDOW(shell_get_main_shell()->window),
                                              GTK_DIALOG_MODAL,
                                              GTK_MESSAGE_INFO,
@@ -367,13 +380,14 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog),
                               "Cancel", GTK_RESPONSE_ACCEPT, NULL);
        gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(bench_dialog), bench_image);
-       
+
        while (gtk_events_pending()) {
          gtk_main_iteration();
        }
-       
+
        benchmark_dialog = g_new0(BenchmarkDialog, 1);
        benchmark_dialog->dialog = bench_dialog;
+       benchmark_dialog->result = -1.0f;
 
        if (g_spawn_async_with_pipes(NULL,
                                     argv, NULL,
@@ -384,39 +398,40 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
                                     NULL)) {
           GIOChannel *channel;
           guint watch_id;
-          
+
           channel = g_io_channel_unix_new(bench_stdout);
-          watch_id = g_io_add_watch(channel, G_IO_IN, do_benchmark_handler, benchmark_dialog);
-          
+          watch_id = g_io_add_watch(channel, G_IO_IN, do_benchmark_handler,
+                                    benchmark_dialog);
+
           switch (gtk_dialog_run(GTK_DIALOG(bench_dialog))) {
             case GTK_RESPONSE_NONE:
               DEBUG("benchmark finished");
               break;
             case GTK_RESPONSE_ACCEPT:
               DEBUG("cancelling benchmark");
-              
+
               gtk_widget_destroy(bench_dialog);
               g_source_remove(watch_id);
               kill(bench_pid, SIGINT);
           }
-          
+
           bench_results[entry] = benchmark_dialog->result;
-          
+
           g_io_channel_unref(channel);
           shell_status_set_enabled(TRUE);
           g_free(benchmark_dialog);
-          
+
           shell_status_update("Done.");
-          
+
           return;
        }
-       
+
        gtk_widget_destroy(bench_dialog);
        g_free(benchmark_dialog);
        shell_status_set_enabled(TRUE);
        shell_status_update("Done.");
     }
-       
+
     setpriority(PRIO_PROCESS, 0, -20);
     benchmark_function();
     setpriority(PRIO_PROCESS, 0, old_priority);
@@ -425,13 +440,13 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 void scan_gui(gboolean reload)
 {
     SCAN_START();
-    
+
     if (params.run_benchmark) {
         int argc = 0;
-        
+
         ui_init(&argc, NULL);
     }
-    
+
     if (params.gui_running || params.run_benchmark) {
         do_benchmark(benchmark_gui, BENCHMARK_GUI);
     } else {
@@ -487,7 +502,7 @@ const gchar *hi_note_func(gint entry)
     switch (entry) {
     case BENCHMARK_CRYPTOHASH:
 	return "Results in MiB/second. Higher is better.";
-    
+
     case BENCHMARK_GUI:
         return "Results in HIMarks. Higher is better.";
 
@@ -568,21 +583,21 @@ static gchar *get_benchmark_results()
 static gchar *run_benchmark(gchar *name)
 {
     int i;
-    
+
     DEBUG("name = %s", name);
-    
+
     for (i = 0; entries[i].name; i++) {
       if (g_str_equal(entries[i].name, name)) {
         void (*scan_callback)(gboolean rescan);
-        
+
         if ((scan_callback = entries[i].scan_callback)) {
           scan_callback(FALSE);
-          
+
           return g_strdup_printf("%f", bench_results[i]);
         }
       }
     }
-    
+
     return NULL;
 }
 
@@ -621,3 +636,4 @@ gchar **hi_module_get_dependencies(void)
 
     return deps;
 }
+
