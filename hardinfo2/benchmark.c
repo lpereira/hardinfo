@@ -573,7 +573,12 @@ static gchar *get_benchmark_results()
 				    machineram, i);
     for (; i >= 0; i--) {
 	if ((scan_callback = entries[i].scan_callback)) {
-	    scan_callback(FALSE);
+	    if (bench_results[i] < 0.0) {
+	       /* benchmark was cancelled */
+	       scan_callback(TRUE);
+            } else {
+  	       scan_callback(FALSE);
+            }
 
 	    result = h_strdup_cprintf("[bench%d]\n"
 				      "name=%s\n"
