@@ -66,6 +66,9 @@ static ModuleEntry entries[] = {
     {NULL}
 };
 
+
+static gboolean sending_benchmark_results = FALSE;
+
 typedef struct _ParallelBenchTask ParallelBenchTask;
 
 struct _ParallelBenchTask {
@@ -355,7 +358,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 {
     int old_priority = 0;
     
-    if (params.gui_running) {
+    if (params.gui_running && !sending_benchmark_results) {
        gchar *argv[] = { params.argv0, "-b", entries[entry].name,
                          "-m", "benchmark.so", "-a", NULL };
        GPid bench_pid;
@@ -559,6 +562,8 @@ static gchar *get_benchmark_results()
 {
     void (*scan_callback) (gboolean rescan);
 
+    sending_benchmark_results = TRUE;
+
     gint i = G_N_ELEMENTS(entries) - 1;
     gchar *machine = module_call_method("devices::getProcessorName");
     gchar *machineclock = module_call_method("devices::getProcessorFrequency");
@@ -592,6 +597,8 @@ static gchar *get_benchmark_results()
     g_free(machineclock);
     g_free(machineram);
 
+    sending_benchmark_results = FALSE;
+    
     return result;
 }
 
