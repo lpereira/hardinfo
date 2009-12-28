@@ -363,7 +363,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        GtkWidget *bench_dialog;
        GtkWidget *bench_image;
        BenchmarkDialog *benchmark_dialog;
-       GSpawnFlags spawn_flags;
+       GSpawnFlags spawn_flags = G_SPAWN_STDERR_TO_DEV_NULL;
        gchar *bench_status;
 
        bench_status = g_strdup_printf("Benchmarking: <b>%s</b>.", entries[entry].name);
@@ -395,10 +395,8 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        benchmark_dialog->dialog = bench_dialog;
        benchmark_dialog->result = -1.0f;
        
-       if (*params.argv0 != '/' || *params.argv0 != '.') {
-          spawn_flags = G_SPAWN_SEARCH_PATH | G_SPAWN_STDERR_TO_DEV_NULL;
-       } else {
-          spawn_flags = G_SPAWN_STDERR_TO_DEV_NULL;
+       if (!g_path_is_absolute(params.argv0)) {
+          spawn_flags |= G_SPAWN_SEARCH_PATH;
        }
 
        if (g_spawn_async_with_pipes(NULL,
