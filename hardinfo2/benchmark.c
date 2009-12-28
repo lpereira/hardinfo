@@ -354,7 +354,7 @@ static gboolean do_benchmark_handler(GIOChannel *source,
 static void do_benchmark(void (*benchmark_function)(void), int entry)
 {
     int old_priority = 0;
-
+    
     if (params.gui_running) {
        gchar *argv[] = { params.argv0, "-b", entries[entry].name,
                          "-m", "benchmark.so", "-a", NULL };
@@ -363,6 +363,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        GtkWidget *bench_dialog;
        GtkWidget *bench_image;
        BenchmarkDialog *benchmark_dialog;
+       GSpawnFlags spawn_flags;
        gchar *bench_status;
 
        bench_status = g_strdup_printf("Benchmarking: <b>%s</b>.", entries[entry].name);
@@ -393,10 +394,16 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        benchmark_dialog = g_new0(BenchmarkDialog, 1);
        benchmark_dialog->dialog = bench_dialog;
        benchmark_dialog->result = -1.0f;
+       
+       if (*params.argv0 != '/' || *params.argv0 != '.') {
+          spawn_flags = G_SPAWN_SEARCH_PATH | G_SPAWN_STDERR_TO_DEV_NULL;
+       } else {
+          spawn_flags = G_SPAWN_STDERR_TO_DEV_NULL;
+       }
 
        if (g_spawn_async_with_pipes(NULL,
                                     argv, NULL,
-                                    G_SPAWN_STDERR_TO_DEV_NULL,
+                                    spawn_flags,
                                     NULL, NULL,
                                     &bench_pid,
                                     NULL, &bench_stdout, NULL,
@@ -430,7 +437,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 
           return;
        }
-
+       
        gtk_widget_destroy(bench_dialog);
        g_free(benchmark_dialog);
        shell_status_set_enabled(TRUE);
