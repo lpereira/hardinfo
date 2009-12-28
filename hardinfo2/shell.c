@@ -855,14 +855,14 @@ static gboolean reload_section(gpointer data)
             gtk_tree_view_set_cursor(GTK_TREE_VIEW(shell->info->view), path, NULL,
                                      FALSE);
 	    gtk_tree_path_free(path);
-	}
-	
+        } else {
+            /* restore position */
+            RANGE_SET_VALUE(info, vscrollbar, pos_info_scroll);
+            RANGE_SET_VALUE(moreinfo, vscrollbar, pos_more_scroll);
+        }
+        	
 	/* make the window drawable again */
 	gdk_window_thaw_updates(shell->window->window);
-	
-	/* restore position */
-	RANGE_SET_VALUE(info, vscrollbar, pos_info_scroll);
-	RANGE_SET_VALUE(moreinfo, vscrollbar, pos_more_scroll);
     }
 
     /* destroy the timeout: it'll be set up again */
@@ -1506,6 +1506,12 @@ static void info_selected(GtkTreeSelection * ts, gpointer data)
 
     if (!gtk_tree_selection_get_selected(ts, &model, &parent))
 	return;
+	
+    if (shell->view_type == SHELL_VIEW_NORMAL ||
+        shell->view_type == SHELL_VIEW_PROGRESS) {
+        gtk_tree_selection_unselect_all(ts);
+        return;
+    }
 
     gtk_tree_model_get(model, &parent, INFO_TREE_COL_DATA, &datacol, -1);
     info_selected_show_extra(datacol);
