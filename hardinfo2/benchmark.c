@@ -363,9 +363,14 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        GtkWidget *bench_dialog;
        GtkWidget *bench_image;
        BenchmarkDialog *benchmark_dialog;
+       gchar *bench_status;
+
+       bench_status = g_strdup_printf("Benchmarking: <b>%s</b>.", entries[entry].name);
 
        shell_view_set_enabled(FALSE);
-       shell_status_update("Benchmarking.");
+       shell_status_update(bench_status);
+       
+       g_free(bench_status);
 
        bench_image = icon_cache_get_image("benchmark.png");
        gtk_widget_show(bench_image);

@@ -811,9 +811,15 @@ static gboolean update_field(gpointer data)
 }
 
 #define RANGE_SET_VALUE(tree,scrollbar,value) \
-  	  gtk_range_set_value(GTK_RANGE \
+  	  do { \
+  	      GtkRange CONCAT(*range, __LINE__) = GTK_RANGE(GTK_SCROLLED_WINDOW(shell->tree->scroll)->scrollbar); \
+  	      gtk_range_set_value(CONCAT(range, __LINE__), value); \
+              gtk_adjustment_value_changed(GTK_ADJUSTMENT(gtk_range_get_adjustment(CONCAT(range, __LINE__)))); \
+          } while (0)
+#define RANGE_GET_VALUE(tree,scrollbar) \
+  	  gtk_range_get_value(GTK_RANGE \
 	  		    (GTK_SCROLLED_WINDOW(shell->tree->scroll)-> \
-			     scrollbar), value);
+			     scrollbar))
 
 static gboolean reload_section(gpointer data)
 {
@@ -823,7 +829,12 @@ static gboolean reload_section(gpointer data)
     if (entry->selected) {
 	GtkTreePath *path = NULL;
 	GtkTreeIter iter;
-
+	double pos_info_scroll, pos_more_scroll;
+	
+	/* save current position */
+	pos_info_scroll = RANGE_GET_VALUE(info, vscrollbar);
+	pos_more_scroll = RANGE_GET_VALUE(moreinfo, vscrollbar);
+	
 	/* avoid drawing the window while we reload */
 	gdk_window_freeze_updates(shell->window->window);
 	
@@ -848,6 +859,10 @@ static gboolean reload_section(gpointer data)
 	
 	/* make the window drawable again */
 	gdk_window_thaw_updates(shell->window->window);
+	
+	/* restore position */
+	RANGE_SET_VALUE(info, vscrollbar, pos_info_scroll);
+	RANGE_SET_VALUE(moreinfo, vscrollbar, pos_more_scroll);
     }
 
     /* destroy the timeout: it'll be set up again */

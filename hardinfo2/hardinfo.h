@@ -136,4 +136,7 @@ gchar	       *h_sysfs_read_string(gchar *endpoint, gchar *entry);
 #define SCAN_START()  static gboolean scanned = FALSE; if (reload) scanned = FALSE; if (scanned) return;
 #define SCAN_END()    scanned = TRUE;
 
+#define _CONCAT(a,b) a ## b
+#define CONCAT(a,b) _CONCAT(a,b)
+
 #endif				/* __HARDINFO_H__ */
