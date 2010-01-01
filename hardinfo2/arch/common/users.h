@@ -58,4 +58,6 @@ scan_users_do(void)
         users = h_strdup_cprintf("$%s$%s=%s\n", users, key, passwd_->pw_name, passwd_->pw_gecos);
         passwd_ = getpwent();
     }
+    
+    endpwent();
 }
