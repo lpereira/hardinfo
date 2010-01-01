@@ -336,18 +336,30 @@ static void destroy_me(void)
 
 static void close_note(GtkWidget * widget, gpointer user_data)
 {
-    gtk_widget_hide(shell->note->frame);
+    gtk_widget_hide(shell->note->event_box);
 }
 
 static ShellNote *note_new(void)
 {
     ShellNote *note;
     GtkWidget *hbox, *icon, *button;
+    GtkWidget *border_box;
+    /* colors stolen from gtkinfobar.c */
+    GdkColor info_default_border_color     = { 0, 0xb800, 0xad00, 0x9d00 };
+    GdkColor info_default_fill_color       = { 0, 0xff00, 0xff00, 0xbf00 };
 
     note = g_new0(ShellNote, 1);
     note->label = gtk_label_new("");
-    note->frame = gtk_frame_new(NULL);
+    note->event_box = gtk_event_box_new();
     button = gtk_button_new();
+    
+    border_box = gtk_event_box_new();
+    gtk_container_set_border_width(GTK_CONTAINER(border_box), 1);
+    gtk_container_add(GTK_CONTAINER(note->event_box), border_box);
+    gtk_widget_show(border_box);
+    
+    gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
+    gtk_widget_modify_bg(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
 
     icon = icon_cache_get_image("close.png");
     gtk_widget_show(icon);
@@ -364,7 +376,7 @@ static ShellNote *note_new(void)
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
     gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
-    gtk_container_add(GTK_CONTAINER(note->frame), hbox);
+    gtk_container_add(GTK_CONTAINER(border_box), hbox);
     gtk_widget_show_all(hbox);
 
     return note;
@@ -438,7 +450,7 @@ static void create_window(void)
     gtk_paned_add2(GTK_PANED(shell->hpaned), vbox);
 
     shell->note = note_new();
-    gtk_box_pack_end(GTK_BOX(vbox), shell->note->frame, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(vbox), shell->note->event_box, FALSE, FALSE, 0);
 
     shell->vpaned = gtk_vpaned_new();
     gtk_box_pack_start(GTK_BOX(vbox), shell->vpaned, TRUE, TRUE, 0);
@@ -725,7 +737,7 @@ void shell_init(GSList * modules)
 
     load_graph_configure_expose(shell->loadgraph);
     gtk_widget_hide(shell->notebook);
-    gtk_widget_hide(shell->note->frame);
+    gtk_widget_hide(shell->note->event_box);
 
     shell_status_update("Done.");
     shell_status_set_enabled(FALSE);
@@ -1275,12 +1287,12 @@ void shell_set_note_from_entry(ShellModuleEntry * entry)
 
 	if (note) {
 	    gtk_label_set_markup(GTK_LABEL(shell->note->label), note);
-	    gtk_widget_show(shell->note->frame);
+	    gtk_widget_show(shell->note->event_box);
 	} else {
-	    gtk_widget_hide(shell->note->frame);
+	    gtk_widget_hide(shell->note->event_box);
 	}
     } else {
-	gtk_widget_hide(shell->note->frame);
+	gtk_widget_hide(shell->note->event_box);
     }
 }
 

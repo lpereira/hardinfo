@@ -121,7 +121,7 @@ struct _ShellInfoTree {
 };
 
 struct _ShellNote {
-    GtkWidget		*frame;
+    GtkWidget		*event_box;
     GtkWidget		*label;
 };
 
