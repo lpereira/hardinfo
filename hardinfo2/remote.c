@@ -84,6 +84,8 @@ struct _HostDialog {
     GtkWidget *txt_ssh_user, *txt_ssh_password;
 
     GtkWidget *cmb_type;
+    
+    GtkWidget *frm_options;
 };
 
 static HostManager *host_manager_new(GtkWidget * parent);
@@ -603,6 +605,12 @@ static void host_combo_changed_cb(GtkComboBox * widget, gpointer user_data)
     gtk_notebook_set_current_page(GTK_NOTEBOOK(host_dlg->notebook), index);
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(host_dlg->txt_port),
 			      default_ports[index]);
+
+    if (index == 0) {
+       gtk_widget_hide(host_dlg->frm_options);
+    } else {
+       gtk_widget_show(host_dlg->frm_options);
+    }
 }
 
 static void host_dialog_destroy(HostDialog * rd)
@@ -618,7 +626,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     GtkWidget *dialog;
     GtkWidget *dialog_vbox1;
     GtkWidget *vbox1;
-    GtkWidget *frame1;
+    GtkWidget *frm_remote_host;
     GtkWidget *alignment1;
     GtkWidget *table1;
     GtkWidget *label2;
@@ -631,7 +639,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     GtkObject *txt_port_adj;
     GtkWidget *txt_port;
     GtkWidget *label1;
-    GtkWidget *frame2;
+    GtkWidget *frm_options;
     GtkWidget *alignment3;
     GtkWidget *notebook;
     GtkWidget *table2;
@@ -669,15 +677,16 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     gtk_widget_show(vbox1);
     gtk_box_pack_start(GTK_BOX(dialog_vbox1), vbox1, TRUE, TRUE, 0);
     gtk_container_set_border_width(GTK_CONTAINER(vbox1), 5);
+    gtk_box_set_spacing(GTK_BOX(vbox1), 10);
 
-    frame1 = gtk_frame_new(NULL);
-    gtk_widget_show(frame1);
-    gtk_box_pack_start(GTK_BOX(vbox1), frame1, FALSE, TRUE, 0);
-    gtk_frame_set_shadow_type(GTK_FRAME(frame1), GTK_SHADOW_NONE);
+    frm_remote_host = gtk_frame_new(NULL);
+    gtk_widget_show(frm_remote_host);
+    gtk_box_pack_start(GTK_BOX(vbox1), frm_remote_host, FALSE, TRUE, 0);
+    gtk_frame_set_shadow_type(GTK_FRAME(frm_remote_host), GTK_SHADOW_NONE);
 
     alignment1 = gtk_alignment_new(0.5, 0.5, 1, 1);
     gtk_widget_show(alignment1);
-    gtk_container_add(GTK_CONTAINER(frame1), alignment1);
+    gtk_container_add(GTK_CONTAINER(frm_remote_host), alignment1);
     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment1), 0, 0, 12, 0);
 
     table1 = gtk_table_new(3, 2, FALSE);
@@ -740,17 +749,17 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
 
     label1 = gtk_label_new("<b>Remote host</b>");
     gtk_widget_show(label1);
-    gtk_frame_set_label_widget(GTK_FRAME(frame1), label1);
+    gtk_frame_set_label_widget(GTK_FRAME(frm_remote_host), label1);
     gtk_label_set_use_markup(GTK_LABEL(label1), TRUE);
 
-    frame2 = gtk_frame_new(NULL);
-    gtk_widget_show(frame2);
-    gtk_box_pack_start(GTK_BOX(vbox1), frame2, FALSE, TRUE, 0);
-    gtk_frame_set_shadow_type(GTK_FRAME(frame2), GTK_SHADOW_NONE);
+    frm_options = gtk_frame_new(NULL);
+    gtk_widget_show(frm_options);
+    gtk_box_pack_start(GTK_BOX(vbox1), frm_options, FALSE, TRUE, 0);
+    gtk_frame_set_shadow_type(GTK_FRAME(frm_options), GTK_SHADOW_NONE);
 
     alignment3 = gtk_alignment_new(0.5, 0.5, 1, 1);
     gtk_widget_show(alignment3);
-    gtk_container_add(GTK_CONTAINER(frame2), alignment3);
+    gtk_container_add(GTK_CONTAINER(frm_options), alignment3);
     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment3), 0, 0, 12, 0);
 
     notebook = gtk_notebook_new();
@@ -760,8 +769,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), FALSE);
     gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
 
-    label10 =
-	gtk_label_new("<i>No options available for this protocol.</i>");
+    label10 = gtk_label_new("");
     gtk_widget_show(label10);
     gtk_container_add(GTK_CONTAINER(notebook), label10);
     gtk_label_set_use_markup(GTK_LABEL(label10), TRUE);
@@ -802,7 +810,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     
     label5 = gtk_label_new("<b>Connection options</b>");
     gtk_widget_show(label5);
-    gtk_frame_set_label_widget(GTK_FRAME(frame2), label5);
+    gtk_frame_set_label_widget(GTK_FRAME(frm_options), label5);
     gtk_label_set_use_markup(GTK_LABEL(label5), TRUE);
 
     dialog_action_area1 = GTK_DIALOG(dialog)->action_area;
@@ -835,6 +843,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     host_dlg->txt_ssh_user = txt_ssh_user;
     host_dlg->txt_ssh_password = txt_ssh_password;
     host_dlg->cmb_type = cmb_type;
+    host_dlg->frm_options = frm_options;
 
     completion = gtk_entry_completion_new();
     gtk_entry_set_completion(GTK_ENTRY(host_dlg->txt_hostname), completion);
