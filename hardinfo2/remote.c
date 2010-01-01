@@ -944,6 +944,8 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     host_combo_changed_cb(GTK_COMBO_BOX(cmb_type), host_dlg);
     host_dialog_hostname_changed(GTK_EDITABLE(txt_hostname), host_dlg);
     
+    gtk_entry_set_activates_default(GTK_ENTRY(txt_hostname), TRUE);
+
     return host_dlg;
 }
 
