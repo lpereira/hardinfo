@@ -26,6 +26,9 @@
 #include <sys/utsname.h>
 #include <sys/stat.h>
 
+#include <sys/socket.h>
+#include <netdb.h>
+
 #include <hardinfo.h>
 #include <iconcache.h>
 #include <shell.h>
@@ -143,9 +146,25 @@ void scan_dns(gboolean reload)
     if ((resolv = fopen("/etc/resolv.conf", "r"))) {
       while (fgets(buffer, 256, resolv)) {
         if (g_str_has_prefix(buffer, "nameserver")) {
-          __nameservers = h_strdup_cprintf("%s=\n",
-                                           __nameservers,
-                                           g_strstrip(buffer + sizeof("nameserver")));
+          gchar *ip;
+          struct sockaddr_in sa;
+          char hbuf[NI_MAXHOST];
+          
+          ip = g_strstrip(buffer + sizeof("nameserver"));
+          
+          sa.sin_family = AF_INET;
+          sa.sin_addr.s_addr = inet_addr(ip);
+          
+          if (getnameinfo((struct sockaddr *)&sa, sizeof(sa), hbuf, sizeof(hbuf), NULL, 0, NI_NAMEREQD)) {
+              __nameservers = h_strdup_cprintf("%s=\n",
+                                               __nameservers,
+                                               ip);
+          } else {
+              __nameservers = h_strdup_cprintf("%s=%s\n",
+                                               __nameservers,
+                                               ip, hbuf);
+          
+          }          
         } 
       }
       fclose(resolv);
@@ -302,7 +321,11 @@ gchar *callback_shares()
 gchar *callback_dns()
 {
     return g_strdup_printf("[Name servers]\n"
-                           "%s\n", __nameservers);
+                           "%s\n"
+                           "[$ShellParam$]\n"
+                           "ColumnTitle$TextValue=IP Address\n"
+                           "ColumnTitle$Value=Name\n"
+                           "ShowColumnHeaders=true\n", __nameservers);
 }
 
 gchar *callback_connections()
