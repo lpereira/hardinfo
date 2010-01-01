@@ -737,7 +737,6 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     txt_port = gtk_spin_button_new(GTK_ADJUSTMENT(txt_port_adj), 1, 0);
     gtk_widget_show(txt_port);
     gtk_box_pack_start(GTK_BOX(hbox1), txt_port, FALSE, TRUE, 0);
-    gtk_widget_set_size_request(txt_port, 52, -1);
 
     label1 = gtk_label_new("<b>Remote host</b>");
     gtk_widget_show(label1);
