@@ -86,6 +86,7 @@ struct _HostDialog {
     GtkWidget *cmb_type;
     
     GtkWidget *frm_options;
+    GtkWidget *btn_accept, *btn_cancel;
 };
 
 static HostManager *host_manager_new(GtkWidget * parent);
@@ -613,6 +614,40 @@ static void host_combo_changed_cb(GtkComboBox * widget, gpointer user_data)
     }
 }
 
+static void
+host_dialog_hostname_changed (GtkEditable *entry, gpointer user_data)
+{
+    HostDialog *host_dlg = (HostDialog *)user_data;
+    GRegex *regex_ip = NULL, *regex_host = NULL;
+    gboolean match;
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
+    
+    /*
+     * Regexes from:
+     * http://stackoverflow.com/questions/106179
+     */
+    const gchar *valid_ip_regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|" \
+                                  "25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}" \
+                                  "|2[0-4][0-9]|25[0-5])$";
+    const gchar *valid_hostname_regex = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9" \
+                                        "\\-]*[a-zA-Z0-9])\\.)*([A-Za-z]|[A-Z" \
+                                        "a-z][A-Za-z0-9\\-]*[A-Za-z0-9])$";
+    if (regex_ip == NULL) {
+        regex_ip = g_regex_new(valid_ip_regex, 0, 0, NULL);
+    }
+    
+    if (regex_host == NULL) {
+        regex_host = g_regex_new(valid_hostname_regex, 0, 0, NULL);
+    }
+    
+    match = g_regex_match(regex_ip, text, 0, NULL);
+    if (!match) {
+        match = g_regex_match(regex_host, text, 0, NULL);
+    }
+    
+    gtk_widget_set_sensitive(host_dlg->btn_accept, match);
+}
+
 static void host_dialog_destroy(HostDialog * rd)
 {
     gtk_widget_destroy(rd->dialog);
@@ -652,7 +687,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     GtkWidget *label7;
     GtkWidget *label5;
     GtkWidget *dialog_action_area1;
-    GtkWidget *button1;
+    GtkWidget *btn_cancel;
     GtkWidget *btn_save;
     GtkEntryCompletion *completion;
     GtkTreeModel *completion_model;
@@ -818,16 +853,18 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog_action_area1),
 			      GTK_BUTTONBOX_END);
 
-    button1 = gtk_button_new_from_stock("gtk-cancel");
-    gtk_widget_show(button1);
-    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button1,
+    btn_cancel = gtk_button_new_from_stock("gtk-cancel");
+    gtk_widget_show(btn_cancel);
+    gtk_dialog_add_action_widget(GTK_DIALOG(dialog), btn_cancel,
 				 GTK_RESPONSE_CANCEL);
-    GTK_WIDGET_SET_FLAGS(button1, GTK_CAN_DEFAULT);
+    GTK_WIDGET_SET_FLAGS(btn_cancel, GTK_CAN_DEFAULT);
 
     if (mode == HOST_DIALOG_MODE_EDIT) {
 	btn_save = gtk_button_new_from_stock(GTK_STOCK_SAVE);
     } else if (mode == HOST_DIALOG_MODE_CONNECT) {
 	btn_save = gtk_button_new_from_stock(GTK_STOCK_CONNECT);
+    } else {
+        g_error("internal error");
     }
 
     gtk_widget_show(btn_save);
@@ -844,6 +881,10 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     host_dlg->txt_ssh_password = txt_ssh_password;
     host_dlg->cmb_type = cmb_type;
     host_dlg->frm_options = frm_options;
+    host_dlg->btn_accept = btn_save;
+    host_dlg->btn_cancel = btn_cancel;
+    
+    DEBUG("btn_accept is %p", btn_save);
 
     completion = gtk_entry_completion_new();
     gtk_entry_set_completion(GTK_ENTRY(host_dlg->txt_hostname), completion);
@@ -856,10 +897,14 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     gtk_entry_completion_set_text_column(completion, 0);
 
     gtk_combo_box_set_active(GTK_COMBO_BOX(host_dlg->cmb_type), 0);
+    
+    g_signal_connect(G_OBJECT(txt_hostname), "changed",
+                     G_CALLBACK(host_dialog_hostname_changed), host_dlg);
     g_signal_connect(G_OBJECT(cmb_type), "changed",
 		     G_CALLBACK(host_combo_changed_cb), host_dlg);
-     
+
     host_combo_changed_cb(GTK_COMBO_BOX(cmb_type), host_dlg);
+    host_dialog_hostname_changed(GTK_EDITABLE(txt_hostname), host_dlg);
     
     return host_dlg;
 }
