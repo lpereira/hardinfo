@@ -65,19 +65,19 @@ void scan_dmi(gboolean reload);
 void scan_device_resources(gboolean reload);
 
 static ModuleEntry entries[] = {
-    {"Processor", "processor.png", callback_processors, scan_processors},
-    {"Memory", "memory.png", callback_memory, scan_memory},
-    {"PCI Devices", "devices.png", callback_pci, scan_pci},
-    {"USB Devices", "usb.png", callback_usb, scan_usb},
-    {"Printers", "printer.png", callback_printers, scan_printers,},
-    {"Battery", "battery.png", callback_battery, scan_battery},
-    {"Sensors", "therm.png", callback_sensors, scan_sensors},
-    {"Input Devices", "inputdevices.png", callback_input, scan_input},
-    {"Storage", "hdd.png", callback_storage, scan_storage},
+    {"Processor", "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
+    {"Memory", "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
+    {"PCI Devices", "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
+    {"USB Devices", "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
+    {"Printers", "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
+    {"Battery", "battery.png", callback_battery, scan_battery, MODULE_FLAG_NONE},
+    {"Sensors", "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
+    {"Input Devices", "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
+    {"Storage", "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
 #if defined(ARCH_i386) || defined(ARCH_x86_64)
-    {"DMI", "computer.png", callback_dmi, scan_dmi},
+    {"DMI", "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
-    {"Resources", "resources.png", callback_device_resources, scan_device_resources},
+    {"Resources", "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     {NULL}
 };
 

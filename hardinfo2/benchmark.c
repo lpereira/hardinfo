@@ -56,13 +56,13 @@ gchar *callback_nqueens();
 gchar *callback_gui();
 
 static ModuleEntry entries[] = {
-    {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh},
-    {"CPU CryptoHash", "cryptohash.png", callback_cryptohash, scan_cryptohash},
-    {"CPU Fibonacci", "nautilus.png", callback_fib, scan_fib},
-    {"CPU N-Queens", "nqueens.png", callback_nqueens, scan_nqueens},
-    {"FPU FFT", "fft.png", callback_fft, scan_fft},
-    {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr},
-    {"GPU Drawing", "module.png", callback_gui, scan_gui},
+    {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh, MODULE_FLAG_NO_REMOTE},
+    {"CPU CryptoHash", "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NO_REMOTE},
+    {"CPU Fibonacci", "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NO_REMOTE},
+    {"CPU N-Queens", "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NO_REMOTE},
+    {"FPU FFT", "fft.png", callback_fft, scan_fft, MODULE_FLAG_NO_REMOTE},
+    {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr, MODULE_FLAG_NO_REMOTE},
+    {"GPU Drawing", "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
     {NULL}
 };
 

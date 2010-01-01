@@ -200,19 +200,22 @@ static void method_get_entry_list(SoupMessage * msg, GValueArray * params)
     out = soup_value_array_new();
 
     if (found) {
-      module = (ShellModule *) modules->data;
-      for (entry = module->entries; entry; entry = entry->next) {
-          GValueArray *tuple;
+        module = (ShellModule *) modules->data;
+        for (entry = module->entries; entry; entry = entry->next) {
+            GValueArray *tuple;
 
-          module_entry = (ShellModuleEntry *) entry->data;
-          tuple = soup_value_array_new();
+            module_entry = (ShellModuleEntry *) entry->data;
+              
+            if (!(module_entry->flags & MODULE_FLAG_NO_REMOTE)) {
+                tuple = soup_value_array_new();
 
-          soup_value_array_append(tuple, G_TYPE_STRING, module_entry->name);
-          soup_value_array_append(tuple, G_TYPE_STRING, module_entry->icon_file);
-          
-          soup_value_array_append(out, G_TYPE_VALUE_ARRAY, tuple);
-          g_value_array_free(tuple);
-      }
+                soup_value_array_append(tuple, G_TYPE_STRING, module_entry->name);
+                soup_value_array_append(tuple, G_TYPE_STRING, module_entry->icon_file);
+                  
+                soup_value_array_append(out, G_TYPE_VALUE_ARRAY, tuple);
+                g_value_array_free(tuple);
+            }
+        }
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_VALUE_ARRAY, out);

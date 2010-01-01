@@ -62,18 +62,18 @@ void scan_dev(gboolean reload);
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 static ModuleEntry entries[] = {
-    {"Summary", "summary.png", callback_summary, scan_summary},
-    {"Operating System", "os.png", callback_os, scan_os},
-    {"Kernel Modules", "module.png", callback_modules, scan_modules},
-    {"Boots", "boot.png", callback_boots, scan_boots},
-    {"Languages", "language.png", callback_locales, scan_locales},
-    {"Filesystems", "dev_removable.png", callback_fs, scan_fs},
-    {"Display", "monitor.png", callback_display, scan_display},
-    {"Environment Variables", "environment.png", callback_env_var, scan_env_var},
+    {"Summary", "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
+    {"Operating System", "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
+    {"Kernel Modules", "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
+    {"Boots", "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
+    {"Languages", "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
+    {"Filesystems", "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
+    {"Display", "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
+    {"Environment Variables", "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
 #if GLIB_CHECK_VERSION(2,14,0)
-    {"Development", "devel.png", callback_dev, scan_dev},
+    {"Development", "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
-    {"Users", "users.png", callback_users, scan_users},
+    {"Users", "users.png", callback_users, scan_users, MODULE_FLAG_NONE},
     {NULL},
 };
 

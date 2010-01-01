@@ -112,7 +112,37 @@ void remote_disconnect_all(gboolean ssh)
     }
 }
 
-static gboolean remote_version_is_supported()
+static void remote_connection_error(void)
+{
+    GtkWidget *dialog;
+    static gboolean showing_error = FALSE;
+    
+    if (showing_error) {
+       return;
+    }
+    
+    showing_error = TRUE;
+
+    dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_NONE,
+                                    "Connection to %s was lost.", xmlrpc_server_uri);
+
+    gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+                           GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+       remote_disconnect_all(ssh_conn != NULL);
+       cb_local_computer();
+    }
+
+    gtk_widget_destroy(dialog);
+
+    showing_error = FALSE;
+}
+
+static gboolean remote_version_is_supported(void)
 {
     gint remote_ver;
     GtkWidget *dialog;
@@ -181,17 +211,18 @@ static gchar *remote_module_entry_func()
 static void remote_module_entry_scan_func(gboolean reload)
 {
     Shell *shell = shell_get_main_shell();
+    gchar *response;
 
     if (reload) {
 	xmlrpc_get_string(xmlrpc_server_uri,
-			  "module.entryReload", "%s%i",
-			  shell->selected_module_name,
-			  shell->selected->number);
+		                     "module.entryReload", "%s%i",
+                                     shell->selected_module_name,
+                                     shell->selected->number);
     } else {
 	xmlrpc_get_string(xmlrpc_server_uri,
-			  "module.entryScan", "%s%i",
-			  shell->selected_module_name,
-			  shell->selected->number);
+		                     "module.entryScan", "%s%i",
+                                     shell->selected_module_name,
+                                     shell->selected->number);
     }
 }
 
@@ -205,7 +236,11 @@ static gchar *remote_module_entry_field_func(gchar * entry)
 			  "module.entryGetField", "%s%i%s",
 			  shell->selected_module_name,
 			  shell->selected->number, entry);
-
+    
+    if (!ret) {
+        remote_connection_error();
+    }
+    
     return ret;
 }
 
@@ -220,6 +255,10 @@ static gchar *remote_module_entry_more_func(gchar * entry)
 			  shell->selected_module_name,
 			  shell->selected->number, entry);
 
+    if (!ret) {
+        remote_connection_error();
+    }
+
     return ret;
 }
 
@@ -233,6 +272,7 @@ static gchar *remote_module_entry_note_func(gint entry)
 			  "module.entryGetNote", "%s%i",
 			  shell->selected_module_name,
 			  shell->selected->number);
+
     if (note && *note == '\0') {
 	g_free(note);
 	return NULL;
@@ -279,10 +319,9 @@ static gboolean load_module_list()
 	m->aboutfunc = (gpointer) remote_module_get_about;
 
 	shell_status_pulse();
-	entries =
-	    xmlrpc_get_array(xmlrpc_server_uri,
-			     "module.getEntryList", "%s", m->name);
-	if (entries) {
+	entries = xmlrpc_get_array(xmlrpc_server_uri,
+		                   "module.getEntryList", "%s", m->name);
+	if (entries && entries->n_values > 0) {
 	    for (; j < entries->n_values; j++) {
 		GValueArray *tuple =
 		    g_value_get_boxed(&entries->values[j]);
@@ -308,9 +347,12 @@ static gboolean load_module_list()
 	    }
 
 	    g_value_array_free(entries);
+	    
+            shell->tree->modules = g_slist_append(shell->tree->modules, m);
+	} else {
+	    g_free(m->name);
+	    g_free(m);
 	}
-
-	shell->tree->modules = g_slist_append(shell->tree->modules, m);
     }
 
     g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui,
@@ -863,8 +905,6 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
 	btn_save = gtk_button_new_from_stock(GTK_STOCK_SAVE);
     } else if (mode == HOST_DIALOG_MODE_CONNECT) {
 	btn_save = gtk_button_new_from_stock(GTK_STOCK_CONNECT);
-    } else {
-        g_error("internal error");
     }
 
     gtk_widget_show(btn_save);
@@ -884,8 +924,6 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     host_dlg->btn_accept = btn_save;
     host_dlg->btn_cancel = btn_cancel;
     
-    DEBUG("btn_accept is %p", btn_save);
-
     completion = gtk_entry_completion_new();
     gtk_entry_set_completion(GTK_ENTRY(host_dlg->txt_hostname), completion);
     g_object_unref(completion);

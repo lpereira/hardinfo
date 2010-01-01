@@ -22,6 +22,11 @@
 #include <gtk/gtk.h>
 #include <shell.h>
 
+typedef enum {
+  MODULE_FLAG_NONE = 0,
+  MODULE_FLAG_NO_REMOTE = 1<<0,
+} ModuleEntryFlags;
+
 typedef struct _ModuleEntry		ModuleEntry;
 typedef struct _ModuleAbout		ModuleAbout;
 typedef struct _FileTypes		FileTypes;
@@ -56,6 +61,7 @@ struct _ModuleEntry {
     gchar	*icon;
     gpointer	 callback;
     gpointer	 scan_callback;
+    guint32	 flags;
 };
 
 struct _ModuleAbout {

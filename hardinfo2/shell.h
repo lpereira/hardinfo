@@ -147,6 +147,7 @@ struct _ShellModuleEntry {
     gchar		*icon_file;
     gboolean		 selected;
     gint		 number;
+    guint32		 flags;
     
     gchar		*(*func) ();
     void		(*scan_func) ();

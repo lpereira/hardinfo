@@ -718,6 +718,7 @@ static ShellModule *module_load(gchar * filename)
 	    entry->scan_func = entries[i].scan_callback;
 	    entry->func = entries[i].callback;
 	    entry->number = i;
+	    entry->flags = entries[i].flags;
 
 	    module->entries = g_slist_append(module->entries, entry);
 
