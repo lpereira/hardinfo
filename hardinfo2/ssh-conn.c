@@ -249,13 +249,13 @@ SSHConnResponse ssh_new(SoupURI * uri,
     if (bytes_read > 0 && res == 1) {
 	DEBUG("Received (error channel): [%s]", buffer);
 
-	if (g_str_has_prefix(buffer, "Permission denied")) {
+	if (strstr(buffer, "Permission denied")) {
 	    response = SSH_CONN_PERMISSION_DENIED;
 	    goto end;
-	} else if (g_str_has_prefix(buffer, "Host key verification failed")) {
+	} else if (strstr(buffer, "Host key verification failed")) {
 	    response = SSH_CONN_HOST_KEY_CHECK_FAIL;
 	    goto end;
-	} else if (g_str_has_prefix(buffer, "Connection refused")) {
+	} else if (strstr(buffer, "Connection refused")) {
 	    response = SSH_CONN_REFUSED;
 	    goto end;
 	}
