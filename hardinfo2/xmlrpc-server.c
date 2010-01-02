@@ -206,7 +206,9 @@ static void method_get_entry_list(SoupMessage * msg, GValueArray * params)
 
             module_entry = (ShellModuleEntry *) entry->data;
               
-            if (!(module_entry->flags & MODULE_FLAG_NO_REMOTE)) {
+            if (module_entry->flags & MODULE_FLAG_NO_REMOTE) {
+                /* do nothing if we're not supposed to */
+            } else {
                 tuple = soup_value_array_new();
 
                 soup_value_array_append(tuple, G_TYPE_STRING, module_entry->name);
@@ -241,7 +243,7 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
 
     for (modules = modules_get_list(); modules; modules = modules->next) {
 	module = (ShellModule *) modules->data;
-
+	
 	if (!strncmp(module->name, module_name, strlen(module->name))) {
 	    found = TRUE;
 	    break;
@@ -249,11 +251,15 @@ static void method_entry_get_field(SoupMessage * msg, GValueArray * params)
     }
     
     if (found) {
-        if (entry_number < g_slist_length(module->entries)) {
+	if (entry_number < g_slist_length(module->entries)) {
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
-
-          answer = module_entry_get_field(entry, field_name);
+          
+          if (entry->flags & MODULE_FLAG_NO_REMOTE) {
+              /* do nothing */
+          } else {
+              answer = module_entry_get_field(entry, field_name);
+          }
         }
     }
     
@@ -297,7 +303,11 @@ static void method_entry_get_moreinfo(SoupMessage * msg,
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
-          answer = module_entry_get_moreinfo(entry, field_name);
+          if (entry->flags & MODULE_FLAG_NO_REMOTE) {
+              /* do nothing */
+          } else {
+              answer = module_entry_get_moreinfo(entry, field_name);
+          }
         }
     }
     
@@ -339,8 +349,12 @@ static void method_entry_reload(SoupMessage * msg, GValueArray * params)
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
-          module_entry_reload(entry);
-          answer = TRUE;
+          if (entry->flags & MODULE_FLAG_NO_REMOTE) {
+              /* do nothing */
+          } else {
+              module_entry_reload(entry);
+              answer = TRUE;
+          }
         }
     }
     
@@ -377,8 +391,12 @@ static void method_entry_scan(SoupMessage * msg, GValueArray * params)
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
-          module_entry_scan(entry);
-          answer = TRUE;
+          if (entry->flags & MODULE_FLAG_NO_REMOTE) {
+              /* do nothing */
+          } else {
+              module_entry_scan(entry);
+              answer = TRUE;
+          }
         }
     }
     
@@ -415,16 +433,21 @@ static void method_entry_function(SoupMessage * msg, GValueArray * params)
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
-          module_entry_scan(entry);
-          answer = module_entry_function(entry);
+          if (entry->flags & MODULE_FLAG_NO_REMOTE) {
+              /* do nothing */
+          } else {
+              module_entry_scan(entry);
+              answer = module_entry_function(entry);
+          }
         }
     }
     
     if (!answer) {
-        answer = "";
+        answer = g_strdup("");
     }
 
     soup_xmlrpc_set_response(msg, G_TYPE_STRING, answer);
+    g_free(answer);
 }
 
 
@@ -458,7 +481,11 @@ static void method_entry_get_note(SoupMessage * msg, GValueArray * params)
           GSList *entry_node = g_slist_nth(module->entries, entry_number);
           ShellModuleEntry *entry = (ShellModuleEntry *)entry_node->data;
 
-          answer = g_strdup((gchar *)module_entry_get_note(entry));
+          if (entry->flags & MODULE_FLAG_NO_REMOTE) {
+              /* do nothing */
+          } else {
+              answer = g_strdup((gchar *)module_entry_get_note(entry));
+          }
         }
     }
     
