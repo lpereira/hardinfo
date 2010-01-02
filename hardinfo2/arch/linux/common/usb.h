@@ -91,7 +91,7 @@ void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
     g_free(mxpwr);
 }
 
-void __scan_usb_sysfs(void)
+gboolean __scan_usb_sysfs(void)
 {
     GDir *sysfs;
     gchar *filename;
@@ -99,7 +99,7 @@ void __scan_usb_sysfs(void)
     gint usb_device_number = 0;
 
     if (!(sysfs = g_dir_open(sysfs_path, 0, NULL))) {
-	return;
+	return FALSE;
     }
 
     if (usb_list) {
@@ -123,9 +123,11 @@ void __scan_usb_sysfs(void)
     }
 
     g_dir_close(sysfs);
+    
+    return usb_device_number > 0;
 }
 
-int __scan_usb_procfs(void)
+gboolean __scan_usb_procfs(void)
 {
     FILE *dev;
     gchar buffer[128];
@@ -238,11 +240,104 @@ int __scan_usb_procfs(void)
 
     fclose(dev);
 
-    return n;
+    return n > 0;
+}
+
+void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_number)
+{
+    gint bus, device, vendor_id, product_id;
+    gchar *product, *vendor, *max_power, *tmp, *strhash;
+    
+    sscanf(buffer, "Bus %d Device %d: ID %x:%x",
+           &bus, &device, &vendor_id, &product_id);
+
+    while (fgets(buffer, 512, lsusb)) {
+        if (g_str_has_prefix(buffer, "  idVendor")) {
+            vendor = g_strstrip(g_strdup(buffer + 28));
+        } else if (g_str_has_prefix(buffer, "  idProduct")) {
+            product = g_strstrip(g_strdup(buffer + 28));
+        } else if (g_str_has_prefix(buffer, "    MaxPower")) {
+            max_power = g_strstrip(g_strdup(buffer + 26));
+        } else if (g_str_has_prefix(buffer, "\n")) {
+            /* device separator */
+            break;
+        }
+    }
+
+    tmp = g_strdup_printf("USB%d", usb_device_number);
+    usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, product);
+
+    strhash = g_strdup_printf("[Device Information]\n"
+			      "Product=%s\n"
+			      "Manufacturer=%s\n"
+			      "Max Current=%s\n"
+			      "[Misc]\n"
+			      "USB Version=%.2f\n"
+			      "Class=0x%x\n"
+			      "Vendor=0x%x\n"
+			      "Product ID=0x%x\n"
+			      "Bus=%d\n",
+			      product,
+			      vendor,
+			      max_power,
+			      0.0f /* FIXME */,
+			      0 /* FIXME */,
+			      vendor_id, product_id, bus);
+
+    g_hash_table_insert(moreinfo, tmp, strhash);
+    
+    g_free(vendor);
+    g_free(product);
+    g_free(max_power);
+}
+
+gboolean __scan_usb_lsusb(void)
+{
+    static gchar *lsusb_path = NULL;
+    int usb_device_number = 0;
+    FILE *lsusb;
+    char buffer[512], *temp;
+    
+    if (!lsusb_path) {
+        if (!(lsusb_path = find_program("lsusb"))) {
+            DEBUG("lsusb not found");
+            
+            return FALSE;
+        }
+    }
+    
+    temp = g_strdup_printf("%s -v", lsusb_path);
+    if (!(lsusb = popen(temp, "r"))) {
+        DEBUG("cannot run %s", lsusb_path);
+        
+        g_free(temp);
+        return FALSE;
+    }
+    
+    g_free(temp);
+    
+    if (usb_list) {
+	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
+	g_free(usb_list);
+    }
+    usb_list = g_strdup("[USB Devices]\n");
+
+    while (fgets(buffer, sizeof(buffer), lsusb)) {
+        if (g_str_has_prefix(buffer, "Bus ")) {
+           __scan_usb_lsusb_add_device(buffer, lsusb, ++usb_device_number);
+        }
+    }
+    
+    pclose(lsusb);
+    
+    return usb_device_number > 0;
 }
 
 void __scan_usb(void)
 {
-    if (!__scan_usb_procfs())
-	__scan_usb_sysfs();
+    if (!__scan_usb_procfs()) {
+	if (!__scan_usb_sysfs()) {
+             __scan_usb_lsusb();
+        }
+    }
 }
