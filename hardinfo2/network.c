@@ -165,6 +165,8 @@ void scan_dns(gboolean reload)
                                                ip, hbuf);
           
           }          
+          
+          shell_status_pulse();
         } 
       }
       fclose(resolv);
