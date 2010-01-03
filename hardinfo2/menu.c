@@ -88,6 +88,11 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_open_online_docs)},
 
+    {"ContextHelpAction", NULL,
+     "Context help", "<Ctrl>F1",
+     NULL,
+     G_CALLBACK(cb_open_online_docs_context)},
+
     {"HomePageAction", HI_STOCK_INTERNET,
      "_Open HardInfo Web Site", NULL,
      NULL,

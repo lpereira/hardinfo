@@ -32,6 +32,7 @@ void cb_side_pane();
 void cb_toolbar();
 void cb_open_web_page();
 void cb_open_online_docs();
+void cb_open_online_docs_context();
 void cb_sync_manager();
 void cb_report_bug();
 void cb_donate();

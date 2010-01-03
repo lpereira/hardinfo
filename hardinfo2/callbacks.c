@@ -125,7 +125,7 @@ void cb_local_computer()
     
     shell_view_set_enabled(TRUE);
     shell_status_update("Done.");
-    shell_set_remote_label(shell, "Local");
+    shell_set_remote_label(shell, "");
 #endif /* HAS_LIBSOUP */
 }
 
@@ -183,6 +183,45 @@ void cb_open_online_docs()
         help_dir = g_build_filename(params.path_data, "doc", NULL);
         shell->help_viewer = help_viewer_new(help_dir, "index.hlp");
         g_free(help_dir);
+    }
+}
+
+void cb_open_online_docs_context()
+{
+    Shell *shell;
+    
+    shell = shell_get_main_shell();
+
+    if (shell->selected->flags & MODULE_FLAG_HAS_HELP) {
+        gchar *temp;
+        
+        /* FIXME: better naming for context-help files */
+        temp = g_strdup_printf("context-help-%s-%d.hlp",
+                               shell->selected_module_name,
+                               shell->selected->number);
+        
+        if (shell->help_viewer) {
+            help_viewer_open_page(shell->help_viewer, temp);
+        } else {
+            gchar *help_dir;
+            
+            help_dir = g_build_filename(params.path_data, "doc", NULL);
+            shell->help_viewer = help_viewer_new(help_dir, temp);
+            g_free(help_dir);
+        }
+        
+        g_free(temp);
+    } else {
+        GtkWidget *dialog;
+        
+	dialog = gtk_message_dialog_new(GTK_WINDOW(shell->window),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_ERROR,
+					GTK_BUTTONS_CLOSE,
+					"No context help available.");
+
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
     }
 }
 

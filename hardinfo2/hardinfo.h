@@ -25,6 +25,7 @@
 typedef enum {
   MODULE_FLAG_NONE = 0,
   MODULE_FLAG_NO_REMOTE = 1<<0,
+  MODULE_FLAG_HAS_HELP = 1<<1,
 } ModuleEntryFlags;
 
 typedef struct _ModuleEntry		ModuleEntry;

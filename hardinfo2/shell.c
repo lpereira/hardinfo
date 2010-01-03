@@ -126,6 +126,19 @@ void shell_action_set_property(const gchar * action_name,
     }
 }
 
+void shell_action_set_label(const gchar * action_name, gchar * label)
+{
+    if (params.gui_running && shell->action_group) {
+	GtkAction *action;
+
+	action =
+	    gtk_action_group_get_action(shell->action_group, action_name);
+	if (action) {
+	    gtk_action_set_label(action, label);
+	}
+    }
+}
+
 void shell_action_set_enabled(const gchar * action_name, gboolean setting)
 {
     if (params.gui_running && shell->action_group) {
@@ -432,7 +445,7 @@ static void create_window(void)
 #else
     gtk_widget_hide(shell->remote_label);
 #endif
-    shell_set_remote_label(shell, "Local");
+    shell_set_remote_label(shell, "");
     gtk_box_pack_end(GTK_BOX(hbox), shell->remote_label, FALSE, FALSE, 0);
 
     shell->status = gtk_label_new("");
@@ -742,6 +755,7 @@ void shell_init(GSList * modules)
     shell_status_update("Done.");
     shell_status_set_enabled(FALSE);
 
+    shell_action_set_enabled("ContextHelpAction", FALSE);
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("SaveGraphAction", FALSE);
@@ -1487,9 +1501,24 @@ static void module_selected(gpointer data)
         RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
 
-	title = g_strdup_printf("%s: %s", shell->selected_module_name, entry->name);
+	title = g_strdup_printf("%s - %s", shell->selected_module_name, entry->name);
 	shell_set_title(shell, title);
 	g_free(title);
+
+        if (entry->flags & MODULE_FLAG_HAS_HELP) {
+            gchar *temp;
+            
+            shell_action_set_enabled("ContextHelpAction", TRUE);
+            
+            temp = g_strdup_printf("Help on %s \342\206\222 %s",
+                                   shell->selected_module_name,
+                                   entry->name);
+            shell_action_set_label("ContextHelpAction", temp);
+            
+            g_free(temp);
+        } else {
+            goto no_help;
+        }
 
 	shell_action_set_enabled("RefreshAction", TRUE);
 	shell_action_set_enabled("CopyAction", TRUE);
@@ -1503,6 +1532,10 @@ static void module_selected(gpointer data)
 
 	gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
 	set_view_type(SHELL_VIEW_NORMAL, FALSE);
+
+no_help:
+        shell_action_set_enabled("ContextHelpAction", FALSE);
+        shell_action_set_label("ContextHelpAction", "Context help");
     }
 
     current = entry;

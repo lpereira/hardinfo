@@ -51,6 +51,7 @@ SYNC_MANAGER_ITEMS
 REMOTE_MENU_ITEMS \
 "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">" \
 "		<menuitem name=\"OnlineDocs\" action=\"OnlineDocsAction\"/>" \
+"		<menuitem name=\"ContextHelp\" action=\"ContextHelpAction\"/>" \
 "		<separator/>" \
 "		<menuitem name=\"WebPage\" action=\"HomePageAction\"/>" \
 "		<menuitem name=\"ReportBug\" action=\"ReportBugAction\"/>" \

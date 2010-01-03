@@ -62,7 +62,7 @@ void scan_dev(gboolean reload);
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 static ModuleEntry entries[] = {
-    {"Summary", "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
+    {"Summary", "summary.png", callback_summary, scan_summary, MODULE_FLAG_HAS_HELP},
     {"Operating System", "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
     {"Kernel Modules", "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
     {"Boots", "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},

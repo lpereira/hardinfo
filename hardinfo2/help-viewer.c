@@ -317,6 +317,7 @@ static gboolean destroy_me(GtkWidget *widget, gpointer data)
 HelpViewer *
 help_viewer_new (const gchar *help_dir, const gchar *help_file)
 {
+    Shell *shell;
     HelpViewer *hv;
     GtkWidget *help_viewer;
     GtkWidget *vbox;
@@ -338,13 +339,15 @@ help_viewer_new (const gchar *help_dir, const gchar *help_file)
     GtkWidget *status_bar;
     GtkWidget *separatortoolitem;
     GtkWidget *btn_home;
-    
     GdkPixbuf *icon;
+    
+    shell = shell_get_main_shell();
 
-    help_viewer = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    help_viewer = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_size_request(help_viewer, 300, 200);
     gtk_window_set_default_size(GTK_WINDOW(help_viewer), 640, 480);
-    gtk_window_set_title (GTK_WINDOW (help_viewer), "Help Viewer");
+    gtk_window_set_title(GTK_WINDOW(help_viewer), "Help Viewer");
+    gtk_window_set_transient_for(GTK_WINDOW(help_viewer), GTK_WINDOW(shell->window));
     
     icon = gtk_widget_render_icon(help_viewer, GTK_STOCK_HELP, 
                                   GTK_ICON_SIZE_DIALOG,
@@ -460,13 +463,19 @@ help_viewer_new (const gchar *help_dir, const gchar *help_file)
     if (!markdown_textview_load_file(MARKDOWN_TEXTVIEW(markdown_textview), help_file ? help_file : "index.hlp")) {
         GtkWidget	*dialog;
 
-        dialog = gtk_message_dialog_new(NULL,
+        dialog = gtk_message_dialog_new(GTK_WINDOW(shell->window),
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,
                                         GTK_BUTTONS_CLOSE,
-                                        "Cannot open help index file.");
+                                        "Cannot open help file (%s).",
+                                        help_file ? help_file : "index.hlp");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
+        
+        gtk_widget_destroy(hv->window);
+        g_free(hv);
+        
+        return NULL;
     }
     
     gtk_widget_show_all(hv->window);
