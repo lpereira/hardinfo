@@ -1517,7 +1517,8 @@ static void module_selected(gpointer data)
             
             g_free(temp);
         } else {
-            goto no_help;
+            shell_action_set_enabled("ContextHelpAction", FALSE);
+            shell_action_set_label("ContextHelpAction", "Context help");
         }
 
 	shell_action_set_enabled("RefreshAction", TRUE);
@@ -1533,7 +1534,6 @@ static void module_selected(gpointer data)
 	gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
 	set_view_type(SHELL_VIEW_NORMAL, FALSE);
 
-no_help:
         shell_action_set_enabled("ContextHelpAction", FALSE);
         shell_action_set_label("ContextHelpAction", "Context help");
     }
