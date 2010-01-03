@@ -117,7 +117,7 @@ static void remote_connection_error(void)
     GtkWidget *dialog;
     static gboolean showing_error = FALSE;
     
-    if (showing_error) {
+    if (showing_error || !xmlrpc_server_uri) {
        return;
     }
     
