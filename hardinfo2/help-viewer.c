@@ -273,13 +273,31 @@ static void home_clicked(GtkWidget *button, gpointer data)
 
 void help_viewer_open_page(HelpViewer *hv, const gchar *page)
 {
-    /* adds the current file to the back stack (before loading the new file */
-    hv->back_stack = g_slist_prepend(hv->back_stack, g_strdup(hv->current_file));
-    gtk_widget_set_sensitive(hv->btn_back, TRUE);
-
-    markdown_textview_load_file(MARKDOWN_TEXTVIEW(hv->text_view), page);
+    gchar *temp;
     
-    gtk_window_present(GTK_WINDOW(hv->window));
+    temp = g_strdup(hv->current_file);
+    
+    if (!markdown_textview_load_file(MARKDOWN_TEXTVIEW(hv->text_view), page)) {
+        GtkWidget	*dialog;
+        Shell		*shell;
+        
+        shell = shell_get_main_shell();
+        dialog = gtk_message_dialog_new(GTK_WINDOW(shell->window),
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_CLOSE,
+                                        "Cannot open help file (%s).",
+                                        page);
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        
+        g_free(temp);
+    } else {
+        /* adds the current file to the back stack (before loading the new file */
+        hv->back_stack = g_slist_prepend(hv->back_stack, temp);
+        gtk_widget_set_sensitive(hv->btn_back, TRUE);
+        gtk_window_present(GTK_WINDOW(hv->window));
+    }
 }
 
 void help_viewer_destroy(HelpViewer *hv)
