@@ -581,6 +581,50 @@ gchar **hi_module_get_dependencies(void)
     return deps;
 }
 
+void hi_module_deinit(void)
+{
+    DEBUG("cleaning up module");
+
+    if (computer->os) {
+        g_free(computer->os->kernel);
+        g_free(computer->os->libc);
+        g_free(computer->os->distrocode);
+        g_free(computer->os->distro);
+        g_free(computer->os->hostname);
+        g_free(computer->os->language);
+        g_free(computer->os->homedir);
+        g_free(computer->os->kernel_version);
+        g_free(computer->os->languages);
+        g_free(computer->os->desktop);
+        g_free(computer->os->username);
+        g_free(computer->os->boots);
+        g_free(computer->os);
+    }
+    
+    if (computer->display) {
+        g_free(computer->display->ogl_vendor);
+        g_free(computer->display->ogl_renderer);
+        g_free(computer->display->ogl_version);
+        g_free(computer->display->display_name);
+        g_free(computer->display->vendor);
+        g_free(computer->display->version);
+        g_free(computer->display->extensions);
+        g_free(computer->display->monitors);
+        g_free(computer->display);
+    }
+    
+    if (computer->alsa) {
+        g_slist_free(computer->alsa->cards);
+        g_free(computer->alsa);
+    }
+    
+    g_free(computer->date_time);
+    g_free(computer);
+    
+    h_hash_table_remove_all(moreinfo);
+    g_hash_table_destroy(moreinfo);
+}
+
 void hi_module_init(void)
 {
     computer = g_new0(Computer, 1);
@@ -600,3 +644,4 @@ ModuleAbout *hi_module_get_about(void)
 
     return ma;
 }
+

@@ -130,6 +130,7 @@ struct _ShellModule {
     GdkPixbuf		*icon;
     GModule		*dll;
     gpointer		(*aboutfunc) ();
+    void		(*deinit) ();
     
     guchar		 weight;
 

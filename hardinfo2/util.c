@@ -593,6 +593,9 @@ static void module_unload(ShellModule * module)
     if (module->dll) {
         gchar *name;
         
+        if (module->deinit)
+		module->deinit();
+        
         name = g_path_get_basename(g_module_name(module->dll));
         g_hash_table_foreach_remove(__module_methods, remove_module_methods, name);
         
@@ -697,6 +700,8 @@ static ShellModule *module_load(gchar * filename)
 
         g_module_symbol(module->dll, "hi_module_get_about",
    	 	        (gpointer) & (module->aboutfunc));
+        g_module_symbol(module->dll, "hi_module_deinit",
+   	 	        (gpointer) & (module->deinit));
    	 	        
 	entries = get_module_entries();
 	while (entries[i].name) {

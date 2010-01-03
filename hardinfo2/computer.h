@@ -118,22 +118,6 @@ struct _Computer {
     gchar *date_time;
 };
 
-struct _Processor {
-    gchar *model_name;
-    gchar *vendor_id;
-    gchar *flags;
-    gint cache_size;
-    gfloat bogomips, cpu_mhz;
-
-    gchar *has_fpu;
-    gchar *bug_fdiv, *bug_hlt, *bug_f00f, *bug_coma;
-    
-    gint model, family, stepping;
-    gchar *strmodel;
-    
-    gint id;
-};
-
 struct _OperatingSystem {
     gchar *kernel;
     gchar *libc;
