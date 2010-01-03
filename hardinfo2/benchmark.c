@@ -430,6 +430,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
           bench_results[entry] = benchmark_dialog->result;
 
           g_io_channel_unref(channel);
+          shell_view_set_enabled(TRUE);
           shell_status_set_enabled(TRUE);
           g_free(benchmark_dialog);
 
