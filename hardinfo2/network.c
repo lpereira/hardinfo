@@ -414,6 +414,23 @@ void hi_module_init(void)
 	g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 }
 
+void hi_module_deinit(void)
+{
+    h_hash_table_remove_all(moreinfo);
+    g_hash_table_destroy(moreinfo);
+    
+    g_free(smb_shares_list);
+    g_free(nfs_shares_list);
+    g_free(network_interfaces);
+    g_free(network_icons);
+    
+    g_free(__statistics);
+    g_free(__nameservers);
+    g_free(__arp_table);
+    g_free(__routing_table);
+    g_free(__connections);
+}
+
 ModuleAbout *hi_module_get_about(void)
 {
     static ModuleAbout ma[] = {

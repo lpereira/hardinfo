@@ -583,8 +583,6 @@ gchar **hi_module_get_dependencies(void)
 
 void hi_module_deinit(void)
 {
-    DEBUG("cleaning up module");
-
     if (computer->os) {
         g_free(computer->os->kernel);
         g_free(computer->os->libc);

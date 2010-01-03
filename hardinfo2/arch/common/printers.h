@@ -37,6 +37,7 @@ struct _CUPSDest {
 static int (*cups_dests_get) (CUPSDest **dests) = NULL;
 static int (*cups_dests_free) (int num_dests, CUPSDest *dests) = NULL;
 static gboolean cups_init = FALSE;
+static GModule *cups = NULL;
 
 static gboolean
 remove_printer_devices(gpointer key, gpointer value, gpointer data)
@@ -47,7 +48,6 @@ remove_printer_devices(gpointer key, gpointer value, gpointer data)
 static void
 __init_cups(void)
 {
-    static GModule *cups = NULL;
     const char *libcups[] = { "libcups", "libcups.so", "libcups.so.1", "libcups.so.2", NULL };
 
     if (!(cups_dests_get && cups_dests_free)) {

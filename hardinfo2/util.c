@@ -593,8 +593,12 @@ static void module_unload(ShellModule * module)
     if (module->dll) {
         gchar *name;
         
-        if (module->deinit)
+        if (module->deinit) {
+        	DEBUG("cleaning up module \"%s\"", module->name);
 		module->deinit();
+	} else {
+		DEBUG("module \"%s\" does not need cleanup", module->name);
+	}
         
         name = g_path_get_basename(g_module_name(module->dll));
         g_hash_table_foreach_remove(__module_methods, remove_module_methods, name);
