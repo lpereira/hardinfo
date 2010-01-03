@@ -388,7 +388,7 @@ static ShellNote *note_new(void)
     gtk_box_pack_start(GTK_BOX(hbox), note->label, FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-    gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
+    gtk_container_set_border_width(GTK_CONTAINER(hbox), 2);
     gtk_container_add(GTK_CONTAINER(border_box), hbox);
     gtk_widget_show_all(hbox);
 
