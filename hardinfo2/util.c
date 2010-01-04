@@ -640,6 +640,7 @@ void module_unload_all(void)
     sync_manager_clear_entries();
     shell_clear_timeouts(shell);
     shell_clear_tree_models(shell);
+    shell_clear_field_updates();
     shell_set_title(shell, NULL);
     
     g_slist_free(shell->tree->modules);

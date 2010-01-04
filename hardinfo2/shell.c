@@ -1310,6 +1310,25 @@ void shell_set_note_from_entry(ShellModuleEntry * entry)
     }
 }
 
+void shell_clear_field_updates(void)
+{
+    if (update_sfusrc) {
+        GSList *sfusrc;
+        
+        for (sfusrc = update_sfusrc; sfusrc; sfusrc = sfusrc->next) {
+            ShellFieldUpdateSource *src =
+                (ShellFieldUpdateSource *) sfusrc->data;
+            g_source_remove(src->source_id);
+            g_free(src->sfu->field_name);
+            g_free(src->sfu);
+            g_free(src);
+        }
+
+        g_slist_free(update_sfusrc);
+        update_sfusrc = NULL;
+    }
+}
+
 static void
 module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
@@ -1337,22 +1356,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
         h_hash_table_remove_all(update_tbl);
     }
     
-    if (update_sfusrc) {
-	GSList *sfusrc;
-
-	for (sfusrc = update_sfusrc; sfusrc; sfusrc = sfusrc->next) {
-	    ShellFieldUpdateSource *src =
-		(ShellFieldUpdateSource *) sfusrc->data;
-
-	    g_source_remove(src->source_id);
-	    g_free(src->sfu->field_name);
-	    g_free(src->sfu);
-	    g_free(src);
-	}
-
-	g_slist_free(update_sfusrc);
-	update_sfusrc = NULL;
-    }
+    shell_clear_field_updates();
 
     store = GTK_TREE_STORE(shell->info->model);
 
