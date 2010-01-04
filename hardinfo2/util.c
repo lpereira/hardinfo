@@ -628,21 +628,20 @@ void module_unload_all(void)
 
     shell = shell_get_main_shell();
     
-    for (module = shell->tree->modules; module; module = module->next) {
-    	module_unload((ShellModule *)module->data);
-    }
-        
-    for (merge_id = shell->merge_ids; merge_id; merge_id = merge_id->next) {
-    	gtk_ui_manager_remove_ui(shell->ui_manager,
-			         GPOINTER_TO_INT(merge_id->data));
-    }
-    
     sync_manager_clear_entries();
     shell_clear_timeouts(shell);
     shell_clear_tree_models(shell);
     shell_clear_field_updates();
     shell_set_title(shell, NULL);
     
+    for (module = shell->tree->modules; module; module = module->next) {
+    	module_unload((ShellModule *)module->data);
+    }
+
+    for (merge_id = shell->merge_ids; merge_id; merge_id = merge_id->next) {
+    	gtk_ui_manager_remove_ui(shell->ui_manager,
+			         GPOINTER_TO_INT(merge_id->data));
+    }
     g_slist_free(shell->tree->modules);
     g_slist_free(shell->merge_ids);
     
