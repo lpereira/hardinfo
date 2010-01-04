@@ -198,7 +198,7 @@ void cb_open_online_docs_context()
         if (shell->selected_module->dll) {
             gchar *name_temp;
             
-            name_temp = g_module_name(shell->selected_module->dll);
+            name_temp = (gchar *)g_module_name(shell->selected_module->dll);
             name_temp = g_path_get_basename(name_temp);
             strend(name_temp, '.');
             
