@@ -198,7 +198,7 @@ static gchar *remote_module_entry_func()
     ret =
 	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryFunction", "%s%i",
-			  shell->selected_module_name,
+			  shell->selected_module->name,
 			  shell->selected->number);
 
     if (!ret) {
@@ -216,12 +216,12 @@ static void remote_module_entry_scan_func(gboolean reload)
     if (reload) {
 	xmlrpc_get_string(xmlrpc_server_uri,
 		                     "module.entryReload", "%s%i",
-                                     shell->selected_module_name,
+                                     shell->selected_module->name,
                                      shell->selected->number);
     } else {
 	xmlrpc_get_string(xmlrpc_server_uri,
 		                     "module.entryScan", "%s%i",
-                                     shell->selected_module_name,
+                                     shell->selected_module->name,
                                      shell->selected->number);
     }
 }
@@ -234,7 +234,7 @@ static gchar *remote_module_entry_field_func(gchar * entry)
     ret =
 	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryGetField", "%s%i%s",
-			  shell->selected_module_name,
+			  shell->selected_module->name,
 			  shell->selected->number, entry);
     
     if (!ret) {
@@ -252,7 +252,7 @@ static gchar *remote_module_entry_more_func(gchar * entry)
     ret =
 	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryGetMoreInfo", "%s%i%s",
-			  shell->selected_module_name,
+			  shell->selected_module->name,
 			  shell->selected->number, entry);
 
     if (!ret) {
@@ -270,7 +270,7 @@ static gchar *remote_module_entry_note_func(gint entry)
     note =
 	xmlrpc_get_string(xmlrpc_server_uri,
 			  "module.entryGetNote", "%s%i",
-			  shell->selected_module_name,
+			  shell->selected_module->name,
 			  shell->selected->number);
 
     if (note && *note == '\0') {

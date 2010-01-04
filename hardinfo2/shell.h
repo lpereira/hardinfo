@@ -57,7 +57,8 @@ typedef enum {
 typedef enum {
     TREE_COL_PBUF,
     TREE_COL_NAME,
-    TREE_COL_DATA,
+    TREE_COL_MODULE_ENTRY,
+    TREE_COL_MODULE,
     TREE_COL_SEL,
     TREE_NCOL
 } ShellTreeColumns;
@@ -82,6 +83,7 @@ struct _Shell {
 
     ShellTree		*tree;
     ShellInfoTree	*info, *moreinfo;
+    ShellModule		*selected_module;
     ShellModuleEntry	*selected;
     ShellNote		*note;
     LoadGraph		*loadgraph;
@@ -96,8 +98,6 @@ struct _Shell {
     gint		_pulses;
     ShellOrderType	_order_type;
     
-    gchar		*selected_module_name;
-
     GKeyFile		*hosts;
     HelpViewer		*help_viewer;
 };

@@ -639,8 +639,12 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
     }
 
     gtk_tree_store_append(store, &parent, NULL);
-    gtk_tree_store_set(store, &parent, TREE_COL_NAME, module->name,
-		       TREE_COL_DATA, NULL, TREE_COL_SEL, FALSE, -1);
+    gtk_tree_store_set(store, &parent,
+                       TREE_COL_NAME, module->name,
+		       TREE_COL_MODULE, module,
+		       TREE_COL_MODULE_ENTRY, NULL,
+		       TREE_COL_SEL, FALSE,
+		       -1);
 
     if (module->icon) {
 	gtk_tree_store_set(store, &parent, TREE_COL_PBUF, module->icon,
@@ -659,7 +663,7 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 
 	    gtk_tree_store_append(store, &child, &parent);
 	    gtk_tree_store_set(store, &child, TREE_COL_NAME, entry->name,
-			       TREE_COL_DATA, entry,
+			       TREE_COL_MODULE_ENTRY, entry,
 			       TREE_COL_SEL, FALSE, -1);
 
 	    if (entry->icon) {
@@ -1480,7 +1484,7 @@ static void module_selected(gpointer data)
     }
 
     /* Get the current selection and shows its related info */
-    gtk_tree_model_get(model, &iter, TREE_COL_DATA, &entry, -1);
+    gtk_tree_model_get(model, &iter, TREE_COL_MODULE_ENTRY, &entry, -1);
     if (entry && !entry->selected) {
         GtkTreeIter parent;
 	gchar *title;
@@ -1488,9 +1492,8 @@ static void module_selected(gpointer data)
 	shell_status_set_enabled(TRUE);
 	shell_status_update("Updating...");
 	
-	g_free(shell->selected_module_name);
 	gtk_tree_model_iter_parent(model, &parent, &iter);
-        gtk_tree_model_get(model, &parent, TREE_COL_NAME, &shell->selected_module_name, -1);
+        gtk_tree_model_get(model, &parent, TREE_COL_MODULE, &shell->selected_module, -1);
 
 	entry->selected = TRUE;
 	shell->selected = entry;
@@ -1505,7 +1508,7 @@ static void module_selected(gpointer data)
         RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
 
-	title = g_strdup_printf("%s - %s", shell->selected_module_name, entry->name);
+	title = g_strdup_printf("%s - %s", shell->selected_module->name, entry->name);
 	shell_set_title(shell, title);
 	g_free(title);
 
@@ -1515,7 +1518,7 @@ static void module_selected(gpointer data)
             shell_action_set_enabled("ContextHelpAction", TRUE);
             
             temp = g_strdup_printf("Help on %s \342\206\222 %s",
-                                   shell->selected_module_name,
+                                   shell->selected_module->name,
                                    entry->name);
             shell_action_set_label("ContextHelpAction", temp);
             
@@ -1690,7 +1693,7 @@ static ShellTree *tree_new()
 				   GTK_POLICY_AUTOMATIC);
 
     store = gtk_tree_store_new(TREE_NCOL, GDK_TYPE_PIXBUF, G_TYPE_STRING,
-			       G_TYPE_POINTER, G_TYPE_BOOLEAN);
+			       G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_BOOLEAN);
     model = GTK_TREE_MODEL(store);
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);

@@ -426,7 +426,7 @@ static GSList *report_create_module_list_from_dialog(ReportDialog * rd)
 		if (!selected)
 		    continue;
 
-		gtk_tree_model_get(model, &child, TREE_COL_DATA, &entry,
+		gtk_tree_model_get(model, &child, TREE_COL_MODULE_ENTRY, &entry,
 				   -1);
 		module->entries = g_slist_append(module->entries, entry);
 	    }

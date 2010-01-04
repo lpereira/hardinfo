@@ -195,11 +195,22 @@ void cb_open_online_docs_context()
     if (shell->selected->flags & MODULE_FLAG_HAS_HELP) {
         gchar *temp;
         
-        /* FIXME: better naming for context-help files */
-        temp = g_strdup_printf("context-help-%s-%d.hlp",
-                               shell->selected_module_name,
-                               shell->selected->number);
-        
+        if (shell->selected_module->dll) {
+            gchar *name_temp;
+            
+            name_temp = g_module_name(shell->selected_module->dll);
+            name_temp = g_path_get_basename(name_temp);
+            strend(name_temp, '.');
+            
+            temp = g_strdup_printf("context-help-%s-%d.hlp",
+                                   name_temp,
+                                   shell->selected->number);
+            
+            g_free(name_temp);
+        } else {
+            goto no_context_help;
+        }
+                
         if (shell->help_viewer) {
             help_viewer_open_page(shell->help_viewer, temp);
         } else {
@@ -214,6 +225,7 @@ void cb_open_online_docs_context()
     } else {
         GtkWidget *dialog;
         
+no_context_help:
 	dialog = gtk_message_dialog_new(GTK_WINDOW(shell->window),
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR,
