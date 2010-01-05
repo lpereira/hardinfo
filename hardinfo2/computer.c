@@ -389,7 +389,6 @@ gchar *callback_summary()
 			      "Resolution=%dx%d pixels\n"
 			      "OpenGL Renderer=%s\n"
 			      "X11 Vendor=%s\n"
-			      "[Multimedia]\n"
 			      "\n%s\n"
 			      "[Input Devices]\n%s\n"
 			      "\n%s\n"
@@ -532,6 +531,18 @@ gchar *get_os_kernel(void)
     return g_strdup(computer->os->kernel);
 }
 
+gchar *get_os(void)
+{
+    scan_os(FALSE);
+    return g_strdup(computer->os->distro);
+}
+
+gchar *get_display_vendor(void)
+{
+    scan_display(FALSE);
+    return g_strdup(computer->display->ogl_vendor);
+}
+
 gchar *get_kernel_module_description(gchar *module)
 {
     gchar *description;
@@ -548,10 +559,22 @@ gchar *get_kernel_module_description(gchar *module)
     return g_strdup(description);
 }
 
+gchar *get_audio_cards(void)
+{
+    if (!computer->alsa) {
+      computer->alsa = computer_get_alsainfo();
+    }
+    
+    return computer_get_alsacards(computer);
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
 	{"getOSKernel", get_os_kernel},
+	{"getOS", get_os},
+	{"getDisplayVendor", get_display_vendor},
+	{"getAudioCards", get_audio_cards},
 	{"getKernelModuleDescription", get_kernel_module_description},
 	{NULL}
     };
@@ -579,6 +602,33 @@ gchar **hi_module_get_dependencies(void)
     static gchar *deps[] = { "devices.so", NULL };
 
     return deps;
+}
+
+gchar *hi_module_get_summary(void)
+{
+    return g_strdup("[Operating System]\n"
+                    "Icon=os.png\n"
+                    "Method=computer::getOS\n"
+                    "[CPU]\n"
+                    "Icon=processor.png\n"
+                    "Method=devices::getProcessorName\n"
+                    "[RAM]\n"
+                    "Icon=memory.png\n"
+                    "Method=devices::getMemoryTotal\n"
+                    "[Motherboard]\n"
+                    "Icon=module.png\n"
+                    "[Graphics]\n"
+                    "Icon=monitor.png\n"
+                    "Method=computer::getDisplayVendor\n"
+                    "[Storage]\n"
+                    "Icon=hdd.png\n"
+                    "Method=devices::getStorageDevices\n"
+                    "[Printers]\n"
+                    "Icon=printer.png\n"
+                    "Method=devices::getPrinters\n"
+                    "[Audio]\n"
+                    "Icon=audio.png\n"
+                    "Method=computer::getAudioCards\n");
 }
 
 void hi_module_deinit(void)

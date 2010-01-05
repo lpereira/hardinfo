@@ -393,7 +393,7 @@ egg_markdown_to_text_line_formatter_image (EggMarkdown *self, const gchar *line)
 		/* not found, keep return as-is */
 		data = g_strdup (line);
 	}
-out:
+
 	g_free (copy);
 	return data;
 }

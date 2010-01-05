@@ -765,7 +765,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     gtk_widget_show(alignment1);
     gtk_container_add(GTK_CONTAINER(frm_remote_host), alignment1);
     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment1), 0, 0, 12, 0);
-
+    
     table1 = gtk_table_new(3, 2, FALSE);
     gtk_widget_show(table1);
     gtk_container_add(GTK_CONTAINER(alignment1), table1);

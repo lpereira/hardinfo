@@ -355,7 +355,6 @@ help_viewer_new (const gchar *help_dir, const gchar *help_file)
     GtkWidget *scrolledhelp_viewer;
     GtkWidget *markdown_textview;
     GtkWidget *status_bar;
-    GtkWidget *separatortoolitem;
     GtkWidget *btn_home;
     GdkPixbuf *icon;
     

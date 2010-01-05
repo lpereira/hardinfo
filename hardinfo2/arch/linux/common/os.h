@@ -195,6 +195,8 @@ computer_get_os(void)
 	}
     }
 
+    os->distro = g_strstrip(os->distro);
+
     /* Kernel and hostname info */
     uname(&utsbuf);
     os->kernel_version = g_strdup(utsbuf.version);

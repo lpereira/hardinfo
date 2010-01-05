@@ -47,6 +47,8 @@
 
 static GSList *modules_list = NULL;
 
+void sync_manager_clear_entries(void);
+
 gchar *find_program(gchar *program_name)
 {
     int i;
@@ -621,6 +623,7 @@ static void module_unload(ShellModule * module)
     g_free(module);
 }
 
+
 void module_unload_all(void)
 {
     Shell *shell;
@@ -706,6 +709,8 @@ static ShellModule *module_load(gchar * filename)
    	 	        (gpointer) & (module->aboutfunc));
         g_module_symbol(module->dll, "hi_module_deinit",
    	 	        (gpointer) & (module->deinit));
+        g_module_symbol(module->dll, "hi_module_get_summary",
+   	 	        (gpointer) & (module->summaryfunc));
    	 	        
 	entries = get_module_entries();
 	while (entries[i].name) {
@@ -772,6 +777,7 @@ static gint module_cmp(gconstpointer m1, gconstpointer m2)
     return a->weight - b->weight;
 }
 
+#if 0
 static void module_entry_free(gpointer data, gpointer user_data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *) data;
@@ -783,6 +789,7 @@ static void module_entry_free(gpointer data, gpointer user_data)
 	g_free(entry);
     }
 }
+#endif
 
 ModuleAbout *module_get_about(ShellModule * module)
 {

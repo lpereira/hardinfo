@@ -20,7 +20,7 @@ gchar *
 computer_get_alsacards(Computer * computer)
 {
     GSList *p;
-    gchar *tmp = g_strdup("");
+    gchar *tmp = g_strdup("[Audio Devices]\n");
     gint n = 0;
 
     if (computer->alsa) {
