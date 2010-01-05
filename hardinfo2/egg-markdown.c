@@ -347,7 +347,6 @@ egg_markdown_to_text_line_formatter_image (EggMarkdown *self, const gchar *line)
 	gchar *end = NULL;
 	gchar *copy = NULL;
 	gchar *data = NULL;
-	gchar *temp;
 
 	/* find sections */
 	copy = g_strdup (line);
@@ -414,7 +413,6 @@ egg_markdown_to_text_line_formatter_link (EggMarkdown *self, const gchar *line)
 	gchar *end = NULL;
 	gchar *copy = NULL;
 	gchar *data = NULL;
-	gchar *temp;
 
 	/* find sections */
 	copy = g_strdup (line);
@@ -455,7 +453,7 @@ egg_markdown_to_text_line_formatter_link (EggMarkdown *self, const gchar *line)
 		/* not found, keep return as-is */
 		data = g_strdup (line);
 	}
-out:
+
 	g_free (copy);
 	return data;
 }

@@ -323,7 +323,7 @@ static void method_entry_reload(SoupMessage * msg, GValueArray * params)
 {
     ShellModule *module;
     GSList *modules;
-    gchar *module_name, *field_name;
+    gchar *module_name;
     gint entry_number;
     gboolean found = FALSE, answer = FALSE;
     MethodParameter method_params[] = {
@@ -502,7 +502,6 @@ static void method_get_about_info(SoupMessage * msg, GValueArray * params)
     ShellModule *module;
     GSList *modules;
     gchar *module_name;
-    gint entry_number;
     gboolean found = FALSE;
     GValueArray *out;
     MethodParameter method_params[] = {
@@ -539,11 +538,7 @@ static void method_get_about_info(SoupMessage * msg, GValueArray * params)
 
 static void method_call_method(SoupMessage * msg, GValueArray * params)
 {
-    ShellModule *module;
-    GSList *modules;
     gchar *method_name, *answer = NULL;
-    gint entry_number;
-    gboolean found = FALSE;
     MethodParameter method_params[] = {
         { G_TYPE_STRING, &method_name },
     };
@@ -563,11 +558,7 @@ static void method_call_method(SoupMessage * msg, GValueArray * params)
 static void method_call_method_param(SoupMessage * msg,
 				     GValueArray * params)
 {
-    ShellModule *module;
-    GSList *modules;
     gchar *method_name, *parameter, *answer = NULL;
-    gint entry_number;
-    gboolean found = FALSE;
     MethodParameter method_params[] = {
         { G_TYPE_STRING, &method_name },
         { G_TYPE_STRING, &parameter },
@@ -704,7 +695,7 @@ static void icon_server_callback(SoupServer * server,
                                       "500 :(", 6);
         } else {
             gchar  *file, *icon;
-            gint   size;
+            gsize   size;
             
             file = g_build_filename(params.path_data,
                                     "pixmaps",

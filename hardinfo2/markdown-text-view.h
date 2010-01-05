@@ -64,7 +64,7 @@ gboolean 	 markdown_textview_set_text(MarkdownTextView * textview,
 void		 markdown_textview_clear(MarkdownTextView * textview);
 void		 markdown_textview_set_image_directory(MarkdownTextView * self,
                                                        const gchar * directory);
-
+GType		 markdown_textview_get_type();
 G_END_DECLS
 
 #endif				/* __MARKDOWN_TEXTVIEW_H__ */

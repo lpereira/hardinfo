@@ -25,6 +25,7 @@
 #ifdef HAS_LIBSOUP
 
 #include "shell.h"
+#include "callbacks.h"
 #include "iconcache.h"
 #include "hardinfo.h"
 #include "xmlrpc-client.h"
@@ -211,7 +212,6 @@ static gchar *remote_module_entry_func()
 static void remote_module_entry_scan_func(gboolean reload)
 {
     Shell *shell = shell_get_main_shell();
-    gchar *response;
 
     if (reload) {
 	xmlrpc_get_string(xmlrpc_server_uri,
@@ -497,8 +497,6 @@ gboolean remote_connect_host(gchar * hostname)
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
-
-	return;
     } else {
 	const gint port =
 	    g_key_file_get_integer(shell->hosts, hostname, "port", NULL);
@@ -575,7 +573,6 @@ void connect_dialog_show(GtkWidget * parent)
 
 void host_manager_show(GtkWidget * parent)
 {
-    gboolean success;
     HostManager *rd = host_manager_new(parent);
 
     gtk_dialog_run(GTK_DIALOG(rd->dialog));
@@ -587,9 +584,9 @@ static void populate_store(HostManager * rd, GtkListStore * store)
 {
     Shell *shell;
     GtkTreeIter iter;
-    gchar *path;
     gchar **hosts;
-    gint i, no_groups;
+    gint i;
+    gsize no_groups;
 
     gtk_list_store_clear(store);
     shell = shell_get_main_shell();
@@ -724,9 +721,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
     GtkWidget *label9;
     GtkWidget *txt_ssh_user;
     GtkWidget *txt_ssh_password;
-    GtkWidget *label6;
     GtkWidget *label10;
-    GtkWidget *label7;
     GtkWidget *label5;
     GtkWidget *dialog_action_area1;
     GtkWidget *btn_cancel;
@@ -1171,7 +1166,6 @@ static void host_manager_destroy(HostManager * rd)
 static HostManager *host_manager_new(GtkWidget * parent)
 {
     HostManager *rd;
-    gchar *path;
     GtkWidget *dialog;
     GtkWidget *dialog_vbox;
     GtkWidget *scrolledwindow;
@@ -1182,7 +1176,6 @@ static HostManager *host_manager_new(GtkWidget * parent)
     GtkWidget *dialog_action_area;
     GtkWidget *btn_cancel;
     GtkWidget *btn_remove;
-    GtkWidget *label;
     GtkWidget *hbox;
     GtkTreeSelection *sel;
     GtkTreeViewColumn *column;

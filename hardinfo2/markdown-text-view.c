@@ -22,14 +22,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+#include <stdlib.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "markdown-text-view.h"
 #include "config.h"
 
 static GdkCursor *hand_cursor = NULL;
-
-static void markdown_textview_finalize(GObject * object);
 
 G_DEFINE_TYPE(MarkdownTextView, markdown_textview, GTK_TYPE_TEXT_VIEW);
 
@@ -636,12 +635,3 @@ static void markdown_textview_init(MarkdownTextView * self)
 		     G_CALLBACK(visibility_notify_event), NULL);
 }
 
-static void markdown_textview_finalize(GObject * object)
-{
-    MarkdownTextView *self;
-
-    g_return_if_fail(IS_MARKDOWN_TEXTVIEW(object));
-
-    self = MARKDOWN_TEXTVIEW(object);
-    g_object_unref(self->markdown);
-}

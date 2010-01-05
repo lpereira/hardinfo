@@ -25,6 +25,7 @@
 
 #include "shell.h"
 #include "report.h"
+#include "remote.h"
 #include "syncmanager.h"
 #include "help-viewer.h"
 #include "xmlrpc-server.h"
@@ -112,7 +113,7 @@ void cb_local_computer()
     Shell *shell = shell_get_main_shell();
 
     shell_status_update("Disconnecting...");
-    remote_disconnect_all();
+    remote_disconnect_all(TRUE);
 
     shell_status_update("Unloading modules...");
     module_unload_all();

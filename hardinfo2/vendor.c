@@ -159,7 +159,6 @@ void vendor_init(void)
 const gchar *vendor_get_name(const gchar * id)
 {
     GSList *vendor;
-    int i;
     
     if (!id) {
       return NULL;
@@ -179,7 +178,6 @@ const gchar *vendor_get_name(const gchar * id)
 const gchar *vendor_get_url(const gchar * id)
 {
     GSList *vendor;
-    int i;
 
     if (!id) {
       return NULL;

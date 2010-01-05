@@ -25,13 +25,16 @@
 
 #include "config.h"
 #ifdef HAS_LIBSOUP
+#include <glib/gstdio.h>
+#include <glib.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <linux/termios.h>
 #include <sys/types.h>
 #include <sys/wait.h>
        
