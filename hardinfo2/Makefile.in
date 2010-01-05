@@ -1,8 +1,8 @@
 
 CCFLAGS = -fPIC -pipe -Wall -Werror -g 
 CFLAGS = $(GTK_CFLAGS) $(SOUP_CFLAGS) -I.
-CC = gcc $(ARCHOPTS) -g
-CCSLOW = gcc -O0 -g
+CC = gcc $(ARCHOPTS) $(CCFLAGS)
+CCSLOW = gcc -O0 $(CCFLAGS)
 
 # ----------------------------------------------------------------------------
 
