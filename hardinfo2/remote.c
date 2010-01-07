@@ -1014,6 +1014,7 @@ static void host_manager_edit(GtkWidget * button, gpointer data)
     HostDialog *he =
 	host_dialog_new(rd->dialog, "Edit a host", HOST_DIALOG_MODE_EDIT);
     gchar *host_type;
+    gchar *previous_hostname;
     gint host_port;
 
     host_type =
@@ -1056,6 +1057,7 @@ static void host_manager_edit(GtkWidget * button, gpointer data)
     }
 
     gtk_entry_set_text(GTK_ENTRY(he->txt_hostname), rd->selected_name);
+    previous_hostname = rd->selected_name;
 
     host_port =
 	g_key_file_get_integer(shell->hosts, rd->selected_name, "port",
@@ -1071,6 +1073,12 @@ static void host_manager_edit(GtkWidget * button, gpointer data)
 	    (int) gtk_spin_button_get_value(GTK_SPIN_BUTTON(he->txt_port));
 	const gchar *hostname =
 	    gtk_entry_get_text(GTK_ENTRY(he->txt_hostname));
+        
+        if (!g_str_equal(previous_hostname, he->txt_hostname)) {
+            g_key_file_remove_group(shell->hosts, previous_hostname, NULL);
+	    gtk_list_store_set(rd->tree_store, rd->selected_iter,
+			       1, g_strdup(hostname), -1);
+        }
 
 	g_key_file_set_string(shell->hosts, hostname, "type",
 			      type[selected_type]);
