@@ -537,10 +537,17 @@ gchar *get_os(void)
     return g_strdup(computer->os->distro);
 }
 
-gchar *get_display_vendor(void)
+gchar *get_display_summary(void)
 {
     scan_display(FALSE);
-    return g_strdup(computer->display->ogl_vendor);
+
+    return g_strdup_printf("%dx%d\n"
+                           "%s\n"
+                           "%s",
+                           computer->display->width,
+                           computer->display->height,
+                           computer->display->ogl_renderer,
+                           computer->display->vendor);
 }
 
 gchar *get_kernel_module_description(gchar *module)
@@ -573,7 +580,7 @@ ShellModuleMethod *hi_exported_methods(void)
     static ShellModuleMethod m[] = {
 	{"getOSKernel", get_os_kernel},
 	{"getOS", get_os},
-	{"getDisplayVendor", get_display_vendor},
+	{"getDisplaySummary", get_display_summary},
 	{"getAudioCards", get_audio_cards},
 	{"getKernelModuleDescription", get_kernel_module_description},
 	{NULL}
@@ -619,7 +626,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=module.png\n"
                     "[Graphics]\n"
                     "Icon=monitor.png\n"
-                    "Method=computer::getDisplayVendor\n"
+                    "Method=computer::getDisplaySummary\n"
                     "[Storage]\n"
                     "Icon=hdd.png\n"
                     "Method=devices::getStorageDevices\n"
