@@ -125,7 +125,7 @@ int main(int argc, char **argv)
         
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
         if (!result) {
-          g_error("Unknown benchmark ``%s'' or benchmark.so not loaded", params.run_benchmark);
+          g_error("Unknown benchmark ``%s'' or libbenchmark.so not loaded", params.run_benchmark);
         } else {
           g_print("%s\n", result);
           g_free(result);

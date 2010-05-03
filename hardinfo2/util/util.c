@@ -546,13 +546,15 @@ static void module_register_methods(ShellModule * module)
 	for (methods = get_methods(); methods->name; methods++) {
 	    ShellModuleMethod method = *methods;
 	    gchar *name = g_path_get_basename(g_module_name(module->dll));
+	    gchar *simple_name = strreplace(name, "lib", "");
+	    
+	    strend(simple_name, '.');
 
-	    strend(name, '.');
-
-	    method_name = g_strdup_printf("%s::%s", name, method.name);
+	    method_name = g_strdup_printf("%s::%s", simple_name, method.name);
 	    g_hash_table_insert(__module_methods, method_name,
 				method.function);
 	    g_free(name);
+	    g_free(simple_name);
 	}
     }
 
@@ -661,18 +663,21 @@ static ShellModule *module_load(gchar * filename)
     module = g_new0(ShellModule, 1);
 
     if (params.gui_running) {
-	gchar *tmpicon;
+	gchar *tmpicon, *dot, *simple_name;
 
 	tmpicon = g_strdup(filename);
-	gchar *dot = g_strrstr(tmpicon, "." G_MODULE_SUFFIX);
+	dot = g_strrstr(tmpicon, "." G_MODULE_SUFFIX);
 
 	*dot = '\0';
 
-	tmp = g_strdup_printf("%s.png", tmpicon);
+	simple_name = strreplace(tmpicon, "lib", "");
+
+	tmp = g_strdup_printf("%s.png", simple_name);
 	module->icon = icon_cache_get_pixbuf(tmp);
 
 	g_free(tmp);
 	g_free(tmpicon);
+	g_free(simple_name);
     }
 
     tmp = g_build_filename(params.path_lib, "modules", filename, NULL);
@@ -744,7 +749,7 @@ static ShellModule *module_load(gchar * filename)
     } else {
     	DEBUG("cannot g_module_open(``%s''). permission problem?", filename);
       failed:
-	DEBUG("loading module %s failed", filename);
+	DEBUG("loading module %s failed: %s", filename, g_module_error());
 
 	g_free(module->name);
 	g_free(module);

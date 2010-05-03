@@ -36,6 +36,8 @@
 #include <expr.h>
 #include <socket.h>
 
+#include "devices.h"
+
 gchar *callback_processors();
 gchar *callback_memory();
 gchar *callback_battery();
@@ -81,61 +83,19 @@ static ModuleEntry entries[] = {
     {NULL}
 };
 
-static GHashTable *moreinfo = NULL;
 static GSList *processors = NULL;
-static gchar *printer_list = NULL, *printer_icons = NULL;
-static gchar *pci_list = NULL;
-static gchar *input_list = NULL;
-static gchar *storage_list = NULL;
-static gchar *battery_list = NULL;
-static gchar *meminfo = NULL, *lginterval = NULL;
+gchar *printer_list = NULL;
+gchar *printer_icons = NULL;
+gchar *pci_list = NULL;
+gchar *input_list = NULL;
+gchar *storage_list = NULL;
+gchar *battery_list = NULL;
+gchar *meminfo = NULL;
+gchar *lginterval = NULL;
 
-#define WALK_UNTIL(x)   while((*buf != '\0') && (*buf != x)) buf++
-
-#define GET_STR(field_name,ptr)      					\
-  if (!ptr && strstr(tmp[0], field_name)) {				\
-    ptr = g_markup_escape_text(g_strstrip(tmp[1]), strlen(tmp[1]));	\
-    g_strfreev(tmp);                 					\
-    continue;                        					\
-  }
-
-#define get_str(field_name,ptr)               \
-  if (g_str_has_prefix(tmp[0], field_name)) { \
-    ptr = g_strdup(tmp[1]);                   \
-    g_strfreev(tmp);                          \
-    continue;                                 \
-  }
-#define get_int(field_name,ptr)               \
-  if (g_str_has_prefix(tmp[0], field_name)) { \
-    ptr = atoi(tmp[1]);                       \
-    g_strfreev(tmp);                          \
-    continue;                                 \
-  }
-#define get_float(field_name,ptr)             \
-  if (g_str_has_prefix(tmp[0], field_name)) { \
-    ptr = atof(tmp[1]);                       \
-    g_strfreev(tmp);                          \
-    continue;                                 \
-  }
+GHashTable *moreinfo = NULL;
 
 #include <vendor.h>
-
-typedef struct _Processor Processor;
-
-#include <arch/this/processor.h>
-#include <arch/this/pci.h>
-#include <arch/common/printers.h>
-#include <arch/this/inputdevices.h>
-#include <arch/this/usb.h>
-#include <arch/this/storage.h>
-#include <arch/this/battery.h>
-#include <arch/this/sensors.h>
-#include <arch/this/devmemory.h>
-#include <arch/this/resources.h>
-
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
-#include <arch/this/dmi.h>
-#endif	/* x86 or x86_64 */
 
 gchar *get_processor_name(void)
 {
@@ -265,42 +225,42 @@ void scan_processors(gboolean reload)
 {
     SCAN_START();
     if (!processors)
-	processors = __scan_processors();
+	processors = processor_scan();
     SCAN_END();
 }
 
 void scan_memory(gboolean reload)
 {
     SCAN_START();
-    __scan_memory();
+    scan_memory_do();
     SCAN_END();
 }
 
 void scan_battery(gboolean reload)
 {
     SCAN_START();
-    __scan_battery();
+    scan_battery_do();
     SCAN_END();
 }
 
 void scan_pci(gboolean reload)
 {
     SCAN_START();
-    __scan_pci();
+    scan_pci_do();
     SCAN_END();
 }
 
 void scan_sensors(gboolean reload)
 {
     SCAN_START();
-    __scan_sensors();
+    scan_sensors_do();
     SCAN_END();
 }
 
 void scan_printers(gboolean reload)
 {
     SCAN_START();
-    __scan_printers();
+    scan_printers_do();
     SCAN_END();
 }
 
@@ -449,8 +409,8 @@ void hi_module_init(void)
 #endif	/* defined(ARCH_i386) || defined(ARCH_x86_64) */
 
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-    __init_memory_labels();
-    __init_cups();
+    init_memory_labels();
+    init_cups();
 }
 
 void hi_module_deinit(void)
@@ -476,7 +436,7 @@ ModuleAbout *hi_module_get_about(void)
 
 gchar **hi_module_get_dependencies(void)
 {
-    static gchar *deps[] = { "computer.so", NULL };
+    static gchar *deps[] = { "libcomputer.so", NULL };
 
     return deps;
 }

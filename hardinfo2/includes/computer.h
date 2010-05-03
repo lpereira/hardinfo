@@ -18,6 +18,8 @@
 #ifndef __COMPUTER_H__
 #define __COMPUTER_H__
 
+#include "hardinfo.h"
+
 #define DB_PREFIX "/etc/"
 
 static struct {
@@ -158,5 +160,27 @@ struct _MemoryInfo {
     g_strfreev(tmp);                          \
     continue;                                 \
   }
+
+extern gchar *users;
+extern gchar *fs_list;
+extern GHashTable *_module_hash_table;
+extern Computer *computer;
+extern GHashTable *moreinfo;
+extern gchar *module_list;
+
+gchar *computer_get_formatted_loadavg();
+gchar *computer_get_formatted_uptime();
+gchar *computer_get_alsacards(Computer * computer);
+
+OperatingSystem *computer_get_os(void);
+AlsaInfo *computer_get_alsainfo(void);
+LoadInfo *computer_get_loadinfo(void);
+MemoryInfo *computer_get_memory(void);
+UptimeInfo *computer_get_uptime(void);
+DisplayInfo *computer_get_display(void);
+
+void scan_modules_do(void);
+void scan_filesystems(void);
+void scan_users_do(void);
 
 #endif				/* __COMPUTER_H__ */

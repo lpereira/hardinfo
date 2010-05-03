@@ -28,16 +28,7 @@
 #include <sys/types.h>
 #include <signal.h>
 
-enum {
-    BENCHMARK_BLOWFISH,
-    BENCHMARK_CRYPTOHASH,
-    BENCHMARK_FIB,
-    BENCHMARK_NQUEENS,
-    BENCHMARK_FFT,
-    BENCHMARK_RAYTRACE,
-    BENCHMARK_GUI,
-    BENCHMARK_N_ENTRIES
-} Entries;
+#include "benchmark.h"
 
 void scan_fft(gboolean reload);
 void scan_raytr(gboolean reload);
@@ -271,7 +262,7 @@ static gchar *benchmark_include_results(gdouble result,
 				       SHELL_ORDER_ASCENDING);
 }
 
-static gdouble bench_results[BENCHMARK_N_ENTRIES];
+gdouble bench_results[BENCHMARK_N_ENTRIES];
 
 #include <arch/common/fib.h>
 #include <arch/common/cryptohash.h>
@@ -359,7 +350,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
     
     if (params.gui_running && !sending_benchmark_results) {
        gchar *argv[] = { params.argv0, "-b", entries[entry].name,
-                         "-m", "benchmark.so", "-a", NULL };
+                         "-m", "libbenchmark.so", "-a", NULL };
        GPid bench_pid;
        gint bench_stdout;
        GtkWidget *bench_dialog;
@@ -410,6 +401,8 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
                                     NULL)) {
           GIOChannel *channel;
           guint watch_id;
+
+          DEBUG("spawning benchmark; pid=%d", bench_pid);
 
           channel = g_io_channel_unix_new(bench_stdout);
           watch_id = g_io_add_watch(channel, G_IO_IN, do_benchmark_handler,
@@ -654,7 +647,7 @@ void hi_module_init(void)
 
 gchar **hi_module_get_dependencies(void)
 {
-    static gchar *deps[] = { "devices.so", NULL };
+    static gchar *deps[] = { "libdevices.so", NULL };
 
     return deps;
 }

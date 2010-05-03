@@ -35,7 +35,9 @@
 
 #include <vendor.h>
 
-static GHashTable *moreinfo = NULL;
+#include "network.h"
+
+GHashTable *moreinfo = NULL;
 
 /* Callbacks */
 gchar *callback_network();
@@ -65,10 +67,6 @@ static ModuleEntry entries[] = {
     {"Shared Directories", "shares.png", callback_shares, scan_shares, MODULE_FLAG_NONE},
     {NULL},
 };
-
-#include <arch/this/samba.h>
-#include <arch/this/nfs.h>
-#include <arch/this/net.h>
 
 void scan_shares(gboolean reload)
 {

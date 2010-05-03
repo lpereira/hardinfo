@@ -20,7 +20,9 @@
 #define __HARDINFO_H__
 
 #include <gtk/gtk.h>
-#include <shell.h>
+#include "config.h"
+#include "shell.h"
+#include "vendor.h"
 
 typedef enum {
   MODULE_FLAG_NONE = 0,

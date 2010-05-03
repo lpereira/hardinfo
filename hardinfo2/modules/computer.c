@@ -22,7 +22,6 @@
 #include <config.h>
 #include <time.h>
 #include <string.h>
-#include <sys/utsname.h>
 #include <sys/stat.h>
 
 #include <hardinfo.h>
@@ -30,6 +29,8 @@
 #include <shell.h>
 
 #include <vendor.h>
+
+#include "computer.h"
 
 /* Callbacks */
 gchar *callback_summary();
@@ -77,24 +78,10 @@ static ModuleEntry entries[] = {
     {NULL},
 };
 
-#include "computer.h"
 
-static GHashTable *moreinfo = NULL;
-static gchar *module_list = NULL;
-static Computer *computer = NULL;
-
-#include <arch/this/modules.h>
-#include <arch/common/languages.h>
-#include <arch/this/alsa.h>
-#include <arch/common/display.h>
-#include <arch/this/loadavg.h>
-#include <arch/this/memory.h>
-#include <arch/this/uptime.h>
-#include <arch/this/os.h>
-#include <arch/this/filesystem.h>
-#include <arch/common/users.h>
-#include <arch/this/boots.h>
-#include <arch/common/environment.h>
+GHashTable *moreinfo = NULL;
+gchar *module_list = NULL;
+Computer *computer = NULL;
 
 gchar *hi_more_info(gchar * entry)
 {
@@ -606,7 +593,7 @@ guchar hi_module_get_weight(void)
 
 gchar **hi_module_get_dependencies(void)
 {
-    static gchar *deps[] = { "devices.so", NULL };
+    static gchar *deps[] = { "libdevices.so", NULL };
 
     return deps;
 }

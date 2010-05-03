@@ -1,7 +1,5 @@
-hardinfo
 Makefile
 config.h
-modules/*
 *.so
 *.o
 *~
