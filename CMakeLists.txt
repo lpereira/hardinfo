@@ -1,6 +1,12 @@
 project(HardInfo)
 cmake_minimum_required(VERSION 2.6)
 
+set(HARDINFO_VERSION "0.5.2pre")
+
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+	set(HARDINFO_DEBUG 1)
+endif()
+
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
 	set(HARDINFO_OS "linux")
 else()
@@ -43,6 +49,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/includes
 	${CMAKE_SOURCE_DIR}/includes/${HARDINFO_ARCH}
+	${CMAKE_BINARY_DIR}
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
 )
@@ -116,18 +123,18 @@ foreach (_module ${HARDINFO_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
 endforeach()
 
-add_library(hardinfo-remote SHARED
+add_library(hardinfo-remote STATIC
         remote/remote.c
         remote/ssh-conn.c
         remote/xmlrpc-client.c
         remote/xmlrpc-server.c
 )
-add_library(hardinfo-help-viewer SHARED
+add_library(hardinfo-help-viewer STATIC
         help-viewer/egg-markdown.c
         help-viewer/help-viewer.c
         help-viewer/markdown-text-view.c
 )
-add_library(hardinfo-shell SHARED
+add_library(hardinfo-shell STATIC
         shell/callbacks.c
         shell/iconcache.c
         shell/loadgraph.c
@@ -137,34 +144,29 @@ add_library(hardinfo-shell SHARED
         shell/stock.c
 	shell/syncmanager.c
 )
-add_library(hardinfo-util SHARED
+add_executable(hardinfo
 	util/binreloc.c
 	util/expr.c
 	util/socket.c
 	util/vendor.c
 	util/util.c
-)
-add_executable(hardinfo
         hardinfo/hardinfo.c
 )
 target_link_libraries(hardinfo 
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
 	hardinfo-shell
-	hardinfo-util
 )
 target_link_libraries(hardinfo-shell
 	hardinfo-help-viewer
 	hardinfo-remote
 )
 
+configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
+
 install(TARGETS hardinfo ${HARDINFO_MODULES}
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib/hardinfo/modules
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
-install(TARGETS hardinfo-shell hardinfo-util hardinfo-help-viewer hardinfo-remote
-	LIBRARY DESTINATION lib
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
 install(FILES ${HARDINFO_RESOURCES}
