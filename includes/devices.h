@@ -4,6 +4,8 @@
 #include "hardinfo.h"
 #include "processor-platform.h"
 
+typedef struct _Processor Processor;
+
 #define WALK_UNTIL(x)   while((*buf != '\0') && (*buf != x)) buf++
 
 #define GET_STR(field_name,ptr)      					\
@@ -31,7 +33,6 @@
     g_strfreev(tmp);                          \
     continue;                                 \
   }
-
 
 
 /* Processor */

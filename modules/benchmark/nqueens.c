@@ -6,6 +6,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "hardinfo.h"
+#include "benchmark.h"
+
 #define QUEENS 11
 
 int row[QUEENS];
@@ -35,3 +38,29 @@ int nqueens(int y)
     
     return 0;
 }
+
+static gpointer nqueens_for(unsigned int start, unsigned int end, void *data, gint thread_number)
+{
+    unsigned int i;
+    
+    for (i = start; i <= end; i++) { 
+        nqueens(0);
+    }
+    
+    return NULL;
+}
+
+void
+benchmark_nqueens(void)
+{
+    gdouble elapsed = 0;
+    
+    shell_view_set_enabled(FALSE);
+    shell_status_update("Running N-Queens benchmark...");
+        
+    elapsed = benchmark_parallel_for(0, 10, nqueens_for, NULL);
+    
+    bench_results[BENCHMARK_NQUEENS] = elapsed;
+}
+
+

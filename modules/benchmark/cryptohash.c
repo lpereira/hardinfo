@@ -55,7 +55,7 @@ static gpointer cryptohash_for(unsigned int start, unsigned int end, void *data,
     return NULL;
 }
 
-static void
+void
 benchmark_cryptohash(void)
 {
     gdouble elapsed = 0;

@@ -111,6 +111,7 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/drawing.c
 	modules/benchmark/fbench.c
 	modules/benchmark/fftbench.c
+	modules/benchmark/fft.c
 	modules/benchmark/fib.c
 	modules/benchmark/guibench.c
 	modules/benchmark/md5.c
@@ -145,12 +146,12 @@ add_library(hardinfo-shell STATIC
 	shell/syncmanager.c
 )
 add_executable(hardinfo
-	util/binreloc.c
-	util/expr.c
-	util/socket.c
-	util/vendor.c
-	util/util.c
+	hardinfo/binreloc.c
+	hardinfo/expr.c
         hardinfo/hardinfo.c
+	hardinfo/socket.c
+	hardinfo/util.c
+	hardinfo/vendor.c
 )
 target_link_libraries(hardinfo 
 	${GTK_LIBRARIES}

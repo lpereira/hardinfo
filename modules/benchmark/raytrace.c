@@ -32,7 +32,7 @@ parallel_raytrace(unsigned int start, unsigned int end, gpointer data, gint thre
     return NULL;
 }
 
-static void
+void
 benchmark_raytrace(void)
 {
     gdouble elapsed = 0;

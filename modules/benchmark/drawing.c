@@ -19,7 +19,7 @@
 #include "benchmark.h"
 #include "guibench.h"
 
-static void
+void
 benchmark_gui(void)
 {
     shell_view_set_enabled(FALSE);

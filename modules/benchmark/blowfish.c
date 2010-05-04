@@ -55,6 +55,8 @@ have time to provide unpaid support for everyone who uses this code.
                                              -- Paul Kocher
 */  
     
+#include "hardinfo.h"
+#include "benchmark.h"
 #include "blowfish.h"
     
 #define N               16
@@ -490,4 +492,46 @@ void Blowfish_Init(BLOWFISH_CTX * ctx, unsigned char *key, int keyLen)
     }
 }
 
+static gpointer
+parallel_blowfish(unsigned int start, unsigned int end, void *data, gint thread_number)
+{
+    BLOWFISH_CTX ctx;
+    unsigned int i;
+    unsigned long L, R;
 
+    L = 0xBEBACAFE;
+    R = 0xDEADBEEF;
+
+    for (i = start; i <= end; i++) { 
+        Blowfish_Init(&ctx, (unsigned char*)data, 65536);
+        Blowfish_Encrypt(&ctx, &L, &R);
+        Blowfish_Decrypt(&ctx, &L, &R);
+    }
+
+    return NULL;
+}
+
+void
+benchmark_fish(void)
+{
+    gdouble elapsed = 0;
+    gchar *tmpsrc;
+
+    gchar *bdata_path;
+
+    bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
+    if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
+        g_free(bdata_path);
+        return;
+    }
+
+    shell_view_set_enabled(FALSE);
+    shell_status_update("Performing Blowfish benchmark...");
+
+    elapsed = benchmark_parallel_for(0, 50000, parallel_blowfish, tmpsrc);
+
+    g_free(bdata_path);
+    g_free(tmpsrc);
+
+    bench_results[BENCHMARK_BLOWFISH] = elapsed;
+}

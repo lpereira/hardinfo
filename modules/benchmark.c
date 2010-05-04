@@ -264,14 +264,6 @@ static gchar *benchmark_include_results(gdouble result,
 
 gdouble bench_results[BENCHMARK_N_ENTRIES];
 
-#include <arch/common/fib.h>
-#include <arch/common/cryptohash.h>
-#include <arch/common/blowfish.h>
-#include <arch/common/raytrace.h>
-#include <arch/common/nqueens.h>
-#include <arch/common/fft.h>
-#include <arch/common/drawing.h>
-
 gchar *callback_gui()
 {
     return benchmark_include_results_reverse(bench_results[BENCHMARK_GUI],

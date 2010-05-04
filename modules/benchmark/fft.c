@@ -16,7 +16,9 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include <fftbench.h>
+#include "hardinfo.h"
+#include "benchmark.h"
+#include "fftbench.h"
 
 static gpointer fft_for(unsigned int start, unsigned int end, void *data, gint thread_number)
 {
@@ -31,7 +33,7 @@ static gpointer fft_for(unsigned int start, unsigned int end, void *data, gint t
     return NULL;
 }
 
-static void
+void
 benchmark_fft(void)
 {
     gdouble elapsed = 0;

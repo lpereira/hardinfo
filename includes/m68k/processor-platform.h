@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@hardinfo.org>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -16,35 +16,14 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include "benchmark.h"
+#ifndef __PROCESSOR_PLATFORM_H__
+#define __PROCESSOR_PLATFORM_H__
 
-static gulong
-fib(gulong n)
-{
-    if (n == 0)
-        return 0;
-    else if (n <= 2)
-        return 1;
-    return fib(n - 1) + fib(n - 2);
-}
+struct _Processor {
+    gchar *model_name;
+    gfloat bogomips, cpu_mhz;
 
-void
-benchmark_fib(void)
-{
-    GTimer *timer = g_timer_new();
-    gdouble elapsed;
-    
-    shell_view_set_enabled(FALSE);
-    shell_status_update("Calculating the 42nd Fibonacci number...");
-    
-    g_timer_reset(timer);
-    g_timer_start(timer);
+    gchar *has_fpu;
+};
 
-    fib(42);
-    
-    g_timer_stop(timer);
-    elapsed = g_timer_elapsed(timer, NULL);
-    g_timer_destroy(timer);
-    
-    bench_results[BENCHMARK_FIB] = elapsed;
-}
+#endif	/* __PROCESSOR_PLATFORM_H__ */
