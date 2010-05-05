@@ -42,7 +42,7 @@ endif()
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
 
 include(FindPkgConfig)
-pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10)
+pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
 pkg_check_modules(LIBSOUP libsoup-2.4>=2.26)
 
 include_directories(
