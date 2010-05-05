@@ -32,20 +32,20 @@ get_libc_version(void)
     } else if (!g_file_test("/lib/libc.so.6", G_FILE_TEST_EXISTS)) {
       goto err;
     }
-   
+
     libc = popen("/lib/libc.so.6", "r");
     if (!libc) goto err;
-    
+
     (void)fgets(buf, 256, libc);
     if (pclose(libc)) goto err;
-    
+
     tmp = strstr(buf, "version ");
     if (!tmp) goto err;
-    
+
     p = strchr(tmp, ',');
     if (p) *p = '\0';
     else goto err;
-    
+
     return g_strdup_printf("GNU C Library version %s (%sstable)",
                            strchr(tmp, ' ') + 1,
                            strstr(buf, " stable ") ? "" : "un");
@@ -104,12 +104,12 @@ detect_desktop_environment(OperatingSystem * os)
 	    os->desktop = g_strdup("Terminal");
 	} else {
             GdkScreen *screen = gdk_screen_get_default();
-            
+
             if (screen && GDK_IS_SCREEN(screen)) {
               const gchar *windowman;
 
               windowman = gdk_x11_screen_get_window_manager_name(screen);
-              
+
               if (g_str_equal(windowman, "Xfwm4")) {
                   /* FIXME: check if xprop -root | grep XFCE_DESKTOP_WINDOW
                      is defined */
@@ -148,56 +148,57 @@ computer_get_os(void)
             os->distro = buffer;
             os->distro = g_strdup(os->distro + strlen("Description:\t"));
         }
-    }
-
-    for (i = 0;; i++) {
-	if (distro_db[i].file == NULL) {
-	    os->distrocode = g_strdup("unk");
-	    os->distro = g_strdup("Unknown distribution");
-	    break;
-	}
-
-	if (g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS)) {
-	    FILE *distro_ver;
-	    char buf[128];
-
-	    distro_ver = fopen(distro_db[i].file, "r");
-	    if (distro_ver) {
-                (void)fgets(buf, 128, distro_ver);
-                fclose(distro_ver);
-            } else {
-                continue;
+    } else if (g_file_test("/etc/arch-release", G_FILE_TEST_EXISTS)) {
+        os->distrocode = g_strdup("arch");
+        os->distro = g_strdup("Arch Linux");
+    } else {
+        for (i = 0;; i++) {
+            if (distro_db[i].file == NULL) {
+                os->distrocode = g_strdup("unk");
+                os->distro = g_strdup("Unknown distribution");
+                break;
             }
 
-	    buf[strlen(buf) - 1] = 0;
+            if (g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS)) {
+                FILE *distro_ver;
+                char buf[128];
 
-	    if (!os->distro) {
-		/*
-		 * HACK: Some Debian systems doesn't include
-		 * the distribuition name in /etc/debian_release,
-		 * so add them here. 
-		 */
-		if (!strncmp(distro_db[i].codename, "deb", 3) &&
-		    ((buf[0] >= '0' && buf[0] <= '9') || buf[0] != 'D')) {
-		    os->distro = g_strdup_printf
-			("Debian GNU/Linux %s", buf);
-		} else {
-		    os->distro = g_strdup(buf);
-		}
-	    }
-	    
-	    if (g_str_equal(distro_db[i].codename, "ppy")) {
-	      gchar *tmp;
-	      
-	      tmp = g_strdup_printf("Puppy Linux %.2f", atof(os->distro) / 100.0);
-	      g_free(os->distro);
-	      os->distro = tmp;
-	    }
-	    
-	    os->distrocode = g_strdup(distro_db[i].codename);
+                distro_ver = fopen(distro_db[i].file, "r");
+                if (distro_ver) {
+                    (void)fgets(buf, 128, distro_ver);
+                    fclose(distro_ver);
+                } else {
+                    continue;
+                }
 
-	    break;
-	}
+                buf[strlen(buf) - 1] = 0;
+
+                if (!os->distro) {
+                    /*
+                     * HACK: Some Debian systems doesn't include
+                     * the distribuition name in /etc/debian_release,
+                     * so add them here.
+                     */
+                    if (!strncmp(distro_db[i].codename, "deb", 3) &&
+                        ((buf[0] >= '0' && buf[0] <= '9') || buf[0] != 'D')) {
+                        os->distro = g_strdup_printf
+                            ("Debian GNU/Linux %s", buf);
+                    } else {
+                        os->distro = g_strdup(buf);
+                    }
+                }
+
+                if (g_str_equal(distro_db[i].codename, "ppy")) {
+                  gchar *tmp;
+                    tmp = g_strdup_printf("Puppy Linux %.2f", atof(os->distro) / 100.0);
+                  g_free(os->distro);
+                  os->distro = tmp;
+                }
+                os->distrocode = g_strdup(distro_db[i].codename);
+
+                break;
+            }
+        }
     }
 
     os->distro = g_strstrip(os->distro);
