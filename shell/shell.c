@@ -1930,6 +1930,11 @@ static ShellTree *tree_new()
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
 
+#if GTK_CHECK_VERSION(2,12,0)
+    gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(treeview), FALSE);
+    gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(treeview), 24);
+#endif
+
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
