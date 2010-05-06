@@ -7,7 +7,6 @@
 - Benchmark
 
     * New benchmarks
-          o Video
           o FPU+CPU
           o Disk
 	  o Phoronix?
@@ -25,7 +24,6 @@
 - i18n, build system
 
     * GNU gettext
-    * Better build system (no more symlink mess)
 
 - Misc
 
