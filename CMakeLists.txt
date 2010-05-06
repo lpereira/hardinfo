@@ -120,6 +120,15 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/sha1.c
 )
 
+set_source_files_properties(
+	modules/benchmark/blowfish.c
+	modules/benchmark/fftbench.c
+	modules/benchmark/md5.c
+	modules/benchmark/sha1.c
+	PROPERTIES
+	COMPILE_FLAGS "-O0"
+)
+
 foreach (_module ${HARDINFO_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
 endforeach()
