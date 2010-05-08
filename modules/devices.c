@@ -47,7 +47,7 @@ gchar *callback_printers();
 gchar *callback_storage();
 gchar *callback_input();
 gchar *callback_usb();
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
+#if defined(ARCH_x86)
 gchar *callback_dmi();
 #endif
 gchar *callback_device_resources();
@@ -61,7 +61,7 @@ void scan_printers(gboolean reload);
 void scan_storage(gboolean reload);
 void scan_input(gboolean reload);
 void scan_usb(gboolean reload);
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
+#if defined(ARCH_x86)
 void scan_dmi(gboolean reload);
 #endif
 void scan_device_resources(gboolean reload);
@@ -76,7 +76,7 @@ static ModuleEntry entries[] = {
     {"Sensors", "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
     {"Input Devices", "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
     {"Storage", "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
+#if defined(ARCH_x86)
     {"DMI", "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
     {"Resources", "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
@@ -212,7 +212,7 @@ gchar *hi_get_field(gchar * field)
     return g_strdup(field);
 }
 
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
+#if defined(ARCH_x86)
 void scan_dmi(gboolean reload)
 {
     SCAN_START();
@@ -294,7 +294,7 @@ gchar *callback_processors()
     return processor_get_info(processors);
 }
 
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
+#if defined(ARCH_x86)
 gchar *callback_dmi()
 {
     return g_strdup(dmi_info);
@@ -395,7 +395,7 @@ void hi_module_init(void)
         sync_manager_add_entry(&se);
     }
 
-#if defined(ARCH_i386) || defined(ARCH_x86_64)
+#if defined(ARCH_x86)
     {
       static SyncEntry se = {
         .fancy_name = "Update CPU feature database",
@@ -406,7 +406,7 @@ void hi_module_init(void)
       
       sync_manager_add_entry(&se);
     }
-#endif	/* defined(ARCH_i386) || defined(ARCH_x86_64) */
+#endif	/* defined(ARCH_x86) */
 
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     init_memory_labels();
