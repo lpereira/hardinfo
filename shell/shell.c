@@ -130,6 +130,7 @@ void shell_action_set_property(const gchar * action_name,
 
 void shell_action_set_label(const gchar * action_name, gchar * label)
 {
+#if GTK_CHECK_VERSION(2,16,0)
     if (params.gui_running && shell->action_group) {
 	GtkAction *action;
 
@@ -139,6 +140,7 @@ void shell_action_set_label(const gchar * action_name, gchar * label)
 	    gtk_action_set_label(action, label);
 	}
     }
+#endif
 }
 
 void shell_action_set_enabled(const gchar * action_name, gboolean setting)
