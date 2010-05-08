@@ -162,7 +162,7 @@ add_executable(hardinfo
 	hardinfo/util.c
 	hardinfo/vendor.c
 )
-target_link_libraries(hardinfo 
+target_link_libraries(hardinfo
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
 	hardinfo-shell
@@ -173,11 +173,16 @@ target_link_libraries(hardinfo-shell
 )
 
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
+configure_file(hardinfo.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo.desktop @ONLY)
 
 install(TARGETS hardinfo ${HARDINFO_MODULES}
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib/hardinfo/modules
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
+install(FILES ${CMAKE_BINARY_DIR}/hardinfo.desktop
+	DESTINATION share/applications
+	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
 install(FILES ${HARDINFO_RESOURCES}
 	DESTINATION share/hardinfo
