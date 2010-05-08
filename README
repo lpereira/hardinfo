@@ -1,0 +1,64 @@
+
+HardInfo is a system profiler and benchmark for Linux systems. It is able to
+obtain information from both hardware and basic software, and organize them
+in a simple to use GUI.
+
+Features include:
+- Report generation (in either HTML or plain text)
+- Benchmark result synchronization
+- Ability to explore the information on remote computers
+
+
+DEPENDENCIES
+------------
+
+Required:
+- GTK+ 2.10 (or newer)
+- GLib 2.10 (or newer)
+
+Optional (for synchronization/remote):
+- Libsoup 2.24 (or newer)
+
+BUILDING
+--------
+
+HardInfo previously used a hand-made Makefile and configure scripts, but it
+is now using CMake. This makes the job of maintaining HardInfo simpler and
+also produces better binaries.
+
+To build, it is recommended to create a build directory and build from
+there:
+
+	hardinfo $ mkdir build
+	hardinfo $ cd build
+	build $ cmake ..
+	build $ make
+
+There are some variables that can be changed:
+
+	CMAKE_BUILD_TYPE	Can be either Release or Debug
+	[Default: Release]	Debug builds prints messages to console
+				and are not recommended for general use
+	CMAKE_INSTALL_PREFIX	Sets the installation prefix.
+	[Default: /usr/local]
+
+To set a variable, pass use cmake's -D command-line parameter. For example:
+
+	build $ cmake .. -DCMAKE_BUILD_TYPE=Debug
+
+SETTING UP
+----------
+
+Most things in HardInfo are detected automatically. However, some things
+depends on manual set up. They are:
+
+Sensors
+-------
+
+lm-sensors: If your computer is compatible with lm-sensors module, use the
+"sensors-detect" program included with the lm-sensors package, and be sure
+to have the detected kernel modules loaded.
+
+hddtemp: To obtain the hard disk drive temperature, be sure to run hddtemp
+in daemon mode, using the default port.
+
