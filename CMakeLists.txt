@@ -95,6 +95,7 @@ set(MODULE_devices_SOURCES
 	modules/devices/printers.c
 	modules/devices/resources.c
 	modules/devices/sensors.c
+	modules/devices/spd-decode.c
 	modules/devices/storage.c
 	modules/devices/usb.c
 )

@@ -49,6 +49,7 @@ gchar *callback_input();
 gchar *callback_usb();
 #if defined(ARCH_x86)
 gchar *callback_dmi();
+gchar *callback_spd();
 #endif
 gchar *callback_device_resources();
 
@@ -63,6 +64,7 @@ void scan_input(gboolean reload);
 void scan_usb(gboolean reload);
 #if defined(ARCH_x86)
 void scan_dmi(gboolean reload);
+void scan_spd(gboolean reload);
 #endif
 void scan_device_resources(gboolean reload);
 
@@ -78,6 +80,7 @@ static ModuleEntry entries[] = {
     {"Storage", "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
 #if defined(ARCH_x86)
     {"DMI", "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
+    {"Memory SPD", "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
     {"Resources", "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     {NULL}
@@ -219,6 +222,13 @@ void scan_dmi(gboolean reload)
     __scan_dmi();
     SCAN_END();
 }
+
+void scan_spd(gboolean reload)
+{
+    SCAN_START();
+    scan_spd_do();
+    SCAN_END();
+}
 #endif
 
 void scan_processors(gboolean reload)
@@ -298,6 +308,11 @@ gchar *callback_processors()
 gchar *callback_dmi()
 {
     return g_strdup(dmi_info);
+}
+
+gchar *callback_spd()
+{
+    return g_strdup(spd_info);
 }
 #endif
 

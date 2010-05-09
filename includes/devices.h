@@ -62,8 +62,12 @@ void scan_printers_do(void);
 /* Sensors */
 void scan_sensors_do(void);
 
+#ifdef ARCH_x86
+/* SPD */
+void scan_spd_do(void);
+#endif /* ARCH_x86 */
+
 extern gchar *battery_list;
-extern gchar *dmi_info;
 extern gchar *input_icons;
 extern gchar *input_list;
 extern gchar *lginterval;
@@ -83,6 +87,9 @@ extern GHashTable *sensor_compute;
 extern GHashTable *sensor_labels;
 extern GModule *cups;
 
-
+#ifdef ARCH_x86
+extern gchar *dmi_info;
+extern gchar *spd_info;
+#endif
 
 #endif /* __DEVICES_H__ */
