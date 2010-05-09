@@ -957,30 +957,6 @@ static void decode_ddr_module_size(unsigned char *bytes, int *size)
     }
 }
 
-static void decode_ddr_module_height(unsigned char *bytes, char **height)
-{
-    char *temp;
-
-    if (bytes[47] & 0x03) {
-	switch (bytes[47] & 0x03) {
-	case 0x01:
-	    temp = "1.125\" to 1.25\"";
-	    break;
-	case 0x02:
-	    temp = "1.7\"";
-	    break;
-	default:
-	    temp = "Other";
-	}
-    } else {
-	temp = "Unknown";
-    }
-
-    if (height) {
-	*height = temp;
-    }
-}
-
 static void *decode_ddr_module_timings(unsigned char *bytes, float *tcl,
 				       float *trcd, float *trp,
 				       float *tras)
