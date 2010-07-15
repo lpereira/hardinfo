@@ -256,6 +256,7 @@ static struct {
     { "gre", "GRE Network Tunnel", "network" },
     { "msh", "Mesh Network", "wireless" },
     { "wmaster", "Wireless Master Interface", "wireless" },
+    { "vboxnet", "VirtualBox Virtual Network Interface", "network" },
     { NULL, "Unknown", "network" },
 };
 
