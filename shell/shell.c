@@ -494,10 +494,25 @@ static void view_menu_select_entry(gpointer data, gpointer data2)
     gtk_tree_path_free(path);
 }
 
+static void menu_item_set_icon_always_visible(Shell *shell,
+                                              gchar *parent_path,
+                                              gchar *item_id)
+{
+    GtkWidget *menuitem;
+    gchar *path;
+    
+    path = g_strdup_printf("%s/%s", parent_path, item_id);
+    menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
+    gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
+    g_free(path);
+}
+
 static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 {
     GtkAction *action;
+    GtkWidget *menuitem;
     gchar *about_module = g_strdup_printf("AboutModule%s", name);
+    gchar *path;
     gint merge_id;
 
     GtkActionEntry entries[] = {
@@ -537,7 +552,7 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 			  "/menubar/ViewMenu/LastSep",
 			  name, name, GTK_UI_MANAGER_MENU, TRUE);
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
-        
+    
     merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
@@ -545,6 +560,8 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 			  about_module, about_module, GTK_UI_MANAGER_AUTO,
 			  TRUE);
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
+
+    menu_item_set_icon_always_visible(shell, "/menubar/ViewMenu", name);
 }
 
 static GSList *remote_merge_ids = NULL;
@@ -552,6 +569,8 @@ static void
 add_host_to_view_menu(gchar *hostname)
 {
     GtkAction *action;
+    GtkWidget *menuitem;
+    gchar *path;
     gint merge_id;
     GtkActionEntry entry = {
        hostname,			/* name */
@@ -574,6 +593,8 @@ add_host_to_view_menu(gchar *hostname)
                           "/menubar/RemoteMenu/LocalComputer",
 			  hostname, hostname, GTK_UI_MANAGER_AUTO, FALSE);
     remote_merge_ids = g_slist_prepend(remote_merge_ids, GINT_TO_POINTER(merge_id));
+    
+    menu_item_set_icon_always_visible(shell, "/menubar/RemoteMenu", hostname);
 }
 
 void shell_update_remote_menu(void)
@@ -594,6 +615,8 @@ void shell_update_remote_menu(void)
         add_host_to_view_menu(g_strdup(hosts[i]));
     }
     
+    menu_item_set_icon_always_visible(shell, "/menubar/RemoteMenu", "LocalComputer");
+
     g_strfreev(hosts);
 }
 
@@ -602,6 +625,7 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
 			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
 {
     GtkAction *action;
+    GtkWidget *menuitem;
     gint merge_id;
     gchar *path;
     GtkActionEntry entry = {
@@ -628,6 +652,9 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
                           path,
 			  name, name, GTK_UI_MANAGER_AUTO, FALSE);
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
+
+    menu_item_set_icon_always_visible(shell, path, name);
+    
     g_free(path);
 }
 
