@@ -430,7 +430,6 @@ void hi_module_init(void)
 
 void hi_module_deinit(void)
 {
-    h_hash_table_remove_all(moreinfo);
     g_hash_table_destroy(moreinfo);
     g_hash_table_destroy(memlabels);
     g_module_close(cups);

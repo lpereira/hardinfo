@@ -414,7 +414,6 @@ void hi_module_init(void)
 
 void hi_module_deinit(void)
 {
-    h_hash_table_remove_all(moreinfo);
     g_hash_table_destroy(moreinfo);
     
     g_free(smb_shares_list);
