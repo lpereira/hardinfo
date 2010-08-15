@@ -36,10 +36,10 @@ __scan_scsi_devices(void)
     FILE *proc_scsi;
     gchar buffer[256], *buf;
     gint n = 0;
-    gint scsi_controller;
-    gint scsi_channel;
-    gint scsi_id;
-    gint scsi_lun;
+    gint scsi_controller = 0;
+    gint scsi_channel = 0;
+    gint scsi_id = 0 ;
+    gint scsi_lun = 0;
     gchar *vendor = NULL, *revision = NULL, *model = NULL;
     gchar *scsi_storage_list;
 
@@ -96,7 +96,7 @@ __scan_scsi_devices(void)
                     };
                     int i;
                     
-                    if (strstr(model, "Flash Disk")) {
+                    if (model && strstr(model, "Flash Disk")) {
                       type = "Flash Disk";
                       icon = "usbfldisk";
                     } else {
@@ -146,6 +146,8 @@ __scan_scsi_devices(void)
                 g_free(model);
                 g_free(revision);
                 g_free(vendor);
+
+                scsi_controller = scsi_channel = scsi_id = scsi_lun = 0;
             }
         }
         fclose(proc_scsi);

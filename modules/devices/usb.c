@@ -138,7 +138,7 @@ gboolean __scan_usb_procfs(void)
     FILE *dev;
     gchar buffer[128];
     gchar *tmp, *manuf = NULL, *product = NULL, *mxpwr;
-    gint bus, level, port, classid, trash;
+    gint bus, level, port = 0, classid = 0, trash;
     gint vendor, prodid;
     gfloat ver, rev, speed;
     int n = 0;
@@ -183,7 +183,7 @@ gboolean __scan_usb_procfs(void)
 
 	    tmp = g_strdup_printf("USB%d", ++n);
 
-	    if (*product == '\0') {
+	    if (product && *product == '\0') {
 		g_free(product);
 		if (classid == 9) {
 		    product = g_strdup_printf("USB %.2f Hub", ver);
@@ -194,7 +194,6 @@ gboolean __scan_usb_procfs(void)
 			 classid);
 		}
 	    }
-
 
 	    if (classid == 9) {	/* hub */
 		usb_list = h_strdup_cprintf("[%s#%d]\n",
@@ -241,6 +240,7 @@ gboolean __scan_usb_procfs(void)
 	    g_free(product);
 	    manuf = g_strdup("");
 	    product = g_strdup("");
+	    port = classid = 0;
 	}
     }
 
@@ -252,7 +252,7 @@ gboolean __scan_usb_procfs(void)
 void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_number)
 {
     gint bus, device, vendor_id, product_id;
-    gchar *product, *vendor, *max_power, *tmp, *strhash;
+    gchar *product = NULL, *vendor = NULL, *max_power, *tmp, *strhash;
     
     sscanf(buffer, "Bus %d Device %d: ID %x:%x",
            &bus, &device, &vendor_id, &product_id);
@@ -271,7 +271,7 @@ void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_numbe
     }
 
     tmp = g_strdup_printf("USB%d", usb_device_number);
-    usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, product);
+    usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, product ? product : "Unknown");
 
     strhash = g_strdup_printf("[Device Information]\n"
 			      "Product=%s\n"
@@ -284,7 +284,7 @@ void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_numbe
 			      "Product ID=0x%x\n"
 			      "Bus=%d\n",
 			      product,
-			      vendor,
+			      vendor ? vendor : "Unknown",
 			      max_power,
 			      0.0f /* FIXME */,
 			      0 /* FIXME */,

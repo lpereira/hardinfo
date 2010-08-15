@@ -46,7 +46,7 @@ __scan_input_devices(void)
     FILE *dev;
     gchar buffer[128];
     gchar *tmp, *name = NULL, *phys = NULL;
-    gint bus, vendor, product, version;
+    gint bus = 0, vendor, product, version;
     int d = 0, n = 0;
 
     dev = fopen("/proc/bus/input/devices", "r");
@@ -87,7 +87,7 @@ __scan_input_devices(void)
 		d = 4;		//INPUT_UNKNOWN;
 	    break;
 	case '\n':
-	    if (strstr(name, "PC Speaker")) {
+	    if (name && strstr(name, "PC Speaker")) {
 	      d = 3;		// INPUT_PCSPKR
 	    }
 	
@@ -123,12 +123,12 @@ __scan_input_devices(void)
 				      "Version=0x%x\n",
 				      strhash, product, version);
 	    
-            if (phys[1] != 0) {
+            if (phys && phys[1] != 0) {
                  strhash = h_strdup_cprintf("Connected to=%s\n",
                                             strhash, phys);
             }
 
-	    if (strstr(phys,"ir")) {
+	    if (phys && strstr(phys, "ir")) {
 		 strhash = h_strdup_cprintf("InfraRed port=yes\n",
 				 	     strhash);
 	    }

@@ -71,7 +71,7 @@ gpointer benchmark_parallel_for_dispatcher(gpointer data)
 {
     ParallelBenchTask 	*pbt = (ParallelBenchTask *)data;
     gpointer 		(*callback)(unsigned int start, unsigned int end, void *data, gint thread_number);
-    gpointer		return_value;
+    gpointer		return_value = NULL;
 
     if ((callback = pbt->callback)) {
         DEBUG("this is thread %p; items %d -> %d, data %p", g_thread_self(),
@@ -101,7 +101,7 @@ gdouble benchmark_parallel_for(guint start, guint end,
     n_cores = temp ? atoi(temp) : 1;
     g_free(temp);
 
-    while (1) {
+    while (n_cores > 0) {
         iter_per_core = (end - start) / n_cores;
 
         if (iter_per_core == 0) {

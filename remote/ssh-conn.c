@@ -149,7 +149,7 @@ SSHConnResponse ssh_new(SoupURI * uri,
     char **argv, *askpass_path = NULL;
     GString *cmd_line;
     SSHConnResponse response;
-    SSHConn *connection;
+    SSHConn *connection = NULL;
     gchar buffer[512];
 
     if (!conn_return) {
@@ -282,7 +282,7 @@ SSHConnResponse ssh_new(SoupURI * uri,
     }
 
     if (response != SSH_CONN_OK) {
-        if (connection->uri) {
+        if (connection && connection->uri) {
             soup_uri_free(connection->uri);
         }
         

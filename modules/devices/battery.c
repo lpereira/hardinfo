@@ -174,7 +174,10 @@ __scan_battery_acpi(void)
 	 }
           
           if (g_str_equal(present, "yes")) {
-            charge_rate = atof(remaining) / atof(capacity);
+            if (remaining && capacity)
+               charge_rate = atof(remaining) / atof(capacity);
+            else
+               charge_rate = 0;
 
             battery_list = h_strdup_cprintf("\n[Battery: %s]\n"
                                            "State=%s (load: %s)\n"

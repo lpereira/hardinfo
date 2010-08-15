@@ -239,7 +239,7 @@ GSList *processor_scan(void)
 	    __cache_obtain_info(processor, processor_number++);
 	}
 
-	if (tmp[0] && tmp[1]) {
+	if (processor && tmp[0] && tmp[1]) {
 	    tmp[0] = g_strstrip(tmp[0]);
 	    tmp[1] = g_strstrip(tmp[1]);
 

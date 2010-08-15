@@ -121,21 +121,21 @@ void get_wireless_info(int fd, NetInfo *netinfo)
   wi_req.u.essid.length  = IW_ESSID_MAX_SIZE + 1;
   wi_req.u.essid.flags   = 0;
   
-  if ((r = ioctl(fd, SIOCGIWESSID, &wi_req) < 0)) {
+  if (ioctl(fd, SIOCGIWESSID, &wi_req) < 0) {
     strcpy(netinfo->wi_essid, "");
   } else {
     netinfo->wi_essid[wi_req.u.essid.length] = '\0';
   }
 
   /* obtain bit rate */
-  if ((r = ioctl(fd, SIOCGIWRATE, &wi_req) < 0)) {
+  if (ioctl(fd, SIOCGIWRATE, &wi_req) < 0) {
     netinfo->wi_rate = 0;
   } else {
     netinfo->wi_rate = wi_req.u.bitrate.value;
   }
   
   /* obtain operation mode */
-  if ((r = ioctl(fd, SIOCGIWMODE, &wi_req) < 0)) {
+  if (ioctl(fd, SIOCGIWMODE, &wi_req) < 0) {
     netinfo->wi_mode = 0;
   } else {
     if (wi_req.u.mode >= 0 && wi_req.u.mode < 6) {
@@ -147,7 +147,7 @@ void get_wireless_info(int fd, NetInfo *netinfo)
   
 #if WIRELESS_EXT >= 10
   /* obtain txpower */
-  if ((r = ioctl(fd, SIOCGIWTXPOW, &wi_req) < 0)) {
+  if (ioctl(fd, SIOCGIWTXPOW, &wi_req) < 0) {
     netinfo->wi_has_txpower = FALSE;
   } else {
     netinfo->wi_has_txpower = TRUE;

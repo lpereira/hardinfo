@@ -898,7 +898,7 @@ static HostDialog *host_dialog_new(GtkWidget * parent,
 
     if (mode == HOST_DIALOG_MODE_EDIT) {
 	btn_save = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-    } else if (mode == HOST_DIALOG_MODE_CONNECT) {
+    } else {
 	btn_save = gtk_button_new_from_stock(GTK_STOCK_CONNECT);
     }
 

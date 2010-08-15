@@ -633,7 +633,7 @@ static int parity(int value)
 
 static void decode_sdr_module_size(unsigned char *bytes, int *size)
 {
-    int i, k;
+    int i, k = 0;
 
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
     if (bytes[5] <= 8 && bytes[17] <= 8) {
@@ -1154,7 +1154,7 @@ static void decode_module_manufacturer(unsigned char *bytes,
 
     do {
 	ai++;
-    } while ((--len && (first = *bytes++ == 0x7f)));
+    } while ((--len && (*bytes++ == 0x7f)));
     first = *--bytes;
 
     if (ai == 0) {
@@ -1288,6 +1288,7 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs)
             break;
         default:
             DEBUG("Unsupported EEPROM type: %s\n", ram_types[ram_type]);
+            continue;
         }
         
         read_spd(spd_path, 64, 64, use_sysfs, bytes);

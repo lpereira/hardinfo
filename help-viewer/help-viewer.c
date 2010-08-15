@@ -341,7 +341,6 @@ help_viewer_new (const gchar *help_dir, const gchar *help_file)
     GtkWidget *vbox;
     GtkWidget *hbox;
     GtkWidget *toolbar1;
-    GtkIconSize tmp_toolbar_icon_size;
     GtkWidget *btn_back;
     GtkWidget *btn_forward;
     GtkWidget *separatortoolitem1;
@@ -384,7 +383,6 @@ help_viewer_new (const gchar *help_dir, const gchar *help_file)
     gtk_widget_show (toolbar1);
     gtk_box_pack_start (GTK_BOX (hbox), toolbar1, TRUE, TRUE, 0);
     gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH_HORIZ);
-    tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar1));
 
     btn_back = (GtkWidget*) gtk_tool_button_new_from_stock ("gtk-go-back");
     gtk_widget_show (btn_back);
@@ -410,7 +408,6 @@ help_viewer_new (const gchar *help_dir, const gchar *help_file)
     gtk_box_pack_end (GTK_BOX (hbox), toolbar2, FALSE, TRUE, 0);
     gtk_toolbar_set_style (GTK_TOOLBAR (toolbar2), GTK_TOOLBAR_BOTH_HORIZ);
     gtk_toolbar_set_show_arrow (GTK_TOOLBAR (toolbar2), FALSE);
-    tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar2));
 
     toolitem3 = (GtkWidget*) gtk_tool_item_new ();
     gtk_widget_show (toolitem3);
