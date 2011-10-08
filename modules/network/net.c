@@ -88,8 +88,8 @@ void get_wireless_info(int fd, NetInfo *netinfo)
               
               buf1 = strchr(buf1, ':') + 1;
               
-              if (strstr(buf1, ".")) {
-                  sscanf(buf1, "%d %d. %d %d %d %d %d %d %d %d",
+              if (strchr(buf1, '.')) {
+                  sscanf(buf1, "%d %d. %d. %d %d %d %d %d %d %d",
                          &(netinfo->wi_status),
                          &(netinfo->wi_quality_level),
                          &(netinfo->wi_signal_level),
@@ -411,7 +411,7 @@ static void scan_net_interfaces_24(void)
                                           "Mode=%s\n"
                                           "Status=%d\n"
                                           "Link Quality=%d\n"
-                                          "Signal / Noise=%d / %d\n",
+                                          "Signal / Noise=%d dBm / %d dBm\n",
                                           detailed,
                                           ni.wi_essid,
                                           ni.wi_rate / 1000000,
