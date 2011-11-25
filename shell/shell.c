@@ -1016,6 +1016,8 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     /* turn off the save graphic action */
     shell_action_set_enabled("SaveGraphAction", FALSE);
 
+    close_note(NULL, NULL);
+
     switch (viewtype) {
     default:
     case SHELL_VIEW_NORMAL:
