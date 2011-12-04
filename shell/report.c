@@ -226,8 +226,7 @@ void report_table(ReportContext * ctx, gchar * text)
 
 static void report_html_header(ReportContext * ctx)
 {
-    if (ctx->output)
-	g_free(ctx->output);
+    g_free(ctx->output);
 
     ctx->output =
 	g_strdup_printf
@@ -318,8 +317,7 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 
 static void report_text_header(ReportContext * ctx)
 {
-    if (ctx->output)
-	g_free(ctx->output);
+    g_free(ctx->output);
 
     ctx->output = g_strdup("");
 }

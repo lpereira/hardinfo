@@ -290,8 +290,7 @@ set_cursor_if_appropriate(MarkdownTextView * self, gint x, gint y)
         }
     }
     
-    if (link_uri)
-        g_free(link_uri);
+    g_free(link_uri);
 
     if (tags)
 	g_slist_free(tags);

@@ -326,14 +326,12 @@ static gboolean _action_call_function(SyncDialog * sd, gpointer user_data)
 					       VERSION, ARCH,
 					       sna->entry->name,
 					       str_data, NULL)) {
-	    if (str_data)
-		g_free(str_data);
+	    g_free(str_data);
 
 	    return FALSE;
 	}
 
-	if (str_data)
-	    g_free(str_data);
+	g_free(str_data);
     }
 
     return sna->error ? FALSE : TRUE;

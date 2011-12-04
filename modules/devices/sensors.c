@@ -332,8 +332,7 @@ static void read_sensors_hddtemp(void)
 	    gchar **disks;
 	    int i;
 
-	    if (old)
-		g_free(old);
+	    g_free(old);
 
 	    old = g_strdup("[Hard Disk Temperature]\n");
 
@@ -369,8 +368,7 @@ static void read_sensors_hddtemp(void)
 
 void scan_sensors_do(void)
 {
-    if (sensors)
-	g_free(sensors);
+    g_free(sensors);
 
     sensors = g_strdup("");
 
