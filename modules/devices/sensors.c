@@ -161,7 +161,7 @@ static void read_sensors_hwmon(void)
     gchar *path_hwmon, *path_sensor, *tmp, *driver, *name, *mon;
     hwmon = 0;
 
-    path_hwmon = g_strdup_printf("/sys/class/hwmon/hwmon%d/device/", hwmon);
+    path_hwmon = g_strdup_printf("/sys/class/hwmon/hwmon%d/", hwmon);
     while (g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
 	tmp = g_strdup_printf("%sdriver", path_hwmon);
 	driver = g_file_read_link(tmp, NULL);
