@@ -99,7 +99,9 @@ void cb_act_as_server()
 
     accepting = shell_action_get_active("ActAsServerAction");
     if (accepting) {
-       server_loop = g_main_loop_new(NULL, FALSE);
+       if (!server_loop) {
+          server_loop = g_main_loop_new(NULL, FALSE);
+       }
        g_idle_add(server_start_helper, server_loop);
     } else {
        g_main_loop_quit(server_loop);
