@@ -60,8 +60,7 @@ __scan_battery_apcupsd(void)
     int		i;
 
     apcaccess_path = find_program("apcaccess");
-
-    if ((apcaccess = popen(apcaccess_path, "r"))) {
+    if (apcaccess_path && (apcaccess = popen(apcaccess_path, "r"))) {
       /* first line isn't important */
       if (fgets(buffer, 512, apcaccess)) {
         /* allocate the key, value hash table */
