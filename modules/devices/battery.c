@@ -208,7 +208,7 @@ __scan_battery_acpi(void)
 	  g_free(manufacturer);
 
           present = capacity = technology = type = \
-                model = serial = state = remaining = rate = NULL;
+                model = serial = state = remaining = rate = manufacturer = NULL;
         }
       
         g_dir_close(acpi);
