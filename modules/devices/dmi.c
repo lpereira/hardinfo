@@ -43,10 +43,17 @@ DMIInfo dmi_info_table[] = {
 
 gchar *dmi_info = NULL;
 
+static void add_to_moreinfo(const char *group, const char *key, char *value)
+{
+  char *new_key = g_strconcat("DMI:", group, ":", key, NULL);
+  g_hash_table_replace(moreinfo, new_key, g_strdup(g_strstrip(value)));
+}
+
 gboolean dmi_get_info_dmidecode()
 {
   FILE *dmi_pipe;
   gchar buffer[256];
+  const gchar *group;
   DMIInfo *info;
   gboolean dmi_failed = FALSE;
   gint i;
@@ -60,8 +67,8 @@ gboolean dmi_get_info_dmidecode()
     info = &dmi_info_table[i];
     
     if (*(info->name) == '$') {
-      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info,
-                                  (info->name) + 1);
+      group = info->name + 1;
+      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
     } else {
       gchar *temp;
       
@@ -77,6 +84,8 @@ gboolean dmi_get_info_dmidecode()
           dmi_failed = TRUE;
           break;
         }
+        
+        add_to_moreinfo(group, info->name, buffer);
 
         const gchar *url = vendor_get_url(buffer);
         if (url) {
@@ -121,6 +130,7 @@ gboolean dmi_get_info_sys()
 {
   FILE *dmi_file;
   gchar buffer[256];
+  const gchar *group;
   DMIInfo *info;
   gboolean dmi_failed = FALSE;
   gint i;
@@ -134,8 +144,8 @@ gboolean dmi_get_info_sys()
     info = &dmi_info_table[i];
     
     if (*(info->name) == '$') {
-      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info,
-                                  (info->name) + 1);
+      group = info->name + 1;
+      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
     } else {
       if (!info->file)
         continue;
@@ -143,6 +153,8 @@ gboolean dmi_get_info_sys()
       if ((dmi_file = fopen(info->file, "r"))) {
         (void)fgets(buffer, 256, dmi_file);
         fclose(dmi_file);
+
+        add_to_moreinfo(group, info->name, buffer);
         
         const gchar *url = vendor_get_url(buffer);
         if (url) {

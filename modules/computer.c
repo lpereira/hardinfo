@@ -611,6 +611,7 @@ gchar *hi_module_get_summary(void)
                     "Method=devices::getMemoryTotal\n"
                     "[Motherboard]\n"
                     "Icon=module.png\n"
+                    "Method=devices::getMotherboard\n"
                     "[Graphics]\n"
                     "Icon=monitor.png\n"
                     "Method=computer::getDisplaySummary\n"

@@ -180,6 +180,25 @@ gchar *get_memory_total(void)
     return hi_more_info("Total Memory");    
 }
 
+gchar *get_motherboard(void)
+{
+    char *board_name, *board_vendor;
+
+    scan_dmi(FALSE);
+
+    board_name = (gchar *)g_hash_table_lookup(moreinfo, "DMI:Board:Name");
+    board_vendor = (gchar *)g_hash_table_lookup(moreinfo, "DMI:Board:Vendor");
+    
+    if (board_name && board_vendor && *board_name && *board_vendor)
+       return g_strconcat(board_vendor, " ", board_name, NULL);
+    else if (board_name && *board_name)
+       return g_strconcat(board_name, " (vendor unknown)", NULL);
+    else if (board_vendor && *board_vendor)
+       return g_strconcat(board_vendor, " (model unknown)", NULL);
+    
+    return g_strdup("Unknown");
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
@@ -191,6 +210,7 @@ ShellModuleMethod *hi_exported_methods(void)
 	{"getPrinters", get_printers},
 	{"getInputDevices", get_input_devices},
 	{"getPCIDeviceDescription", get_pci_device_description},
+	{"getMotherboard", get_motherboard},
 	{NULL}
     };
 
