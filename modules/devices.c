@@ -68,6 +68,8 @@ void scan_spd(gboolean reload);
 #endif
 void scan_device_resources(gboolean reload);
 
+gchar *hi_more_info(gchar *entry);
+
 static ModuleEntry entries[] = {
     {"Processor", "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
     {"Memory", "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
@@ -174,8 +176,8 @@ gchar *get_pci_device_description(gchar *pci_id)
 
 gchar *get_memory_total(void)
 {
-    /* FIXME */
-    return g_strdup("0.0");
+    scan_memory(FALSE);
+    return hi_more_info("Total Memory");    
 }
 
 ShellModuleMethod *hi_exported_methods(void)
