@@ -162,6 +162,7 @@ struct _MemoryInfo {
   }
 
 extern gchar *users;
+extern gchar *groups;
 extern gchar *fs_list;
 extern GHashTable *_module_hash_table;
 extern Computer *computer;

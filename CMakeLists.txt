@@ -83,6 +83,7 @@ set(MODULE_computer_SOURCES
 	modules/computer/os.c
 	modules/computer/uptime.c
 	modules/computer/users.c
+	modules/computer/groups.c
 )
 set(MODULE_devices_SOURCES
 	modules/devices.c

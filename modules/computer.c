@@ -42,6 +42,7 @@ gchar *callback_fs();
 gchar *callback_display();
 gchar *callback_network();
 gchar *callback_users();
+gchar *callback_groups();
 gchar *callback_env_var();
 #if GLIB_CHECK_VERSION(2,14,0)
 gchar *callback_dev();
@@ -57,6 +58,7 @@ void scan_fs(gboolean reload);
 void scan_display(gboolean reload);
 void scan_network(gboolean reload);
 void scan_users(gboolean reload);
+void scan_groups(gboolean reload);
 void scan_env_var(gboolean reload);
 #if GLIB_CHECK_VERSION(2,14,0)
 void scan_dev(gboolean reload);
@@ -75,9 +77,9 @@ static ModuleEntry entries[] = {
     {"Development", "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
     {"Users", "users.png", callback_users, scan_users, MODULE_FLAG_NONE},
+    {"Groups", "users.png", callback_groups, scan_groups, MODULE_FLAG_NONE},
     {NULL},
 };
-
 
 GHashTable *moreinfo = NULL;
 gchar *module_list = NULL;
@@ -172,6 +174,13 @@ void scan_users(gboolean reload)
 {
     SCAN_START();
     scan_users_do();
+    SCAN_END();
+}
+
+void scan_groups(gboolean reload)
+{
+    SCAN_START();
+    scan_groups_do();
     SCAN_END();
 }
 
@@ -510,6 +519,17 @@ gchar *callback_users()
 			   "ViewType=1\n"
 			   "[Users]\n"
 			   "%s\n", users);
+}
+
+gchar *callback_groups()
+{
+    return g_strdup_printf("[$ShellParam$]\n"
+			   "ReloadInterval=10000\n"
+			   "ColumnTitle$TextValue=Name\n"
+			   "ColumnTitle$Value=Group ID\n"
+			   "ShowColumnHeaders=true\n"
+			   "[Groups]\n"
+			   "%s\n", groups);
 }
 
 gchar *get_os_kernel(void)
