@@ -154,6 +154,54 @@ static float adjust_sensor(gchar * name, float value)
     return math_postfix_eval(postfix, value);
 }
 
+static char *get_sensor_path(int number)
+{
+    char *path, *last_slash;
+
+    path = g_strdup_printf("/sys/class/hwmon/hwmon%d/device", number);
+    if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+        return path;
+    }
+
+    if ((last_slash = strrchr(path, '/'))) {
+        *last_slash = '\0';
+        return path;
+    }
+
+    g_free(path);
+    return NULL;
+}
+
+static char *determine_driver_for_hwmon_path(char *path)
+{
+    char *tmp, *driver;
+
+    tmp = g_strdup_printf("%s/driver", path);
+    driver = g_file_read_link(tmp, NULL);
+    g_free(tmp);
+
+    if (driver) {
+        tmp = g_path_get_basename(driver);
+        g_free(driver);
+        driver = tmp;
+    } else {
+        tmp = g_strdup_printf("%s/device", path);
+        driver = g_file_read_link(tmp, NULL);
+        g_free(tmp);
+    }
+
+    if (!driver) {
+        tmp = g_strdup_printf("%s/name", path);
+        if (!g_file_get_contents(tmp, &driver, NULL, NULL)) {
+            driver = g_strdup("unknown");
+        } else {
+            driver = g_strstrip(driver);
+        }
+        g_free(tmp);
+    }
+
+    return driver;
+}
 
 static void read_sensors_hwmon(void)
 {
@@ -161,15 +209,10 @@ static void read_sensors_hwmon(void)
     gchar *path_hwmon, *path_sensor, *tmp, *driver, *name, *mon;
     hwmon = 0;
 
-    path_hwmon = g_strdup_printf("/sys/class/hwmon/hwmon%d/", hwmon);
-    while (g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
-	tmp = g_strdup_printf("%sdriver", path_hwmon);
-	driver = g_file_read_link(tmp, NULL);
-	g_free(tmp);
-
-	tmp = g_path_get_basename(driver);
-	g_free(driver);
-	driver = tmp;
+    path_hwmon = get_sensor_path(hwmon);
+    while (path_hwmon && g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
+        driver = determine_driver_for_hwmon_path(path_hwmon);
+        DEBUG("hwmon%d has driver=%s", hwmon, driver);
 
 	if (!sensor_labels) {
 	    read_sensor_labels(driver);
@@ -178,7 +221,7 @@ static void read_sensors_hwmon(void)
 	sensors = g_strconcat(sensors, "[Cooling Fans]\n", NULL);
 	for (count = 1;; count++) {
 	    path_sensor =
-		g_strdup_printf("%sfan%d_input", path_hwmon, count);
+		g_strdup_printf("%s/fan%d_input", path_hwmon, count);
 	    if (!g_file_get_contents(path_sensor, &tmp, NULL, NULL)) {
 		g_free(path_sensor);
 		break;
@@ -187,8 +230,8 @@ static void read_sensors_hwmon(void)
 	    mon = g_strdup_printf("fan%d", count);
 	    name = get_sensor_label(mon);
 	    if (!g_str_equal(name, "ignore")) {
-		sensors = h_strdup_cprintf("%s=%.0fRPM\n",
-					  sensors, name,
+		sensors = h_strdup_cprintf("%s (%s)=%.0fRPM\n",
+					  sensors, name, driver,
 					  adjust_sensor(mon, atof(tmp)));
 	    }
 
@@ -201,7 +244,8 @@ static void read_sensors_hwmon(void)
 	sensors = g_strconcat(sensors, "[Temperatures]\n", NULL);
 	for (count = 1;; count++) {
 	    path_sensor =
-		g_strdup_printf("%stemp%d_input", path_hwmon, count);
+		g_strdup_printf("%s/temp%d_input", path_hwmon, count);
+            DEBUG("Reading temp from %s", path_sensor);
 	    if (!g_file_get_contents(path_sensor, &tmp, NULL, NULL)) {
 		g_free(path_sensor);
 		break;
@@ -210,8 +254,8 @@ static void read_sensors_hwmon(void)
 	    mon = g_strdup_printf("temp%d", count);
 	    name = get_sensor_label(mon);
 	    if (!g_str_equal(name, "ignore")) {
-		sensors = h_strdup_cprintf("%s=%.2f\302\260C\n",
-					  sensors, name,
+		sensors = h_strdup_cprintf("%s (%s)=%.2f\302\260C\n",
+					  sensors, name, driver,
 					  adjust_sensor(mon,
 							atof(tmp) /
 							1000.0));
@@ -226,7 +270,7 @@ static void read_sensors_hwmon(void)
 	sensors = g_strconcat(sensors, "[Voltage Values]\n", NULL);
 	for (count = 0;; count++) {
 	    path_sensor =
-		g_strdup_printf("%sin%d_input", path_hwmon, count);
+		g_strdup_printf("%s/in%d_input", path_hwmon, count);
 	    if (!g_file_get_contents(path_sensor, &tmp, NULL, NULL)) {
 		g_free(path_sensor);
 		break;
@@ -236,8 +280,8 @@ static void read_sensors_hwmon(void)
 	    mon = g_strdup_printf("in%d", count);
 	    name = get_sensor_label(mon);
 	    if (!g_str_equal(name, "ignore")) {
-		sensors = h_strdup_cprintf("%s=%.3fV\n",
-					  sensors, name,
+		sensors = h_strdup_cprintf("%s (%s)=%.3fV\n",
+					  sensors, name, driver,
 					  adjust_sensor(mon,
 							atof(tmp) /
 							1000.0));
@@ -251,8 +295,8 @@ static void read_sensors_hwmon(void)
 
 	g_free(path_hwmon);
 	g_free(driver);
-	path_hwmon =
-	    g_strdup_printf("/sys/class/hwmon/hwmon%d/device/", ++hwmon);
+
+	path_hwmon = get_sensor_path(++hwmon);
     }
 
     g_free(path_hwmon);
