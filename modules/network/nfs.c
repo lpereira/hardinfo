@@ -45,7 +45,7 @@ scan_nfs_shared_directories(void)
             strend(buf, '\t');
 
             nfs_shares_list = h_strdup_cprintf("%s=\n", 
-                                               buf, nfs_shares_list);
+                                               nfs_shares_list, buf);
             count++;
         }
 
