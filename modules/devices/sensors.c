@@ -233,8 +233,8 @@ static void read_sensors_hwmon(void)
 	}
 
 	for (sensor = hwmon_sensors; sensor->friendly_name; sensor++) {
+	    char *output = NULL;
 	    DEBUG("current sensor type=%s", sensor->friendly_name);
-	    sensors = g_strconcat(sensors, "[", sensor->friendly_name, "]\n", NULL);
 
             for (count = sensor->begin_at;; count++) {
                 path_sensor = g_strdup_printf(sensor->path_format, path_hwmon, count);
@@ -247,8 +247,8 @@ static void read_sensors_hwmon(void)
                 mon = g_strdup_printf(sensor->key_format, count);
                 name = get_sensor_label(mon);
                 if (!g_str_equal(name, "ignore")) {
-                    sensors = h_strdup_cprintf(sensor->value_format,
-                                              sensors, name, driver,
+                    output = h_strdup_cprintf(sensor->value_format,
+                                              output, name, driver,
                                               adjust_sensor(mon,
                                                             atof(tmp) / sensor->adjust_ratio));
                 }
@@ -258,8 +258,12 @@ static void read_sensors_hwmon(void)
                 g_free(name);
                 g_free(path_sensor);
             }
-	}
 
+            if (output) {
+                sensors = g_strconcat(sensors, "[", sensor->friendly_name, "]\n", output, "\n", NULL);
+                g_free(output);
+            }
+	}
 
 	g_free(path_hwmon);
 	g_free(driver);
