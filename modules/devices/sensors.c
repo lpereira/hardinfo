@@ -34,10 +34,6 @@ static void read_sensor_labels(gchar * driver)
     gboolean lock = FALSE;
     gint i;
 
-    sensor_labels = g_hash_table_new_full(g_str_hash, g_str_equal,
-					  g_free, g_free);
-    sensor_compute = g_hash_table_new(g_str_hash, g_str_equal);
-
     /* Try to open lm-sensors config file sensors3.conf */
     conf = fopen("/etc/sensors3.conf", "r");
 
@@ -394,4 +390,17 @@ void scan_sensors_do(void)
     read_sensors_hddtemp();
 
     /* FIXME: Add support for  ibm acpi and more sensors */
+}
+
+void sensors_init(void)
+{
+    sensor_labels = g_hash_table_new_full(g_str_hash, g_str_equal,
+					  g_free, g_free);
+    sensor_compute = g_hash_table_new(g_str_hash, g_str_equal);
+}
+
+void sensors_shutdown(void)
+{
+    g_hash_table_destroy(sensor_labels);
+    g_hash_table_destroy(sensor_compute);
 }

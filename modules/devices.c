@@ -448,10 +448,12 @@ void hi_module_init(void)
     moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     init_memory_labels();
     init_cups();
+    sensors_init();
 }
 
 void hi_module_deinit(void)
 {
+    sensors_shutdown();
     g_hash_table_destroy(moreinfo);
     g_hash_table_destroy(memlabels);
     g_module_close(cups);

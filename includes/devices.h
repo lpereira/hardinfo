@@ -61,6 +61,8 @@ void scan_printers_do(void);
 
 /* Sensors */
 void scan_sensors_do(void);
+void sensors_init(void);
+void sensors_shutdown(void);
 
 #ifdef ARCH_x86
 /* SPD */
