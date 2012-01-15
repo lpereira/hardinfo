@@ -47,9 +47,7 @@ scan_modules_do(void)
         _module_hash_table = g_hash_table_new(g_str_hash, g_str_equal);
     }
 
-    if (module_list) {
-        g_free(module_list);
-    }
+    g_free(module_list);
     
     module_list = NULL;
     g_hash_table_foreach_remove(moreinfo, remove_module_devices, NULL);

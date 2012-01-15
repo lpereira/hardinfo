@@ -291,9 +291,7 @@ __scan_battery_apm(void)
 void
 scan_battery_do(void)
 {
-    if (battery_list) {
-      g_free(battery_list);
-    }
+    g_free(battery_list);
     battery_list = g_strdup("");
 
     __scan_battery_acpi();

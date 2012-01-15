@@ -1065,9 +1065,7 @@ void tree_view_save_image(gchar * filename)
 
 static gboolean __idle_free_do(gpointer ptr)
 {
-    if (ptr) {
-	g_free(ptr);
-    }
+    g_free(ptr);
 
     return FALSE;
 }

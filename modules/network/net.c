@@ -312,13 +312,9 @@ static void scan_net_interfaces_24(void)
 	return;
     }
 
-    if (network_interfaces) {
-	g_free(network_interfaces);
-    }
+    g_free(network_interfaces);
 
-    if (network_icons) {
-	g_free(network_icons);
-    }
+    g_free(network_icons);
 
     network_interfaces = g_strdup("[Network Interfaces]\n");
     network_icons = g_strdup("");

@@ -30,9 +30,7 @@ scan_nfs_shared_directories(void)
     gint count = 0;
     gchar buf[512];
     
-    if (nfs_shares_list) {
-        g_free(nfs_shares_list);
-    }
+    g_free(nfs_shares_list);
 
     nfs_shares_list = g_strdup("");
     
