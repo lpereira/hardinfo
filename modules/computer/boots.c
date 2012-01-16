@@ -44,7 +44,7 @@ scan_boots_real(void)
           
           while (*buf) {
             if (*buf == ' ' && *(buf + 1) == ' ') {
-              strcpy(buf, buf + 1);
+              memmove(buf, buf + 1, strlen(buf) + 1);
               
               buf--;
             } else {
