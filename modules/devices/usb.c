@@ -45,7 +45,7 @@ void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
     bus = h_sysfs_read_int(endpoint, "busnum");
     speed = h_sysfs_read_float(endpoint, "speed");
     version = h_sysfs_read_float(endpoint, "version");
-    
+
     if (!(mxpwr = h_sysfs_read_string(endpoint, "bMaxPower"))) {
     	mxpwr = g_strdup("0 mA");
     }
@@ -67,7 +67,7 @@ void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
 	tmp = g_strdup_printf("%s (%s)", vendor_get_name(manufacturer), url);
 	
 	g_free(manufacturer);
-	manufacturer = tmp;	    
+	manufacturer = tmp;
     }
 
     tmp = g_strdup_printf("USB%d", n);
@@ -91,7 +91,7 @@ void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
 			      version, classid, vendor, prodid, bus);
 
     g_hash_table_insert(moreinfo, tmp, strhash);
-    
+
     g_free(manufacturer);
     g_free(product);
     g_free(mxpwr);
@@ -129,7 +129,7 @@ gboolean __scan_usb_sysfs(void)
     }
 
     g_dir_close(sysfs);
-    
+
     return usb_device_number > 0;
 }
 
@@ -252,21 +252,48 @@ gboolean __scan_usb_procfs(void)
 void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_number)
 {
     gint bus, device, vendor_id, product_id;
-    gchar *product = NULL, *vendor = NULL, *max_power, *tmp, *strhash;
-    
+    gchar *version = NULL, *product = NULL, *vendor = NULL, *dev_class = NULL, *int_class = NULL;
+    gchar *max_power = NULL;
+    gchar *tmp, *strhash;
+    long position;
+
     sscanf(buffer, "Bus %d Device %d: ID %x:%x",
            &bus, &device, &vendor_id, &product_id);
 
-    while (fgets(buffer, 512, lsusb)) {
-        if (g_str_has_prefix(buffer, "  idVendor")) {
-            vendor = g_strstrip(g_strdup(buffer + 28));
-        } else if (g_str_has_prefix(buffer, "  idProduct")) {
-            product = g_strstrip(g_strdup(buffer + 28));
-        } else if (g_str_has_prefix(buffer, "    MaxPower")) {
-            max_power = g_strstrip(g_strdup(buffer + 26));
-        } else if (g_str_has_prefix(buffer, "\n")) {
+    for (position = ftell(lsusb); fgets(buffer, 512, lsusb); position = ftell(lsusb)) {
+        g_strstrip(buffer);
+
+        if (g_str_has_prefix(buffer, "idVendor")) {
+            g_free(vendor);
+            vendor = g_strdup(buffer + 26);
+        } else if (g_str_has_prefix(buffer, "idProduct")) {
+            g_free(product);
+            product = g_strdup(buffer + 26);
+        } else if (g_str_has_prefix(buffer, "MaxPower")) {
+            g_free(max_power);
+            max_power = g_strdup(buffer + 9);
+        } else if (g_str_has_prefix(buffer, "bcdUSB")) {
+            g_free(version);
+            version = g_strdup(buffer + 7);
+        } else if (g_str_has_prefix(buffer, "bDeviceClass")) {
+            g_free(dev_class);
+            dev_class = g_strdup(buffer + 14);
+        } else if (g_str_has_prefix(buffer, "bInterfaceClass")) {
+            g_free(int_class);
+            int_class = g_strdup(buffer + 16);
+        } else if (g_str_has_prefix(buffer, "Bus ")) {
             /* device separator */
+            fseek(lsusb, position, SEEK_SET);
             break;
+        }
+    }
+
+    if (strstr(dev_class, "0 (Defined at Interface level)")) {
+        g_free(dev_class);
+        if (int_class) {
+            dev_class = int_class;
+        } else {
+            dev_class = g_strdup("Unknown");
         }
     }
 
@@ -278,23 +305,25 @@ void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_numbe
 			      "Manufacturer=%s\n"
 			      "Max Current=%s\n"
 			      "[Misc]\n"
-			      "USB Version=%.2f\n"
-			      "Class=0x%x\n"
+			      "USB Version=%s\n"
+			      "Class=%s\n"
 			      "Vendor=0x%x\n"
 			      "Product ID=0x%x\n"
 			      "Bus=%d\n",
-			      product,
-			      vendor ? vendor : "Unknown",
-			      max_power,
-			      0.0f /* FIXME */,
-			      0 /* FIXME */,
+			      product   ? g_strstrip(product)   : "Unknown",
+			      vendor    ? g_strstrip(vendor)    : "Unknown",
+			      max_power ? g_strstrip(max_power) : "Unknown",
+			      version   ? g_strstrip(version)   : "Unknown",
+			      dev_class ? g_strstrip(dev_class) : "Unknown",
 			      vendor_id, product_id, bus);
 
     g_hash_table_insert(moreinfo, tmp, strhash);
-    
+
     g_free(vendor);
     g_free(product);
     g_free(max_power);
+    g_free(dev_class);
+    g_free(version);
 }
 
 gboolean __scan_usb_lsusb(void)
@@ -303,25 +332,25 @@ gboolean __scan_usb_lsusb(void)
     int usb_device_number = 0;
     FILE *lsusb;
     char buffer[512], *temp;
-    
+
     if (!lsusb_path) {
         if (!(lsusb_path = find_program("lsusb"))) {
             DEBUG("lsusb not found");
-            
+
             return FALSE;
         }
     }
-    
+
     temp = g_strdup_printf("%s -v", lsusb_path);
     if (!(lsusb = popen(temp, "r"))) {
         DEBUG("cannot run %s", lsusb_path);
-        
+
         g_free(temp);
         return FALSE;
     }
-    
+
     g_free(temp);
-    
+
     if (usb_list) {
 	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
 	g_free(usb_list);
