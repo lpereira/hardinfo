@@ -111,8 +111,18 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
         if (g_str_equal(key, "ShowColumnHeaders")) {
           ctx->show_column_headers = g_key_file_get_boolean(keyfile, group, key, NULL);
         } else if (g_str_has_prefix(key, "ColumnTitle")) {
-          gchar *value, *title = strchr(key, '$') + 1;
+          gchar *value, *title = strchr(key, '$');
           
+          if (!title) {
+                  DEBUG("couldn't find column title");
+                  break;
+          }
+          title++;
+          if (!*title) {
+                  DEBUG("title is empty");
+                  break;
+          }
+
           value = g_key_file_get_value(keyfile, group, key, NULL);
           if (g_str_equal(title, "Extra1")) {
                   ctx->columns |= REPORT_COL_EXTRA1;
@@ -126,9 +136,7 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
                   ctx->columns |= REPORT_COL_PROGRESS;
           }
           
-          g_hash_table_replace(ctx->column_titles, title, g_strdup(value));
-          
-          g_free(value);
+          g_hash_table_replace(ctx->column_titles, title, value);
         } else if (g_str_equal(key, "ViewType")) {
           if (g_key_file_get_integer(keyfile, group, "ViewType", NULL) == SHELL_VIEW_PROGRESS) {
             ctx->columns &= ~REPORT_COL_VALUE;
