@@ -381,7 +381,7 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
-				   "Copyright \302\251 2003-2009 "
+				   "Copyright \302\251 2003-2012 "
 				   "Leandro A. F. Pereira");
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				  "System information and benchmark tool");
