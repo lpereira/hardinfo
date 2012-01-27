@@ -133,6 +133,7 @@ set_source_files_properties(
 
 foreach (_module ${HARDINFO_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
+	set_target_properties(${_module} PROPERTIES PREFIX "")
 endforeach()
 
 add_library(hardinfo-remote STATIC

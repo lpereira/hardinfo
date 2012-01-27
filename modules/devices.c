@@ -471,7 +471,7 @@ ModuleAbout *hi_module_get_about(void)
 
 gchar **hi_module_get_dependencies(void)
 {
-    static gchar *deps[] = { "libcomputer.so", NULL };
+    static gchar *deps[] = { "computer.so", NULL };
 
     return deps;
 }

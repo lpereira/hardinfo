@@ -342,7 +342,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
     
     if (params.gui_running && !sending_benchmark_results) {
        gchar *argv[] = { params.argv0, "-b", entries[entry].name,
-                         "-m", "libbenchmark.so", "-a", NULL };
+                         "-m", "benchmark.so", "-a", NULL };
        GPid bench_pid;
        gint bench_stdout;
        GtkWidget *bench_dialog;
@@ -639,7 +639,7 @@ void hi_module_init(void)
 
 gchar **hi_module_get_dependencies(void)
 {
-    static gchar *deps[] = { "libdevices.so", NULL };
+    static gchar *deps[] = { "devices.so", NULL };
 
     return deps;
 }

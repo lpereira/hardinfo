@@ -612,7 +612,7 @@ guchar hi_module_get_weight(void)
 
 gchar **hi_module_get_dependencies(void)
 {
-    static gchar *deps[] = { "libdevices.so", NULL };
+    static gchar *deps[] = { "devices.so", NULL };
 
     return deps;
 }
