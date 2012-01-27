@@ -1033,6 +1033,9 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         gtk_widget_show(shell->moreinfo->scroll);
 	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
 	gtk_widget_show(shell->notebook);
+
+	gtk_paned_set_position(GTK_PANED(shell->vpaned),
+			       shell->hpaned->allocation.height / 2);
 	break;
     case SHELL_VIEW_LOAD_GRAPH:
         gtk_widget_show(shell->info->scroll);
