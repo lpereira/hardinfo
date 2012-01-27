@@ -67,7 +67,7 @@ struct _ParallelBenchTask {
     gpointer	data, callback;
 };
 
-gpointer benchmark_parallel_for_dispatcher(gpointer data)
+static gpointer benchmark_parallel_for_dispatcher(gpointer data)
 {
     ParallelBenchTask 	*pbt = (ParallelBenchTask *)data;
     gpointer 		(*callback)(unsigned int start, unsigned int end, void *data, gint thread_number);
@@ -133,7 +133,7 @@ gdouble benchmark_parallel_for(guint start, guint end,
 
         thread = g_thread_create((GThreadFunc) benchmark_parallel_for_dispatcher,
                                  pbt, TRUE, NULL);
-        threads = g_slist_append(threads, thread);
+        threads = g_slist_prepend(threads, thread);
 
         DEBUG("thread %d launched as context %p", thread_number, thread);
     }
@@ -319,6 +319,8 @@ static gboolean do_benchmark_handler(GIOChannel *source,
     BenchmarkDialog *bench_dialog = (BenchmarkDialog*)data;
     GIOStatus status;
     gchar *result;
+    gchar *buffer;
+    float float_result;
 
     status = g_io_channel_read_line(source, &result, NULL, NULL, NULL);
     if (status != G_IO_STATUS_NORMAL) {
@@ -329,7 +331,14 @@ static gboolean do_benchmark_handler(GIOChannel *source,
         return FALSE;
     }
 
-    bench_dialog->result = atof(result);
+    float_result = strtof(result, &buffer);
+    if (buffer == result) {
+        DEBUG("error while converting floating point value");
+        bench_dialog->result = -1.0f;
+    } else {
+        bench_dialog->result = float_result;
+    }
+
     gtk_widget_destroy(bench_dialog->dialog);
     g_free(result);
 
@@ -635,6 +644,11 @@ void hi_module_init(void)
 
     sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
+
+    int i;
+    for (i = 0; i < G_N_ELEMENTS(entries) - 1; i++) {
+         bench_results[i] = -1.0f;
+    }
 }
 
 gchar **hi_module_get_dependencies(void)

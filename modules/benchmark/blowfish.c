@@ -514,13 +514,12 @@ parallel_blowfish(unsigned int start, unsigned int end, void *data, gint thread_
 void
 benchmark_fish(void)
 {
-    gdouble elapsed = 0;
     gchar *tmpsrc;
-
     gchar *bdata_path;
 
     bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
+        bench_results[BENCHMARK_BLOWFISH] = -1.0f;
         g_free(bdata_path);
         return;
     }
@@ -528,10 +527,7 @@ benchmark_fish(void)
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Blowfish benchmark...");
 
-    elapsed = benchmark_parallel_for(0, 50000, parallel_blowfish, tmpsrc);
-
+    bench_results[BENCHMARK_BLOWFISH] = benchmark_parallel_for(0, 50000, parallel_blowfish, tmpsrc);
     g_free(bdata_path);
     g_free(tmpsrc);
-
-    bench_results[BENCHMARK_BLOWFISH] = elapsed;
 }

@@ -25,6 +25,9 @@ void benchmark_gui(void);
 void benchmark_nqueens(void);
 void benchmark_raytrace(void);
 
+gdouble benchmark_parallel_for(guint start, guint end,
+                               gpointer callback, gpointer callback_data);
+
 extern gdouble bench_results[BENCHMARK_N_ENTRIES];
 
 #endif /* __BENCHMARK_H__ */
