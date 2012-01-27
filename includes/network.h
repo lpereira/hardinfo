@@ -7,7 +7,6 @@ extern gchar *smb_shares_list;
 extern gchar *nfs_shares_list;
 extern gchar *network_interfaces;
 extern gchar *network_icons;
-extern GHashTable *moreinfo;
 
 void scan_net_interfaces(void);
 

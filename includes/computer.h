@@ -166,7 +166,6 @@ extern gchar *groups;
 extern gchar *fs_list;
 extern GHashTable *_module_hash_table;
 extern Computer *computer;
-extern GHashTable *moreinfo;
 extern gchar *module_list;
 
 gchar *computer_get_formatted_loadavg();

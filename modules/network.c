@@ -37,8 +37,6 @@
 
 #include "network.h"
 
-GHashTable *moreinfo = NULL;
-
 /* Callbacks */
 gchar *callback_network();
 gchar *callback_route();
@@ -383,7 +381,7 @@ gchar *callback_statistics()
 
 gchar *hi_more_info(gchar * entry)
 {
-    gchar *info = (gchar *) g_hash_table_lookup(moreinfo, entry);
+    gchar *info = moreinfo_lookup_with_prefix("NET", entry);
 
     if (info)
 	return g_strdup(info);
@@ -408,13 +406,11 @@ guchar hi_module_get_weight(void)
 
 void hi_module_init(void)
 {
-    moreinfo =
-	g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 }
 
 void hi_module_deinit(void)
 {
-    g_hash_table_destroy(moreinfo);
+    moreinfo_del_with_prefix("NET");
     
     g_free(smb_shares_list);
     g_free(nfs_shares_list);

@@ -1295,7 +1295,9 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs)
         decode_module_manufacturer(bytes, &manufacturer);
         decode_module_part_number(bytes, part_number);
         
-        g_hash_table_insert(moreinfo, g_strdup_printf("MEM%d", count), g_strdup(detailed_info));
+        gchar *key = g_strdup_printf("MEM%d", count);
+        moreinfo_add_with_prefix("DEV", key, g_strdup(detailed_info));
+        g_free(key);
         g_string_append_printf(output,
                                "$MEM%d$%d=%s|%d MB|%s\n",
                                count, count,

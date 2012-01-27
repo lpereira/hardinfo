@@ -83,7 +83,6 @@ extern gchar *storage_icons;
 extern gchar *storage_list;
 extern gchar *usb_list;
 extern GHashTable *memlabels;
-extern GHashTable *moreinfo;
 extern GHashTable *_pci_devices;
 extern GHashTable *sensor_compute;
 extern GHashTable *sensor_labels;

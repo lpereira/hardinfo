@@ -28,12 +28,6 @@
     continue;                        					\
   }
 
-static gboolean
-remove_module_devices(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "MOD");
-}
-
 GHashTable *_module_hash_table = NULL;
 
 void
@@ -50,7 +44,7 @@ scan_modules_do(void)
     g_free(module_list);
     
     module_list = NULL;
-    g_hash_table_foreach_remove(moreinfo, remove_module_devices, NULL);
+    moreinfo_del_with_prefix("COMP:MOD");
 
     lsmod_path = find_program("lsmod");
     lsmod = popen(lsmod_path, "r");
@@ -158,7 +152,8 @@ scan_modules_do(void)
 	    g_free(deps);
 	}
 
-	g_hash_table_insert(moreinfo, hashkey, strmodule);
+	moreinfo_add_with_prefix("COMP", hashkey, strmodule);
+	g_free(hashkey);
 
 	g_free(license);
 	g_free(description);

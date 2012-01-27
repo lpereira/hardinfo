@@ -89,7 +89,7 @@ scan_languages(OperatingSystem * os)
 					 FIELD(date), FIELD(codeset));
 #undef FIELD
 
-	    g_hash_table_insert(moreinfo, g_strdup(name), currlocale);
+           moreinfo_add_with_prefix("COMP", name, currlocale);
 
 	    g_free(title);
 	    g_free(source);

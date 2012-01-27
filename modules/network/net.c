@@ -433,7 +433,8 @@ static void scan_net_interfaces_24(void)
 				     broadcast : "Not set");
 	    }
 
-	    g_hash_table_insert(moreinfo, devid, detailed);
+	    moreinfo_add_with_prefix("NET", devid, detailed);
+	    g_free(devid);
 	}
     }
     fclose(proc_net);
@@ -445,7 +446,7 @@ void scan_net_interfaces(void)
        that instead of /proc/net/dev */
 
     /* remove old devices from global device table */
-    g_hash_table_foreach_remove(moreinfo, remove_net_devices, NULL);
+    moreinfo_del_with_prefix("NET");
 
     scan_net_interfaces_24();
 }

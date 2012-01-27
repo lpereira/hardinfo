@@ -27,12 +27,6 @@
 
 gchar *usb_list = NULL;
 
-static gboolean
-remove_usb_devices(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "USB");
-}
-
 void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
 {
     gchar *manufacturer, *product, *mxpwr, *tmp, *strhash;
@@ -90,8 +84,8 @@ void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
 			      mxpwr,
 			      version, classid, vendor, prodid, bus);
 
-    g_hash_table_insert(moreinfo, tmp, strhash);
-
+    moreinfo_add_with_prefix("DEV", tmp, strhash);
+    g_free(tmp);
     g_free(manufacturer);
     g_free(product);
     g_free(mxpwr);
@@ -109,7 +103,7 @@ gboolean __scan_usb_sysfs(void)
     }
 
     if (usb_list) {
-	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
+       moreinfo_del_with_prefix("DEV:USB");
 	g_free(usb_list);
     }
     usb_list = g_strdup("[USB Devices]\n");
@@ -148,7 +142,7 @@ gboolean __scan_usb_procfs(void)
 	return 0;
 
     if (usb_list) {
-	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
+       moreinfo_del_with_prefix("DEV:USB");
 	g_free(usb_list);
     }
     usb_list = g_strdup("[USB Devices]\n");
@@ -233,7 +227,8 @@ gboolean __scan_usb_procfs(void)
 					   ver, rev, classid,
 					   vendor, prodid, bus, level);
 
-		g_hash_table_insert(moreinfo, tmp, strhash);
+               moreinfo_add_with_prefix("DEV", tmp, strhash);
+               g_free(tmp);
 	    }
 
 	    g_free(manuf);
@@ -317,13 +312,14 @@ void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_numbe
 			      dev_class ? g_strstrip(dev_class) : "Unknown",
 			      vendor_id, product_id, bus);
 
-    g_hash_table_insert(moreinfo, tmp, strhash);
+    moreinfo_add_with_prefix("DEV", tmp, strhash);
 
     g_free(vendor);
     g_free(product);
     g_free(max_power);
     g_free(dev_class);
     g_free(version);
+    g_free(tmp);
 }
 
 gboolean __scan_usb_lsusb(void)
@@ -352,7 +348,7 @@ gboolean __scan_usb_lsusb(void)
     g_free(temp);
 
     if (usb_list) {
-	g_hash_table_foreach_remove(moreinfo, remove_usb_devices, NULL);
+       moreinfo_del_with_prefix("DEV:USB");
 	g_free(usb_list);
     }
     usb_list = g_strdup("[USB Devices]\n");

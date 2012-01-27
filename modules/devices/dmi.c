@@ -46,7 +46,7 @@ gchar *dmi_info = NULL;
 static void add_to_moreinfo(const char *group, const char *key, char *value)
 {
   char *new_key = g_strconcat("DMI:", group, ":", key, NULL);
-  g_hash_table_replace(moreinfo, new_key, g_strdup(g_strstrip(value)));
+  moreinfo_add_with_prefix("DEV", new_key, g_strdup(g_strstrip(value)));
 }
 
 gboolean dmi_get_info_dmidecode()

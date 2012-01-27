@@ -42,12 +42,6 @@ static gboolean cups_init = FALSE;
 
 GModule *cups;
 
-static gboolean
-remove_printer_devices(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "PRN");
-}
-
 void
 init_cups(void)
 {
@@ -199,7 +193,7 @@ scan_printers_do(void)
     }
 
     /* remove old devices from global device table */
-    g_hash_table_foreach_remove(moreinfo, remove_printer_devices, NULL);
+    moreinfo_del_with_prefix("DEV:PRN");
 
     num_dests = cups_dests_get(&dests);
     if (num_dests > 0) {
@@ -259,7 +253,8 @@ scan_printers_do(void)
               }
             }
             
-            g_hash_table_insert(moreinfo, prn_id, prn_moreinfo);
+            moreinfo_add_with_prefix("DEV", prn_id, prn_moreinfo);
+            g_free(prn_id);
             g_hash_table_destroy(options);
 	}
 	

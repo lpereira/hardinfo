@@ -115,6 +115,9 @@ int main(int argc, char **argv)
     /* initialize vendor database */
     vendor_init();
     
+    /* initialize moreinfo */
+    moreinfo_init();
+
     if (params.run_xmlrpc_server) {
         g_type_init();
     
@@ -155,6 +158,8 @@ int main(int argc, char **argv)
     } else {
         g_error("Don't know what to do. Exiting.");
     }
+
+    moreinfo_shutdown();
 
     DEBUG("finished");
     return 0;

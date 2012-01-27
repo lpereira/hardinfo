@@ -1288,3 +1288,101 @@ h_sysfs_read_string(gchar *endpoint, gchar *entry)
 	return return_value;
 }
 
+static GHashTable *_moreinfo = NULL;
+
+void
+moreinfo_init(void)
+{
+	if (G_UNLIKELY(_moreinfo)) {
+		DEBUG("moreinfo already initialized");
+		return;
+	}
+	DEBUG("initializing moreinfo");
+	_moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+}
+
+void
+moreinfo_shutdown(void)
+{
+	if (G_UNLIKELY(!_moreinfo)) {
+		DEBUG("moreinfo not initialized");
+		return;
+	}
+	DEBUG("shutting down moreinfo");
+	g_hash_table_destroy(_moreinfo);
+	_moreinfo = NULL;
+}
+
+void
+moreinfo_add_with_prefix(gchar *prefix, gchar *key, gchar *value)
+{
+	if (G_UNLIKELY(!_moreinfo)) {
+		DEBUG("moreinfo not initialized");
+		return;
+	}
+	
+	if (prefix) {
+		gchar *hashkey = g_strconcat(prefix, ":", key, NULL);
+		g_hash_table_insert(_moreinfo, hashkey, value);
+		return;
+	}
+
+	g_hash_table_insert(_moreinfo, g_strdup(key), value);
+}
+
+void
+moreinfo_add(gchar *key, gchar *value)
+{
+	moreinfo_add_with_prefix(NULL, key, value);
+}
+
+static gboolean
+_moreinfo_del_cb(gpointer key, gpointer value, gpointer data)
+{
+	return g_str_has_prefix(key, data);
+}
+
+void
+moreinfo_del_with_prefix(gchar *prefix)
+{
+	if (G_UNLIKELY(!_moreinfo)) {
+		DEBUG("moreinfo not initialized");
+		return;
+	}
+	
+	g_hash_table_foreach_remove(_moreinfo, _moreinfo_del_cb, prefix);
+}
+
+void
+moreinfo_clear(void)
+{
+	if (G_UNLIKELY(!_moreinfo)) {
+		DEBUG("moreinfo not initialized");
+		return;
+	}
+	h_hash_table_remove_all(_moreinfo);
+}
+
+gchar *
+moreinfo_lookup_with_prefix(gchar *prefix, gchar *key)
+{
+	if (G_UNLIKELY(!_moreinfo)) {
+		DEBUG("moreinfo not initialized");
+		return;
+	}
+	
+	if (prefix) {
+		gchar *lookup_key = g_strconcat(prefix, ":", key, NULL);
+		gchar *result = g_hash_table_lookup(_moreinfo, lookup_key);
+		g_free(lookup_key);
+		return result;
+	}
+
+	return g_hash_table_lookup(_moreinfo, key);
+}
+
+gchar *
+moreinfo_lookup(gchar *key)
+{
+	return moreinfo_lookup_with_prefix(NULL, key);
+}

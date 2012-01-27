@@ -148,4 +148,13 @@ gchar	       *h_sysfs_read_string(gchar *endpoint, gchar *entry);
 #define _CONCAT(a,b) a ## b
 #define CONCAT(a,b) _CONCAT(a,b)
 
+void moreinfo_init(void);
+void moreinfo_shutdown(void);
+void moreinfo_add_with_prefix(gchar *prefix, gchar *key, gchar *value);
+void moreinfo_add(gchar *key, gchar *value);
+void moreinfo_del_with_prefix(gchar *prefix);
+void moreinfo_clear(void);
+gchar *moreinfo_lookup_with_prefix(gchar *prefix, gchar *key);
+gchar *moreinfo_lookup(gchar *key);
+
 #endif				/* __HARDINFO_H__ */

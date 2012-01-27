@@ -22,12 +22,6 @@
 
 gchar *users = NULL;
 
-static gboolean
-remove_users(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "USER");
-}
-
 void
 scan_users_do(void)
 {
@@ -38,7 +32,7 @@ scan_users_do(void)
 
     if (users) {
         g_free(users);
-        g_hash_table_foreach_remove(moreinfo, remove_users, NULL);
+        moreinfo_del_with_prefix("COMP:USER");
     }
 
     users = g_strdup("");
@@ -54,11 +48,12 @@ scan_users_do(void)
                 (gint) passwd_->pw_gid,
                 passwd_->pw_dir,
                 passwd_->pw_shell);
-        g_hash_table_insert(moreinfo, key, val);
+        moreinfo_add_with_prefix("COMP", key, val);
 
         strend(passwd_->pw_gecos, ',');
         users = h_strdup_cprintf("$%s$%s=%s\n", users, key, passwd_->pw_name, passwd_->pw_gecos);
         passwd_ = getpwent();
+        g_free(key);
     }
     
     endpwent();

@@ -81,13 +81,12 @@ static ModuleEntry entries[] = {
     {NULL},
 };
 
-GHashTable *moreinfo = NULL;
 gchar *module_list = NULL;
 Computer *computer = NULL;
 
 gchar *hi_more_info(gchar * entry)
 {
-    gchar *info = (gchar *) g_hash_table_lookup(moreinfo, entry);
+    gchar *info = moreinfo_lookup_with_prefix("COMP", entry);
 
     if (info)
 	return g_strdup(info);
@@ -684,15 +683,12 @@ void hi_module_deinit(void)
     g_free(computer->date_time);
     g_free(computer);
     
-    h_hash_table_remove_all(moreinfo);
-    g_hash_table_destroy(moreinfo);
+    moreinfo_del_with_prefix("COMP");
 }
 
 void hi_module_init(void)
 {
     computer = g_new0(Computer, 1);
-    moreinfo =
-	g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 }
 
 ModuleAbout *hi_module_get_about(void)

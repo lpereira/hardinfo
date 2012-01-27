@@ -23,12 +23,6 @@
 
 gchar *storage_icons = NULL;
 
-static gboolean
-remove_scsi_devices(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "SCSI");
-}
-
 /* SCSI support by Pascal F.Martin <pascalmartin@earthlink.net> */
 void
 __scan_scsi_devices(void)
@@ -44,7 +38,7 @@ __scan_scsi_devices(void)
     gchar *scsi_storage_list;
 
     /* remove old devices from global device table */
-    g_hash_table_foreach_remove(moreinfo, remove_scsi_devices, NULL);
+    moreinfo_del_with_prefix("DEV:SCSI");
 
     if (!g_file_test("/proc/scsi/scsi", G_FILE_TEST_EXISTS))
 	return;
@@ -141,7 +135,8 @@ __scan_scsi_devices(void)
                                            scsi_channel,
                                            scsi_id,
                                            scsi_lun);
-                g_hash_table_insert(moreinfo, devid, strhash);
+                moreinfo_add_with_prefix("DEV", devid, strhash);
+                g_free(devid);
 
                 g_free(model);
                 g_free(revision);
@@ -159,12 +154,6 @@ __scan_scsi_devices(void)
     }
 }
 
-static gboolean
-remove_ide_devices(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "IDE");
-}
-
 void
 __scan_ide_devices(void)
 {
@@ -175,7 +164,7 @@ __scan_ide_devices(void)
     gchar *capab = NULL, *speed = NULL, *driver = NULL, *ide_storage_list;
 
     /* remove old devices from global device table */
-    g_hash_table_foreach_remove(moreinfo, remove_ide_devices, NULL);
+    moreinfo_del_with_prefix("DEV:IDE");
     
     ide_storage_list = g_strdup("\n[IDE Disks]\n");
 
@@ -362,7 +351,8 @@ __scan_ide_devices(void)
                 speed = NULL;
             }
             
-	    g_hash_table_insert(moreinfo, devid, strhash);
+           moreinfo_add_with_prefix("DEV", devid, strhash);
+           g_free(devid);
 
 	    g_free(model);
 	    model = g_strdup("");

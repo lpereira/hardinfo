@@ -27,12 +27,6 @@
 
 gchar *fs_list = NULL;
 
-static gboolean
-remove_filesystem_entries(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "FS");
-}
-
 void
 scan_filesystems(void)
 {
@@ -43,7 +37,7 @@ scan_filesystems(void)
 
     g_free(fs_list);
     fs_list = g_strdup("");
-    g_hash_table_foreach_remove(moreinfo, remove_filesystem_entries, NULL);
+    moreinfo_del_with_prefix("COMP:FS");
 
     mtab = fopen("/etc/mtab", "r");
     if (!mtab)
@@ -76,13 +70,8 @@ scan_filesystems(void)
 	  	      *strused = size_human_readable(used);
 
 		gchar *strhash;
-		if ((strhash = g_hash_table_lookup(moreinfo, tmp[0]))) {
-		    g_hash_table_remove(moreinfo, tmp[0]);
-		    g_free(strhash);
-		}
 		
 		strreplacechr(tmp[0], "#", '_');
-		
 		strhash = g_strdup_printf("[%s]\n"
 					  "Filesystem=%s\n"
 					  "Mounted As=%s\n"
@@ -95,7 +84,9 @@ scan_filesystems(void)
 					  strstr(tmp[3], "rw") ? "Read-Write" :
 					  "Read-Only", tmp[1], strsize, strused,
 					  stravail);
-		g_hash_table_insert(moreinfo, g_strdup_printf("FS%d", ++count), strhash);
+               gchar *key = g_strdup_printf("FS%d", ++count);
+		moreinfo_add_with_prefix("COMP", key, strhash);
+		g_free(key);
 
 		fs_list = h_strdup_cprintf("$FS%d$%s=%.2f %% (%s of %s)|%s\n",
 					  fs_list,

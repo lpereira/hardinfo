@@ -23,12 +23,6 @@
 
 gchar *input_icons = NULL;
 
-static gboolean
-remove_input_devices(gpointer key, gpointer value, gpointer data)
-{
-    return g_str_has_prefix(key, "INP");
-}
-
 static struct {
     char *name;
     char *icon;
@@ -54,7 +48,7 @@ __scan_input_devices(void)
 	return;
 
     if (input_list) {
-	g_hash_table_foreach_remove(moreinfo, remove_input_devices, NULL);
+        moreinfo_del_with_prefix("DEV:INP");
 	g_free(input_list);
 	g_free(input_icons);
     }
@@ -133,7 +127,8 @@ __scan_input_devices(void)
 				 	     strhash);
 	    }
 	    
-	    g_hash_table_insert(moreinfo, tmp, strhash);
+	    moreinfo_add_with_prefix("DEV", tmp, strhash);
+	    g_free(tmp);
 
 	    g_free(phys);
 	    g_free(name);

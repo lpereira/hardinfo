@@ -64,7 +64,7 @@ void scan_memory_do(void)
             newkeys[0] = g_strdup(tmp);
         }
         
-        g_hash_table_replace(moreinfo, g_strdup(newkeys[0]), g_strdup(newkeys[1]));
+        moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
 
         tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "\n", NULL);
         g_free(meminfo);

@@ -98,8 +98,6 @@ gchar *battery_list = NULL;
 gchar *meminfo = NULL;
 gchar *lginterval = NULL;
 
-GHashTable *moreinfo = NULL;
-
 #include <vendor.h>
 
 gchar *get_processor_name(void)
@@ -186,8 +184,8 @@ gchar *get_motherboard(void)
 
     scan_dmi(FALSE);
 
-    board_name = (gchar *)g_hash_table_lookup(moreinfo, "DMI:Board:Name");
-    board_vendor = (gchar *)g_hash_table_lookup(moreinfo, "DMI:Board:Vendor");
+    board_name = moreinfo_lookup("DEV:DMI:Board:Name");
+    board_vendor = moreinfo_lookup("DEV:DMI:Board:Vendor");
     
     if (board_name && board_vendor && *board_name && *board_vendor)
        return g_strconcat(board_vendor, " ", board_name, NULL);
@@ -219,7 +217,7 @@ ShellModuleMethod *hi_exported_methods(void)
 
 gchar *hi_more_info(gchar * entry)
 {
-    gchar *info = (gchar *) g_hash_table_lookup(moreinfo, entry);
+    gchar *info = moreinfo_lookup_with_prefix("DEV", entry);
     
     if (info)
 	return g_strdup(info);
@@ -229,7 +227,7 @@ gchar *hi_more_info(gchar * entry)
 
 gchar *hi_get_field(gchar * field)
 {
-    gchar *info = (gchar *) g_hash_table_lookup(moreinfo, field);
+    gchar *info = moreinfo_lookup_with_prefix("DEV", field);
 
     if (info)
 	return g_strdup(info);
@@ -445,7 +443,6 @@ void hi_module_init(void)
     }
 #endif	/* defined(ARCH_x86) */
 
-    moreinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     init_memory_labels();
     init_cups();
     sensors_init();
@@ -453,8 +450,8 @@ void hi_module_init(void)
 
 void hi_module_deinit(void)
 {
+    moreinfo_del_with_prefix("DEV");
     sensors_shutdown();
-    g_hash_table_destroy(moreinfo);
     g_hash_table_destroy(memlabels);
     g_module_close(cups);
 }

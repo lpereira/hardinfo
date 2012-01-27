@@ -545,8 +545,9 @@ gchar *processor_get_info(GSList * processors)
 				  processor->cpu_mhz);
 
 	    hashkey = g_strdup_printf("CPU%d", processor->id);
-	    g_hash_table_insert(moreinfo, hashkey,
+	    moreinfo_add_with_prefix("DEV", hashkey,
 				processor_get_detailed_info(processor));
+           g_free(hashkey);
 	}
 
 	ret = g_strdup_printf("[$ShellParam$]\n"
