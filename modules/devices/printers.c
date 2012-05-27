@@ -184,7 +184,7 @@ scan_printers_do(void)
     g_free(printer_icons);
 
     if (!cups_init) {
-        __init_cups();
+        init_cups();
         
         printer_icons = g_strdup("");
         printer_list = g_strdup("[Printers]\n"
