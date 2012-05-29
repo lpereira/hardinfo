@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.5.2pre")
 
+include(GNUInstallDirs)
+
 if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
 	set(HARDINFO_DEBUG 1)
 endif()
@@ -179,8 +181,8 @@ configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
 configure_file(hardinfo.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo.desktop @ONLY)
 
 install(TARGETS hardinfo ${HARDINFO_MODULES}
-	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION lib/hardinfo/modules
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hardinfo/modules
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
 install(FILES ${CMAKE_BINARY_DIR}/hardinfo.desktop
@@ -201,4 +203,4 @@ install(DIRECTORY doc
 	PATTERN "*.{hlp,png}"
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
-	
+
