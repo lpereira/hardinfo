@@ -173,6 +173,7 @@ target_link_libraries(hardinfo
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
 	hardinfo-shell
+	m
 )
 target_link_libraries(hardinfo-shell
 	hardinfo-help-viewer
