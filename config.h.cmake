@@ -10,7 +10,7 @@
 #define HOSTNAME		""
 #define ARCH_@HARDINFO_ARCH@
 
-#define LIBPREFIX		"@CMAKE_INSTALL_PREFIX@/lib/hardinfo"
+#define LIBPREFIX		"@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/hardinfo"
 #define PREFIX			"@CMAKE_INSTALL_PREFIX@/share/hardinfo"
 
 #cmakedefine LIBSOUP_FOUND
