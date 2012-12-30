@@ -1368,7 +1368,7 @@ moreinfo_lookup_with_prefix(gchar *prefix, gchar *key)
 {
 	if (G_UNLIKELY(!_moreinfo)) {
 		DEBUG("moreinfo not initialized");
-		return;
+		return 0;
 	}
 	
 	if (prefix) {
