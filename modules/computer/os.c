@@ -46,11 +46,11 @@ get_libc_version(void)
     if (p) *p = '\0';
     else goto err;
 
-    return g_strdup_printf("GNU C Library version %s (%sstable)",
+    return g_strdup_printf(_("GNU C Library version %s (%sstable)"),
                            strchr(tmp, ' ') + 1,
-                           strstr(buf, " stable ") ? "" : "un");
+                           strstr(buf, " stable ") ? "" : _("un"));
   err:
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
 }
 
 #include <gdk/gdkx.h>
@@ -69,7 +69,7 @@ detect_desktop_environment(OperatingSystem * os)
 	   obtain the version. */
 	version = popen("gnome-about --gnome-version", "r");
 	if (version) {
-	    (void)fscanf(version, "Version: %s", vers);
+	    (void)fscanf(version, _("Version: %s"), vers);
 	    if (pclose(version))
 	        goto unknown;
 	} else {
@@ -103,7 +103,7 @@ detect_desktop_environment(OperatingSystem * os)
         os->desktop = NULL;
         
 	if (!g_getenv("DISPLAY")) {
-	    os->desktop = g_strdup("Terminal");
+	    os->desktop = g_strdup(_("Terminal"));
 	} else {
             GdkScreen *screen = gdk_screen_get_default();
 
@@ -123,11 +123,11 @@ detect_desktop_environment(OperatingSystem * os)
               }
 
               if (!os->desktop) {
-                  os->desktop = g_strdup_printf("Unknown (Window Manager: %s)",
+                  os->desktop = g_strdup_printf(_("Unknown (Window Manager: %s)"),
                                                 windowman);
               }
             } else {
-                  os->desktop = g_strdup("Unknown");
+                  os->desktop = g_strdup(_("Unknown"));
             }
 	}
     }
@@ -163,7 +163,7 @@ computer_get_os(void)
         for (i = 0;; i++) {
             if (distro_db[i].file == NULL) {
                 os->distrocode = g_strdup("unk");
-                os->distro = g_strdup("Unknown distribution");
+                os->distro = g_strdup(_("Unknown distribution"));
                 break;
             }
 
@@ -198,7 +198,7 @@ computer_get_os(void)
 
                 if (g_str_equal(distro_db[i].codename, "ppy")) {
                   gchar *tmp;
-                    tmp = g_strdup_printf("Puppy Linux %.2f", atof(os->distro) / 100.0);
+                    tmp = g_strdup_printf("Puppy Linux");
                   g_free(os->distro);
                   os->distro = tmp;
                 }

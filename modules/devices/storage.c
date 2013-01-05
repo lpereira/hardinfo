@@ -43,7 +43,7 @@ __scan_scsi_devices(void)
     if (!g_file_test("/proc/scsi/scsi", G_FILE_TEST_EXISTS))
 	return;
 
-    scsi_storage_list = g_strdup("\n[SCSI Disks]\n");
+    scsi_storage_list = g_strdup(_("\n[SCSI Disks]\n"));
 
     if ((proc_scsi = fopen("/proc/scsi/scsi", "r"))) {
         while (fgets(buffer, 256, proc_scsi)) {
@@ -107,27 +107,27 @@ __scan_scsi_devices(void)
                 scsi_storage_list = h_strdup_cprintf("$%s$%s=\n", scsi_storage_list, devid, model);
                 storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
                 
-                gchar *strhash = g_strdup_printf("[Device Information]\n"
-                                                 "Model=%s\n", model);
+                gchar *strhash = g_strdup_printf(_("[Device Information]\n"
+                                                 "Model=%s\n"), model);
                 
                 const gchar *url = vendor_get_url(model);
                 if (url) {
-                  strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
+                  strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
                                              strhash,
                                              vendor_get_name(model),
                                              url);
                 } else {
-                  strhash = h_strdup_cprintf("Vendor=%s\n",
+                  strhash = h_strdup_cprintf(_("Vendor=%s\n"),
                                              strhash,
                                              vendor_get_name(model));
                 }
 
-                strhash = h_strdup_cprintf("Type=%s\n"
+                strhash = h_strdup_cprintf(_("Type=%s\n"
                                            "Revision=%s\n"
                                            "[SCSI Controller]\n"
                                            "Controller=scsi%d\n"
                                            "Channel=%d\n"
-                                           "ID=%d\n" "LUN=%d\n",
+                                           "ID=%d\n" "LUN=%d\n"),
                                            strhash,
                                            type,
                                            revision,
@@ -166,7 +166,7 @@ __scan_ide_devices(void)
     /* remove old devices from global device table */
     moreinfo_del_with_prefix("DEV:IDE");
     
-    ide_storage_list = g_strdup("\n[IDE Disks]\n");
+    ide_storage_list = g_strdup(_("\n[IDE Disks]\n"));
 
     iface = 'a';
     for (i = 0; i <= 16; i++) {
@@ -239,7 +239,7 @@ __scan_ide_devices(void)
   	                                       strreplacechr(g_strstrip(buf), ":", '='),
   	                                       "\n", NULL);
   	               } else if (strstr(buf, "Device seems to be")) {
-  	                   driver = g_strdup_printf("Driver=%s\n", strchr(buf, ':') + 1);
+  	                   driver = g_strdup_printf(_("Driver=%s\n"), strchr(buf, ':') + 1);
   	               }
   	            }
 
@@ -294,26 +294,26 @@ __scan_ide_devices(void)
 	                                  model, g_str_equal(media, "cdrom") ? \
 	                                         "cdrom" : "hdd");
 	    
-	    gchar *strhash = g_strdup_printf("[Device Information]\n"
-		                             "Model=%s\n",
+	    gchar *strhash = g_strdup_printf(_("[Device Information]\n"
+		                             "Model=%s\n"),
 					     model);
 	    
 	    const gchar *url = vendor_get_url(model);
 	    
 	    if (url) {
-	      strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
+	      strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
                                          strhash,
                                          vendor_get_name(model),
                                          url);
 	    } else {
-	      strhash = h_strdup_cprintf("Vendor=%s\n",
+	      strhash = h_strdup_cprintf(_("Vendor=%s\n"),
                                          strhash,
                                          vendor_get_name(model));
 	    }
 	    
-            strhash = h_strdup_cprintf("Device Name=hd%c\n"
+            strhash = h_strdup_cprintf(_("Device Name=hd%c\n"
                                        "Media=%s\n"
-                                       "Cache=%dkb\n",
+                                       "Cache=%dkb\n"),
                                        strhash,
                                        iface,
                                        media,
@@ -326,9 +326,9 @@ __scan_ide_devices(void)
             }
             
 	    if (pgeometry && lgeometry) {
-		strhash = h_strdup_cprintf("[Geometry]\n"
+		strhash = h_strdup_cprintf(_("[Geometry]\n"
 					  "Physical=%s\n"
-					  "Logical=%s\n",
+					  "Logical=%s\n"),
 					  strhash, pgeometry, lgeometry);
 
                 g_free(pgeometry);
@@ -338,14 +338,14 @@ __scan_ide_devices(void)
             }
             
             if (capab) {
-                strhash = h_strdup_cprintf("[Capabilities]\n%s", strhash, capab);
+                strhash = h_strdup_cprintf(_("[Capabilities]\n%s"), strhash, capab);
                 
                 g_free(capab);
                 capab = NULL;
             }
             
             if (speed) {
-                strhash = h_strdup_cprintf("[Speeds]\n%s", strhash, speed);
+                strhash = h_strdup_cprintf(_("[Speeds]\n%s"), strhash, speed);
                 
                 g_free(speed);
                 speed = NULL;

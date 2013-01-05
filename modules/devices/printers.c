@@ -78,42 +78,42 @@ gchar *__cups_callback_ptype(gchar *strvalue)
     gchar *output = g_strdup("\n");
     
     if (value & 0x0004)
-      output = h_strdup_cprintf("\342\232\254 Can do black and white printing=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Can do black and white printing=\n"), output);
     if (value & 0x0008)
-      output = h_strdup_cprintf("\342\232\254 Can do color printing=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Can do color printing=\n"), output);
     if (value & 0x0010)
-      output = h_strdup_cprintf("\342\232\254 Can do duplexing=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Can do duplexing=\n"), output);
     if (value & 0x0020)
-      output = h_strdup_cprintf("\342\232\254 Can do staple output=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Can do staple output=\n"), output);
     if (value & 0x0040)
-      output = h_strdup_cprintf("\342\232\254 Can do copies=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Can do copies=\n"), output);
     if (value & 0x0080)
-      output = h_strdup_cprintf("\342\232\254 Can collate copies=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Can collate copies=\n"), output);
     if (value & 0x80000)
-      output = h_strdup_cprintf("\342\232\254 Printer is rejecting jobs=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Printer is rejecting jobs=\n"), output);
     if (value & 0x1000000)
-      output = h_strdup_cprintf("\342\232\254 Printer was automatically discovered and added=\n", output);
+      output = h_strdup_cprintf(_("\342\232\254 Printer was automatically discovered and added=\n"), output);
 
     return output;
   } else {
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
   }
 }
 
 gchar *__cups_callback_state(gchar *value)
 {
   if (!value) {
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
   }
 
   if (g_str_equal(value, "3")) {
-    return g_strdup("Idle");
+    return g_strdup(_("Idle"));
   } else if (g_str_equal(value, "4")) {
-    return g_strdup("Printing a Job");
+    return g_strdup(_("Printing a Job"));
   } else if (g_str_equal(value, "5")) {
-    return g_strdup("Stopped");
+    return g_strdup(_("Stopped"));
   } else {
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
   }
 }
 
@@ -128,16 +128,16 @@ gchar *__cups_callback_state_change_time(gchar *value)
 
     return g_strdup(buf);
   } else {
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
   }
 }
 
 gchar *__cups_callback_boolean(gchar *value)
 {
   if (value) {
-    return g_strdup(g_str_equal(value, "1") ? "Yes" : "No");
+    return g_strdup(g_str_equal(value, "1") ? _("Yes") : _("No"));
   } else {
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
   }
 }
 
@@ -187,8 +187,8 @@ scan_printers_do(void)
         init_cups();
         
         printer_icons = g_strdup("");
-        printer_list = g_strdup("[Printers]\n"
-                                "No suitable CUPS library found=");
+        printer_list = g_strdup(_("[Printers]\n"
+                                "No suitable CUPS library found="));
         return;
     }
 
@@ -197,7 +197,7 @@ scan_printers_do(void)
 
     num_dests = cups_dests_get(&dests);
     if (num_dests > 0) {
-	printer_list = g_strdup_printf("[Printers (CUPS)]\n");
+	printer_list = g_strdup_printf(_("[Printers (CUPS)]\n"));
         printer_icons = g_strdup("");
 	for (i = 0; i < num_dests; i++) {
 	    GHashTable *options;
@@ -240,7 +240,7 @@ scan_printers_do(void)
                     /* FIXME Do proper escaping */
                     temp = g_strdup(strreplacechr(temp, "&=", ' '));
                   } else {
-                    temp = g_strdup("Unknown");
+                    temp = g_strdup(_("Unknown"));
                   }
                 }
                 
@@ -260,7 +260,7 @@ scan_printers_do(void)
 	
 	cups_dests_free(num_dests, dests);
     } else {
-	printer_list = g_strdup("[Printers]\n"
-	                        "No printers found=\n");
+	printer_list = g_strdup(_("[Printers]\n"
+	                        "No printers found=\n"));
     }
 }

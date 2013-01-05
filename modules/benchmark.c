@@ -47,13 +47,13 @@ gchar *callback_nqueens();
 gchar *callback_gui();
 
 static ModuleEntry entries[] = {
-    {"CPU Blowfish", "blowfish.png", callback_bfsh, scan_bfsh, MODULE_FLAG_NONE},
-    {"CPU CryptoHash", "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NONE},
-    {"CPU Fibonacci", "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NONE},
-    {"CPU N-Queens", "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NONE},
-    {"FPU FFT", "fft.png", callback_fft, scan_fft, MODULE_FLAG_NONE},
-    {"FPU Raytracing", "raytrace.png", callback_raytr, scan_raytr, MODULE_FLAG_NONE},
-    {"GPU Drawing", "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
+    {N_("CPU Blowfish"), "blowfish.png", callback_bfsh, scan_bfsh, MODULE_FLAG_NONE},
+    {N_("CPU CryptoHash"), "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NONE},
+    {N_("CPU Fibonacci"), "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NONE},
+    {N_("CPU N-Queens"), "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NONE},
+    {N_("FPU FFT"), "fft.png", callback_fft, scan_fft, MODULE_FLAG_NONE},
+    {N_("FPU Raytracing"), "raytrace.png", callback_raytr, scan_raytr, MODULE_FLAG_NONE},
+    {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
     {NULL}
 };
 
@@ -219,7 +219,7 @@ static gchar *__benchmark_include_results(gdouble result,
 
     if (result > 0.0f) {
         processor_frequency = module_call_method("devices::getProcessorFrequency");
-        return_value = g_strdup_printf("[$ShellParam$]\n"
+        return_value = g_strdup_printf(_("[$ShellParam$]\n"
 			       	   "Zebra=1\n"
 			       	   "OrderType=%d\n"
 	       			   "ViewType=3\n"
@@ -229,10 +229,10 @@ static gchar *__benchmark_include_results(gdouble result,
 			       	   "ShowColumnHeaders=true\n"
 	       			   "[%s]\n"
 		       		   "<big><b>This Machine</b></big>=%.3f|%s MHz\n"
-			       	   "%s", order_type, benchmark, result, processor_frequency, results);
+			       	   "%s"), order_type, benchmark, result, processor_frequency, results);
         g_free(processor_frequency);
     } else {
-        return_value = g_strdup_printf("[$ShellParam$]\n"
+        return_value = g_strdup_printf(_("[$ShellParam$]\n"
 			       	   "Zebra=1\n"
 			       	   "OrderType=%d\n"
 	       			   "ViewType=3\n"
@@ -241,7 +241,7 @@ static gchar *__benchmark_include_results(gdouble result,
 			       	   "ColumnTitle$TextValue=CPU\n"
 			       	   "ShowColumnHeaders=true\n"
 	       			   "[%s]\n"
-			       	   "%s", order_type, benchmark, results);
+			       	   "%s"), order_type, benchmark, results);
     }
     return return_value;
 }
@@ -360,7 +360,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        GSpawnFlags spawn_flags = G_SPAWN_STDERR_TO_DEV_NULL;
        gchar *bench_status;
 
-       bench_status = g_strdup_printf("Benchmarking: <b>%s</b>.", entries[entry].name);
+       bench_status = g_strdup_printf(_("Benchmarking: <b>%s</b>."), entries[entry].name);
 
        shell_view_set_enabled(FALSE);
        shell_status_update(bench_status);
@@ -374,11 +374,11 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
                                              GTK_DIALOG_MODAL,
                                              GTK_MESSAGE_INFO,
                                              GTK_BUTTONS_NONE,
-                                             "Benchmarking. Please do not move your mouse " \
-                                             "or press any keys.");
+                                             _("Benchmarking. Please do not move your mouse " \
+                                             "or press any keys."));
        g_object_set_data(G_OBJECT(bench_dialog), "result", "0.0");
        gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog),
-                              "Cancel", GTK_RESPONSE_ACCEPT, NULL);
+                              _("Cancel"), GTK_RESPONSE_ACCEPT, NULL);
        gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(bench_dialog), bench_image);
 
        while (gtk_events_pending()) {
@@ -428,7 +428,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
           shell_status_set_enabled(TRUE);
           g_free(benchmark_dialog);
 
-          shell_status_update("Done.");
+          shell_status_update(_("Done."));
 
           return;
        }
@@ -436,7 +436,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        gtk_widget_destroy(bench_dialog);
        g_free(benchmark_dialog);
        shell_status_set_enabled(TRUE);
-       shell_status_update("Done.");
+       shell_status_update(_("Done."));
     }
 
     setpriority(PRIO_PROCESS, 0, -20);
@@ -508,17 +508,17 @@ const gchar *hi_note_func(gint entry)
 {
     switch (entry) {
     case BENCHMARK_CRYPTOHASH:
-	return "Results in MiB/second. Higher is better.";
+	return _("Results in MiB/second. Higher is better.");
 
     case BENCHMARK_GUI:
-        return "Results in HIMarks. Higher is better.";
+        return _("Results in HIMarks. Higher is better.");
 
     case BENCHMARK_FFT:
     case BENCHMARK_RAYTRACE:
     case BENCHMARK_BLOWFISH:
     case BENCHMARK_FIB:
     case BENCHMARK_NQUEENS:
-	return "Results in seconds. Lower is better.";
+	return _("Results in seconds. Lower is better.");
     }
 
     return NULL;
@@ -526,7 +526,7 @@ const gchar *hi_note_func(gint entry)
 
 gchar *hi_module_get_name(void)
 {
-    return g_strdup("Benchmarks");
+    return g_strdup(_("Benchmarks"));
 }
 
 guchar hi_module_get_weight(void)
@@ -544,7 +544,7 @@ ModuleAbout *hi_module_get_about(void)
     static ModuleAbout ma[] = {
 	{
 	 .author = "Leandro A. F. Pereira",
-	 .description = "Perform tasks and compare with other systems",
+	 .description = N_("Perform tasks and compare with other systems"),
 	 .version = VERSION,
 	 .license = "GNU GPL version 2"}
     };
@@ -631,12 +631,12 @@ void hi_module_init(void)
 {
     static SyncEntry se[] = {
 	{
-	 .fancy_name = "Send benchmark results",
+	 .fancy_name = N_("Send benchmark results"),
 	 .name = "SendBenchmarkResults",
 	 .save_to = NULL,
 	 .get_data = get_benchmark_results},
 	{
-	 .fancy_name = "Receive benchmark results",
+	 .fancy_name = N_("Receive benchmark results"),
 	 .name = "RecvBenchmarkResults",
 	 .save_to = "benchmark.conf",
 	 .get_data = NULL}

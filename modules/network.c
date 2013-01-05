@@ -56,13 +56,13 @@ void scan_arp(gboolean reload);
 void scan_statistics(gboolean reload);
 
 static ModuleEntry entries[] = {
-    {"Interfaces", "network-interface.png", callback_network, scan_network, MODULE_FLAG_NONE},
-    {"IP Connections", "network-connections.png", callback_connections, scan_connections, MODULE_FLAG_NONE},
-    {"Routing Table", "network.png", callback_route, scan_route, MODULE_FLAG_NONE},
-    {"ARP Table", "module.png", callback_arp, scan_arp, MODULE_FLAG_NONE},
-    {"DNS Servers", "dns.png", callback_dns, scan_dns, MODULE_FLAG_NONE},
-    {"Statistics", "network-statistics.png", callback_statistics, scan_statistics, MODULE_FLAG_NONE},
-    {"Shared Directories", "shares.png", callback_shares, scan_shares, MODULE_FLAG_NONE},
+    {N_("Interfaces"), "network-interface.png", callback_network, scan_network, MODULE_FLAG_NONE},
+    {N_("IP Connections"), "network-connections.png", callback_connections, scan_connections, MODULE_FLAG_NONE},
+    {N_("Routing Table"), "network.png", callback_route, scan_route, MODULE_FLAG_NONE},
+    {N_("ARP Table"), "module.png", callback_arp, scan_arp, MODULE_FLAG_NONE},
+    {N_("DNS Servers"), "dns.png", callback_dns, scan_dns, MODULE_FLAG_NONE},
+    {N_("Statistics"), "network-statistics.png", callback_statistics, scan_statistics, MODULE_FLAG_NONE},
+    {N_("Shared Directories"), "shares.png", callback_shares, scan_shares, MODULE_FLAG_NONE},
     {NULL},
 };
 
@@ -297,14 +297,14 @@ void scan_connections(gboolean reload)
 
 gchar *callback_arp()
 {
-    return g_strdup_printf("[ARP Table]\n"
+    return g_strdup_printf(_("[ARP Table]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ReloadInterval=3000\n"
                            "ColumnTitle$TextValue=IP Address\n"
                            "ColumnTitle$Value=Interface\n"
                            "ColumnTitle$Extra1=MAC Address\n"
-                           "ShowColumnHeaders=true\n",
+                           "ShowColumnHeaders=true\n"),
                            __arp_table);
 }
 
@@ -318,17 +318,17 @@ gchar *callback_shares()
 
 gchar *callback_dns()
 {
-    return g_strdup_printf("[Name servers]\n"
+    return g_strdup_printf(_("[Name servers]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ColumnTitle$TextValue=IP Address\n"
                            "ColumnTitle$Value=Name\n"
-                           "ShowColumnHeaders=true\n", __nameservers);
+                           "ShowColumnHeaders=true\n"), __nameservers);
 }
 
 gchar *callback_connections()
 {
-    return g_strdup_printf("[Connections]\n"
+    return g_strdup_printf(_("[Connections]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ReloadInterval=3000\n"
@@ -336,13 +336,13 @@ gchar *callback_connections()
                            "ColumnTitle$Value=Protocol\n"
                            "ColumnTitle$Extra1=Foreign Address\n"
                            "ColumnTitle$Extra2=State\n"
-                           "ShowColumnHeaders=true\n",
+                           "ShowColumnHeaders=true\n"),
                            __connections);
 }
 
 gchar *callback_network()
 {
-    return g_strdup_printf("%s\n"
+    return g_strdup_printf(_("%s\n"
                            "[$ShellParam$]\n"
 			   "ReloadInterval=3000\n"
 			   "ViewType=1\n"
@@ -351,14 +351,14 @@ gchar *callback_network()
 			   "ColumnTitle$Extra1=Sent\n"
 			   "ColumnTitle$Extra2=Received\n"
 			   "ShowColumnHeaders=true\n"
-			   "%s",
+			   "%s"),
 			   network_interfaces,
 			   network_icons);
 }
 
 gchar *callback_route()
 {
-    return g_strdup_printf("[IP routing table]\n"
+    return g_strdup_printf(_("[IP routing table]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ViewType=0\n"
@@ -367,7 +367,7 @@ gchar *callback_route()
                            "ColumnTitle$Value=Interface\n"
                            "ColumnTitle$Extra1=Flags\n"
                            "ColumnTitle$Extra2=Mask\n"
-                           "ShowColumnHeaders=true\n",
+                           "ShowColumnHeaders=true\n"),
                            __routing_table);
 }
 
@@ -396,7 +396,7 @@ ModuleEntry *hi_module_get_entries(void)
 
 gchar *hi_module_get_name(void)
 {
-    return g_strdup("Network");
+    return g_strdup(_("Network"));
 }
 
 guchar hi_module_get_weight(void)
@@ -429,7 +429,7 @@ ModuleAbout *hi_module_get_about(void)
     static ModuleAbout ma[] = {
 	{
 	 .author = "Leandro A. F. Pereira",
-	 .description = "Gathers information about this computer's network connection",
+	 .description = N_("Gathers information about this computer's network connection"),
 	 .version = VERSION,
 	 .license = "GNU GPL version 2"}
     };
