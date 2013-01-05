@@ -1,0 +1,2 @@
+update .pot : in po/, make hardinfo.pot
+update .po files after .pot update : ?
