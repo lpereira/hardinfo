@@ -24,6 +24,12 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <math.h>
+/*#include <libintl.h>
+#include <locale.h>
+#define _(STRING)    gettext(STRING)
+#define N_(STRING) (STRING)*/
+
+
 
 typedef struct _LoadGraph LoadGraph;
 

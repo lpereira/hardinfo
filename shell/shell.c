@@ -311,7 +311,7 @@ void shell_status_set_enabled(gboolean setting)
 	gtk_widget_hide(shell->progress);
 	shell_view_set_enabled(TRUE);
 
-	shell_status_update("Done.");
+	shell_status_update(_("Done."));
     }
 }
 
@@ -404,12 +404,12 @@ void shell_set_title(Shell *shell, gchar *subtitle)
     if (subtitle) {
         gchar *tmp;
 
-        tmp = g_strdup_printf("%s - System Information", subtitle);
+        tmp = g_strdup_printf(_("%s - System Information"), subtitle);
         gtk_window_set_title(GTK_WINDOW(shell->window), tmp);
         
         g_free(tmp);
     } else {
-        gtk_window_set_title(GTK_WINDOW(shell->window), "System Information");
+        gtk_window_set_title(GTK_WINDOW(shell->window), _("System Information"));
     }
 }
 
@@ -798,7 +798,7 @@ void shell_init(GSList * modules)
     gtk_notebook_set_show_border(GTK_NOTEBOOK(shell->notebook), FALSE);
 
     shell_status_set_enabled(TRUE);
-    shell_status_update("Loading modules...");
+    shell_status_update(_("Loading modules..."));
 
     shell->tree->modules = modules ? modules : modules_load_all();
 
@@ -811,7 +811,7 @@ void shell_init(GSList * modules)
     gtk_widget_hide(shell->notebook);
     gtk_widget_hide(shell->note->event_box);
 
-    shell_status_update("Done.");
+    shell_status_update(_("Done."));
     shell_status_set_enabled(FALSE);
 
     shell_action_set_enabled("ContextHelpAction", FALSE);
@@ -1647,7 +1647,7 @@ static void shell_summary_create_header(ShellSummary *summary,
     GtkWidget *header, *label;
     gchar *temp;
     
-    temp = g_strdup_printf("<b>%s \342\206\222 Summary</b>", title);
+    temp = g_strdup_printf(_("<b>%s \342\206\222 Summary</b>"), title);
     
     header = gtk_menu_item_new_with_label(temp);
     gtk_menu_item_select(GTK_MENU_ITEM(header));
@@ -1755,7 +1755,7 @@ static void module_selected(gpointer data)
 	gchar *title;
 
 	shell_status_set_enabled(TRUE);
-	shell_status_update("Updating...");
+	shell_status_update(_("Updating..."));
 
 	entry->selected = TRUE;
 	shell->selected = entry;
@@ -1787,13 +1787,13 @@ static void module_selected(gpointer data)
             g_free(temp);
         } else {
             shell_action_set_enabled("ContextHelpAction", FALSE);
-            shell_action_set_label("ContextHelpAction", "Context help");
+            shell_action_set_label("ContextHelpAction", _("Context help"));
         }
 
 	shell_action_set_enabled("RefreshAction", TRUE);
 	shell_action_set_enabled("CopyAction", TRUE);
 
-	shell_status_update("Done.");
+	shell_status_update(_("Done."));
 	shell_status_set_enabled(FALSE);
     } else {
 	shell_set_title(shell, NULL);
@@ -1804,7 +1804,7 @@ static void module_selected(gpointer data)
 	set_view_type(SHELL_VIEW_NORMAL, FALSE);
 
         shell_action_set_enabled("ContextHelpAction", FALSE);
-        shell_action_set_label("ContextHelpAction", "Context help");
+        shell_action_set_label("ContextHelpAction", _("Context help"));
         
         if (shell->selected_module->summaryfunc) {
            shell_show_summary();
