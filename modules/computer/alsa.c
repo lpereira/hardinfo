@@ -23,14 +23,14 @@ gchar *
 computer_get_alsacards(Computer * computer)
 {
     GSList *p;
-    gchar *tmp = g_strdup("[Audio Devices]\n");
+    gchar *tmp = g_strdup(_("[Audio Devices]\n"));
     gint n = 0;
 
     if (computer->alsa) {
 	for (p = computer->alsa->cards; p; p = p->next) {
 	    AlsaCard *ac = (AlsaCard *) p->data;
 
-	    tmp = h_strdup_cprintf("Audio Adapter#%d=%s\n",
+	    tmp = h_strdup_cprintf(_("Audio Adapter#%d=%s\n"),
 	                           tmp, ++n, ac->friendly_name);
 	}
     }

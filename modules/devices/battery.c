@@ -178,13 +178,13 @@ __scan_battery_acpi(void)
             else
                charge_rate = 0;
 
-            battery_list = h_strdup_cprintf("\n[Battery: %s]\n"
+            battery_list = h_strdup_cprintf(_("\n[Battery: %s]\n"
                                            "State=%s (load: %s)\n"
                                            "Capacity=%s / %s (%.2f%%)\n"
                                            "Battery Technology=%s (%s)\n"
 					   "Manufacturer=%s\n"
                                            "Model Number=%s\n"
-                                           "Serial Number=%s\n",
+                                           "Serial Number=%s\n"),
                                            battery_list,
                                            entry,
                                            state, rate,
@@ -263,23 +263,23 @@ __scan_battery_apm(void)
     }
 
     if (stotal && sremaining) {
-        battery_list = h_strdup_cprintf("\n[Battery (APM)]\n"
+        battery_list = h_strdup_cprintf(_("\n[Battery (APM)]\n"
                                        "Charge=%d%%\n"
                                        "Remaining Charge=%s of %s\n"
                                        "Using=%s\n"
                                        "APM driver version=%s\n"
-                                       "APM BIOS version=%s\n",
+                                       "APM BIOS version=%s\n"),
                                        battery_list,
                                        percentage,
                                        sremaining, stotal,
                                        ac_status[ac_bat],
                                        apm_drv_ver, apm_bios_ver);
     } else {
-        battery_list = h_strdup_cprintf("\n[Battery (APM)]\n"
+        battery_list = h_strdup_cprintf(_("\n[Battery (APM)]\n"
                                        "Charge=%d%%\n"
                                        "Using=%s\n"
                                        "APM driver version=%s\n"
-                                       "APM BIOS version=%s\n",
+                                       "APM BIOS version=%s\n"),
                                        battery_list,
                                        percentage,
                                        ac_status[ac_bat],
@@ -301,7 +301,7 @@ scan_battery_do(void)
     if (*battery_list == '\0') {
         g_free(battery_list);
         
-        battery_list = g_strdup("[No batteries]\n"
-                                "No batteries found on this system=\n");
+        battery_list = g_strdup(_("[No batteries]\n"
+                                "No batteries found on this system=\n"));
     }
 }

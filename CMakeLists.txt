@@ -1,5 +1,6 @@
 project(HardInfo)
 cmake_minimum_required(VERSION 2.6)
+cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.5.2pre")
 
@@ -47,6 +48,8 @@ endif()
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
 
 add_definitions("-std=gnu89")
+
+add_subdirectory(po)
 
 include(FindPkgConfig)
 pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)

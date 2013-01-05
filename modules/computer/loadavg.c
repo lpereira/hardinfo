@@ -38,7 +38,6 @@ computer_get_formatted_loadavg()
 {
     LoadInfo *li;
     gchar *tmp;
-
     li = computer_get_loadinfo();
 
     tmp =

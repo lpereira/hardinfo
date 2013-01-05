@@ -1,0 +1,2 @@
+update .pot : make pot in build/
+update .po files after .pot update : ?

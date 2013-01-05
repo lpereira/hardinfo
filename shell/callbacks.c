@@ -68,7 +68,7 @@ void cb_connect_host(GtkAction * action)
     if (remote_connect_host(name)) {
         gchar *tmp;
         
-        tmp = g_strdup_printf("Remote: <b>%s</b>", name);
+        tmp = g_strdup_printf(_("Remote: <b>%s</b>"), name);
         shell_set_remote_label(shell, tmp);
         
         g_free(tmp);
@@ -114,20 +114,20 @@ void cb_local_computer()
 #ifdef HAS_LIBSOUP
     Shell *shell = shell_get_main_shell();
 
-    shell_status_update("Disconnecting...");
+    shell_status_update(_("Disconnecting..."));
     remote_disconnect_all(TRUE);
 
-    shell_status_update("Unloading modules...");
+    shell_status_update(_("Unloading modules..."));
     module_unload_all();
     
-    shell_status_update("Loading local modules...");
+    shell_status_update(_("Loading local modules..."));
     shell->tree->modules = modules_load_all();
 
     g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
     
     shell_view_set_enabled(TRUE);
-    shell_status_update("Done.");
+    shell_status_update(_("Done."));
     shell_set_remote_label(shell, "");
 #endif /* HAS_LIBSOUP */
 }
@@ -139,7 +139,7 @@ void cb_save_graphic()
     gchar *filename;
 
     /* save the pixbuf to a png file */
-    dialog = gtk_file_chooser_dialog_new("Save Image",
+    dialog = gtk_file_chooser_dialog_new(_("Save Image"),
 					 NULL,
 					 GTK_FILE_CHOOSER_ACTION_SAVE,
 					 GTK_STOCK_CANCEL,
@@ -155,11 +155,11 @@ void cb_save_graphic()
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 	gtk_widget_destroy(dialog);
 
-	shell_status_update("Saving image...");
+	shell_status_update(_("Saving image..."));
 
 	tree_view_save_image(filename);
 
-	shell_status_update("Done.");
+	shell_status_update(_("Done."));
 	g_free(filename);
 
 	return;
@@ -233,7 +233,7 @@ no_context_help:
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR,
 					GTK_BUTTONS_CLOSE,
-					"No context help available.");
+					_("No context help available."));
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
@@ -315,14 +315,14 @@ void cb_about_module(GtkAction * action)
 
 	    about = gtk_about_dialog_new();
 
-	    text = g_strdup_printf("%s Module", sm->name);
+	    text = g_strdup_printf(_("%s Module"), sm->name);
 	    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), text);
 	    g_free(text);
 
 	    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about),
 					 ma->version);
 
-	    text = g_strdup_printf("Written by %s\nLicensed under %s",
+	    text = g_strdup_printf(_("Written by %s\nLicensed under %s"),
 				   ma->author, ma->license);
 	    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), text);
 	    g_free(text);
@@ -336,7 +336,7 @@ void cb_about_module(GtkAction * action)
 	    gtk_widget_destroy(about);
 	} else {
 	    g_warning
-		("No about information is associated with the %s module.",
+		(_("No about information is associated with the %s module."),
 		 name);
 	}
 
@@ -350,30 +350,30 @@ void cb_about()
 {
     GtkWidget *about;
     const gchar *authors[] = {
-	"Author:",
+	_("Author:"),
 	"Leandro A. F. Pereira",
 	"",
-	"Contributors:",
+	_("Contributors:"),
 	"Agney Lopes Roth Ferraz",
 	"Andrey Esin",
 	"",
-	"Based on work by:",
-	"MD5 implementation by Colin Plumb (see md5.c for details)",
-	"SHA1 implementation by Steve Reid (see sha1.c for details)",
-	"Blowfish implementation by Paul Kocher (see blowfich.c for details)",
-	"Raytracing benchmark by John Walker (see fbench.c for details)",
-	"FFT benchmark by Scott Robert Ladd (see fftbench.c for details)",
-	"Some code partly based on x86cpucaps by Osamu Kayasono",
-	"Vendor list based on GtkSysInfo by Pissens Sebastien",
-	"DMI support based on code by Stewart Adam",
-	"SCSI support based on code by Pascal F. Martin",
+	_("Based on work by:"),
+	_("MD5 implementation by Colin Plumb (see md5.c for details)"),
+	_("SHA1 implementation by Steve Reid (see sha1.c for details)"),
+	_("Blowfish implementation by Paul Kocher (see blowfich.c for details)"),
+	_("Raytracing benchmark by John Walker (see fbench.c for details)"),
+	_("FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"),
+	_("Some code partly based on x86cpucaps by Osamu Kayasono"),
+	_("Vendor list based on GtkSysInfo by Pissens Sebastien"),
+	_("DMI support based on code by Stewart Adam"),
+	_("SCSI support based on code by Pascal F. Martin"),
 	NULL
     };
     const gchar *artists[] = {
-	"Jakub Szypulka",
-	"Tango Project",
-	"The GNOME Project",
-	"VMWare, Inc. (USB icon from VMWare Workstation 6)",
+	_("Jakub Szypulka"),
+	_("Tango Project"),
+	_("The GNOME Project"),
+	_("VMWare, Inc. (USB icon from VMWare Workstation 6)"),
 	NULL
     };
 
@@ -384,12 +384,12 @@ void cb_about()
 				   "Copyright \302\251 2003-2012 "
 				   "Leandro A. F. Pereira");
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-				  "System information and benchmark tool");
+				  _("System information and benchmark tool"));
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
 			      icon_cache_get_pixbuf("logo.png"));
 
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about),
-				 "HardInfo is free software; you can redistribute it and/or modify "
+				 _("HardInfo is free software; you can redistribute it and/or modify "
 				 "it under the terms of the GNU General Public License as published by "
 				 "the Free Software Foundation, version 2.\n\n"
 				 "This program is distributed in the hope that it will be useful, "
@@ -398,7 +398,7 @@ void cb_about()
 				 "GNU General Public License for more details.\n\n"
 				 "You should have received a copy of the GNU General Public License "
 				 "along with this program; if not, write to the Free Software "
-				 "Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA");
+				 "Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"));
 #if GTK_CHECK_VERSION(2,8,0)
     gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(about), TRUE);
 #endif
