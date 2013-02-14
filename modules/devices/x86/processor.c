@@ -142,7 +142,7 @@ static gchar *__cache_get_info_as_string(Processor *processor)
     ProcessorCache *cache;
     
     if (!processor->cache) {
-        return g_strdup("Cache information not available=\n");
+        return g_strdup(_("Cache information not available=\n"));
     }
     
     for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
@@ -481,7 +481,7 @@ gchar *processor_get_detailed_info(Processor * processor)
     tmp = processor_get_capabilities_from_flags(processor->flags);
     cache_info = __cache_get_info_as_string(processor);
     
-    ret = g_strdup_printf("[Processor]\n"
+    ret = g_strdup_printf(_("[Processor]\n"
 			  "Name=%s\n"
 			  "Family, model, stepping=%d, %d, %d (%s)\n"
 			  "Vendor=%s\n"
@@ -499,7 +499,7 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  "[Cache]\n"
 			  "%s\n"
 			  "[Capabilities]\n"
-			  "%s",
+			  "%s"),
 			  processor->model_name,
 			  processor->family,
 			  processor->model,
@@ -539,7 +539,7 @@ gchar *processor_get_info(GSList * processors)
 	for (l = processors; l; l = l->next) {
 	    processor = (Processor *) l->data;
 
-	    tmp = g_strdup_printf("%s$CPU%d$%s=%.2fMHz\n",
+	    tmp = g_strdup_printf(_("%s$CPU%d$%s=%.2fMHz\n"),
 				  tmp, processor->id,
 				  processor->model_name,
 				  processor->cpu_mhz);
