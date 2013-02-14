@@ -489,7 +489,7 @@ static gchar *report_get_filename(void)
     GtkWidget *dialog;
     gchar *filename = NULL;
 
-    dialog = gtk_file_chooser_dialog_new("Save File",
+    dialog = gtk_file_chooser_dialog_new(_("Save File"),
 					 NULL,
 					 GTK_FILE_CHOOSER_ACTION_SAVE,
 					 GTK_STOCK_CANCEL,
@@ -613,7 +613,7 @@ static gboolean report_generate(ReportDialog * rd)
     create_context = file_types_get_data_by_name(file_types, file);
 
     if (!create_context) {
-	g_warning("Cannot create ReportContext. Programming bug?");
+	g_warning(_("Cannot create ReportContext. Programming bug?"));
 	g_free(file);
 	return FALSE;
     }
@@ -631,7 +631,7 @@ static gboolean report_generate(ReportDialog * rd)
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_NONE,
-					"Open the report with your web browser?");
+					_("Open the report with your web browser?"));
 	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 			       GTK_STOCK_NO, GTK_RESPONSE_REJECT,
 			       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
@@ -659,7 +659,7 @@ void report_dialog_show(GtkTreeModel * model, GtkWidget * parent)
     ReportDialog *rd = report_dialog_new(model, parent);
 
     if (gtk_dialog_run(GTK_DIALOG(rd->dialog)) == GTK_RESPONSE_ACCEPT) {
-	shell_status_update("Generating report...");
+	shell_status_update(_("Generating report..."));
 	gtk_widget_hide(rd->dialog);
 	shell_view_set_enabled(FALSE);
 	shell_status_set_enabled(TRUE);
@@ -669,9 +669,9 @@ void report_dialog_show(GtkTreeModel * model, GtkWidget * parent)
 	shell_status_set_enabled(FALSE);
 
 	if (success)
-	    shell_status_update("Report saved.");
+	    shell_status_update(_("Report saved."));
 	else
-	    shell_status_update("Error while creating the report.");
+	    shell_status_update(_("Error while creating the report."));
     }
 
     set_all_active(rd, FALSE);
@@ -773,7 +773,7 @@ static ReportDialog
     rd = g_new0(ReportDialog, 1);
 
     dialog = gtk_dialog_new();
-    gtk_window_set_title(GTK_WINDOW(dialog), "Generate Report");
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Generate Report"));
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
@@ -790,9 +790,9 @@ static ReportDialog
     hbox = gtk_hbox_new(FALSE, 5);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, FALSE, FALSE, 0);
 
-    label = gtk_label_new("<big><b>Generate Report</b></big>\n"
+    label = gtk_label_new(_("<big><b>Generate Report</b></big>\n"
 			  "Please choose the information that you wish "
-			  "to view in your report:");
+			  "to view in your report:"));
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
@@ -850,14 +850,14 @@ static ReportDialog
     gtk_button_box_set_layout(GTK_BUTTON_BOX(vbuttonbox3),
 			      GTK_BUTTONBOX_START);
 
-    button3 = gtk_button_new_with_mnemonic("Select _None");
+    button3 = gtk_button_new_with_mnemonic(_("Select _None"));
     gtk_widget_show(button3);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button3);
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
     g_signal_connect(button3, "clicked",
 		     G_CALLBACK(report_dialog_sel_none), rd);
 
-    button6 = gtk_button_new_with_mnemonic("Select _All");
+    button6 = gtk_button_new_with_mnemonic(_("Select _All"));
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
@@ -875,7 +875,7 @@ static ReportDialog
 				 GTK_RESPONSE_CANCEL);
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
 
-    button7 = gtk_button_new_with_mnemonic("_Generate");
+    button7 = gtk_button_new_with_mnemonic(_("_Generate"));
     gtk_widget_show(button7);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);
