@@ -32,6 +32,10 @@ ProgramParameters params = { 0 };
 
 int main(int argc, char **argv)
 {
+	setlocale( LC_ALL, "" );
+    bindtextdomain( "hardinfo", "/usr/share/locale" );
+    textdomain( "hardinfo" );
+    
     GSList *modules;
 
     DEBUG("HardInfo version " VERSION ". Debug version.");
@@ -47,16 +51,16 @@ int main(int argc, char **argv)
     if (params.show_version) {
 	g_print("HardInfo version " VERSION "\n");
 	g_print
-	    ("Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n\n");
+	    (_("Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n\n"));
 
-	g_print("Compile-time options:\n"
+	g_print(_("Compile-time options:\n"
 		"  Release version:   %s (%s)\n"
 		"  BinReloc enabled:  %s\n"
 		"  Data prefix:       %s\n"
 		"  Library prefix:    %s\n"
-		"  Compiled on:       %s %s (%s)\n",
-		RELEASE ? "Yes" : "No (" VERSION ")", ARCH,
-		ENABLE_BINRELOC ? "Yes" : "No",
+		"  Compiled on:       %s %s (%s)\n"),
+		RELEASE ? _("Yes") : "No (" VERSION ")", ARCH,
+		ENABLE_BINRELOC ? _("Yes") : _("No"),
 		PREFIX, LIBPREFIX, PLATFORM, KERNEL, HOSTNAME);
 
 	DEBUG("  Debugging is enabled.");
@@ -67,15 +71,15 @@ int main(int argc, char **argv)
 
     /* initialize the binreloc library, so we can load program data */
     if (!binreloc_init(FALSE))
-	g_error("Failed to find runtime data.\n\n"
+	g_error(_("Failed to find runtime data.\n\n"
 		"\342\200\242 Is HardInfo correctly installed?\n"
-		"\342\200\242 See if %s and %s exists and you have read permision.",
+		"\342\200\242 See if %s and %s exists and you have read permision."),
 		PREFIX, LIBPREFIX);
 
     /* list all module names */
     if (params.list_modules) {
-	g_print("Modules:\n"
-		"%-20s%-15s%-12s\n", "File Name", "Name", "Version");
+	g_print(_("Modules:\n"
+		"%-20s%-15s%-12s\n"), _("File Name"), _("Name"), _("Version"));
 
 	for (modules = modules_load_all(); modules;
 	     modules = modules->next) {
@@ -128,7 +132,7 @@ int main(int argc, char **argv)
         
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
         if (!result) {
-          g_error("Unknown benchmark ``%s'' or libbenchmark.so not loaded", params.run_benchmark);
+          g_error(_("Unknown benchmark ``%s'' or libbenchmark.so not loaded"), params.run_benchmark);
         } else {
           g_print("%s\n", result);
           g_free(result);
@@ -156,7 +160,7 @@ int main(int argc, char **argv)
 
 	g_free(report);
     } else {
-        g_error("Don't know what to do. Exiting.");
+        g_error(_("Don't know what to do. Exiting."));
     }
 
     moreinfo_shutdown();

@@ -66,11 +66,11 @@ static GQuark err_quark;
 #define XMLRPC_SERVER_URI   		"http://hardinfo.berlios.de/xmlrpc/"
 #define XMLRPC_SERVER_API_VERSION	1
 
-#define LABEL_SYNC_DEFAULT  "<big><b>Synchronize with Central Database</b></big>\n" \
+#define LABEL_SYNC_DEFAULT  _("<big><b>Synchronize with Central Database</b></big>\n" \
                             "The following information may be synchronized " \
-                            "with the HardInfo central database."
-#define LABEL_SYNC_SYNCING  "<big><b>Synchronizing</b></big>\n" \
-                            "This may take some time."
+                            "with the HardInfo central database.")
+#define LABEL_SYNC_SYNCING  _("<big><b>Synchronizing</b></big>\n" \
+                            "This may take some time.")
 
 static SyncDialog *sync_dialog_new(GtkWidget *parent);
 static void sync_dialog_destroy(SyncDialog * sd);
@@ -129,7 +129,7 @@ void sync_manager_show(GtkWidget *parent)
 {
 #ifndef HAS_LIBSOUP
     g_warning
-	("HardInfo was compiled without libsoup support. (Network Updater requires it.)");
+	(_("HardInfo was compiled without libsoup support. (Network Updater requires it.)"));
 #else				/* !HAS_LIBSOUP */
     SyncDialog *sd = sync_dialog_new(parent);
 
@@ -158,7 +158,7 @@ static gint _soup_get_xmlrpc_value_int(SoupMessage * msg,
     sna->error = NULL;
 
     if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
-	SNA_ERROR(1, "%s (error #%d)", msg->reason_phrase,
+	SNA_ERROR(1, _("%s (error #%d)"), msg->reason_phrase,
 		  msg->status_code);
 	goto bad;
     }
@@ -167,7 +167,7 @@ static gint _soup_get_xmlrpc_value_int(SoupMessage * msg,
 					     msg->response_body->length,
 					     NULL,
 					     G_TYPE_INT, &int_value)) {
-	SNA_ERROR(2, "Could not parse XML-RPC response");
+	SNA_ERROR(2, _("Could not parse XML-RPC response"));
     }
 
   bad:
@@ -182,7 +182,7 @@ static gchar *_soup_get_xmlrpc_value_string(SoupMessage * msg,
     sna->error = NULL;
 
     if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
-	SNA_ERROR(1, "%s (error #%d)", msg->reason_phrase,
+	SNA_ERROR(1, _("%s (error #%d)"), msg->reason_phrase,
 		  msg->status_code);
 	goto bad;
     }
@@ -191,7 +191,7 @@ static gchar *_soup_get_xmlrpc_value_string(SoupMessage * msg,
 					     msg->response_body->length,
 					     NULL,
 					     G_TYPE_STRING, &string)) {
-	SNA_ERROR(2, "Could not parse XML-RPC response");
+	SNA_ERROR(2, _("Could not parse XML-RPC response"));
     }
 
   bad:
@@ -264,9 +264,9 @@ static void _action_check_api_version_got_response(SoupSession * session,
     gint version = _soup_get_xmlrpc_value_int(msg, sna);
 
     if (version != XMLRPC_SERVER_API_VERSION) {
-	SNA_ERROR(5, "Server says it supports API version %d, but "
+	SNA_ERROR(5, _("Server says it supports API version %d, but "
 		  "this version of HardInfo only supports API "
-		  "version %d.", version, XMLRPC_SERVER_API_VERSION);
+		  "version %d."), version, XMLRPC_SERVER_API_VERSION);
     }
 
     g_main_quit(loop);
@@ -359,8 +359,8 @@ static SyncNetAction *sync_manager_get_selected_actions(gint * n)
     GSList *entry;
     SyncNetAction *actions;
     SyncNetAction
-      action_check_api = { "Contacting HardInfo Central Database", _action_check_api_version },
-      action_clean_up = { "Cleaning up", NULL};
+      action_check_api = { _("Contacting HardInfo Central Database"), _action_check_api_version },
+      action_clean_up = { _("Cleaning up"), NULL};
 
     actions = g_new0(SyncNetAction, 2 + g_slist_length(entries));
 
@@ -477,7 +477,7 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 
 	if (sd->flag_cancel) {
 	    markup =
-		g_strdup_printf("<s>%s</s> <i>(canceled)</i>",
+		g_strdup_printf(_("<s>%s</s> <i>(canceled)</i>"),
 				sna[i].name);
 	    gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
 	    g_free(markup);
@@ -494,7 +494,7 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 
 	if (sna[i].do_action && !sna[i].do_action(sd, &sna[i])) {
 	    markup =
-		g_strdup_printf("<b><s>%s</s></b> <i>(failed)</i>",
+		g_strdup_printf(_("<b><s>%s</s></b> <i>(failed)</i>"),
 				sna[i].name);
 	    gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
 	    g_free(markup);
@@ -506,18 +506,18 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 		if (sna[i].error->code != 1) {
 		    /* the user has not cancelled something... */
 		    g_warning
-			("Failed while performing \"%s\". Please file a bug report "
+			(_("Failed while performing \"%s\". Please file a bug report "
 			 "if this problem persists. (Use the Help\342\206\222Report"
-			 " bug option.)\n\nDetails: %s", sna[i].name,
+			 " bug option.)\n\nDetails: %s"), sna[i].name,
 			 sna[i].error->message);
 		}
 
 		g_error_free(sna[i].error);
 	    } else {
 		g_warning
-		    ("Failed while performing \"%s\". Please file a bug report "
+		    (_("Failed while performing \"%s\". Please file a bug report "
 		     "if this problem persists. (Use the Help\342\206\222Report"
-		     " bug option.)", sna[i].name);
+		     " bug option.)"), sna[i].name);
 	    }
 	    break;
 	}
@@ -643,7 +643,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 
     dialog = gtk_dialog_new();
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
-    gtk_window_set_title(GTK_WINDOW(dialog), "Network Updater");
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Network Updater"));
     gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
     gtk_window_set_icon(GTK_WINDOW(dialog),
 			icon_cache_get_pixbuf("syncmanager.png"));
@@ -724,7 +724,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 				 GTK_RESPONSE_CANCEL);
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
 
-    button7 = gtk_button_new_with_mnemonic("_Synchronize");
+    button7 = gtk_button_new_with_mnemonic(_("_Synchronize"));
     gtk_widget_show(button7);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);

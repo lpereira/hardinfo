@@ -65,19 +65,19 @@ void scan_dev(gboolean reload);
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 static ModuleEntry entries[] = {
-    {"Summary", "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
-    {"Operating System", "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
-    {"Kernel Modules", "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
-    {"Boots", "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
-    {"Languages", "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
-    {"Filesystems", "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
-    {"Display", "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
-    {"Environment Variables", "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
+    {N_("Summary"), "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
+    {N_("Operating System"), "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
+    {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
+    {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
+    {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
+    {N_("Filesystems"), "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
+    {N_("Display"), "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
+    {N_("Environment Variables"), "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
 #if GLIB_CHECK_VERSION(2,14,0)
-    {"Development", "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
+    {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
-    {"Users", "users.png", callback_users, scan_users, MODULE_FLAG_NONE},
-    {"Groups", "users.png", callback_groups, scan_groups, MODULE_FLAG_NONE},
+    {N_("Users"), "users.png", callback_users, scan_users, MODULE_FLAG_NONE},
+    {N_("Groups"), "users.png", callback_groups, scan_groups, MODULE_FLAG_NONE},
     {NULL},
 };
 
@@ -96,11 +96,12 @@ gchar *hi_more_info(gchar * entry)
 
 gchar *hi_get_field(gchar * field)
 {
+	setlocale(LC_ALL, "C"); //Load Average is not updated if locale is not C, swithc locale to C
     gchar *tmp;
 
     if (g_str_equal(field, "Memory")) {
 	MemoryInfo *mi = computer_get_memory();
-	tmp = g_strdup_printf("%dMB (%dMB used)", mi->total, mi->used);
+	tmp = g_strdup_printf(_("%dMB (%dMB used)"), mi->total, mi->used);
 	g_free(mi);
     } else if (g_str_equal(field, "Uptime")) {
 	tmp = computer_get_formatted_uptime();
@@ -114,7 +115,7 @@ gchar *hi_get_field(gchar * field)
     } else {
 	tmp = g_strdup("");
     }
-
+    setlocale(LC_ALL, "");// switch locale back to normal
     return tmp;
 }
 
@@ -196,21 +197,21 @@ void scan_dev(gboolean reload)
        gchar *regex;
        gboolean stdout;
     } detect_lang[] = {
-       { "Scripting Languages", NULL, FALSE },
-       { "CPython", "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
-       { "Perl", "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
-       { "PHP", "php --version", "\\d+\\.\\d+\\.\\S+", TRUE},
-       { "Ruby", "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
-       { "Bash", "bash --version", "\\d+\\.\\d+\\.\\S+", TRUE},
-       { "Compilers", NULL, FALSE },
-       { "C (GCC)", "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
-       { "Java", "javac -version", "\\d+\\.\\d+\\.\\d+", FALSE },
-       { "CSharp (Mono, old)", "mcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
-       { "CSharp (Mono)", "gmcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
-       { "Vala", "valac --version", "\\d+\\.\\d+\\.\\d+", TRUE },
-       { "Haskell (GHC)", "ghc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
-       { "FreePascal", "fpc --version", "\\d+\\.\\d+\\.\\S+", TRUE },
-       { "Tools", NULL, FALSE },
+       { N_("Scripting Languages"), NULL, FALSE },
+       { N_("CPython"), "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Perl"), "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("PHP"), "php --version", "\\d+\\.\\d+\\.\\S+", TRUE},
+       { N_("Ruby"), "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Bash"), "bash --version", "\\d+\\.\\d+\\.\\S+", TRUE},
+       { N_("Compilers"), NULL, FALSE },
+       { N_("C (GCC)"), "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Java"), "javac -version", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("CSharp (Mono, old)"), "mcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("CSharp (Mono)"), "gmcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Vala"), "valac --version", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Haskell (GHC)"), "ghc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("FreePascal"), "fpc --version", "\\d+\\.\\d+\\.\\S+", TRUE },
+       { N_("Tools"), NULL, FALSE },
        { "make", "make --version", "\\d+\\.\\d+", TRUE },
        { "GDB", "gdb --version", "\\d+\\.\\S+", TRUE },
        { "strace", "strace -V", "\\d+\\.\\d+\\.\\d+", TRUE },
@@ -258,10 +259,10 @@ void scan_dev(gboolean reload)
            dev_list = h_strdup_cprintf("%s=%s\n", dev_list, detect_lang[i].compiler_name, version);
            g_free(version);
        } else {
-           dev_list = h_strdup_cprintf("%s=Not found\n", dev_list, detect_lang[i].compiler_name);
+           dev_list = h_strdup_cprintf(_("%s=Not found\n"), dev_list, detect_lang[i].compiler_name);
        }
        
-       temp = g_strdup_printf("Detecting version: %s",
+       temp = g_strdup_printf(_("Detecting version: %s"),
                               detect_lang[i].compiler_name);
        shell_status_update(temp);
        g_free(temp);
@@ -272,11 +273,11 @@ void scan_dev(gboolean reload)
 
 gchar *callback_dev()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
+    return g_strdup_printf(_("[$ShellParam$]\n"
 			   "ColumnTitle$TextValue=Program\n"
 			   "ColumnTitle$Value=Version\n"
 			   "ShowColumnHeaders=true\n"
-                           "%s", dev_list);
+                           "%s"), dev_list);
 }
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
@@ -352,7 +353,7 @@ gchar *computer_get_virtualization()
     
     DEBUG("no virtual machine detected; assuming physical machine");
     
-    return g_strdup("Physical machine");
+    return g_strdup(_("Physical machine"));
 }
 
 gchar *callback_summary()
@@ -369,7 +370,7 @@ gchar *callback_summary()
     storage_devices = module_call_method("devices::getStorageDevices");
     virt            = computer_get_virtualization();
 
-    summary = g_strdup_printf("[$ShellParam$]\n"
+    summary = g_strdup_printf(_("[$ShellParam$]\n"
 			      "UpdateInterval$Memory=1000\n"
 			      "UpdateInterval$Date/Time=1000\n"
 			      "#ReloadInterval=5000\n"
@@ -387,7 +388,7 @@ gchar *callback_summary()
 			      "\n%s\n"
 			      "[Input Devices]\n%s\n"
 			      "\n%s\n"
-			      "\n%s\n",
+			      "\n%s\n"),
 			      processor_name,
 			      virt,
 			      computer->os->distro,
@@ -411,7 +412,7 @@ gchar *callback_summary()
 
 gchar *callback_os()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
+    return g_strdup_printf(_("[$ShellParam$]\n"
 			   "UpdateInterval$Uptime=10000\n"
 			   "UpdateInterval$Load Average=1000\n"
 			   "[Version]\n"
@@ -427,7 +428,7 @@ gchar *callback_os()
 			   "Desktop Environment=%s\n"
 			   "[Misc]\n"
 			   "Uptime=...\n"
-			   "Load Average=...",
+			   "Load Average=..."),
 			   computer->os->kernel,
 			   computer->os->kernel_version,
 			   computer->os->libc,
@@ -440,39 +441,39 @@ gchar *callback_os()
 
 gchar *callback_modules()
 {
-    return g_strdup_printf("[Loaded Modules]\n"
+    return g_strdup_printf(_("[Loaded Modules]\n"
 			   "%s"
 			   "[$ShellParam$]\n"
 			   "ViewType=1\n"
 			   "ColumnTitle$TextValue=Name\n"
 			   "ColumnTitle$Value=Description\n"
-			   "ShowColumnHeaders=true\n", module_list);
+			   "ShowColumnHeaders=true\n"), module_list);
 }
 
 gchar *callback_boots()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
+    return g_strdup_printf(_("[$ShellParam$]\n"
 			   "ColumnTitle$TextValue=Date & Time\n"
 			   "ColumnTitle$Value=Kernel Version\n"
 			   "ShowColumnHeaders=true\n"
 			   "\n"
-			   "%s", computer->os->boots);
+			   "%s"), computer->os->boots);
 }
 
 gchar *callback_locales()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
+    return g_strdup_printf(_("[$ShellParam$]\n"
 			   "ViewType=1\n"
 			   "ColumnTitle$TextValue=Language Code\n"
 			   "ColumnTitle$Value=Name\n"
 			   "ShowColumnHeaders=true\n"
 			   "[Available Languages]\n"
-			   "%s", computer->os->languages);
+			   "%s"), computer->os->languages);
 }
 
 gchar *callback_fs()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
+    return g_strdup_printf(_("[$ShellParam$]\n"
 			   "ViewType=4\n"
 			   "ReloadInterval=5000\n"
 			   "Zebra=1\n"
@@ -481,12 +482,12 @@ gchar *callback_fs()
 			   "ColumnTitle$Progress=Usage\n"
 			   "ColumnTitle$TextValue=Device\n"
 			   "ShowColumnHeaders=true\n"
-			   "[Mounted File Systems]\n%s\n", fs_list);
+			   "[Mounted File Systems]\n%s\n"), fs_list);
 }
 
 gchar *callback_display()
 {
-    return g_strdup_printf("[Display]\n"
+    return g_strdup_printf(_("[Display]\n"
 			   "Resolution=%dx%d pixels\n"
 			   "Vendor=%s\n"
 			   "Version=%s\n"
@@ -498,7 +499,7 @@ gchar *callback_display()
 			   "Vendor=%s\n"
 			   "Renderer=%s\n"
 			   "Version=%s\n"
-			   "Direct Rendering=%s\n",
+			   "Direct Rendering=%s\n"),
 			   computer->display->width,
 			   computer->display->height,
 			   computer->display->vendor,
@@ -508,7 +509,7 @@ gchar *callback_display()
 			   computer->display->ogl_vendor,
 			   computer->display->ogl_renderer,
 			   computer->display->ogl_version,
-			   computer->display->dri ? "Yes" : "No");
+			   computer->display->dri ? _("Y_es") : _("No"));
 }
 
 gchar *callback_users()
@@ -522,13 +523,13 @@ gchar *callback_users()
 
 gchar *callback_groups()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
+    return g_strdup_printf(_("[$ShellParam$]\n"
 			   "ReloadInterval=10000\n"
 			   "ColumnTitle$TextValue=Name\n"
 			   "ColumnTitle$Value=Group ID\n"
 			   "ShowColumnHeaders=true\n"
 			   "[Groups]\n"
-			   "%s\n", groups);
+			   "%s\n"), groups);
 }
 
 gchar *get_os_kernel(void)
@@ -602,7 +603,7 @@ ModuleEntry *hi_module_get_entries(void)
 
 gchar *hi_module_get_name(void)
 {
-    return g_strdup("Computer");
+    return g_strdup(_("Computer"));
 }
 
 guchar hi_module_get_weight(void)
@@ -696,7 +697,7 @@ ModuleAbout *hi_module_get_about(void)
     static ModuleAbout ma[] = {
 	{
 	 .author = "Leandro A. F. Pereira",
-	 .description = "Gathers high-level computer information",
+	 .description = N_("Gathers high-level computer information"),
 	 .version = VERSION,
 	 .license = "GNU GPL version 2"}
     };

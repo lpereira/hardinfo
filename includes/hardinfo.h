@@ -23,6 +23,10 @@
 #include "config.h"
 #include "shell.h"
 #include "vendor.h"
+#include <libintl.h>
+#include <locale.h>
+#define _(STRING)    gettext(STRING)
+#define N_(STRING) (STRING)
 
 typedef enum {
   MODULE_FLAG_NONE = 0,

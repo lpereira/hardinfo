@@ -71,20 +71,20 @@ void scan_device_resources(gboolean reload);
 gchar *hi_more_info(gchar *entry);
 
 static ModuleEntry entries[] = {
-    {"Processor", "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
-    {"Memory", "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
-    {"PCI Devices", "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
-    {"USB Devices", "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
-    {"Printers", "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
-    {"Battery", "battery.png", callback_battery, scan_battery, MODULE_FLAG_NONE},
-    {"Sensors", "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
-    {"Input Devices", "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
-    {"Storage", "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
+    {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
+    {N_("Memory"), "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
+    {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
+    {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
+    {N_("Printers"), "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
+    {N_("Battery"), "battery.png", callback_battery, scan_battery, MODULE_FLAG_NONE},
+    {N_("Sensors"), "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
+    {N_("Input Devices"), "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
+    {N_("Storage"), "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
-    {"DMI", "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
-    {"Memory SPD", "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
+    {N_("DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
+    {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
-    {"Resources", "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
+    {N_("Resources"), "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     {NULL}
 };
 
@@ -151,7 +151,7 @@ gchar *get_processor_frequency(void)
 
     p = (Processor *)processors->data;
     if (p->cpu_mhz == 0.0f) {
-        return g_strdup("Unknown");
+        return g_strdup(N_("Unknown"));
     } else {
         return g_strdup_printf("%.0f", p->cpu_mhz);
     }
@@ -175,7 +175,7 @@ gchar *get_pci_device_description(gchar *pci_id)
 gchar *get_memory_total(void)
 {
     scan_memory(FALSE);
-    return hi_more_info("Total Memory");    
+    return hi_more_info(N_("Total Memory"));    
 }
 
 gchar *get_motherboard(void)
@@ -190,11 +190,11 @@ gchar *get_motherboard(void)
     if (board_name && board_vendor && *board_name && *board_vendor)
        return g_strconcat(board_vendor, " ", board_name, NULL);
     else if (board_name && *board_name)
-       return g_strconcat(board_name, " (vendor unknown)", NULL);
+       return g_strconcat(board_name, _(" (vendor unknown)"), NULL);
     else if (board_vendor && *board_vendor)
-       return g_strconcat(board_vendor, " (model unknown)", NULL);
+       return g_strconcat(board_vendor, _(" (model unknown)"), NULL);
     
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
 }
 
 ShellModuleMethod *hi_exported_methods(void)
@@ -409,7 +409,7 @@ ModuleEntry *hi_module_get_entries(void)
 
 gchar *hi_module_get_name(void)
 {
-    return g_strdup("Devices");
+    return g_strdup(_("Devices"));
 }
 
 guchar hi_module_get_weight(void)
@@ -421,7 +421,7 @@ void hi_module_init(void)
 {
     if (!g_file_test("/usr/share/misc/pci.ids", G_FILE_TEST_EXISTS)) {
         static SyncEntry se = {
-             .fancy_name = "Update PCI ID listing",
+             .fancy_name = N_("Update PCI ID listing"),
              .name = "GetPCIIds",
              .save_to = "pci.ids",
              .get_data = NULL
@@ -433,7 +433,7 @@ void hi_module_init(void)
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     {
       static SyncEntry se = {
-        .fancy_name = "Update CPU feature database",
+        .fancy_name = N_("Update CPU feature database"),
         .name = "RecvCPUFlags",
         .save_to = "cpuflags.conf",
         .get_data = NULL
@@ -461,7 +461,7 @@ ModuleAbout *hi_module_get_about(void)
     static ModuleAbout ma[] = {
 	{
 	 .author = "Leandro A. F. Pereira",
-	 .description = "Gathers information about hardware devices",
+	 .description = N_("Gathers information about hardware devices"),
 	 .version = VERSION,
 	 .license = "GNU GPL version 2"}
     };
