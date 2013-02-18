@@ -323,6 +323,8 @@ gboolean lg_update(gpointer d)
 
 int main(int argc, char **argv)
 {
+	
+   
     LoadGraph *lg;
     GtkWidget *window;
 

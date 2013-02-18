@@ -30,7 +30,7 @@ scan_boots_real(void)
     scan_os(FALSE);
 
     if (!computer->os->boots)
-      computer->os->boots = g_strdup("[Boots]\n");
+      computer->os->boots = g_strdup(_("[Boots]\n"));
     else
       return;
     

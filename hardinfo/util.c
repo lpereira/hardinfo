@@ -96,35 +96,30 @@ gchar *seconds_to_string(unsigned int seconds)
     days = hours / 24;
     hours %= 24;
 
-#define plural(x) ((x > 1) ? "s" : "")
 
     if (days < 1) {
 	if (hours < 1) {
-	    return g_strdup_printf("%d minute%s", minutes,
-				   plural(minutes));
+	    return g_strdup_printf(ngettext("%d minute","%d minutes",minutes),minutes);
 	} else {
-	    return g_strdup_printf("%d hour%s, %d minute%s",
-				   hours,
-				   plural(hours), minutes,
-				   plural(minutes));
+		return g_strdup_printf(ngettext("%d hour, ","%d hours, ",hours),hours,
+                                  ngettext("%d minute","%d minutes",minutes),minutes);
 	}
     }
-
-    return g_strdup_printf("%d day%s, %d hour%s and %d minute%s",
-			   days, plural(days), hours,
-			   plural(hours), minutes, plural(minutes));
+	return g_strdup_printf(ngettext("%d day, ","%d days, ",days),days,
+                           ngettext("%d hour and ","%d hours and ",hours),hours,                          
+                           ngettext("%d minute","%d minutes",minutes),minutes);
 }
 
 inline gchar *size_human_readable(gfloat size)
 {
     if (size < KiB)
-	return g_strdup_printf("%.1f B", size);
+	return g_strdup_printf(_("%.1f B"), size);
     if (size < MiB)
-	return g_strdup_printf("%.1f KiB", size / KiB);
+	return g_strdup_printf(_("%.1f KiB"), size / KiB);
     if (size < GiB)
-	return g_strdup_printf("%.1f MiB", size / MiB);
+	return g_strdup_printf(_("%.1f MiB"), size / MiB);
 
-    return g_strdup_printf("%.1f GiB", size / GiB);
+    return g_strdup_printf(_("%.1f GiB"), size / GiB);
 }
 
 inline char *strend(gchar * str, gchar chr)
@@ -338,7 +333,7 @@ log_handler(const gchar * log_domain,
     if (!params.gui_running) {
 	/* No GUI running: spit the message to the terminal */
 	g_print("\n\n*** %s: %s\n\n",
-		(log_level & G_LOG_FLAG_FATAL) ? "Error" : "Warning",
+		(log_level & G_LOG_FLAG_FATAL) ? _("Error") : _("Warning"),
 		message);
     } else {
 	/* Hooray! We have a GUI running! */
@@ -353,8 +348,8 @@ log_handler(const gchar * log_domain,
 						    "<big><b>%s</b></big>\n\n%s",
 						    (log_level &
 						     G_LOG_FLAG_FATAL) ?
-						    "Fatal Error" :
-						    "Warning", message);
+						    _("Fatal Error") :
+						    _("Warning"), message);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
@@ -378,56 +373,56 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .short_name = 'r',
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &create_report,
-	 .description = "creates a report and prints to standard output"},
+	 .description = N_("creates a report and prints to standard output")},
 	{
 	 .long_name = "report-format",
 	 .short_name = 'f',
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &report_format,
-	 .description = "chooses a report format (text, html)"},
+	 .description = N_("chooses a report format (text, html)")},
 	{
 	 .long_name = "run-benchmark",
 	 .short_name = 'b',
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &run_benchmark,
-	 .description = "run benchmark; requires benchmark.so to be loaded"},
+	 .description = N_("run benchmark; requires benchmark.so to be loaded")},
 	{
 	 .long_name = "list-modules",
 	 .short_name = 'l',
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &list_modules,
-	 .description = "lists modules"},
+	 .description = N_("lists modules")},
 	{
 	 .long_name = "load-module",
 	 .short_name = 'm',
 	 .arg = G_OPTION_ARG_STRING_ARRAY,
 	 .arg_data = &use_modules,
-	 .description = "specify module to load"},
+	 .description = N_("specify module to load")},
 	{
 	 .long_name = "autoload-deps",
 	 .short_name = 'a',
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &autoload_deps,
-	 .description = "automatically load module dependencies"},
+	 .description = N_("automatically load module dependencies")},
 #ifdef HAS_LIBSOUP
 	{
 	 .long_name = "xmlrpc-server",
 	 .short_name = 'x',
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &run_xmlrpc_server,
-	 .description = "run in XML-RPC server mode"},
+	 .description = N_("run in XML-RPC server mode")},
 #endif	/* HAS_LIBSOUP */
 	{
 	 .long_name = "version",
 	 .short_name = 'v',
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &show_version,
-	 .description = "shows program version and quit"},
+	 .description = N_("shows program version and quit")},
 	{NULL}
     };
     GOptionContext *ctx;
 
-    ctx = g_option_context_new("- System Profiler and Benchmark tool");
+    ctx = g_option_context_new(_("- System Profiler and Benchmark tool"));
     g_option_context_set_ignore_unknown_options(ctx, FALSE);
     g_option_context_set_help_enabled(ctx, TRUE);
 
@@ -437,8 +432,8 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     g_option_context_free(ctx);
 
     if (*argc >= 2) {
-	g_print("Unrecognized arguments.\n"
-		"Try ``%s --help'' for more information.\n", *(argv)[0]);
+	g_print(_("Unrecognized arguments.\n"
+		"Try ``%s --help'' for more information.\n"), *(argv)[0]);
 	exit(1);
     }
 
@@ -503,7 +498,7 @@ void open_url(gchar * url)
     	browser = (gchar *)browsers[i++];
     } while (browser);
 
-    g_warning("Couldn't find a Web browser to open URL %s.", url);
+    g_warning(_("Couldn't find a Web browser to open URL %s."), url);
 }
 
 /* Copyright: Jens Låås, SLU 2002 */
@@ -733,7 +728,7 @@ static ShellModule *module_load(gchar * filename)
 	    g_module_symbol(module->dll, "hi_note_func",
 			    (gpointer) & (entry->notefunc));
 
-	    entry->name = entries[i].name;
+	    entry->name = _(entries[i].name); //gettext unname N_() in computer.c line 67 etc...
 	    entry->scan_func = entries[i].scan_callback;
 	    entry->func = entries[i].callback;
 	    entry->number = i;
@@ -850,7 +845,7 @@ static GSList *modules_check_deps(GSList * modules)
 							GTK_DIALOG_DESTROY_WITH_PARENT,
 							GTK_MESSAGE_QUESTION,
 							GTK_BUTTONS_NONE,
-							"Module \"%s\" depends on module \"%s\", load it?",
+							_("Module \"%s\" depends on module \"%s\", load it?"),
 							module->name,
 							deps[i]);
 			gtk_dialog_add_buttons(GTK_DIALOG(dialog),
@@ -873,7 +868,7 @@ static GSList *modules_check_deps(GSList * modules)
 
 			gtk_widget_destroy(dialog);
 		    } else {
-			g_error("Module \"%s\" depends on module \"%s\".",
+			g_error(_("Module \"%s\" depends on module \"%s\"."),
 				module->name, deps[i]);
 		    }
 		}
@@ -918,12 +913,12 @@ static GSList *modules_load(gchar ** module_list)
     if (g_slist_length(modules) == 0) {
 	if (params.use_modules == NULL) {
 	    g_error
-		("No module could be loaded. Check permissions on \"%s\" and try again.",
+		(_("No module could be loaded. Check permissions on \"%s\" and try again."),
 		 params.path_lib);
 	} else {
 	    g_error
-		("No module could be loaded. Please use hardinfo -l to list all avai"
-		 "lable modules and try again with a valid module list.");
+		(_("No module could be loaded. Please use hardinfo -l to list all avai"
+		 "lable modules and try again with a valid module list."));
 
 	}
     }
@@ -1098,7 +1093,7 @@ void module_entry_scan_all_except(ModuleEntry * entries, gint except_entry)
 	if (i == except_entry)
 	    continue;
 
-	text = g_strdup_printf("Scanning: %s...", entry.name);
+	text = g_strdup_printf(_("Scanning: %s..."), _(entry.name));
 	shell_status_update(text);
 	g_free(text);
 
@@ -1108,7 +1103,7 @@ void module_entry_scan_all_except(ModuleEntry * entries, gint except_entry)
     }
 
     shell_view_set_enabled(TRUE);
-    shell_status_update("Done.");
+    shell_status_update(_("Done."));
 }
 
 void module_entry_scan_all(ModuleEntry * entries)

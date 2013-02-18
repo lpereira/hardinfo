@@ -28,108 +28,109 @@
 #include <callbacks.h>
 #include <hardinfo.h>
 
+
 #include "uidefs.h"
 
 static GtkActionEntry entries[] = {
-    {"InformationMenuAction", NULL, "_Information"},	/* name, stock id, label */
-    {"RemoteMenuAction", NULL, "_Remote"},
-    {"ViewMenuAction", NULL, "_View"},
-    {"HelpMenuAction", NULL, "_Help"},
-    {"HelpMenuModulesAction", HI_STOCK_ABOUT_MODULES, "About _Modules"},
+    {"InformationMenuAction", NULL, N_("_Information")},	/* name, stock id, label */
+    {"RemoteMenuAction", NULL, N_("_Remote")},
+    {"ViewMenuAction", NULL, N_("_View")},
+    {"HelpMenuAction", NULL, N_("_Help")},
+    {"HelpMenuModulesAction", HI_STOCK_ABOUT_MODULES, N_("About _Modules")},
     {"MainMenuBarAction", NULL, ""},
 
     {"ReportAction", HI_STOCK_REPORT,	/* name, stock id */
-     "Generate _Report", "<control>R",	/* label, accelerator */
+     N_("Generate _Report"), "<control>R",	/* label, accelerator */
      NULL,			/* tooltip */
      G_CALLBACK(cb_generate_report)},
 
     {"SyncManagerAction", HI_STOCK_SYNC_MENU,
-     "_Network Updater...", NULL,
+     N_("_Network Updater..."), NULL,
      NULL,
      G_CALLBACK(cb_sync_manager)},
 
     {"OpenAction", GTK_STOCK_OPEN,
-     "_Open...", NULL,
+     N_("_Open..."), NULL,
      NULL,
      G_CALLBACK(cb_sync_manager)},
      
     {"ConnectToAction", GTK_STOCK_CONNECT,
-     "_Connect to...", NULL,
+     N_("_Connect to..."), NULL,
      NULL,
      G_CALLBACK(cb_connect_to)},
 
     {"ManageAction", NULL,
-     "_Manage hosts...", NULL,
+     N_("_Manage hosts..."), NULL,
      NULL,
      G_CALLBACK(cb_manage_hosts)},
     
     {"LocalComputerAction", GTK_STOCK_HOME,
-     "_Local computer", NULL,
+     N_("_Local computer"), NULL,
      NULL,
      G_CALLBACK(cb_local_computer)},
 
     {"CopyAction", GTK_STOCK_COPY,
-     "_Copy to Clipboard", "<control>C",
-     "Copy to clipboard",
+     N_("_Copy to Clipboard"), "<control>C",
+     N_("Copy to clipboard"),
      G_CALLBACK(cb_copy_to_clipboard)},
 
     {"SaveGraphAction", GTK_STOCK_SAVE_AS,
-     "_Save image as...", "<control>S",
+     N_("_Save image as..."), "<control>S",
      NULL,
      G_CALLBACK(cb_save_graphic)},
 
     {"RefreshAction", GTK_STOCK_REFRESH,
-     "_Refresh", "F5",
+     N_("_Refresh"), "F5",
      NULL,
      G_CALLBACK(cb_refresh)},
 
     {"OnlineDocsAction", GTK_STOCK_HELP,
-     "Contents", "F1",
+     N_("Contents"), "F1",
      NULL,
      G_CALLBACK(cb_open_online_docs)},
 
     {"ContextHelpAction", NULL,
-     "Context help", "<Ctrl>F1",
+     N_("Context help"), "<Ctrl>F1",
      NULL,
      G_CALLBACK(cb_open_online_docs_context)},
 
     {"HomePageAction", HI_STOCK_INTERNET,
-     "_Open HardInfo Web Site", NULL,
+     N_("_Open HardInfo Web Site"), NULL,
      NULL,
      G_CALLBACK(cb_open_web_page)},
 
     {"ReportBugAction", HI_STOCK_INTERNET,
-     "_Report bug", NULL,
+     N_("_Report bug"), NULL,
      NULL,
      G_CALLBACK(cb_report_bug)},
 
     {"DonateAction", HI_STOCK_DONATE,
-     "_Donate to the project", NULL,
+     N_("_Donate to the project"), NULL,
      NULL,
      G_CALLBACK(cb_donate)},
 
     {"AboutAction", GTK_STOCK_ABOUT,
-     "_About HardInfo", NULL,
-     "Displays program version information",
+     N_("_About HardInfo"), NULL,
+     N_("Displays program version information"),
      G_CALLBACK(cb_about)},
 
     {"QuitAction", GTK_STOCK_QUIT,
-     "_Quit", "<control>Q",
+     N_("_Quit"), "<control>Q",
      NULL,
      G_CALLBACK(cb_quit)}
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
     {"SidePaneAction", NULL,
-     "_Side Pane", NULL,
-     "Toggles side pane visibility",
+     N_("_Side Pane"), NULL,
+     N_("Toggles side pane visibility"),
      G_CALLBACK(cb_side_pane)},
     {"ToolbarAction", NULL,
-     "_Toolbar", NULL,
+     N_("_Toolbar"), NULL,
      NULL,
      G_CALLBACK(cb_toolbar)},
     {"ActAsServerAction", NULL,
-      "_Accept connections", NULL,
+      N_("_Accept connections"), NULL,
       NULL,
       G_CALLBACK(cb_act_as_server) }
 };
@@ -163,13 +164,15 @@ void menu_init(Shell * shell)
     /* Pack up our objects:
      * menu_box -> window
      * actions -> action_group
-     * action_group -> menu_manager */
+     * action_group -> menu_manager */  
+    gtk_action_group_set_translation_domain( action_group, "hardinfo" );//gettext 
     gtk_action_group_add_actions(action_group, entries,
 				 G_N_ELEMENTS(entries), NULL);
     gtk_action_group_add_toggle_actions(action_group, toggle_entries,
 					G_N_ELEMENTS(toggle_entries),
 					NULL);
     gtk_ui_manager_insert_action_group(menu_manager, action_group, 0);
+    
 
     /* Read in the UI from our XML file */
     error = NULL;
