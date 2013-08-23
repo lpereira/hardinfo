@@ -593,11 +593,7 @@ gchar *gbr_find_lib_dir(const gchar * default_lib_dir)
 	    return NULL;
     }
 
-#ifdef ARCH_x86_64
-    dir = g_build_filename(prefix, "lib64", NULL);
-#else
-    dir = g_build_filename(prefix, "lib", NULL);
-#endif
+    dir = g_build_filename(prefix, LIBDIR, NULL);
 
     g_free(prefix);
     return dir;
