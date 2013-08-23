@@ -10,6 +10,7 @@
 #define HOSTNAME		""
 #define ARCH_@HARDINFO_ARCH@
 
+#define LIBDIR			"@CMAKE_INSTALL_LIBDIR@"
 #define LIBPREFIX		"@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/hardinfo"
 #define PREFIX			"@CMAKE_INSTALL_PREFIX@/share/hardinfo"
 
