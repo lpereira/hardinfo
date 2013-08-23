@@ -313,7 +313,6 @@ void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_numbe
 			      vendor_id, product_id, bus);
 
     moreinfo_add_with_prefix("DEV", tmp, strhash);
-
     g_free(vendor);
     g_free(product);
     g_free(max_power);
@@ -327,6 +326,7 @@ gboolean __scan_usb_lsusb(void)
     static gchar *lsusb_path = NULL;
     int usb_device_number = 0;
     FILE *lsusb;
+    FILE *temp_lsusb;
     char buffer[512], *temp;
 
     if (!lsusb_path) {
@@ -345,6 +345,22 @@ gboolean __scan_usb_lsusb(void)
         return FALSE;
     }
 
+    temp_lsusb = tmpfile();
+    if (!temp_lsusb) {
+        DEBUG("cannot create temporary file for lsusb");
+
+        return FALSE;
+    }
+
+    while (fgets(buffer, sizeof(buffer), lsusb)) {
+        fputs(buffer, temp_lsusb);
+    }
+
+    pclose(lsusb);
+
+    // rewind file so we can read from it
+    fseek(temp_lsusb, 0, SEEK_SET);
+
     g_free(temp);
 
     if (usb_list) {
@@ -353,13 +369,13 @@ gboolean __scan_usb_lsusb(void)
     }
     usb_list = g_strdup("[USB Devices]\n");
 
-    while (fgets(buffer, sizeof(buffer), lsusb)) {
+    while (fgets(buffer, sizeof(buffer), temp_lsusb)) {
         if (g_str_has_prefix(buffer, "Bus ")) {
-           __scan_usb_lsusb_add_device(buffer, lsusb, ++usb_device_number);
+           __scan_usb_lsusb_add_device(buffer, temp_lsusb, ++usb_device_number);
         }
     }
     
-    pclose(lsusb);
+    fclose(temp_lsusb);
     
     return usb_device_number > 0;
 }
