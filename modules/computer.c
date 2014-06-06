@@ -84,7 +84,7 @@ static ModuleEntry entries[] = {
 gchar *module_list = NULL;
 Computer *computer = NULL;
 
-gchar *hi_more_info(gchar * entry)
+static gchar *hi_more_info(gchar * entry)
 {
     gchar *info = moreinfo_lookup_with_prefix("COMP", entry);
 

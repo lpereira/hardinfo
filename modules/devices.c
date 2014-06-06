@@ -68,7 +68,7 @@ void scan_spd(gboolean reload);
 #endif
 void scan_device_resources(gboolean reload);
 
-gchar *hi_more_info(gchar *entry);
+static gchar *hi_more_info(gchar *entry);
 
 static ModuleEntry entries[] = {
     {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
@@ -215,7 +215,7 @@ ShellModuleMethod *hi_exported_methods(void)
     return m;
 }
 
-gchar *hi_more_info(gchar * entry)
+static gchar *hi_more_info(gchar * entry)
 {
     gchar *info = moreinfo_lookup_with_prefix("DEV", entry);
     
