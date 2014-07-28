@@ -379,7 +379,7 @@ gchar *callback_statistics()
                             __statistics);
 }
 
-static gchar *hi_more_info(gchar * entry)
+gchar *hi_more_info(gchar * entry)
 {
     gchar *info = moreinfo_lookup_with_prefix("NET", entry);
 

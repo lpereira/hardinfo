@@ -244,7 +244,7 @@ gboolean __scan_usb_procfs(void)
     return n > 0;
 }
 
-void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_number)
+void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE *lsusb, int usb_device_number)
 {
     gint bus, device, vendor_id, product_id;
     gchar *version = NULL, *product = NULL, *vendor = NULL, *dev_class = NULL, *int_class = NULL;
@@ -255,7 +255,7 @@ void __scan_usb_lsusb_add_device(char *buffer, FILE *lsusb, int usb_device_numbe
     sscanf(buffer, "Bus %d Device %d: ID %x:%x",
            &bus, &device, &vendor_id, &product_id);
 
-    for (position = ftell(lsusb); fgets(buffer, 512, lsusb); position = ftell(lsusb)) {
+    for (fgets(buffer, bufsize, lsusb); position = ftell(lsusb); fgets(buffer, bufsize, lsusb)) {
         g_strstrip(buffer);
 
         if (g_str_has_prefix(buffer, "idVendor")) {
@@ -371,7 +371,7 @@ gboolean __scan_usb_lsusb(void)
 
     while (fgets(buffer, sizeof(buffer), temp_lsusb)) {
         if (g_str_has_prefix(buffer, "Bus ")) {
-           __scan_usb_lsusb_add_device(buffer, temp_lsusb, ++usb_device_number);
+           __scan_usb_lsusb_add_device(buffer, sizeof(buffer), temp_lsusb, ++usb_device_number);
         }
     }
     

@@ -54,10 +54,10 @@ gchar *find_program(gchar *program_name)
     int i;
     char *temp;
     static GHashTable *cache = NULL;
-    const char *path[] = { "/bin", "/sbin",
-		           "/usr/bin", "/usr/sbin",
-		           "/usr/local/bin", "/usr/local/sbin",
-		           NULL };
+    const char *path[] = { "/usr/local/bin", "/usr/local/sbin",
+		                   "/usr/bin", "/usr/sbin",
+		                   "/bin", "/sbin",
+		                   NULL };
     
     /* we don't need to call stat() every time: cache the results */
     if (!cache) {

@@ -42,6 +42,7 @@ typedef enum {
     DDR_SGRAM,
     DDR_SDRAM,
     DDR2_SDRAM,
+    DDR3_SDRAM
 } RamType;
 
 char *spd_info = NULL;
@@ -57,7 +58,8 @@ static const char *ram_types[] = {
     "Multiplexed ROM",
     "DDR SGRAM",
     "DDR SDRAM",
-    "DDR2 SDRAM"
+    "DDR2 SDRAM",
+    "DDR3 SDRAM"
 };
 
 static const char *vendors1[] = { "AMD", "AMI", "Fairchild", "Fujitsu",
@@ -1138,6 +1140,125 @@ static gchar *decode_ddr2_sdram(unsigned char *bytes, int *size)
 }
 
 
+
+static void decode_ddr3_module_speed(unsigned char *bytes,
+				     float *ddr_clock, int *pc3_speed)
+{
+    float ctime;
+    float ddrclk;
+    int tbits, pcclk;
+	float mtb=0.125;
+
+    if (bytes[10]==1 && bytes[11]==8) mtb=0.125;
+    if (bytes[10]==1 && bytes[11]==15) mtb=0.125;
+    ctime = mtb * bytes[12];
+
+    ddrclk = 2 * (1000 / ctime);
+
+	tbits=64;
+	switch (bytes[8]) {
+		case 1: tbits=16;
+		case 4: tbits=32;
+		case 3: case 0xb: tbits=64;
+	}
+
+    pcclk = ddrclk * tbits / 8;
+    pcclk -= pcclk % 100;
+
+    if (ddr_clock) {
+	*ddr_clock = (int) ddrclk;
+    }
+    if (pc3_speed) {
+	*pc3_speed = pcclk;
+    }
+}
+
+static void decode_ddr3_module_size(unsigned char *bytes, int *size)
+{
+    *size = 512 << bytes[4];
+}
+
+static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd,
+				       float *trp, float *tras, float *tcl)
+{
+    float ctime;
+    float highest_cas = 0;
+    int i;
+	float mtb=0.125;
+
+    if (bytes[10]==1 && bytes[11]==8) mtb=0.125;
+    if (bytes[10]==1 && bytes[11]==15) mtb=0.125;
+    ctime = mtb * bytes[12];
+
+	switch (bytes[14]) {
+		case 6: highest_cas = 5;
+		case 4: highest_cas = 6;
+		case 0xc: highest_cas = 7;
+		case 0x1e: highest_cas = 8;
+	}
+    if (trcd) {
+	*trcd = bytes[18] * mtb;
+    }
+
+    if (trp) {
+	*trp = bytes[20] * mtb;
+    }
+
+    if (tras) {
+	*tras = (bytes[22]+bytes[21] & 0xf)*mtb;
+    }
+
+    if (tcl) {
+	*tcl = highest_cas;
+    }
+}
+
+
+static gchar *decode_ddr3_sdram(unsigned char *bytes, int *size)
+{
+    float ddr_clock;
+    float trcd, trp, tras, tcl;
+    int pc3_speed;
+
+    decode_ddr3_module_speed(bytes, &ddr_clock, &pc3_speed);
+    decode_ddr3_module_size(bytes, size);
+    decode_ddr3_module_timings(bytes, &trcd, &trp, &tras, &tcl);
+    
+    return g_strdup_printf("[Module Information]\n"
+                           "Module type=DDR3 %.2f MHz (PC3-%d)\n"
+                           "SPD revision=%d.%d\n"
+                           "[Timings]\n"
+                           "tCL=%.2f\n"
+                           "tRCD=%.3fns\n"
+                           "tRP=%.3fns\n"
+                           "tRAS=%.3fns\n",
+                           ddr_clock, pc3_speed,
+                           bytes[1] >> 4, bytes[1] & 0xf,
+                           tcl, trcd, trp, tras);
+}
+
+static void decode_ddr3_part_number(unsigned char *bytes,
+				      char *part_number)
+{
+	int i;
+    if (part_number) {
+	for (i=128; i<=145; i++)
+		*part_number++ = bytes[i];
+	*part_number = '\0';		
+    }
+}
+
+static void decode_ddr3_manufacturer(unsigned char *bytes,
+				       char **manufacturer)
+{
+	char *out="Unknown";
+
+  end:
+    if (manufacturer) {
+	*manufacturer = out;
+    }
+}
+
 static void decode_module_manufacturer(unsigned char *bytes,
 				       char **manufacturer)
 {
@@ -1179,7 +1300,7 @@ static void decode_module_part_number(unsigned char *bytes,
 				      char *part_number)
 {
     if (part_number) {
-	bytes += 8;
+	bytes += 8+64;
 
 	while (*bytes++ && *bytes >= 32 && *bytes < 127) {
 	    *part_number++ = *bytes;
@@ -1215,6 +1336,8 @@ static int decode_ram_type(unsigned char *bytes)
 	    return DDR_SDRAM;
 	case 8:
 	    return DDR2_SDRAM;
+	case 11:
+		return DDR3_SDRAM;
 	}
     }
 
@@ -1267,33 +1390,42 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs)
         gchar *detailed_info;
         gchar *moreinfo_key;
         gchar part_number[32];
-        unsigned char bytes[64];
+        unsigned char bytes[256];
         int module_size;
         RamType ram_type;
         
         shell_status_pulse();
         
-        read_spd(spd_path, 0, 64, use_sysfs, bytes);
+        read_spd(spd_path, 0, 256, use_sysfs, bytes);
         ram_type = decode_ram_type(bytes);
 
         switch (ram_type) {
         case DDR2_SDRAM:
-            detailed_info = decode_ddr2_sdram(bytes, &module_size);
+			detailed_info = decode_ddr2_sdram(bytes, &module_size);
+			decode_module_part_number(bytes, part_number);
+			decode_module_manufacturer(bytes+64, &manufacturer);
+			break;
+        case DDR3_SDRAM:
+            detailed_info = decode_ddr3_sdram(bytes, &module_size);
+			decode_ddr3_part_number(bytes, part_number);    
+			decode_ddr3_manufacturer(bytes, &manufacturer);
             break;
         case DDR_SDRAM:
             detailed_info = decode_ddr_sdram(bytes, &module_size);
+			decode_module_part_number(bytes, part_number);
+			decode_module_manufacturer(bytes+64, &manufacturer);
             break;
         case SDR_SDRAM:
             detailed_info = decode_sdr_sdram(bytes, &module_size);
+			decode_module_part_number(bytes, part_number);
+			decode_module_manufacturer(bytes+64, &manufacturer);    
             break;
         default:
             DEBUG("Unsupported EEPROM type: %s\n", ram_types[ram_type]);
             continue;
         }
         
-        read_spd(spd_path, 64, 64, use_sysfs, bytes);
-        decode_module_manufacturer(bytes, &manufacturer);
-        decode_module_part_number(bytes, part_number);
+        
         
         gchar *key = g_strdup_printf("MEM%d", count);
         moreinfo_add_with_prefix("DEV", key, g_strdup(detailed_info));

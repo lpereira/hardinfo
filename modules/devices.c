@@ -68,7 +68,7 @@ void scan_spd(gboolean reload);
 #endif
 void scan_device_resources(gboolean reload);
 
-static gchar *hi_more_info(gchar *entry);
+gchar *hi_more_info(gchar *entry);
 
 static ModuleEntry entries[] = {
     {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
@@ -175,7 +175,7 @@ gchar *get_pci_device_description(gchar *pci_id)
 gchar *get_memory_total(void)
 {
     scan_memory(FALSE);
-    return hi_more_info(N_("Total Memory"));    
+    return moreinfo_lookup ("DEV:Total Memory"); //hi_more_info(N_("Total Memory"));
 }
 
 gchar *get_motherboard(void)
@@ -215,7 +215,7 @@ ShellModuleMethod *hi_exported_methods(void)
     return m;
 }
 
-static gchar *hi_more_info(gchar * entry)
+gchar *hi_more_info(gchar * entry)
 {
     gchar *info = moreinfo_lookup_with_prefix("DEV", entry);
     

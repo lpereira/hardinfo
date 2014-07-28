@@ -26,14 +26,22 @@ get_libc_version(void)
 {
     FILE *libc;
     gchar buf[256], *tmp, *p;
+    char *libc_paths[] = {
+		"/lib/ld-uClibc.so.0", "/lib64/ld-uClibc.so.0",
+		"/lib/libc.so.6", "/lib64/libc.so.6"
+	};
+	int i;
+	
+	for (i=0; i < 4; i++) {
+		if (g_file_test(libc_paths[i], G_FILE_TEST_EXISTS)) break;
+	}
+	switch (i) {
+		case 0: case 1: return g_strdup("uClibc Library");
+		case 2: case 3: break; // gnu libc, continue processing
+		default: goto err;
+	}
 
-    if (g_file_test("/lib/ld-uClibc.so.0", G_FILE_TEST_EXISTS)) {
-      return g_strdup("uClibc Library");
-    } else if (!g_file_test("/lib/libc.so.6", G_FILE_TEST_EXISTS)) {
-      goto err;
-    }
-
-    libc = popen("/lib/libc.so.6", "r");
+    libc = popen(libc_paths[i], "r");
     if (!libc) goto err;
 
     (void)fgets(buf, 256, libc);
