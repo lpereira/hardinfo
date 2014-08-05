@@ -248,14 +248,16 @@ void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE *lsusb, int usb
 {
     gint bus, device, vendor_id, product_id;
     gchar *version = NULL, *product = NULL, *vendor = NULL, *dev_class = NULL, *int_class = NULL;
-    gchar *max_power = NULL;
+    gchar *max_power = NULL, *name=NULL;
     gchar *tmp, *strhash;
     long position;
 
+	g_strstrip(buffer);
     sscanf(buffer, "Bus %d Device %d: ID %x:%x",
            &bus, &device, &vendor_id, &product_id);
+	name = g_strdup (buffer + 33); 
 
-    for (fgets(buffer, bufsize, lsusb); position = ftell(lsusb); fgets(buffer, bufsize, lsusb)) {
+    for (fgets(buffer, bufsize, lsusb); fgets(buffer, bufsize, lsusb); position = ftell(lsusb)) {
         g_strstrip(buffer);
 
         if (g_str_has_prefix(buffer, "idVendor")) {
@@ -293,7 +295,7 @@ void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE *lsusb, int usb
     }
 
     tmp = g_strdup_printf("USB%d", usb_device_number);
-    usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, product ? product : "Unknown");
+    usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, name);
 
     strhash = g_strdup_printf("[Device Information]\n"
 			      "Product=%s\n"
@@ -319,6 +321,7 @@ void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE *lsusb, int usb
     g_free(dev_class);
     g_free(version);
     g_free(tmp);
+    g_free(name);
 }
 
 gboolean __scan_usb_lsusb(void)
