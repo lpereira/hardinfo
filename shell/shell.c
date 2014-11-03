@@ -503,7 +503,9 @@ static void menu_item_set_icon_always_visible(Shell *shell,
     
     path = g_strdup_printf("%s/%s", parent_path, item_id);
     menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
+#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
+#endif
     g_free(path);
 }
 
