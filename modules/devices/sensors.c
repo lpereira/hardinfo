@@ -154,16 +154,16 @@ static char *get_sensor_path(int number)
 {
     char *path, *last_slash;
 
-    path = g_strdup_printf("/sys/class/hwmon/hwmon%d/device", number);
-    if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+    path = g_strdup_printf("/sys/class/hwmon/hwmon%d", number);
+    if (g_file_test(path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
         return path;
     }
-
+/*  we start at the top of hwmon, this fallback is not needed anymore
     if ((last_slash = strrchr(path, '/'))) {
         *last_slash = '\0';
         return path;
     }
-
+*/
     g_free(path);
     return NULL;
 }
@@ -172,7 +172,7 @@ static char *determine_driver_for_hwmon_path(char *path)
 {
     char *tmp, *driver;
 
-    tmp = g_strdup_printf("%s/driver", path);
+    tmp = g_strdup_printf("%s/device/driver", path);
     driver = g_file_read_link(tmp, NULL);
     g_free(tmp);
 
