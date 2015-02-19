@@ -340,7 +340,7 @@ gboolean __scan_usb_lsusb(void)
         }
     }
 
-    temp = g_strdup_printf("%s -v", lsusb_path);
+    temp = g_strdup_printf("%s -v | tr '[]' '()'", lsusb_path);
     if (!(lsusb = popen(temp, "r"))) {
         DEBUG("cannot run %s", lsusb_path);
 
