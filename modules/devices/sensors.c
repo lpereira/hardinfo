@@ -338,10 +338,10 @@ static void read_sensors_sys_thermal(void)
 		if (g_file_get_contents(path, &contents, NULL, NULL)) {
 		    int temperature;
 
-		    sscanf(contents, "temperature: %d C", &temperature);
+		    sscanf(contents, "%d", &temperature);
 
-		    temp = h_strdup_cprintf("\n%s=%d\302\260C\n",
-					      temp, entry, temperature);
+		    temp = h_strdup_cprintf("\n%s=%.2f\302\260C\n",
+					      temp, entry, (1.0*temperature/1000));
 
 		    g_free(contents);
 		}
