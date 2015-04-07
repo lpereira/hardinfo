@@ -38,7 +38,7 @@ processor_scan(void)
 	    tmp[0] = g_strstrip(tmp[0]);
 	    tmp[1] = g_strstrip(tmp[1]);
 
-	    get_str("Processor", processor->model_name);
+	    get_str("model name", processor->model_name);
 	    get_str("Features", processor->flags);
 	    get_float("BogoMIPS", processor->bogomips);
 
@@ -65,9 +65,9 @@ processor_get_info(GSList *processors)
 			       "BogoMips=%.2f\n"
 			       "Endianesss="
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                               "Little Endian",
+                               "Little Endian"
 #else
-                               "Big Endian",
+                               "Big Endian"
 #endif
                                "\n"
 			       "Hardware=%s\n",

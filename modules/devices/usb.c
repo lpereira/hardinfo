@@ -285,14 +285,14 @@ void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE *lsusb, int usb
         }
     }
 
-    if (strstr(dev_class, "0 (Defined at Interface level)")) {
+    if (dev_class && strstr(dev_class, "0 (Defined at Interface level)")) {
         g_free(dev_class);
         if (int_class) {
             dev_class = int_class;
         } else {
             dev_class = g_strdup("Unknown");
         }
-    }
+    } else dev_class = g_strdup("Unknown");
 
     tmp = g_strdup_printf("USB%d", usb_device_number);
     usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, name);

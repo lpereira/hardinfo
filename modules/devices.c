@@ -181,9 +181,9 @@ gchar *get_memory_total(void)
 gchar *get_motherboard(void)
 {
     char *board_name, *board_vendor;
-
+#if defined(ARCH_x86) || defined(ARCH_x86_64)
     scan_dmi(FALSE);
-
+#endif
     board_name = moreinfo_lookup("DEV:DMI:Board:Name");
     board_vendor = moreinfo_lookup("DEV:DMI:Board:Vendor");
     

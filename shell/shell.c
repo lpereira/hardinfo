@@ -1537,6 +1537,8 @@ static gchar *shell_summary_clear_value(gchar *value)
      gchar *return_value;
      
      keyfile = g_key_file_new();
+     if (!value) return_value = g_strdup("");
+     else
      if (g_key_file_load_from_data(keyfile, value,
                                    strlen(value), 0, NULL)) {
           gchar **groups;
