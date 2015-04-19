@@ -38,7 +38,9 @@ processor_scan(void)
 	    tmp[0] = g_strstrip(tmp[0]);
 	    tmp[1] = g_strstrip(tmp[1]);
 
-	    get_str("model name", processor->model_name);
+		get_str("Processor", processor->model_name);
+		if (!processor->model_name)
+			get_str("model name", processor->model_name);
 	    get_str("Features", processor->flags);
 	    get_float("BogoMIPS", processor->bogomips);
 
