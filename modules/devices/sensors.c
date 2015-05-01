@@ -246,7 +246,10 @@ static void read_sensors_hwmon(void)
 						DEBUG("should be reading from %s", path_sensor);
 						if (!g_file_get_contents(path_sensor, &tmp, NULL, NULL)) {
 							g_free(path_sensor);
-							break;
+							if (count<256)
+								continue; // brute-force find all
+							else
+								break; 
 						}
 
 						mon = g_strdup_printf(sensor->key_format, count);
