@@ -202,6 +202,14 @@ computer_get_os(void)
                   g_free(os->distro);
                   os->distro = tmp;
                 }
+
+                if (g_str_equal(distro_db[i].codename, "fatdog")) {
+                  gchar *tmp;
+                    tmp = g_strdup_printf("Fatdog64 [%.10s]", os->distro);
+                  g_free(os->distro);
+                  os->distro = tmp;
+                }
+
                 os->distrocode = g_strdup(distro_db[i].codename);
 
                 break;

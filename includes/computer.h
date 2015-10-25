@@ -44,6 +44,8 @@ static struct {
     { DB_PREFIX "sun-release",		"sun"  },
     { DB_PREFIX "zenwalk-version",	"zen"  },
     { DB_PREFIX "DISTRO_SPECS",		"ppy"  },
+    { DB_PREFIX "puppyversion",		"ppy"  },
+    { DB_PREFIX "fatdog-version",	"fatdog"  },
     { DB_PREFIX "distro-release",	"fl"   },
     { DB_PREFIX "vine-release",         "vine" },
     { DB_PREFIX "PartedMagic-version",	"pmag" },

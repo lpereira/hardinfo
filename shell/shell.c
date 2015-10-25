@@ -1640,7 +1640,7 @@ static void shell_summary_clear(ShellSummary *summary)
      g_slist_free(summary->items);
      summary->items = NULL;
      
-     gtk_widget_destroy(summary->header);
+     if (summary->header) gtk_widget_destroy(summary->header);
      summary->header = NULL;
 }
 static void shell_summary_create_header(ShellSummary *summary,
