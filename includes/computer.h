@@ -25,6 +25,7 @@
 static struct {
     gchar *file, *codename;
 } distro_db[] = {
+    { DB_PREFIX "fatdog-version",	"fatdog"  },
     { DB_PREFIX "debian_version",	"deb"  },
     { DB_PREFIX "slackware-version",	"slk"  },
     { DB_PREFIX "mandrake-release",	"mdk"  },
@@ -45,7 +46,6 @@ static struct {
     { DB_PREFIX "zenwalk-version",	"zen"  },
     { DB_PREFIX "DISTRO_SPECS",		"ppy"  },
     { DB_PREFIX "puppyversion",		"ppy"  },
-    { DB_PREFIX "fatdog-version",	"fatdog"  },
     { DB_PREFIX "distro-release",	"fl"   },
     { DB_PREFIX "vine-release",         "vine" },
     { DB_PREFIX "PartedMagic-version",	"pmag" },
