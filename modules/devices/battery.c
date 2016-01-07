@@ -234,7 +234,7 @@ read_contents(const gchar *base, const gchar *key)
     }
 
     free(path);
-    return g_strstrip(value);
+    return g_strchomp(value);
 }
 
 static void
