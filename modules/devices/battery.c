@@ -218,6 +218,86 @@ __scan_battery_acpi(void)
     g_free(acpi_path);
 }
 
+static gchar *
+read_contents(const gchar *base, const gchar *key)
+{
+    gchar *value;
+    gchar *path;
+
+    path = g_strdup_printf("%s/%s", base, key);
+    if (!path)
+        return NULL;
+
+    if (!g_file_get_contents(path, &value, NULL, NULL)) {
+        free(path);
+        return NULL;
+    }
+
+    free(path);
+    return g_strstrip(value);
+}
+
+static void
+__scan_battery_sysfs_add_battery(const gchar *name)
+{
+    gchar *path = g_strdup_printf("/sys/class/power_supply/%s", name);
+    gchar *status, *capacity, *capacity_level, *technology, *manufacturer,
+        *model_name, *serial_number;
+
+    if (!path)
+        return;
+
+    status = read_contents(path, "status");
+    capacity = read_contents(path, "capacity");
+    capacity_level = read_contents(path, "capacity_level");
+    technology = read_contents(path, "technology");
+    manufacturer = read_contents(path, "manufacturer");
+    model_name = read_contents(path, "model_name");
+    serial_number = read_contents(path, "serial_number");
+
+    battery_list = h_strdup_cprintf(_("\n[Battery: %s]\n"
+        "State=%s\n"
+        "Capacity=%s / %s\n"
+        "Battery Technology=%s\n"
+        "Manufacturer=%s\n"
+        "Model Number=%s\n"
+        "Serial Number=%s\n"),
+        battery_list,
+        name,
+        status,
+        capacity, capacity_level,
+        technology,
+        manufacturer,
+        model_name,
+        serial_number);
+
+    free(status);
+    free(capacity);
+    free(capacity_level);
+    free(technology);
+    free(manufacturer);
+    free(model_name);
+    free(serial_number);
+}
+
+static void
+__scan_battery_sysfs(void)
+{
+    GDir *dir;
+    const gchar *entry;
+
+    dir = g_dir_open("/sys/class/power_supply", 0, NULL);
+    if (!dir)
+        return;
+
+    while ((entry = g_dir_read_name(dir))) {
+        if (g_str_has_prefix(entry, "BAT"))
+            __scan_battery_sysfs_add_battery(entry);
+    }
+
+    g_dir_close(dir);
+}
+
 static void
 __scan_battery_apm(void)
 {
@@ -294,6 +374,7 @@ scan_battery_do(void)
     g_free(battery_list);
     battery_list = g_strdup("");
 
+    __scan_battery_sysfs();
     __scan_battery_acpi();
     __scan_battery_apm();
     __scan_battery_apcupsd();
