@@ -80,9 +80,9 @@ get_x11_info(DisplayInfo *di)
             if (tmp[1] && tmp[0]) {
               tmp[1] = g_strchug(tmp[1]);
 
-              get_str(_("vendor string"), di->vendor);
-              get_str(_("X.Org version"), di->version);
-              get_str(_("XFree86 version"), di->version);
+              get_str("vendor string", di->vendor);
+              get_str("X.Org version", di->version);
+              get_str("XFree86 version", di->version);
 
               if (g_str_has_prefix(tmp[0], "number of extensions")) {
                 int n;
