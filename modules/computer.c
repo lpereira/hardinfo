@@ -96,7 +96,7 @@ gchar *hi_more_info(gchar * entry)
 
 gchar *hi_get_field(gchar * field)
 {
-	setlocale(LC_ALL, "C"); //Load Average is not updated if locale is not C, swithc locale to C
+	setlocale(LC_ALL, "C"); //Load Average is not updated if locale is not C, switch locale to C
     gchar *tmp;
 
     if (g_str_equal(field, "Memory")) {
