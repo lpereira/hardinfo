@@ -1,22 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# German translations for PACKAGE package
+# German translation for PACKAGE.
+# Copyright (C) 2016 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Alexander Münch <git@thehacker.biz>, 2016.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-10 10:11+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2016-06-10 12:11+0200\n"
+"Last-Translator: Alexander Münch <git@thehacker.biz>\n"
+"Language-Team: German\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: shell//callbacks.c:71
 #, c-format
@@ -35,16 +36,11 @@ msgstr ""
 msgid "Loading local modules..."
 msgstr ""
 
-#: shell//callbacks.c:130
-#: shell//callbacks.c:162
-#: shell//shell.c:314
-#: shell//shell.c:816
-#: shell//shell.c:1800
-#: modules//benchmark.c:431
-#: modules//benchmark.c:439
-#: hardinfo//util.c:1112
+#: shell//callbacks.c:130 shell//callbacks.c:162 shell//shell.c:314
+#: shell//shell.c:816 shell//shell.c:1800 modules//benchmark.c:431
+#: modules//benchmark.c:439 hardinfo//util.c:1112
 msgid "Done."
-msgstr ""
+msgstr "Fertig."
 
 #: shell//callbacks.c:142
 msgid "Save Image"
@@ -69,6 +65,8 @@ msgid ""
 "Written by %s\n"
 "Licensed under %s"
 msgstr ""
+"Programmiert von %s\n"
+"Lizenziert unter %s"
 
 #: shell//callbacks.c:339
 #, c-format
@@ -81,7 +79,7 @@ msgstr ""
 
 #: shell//callbacks.c:356
 msgid "Contributors:"
-msgstr ""
+msgstr "Mitwirkende:"
 
 #: shell//callbacks.c:360
 msgid "Based on work by:"
@@ -125,7 +123,7 @@ msgstr ""
 
 #: shell//callbacks.c:373
 msgid "Jakub Szypulka"
-msgstr ""
+msgstr "Jakub Szypulka"
 
 #: shell//callbacks.c:374
 msgid "Tango Project"
@@ -141,7 +139,7 @@ msgstr ""
 
 #: shell//callbacks.c:387
 msgid "System information and benchmark tool"
-msgstr ""
+msgstr "System-Informationen und Benchmark-Werkzeug"
 
 #: shell//callbacks.c:392
 msgid ""
@@ -161,7 +159,7 @@ msgstr ""
 
 #: shell//menu.c:35
 msgid "_Information"
-msgstr ""
+msgstr "_Informationen"
 
 #: shell//menu.c:36
 msgid "_Remote"
@@ -169,23 +167,23 @@ msgstr ""
 
 #: shell//menu.c:37
 msgid "_View"
-msgstr ""
+msgstr "_Ansicht"
 
 #: shell//menu.c:38
 msgid "_Help"
-msgstr ""
+msgstr "_Hilfe"
 
 #: shell//menu.c:39
 msgid "About _Modules"
-msgstr ""
+msgstr "Über _Module"
 
 #: shell//menu.c:43
 msgid "Generate _Report"
-msgstr ""
+msgstr "_Bericht generieren"
 
 #: shell//menu.c:48
 msgid "_Network Updater..."
-msgstr ""
+msgstr "_Netzwerk-Updater…"
 
 #: shell//menu.c:53
 msgid "_Open..."
@@ -205,11 +203,11 @@ msgstr ""
 
 #: shell//menu.c:73
 msgid "_Copy to Clipboard"
-msgstr ""
+msgstr "In die Zwischenablage _kopieren"
 
 #: shell//menu.c:74
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "In die Zwischenablage kopieren"
 
 #: shell//menu.c:78
 msgid "_Save image as..."
@@ -217,33 +215,31 @@ msgstr ""
 
 #: shell//menu.c:83
 msgid "_Refresh"
-msgstr ""
+msgstr "_Aktualisieren"
 
 #: shell//menu.c:88
 msgid "Contents"
-msgstr ""
+msgstr "Inhalt"
 
-#: shell//menu.c:93
-#: shell//shell.c:1794
-#: shell//shell.c:1811
+#: shell//menu.c:93 shell//shell.c:1794 shell//shell.c:1811
 msgid "Context help"
-msgstr ""
+msgstr "Kontexthilfe"
 
 #: shell//menu.c:98
 msgid "_Open HardInfo Web Site"
-msgstr ""
+msgstr "HardInfo-_Webseite öffnen"
 
 #: shell//menu.c:103
 msgid "_Report bug"
-msgstr ""
+msgstr "Fehler _melden"
 
 #: shell//menu.c:108
 msgid "_Donate to the project"
-msgstr ""
+msgstr "_Spende zum Projekt"
 
 #: shell//menu.c:113
 msgid "_About HardInfo"
-msgstr ""
+msgstr "_Über HardInfo"
 
 #: shell//menu.c:114
 msgid "Displays program version information"
@@ -251,11 +247,11 @@ msgstr ""
 
 #: shell//menu.c:118
 msgid "_Quit"
-msgstr ""
+msgstr "_Beenden"
 
 #: shell//menu.c:125
 msgid "_Side Pane"
-msgstr ""
+msgstr "_Seitenleiste"
 
 #: shell//menu.c:126
 msgid "Toggles side pane visibility"
@@ -263,7 +259,7 @@ msgstr ""
 
 #: shell//menu.c:129
 msgid "_Toolbar"
-msgstr ""
+msgstr "_Symbolleiste"
 
 #: shell//menu.c:133
 msgid "_Accept connections"
@@ -271,7 +267,7 @@ msgstr ""
 
 #: shell//report.c:492
 msgid "Save File"
-msgstr ""
+msgstr "Datei speichern"
 
 #: shell//report.c:616
 msgid "Cannot create ReportContext. Programming bug?"
@@ -279,50 +275,52 @@ msgstr ""
 
 #: shell//report.c:634
 msgid "Open the report with your web browser?"
-msgstr ""
+msgstr "Den Bericht in deinem Webbrowser öffnen?"
 
 #: shell//report.c:662
 msgid "Generating report..."
-msgstr ""
+msgstr "Generiere Bericht…"
 
 #: shell//report.c:672
 msgid "Report saved."
-msgstr ""
+msgstr "Bericht gespeichert."
 
 #: shell//report.c:674
 msgid "Error while creating the report."
-msgstr ""
+msgstr "Fehler beim Erzeugen des Berichts."
 
 #: shell//report.c:776
 msgid "Generate Report"
-msgstr ""
+msgstr "Bericht generieren"
 
 #: shell//report.c:793
 msgid ""
 "<big><b>Generate Report</b></big>\n"
 "Please choose the information that you wish to view in your report:"
 msgstr ""
+"<big><b>Bericht generieren</b></big>\n"
+"Bitte wähle die Informationen, die du in deinen Bereich einbeziehen möchtest:"
 
 #: shell//report.c:853
 msgid "Select _None"
-msgstr ""
+msgstr "_Nichts auswählen"
 
 #: shell//report.c:860
 msgid "Select _All"
-msgstr ""
+msgstr "_Alles auswählen"
 
 #: shell//report.c:878
 msgid "_Generate"
-msgstr ""
+msgstr "_Generieren"
 
 #: shell//shell.c:407
 #, c-format
 msgid "%s - System Information"
-msgstr ""
+msgstr "%s - System-Informationen"
 
 #: shell//shell.c:412
 msgid "System Information"
-msgstr ""
+msgstr "System-Informationen"
 
 #: shell//shell.c:803
 msgid "Loading modules..."
@@ -331,11 +329,11 @@ msgstr ""
 #: shell//shell.c:1654
 #, c-format
 msgid "<b>%s → Summary</b>"
-msgstr ""
+msgstr "<b>%s → Zusammenfassung</b>"
 
 #: shell//shell.c:1762
 msgid "Updating..."
-msgstr ""
+msgstr "Aktualisiere…"
 
 #: shell//syncmanager.c:69
 msgid ""
@@ -343,26 +341,29 @@ msgid ""
 "The following information may be synchronized with the HardInfo central "
 "database."
 msgstr ""
+"<big><b>Synchronisieren mit zentraler Datenbank</b></big>\n"
+"Die folgenden Informationen können mit der zentralen HardInfo-Datenbank "
+"synchronisiert werden."
 
 #: shell//syncmanager.c:72
 msgid ""
 "<big><b>Synchronizing</b></big>\n"
 "This may take some time."
 msgstr ""
+"<big><b>Synchronisiere</b></big>\n"
+"Dies kann kurz dauern."
 
 #: shell//syncmanager.c:132
 msgid ""
 "HardInfo was compiled without libsoup support. (Network Updater requires it.)"
 msgstr ""
 
-#: shell//syncmanager.c:161
-#: shell//syncmanager.c:185
+#: shell//syncmanager.c:161 shell//syncmanager.c:185
 #, c-format
 msgid "%s (error #%d)"
-msgstr ""
+msgstr "%s (Fehlercode #%d)"
 
-#: shell//syncmanager.c:170
-#: shell//syncmanager.c:194
+#: shell//syncmanager.c:170 shell//syncmanager.c:194
 msgid "Could not parse XML-RPC response"
 msgstr ""
 
@@ -375,21 +376,21 @@ msgstr ""
 
 #: shell//syncmanager.c:362
 msgid "Contacting HardInfo Central Database"
-msgstr ""
+msgstr "Kontaktiere zentrale HardInfo-Datenbank"
 
 #: shell//syncmanager.c:363
 msgid "Cleaning up"
-msgstr ""
+msgstr "Aufräumen"
 
 #: shell//syncmanager.c:480
 #, c-format
 msgid "<s>%s</s> <i>(canceled)</i>"
-msgstr ""
+msgstr "<s>%s</s> <i>(abgebrochen)</i>"
 
 #: shell//syncmanager.c:497
 #, c-format
 msgid "<b><s>%s</s></b> <i>(failed)</i>"
-msgstr ""
+msgstr "<b><s>%s</s></b> <i>(gescheitert)</i>"
 
 #: shell//syncmanager.c:509
 #, c-format
@@ -409,39 +410,39 @@ msgstr ""
 
 #: shell//syncmanager.c:646
 msgid "Network Updater"
-msgstr ""
+msgstr "Netzwerk-Updater"
 
 #: shell//syncmanager.c:727
 msgid "_Synchronize"
-msgstr ""
+msgstr "_Synchronisieren"
 
 #: modules//benchmark.c:50
 msgid "CPU Blowfish"
-msgstr ""
+msgstr "CPU Blowfish"
 
 #: modules//benchmark.c:51
 msgid "CPU CryptoHash"
-msgstr ""
+msgstr "CPU Crypto-Hash"
 
 #: modules//benchmark.c:52
 msgid "CPU Fibonacci"
-msgstr ""
+msgstr "CPU Fibonacci"
 
 #: modules//benchmark.c:53
 msgid "CPU N-Queens"
-msgstr ""
+msgstr "CPU Damenproblem"
 
 #: modules//benchmark.c:54
 msgid "FPU FFT"
-msgstr ""
+msgstr "FPU FFT"
 
 #: modules//benchmark.c:55
 msgid "FPU Raytracing"
-msgstr ""
+msgstr "FPU Raytracing"
 
 #: modules//benchmark.c:56
 msgid "GPU Drawing"
-msgstr ""
+msgstr "GPU Zeichnen"
 
 #: modules//benchmark.c:222
 #, c-format
@@ -458,6 +459,17 @@ msgid ""
 "<big><b>This Machine</b></big>=%.3f|%s MHz\n"
 "%s"
 msgstr ""
+"[$ShellParam$]\n"
+"Zebra=1\n"
+"OrderType=%d\n"
+"ViewType=3\n"
+"ColumnTitle$Extra1=CPU-Takt\n"
+"ColumnTitle$Progress=Ergebnisse\n"
+"ColumnTitle$TextValue=CPU\n"
+"ShowColumnHeaders=true\n"
+"[%s]\n"
+"<big><b>Diese Maschine</b></big>=%.3f|%s MHz\n"
+"%s"
 
 #: modules//benchmark.c:235
 #, c-format
@@ -473,91 +485,101 @@ msgid ""
 "[%s]\n"
 "%s"
 msgstr ""
+"[$ShellParam$]\n"
+"Zebra=1\n"
+"OrderType=%d\n"
+"ViewType=3\n"
+"ColumnTitle$Extra1=CPU-Takt\n"
+"ColumnTitle$Progress=Ergebnisse\n"
+"ColumnTitle$TextValue=CPU\n"
+"ShowColumnHeaders=true\n"
+"[%s]\n"
+"%s"
 
 #: modules//benchmark.c:363
 #, c-format
 msgid "Benchmarking: <b>%s</b>."
-msgstr ""
+msgstr "Benchmarke: <b>%s</b>."
 
 #: modules//benchmark.c:377
 msgid "Benchmarking. Please do not move your mouse or press any keys."
-msgstr ""
+msgstr "Benchmarke. Bitte bewege den Mauszeiger nicht und drücke keine Tasten."
 
 #: modules//benchmark.c:381
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 #: modules//benchmark.c:511
 msgid "Results in MiB/second. Higher is better."
-msgstr ""
+msgstr "Ergebnisse in MiB/Sekunde. Höhere Werte sind besser."
 
 #: modules//benchmark.c:514
 msgid "Results in HIMarks. Higher is better."
-msgstr ""
+msgstr "Ergebnisse in HIMarks. Höhere Werte sind besser."
 
 #: modules//benchmark.c:521
 msgid "Results in seconds. Lower is better."
-msgstr ""
+msgstr "Ergebnisse in Sekunden. Niedrigere Werte sind besser."
 
 #: modules//benchmark.c:529
 msgid "Benchmarks"
-msgstr ""
+msgstr "Benchmarks"
 
 #: modules//benchmark.c:547
 msgid "Perform tasks and compare with other systems"
-msgstr ""
+msgstr "Erledigt Aufgaben und vergleicht die Ergebnisse mit anderen Systemen"
 
 #: modules//benchmark.c:634
 msgid "Send benchmark results"
-msgstr ""
+msgstr "Übermittle Benchmark-Ergebnisse"
 
 #: modules//benchmark.c:639
 msgid "Receive benchmark results"
-msgstr ""
+msgstr "Lade Benchmark-Ergebnisse"
 
 #: modules//computer.c:68
 msgid "Summary"
-msgstr ""
+msgstr "Zusammenfassung"
 
 #: modules//computer.c:69
 msgid "Operating System"
-msgstr ""
+msgstr "Betriebssystem"
 
 #: modules//computer.c:70
 msgid "Kernel Modules"
-msgstr ""
+msgstr "Kernel-Module"
 
 #: modules//computer.c:71
 msgid "Boots"
-msgstr ""
+msgstr "Systemstarts"
 
 #: modules//computer.c:72
 msgid "Languages"
-msgstr ""
+msgstr "Sprachen"
 
 #: modules//computer.c:73
 msgid "Filesystems"
-msgstr ""
+msgstr "Dateisysteme"
 
 #: modules//computer.c:74
 msgid "Display"
-msgstr ""
+msgstr "Anzeige"
 
 #: modules//computer.c:75
 msgid "Environment Variables"
-msgstr ""
+msgstr "Umgebungsvariablen"
 
 #: modules//computer.c:77
 msgid "Development"
-msgstr ""
+msgstr "Entwicklung"
 
 #: modules//computer.c:79
 msgid "Users"
-msgstr ""
+msgstr "Benutzer"
 
 #: modules//computer.c:80
 msgid "Groups"
-msgstr ""
+msgstr "Gruppen"
 
 #: modules//computer.c:104
 #, c-format
@@ -566,96 +588,96 @@ msgstr ""
 
 #: modules//computer.c:200
 msgid "Scripting Languages"
-msgstr ""
+msgstr "Script-Sprachen"
 
 #: modules//computer.c:201
 msgid "CPython"
-msgstr ""
+msgstr "CPython"
 
 #: modules//computer.c:202
 msgid "Perl"
-msgstr ""
+msgstr "Perl"
 
 #: modules//computer.c:203
 msgid "PHP"
-msgstr ""
+msgstr "PHP"
 
 #: modules//computer.c:204
 msgid "Ruby"
-msgstr ""
+msgstr "Ruby"
 
 #: modules//computer.c:205
 msgid "Bash"
-msgstr ""
+msgstr "Bash"
 
 #: modules//computer.c:206
 msgid "Compilers"
-msgstr ""
+msgstr "Compiler"
 
 #: modules//computer.c:207
 msgid "C (GCC)"
-msgstr ""
+msgstr "C (GCC)"
 
 #: modules//computer.c:208
 msgid "C (Clang)"
-msgstr ""
+msgstr "C (Clang)"
 
 #: modules//computer.c:209
 msgid "D (dmd)"
-msgstr ""
+msgstr "D (dmd)"
 
 #: modules//computer.c:210
 msgid "Java"
-msgstr ""
+msgstr "Java"
 
 #: modules//computer.c:211
 msgid "CSharp (Mono, old)"
-msgstr ""
+msgstr "CSharp (Mono, old)"
 
 #: modules//computer.c:212
 msgid "CSharp (Mono)"
-msgstr ""
+msgstr "CSharp (Mono)"
 
 #: modules//computer.c:213
 msgid "Vala"
-msgstr ""
+msgstr "Vala"
 
 #: modules//computer.c:214
 msgid "Haskell (GHC)"
-msgstr ""
+msgstr "Haskell (GHC)"
 
 #: modules//computer.c:215
 msgid "FreePascal"
-msgstr ""
+msgstr "FreePascal"
 
 #: modules//computer.c:216
 msgid "Tools"
-msgstr ""
+msgstr "Werkzeug-Programme"
 
 #: modules//computer.c:217
 msgid "make"
-msgstr ""
+msgstr "make"
 
 #: modules//computer.c:218
 msgid "GDB"
-msgstr ""
+msgstr "GDB"
 
 #: modules//computer.c:219
 msgid "strace"
-msgstr ""
+msgstr "strace"
 
 #: modules//computer.c:220
 msgid "valgrind"
-msgstr ""
+msgstr "valgrind"
 
 #: modules//computer.c:221
 msgid "QMake"
-msgstr ""
+msgstr "QMake"
 
 #: modules//computer.c:264
 #, c-format
 msgid "%s=Not found\n"
-msgstr ""
+msgstr "%s=Nicht gefunden\n"
 
 #: modules//computer.c:267
 #, c-format
@@ -671,10 +693,15 @@ msgid ""
 "ShowColumnHeaders=true\n"
 "%s"
 msgstr ""
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=Programm\n"
+"ColumnTitle$Value=Version\n"
+"ShowColumnHeaders=true\n"
+"%s"
 
 #: modules//computer.c:358
 msgid "Physical machine"
-msgstr ""
+msgstr "Physikalische Maschine"
 
 #: modules//computer.c:375
 #, c-format
@@ -703,9 +730,32 @@ msgid ""
 "\n"
 "%s\n"
 msgstr ""
+"[$ShellParam$]\n"
+"UpdateInterval$Memory=1000\n"
+"UpdateInterval$Date/Time=1000\n"
+"#ReloadInterval=5000\n"
+"[Computer]\n"
+"Prozessor=%s\n"
+"Memory=...\n"
+"Maschinen-Typ=%s\n"
+"Betriebssystem=%s\n"
+"Benutzername=%s\n"
+"Date/Time=...\n"
+"[Anzeige]\n"
+"Auflösung=%dx%d Pixel\n"
+"OpenGL-Renderer=%s\n"
+"X11-Hersteller=%s\n"
+"\n"
+"%s\n"
+"[Eingabegeräte]\n"
+"%s\n"
+"\n"
+"%s\n"
+"\n"
+"%s\n"
 
 #: modules//computer.c:417
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "[$ShellParam$]\n"
 "UpdateInterval$Uptime=10000\n"
@@ -725,6 +775,23 @@ msgid ""
 "Uptime=...\n"
 "Load Average=..."
 msgstr ""
+"[$ShellParam$]\n"
+"UpdateInterval$Uptime=10000\n"
+"UpdateInterval$Load Average=1000\n"
+"[Version]\n"
+"Kernel=%s\n"
+"Version=%s\n"
+"C-Library=%s\n"
+"Distribution=%s\n"
+"[Aktuelle Sitzung]\n"
+"Computername=%s\n"
+"Benutzername=%s\n"
+"#Sprache=%s\n"
+"Stammverzeichnis=%s\n"
+"Desktop-Umgebung=%s\n"
+"[Verschiedenes]\n"
+"Uptime=...\n"
+"Load Average=..."
 
 #: modules//computer.c:446
 #, c-format
@@ -736,6 +803,12 @@ msgid ""
 "ColumnTitle$Value=Description\n"
 "ShowColumnHeaders=true\n"
 msgstr ""
+"[Geladene Module]\n"
+"%s[$ShellParam$]\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Name\n"
+"ColumnTitle$Value=Beschreibung\n"
+"ShowColumnHeaders=true\n"
 
 #: modules//computer.c:457
 #, c-format
@@ -747,6 +820,12 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=Datum & Uhrzeit\n"
+"ColumnTitle$Value=Kernel-Version\n"
+"ShowColumnHeaders=true\n"
+"\n"
+"%s"
 
 #: modules//computer.c:467
 #, c-format
@@ -759,6 +838,13 @@ msgid ""
 "[Available Languages]\n"
 "%s"
 msgstr ""
+"[$ShellParam$]\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Sprach-Code\n"
+"ColumnTitle$Value=Name\n"
+"ShowColumnHeaders=true\n"
+"[Available Languages]\n"
+"%s"
 
 #: modules//computer.c:478
 #, c-format
@@ -775,6 +861,17 @@ msgid ""
 "[Mounted File Systems]\n"
 "%s\n"
 msgstr ""
+"[$ShellParam$]\n"
+"ViewType=4\n"
+"ReloadInterval=5000\n"
+"Zebra=1\n"
+"NormalizePercentage=false\n"
+"ColumnTitle$Extra1=Mount-Punkt\n"
+"ColumnTitle$Progress=Verwendung\n"
+"ColumnTitle$TextValue=Gerät\n"
+"ShowColumnHeaders=true\n"
+"[Mounted File Systems]\n"
+"%s\n"
 
 #: modules//computer.c:492
 #, c-format
@@ -791,16 +888,26 @@ msgid ""
 "Version=%s\n"
 "Direct Rendering=%s\n"
 msgstr ""
+"[Anzeige]\n"
+"Auflösung=%dx%d Pixel\n"
+"Hersteller=%s\n"
+"Version=%s\n"
+"[Bildschirme]\n"
+"%s[Erweiterungen]\n"
+"%s[OpenGL]\n"
+"Hersteller=%s\n"
+"Renderer=%s\n"
+"Version=%s\n"
+"Direct-Rendering=%s\n"
 
 #: modules//computer.c:514
 msgid "Y_es"
-msgstr ""
+msgstr "_Ja"
 
-#: modules//computer.c:514
-#: modules//devices/printers.c:138
+#: modules//computer.c:514 modules//devices/printers.c:138
 #: hardinfo//hardinfo.c:63
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 #: modules//computer.c:528
 #, c-format
@@ -813,18 +920,25 @@ msgid ""
 "[Groups]\n"
 "%s\n"
 msgstr ""
+"[$ShellParam$]\n"
+"ReloadInterval=10000\n"
+"ColumnTitle$TextValue=Name\n"
+"ColumnTitle$Value=Gruppen-ID\n"
+"ShowColumnHeaders=true\n"
+"[Gruppen]\n"
+"%s\n"
 
 #: modules//computer.c:608
 msgid "Computer"
-msgstr ""
+msgstr "Computer"
 
 #: modules//computer.c:702
 msgid "Gathers high-level computer information"
-msgstr ""
+msgstr "Sammelt high-level Computer-Informationen"
 
 #: modules//computer/alsa.c:26
 msgid "[Audio Devices]\n"
-msgstr ""
+msgstr "[Audio-Geräte]\n"
 
 #: modules//computer/alsa.c:33
 #, c-format
@@ -833,16 +947,16 @@ msgstr ""
 
 #: modules//computer/boots.c:33
 msgid "[Boots]\n"
-msgstr ""
+msgstr "[Systemstarts]\n"
 
 #: modules//computer/display.c:122
 #, c-format
 msgid "Monitor %d=%dx%d pixels\n"
-msgstr ""
+msgstr "Bildschirm %d=%dx%d Pixel\n"
 
 #: modules//computer/environment.c:32
 msgid "[Environment Variables]\n"
-msgstr ""
+msgstr "[Umgebungsvariablen]\n"
 
 #: modules//computer/os.c:57
 #, c-format
@@ -853,15 +967,10 @@ msgstr ""
 msgid "un"
 msgstr ""
 
-#: modules//computer/os.c:61
-#: modules//computer/os.c:138
-#: modules//devices.c:154
-#: modules//devices.c:197
-#: modules//devices/printers.c:99
-#: modules//devices/printers.c:106
-#: modules//devices/printers.c:116
-#: modules//devices/printers.c:131
-#: modules//devices/printers.c:140
+#: modules//computer/os.c:61 modules//computer/os.c:138 modules//devices.c:154
+#: modules//devices.c:197 modules//devices/printers.c:99
+#: modules//devices/printers.c:106 modules//devices/printers.c:116
+#: modules//devices/printers.c:131 modules//devices/printers.c:140
 #: modules//devices/printers.c:243
 msgid "Unknown"
 msgstr ""
@@ -886,63 +995,63 @@ msgstr ""
 
 #: modules//devices.c:74
 msgid "Processor"
-msgstr ""
+msgstr "Prozessor"
 
 #: modules//devices.c:75
 msgid "Memory"
-msgstr ""
+msgstr "Hauptspeicher"
 
 #: modules//devices.c:76
 msgid "PCI Devices"
-msgstr ""
+msgstr "PCI-Geräte"
 
 #: modules//devices.c:77
 msgid "USB Devices"
-msgstr ""
+msgstr "USB-Geräte"
 
 #: modules//devices.c:78
 msgid "Printers"
-msgstr ""
+msgstr "Drucker"
 
 #: modules//devices.c:79
 msgid "Battery"
-msgstr ""
+msgstr "Akku"
 
 #: modules//devices.c:80
 msgid "Sensors"
-msgstr ""
+msgstr "Sensoren"
 
 #: modules//devices.c:81
 msgid "Input Devices"
-msgstr ""
+msgstr "Eingabegeräte"
 
 #: modules//devices.c:82
 msgid "Storage"
-msgstr ""
+msgstr "Speicher"
 
 #: modules//devices.c:84
 msgid "DMI"
-msgstr ""
+msgstr "DMI"
 
 #: modules//devices.c:85
 msgid "Memory SPD"
-msgstr ""
+msgstr "Hauptspeicher (SPD)"
 
 #: modules//devices.c:87
 msgid "Resources"
-msgstr ""
+msgstr "Ressourcen"
 
 #: modules//devices.c:193
 msgid " (vendor unknown)"
-msgstr ""
+msgstr " (unbekannter Hersteller)"
 
 #: modules//devices.c:195
 msgid " (model unknown)"
-msgstr ""
+msgstr " (unbekanntes Modell)"
 
 #: modules//devices.c:412
 msgid "Devices"
-msgstr ""
+msgstr "Geräte"
 
 #: modules//devices.c:424
 msgid "Update PCI ID listing"
@@ -954,7 +1063,7 @@ msgstr ""
 
 #: modules//devices.c:464
 msgid "Gathers information about hardware devices"
-msgstr ""
+msgstr "Sammelt Informationen über die Hardware-Geräte"
 
 #: modules//devices/battery.c:181
 #, c-format
@@ -968,6 +1077,14 @@ msgid ""
 "Model Number=%s\n"
 "Serial Number=%s\n"
 msgstr ""
+"\n"
+"[Akku: %s]\n"
+"Status=%s (load: %s)\n"
+"Kapazität=%s / %s (%.2f%%)\n"
+"Akku-Technologie=%s (%s)\n"
+"Hersteller=%s\n"
+"Modellnummer=%s\n"
+"Seriennummer=%s\n"
 
 #: modules//devices/battery.c:258
 #, c-format
@@ -981,9 +1098,17 @@ msgid ""
 "Model Number=%s\n"
 "Serial Number=%s\n"
 msgstr ""
+"\n"
+"[Akku: %s]\n"
+"Status=%s\n"
+"Kapazität=%s / %s\n"
+"Akku-Technologie=%s\n"
+"Hersteller=%s\n"
+"Modellnummer=%s\n"
+"Seriennummer=%s\n"
 
 #: modules//devices/battery.c:346
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "[Battery (APM)]\n"
@@ -993,9 +1118,16 @@ msgid ""
 "APM driver version=%s\n"
 "APM BIOS version=%s\n"
 msgstr ""
+"\n"
+"[Akku (APM)]\n"
+"Ladung=%d%%\n"
+"Verbleibende Ladung=%s von %s\n"
+"Using=%s\n"
+"APM Driver-Version=%s\n"
+"APM BIOS-Version=%s\n"
 
 #: modules//devices/battery.c:358
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "[Battery (APM)]\n"
@@ -1004,44 +1136,52 @@ msgid ""
 "APM driver version=%s\n"
 "APM BIOS version=%s\n"
 msgstr ""
+"\n"
+"[Akku (APM)]\n"
+"Ladung=%d%%\n"
+"Using=%s\n"
+"APM Driver-Version=%s\n"
+"APM BIOS-Version=%s\n"
 
 #: modules//devices/battery.c:385
 msgid ""
 "[No batteries]\n"
 "No batteries found on this system=\n"
 msgstr ""
+"[Keine Akkus]\n"
+"Keine Akkus in diesem System gefunden=\n"
 
 #: modules//devices/printers.c:81
 msgid "⚬ Can do black and white printing=\n"
-msgstr ""
+msgstr "⚬ Kann schwarz/weiß drucken=\n"
 
 #: modules//devices/printers.c:83
 msgid "⚬ Can do color printing=\n"
-msgstr ""
+msgstr "⚬ Kann farbig drucken=\n"
 
 #: modules//devices/printers.c:85
 msgid "⚬ Can do duplexing=\n"
-msgstr ""
+msgstr "⚬ Kann zweiseitig drucken (Duplexdruck)=\n"
 
 #: modules//devices/printers.c:87
 msgid "⚬ Can do staple output=\n"
-msgstr ""
+msgstr "⚬ Kann Ausdrucke stapeln=\n"
 
 #: modules//devices/printers.c:89
 msgid "⚬ Can do copies=\n"
-msgstr ""
+msgstr "⚬ Kann kopieren=\n"
 
 #: modules//devices/printers.c:91
 msgid "⚬ Can collate copies=\n"
-msgstr ""
+msgstr "⚬ Kann Ausdruck sortieren=\n"
 
 #: modules//devices/printers.c:93
 msgid "⚬ Printer is rejecting jobs=\n"
-msgstr ""
+msgstr "⚬ Drucker weist Aufträge zurück=\n"
 
 #: modules//devices/printers.c:95
 msgid "⚬ Printer was automatically discovered and added=\n"
-msgstr ""
+msgstr "⚬ Drucker wurde automatisch entdeckt und hinzugefügt=\n"
 
 #: modules//devices/printers.c:110
 msgid "Idle"
@@ -1055,53 +1195,57 @@ msgstr ""
 msgid "Stopped"
 msgstr ""
 
-#: modules//devices/printers.c:138
-#: hardinfo//hardinfo.c:62
+#: modules//devices/printers.c:138 hardinfo//hardinfo.c:62
 #: hardinfo//hardinfo.c:63
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: modules//devices/printers.c:190
 msgid ""
 "[Printers]\n"
 "No suitable CUPS library found="
 msgstr ""
+"[Drucker]\n"
+"Keine passende CUPS-Bibliothek gefunden="
 
 #: modules//devices/printers.c:200
 msgid "[Printers (CUPS)]\n"
-msgstr ""
+msgstr "[Drucker (CUPS)]\n"
 
 #: modules//devices/printers.c:263
 msgid ""
 "[Printers]\n"
 "No printers found=\n"
 msgstr ""
+"[Printers]\n"
+"Keine Drucker gefunden=\n"
 
 #: modules//devices/storage.c:46
 msgid ""
 "\n"
 "[SCSI Disks]\n"
 msgstr ""
+"\n"
+"[SCSI-Geräte]\n"
 
-#: modules//devices/storage.c:110
-#: modules//devices/storage.c:297
+#: modules//devices/storage.c:110 modules//devices/storage.c:297
 #, c-format
 msgid ""
 "[Device Information]\n"
 "Model=%s\n"
 msgstr ""
+"[Geräte-Informationen]\n"
+"Modell=%s\n"
 
-#: modules//devices/storage.c:115
-#: modules//devices/storage.c:304
+#: modules//devices/storage.c:115 modules//devices/storage.c:304
 #, c-format
 msgid "Vendor=%s (%s)\n"
-msgstr ""
+msgstr "Hersteller=%s (%s)\n"
 
-#: modules//devices/storage.c:120
-#: modules//devices/storage.c:309
+#: modules//devices/storage.c:120 modules//devices/storage.c:309
 #, c-format
 msgid "Vendor=%s\n"
-msgstr ""
+msgstr "Hersteller=%s\n"
 
 #: modules//devices/storage.c:125
 #, c-format
@@ -1120,11 +1264,13 @@ msgid ""
 "\n"
 "[IDE Disks]\n"
 msgstr ""
+"\n"
+"[IDE-Geräte]\n"
 
 #: modules//devices/storage.c:242
 #, c-format
 msgid "Driver=%s\n"
-msgstr ""
+msgstr "Treiber=%s\n"
 
 #: modules//devices/storage.c:314
 #, c-format
@@ -1141,6 +1287,9 @@ msgid ""
 "Physical=%s\n"
 "Logical=%s\n"
 msgstr ""
+"[Geometrie]\n"
+"Physikalisch=%s\n"
+"Logisch=%s\n"
 
 #: modules//devices/storage.c:341
 #, c-format
@@ -1148,6 +1297,8 @@ msgid ""
 "[Capabilities]\n"
 "%s"
 msgstr ""
+"[Fähigkeiten]\n"
+"%s"
 
 #: modules//devices/storage.c:348
 #, c-format
@@ -1155,14 +1306,14 @@ msgid ""
 "[Speeds]\n"
 "%s"
 msgstr ""
+"[Geschwindigkeiten]\n"
+"%s"
 
-#: modules//devices/x86/processor.c:145
-#: modules//devices/x86_64/processor.c:145
+#: modules//devices/x86/processor.c:145 modules//devices/x86_64/processor.c:145
 msgid "Cache information not available=\n"
 msgstr ""
 
-#: modules//devices/x86/processor.c:484
-#: modules//devices/x86_64/processor.c:484
+#: modules//devices/x86/processor.c:484 modules//devices/x86_64/processor.c:484
 #, c-format
 msgid ""
 "[Processor]\n"
@@ -1185,40 +1336,58 @@ msgid ""
 "[Capabilities]\n"
 "%s"
 msgstr ""
+"[Prozessor]\n"
+"Name=%s\n"
+"Familie, Modell, Stufung=%d, %d, %d (%s)\n"
+"Hersteller=%s\n"
+"[Konfiguration]\n"
+"Cache-Größe=%dkb\n"
+"Taktfrequenz=%.2fMHz\n"
+"BogoMIPS=%.2f\n"
+"Byte-Reihenfolge=%s\n"
+"[Funktionen]\n"
+"FDIV-Bug=%s\n"
+"HLT-Bug=%s\n"
+"F00F-Bug=%s\n"
+"Coma-Bug=%s\n"
+"Hat FPU=%s\n"
+"[Cache]\n"
+"%s\n"
+"[Fähigkeiten]\n"
+"%s"
 
-#: modules//devices/x86/processor.c:542
-#: modules//devices/x86_64/processor.c:542
+#: modules//devices/x86/processor.c:542 modules//devices/x86_64/processor.c:542
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
-msgstr ""
+msgstr "%s$CPU%d$%s=%.2fMHz\n"
 
 #: modules//network.c:59
 msgid "Interfaces"
-msgstr ""
+msgstr "Schnittstellen"
 
 #: modules//network.c:60
 msgid "IP Connections"
-msgstr ""
+msgstr "IP-Verbindungen"
 
 #: modules//network.c:61
 msgid "Routing Table"
-msgstr ""
+msgstr "Routing-Tabelle"
 
 #: modules//network.c:62
 msgid "ARP Table"
-msgstr ""
+msgstr "ARP-Tabelle"
 
 #: modules//network.c:63
 msgid "DNS Servers"
-msgstr ""
+msgstr "DNS-Server"
 
 #: modules//network.c:64
 msgid "Statistics"
-msgstr ""
+msgstr "Statistiken"
 
 #: modules//network.c:65
 msgid "Shared Directories"
-msgstr ""
+msgstr "Freigegebene Verzeichnisse"
 
 #: modules//network.c:300
 #, c-format
@@ -1232,6 +1401,14 @@ msgid ""
 "ColumnTitle$Extra1=MAC Address\n"
 "ShowColumnHeaders=true\n"
 msgstr ""
+"[ARP Table]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=IP-Adresse\n"
+"ColumnTitle$Value=Schnittstelle\n"
+"ColumnTitle$Extra1=MAC-Adresse\n"
+"ShowColumnHeaders=true\n"
 
 #: modules//network.c:321
 #, c-format
@@ -1243,6 +1420,12 @@ msgid ""
 "ColumnTitle$Value=Name\n"
 "ShowColumnHeaders=true\n"
 msgstr ""
+"[DNS-Server]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=IP-Adresse\n"
+"ColumnTitle$Value=Name\n"
+"ShowColumnHeaders=true\n"
 
 #: modules//network.c:331
 #, c-format
@@ -1257,6 +1440,15 @@ msgid ""
 "ColumnTitle$Extra2=State\n"
 "ShowColumnHeaders=true\n"
 msgstr ""
+"[Connections]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=Lokale Adresse\n"
+"ColumnTitle$Value=Protokoll\n"
+"ColumnTitle$Extra1=Fremde Adresse\n"
+"ColumnTitle$Extra2=Status\n"
+"ShowColumnHeaders=true\n"
 
 #: modules//network.c:345
 #, c-format
@@ -1272,6 +1464,16 @@ msgid ""
 "ShowColumnHeaders=true\n"
 "%s"
 msgstr ""
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Schnittstelle\n"
+"ColumnTitle$Value=IP-Adresse\n"
+"ColumnTitle$Extra1=Gesendet\n"
+"ColumnTitle$Extra2=Empfangen\n"
+"ShowColumnHeaders=true\n"
+"%s"
 
 #: modules//network.c:361
 #, c-format
@@ -1287,14 +1489,24 @@ msgid ""
 "ColumnTitle$Extra2=Mask\n"
 "ShowColumnHeaders=true\n"
 msgstr ""
+"[IP routing table]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ViewType=0\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=Ziel / Vorgaberoute\n"
+"ColumnTitle$Value=Schnittstelle\n"
+"ColumnTitle$Extra1=Flags\n"
+"ColumnTitle$Extra2=Netz-Maske\n"
+"ShowColumnHeaders=true\n"
 
 #: modules//network.c:399
 msgid "Network"
-msgstr ""
+msgstr "Netzwerk"
 
 #: modules//network.c:432
 msgid "Gathers information about this computer's network connection"
-msgstr ""
+msgstr "Sammelt Informationen über die Netzwerk-Verbindung dieses Computers"
 
 #: hardinfo//hardinfo.c:54
 msgid ""
@@ -1335,7 +1547,7 @@ msgstr ""
 
 #: hardinfo//hardinfo.c:82
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: hardinfo//hardinfo.c:82
 msgid "Version"
@@ -1350,78 +1562,75 @@ msgstr ""
 msgid "Don't know what to do. Exiting."
 msgstr ""
 
-#: hardinfo//util.c:104
-#: hardinfo//util.c:107
-#: hardinfo//util.c:112
+#: hardinfo//util.c:104 hardinfo//util.c:107 hardinfo//util.c:112
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Minute"
+msgstr[1] "%d Minuten"
 
 #: hardinfo//util.c:106
 #, c-format
 msgid "%d hour, "
 msgid_plural "%d hours, "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Stunde, "
+msgstr[1] "%d Stunden, "
 
 #: hardinfo//util.c:110
 #, c-format
 msgid "%d day, "
 msgid_plural "%d days, "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Tag, "
+msgstr[1] "%d Tage, "
 
 #: hardinfo//util.c:111
 #, c-format
 msgid "%d hour and "
 msgid_plural "%d hours and "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Stunde und "
+msgstr[1] "%d Stunden und "
 
 #: hardinfo//util.c:118
 #, c-format
 msgid "%.1f B"
-msgstr ""
+msgstr "%.1f Byte(s)"
 
 #: hardinfo//util.c:120
 #, c-format
 msgid "%.1f KiB"
-msgstr ""
+msgstr "%.1f KiB"
 
 #: hardinfo//util.c:122
 #, c-format
 msgid "%.1f MiB"
-msgstr ""
+msgstr "%.1f MiB"
 
 #: hardinfo//util.c:124
 #, c-format
 msgid "%.1f GiB"
-msgstr ""
+msgstr "%.1f GiB"
 
 #: hardinfo//util.c:126
 #, c-format
 msgid "%.1f TiB"
-msgstr ""
+msgstr "%.1f TiB"
 
 #: hardinfo//util.c:128
 #, c-format
 msgid "%.1f PiB"
-msgstr ""
+msgstr "%.1f PiB"
 
 #: hardinfo//util.c:342
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
-#: hardinfo//util.c:342
-#: hardinfo//util.c:358
+#: hardinfo//util.c:342 hardinfo//util.c:358
 msgid "Warning"
-msgstr ""
+msgstr "Warnung"
 
 #: hardinfo//util.c:357
 msgid "Fatal Error"
-msgstr ""
+msgstr "Kritischer Fehler"
 
 #: hardinfo//util.c:382
 msgid "creates a report and prints to standard output"
@@ -1457,7 +1666,7 @@ msgstr ""
 
 #: hardinfo//util.c:431
 msgid "- System Profiler and Benchmark tool"
-msgstr ""
+msgstr "- System-Profiler und Benchmark-Werkzeug"
 
 #: hardinfo//util.c:441
 #, c-format
@@ -1469,7 +1678,7 @@ msgstr ""
 #: hardinfo//util.c:507
 #, c-format
 msgid "Couldn't find a Web browser to open URL %s."
-msgstr ""
+msgstr "Konnte keinen Web-Browser finden, um die URL %s zu öffnen."
 
 #: hardinfo//util.c:854
 #, c-format
