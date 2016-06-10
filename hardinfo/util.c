@@ -44,6 +44,8 @@
 #define KiB 1024
 #define MiB 1048576
 #define GiB 1073741824
+#define TiB 1099511627776
+#define PiB 1125899906842624
 
 static GSList *modules_list = NULL;
 
@@ -118,8 +120,12 @@ inline gchar *size_human_readable(gfloat size)
 	return g_strdup_printf(_("%.1f KiB"), size / KiB);
     if (size < GiB)
 	return g_strdup_printf(_("%.1f MiB"), size / MiB);
+    if (size < TiB)
+	return g_strdup_printf(_("%.1f GiB"), size / GiB);
+    if (size < PiB)
+	return g_strdup_printf(_("%.1f TiB"), size / TiB);
 
-    return g_strdup_printf(_("%.1f GiB"), size / GiB);
+    return g_strdup_printf(_("%.1f PiB"), size / PiB);
 }
 
 inline char *strend(gchar * str, gchar chr)
