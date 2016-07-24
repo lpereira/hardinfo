@@ -141,6 +141,17 @@ detect_desktop_environment(OperatingSystem * os)
     }
 }
 
+gchar *
+computer_get_entropy_avail(void)
+{
+    gint bits = h_sysfs_read_int("/proc/sys/kernel/random", "entropy_avail");
+    if (bits < 200)
+        return g_strdup_printf("%d bits (low)", bits);
+    if (bits < 3000)
+        return g_strdup_printf("%d bits (medium)", bits);
+    return g_strdup_printf("%d bits (healthy)", bits);
+}
+
 OperatingSystem *
 computer_get_os(void)
 {
@@ -240,6 +251,8 @@ computer_get_os(void)
     os->libc = get_libc_version();
     scan_languages(os);
     detect_desktop_environment(os);
+
+    os->entropy_avail = computer_get_entropy_avail();
 
     return os;
 }

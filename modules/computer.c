@@ -96,8 +96,9 @@ gchar *hi_more_info(gchar * entry)
 
 gchar *hi_get_field(gchar * field)
 {
-	setlocale(LC_ALL, "C"); //Load Average is not updated if locale is not C, switch locale to C
     gchar *tmp;
+
+    setlocale(LC_ALL, "C"); //Load Average is not updated if locale is not C, switch locale to C
 
     if (g_str_equal(field, "Memory")) {
 	MemoryInfo *mi = computer_get_memory();
@@ -112,6 +113,8 @@ gchar *hi_get_field(gchar * field)
 	strftime(tmp, 64, "%c", localtime(&t));
     } else if (g_str_equal(field, "Load Average")) {
 	tmp = computer_get_formatted_loadavg();
+    } else if (g_str_equal(field, "Available entropy in /dev/random")) {
+	tmp = computer_get_entropy_avail();
     } else {
 	tmp = g_strdup("");
     }
@@ -417,6 +420,7 @@ gchar *callback_os()
     return g_strdup_printf(_("[$ShellParam$]\n"
 			   "UpdateInterval$Uptime=10000\n"
 			   "UpdateInterval$Load Average=1000\n"
+			   "UpdateInterval$Available entropy in /dev/random=1000\n"
 			   "[Version]\n"
 			   "Kernel=%s\n"
 			   "Version=%s\n"
@@ -430,7 +434,8 @@ gchar *callback_os()
 			   "Desktop Environment=%s\n"
 			   "[Misc]\n"
 			   "Uptime=...\n"
-			   "Load Average=..."),
+			   "Load Average=...\n"
+			   "Available entropy in /dev/random=..."),
 			   computer->os->kernel,
 			   computer->os->kernel_version,
 			   computer->os->libc,
@@ -438,7 +443,8 @@ gchar *callback_os()
 			   computer->os->hostname,
 			   computer->os->username,
 			   computer->os->language,
-			   computer->os->homedir, computer->os->desktop);
+			   computer->os->homedir, computer->os->desktop,
+			   computer->os->entropy_avail);
 }
 
 gchar *callback_modules()

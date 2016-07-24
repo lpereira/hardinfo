@@ -137,6 +137,8 @@ struct _OperatingSystem {
     gchar *username;
     
     gchar *boots;
+
+    gchar *entropy_avail;
 };
 
 struct _MemoryInfo {
@@ -173,6 +175,7 @@ extern gchar *module_list;
 gchar *computer_get_formatted_loadavg();
 gchar *computer_get_formatted_uptime();
 gchar *computer_get_alsacards(Computer * computer);
+gchar *computer_get_entropy_avail();
 
 OperatingSystem *computer_get_os(void);
 AlsaInfo *computer_get_alsainfo(void);
