@@ -216,12 +216,14 @@ void scan_dev(gboolean reload)
        { N_("Vala"), "valac --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Haskell (GHC)"), "ghc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("FreePascal"), "fpc -iV", "\\d+\\.\\d+\\.?\\d*", TRUE },
+       { N_("Go"), "go version", "\\d+\\.\\d+\\.?\\d* ", TRUE },
        { N_("Tools"), NULL, FALSE },
        { N_("make"), "make --version", "\\d+\\.\\d+", TRUE },
        { N_("GDB"), "gdb --version", "\\d+\\.\\S+", TRUE },
        { N_("strace"), "strace -V", "\\d+\\.\\d+\\.?\\d*", TRUE },
        { N_("valgrind"), "valgrind --version", "\\d+\\.\\d+\\.\\S+", TRUE },
        { N_("QMake"), "qmake --version", "\\d+\\.\\S+", TRUE},
+       { N_("CMake"), "cmake --version", "\\d+\\.\\d+\\.?\\d*", TRUE},
     };
     
     g_free(dev_list);
