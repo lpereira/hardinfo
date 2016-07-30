@@ -50,13 +50,8 @@ SYNC_MANAGER_ITEMS
 "	</menu>" \
 REMOTE_MENU_ITEMS \
 "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">" \
-"		<menuitem name=\"OnlineDocs\" action=\"OnlineDocsAction\"/>" \
-"		<menuitem name=\"ContextHelp\" action=\"ContextHelpAction\"/>" \
-"		<separator/>" \
 "		<menuitem name=\"WebPage\" action=\"HomePageAction\"/>" \
 "		<menuitem name=\"ReportBug\" action=\"ReportBugAction\"/>" \
-"		<separator/>" \
-"		<menuitem name=\"Donate\" action=\"DonateAction\"/>" \
 "		<separator/>" \
 "		<menu name=\"HelpMenuModules\" action=\"HelpMenuModulesAction\">" \
 "			<separator name=\"LastSep\"/>" \

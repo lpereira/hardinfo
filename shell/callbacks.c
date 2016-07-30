@@ -27,7 +27,6 @@
 #include "report.h"
 #include "remote.h"
 #include "syncmanager.h"
-#include "help-viewer.h"
 #include "xmlrpc-server.h"
 
 #include "config.h"
@@ -170,84 +169,12 @@ void cb_save_graphic()
 
 void cb_open_web_page()
 {
-    open_url("http://wiki.hardinfo.org");
-}
-
-void cb_open_online_docs()
-{
-    Shell *shell;
-    
-    shell = shell_get_main_shell();
-    if (shell->help_viewer) {
-        help_viewer_open_page(shell->help_viewer, "index.hlp");
-    } else {
-        gchar *help_dir;
-        
-        help_dir = g_build_filename(params.path_data, "doc", NULL);
-        shell->help_viewer = help_viewer_new(help_dir, "index.hlp");
-        g_free(help_dir);
-    }
-}
-
-void cb_open_online_docs_context()
-{
-    Shell *shell;
-    
-    shell = shell_get_main_shell();
-
-    if (shell->selected->flags & MODULE_FLAG_HAS_HELP) {
-        gchar *temp;
-        
-        if (shell->selected_module->dll) {
-            gchar *name_temp;
-            
-            name_temp = (gchar *)g_module_name(shell->selected_module->dll);
-            name_temp = g_path_get_basename(name_temp);
-            strend(name_temp, '.');
-            
-            temp = g_strdup_printf("context-help-%s-%d.hlp",
-                                   name_temp,
-                                   shell->selected->number);
-            
-            g_free(name_temp);
-        } else {
-            goto no_context_help;
-        }
-                
-        if (shell->help_viewer) {
-            help_viewer_open_page(shell->help_viewer, temp);
-        } else {
-            gchar *help_dir;
-            
-            help_dir = g_build_filename(params.path_data, "doc", NULL);
-            shell->help_viewer = help_viewer_new(help_dir, temp);
-            g_free(help_dir);
-        }
-        
-        g_free(temp);
-    } else {
-        GtkWidget *dialog;
-        
-no_context_help:
-	dialog = gtk_message_dialog_new(GTK_WINDOW(shell->window),
-					GTK_DIALOG_DESTROY_WITH_PARENT,
-					GTK_MESSAGE_ERROR,
-					GTK_BUTTONS_CLOSE,
-					_("No context help available."));
-
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
-    }
+    open_url("http://www.hardinfo.org");
 }
 
 void cb_report_bug()
 {
-    open_url("http://wiki.hardinfo.org/BugReports");
-}
-
-void cb_donate()
-{
-    open_url("http://wiki.hardinfo.org/Donate");
+    open_url("http://github.com/lpereira/hardinfo");
 }
 
 void cb_refresh()

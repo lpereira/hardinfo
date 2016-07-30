@@ -152,11 +152,6 @@ add_library(hardinfo-remote STATIC
         remote/xmlrpc-client.c
         remote/xmlrpc-server.c
 )
-add_library(hardinfo-help-viewer STATIC
-        help-viewer/egg-markdown.c
-        help-viewer/help-viewer.c
-        help-viewer/markdown-text-view.c
-)
 add_library(hardinfo-shell STATIC
         shell/callbacks.c
         shell/iconcache.c
@@ -182,7 +177,6 @@ target_link_libraries(hardinfo
 	m
 )
 target_link_libraries(hardinfo-shell
-	hardinfo-help-viewer
 	hardinfo-remote
 )
 

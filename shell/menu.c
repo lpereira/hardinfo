@@ -84,16 +84,6 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_refresh)},
 
-    {"OnlineDocsAction", GTK_STOCK_HELP,
-     N_("Contents"), "F1",
-     NULL,
-     G_CALLBACK(cb_open_online_docs)},
-
-    {"ContextHelpAction", NULL,
-     N_("Context help"), "<Ctrl>F1",
-     NULL,
-     G_CALLBACK(cb_open_online_docs_context)},
-
     {"HomePageAction", HI_STOCK_INTERNET,
      N_("_Open HardInfo Web Site"), NULL,
      NULL,
@@ -103,11 +93,6 @@ static GtkActionEntry entries[] = {
      N_("_Report bug"), NULL,
      NULL,
      G_CALLBACK(cb_report_bug)},
-
-    {"DonateAction", HI_STOCK_DONATE,
-     N_("_Donate to the project"), NULL,
-     NULL,
-     G_CALLBACK(cb_donate)},
 
     {"AboutAction", GTK_STOCK_ABOUT,
      N_("_About HardInfo"), NULL,

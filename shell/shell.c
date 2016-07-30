@@ -816,7 +816,6 @@ void shell_init(GSList * modules)
     shell_status_update(_("Done."));
     shell_status_set_enabled(FALSE);
 
-    shell_action_set_enabled("ContextHelpAction", FALSE);
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("SaveGraphAction", FALSE);
@@ -1778,22 +1777,6 @@ static void module_selected(gpointer data)
 	shell_set_title(shell, title);
 	g_free(title);
 
-        if (entry->flags & MODULE_FLAG_HAS_HELP) {
-            gchar *temp;
-            
-            shell_action_set_enabled("ContextHelpAction", TRUE);
-            
-            temp = g_strdup_printf("Help on %s \342\206\222 %s",
-                                   shell->selected_module->name,
-                                   entry->name);
-            shell_action_set_label("ContextHelpAction", temp);
-            
-            g_free(temp);
-        } else {
-            shell_action_set_enabled("ContextHelpAction", FALSE);
-            shell_action_set_label("ContextHelpAction", _("Context help"));
-        }
-
 	shell_action_set_enabled("RefreshAction", TRUE);
 	shell_action_set_enabled("CopyAction", TRUE);
 
@@ -1807,9 +1790,6 @@ static void module_selected(gpointer data)
 	gtk_tree_store_clear(GTK_TREE_STORE(shell->info->model));
 	set_view_type(SHELL_VIEW_NORMAL, FALSE);
 
-        shell_action_set_enabled("ContextHelpAction", FALSE);
-        shell_action_set_label("ContextHelpAction", _("Context help"));
-        
         if (shell->selected_module->summaryfunc) {
            shell_show_summary();
         }
