@@ -201,7 +201,7 @@ void scan_dev(gboolean reload)
        gboolean stdout;
     } detect_lang[] = {
        { N_("Scripting Languages"), NULL, FALSE },
-       { N_("CPython"), "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("CPython"), "python -V", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Perl"), "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("PHP"), "php --version", "\\d+\\.\\d+\\.\\S+", TRUE},
        { N_("Ruby"), "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
