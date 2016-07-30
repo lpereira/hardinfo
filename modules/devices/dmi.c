@@ -180,8 +180,6 @@ gboolean dmi_get_info_sys()
         dmi_failed = TRUE;
         break;
       }
-
-      group = NULL;
     }                                
   }
   
