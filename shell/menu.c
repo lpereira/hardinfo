@@ -54,21 +54,6 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_sync_manager)},
      
-    {"ConnectToAction", GTK_STOCK_CONNECT,
-     N_("_Connect to..."), NULL,
-     NULL,
-     G_CALLBACK(cb_connect_to)},
-
-    {"ManageAction", NULL,
-     N_("_Manage hosts..."), NULL,
-     NULL,
-     G_CALLBACK(cb_manage_hosts)},
-    
-    {"LocalComputerAction", GTK_STOCK_HOME,
-     N_("_Local computer"), NULL,
-     NULL,
-     G_CALLBACK(cb_local_computer)},
-
     {"CopyAction", GTK_STOCK_COPY,
      N_("_Copy to Clipboard"), "<control>C",
      N_("Copy to clipboard"),
@@ -114,10 +99,6 @@ static GtkToggleActionEntry toggle_entries[] = {
      N_("_Toolbar"), NULL,
      NULL,
      G_CALLBACK(cb_toolbar)},
-    {"ActAsServerAction", NULL,
-      N_("_Accept connections"), NULL,
-      NULL,
-      G_CALLBACK(cb_act_as_server) }
 };
 
 /* Implement a handler for GtkUIManager's "add_widget" signal. The UI manager

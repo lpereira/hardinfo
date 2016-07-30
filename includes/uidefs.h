@@ -11,20 +11,10 @@
 #endif		/* !RELEASE */
 
 #ifdef HAS_LIBSOUP
-#define REMOTE_MENU_ITEMS "       <menu name=\"RemoteMenu\" action=\"RemoteMenuAction\">" \
-"		<menuitem name=\"ConnectTo\" action=\"ConnectToAction\" />" \
-"		<menuitem name=\"Manage\" action=\"ManageAction\" />" \
-"		<separator/>" \
-"		<menuitem name=\"ActAsServer\" action=\"ActAsServerAction\" />" \
-"		<separator/>" \
-"		<menuitem name=\"LocalComputer\" action=\"LocalComputerAction\" />" \
-"       </menu>" 
-
 #define SYNC_MANAGER_ITEMS "		<separator/>" \
 "		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" 
 
 #else		/* !HAS_LIBSOUP */
-#define REMOTE_MENU_ITEMS
 #define SYNC_MANAGER_ITEMS
 #endif		/* !HAS_LIBSOUP */
 
@@ -48,7 +38,6 @@ SYNC_MANAGER_ITEMS
 "		<separator name=\"LastSep\"/>" \
 "		<menuitem name=\"Refresh\" action=\"RefreshAction\"/>" \
 "	</menu>" \
-REMOTE_MENU_ITEMS \
 "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">" \
 "		<menuitem name=\"WebPage\" action=\"HomePageAction\"/>" \
 "		<menuitem name=\"ReportBug\" action=\"ReportBugAction\"/>" \

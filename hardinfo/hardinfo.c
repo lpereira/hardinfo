@@ -24,7 +24,6 @@
 #include <iconcache.h>
 #include <stock.h>
 #include <vendor.h>
-#include <xmlrpc-server.h>
 
 #include <binreloc.h>
 
@@ -95,9 +94,8 @@ int main(int argc, char **argv)
 	return 0;
     }
 
-    if (!params.create_report && !params.run_benchmark && !params.run_xmlrpc_server) {
-	/* we only try to open the UI if the user didn't asked for a 
-	   report. */
+    if (!params.create_report && !params.run_benchmark) {
+	/* we only try to open the UI if the user didn't ask for a report. */
 	params.gui_running = ui_init(&argc, &argv);
 
 	/* as a fallback, if GTK+ initialization failed, run in report
@@ -122,12 +120,7 @@ int main(int argc, char **argv)
     /* initialize moreinfo */
     moreinfo_init();
 
-    if (params.run_xmlrpc_server) {
-        g_type_init();
-    
-        xmlrpc_server_init();
-        xmlrpc_server_start(NULL);
-    } else if (params.run_benchmark) {
+    if (params.run_benchmark) {
         gchar *result;
         
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);

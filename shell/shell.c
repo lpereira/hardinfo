@@ -62,16 +62,6 @@ static GSList *update_sfusrc = NULL;
  * Code :) ********************************************************************
  */
 
-void shell_set_remote_label(Shell *shell, gchar *label)
-{
-    gchar *tmp;
-    
-    tmp = g_strdup_printf("<small>%s</small> ", label);
-    gtk_label_set_markup(GTK_LABEL(shell->remote_label), tmp);
-    
-    g_free(tmp);
-}
-
 Shell *shell_get_main_shell(void)
 {
     return shell;
@@ -289,7 +279,6 @@ void shell_view_set_enabled(gboolean setting)
 
     gtk_widget_set_sensitive(shell->hpaned, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
-    shell_action_set_enabled("RemoteMenuAction", setting);
     shell_action_set_enabled("ConnectToAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
     shell_action_set_enabled("CopyAction", setting);
@@ -442,16 +431,6 @@ static void create_window(void)
     gtk_widget_hide(shell->progress);
     gtk_box_pack_end(GTK_BOX(hbox), shell->progress, FALSE, FALSE, 5);
 
-    shell->remote_label = gtk_label_new("");
-    gtk_label_set_use_markup(GTK_LABEL(shell->remote_label), TRUE);
-#ifdef HAS_LIBSOUP
-    gtk_widget_show(shell->remote_label);
-#else
-    gtk_widget_hide(shell->remote_label);
-#endif
-    shell_set_remote_label(shell, "");
-    gtk_box_pack_end(GTK_BOX(hbox), shell->remote_label, FALSE, FALSE, 0);
-
     shell->status = gtk_label_new("");
     gtk_misc_set_alignment(GTK_MISC(shell->status), 0.0, 0.5);
     gtk_widget_show(shell->status);
@@ -566,62 +545,6 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
     menu_item_set_icon_always_visible(shell, "/menubar/ViewMenu", name);
 }
 
-static GSList *remote_merge_ids = NULL;
-static void
-add_host_to_view_menu(gchar *hostname)
-{
-    GtkAction *action;
-    GtkWidget *menuitem;
-    gchar *path;
-    gint merge_id;
-    GtkActionEntry entry = {
-       hostname,			/* name */
-       HI_STOCK_SERVER,			/* stockid */
-       hostname,			/* label */
-       NULL,				/* accelerator */
-       NULL,				/* tooltip */
-       (GCallback) cb_connect_host,	/* callback */
-    };
-
-    if ((action = gtk_action_group_get_action(shell->action_group, hostname))) {
-        gtk_action_group_remove_action(shell->action_group, action);
-    }
-
-    gtk_action_group_add_actions(shell->action_group, &entry, 1, NULL /*data */);
-
-    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
-    gtk_ui_manager_add_ui(shell->ui_manager,
-                          merge_id,
-                          "/menubar/RemoteMenu/LocalComputer",
-			  hostname, hostname, GTK_UI_MANAGER_AUTO, FALSE);
-    remote_merge_ids = g_slist_prepend(remote_merge_ids, GINT_TO_POINTER(merge_id));
-    
-    menu_item_set_icon_always_visible(shell, "/menubar/RemoteMenu", hostname);
-}
-
-void shell_update_remote_menu(void)
-{
-    GSList *merge_id;
-    gchar **hosts;
-    gsize length;
-    gint i;
-    
-    for (merge_id = remote_merge_ids; merge_id; merge_id = merge_id->next) {
-        gint id = GPOINTER_TO_INT(merge_id->data);
-        
-        gtk_ui_manager_remove_ui(shell->ui_manager, id);
-    }
-    
-    hosts = g_key_file_get_groups(shell->hosts, &length);
-    for (i = length - 1; i >= 0; i--) {
-        add_host_to_view_menu(g_strdup(hosts[i]));
-    }
-    
-    menu_item_set_icon_always_visible(shell, "/menubar/RemoteMenu", "LocalComputer");
-
-    g_strfreev(hosts);
-}
-
 static void
 add_module_entry_to_view_menu(gchar * module, gchar * name,
 			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
@@ -719,24 +642,6 @@ static void __tree_iter_destroy(gpointer data)
     gtk_tree_iter_free((GtkTreeIter *) data);
 }
 
-void shell_save_hosts_file(void)
-{
-    gchar *path, *remote_conf;
-    gsize length;
-
-    DEBUG("saving hosts file");
-
-    path = g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf", NULL);
-
-    remote_conf = g_key_file_to_data(shell->hosts, &length, NULL);
-    g_file_set_contents(path, remote_conf, length, NULL);
-    
-    g_chmod(path, 0600);
-
-    g_free(remote_conf);
-    g_free(path);
-}
-
 ShellSummary *summary_new(void)
 {
     ShellSummary *summary;
@@ -826,19 +731,6 @@ void shell_init(GSList * modules)
     shell_action_set_enabled("SyncManagerAction", FALSE);
 #else
     shell_action_set_enabled("SyncManagerAction", sync_manager_count_entries() > 0);
-
-    {
-        gchar *path;
-
-        shell->hosts = g_key_file_new();
-        path = g_build_filename(g_get_home_dir(), ".hardinfo", "remote.conf", NULL);
-        g_key_file_load_from_file(shell->hosts, path, 0, NULL);
-        g_free(path);
-        
-        g_atexit(shell_save_hosts_file);
-
-        shell_update_remote_menu();
-    }
 #endif
 }
 

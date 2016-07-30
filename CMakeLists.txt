@@ -146,12 +146,6 @@ foreach (_module ${HARDINFO_MODULES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
 endforeach()
 
-add_library(hardinfo-remote STATIC
-        remote/remote.c
-        remote/ssh-conn.c
-        remote/xmlrpc-client.c
-        remote/xmlrpc-server.c
-)
 add_library(hardinfo-shell STATIC
         shell/callbacks.c
         shell/iconcache.c
@@ -175,9 +169,6 @@ target_link_libraries(hardinfo
 	${LIBSOUP_LIBRARIES}
 	hardinfo-shell
 	m
-)
-target_link_libraries(hardinfo-shell
-	hardinfo-remote
 )
 
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)

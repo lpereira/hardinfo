@@ -25,7 +25,6 @@
 
 #include "shell.h"
 #include "report.h"
-#include "remote.h"
 #include "syncmanager.h"
 #include "xmlrpc-server.h"
 
@@ -36,99 +35,6 @@ void cb_sync_manager()
     Shell *shell = shell_get_main_shell();
 
     sync_manager_show(shell->window);
-}
-
-void cb_connect_to()
-{
-#ifdef HAS_LIBSOUP
-    Shell *shell = shell_get_main_shell();
-
-    connect_dialog_show(shell->window);
-#endif /* HAS_LIBSOUP */
-}
-
-void cb_manage_hosts()
-{
-#ifdef HAS_LIBSOUP
-    Shell *shell = shell_get_main_shell();
-    
-    host_manager_show(shell->window);
-#endif /* HAS_LIBSOUP */
-}
-
-void cb_connect_host(GtkAction * action)
-{
-#ifdef HAS_LIBSOUP
-    Shell *shell = shell_get_main_shell();
-    gchar *name;
-    
-    g_object_get(G_OBJECT(action), "name", &name, NULL);
-    
-    if (remote_connect_host(name)) {
-        gchar *tmp;
-        
-        tmp = g_strdup_printf(_("Remote: <b>%s</b>"), name);
-        shell_set_remote_label(shell, tmp);
-        
-        g_free(tmp);
-    } else {
-        cb_local_computer();
-    }
-
-    g_free(name);
-#endif /* HAS_LIBSOUP */
-}
-
-static gboolean server_start_helper(gpointer server_loop)
-{
-#ifdef HAS_LIBSOUP
-     GMainLoop *loop = (GMainLoop *)server_loop;
-
-     xmlrpc_server_start(loop);
-     
-     return FALSE;
-#endif /* HAS_LIBSOUP */
-}
-
-void cb_act_as_server()
-{
-#ifdef HAS_LIBSOUP
-    gboolean accepting;
-    static GMainLoop *server_loop = NULL;
-
-    accepting = shell_action_get_active("ActAsServerAction");
-    if (accepting) {
-       if (!server_loop) {
-          server_loop = g_main_loop_new(NULL, FALSE);
-       }
-       g_idle_add(server_start_helper, server_loop);
-    } else {
-       g_main_loop_quit(server_loop);
-    }
-#endif /* HAS_LIBSOUP */
-}
-
-void cb_local_computer()
-{
-#ifdef HAS_LIBSOUP
-    Shell *shell = shell_get_main_shell();
-
-    shell_status_update(_("Disconnecting..."));
-    remote_disconnect_all(TRUE);
-
-    shell_status_update(_("Unloading modules..."));
-    module_unload_all();
-    
-    shell_status_update(_("Loading local modules..."));
-    shell->tree->modules = modules_load_all();
-
-    g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
-    gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
-    
-    shell_view_set_enabled(TRUE);
-    shell_status_update(_("Done."));
-    shell_set_remote_label(shell, "");
-#endif /* HAS_LIBSOUP */
 }
 
 void cb_save_graphic()
