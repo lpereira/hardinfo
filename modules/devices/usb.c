@@ -131,10 +131,10 @@ gboolean __scan_usb_procfs(void)
 {
     FILE *dev;
     gchar buffer[128];
-    gchar *tmp, *manuf = NULL, *product = NULL, *mxpwr;
-    gint bus, level, port = 0, classid = 0, trash;
-    gint vendor, prodid;
-    gfloat ver, rev, speed;
+    gchar *tmp, *manuf = NULL, *product = NULL, *mxpwr = NULL;
+    gint bus = 0, level = 0, port = 0, classid = 0, trash;
+    gint vendor = 0, prodid = 0;
+    gfloat ver = 0.0f, rev = 0.0f, speed = 0.0f;
     int n = 0;
 
     dev = fopen("/proc/bus/usb/devices", "r");
@@ -142,7 +142,7 @@ gboolean __scan_usb_procfs(void)
 	return 0;
 
     if (usb_list) {
-       moreinfo_del_with_prefix("DEV:USB");
+	moreinfo_del_with_prefix("DEV:USB");
 	g_free(usb_list);
     }
     usb_list = g_strdup("[USB Devices]\n");
@@ -160,8 +160,7 @@ gboolean __scan_usb_procfs(void)
 	    sscanf(tmp, "D:  Ver=%f Cls=%x", &ver, &classid);
 	    break;
 	case 'P':
-	    sscanf(tmp, "P:  Vendor=%x ProdID=%x Rev=%f",
-		   &vendor, &prodid, &rev);
+	    sscanf(tmp, "P:  Vendor=%x ProdID=%x Rev=%f", &vendor, &prodid, &rev);
 	    break;
 	case 'S':
 	    if (strstr(tmp, "Manufacturer=")) {
@@ -182,35 +181,27 @@ gboolean __scan_usb_procfs(void)
 		if (classid == 9) {
 		    product = g_strdup_printf("USB %.2f Hub", ver);
 		} else {
-		    product =
-			g_strdup_printf
-			("Unknown USB %.2f Device (class %d)", ver,
-			 classid);
+		    product = g_strdup_printf("Unknown USB %.2f Device (class %d)", ver, classid);
 		}
 	    }
 
 	    if (classid == 9) {	/* hub */
-		usb_list = h_strdup_cprintf("[%s#%d]\n",
-					    usb_list, product, n);
+		usb_list = h_strdup_cprintf("[%s#%d]\n", usb_list, product, n);
 	    } else {		/* everything else */
-		usb_list = h_strdup_cprintf("$%s$%s=\n",
-					    usb_list, tmp, product);
+		usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, product);
 
 		const gchar *url = vendor_get_url(manuf);
 		if (url) {
-		    gchar *tmp =
-			g_strdup_printf("%s (%s)", vendor_get_name(manuf),
-					url);
+		    gchar *tmp = g_strdup_printf("%s (%s)", vendor_get_name(manuf),
+						 url);
 		    g_free(manuf);
 		    manuf = tmp;
 		}
 
-		gchar *strhash = g_strdup_printf("[Device Information]\n"
-						 "Product=%s\n",
+		gchar *strhash = g_strdup_printf("[Device Information]\n" "Product=%s\n",
 						 product);
 		if (manuf && strlen(manuf))
-		    strhash = h_strdup_cprintf("Manufacturer=%s\n",
-					       strhash, manuf);
+		    strhash = h_strdup_cprintf("Manufacturer=%s\n", strhash, manuf);
 
 		strhash = h_strdup_cprintf("[Port #%d]\n"
 					   "Speed=%.2fMbit/s\n"
@@ -222,13 +213,10 @@ gboolean __scan_usb_procfs(void)
 					   "Vendor=0x%x\n"
 					   "Product ID=0x%x\n"
 					   "Bus=%d\n" "Level=%d\n",
-					   strhash,
-					   port, speed, mxpwr,
-					   ver, rev, classid,
-					   vendor, prodid, bus, level);
+					   strhash, port, speed, mxpwr, ver, rev, classid, vendor, prodid, bus, level);
 
-               moreinfo_add_with_prefix("DEV", tmp, strhash);
-               g_free(tmp);
+		moreinfo_add_with_prefix("DEV", tmp, strhash);
+		g_free(tmp);
 	    }
 
 	    g_free(manuf);
@@ -244,55 +232,56 @@ gboolean __scan_usb_procfs(void)
     return n > 0;
 }
 
-void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE *lsusb, int usb_device_number)
+
+void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE * lsusb, int usb_device_number)
 {
     gint bus, device, vendor_id, product_id;
     gchar *version = NULL, *product = NULL, *vendor = NULL, *dev_class = NULL, *int_class = NULL;
-    gchar *max_power = NULL, *name=NULL;
+    gchar *max_power = NULL, *name = NULL;
     gchar *tmp, *strhash;
-    long position;
+    long position = 0;
 
+    g_strstrip(buffer);
+    sscanf(buffer, "Bus %d Device %d: ID %x:%x", &bus, &device, &vendor_id, &product_id);
+    name = g_strdup(buffer + 33);
+
+    for (fgets(buffer, bufsize, lsusb); position >= 0 && fgets(buffer, bufsize, lsusb); position = ftell(lsusb)) {
 	g_strstrip(buffer);
-    sscanf(buffer, "Bus %d Device %d: ID %x:%x",
-           &bus, &device, &vendor_id, &product_id);
-	name = g_strdup (buffer + 33); 
 
-    for (fgets(buffer, bufsize, lsusb); fgets(buffer, bufsize, lsusb); position = ftell(lsusb)) {
-        g_strstrip(buffer);
-
-        if (g_str_has_prefix(buffer, "idVendor")) {
-            g_free(vendor);
-            vendor = g_strdup(buffer + 26);
-        } else if (g_str_has_prefix(buffer, "idProduct")) {
-            g_free(product);
-            product = g_strdup(buffer + 26);
-        } else if (g_str_has_prefix(buffer, "MaxPower")) {
-            g_free(max_power);
-            max_power = g_strdup(buffer + 9);
-        } else if (g_str_has_prefix(buffer, "bcdUSB")) {
-            g_free(version);
-            version = g_strdup(buffer + 7);
-        } else if (g_str_has_prefix(buffer, "bDeviceClass")) {
-            g_free(dev_class);
-            dev_class = g_strdup(buffer + 14);
-        } else if (g_str_has_prefix(buffer, "bInterfaceClass")) {
-            g_free(int_class);
-            int_class = g_strdup(buffer + 16);
-        } else if (g_str_has_prefix(buffer, "Bus ")) {
-            /* device separator */
-            fseek(lsusb, position, SEEK_SET);
-            break;
-        }
+	if (g_str_has_prefix(buffer, "idVendor")) {
+	    g_free(vendor);
+	    vendor = g_strdup(buffer + 26);
+	} else if (g_str_has_prefix(buffer, "idProduct")) {
+	    g_free(product);
+	    product = g_strdup(buffer + 26);
+	} else if (g_str_has_prefix(buffer, "MaxPower")) {
+	    g_free(max_power);
+	    max_power = g_strdup(buffer + 9);
+	} else if (g_str_has_prefix(buffer, "bcdUSB")) {
+	    g_free(version);
+	    version = g_strdup(buffer + 7);
+	} else if (g_str_has_prefix(buffer, "bDeviceClass")) {
+	    g_free(dev_class);
+	    dev_class = g_strdup(buffer + 14);
+	} else if (g_str_has_prefix(buffer, "bInterfaceClass")) {
+	    g_free(int_class);
+	    int_class = g_strdup(buffer + 16);
+	} else if (g_str_has_prefix(buffer, "Bus ")) {
+	    /* device separator */
+	    fseek(lsusb, position, SEEK_SET);
+	    break;
+	}
     }
 
     if (dev_class && strstr(dev_class, "0 (Defined at Interface level)")) {
-        g_free(dev_class);
-        if (int_class) {
-            dev_class = int_class;
-        } else {
-            dev_class = g_strdup("Unknown");
-        }
-    } else dev_class = g_strdup("Unknown");
+	g_free(dev_class);
+	if (int_class) {
+	    dev_class = int_class;
+	} else {
+	    dev_class = g_strdup("Unknown");
+	}
+    } else
+	dev_class = g_strdup("Unknown");
 
     tmp = g_strdup_printf("USB%d", usb_device_number);
     usb_list = h_strdup_cprintf("$%s$%s=\n", usb_list, tmp, name);
@@ -307,12 +296,11 @@ void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE *lsusb, int usb
 			      "Vendor=0x%x\n"
 			      "Product ID=0x%x\n"
 			      "Bus=%d\n",
-			      product   ? g_strstrip(product)   : "Unknown",
-			      vendor    ? g_strstrip(vendor)    : "Unknown",
+			      product ? g_strstrip(product) : "Unknown",
+			      vendor ? g_strstrip(vendor) : "Unknown",
 			      max_power ? g_strstrip(max_power) : "Unknown",
-			      version   ? g_strstrip(version)   : "Unknown",
-			      dev_class ? g_strstrip(dev_class) : "Unknown",
-			      vendor_id, product_id, bus);
+			      version ? g_strstrip(version) : "Unknown",
+			      dev_class ? g_strstrip(dev_class) : "Unknown", vendor_id, product_id, bus);
 
     moreinfo_add_with_prefix("DEV", tmp, strhash);
     g_free(vendor);
@@ -351,7 +339,7 @@ gboolean __scan_usb_lsusb(void)
     temp_lsusb = tmpfile();
     if (!temp_lsusb) {
         DEBUG("cannot create temporary file for lsusb");
-
+        pclose(lsusb);
         return FALSE;
     }
 
