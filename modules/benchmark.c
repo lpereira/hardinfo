@@ -554,11 +554,11 @@ ModuleAbout *hi_module_get_about(void)
 
 static gchar *get_benchmark_results()
 {
+    gint i;
     void (*scan_callback) (gboolean rescan);
 
     sending_benchmark_results = TRUE;
 
-    gint i = G_N_ELEMENTS(entries) - 1;
     gchar *machine = module_call_method("devices::getProcessorName");
     gchar *machineclock = module_call_method("devices::getProcessorFrequency");
     gchar *machineram = module_call_method("devices::getMemoryTotal");
@@ -569,22 +569,25 @@ static gchar *get_benchmark_results()
 				    "nbenchmarks=%d\n",
 				    machine,
 				    machineclock,
-				    machineram, i);
-    for (; i >= 0; i--) {
-	if ((scan_callback = entries[i].scan_callback)) {
-	    if (bench_results[i] < 0.0) {
-	       /* benchmark was cancelled */
-	       scan_callback(TRUE);
-            } else {
-  	       scan_callback(FALSE);
-            }
+				    machineram,
+				    G_N_ELEMENTS(entries) - 1);
+    for (i = 0; i < G_N_ELEMENTS(entries); i++) {
+        scan_callback = entries[i].scan_callback;
+        if (!scan_callback)
+            continue;
 
-	    result = h_strdup_cprintf("[bench%d]\n"
-				      "name=%s\n"
-				      "value=%f\n",
-				      result,
-				      i, entries[i].name, bench_results[i]);
-	}
+        if (bench_results[i] < 0.0) {
+           /* benchmark was cancelled */
+           scan_callback(TRUE);
+        } else {
+           scan_callback(FALSE);
+        }
+
+        result = h_strdup_cprintf("[bench%d]\n"
+                                  "name=%s\n"
+                                  "value=%f\n",
+                                  result,
+                                  i, entries[i].name, bench_results[i]);
     }
 
     g_free(machine);
