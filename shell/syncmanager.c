@@ -63,7 +63,7 @@ static SoupSession *session = NULL;
 static GMainLoop *loop;
 static GQuark err_quark;
 
-#define XMLRPC_SERVER_URI   		"http://hardinfo.berlios.de/xmlrpc/"
+#define XMLRPC_SERVER_URI   		"https://xmlrpc.hardinfo.org/"
 #define XMLRPC_SERVER_API_VERSION	1
 
 #define LABEL_SYNC_DEFAULT  _("<big><b>Synchronize with Central Database</b></big>\n" \
