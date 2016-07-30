@@ -265,7 +265,7 @@ void load_graph_update(LoadGraph * lg, gint value)
 	return;
 
     /* shift-right our data */
-    for (i = 0; i < lg->size; i++) {
+    for (i = 0; i < lg->size - 1; i++) {
 	lg->data[i] = lg->data[i + 1];
     }
 
