@@ -58,7 +58,7 @@ __scan_scsi_devices(void)
                 buf[17] = '\0';
                 buf[41] = '\0';
                 buf[53] = '\0';
-                
+
                 vendor   = g_strdup(g_strstrip(buf + 8));
                 model    = g_strdup_printf("%s %s", vendor, g_strstrip(buf + 24));
                 revision = g_strdup(g_strstrip(buf + 46));
@@ -86,10 +86,10 @@ __scan_scsi_devices(void)
                         { "CD-ROM", "CD-ROM", "cdrom"},
                         { "Scanner", "Scanner", "scanner"},
                         { "Flash Disk", "USB Flash Disk", "usbfldisk" },
-                        { NULL, "Generic", "scsi"} 
+                        { NULL, "Generic", "scsi"}
                     };
                     int i;
-                    
+
                     if (model && strstr(model, "Flash Disk")) {
                       type = "Flash Disk";
                       icon = "usbfldisk";
@@ -97,19 +97,19 @@ __scan_scsi_devices(void)
                       for (i = 0; type2icon[i].type != NULL; i++)
                           if (g_str_equal(buf + 8, type2icon[i].type))
                               break;
-                              
+
                       type = type2icon[i].label;
                       icon = type2icon[i].icon;
                     }
                 }
-                
+
                 gchar *devid = g_strdup_printf("SCSI%d", n);
                 scsi_storage_list = h_strdup_cprintf("$%s$%s=\n", scsi_storage_list, devid, model);
                 storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
-                
+
                 gchar *strhash = g_strdup_printf(_("[Device Information]\n"
                                                  "Model=%s\n"), model);
-                
+
                 const gchar *url = vendor_get_url(model);
                 if (url) {
                   strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
@@ -147,7 +147,7 @@ __scan_scsi_devices(void)
         }
         fclose(proc_scsi);
     }
-    
+
     if (n) {
       storage_list = h_strconcat(storage_list, scsi_storage_list, NULL);
       g_free(scsi_storage_list);
