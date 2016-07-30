@@ -96,10 +96,10 @@ int sock_ready_to_write(Socket * s)
 
 int sock_read(Socket * s, gchar * buffer, gint size)
 {
-    if (sock_ready_to_read(s)) {
+    if (size > 2 && sock_ready_to_read(s)) {
 	gint n;
 
-	n = read(s->sock, buffer, size);
+	n = read(s->sock, buffer, size - 1);
 	if (n > 0) {
             buffer[n] = '\0';
         } else {
