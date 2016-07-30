@@ -615,6 +615,7 @@ static gboolean report_generate(ReportDialog * rd)
     if (!create_context) {
 	g_warning(_("Cannot create ReportContext. Programming bug?"));
 	g_free(file);
+	fclose(stream);
 	return FALSE;
     }
 
