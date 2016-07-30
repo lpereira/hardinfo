@@ -191,7 +191,8 @@ FFTBench *fft_bench_new(void)
 void fft_bench_run(FFTBench *fftbench)
 {
     lup_decompose(fftbench);
-    lup_solve(fftbench);
+    double *x = lup_solve(fftbench);
+    free(x);
 }
 
 void fft_bench_free(FFTBench *fftbench)
