@@ -169,7 +169,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
 
     /* IPv4 */
     ifr.ifr_addr.sa_family = AF_INET;
-    strcpy(netinfo->name, if_name);
+    strncpy(netinfo->name, if_name, sizeof(netinfo->name));
 
     /* MTU */
     strcpy(ifr.ifr_name, if_name);
@@ -192,7 +192,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     if (ioctl(fd, SIOCGIFADDR, &ifr) < 0) {
 	netinfo->ip[0] = 0;
     } else {
-	sprintf(netinfo->ip, "%s",
+	snprintf(netinfo->ip, sizeof(netinfo->ip), "%s",
 		inet_ntoa(((struct sockaddr_in *) &ifr.ifr_addr)->
 			  sin_addr));
     }
@@ -202,7 +202,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     if (ioctl(fd, SIOCGIFNETMASK, &ifr) < 0) {
 	netinfo->mask[0] = 0;
     } else {
-	sprintf(netinfo->mask, "%s",
+	snprintf(netinfo->mask, sizeof(netinfo->mask), "%s",
 		inet_ntoa(((struct sockaddr_in *) &ifr.ifr_addr)->
 			  sin_addr));
     }
@@ -212,7 +212,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     if (ioctl(fd, SIOCGIFBRDADDR, &ifr) < 0) {
 	netinfo->broadcast[0] = 0;
     } else {
-	sprintf(netinfo->broadcast, "%s",
+	snprintf(netinfo->broadcast, sizeof(netinfo->broadcast), "%s",
 		inet_ntoa(((struct sockaddr_in *) &ifr.ifr_addr)->
 			  sin_addr));
     }
