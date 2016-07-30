@@ -1139,28 +1139,35 @@ static gchar *decode_ddr2_sdram(unsigned char *bytes, int *size)
                            tcl, trcd, trp, tras);
 }
 
-
-
 static void decode_ddr3_module_speed(unsigned char *bytes,
 				     float *ddr_clock, int *pc3_speed)
 {
     float ctime;
     float ddrclk;
     int tbits, pcclk;
-	float mtb=0.125;
+    float mtb = 0.125;
 
-    if (bytes[10]==1 && bytes[11]==8) mtb=0.125;
-    if (bytes[10]==1 && bytes[11]==15) mtb=0.125;
+    if (bytes[10] == 1 && bytes[11] == 8)
+	mtb = 0.125;
+    if (bytes[10] == 1 && bytes[11] == 15)
+	mtb = 0.125;
     ctime = mtb * bytes[12];
 
     ddrclk = 2 * (1000 / ctime);
 
-	tbits=64;
-	switch (bytes[8]) {
-		case 1: tbits=16;
-		case 4: tbits=32;
-		case 3: case 0xb: tbits=64;
-	}
+    tbits = 64;
+    switch (bytes[8]) {
+    case 1:
+	tbits = 16;
+	break;
+    case 4:
+	tbits = 32;
+	break;
+    case 3:
+    case 0xb:
+	tbits = 64;
+	break;
+    }
 
     pcclk = ddrclk * tbits / 8;
     pcclk -= pcclk % 100;
@@ -1184,18 +1191,28 @@ static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd,
     float ctime;
     float highest_cas = 0;
     int i;
-	float mtb=0.125;
+    float mtb = 0.125;
 
-    if (bytes[10]==1 && bytes[11]==8) mtb=0.125;
-    if (bytes[10]==1 && bytes[11]==15) mtb=0.125;
+    if (bytes[10] == 1 && bytes[11] == 8)
+	mtb = 0.125;
+    if (bytes[10] == 1 && bytes[11] == 15)
+	mtb = 0.125;
     ctime = mtb * bytes[12];
 
-	switch (bytes[14]) {
-		case 6: highest_cas = 5;
-		case 4: highest_cas = 6;
-		case 0xc: highest_cas = 7;
-		case 0x1e: highest_cas = 8;
-	}
+    switch (bytes[14]) {
+    case 6:
+	highest_cas = 5;
+	break;
+    case 4:
+	highest_cas = 6;
+	break;
+    case 0xc:
+	highest_cas = 7;
+	break;
+    case 0x1e:
+	highest_cas = 8;
+	break;
+    }
     if (trcd) {
 	*trcd = bytes[18] * mtb;
     }
@@ -1205,14 +1222,13 @@ static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd,
     }
 
     if (tras) {
-	*tras = (bytes[22]+bytes[21] & 0xf)*mtb;
+	*tras = (bytes[22] + bytes[21] & 0xf) * mtb;
     }
 
     if (tcl) {
 	*tcl = highest_cas;
     }
 }
-
 
 static gchar *decode_ddr3_sdram(unsigned char *bytes, int *size)
 {
