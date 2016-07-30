@@ -154,18 +154,16 @@ __scan_scsi_devices(void)
     }
 }
 
-void
-__scan_ide_devices(void)
+void __scan_ide_devices(void)
 {
     FILE *proc_ide;
-    gchar *device, iface, *model, *media, *pgeometry = NULL, *lgeometry =
-	NULL;
+    gchar *device, iface, *model, *media, *pgeometry = NULL, *lgeometry = NULL;
     gint n = 0, i = 0, cache, nn = 0;
     gchar *capab = NULL, *speed = NULL, *driver = NULL, *ide_storage_list;
 
     /* remove old devices from global device table */
     moreinfo_del_with_prefix("DEV:IDE");
-    
+
     ide_storage_list = g_strdup(_("\n[IDE Disks]\n"));
 
     iface = 'a';
@@ -177,7 +175,10 @@ __scan_ide_devices(void)
 	    cache = 0;
 
 	    proc_ide = fopen(device, "r");
-	    (void)fgets(buf, 128, proc_ide);
+	    if (!proc_ide)
+	        continue;
+
+	    (void) fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
 
 	    buf[strlen(buf) - 1] = 0;
@@ -188,74 +189,85 @@ __scan_ide_devices(void)
 
 	    device = g_strdup_printf("/proc/ide/hd%c/media", iface);
 	    proc_ide = fopen(device, "r");
-	    (void)fgets(buf, 128, proc_ide);
+	    if (!proc_ide) {
+	        free(model);
+	        continue;
+            }
+
+	    (void) fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
 	    buf[strlen(buf) - 1] = 0;
 
 	    media = g_strdup(buf);
 	    if (g_str_equal(media, "cdrom")) {
-	        /* obtain cd-rom drive information from cdrecord */
-	        GTimer *timer;
-	        gchar *tmp = g_strdup_printf("cdrecord dev=/dev/hd%c -prcap 2>/dev/stdout", iface);
-	        FILE *prcap;
-	        
-	        if ((prcap = popen(tmp, "r"))) {
-                    /* we need a timeout so cdrecord does not try to get information on cd drives
-                       with inserted media, which is not possible currently. half second should be
-                       enough. */
-                    timer = g_timer_new();
-                    g_timer_start(timer);
+		/* obtain cd-rom drive information from cdrecord */
+		GTimer *timer;
+		gchar *tmp = g_strdup_printf("cdrecord dev=/dev/hd%c -prcap 2>/dev/stdout", iface);
+		FILE *prcap;
 
-  	            while (fgets(buf, 128, prcap) && g_timer_elapsed(timer, NULL) < 0.5) {
-  	               if (g_str_has_prefix(buf, "  Does")) {
-  	                   if (g_str_has_suffix(buf, "media\n") && !strstr(buf, "speed")) {
-      	                       gchar *media_type = g_strstrip(strstr(buf, "Does "));
-      	                       gchar **ttmp = g_strsplit(media_type, " ", 0);
-  	                   
-      	                       capab = h_strdup_cprintf("\nCan %s#%d=%s\n",
-  	                                               capab,
-  	                                               ttmp[1], ++nn, ttmp[2]);
-  	                                           
-                               g_strfreev(ttmp);
-                           } else if (strstr(buf, "Buffer-Underrun-Free")) {
-                               capab = h_strdup_cprintf("\nSupports BurnProof=%s\n",
-                                                       capab,
-                                                       strstr(buf, "Does not") ? "No" : "Yes");
-                           } else if (strstr(buf, "multi-session")) {
-                               capab = h_strdup_cprintf("\nCan read multi-session CDs=%s\n",
-                                                       capab,
-                                                       strstr(buf, "Does not") ? "No" : "Yes");
-                           } else if (strstr(buf, "audio CDs")) {
-                               capab = h_strdup_cprintf("\nCan play audio CDs=%s\n",
-                                                       capab,
-                                                       strstr(buf, "Does not") ? "No" : "Yes");
-                           } else if (strstr(buf, "PREVENT/ALLOW")) {
-                               capab = h_strdup_cprintf("\nCan lock media=%s\n",
-                                                       capab,
-                                                       strstr(buf, "Does not") ? "No" : "Yes");
-                           }
-  	               } else if ((strstr(buf, "read") || strstr(buf, "write")) && strstr(buf, "kB/s")) {
-  	                   speed = g_strconcat(speed ? speed : "",
-  	                                       strreplacechr(g_strstrip(buf), ":", '='),
-  	                                       "\n", NULL);
-  	               } else if (strstr(buf, "Device seems to be")) {
-  	                   driver = g_strdup_printf(_("Driver=%s\n"), strchr(buf, ':') + 1);
-  	               }
-  	            }
+		if ((prcap = popen(tmp, "r"))) {
+		    /* we need a timeout so cdrecord does not try to get information on cd drives
+		       with inserted media, which is not possible currently. half second should be
+		       enough. */
+		    timer = g_timer_new();
+		    g_timer_start(timer);
 
-  	            pclose(prcap);
-                    g_timer_destroy(timer);
-                }
-	        
-	        g_free(tmp);
+		    while (fgets(buf, 128, prcap)
+			   && g_timer_elapsed(timer, NULL) < 0.5) {
+			if (g_str_has_prefix(buf, "  Does")) {
+			    if (g_str_has_suffix(buf, "media\n")
+				&& !strstr(buf, "speed")) {
+				gchar *media_type = g_strstrip(strstr(buf, "Does "));
+				gchar **ttmp = g_strsplit(media_type, " ", 0);
+
+				capab = h_strdup_cprintf("\nCan %s#%d=%s\n", capab, ttmp[1], ++nn, ttmp[2]);
+
+				g_strfreev(ttmp);
+			    } else if (strstr(buf, "Buffer-Underrun-Free")) {
+				capab =
+				    h_strdup_cprintf
+				    ("\nSupports BurnProof=%s\n", capab, strstr(buf, "Does not") ? "No" : "Yes");
+			    } else if (strstr(buf, "multi-session")) {
+				capab =
+				    h_strdup_cprintf
+				    ("\nCan read multi-session CDs=%s\n",
+				     capab, strstr(buf, "Does not") ? "No" : "Yes");
+			    } else if (strstr(buf, "audio CDs")) {
+				capab =
+				    h_strdup_cprintf
+				    ("\nCan play audio CDs=%s\n", capab, strstr(buf, "Does not") ? "No" : "Yes");
+			    } else if (strstr(buf, "PREVENT/ALLOW")) {
+				capab =
+				    h_strdup_cprintf
+				    ("\nCan lock media=%s\n", capab, strstr(buf, "Does not") ? "No" : "Yes");
+			    }
+			} else if ((strstr(buf, "read")
+				    || strstr(buf, "write"))
+				   && strstr(buf, "kB/s")) {
+			    speed =
+				g_strconcat(speed ? speed : "", strreplacechr(g_strstrip(buf), ":", '='), "\n", NULL);
+			} else if (strstr(buf, "Device seems to be")) {
+			    driver = g_strdup_printf(_("Driver=%s\n"), strchr(buf, ':') + 1);
+			}
+		    }
+
+		    pclose(prcap);
+		    g_timer_destroy(timer);
+		}
+
+		g_free(tmp);
 	    }
 	    g_free(device);
 
 	    device = g_strdup_printf("/proc/ide/hd%c/cache", iface);
 	    if (g_file_test(device, G_FILE_TEST_EXISTS)) {
 		proc_ide = fopen(device, "r");
-		(void)fscanf(proc_ide, "%d", &cache);
-		fclose(proc_ide);
+		if (proc_ide) {
+                    (void) fscanf(proc_ide, "%d", &cache);
+                    fclose(proc_ide);
+                } else {
+                    cache = 0;
+                }
 	    }
 	    g_free(device);
 
@@ -264,23 +276,28 @@ __scan_ide_devices(void)
 		gchar *tmp;
 
 		proc_ide = fopen(device, "r");
+		if (proc_ide) {
+                    (void) fgets(buf, 64, proc_ide);
+                    for (tmp = buf; *tmp; tmp++) {
+                        if (*tmp >= '0' && *tmp <= '9')
+                            break;
+                    }
 
-		(void)fgets(buf, 64, proc_ide);
-		for (tmp = buf; *tmp; tmp++) {
-		    if (*tmp >= '0' && *tmp <= '9')
-			break;
-		}
+                    pgeometry = g_strdup(g_strstrip(tmp));
 
-		pgeometry = g_strdup(g_strstrip(tmp));
+                    (void) fgets(buf, 64, proc_ide);
+                    for (tmp = buf; *tmp; tmp++) {
+                        if (*tmp >= '0' && *tmp <= '9')
+                            break;
+                    }
+                    lgeometry = g_strdup(g_strstrip(tmp));
 
-		(void)fgets(buf, 64, proc_ide);
-		for (tmp = buf; *tmp; tmp++) {
-		    if (*tmp >= '0' && *tmp <= '9')
-			break;
-		}
-		lgeometry = g_strdup(g_strstrip(tmp));
+                    fclose(proc_ide);
+                } else {
+                    pgeometry = g_strdup("Unknown");
+                    lgeometry = g_strdup("Unknown");
+                }
 
-		fclose(proc_ide);
 	    }
 	    g_free(device);
 
@@ -288,82 +305,67 @@ __scan_ide_devices(void)
 
 	    gchar *devid = g_strdup_printf("IDE%d", n);
 
-	    ide_storage_list = h_strdup_cprintf("$%s$%s=\n", ide_storage_list,
-					 devid, model);
-	    storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid,
-	                                  model, g_str_equal(media, "cdrom") ? \
-	                                         "cdrom" : "hdd");
-	    
-	    gchar *strhash = g_strdup_printf(_("[Device Information]\n"
-		                             "Model=%s\n"),
+	    ide_storage_list = h_strdup_cprintf("$%s$%s=\n", ide_storage_list, devid, model);
+	    storage_icons =
+		h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons,
+				 devid, model, g_str_equal(media, "cdrom") ? "cdrom" : "hdd");
+
+	    gchar *strhash = g_strdup_printf(_("[Device Information]\n" "Model=%s\n"),
 					     model);
-	    
+
 	    const gchar *url = vendor_get_url(model);
-	    
+
 	    if (url) {
-	      strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
-                                         strhash,
-                                         vendor_get_name(model),
-                                         url);
+		strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"), strhash, vendor_get_name(model), url);
 	    } else {
-	      strhash = h_strdup_cprintf(_("Vendor=%s\n"),
-                                         strhash,
-                                         vendor_get_name(model));
+		strhash = h_strdup_cprintf(_("Vendor=%s\n"), strhash, vendor_get_name(model));
 	    }
-	    
-            strhash = h_strdup_cprintf(_("Device Name=hd%c\n"
-                                       "Media=%s\n"
-                                       "Cache=%dkb\n"),
-                                       strhash,
-                                       iface,
-                                       media,
-                                       cache);
-            if (driver) {
-                strhash = h_strdup_cprintf("%s\n", strhash, driver);
-                
-                g_free(driver);
-                driver = NULL;
-            }
-            
+
+	    strhash = h_strdup_cprintf(_("Device Name=hd%c\n"
+					 "Media=%s\n" "Cache=%dkb\n"), strhash, iface, media, cache);
+	    if (driver) {
+		strhash = h_strdup_cprintf("%s\n", strhash, driver);
+
+		g_free(driver);
+		driver = NULL;
+	    }
+
 	    if (pgeometry && lgeometry) {
 		strhash = h_strdup_cprintf(_("[Geometry]\n"
-					  "Physical=%s\n"
-					  "Logical=%s\n"),
-					  strhash, pgeometry, lgeometry);
+					     "Physical=%s\n" "Logical=%s\n"), strhash, pgeometry, lgeometry);
 
-                g_free(pgeometry);
-                pgeometry = NULL;
-                g_free(lgeometry);
-                lgeometry = NULL;
-            }
-            
-            if (capab) {
-                strhash = h_strdup_cprintf(_("[Capabilities]\n%s"), strhash, capab);
-                
-                g_free(capab);
-                capab = NULL;
-            }
-            
-            if (speed) {
-                strhash = h_strdup_cprintf(_("[Speeds]\n%s"), strhash, speed);
-                
-                g_free(speed);
-                speed = NULL;
-            }
-            
-           moreinfo_add_with_prefix("DEV", devid, strhash);
-           g_free(devid);
+		g_free(pgeometry);
+		pgeometry = NULL;
+		g_free(lgeometry);
+		lgeometry = NULL;
+	    }
 
+	    if (capab) {
+		strhash = h_strdup_cprintf(_("[Capabilities]\n%s"), strhash, capab);
+
+		g_free(capab);
+		capab = NULL;
+	    }
+
+	    if (speed) {
+		strhash = h_strdup_cprintf(_("[Speeds]\n%s"), strhash, speed);
+
+		g_free(speed);
+		speed = NULL;
+	    }
+
+	    moreinfo_add_with_prefix("DEV", devid, strhash);
+	    g_free(devid);
 	    g_free(model);
-	    model = g_strdup("");
-	} else
+	} else {
 	    g_free(device);
+        }
 
 	iface++;
     }
-    
+
     if (n) {
-      storage_list = h_strconcat(storage_list, ide_storage_list, NULL);
-      g_free(ide_storage_list);
+	storage_list = h_strconcat(storage_list, ide_storage_list, NULL);
+	g_free(ide_storage_list);
     }
 }
