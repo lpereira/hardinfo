@@ -38,9 +38,9 @@ void
 __scan_input_devices(void)
 {
     FILE *dev;
-    gchar buffer[128];
+    gchar buffer[1024];
     gchar *tmp, *name = NULL, *phys = NULL;
-    gint bus = 0, vendor, product, version;
+    gint bus = 0, vendor = 0, product = 0, version = 0;
     int d = 0, n = 0;
 
     dev = fopen("/proc/bus/input/devices", "r");
@@ -55,7 +55,7 @@ __scan_input_devices(void)
     input_list = g_strdup("");
     input_icons = g_strdup("");
 
-    while (fgets(buffer, 128, dev)) {
+    while (fgets(buffer, sizeof(buffer), dev)) {
 	tmp = buffer;
 
 	switch (*tmp) {
