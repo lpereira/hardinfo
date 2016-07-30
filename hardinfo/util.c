@@ -98,18 +98,16 @@ gchar *seconds_to_string(unsigned int seconds)
     days = hours / 24;
     hours %= 24;
 
-
     if (days < 1) {
-	if (hours < 1) {
-	    return g_strdup_printf(ngettext("%d minute","%d minutes",minutes),minutes);
-	} else {
-		return g_strdup_printf(ngettext("%d hour, ","%d hours, ",hours),hours,
-                                  ngettext("%d minute","%d minutes",minutes),minutes);
-	}
+	if (hours < 1)
+	    return g_strdup_printf(ngettext("%d minute", "%d minutes", minutes), minutes);
+
+	return g_strdup_printf(ngettext("%d hour, ", "%d hours, ", hours), hours,
+			       ngettext("%d minute", "%d minutes", minutes), minutes);
     }
-	return g_strdup_printf(ngettext("%d day, ","%d days, ",days),days,
-                           ngettext("%d hour and ","%d hours and ",hours),hours,                          
-                           ngettext("%d minute","%d minutes",minutes),minutes);
+    return g_strdup_printf(ngettext("%d day, ", "%d days, ", days), days,
+			   ngettext("%d hour and ", "%d hours and ", hours), hours,
+			   ngettext("%d minute", "%d minutes", minutes), minutes);
 }
 
 inline gchar *size_human_readable(gfloat size)
