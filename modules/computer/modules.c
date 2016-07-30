@@ -47,6 +47,8 @@ scan_modules_do(void)
     moreinfo_del_with_prefix("COMP:MOD");
 
     lsmod_path = find_program("lsmod");
+    if (!lsmod_path)
+        return;
     lsmod = popen(lsmod_path, "r");
     if (!lsmod) {
         g_free(lsmod_path); 
