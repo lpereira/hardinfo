@@ -68,23 +68,40 @@ void scan_spd(gboolean reload);
 #endif
 void scan_device_resources(gboolean reload);
 
+gboolean root_required_for_resources(void);
+
 gchar *hi_more_info(gchar *entry);
 
+enum {
+    ENTRY_PROCESSOR,
+    ENTRY_MEMORY,
+    ENTRY_PCI,
+    ENTRY_USB,
+    ENTRY_PRINTERS,
+    ENTRY_BATTERY,
+    ENTRY_SENSORS,
+    ENTRY_INPUT,
+    ENTRY_STORAGE,
+    ENTRY_DMI,
+    ENTRY_SPD,
+    ENTRY_RESOURCES
+};
+
 static ModuleEntry entries[] = {
-    {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
-    {N_("Memory"), "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
-    {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
-    {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
-    {N_("Printers"), "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
-    {N_("Battery"), "battery.png", callback_battery, scan_battery, MODULE_FLAG_NONE},
-    {N_("Sensors"), "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
-    {N_("Input Devices"), "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
-    {N_("Storage"), "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
+    [ENTRY_PROCESSOR] = {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
+    [ENTRY_MEMORY] = {N_("Memory"), "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
+    [ENTRY_PCI] = {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
+    [ENTRY_USB] = {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
+    [ENTRY_PRINTERS] = {N_("Printers"), "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
+    [ENTRY_BATTERY] = {N_("Battery"), "battery.png", callback_battery, scan_battery, MODULE_FLAG_NONE},
+    [ENTRY_SENSORS] = {N_("Sensors"), "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
+    [ENTRY_INPUT] = {N_("Input Devices"), "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
+    [ENTRY_STORAGE] = {N_("Storage"), "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
-    {N_("DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
-    {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
+    [ENTRY_DMI] = {N_("DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
+    [ENTRY_SPD] = {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
-    {N_("Resources"), "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
+    [ENTRY_RESOURCES] = {N_("Resources"), "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     {NULL}
 };
 
@@ -474,4 +491,14 @@ gchar **hi_module_get_dependencies(void)
     static gchar *deps[] = { "computer.so", NULL };
 
     return deps;
+}
+
+const gchar *hi_note_func(gint entry)
+{
+    if (entry == ENTRY_RESOURCES) {
+        if (root_required_for_resources()) {
+            return "Resource information requires superuser privileges";
+        }
+    }
+    return NULL;
 }

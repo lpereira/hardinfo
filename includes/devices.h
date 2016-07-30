@@ -77,7 +77,6 @@ extern gchar *meminfo;
 extern gchar *pci_list;
 extern gchar *printer_icons;
 extern gchar *printer_list;
-extern gchar *_resources;
 extern gchar *sensors;
 extern gchar *storage_icons;
 extern gchar *storage_list;

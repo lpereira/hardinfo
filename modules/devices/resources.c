@@ -16,9 +16,12 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <string.h>
+
 #include "devices.h"
 
-gchar *_resources = NULL;
+static gchar *_resources = NULL;
+static gboolean _require_root = FALSE;
 
 #if GLIB_CHECK_VERSION(2,14,0)
 static GRegex *_regex_pci = NULL,
@@ -64,6 +67,7 @@ void scan_device_resources(gboolean reload)
     FILE *io;
     gchar buffer[256];
     gint i;
+    gint zero_to_zero_addr = 0;
 
     struct {
       gchar *file;
@@ -85,6 +89,9 @@ void scan_device_resources(gboolean reload)
           gchar **temp = g_strsplit(buffer, ":", 2);
           gchar *name = _resource_obtain_name(temp[1]);
 
+          if (strstr(temp[0], "0000-0000"))
+            zero_to_zero_addr++;
+
           _resources = h_strdup_cprintf("<tt>%s</tt>=%s\n", _resources,
                                         temp[0], name);
 
@@ -95,11 +102,18 @@ void scan_device_resources(gboolean reload)
         fclose(io);
       }
     }
-    
+
+    _require_root = zero_to_zero_addr > 16;
+
     SCAN_END();
 }
 
 gchar *callback_device_resources(void)
 {
     return g_strdup(_resources);
+}
+
+gboolean root_required_for_resources(void)
+{
+    return _require_root;
 }
