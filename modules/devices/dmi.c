@@ -130,7 +130,7 @@ gboolean dmi_get_info_sys()
 {
   FILE *dmi_file;
   gchar buffer[256];
-  const gchar *group;
+  const gchar *group = NULL;
   DMIInfo *info;
   gboolean dmi_failed = FALSE;
   gint i;
@@ -146,10 +146,7 @@ gboolean dmi_get_info_sys()
     if (*(info->name) == '$') {
       group = info->name + 1;
       dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
-    } else {
-      if (!info->file)
-        continue;
-        
+    } else if (group && info->file) {
       if ((dmi_file = fopen(info->file, "r"))) {
         (void)fgets(buffer, 256, dmi_file);
         fclose(dmi_file);
@@ -183,6 +180,8 @@ gboolean dmi_get_info_sys()
         dmi_failed = TRUE;
         break;
       }
+
+      group = NULL;
     }                                
   }
   
