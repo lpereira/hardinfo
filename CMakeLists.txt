@@ -2,7 +2,7 @@ project(HardInfo)
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6)
 
-set(HARDINFO_VERSION "0.5.2pre")
+set(HARDINFO_VERSION "0.6-alpha")
 
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
