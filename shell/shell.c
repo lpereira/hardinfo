@@ -856,7 +856,13 @@ static gboolean rescan_section(gpointer data)
     return entry->selected;
 }
 
-gint
+static gint
+compare_float(float a, float b)
+{
+    return (a > b) - (a < b);
+}
+
+static gint
 info_tree_compare_val_func(GtkTreeModel * model,
 			   GtkTreeIter * a,
 			   GtkTreeIter * b, gpointer userdata)
@@ -867,15 +873,16 @@ info_tree_compare_val_func(GtkTreeModel * model,
     gtk_tree_model_get(model, a, INFO_TREE_COL_VALUE, &col1, -1);
     gtk_tree_model_get(model, b, INFO_TREE_COL_VALUE, &col2, -1);
 
-    if (col1 == NULL || col2 == NULL) {
-	if (col1 == NULL && col2 == NULL)
-	    return 0;
-
-	ret = (col1 == NULL) ? -1 : 1;
-    } else {
-	ret = shell->_order_type ? (atof(col1) < atof(col2)) :
-	    (atof(col1) > atof(col2));
-    }
+    if (!col1 && !col2)
+        ret = 0;
+    else if (!col1)
+        ret = -1;
+    else if (!col2)
+        ret = 1;
+    else if (shell->_order_type)
+        ret = compare_float(atof(col1), atof(col2));
+    else
+        ret = compare_float(atof(col2), atof(col1));
 
     g_free(col1);
     g_free(col2);
