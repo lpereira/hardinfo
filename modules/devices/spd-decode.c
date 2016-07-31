@@ -1206,24 +1206,54 @@ static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float 
     }
 }
 
+static void decode_ddr3_module_type(unsigned char *bytes, const char **type)
+{
+    switch (bytes[3]) {
+    case 0x00:
+        *type = "Undefined";
+        break;
+    case 0x01:
+        *type = "RDIMM (Registered Long DIMM)";
+        break;
+    case 0x02:
+        *type = "UDIMM (Unbuffered Long DIMM)";
+        break;
+    case 0x03:
+        *type = "SODIMM (Small Outline DIMM)";
+        break;
+    default:
+        *type = "Unknown";
+    }
+}
+
 static gchar *decode_ddr3_sdram(unsigned char *bytes, int *size)
 {
     float ddr_clock;
     float trcd, trp, tras, tcl;
     int pc3_speed;
+    const char *type;
 
     decode_ddr3_module_speed(bytes, &ddr_clock, &pc3_speed);
     decode_ddr3_module_size(bytes, size);
     decode_ddr3_module_timings(bytes, &trcd, &trp, &tras, &tcl);
+    decode_ddr3_module_type(bytes, &type);
 
     return g_strdup_printf("[Module Information]\n"
 			   "Module type=DDR3 %.2f MHz (PC3-%d)\n"
 			   "SPD revision=%d.%d\n"
+			   "Type=%s\n"
 			   "[Timings]\n"
 			   "tCL=%.2f\n"
 			   "tRCD=%.3fns\n"
 			   "tRP=%.3fns\n"
-			   "tRAS=%.3fns\n", ddr_clock, pc3_speed, bytes[1] >> 4, bytes[1] & 0xf, tcl, trcd, trp, tras);
+			   "tRAS=%.3fns\n",
+			   ddr_clock, pc3_speed,
+			   bytes[1] >> 4, bytes[1] & 0xf,
+			   type,
+			   tcl,
+			   trcd,
+			   trp,
+			   tras);
 }
 
 static void decode_ddr3_part_number(unsigned char *bytes, char *part_number)
