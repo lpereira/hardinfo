@@ -1127,7 +1127,7 @@ static void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int
     if (bytes[10] == 1 && bytes[11] == 8)
 	mtb = 0.125;
     if (bytes[10] == 1 && bytes[11] == 15)
-	mtb = 0.125;
+	mtb = 0.0625;
     ctime = mtb * bytes[12];
 
     ddrclk = 2 * (1000 / ctime);
@@ -1172,7 +1172,7 @@ static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float 
     if (bytes[10] == 1 && bytes[11] == 8)
 	mtb = 0.125;
     if (bytes[10] == 1 && bytes[11] == 15)
-	mtb = 0.125;
+	mtb = 0.0625;
     ctime = mtb * bytes[12];
 
     switch (bytes[14]) {
