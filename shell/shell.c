@@ -1195,7 +1195,7 @@ static void update_progress()
     GtkTreeStore *store = GTK_TREE_STORE(model);
     GtkTreeIter iter, fiter;
     gchar *tmp;
-    gdouble maxv = 0, maxp = 0, minp = 100.0, cur, floatval;
+    gdouble maxv = INT_MIN, minv = INT_MAX, coeff, cur;
 
     if (!gtk_tree_model_get_iter_first(model, &fiter))
 	return;
@@ -1208,52 +1208,47 @@ static void update_progress()
 
 	    cur = atof(tmp);
 	    if (cur > maxv)
-	        maxv = cur;
+		maxv = cur;
+	    if (cur < minv)
+		minv = cur;
 
 	    g_free(tmp);
 	} while (gtk_tree_model_iter_next(model, &iter));
+
+	if (minv - maxv < 0.001)
+	    maxv += 1.0f;
     } else {
+	minv = 1.0f;
 	maxv = 100.0f;
     }
 
-    /* calculates the relative percentage and finds the maximum percentage */
-    if (shell->_order_type == SHELL_ORDER_ASCENDING) {
-	iter = fiter;
-	do {
-	    gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
-
-            cur = ceil((100.0 * atof(tmp)) / maxv);
-	    if (minp > cur)
-	        minp = cur;
-
-	    g_free(tmp);
-	} while (gtk_tree_model_iter_next(model, &iter));
-    }
+    coeff = (100.0f - 1.0f) / (maxv - minv);
 
     /* fix the maximum relative percentage */
     iter = fiter;
     do {
-        char *space;
-        char formatted[128];
+	char *space;
+	char formatted[128];
+	gdouble pct;
 
 	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
-	floatval = atof(tmp);
+	cur = atof(tmp);
 	space = strchr(tmp, ' ');
 
-        cur = ceil((100.0 * floatval) / maxv);
-
-        if (shell->_order_type == SHELL_ORDER_ASCENDING)
-            cur = ceil(100.0 - cur + minp);
+	pct = coeff * (cur - minv) + 1.0f;
+	if (shell->_order_type == SHELL_ORDER_ASCENDING)
+	    pct = 100.0 - pct;
+	pct = ceil(pct);
 
 	if (space) {
-	    snprintf(formatted, sizeof(formatted), "%.2f%s", floatval, space);
+	    snprintf(formatted, sizeof(formatted), "%.2f%s", cur, space);
 	} else {
-	    snprintf(formatted, sizeof(formatted), "%.2f", floatval);
+	    snprintf(formatted, sizeof(formatted), "%.2f", cur);
 	}
 
-	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur,
-			   INFO_TREE_COL_VALUE, strreplacechr(formatted, ",", '.'),
-			   -1);
+	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, pct,
+			   INFO_TREE_COL_VALUE, strreplacechr(formatted, ",",
+							      '.'), -1);
 
 	g_free(tmp);
     } while (gtk_tree_model_iter_next(model, &iter));
