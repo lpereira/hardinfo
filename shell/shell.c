@@ -879,10 +879,10 @@ info_tree_compare_val_func(GtkTreeModel * model,
         ret = -1;
     else if (!col2)
         ret = 1;
-    else if (shell->_order_type)
-        ret = compare_float(atof(col1), atof(col2));
-    else
+    else if (shell->_order_type == SHELL_ORDER_ASCENDING)
         ret = compare_float(atof(col2), atof(col1));
+    else
+        ret = compare_float(atof(col1), atof(col2));
 
     g_free(col1);
     g_free(col2);
@@ -1195,22 +1195,22 @@ static void update_progress()
     GtkTreeStore *store = GTK_TREE_STORE(model);
     GtkTreeIter iter, fiter;
     gchar *tmp;
-    gdouble maxv = 0, maxp = 0, cur, floatval;
+    gdouble maxv = 0, maxp = 0, minp = 100.0, cur, floatval;
 
-    if (!gtk_tree_model_get_iter_first(model, &fiter)) {
-        return;
-    }
-    
+    if (!gtk_tree_model_get_iter_first(model, &fiter))
+	return;
+
     /* finds the maximum value */
     if (shell->normalize_percentage) {
 	iter = fiter;
 	do {
-		gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
-	
-		cur = atof(tmp);
-		maxv = MAX(maxv, cur);
-	
-		g_free(tmp);
+	    gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
+
+	    cur = atof(tmp);
+	    if (cur > maxv)
+	        maxv = cur;
+
+	    g_free(tmp);
 	} while (gtk_tree_model_iter_next(model, &iter));
     } else {
 	maxv = 100.0f;
@@ -1222,41 +1222,40 @@ static void update_progress()
 	do {
 	    gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 
-	    cur = 100 - 100 * atof(tmp) / maxv;
-	    maxp = MAX(cur, maxp);
+            cur = ceil((100.0 * atof(tmp)) / maxv);
+	    if (minp > cur)
+	        minp = cur;
 
 	    g_free(tmp);
 	} while (gtk_tree_model_iter_next(model, &iter));
-
-	maxp = 100 - maxp;
     }
 
     /* fix the maximum relative percentage */
     iter = fiter;
     do {
-        char *strval;
-        
+        char *space;
+        char formatted[128];
+
 	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 	floatval = atof(tmp);
-	strval = g_strdup(tmp);
-	g_free(tmp);
-	
-	cur = 100 * floatval / maxv;
+	space = strchr(tmp, ' ');
 
-	if (shell->_order_type == SHELL_ORDER_ASCENDING)
-	    cur = 100 - cur + maxp;
-	    
-        if (strchr(strval, ' ')) {
-            tmp = g_strdup_printf("%.2f%s", floatval, strchr(strval, ' '));
-        } else {
-            tmp = g_strdup_printf("%.2f", floatval);
-        }
+        cur = ceil((100.0 * floatval) / maxv);
 
-        tmp = strreplacechr(tmp, ",", '.');
+        if (shell->_order_type == SHELL_ORDER_ASCENDING)
+            cur = ceil(100.0 - cur + minp);
+
+	if (space) {
+	    snprintf(formatted, sizeof(formatted), "%.2f%s", floatval, space);
+	} else {
+	    snprintf(formatted, sizeof(formatted), "%.2f", floatval);
+	}
+
 	gtk_tree_store_set(store, &iter, INFO_TREE_COL_PROGRESS, cur,
-                                         INFO_TREE_COL_VALUE, tmp, -1);
-        g_free(tmp);
-        g_free(strval);
+			   INFO_TREE_COL_VALUE, strreplacechr(formatted, ",", '.'),
+			   -1);
+
+	g_free(tmp);
     } while (gtk_tree_model_iter_next(model, &iter));
 
     /* now sort everything up. that wasn't as hard as i thought :) */
@@ -1264,8 +1263,7 @@ static void update_progress()
 
     gtk_tree_sortable_set_sort_func(sortable, INFO_TREE_COL_VALUE,
 				    info_tree_compare_val_func, 0, NULL);
-    gtk_tree_sortable_set_sort_column_id(sortable,
-					 INFO_TREE_COL_VALUE,
+    gtk_tree_sortable_set_sort_column_id(sortable, INFO_TREE_COL_VALUE,
 					 GTK_SORT_DESCENDING);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view),
 			    GTK_TREE_MODEL(sortable));
