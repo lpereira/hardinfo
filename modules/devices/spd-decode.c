@@ -1472,7 +1472,10 @@ void scan_spd_do(void)
     if (!dir) {
 	g_free(spd_info);
 	if (!g_file_test("/sys/module/eeprom", G_FILE_TEST_EXISTS)) {
-	    spd_info = g_strdup("[SPD]\n" "Please load the eeprom module to obtain information about memory SPD=\n");
+	    spd_info = g_strdup("[SPD]\n"
+                "Please load the eeprom module to obtain information about memory SPD=\n"
+                "[$ShellParam$]\n"
+                "ReloadInterval=500\n");
 	} else {
 	    spd_info = g_strdup("[SPD]\n" "Reading memory SPD not supported on this system=\n");
 	}
