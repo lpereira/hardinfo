@@ -281,6 +281,7 @@ GSList *processor_scan(void)
  * - Linux' cpufeature.h
  * - http://gentoo-wiki.com/Cpuinfo
  * - Intel IA-32 Architecture Software Development Manual
+ * - https://unix.stackexchange.com/questions/43539/what-do-the-flags-in-proc-cpuinfo-mean
  */
 static struct {
     char *name, *meaning;
@@ -392,10 +393,40 @@ static struct {
 	{ "fid", 	"Frequency Identifier"				},
 	{ "dtes64", 	"64-bit Debug Store"				},
 	{ "monitor", 	"Monitor/Mwait support"				},
+	{ "sse4_1",     "Streaming SIMD Extension 4.1"                  },
+	{ "sse4_2",     "Streaming SIMD Extension 4.2"                  },
+	{ "nopl",       "NOPL instructions"                             },
+	{ "cxmmx",      "Cyrix MMX extensions"                          },
+	{ "xtopology",  "CPU topology enum extensions"                  },
+	{ "nonstop_tsc", "TSC does not stop in C states"                },
+	{ "eagerfpu",   "Non lazy FPU restor"                           },
+	{ "pclmulqdq",  "Perform a Carry-Less Multiplication of Quadword instruction" },
+	{ "smx",        "Safer mode: TXT (TPM support)"                 },
+	{ "pdcm",       "Performance capabilities"                      },
+	{ "pcid",       "Process Context Identifiers"                   },
+	{ "x2apic",     "x2APIC"                                        },
+	{ "popcnt",     "Set bit count instructions"                    },
+	{ "aes",        "Advanced Encryption Standard"                  },
+	{ "aes-ni",     "Advanced Encryption Standard (New Instructions)" },
+	{ "xsave",      "Save Processor Extended States"                },
+	{ "avx",        "Advanced Vector Instructions"                  },
 	{ NULL,		NULL						},
 };
 
 GHashTable *cpu_flags = NULL;
+
+static void
+populate_cpu_flags_list_internal(GHashTable *hash_table)
+{
+    int i;
+
+    DEBUG("using internal CPU flags database");
+
+    for (i = 0; flag_meaning[i].name != NULL; i++) {
+        g_hash_table_insert(cpu_flags, flag_meaning[i].name,
+                            flag_meaning[i].meaning);
+    }
+}
 
 void cpu_flags_init(void)
 {
@@ -406,12 +437,7 @@ void cpu_flags_init(void)
     
     path = g_build_filename(g_get_home_dir(), ".hardinfo", "cpuflags.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-        DEBUG("using internal CPU flags database");
-
-        for (i = 0; flag_meaning[i].name != NULL; i++) {
-            g_hash_table_insert(cpu_flags, flag_meaning[i].name,
-                                flag_meaning[i].meaning);
-        }
+        populate_cpu_flags_list_internal(cpu_flags);
     } else {
         GKeyFile *flags_file;
         
@@ -423,18 +449,24 @@ void cpu_flags_init(void)
             
             flag_keys = g_key_file_get_keys(flags_file, "flags",
                                             NULL, NULL);
-            for (i = 0; flag_keys[i]; i++) {
-                gchar *meaning;
-                
-                meaning = g_key_file_get_string(flags_file, "flags",
-                                                flag_keys[i], NULL);
-                                                
-                g_hash_table_insert(cpu_flags, g_strdup(flag_keys[i]), meaning);
-                
-                /* can't free meaning */
+            if (!flag_keys) {
+                DEBUG("error while using %s as CPU flags database, falling back to internal",
+                      path);
+                populate_cpu_flags_list_internal(cpu_flags);
+            } else {
+                for (i = 0; flag_keys[i]; i++) {
+                    gchar *meaning;
+
+                    meaning = g_key_file_get_string(flags_file, "flags",
+                                                    flag_keys[i], NULL);
+
+                    g_hash_table_insert(cpu_flags, g_strdup(flag_keys[i]), meaning);
+
+                    /* can't free meaning */
+                }
+
+                g_strfreev(flag_keys);
             }
-            
-            g_strfreev(flag_keys);
         } 
         
         g_key_file_free(flags_file);
