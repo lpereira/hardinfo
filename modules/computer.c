@@ -323,6 +323,8 @@ gchar *computer_get_virtualization()
         { "Xen virtual console", "Virtual (Xen)" },
         { "Xen reported: ", "Virtual (Xen)" },
         { "xen-vbd: registered block device", "Virtual (Xen)" },
+        /* Generic */
+        { " hypervisor", "Virtual (hypervisor present)"} ,
         { NULL }
     };
     
