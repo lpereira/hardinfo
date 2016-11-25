@@ -136,7 +136,8 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
                   ctx->columns |= REPORT_COL_PROGRESS;
           }
           
-          g_hash_table_replace(ctx->column_titles, title, value);
+          g_hash_table_replace(ctx->column_titles,
+                               g_strdup(title), g_strdup(value));
         } else if (g_str_equal(key, "ViewType")) {
           if (g_key_file_get_integer(keyfile, group, "ViewType", NULL) == SHELL_VIEW_PROGRESS) {
             ctx->columns &= ~REPORT_COL_VALUE;
@@ -526,7 +527,8 @@ ReportContext *report_context_html_new()
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_HTML;
 
-    ctx->column_titles = g_hash_table_new(g_str_hash, g_str_equal);
+    ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                               g_free, g_free);
     ctx->first_table = TRUE;
 
     return ctx;
@@ -547,7 +549,8 @@ ReportContext *report_context_text_new()
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_TEXT;
     
-    ctx->column_titles = g_hash_table_new(g_str_hash, g_str_equal);
+    ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                               g_free, g_free);
     ctx->first_table = TRUE;
 
     return ctx;
