@@ -87,44 +87,44 @@ msgstr "Основан на работах:"
 
 #: shell/callbacks.c:361
 msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
-msgstr "Реализация MD5 Колина Пламба (подробности  md5.c)"
+msgstr "Реализация MD5 от Colin Plumb (подробности md5.c)"
 
 #: shell/callbacks.c:362
 msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
-msgstr "Реализация SHA1 Стива Рейда (см. подробности в sha1.c) "
+msgstr "Реализация SHA1 от Steve Reid (см. подробности в sha1.c) "
 
 #: shell/callbacks.c:363
 msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
-msgstr "Реализация Blowfish Пола Кочера (см. подробности в blowfich.c)"
+msgstr "Реализация Blowfish от Paul Kocher (см. подробности в blowfich.c)"
 
 #: shell/callbacks.c:364
 msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
-msgstr ""
+msgstr "Тест Raytracing от John Walker (см. подробности в fbench.c)"
 
 #: shell/callbacks.c:365
 msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
-msgstr ""
+msgstr "Тест FFT Скотта от Robert Ladd (см. подробности в fbench.c)"
 
 #: shell/callbacks.c:366
 msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
-msgstr ""
+msgstr "Часть кода основана на x86cpucaps от Osamu Kayasono"
 
 #: shell/callbacks.c:367
 msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
-msgstr ""
+msgstr "Список поставщиков основан на GtkSysInfo от Pissens Sebastien"
 
 #: shell/callbacks.c:368
 msgid "DMI support based on code by Stewart Adam"
-msgstr ""
+msgstr "Поддержка DMI основана на коде от Stewart Adam"
 
 #: shell/callbacks.c:369
 msgid "SCSI support based on code by Pascal F. Martin"
-msgstr ""
+msgstr "Поддержка SCSI основана на коде от Pascal F. Martin"
 
 #: shell/callbacks.c:373
 #, fuzzy
 msgid "Jakub Szypulka"
-msgstr "Jakub Jelínek"
+msgstr "Jakub Szypulka"
 
 #: shell/callbacks.c:374
 msgid "Tango Project"
@@ -541,7 +541,7 @@ msgstr "Принять результаты тестирования"
 
 #: modules/computer.c:68
 msgid "Summary"
-msgstr "Суммарная информация"
+msgstr "Общая информация"
 
 #: modules/computer.c:69
 msgid "Operating System"
@@ -569,7 +569,7 @@ msgstr "Дисплей"
 
 #: modules/computer.c:75
 msgid "Environment Variables"
-msgstr "Переменные окружения"
+msgstr "Переменные среды"
 
 #: modules/computer.c:77
 msgid "Development"
@@ -682,7 +682,7 @@ msgstr ""
 msgid "Physical machine"
 msgstr "Физическая машина"
 
-# Memory и Date/Time не переводить, не будет обновляться.
+# Memory и Date/Time не переводить — не будут обновляться!
 #: modules/computer.c:373
 #, c-format
 msgid ""
@@ -723,8 +723,8 @@ msgstr ""
 "Date/Time=...\n"
 "[Дисплей]\n"
 "Разрешение=%dx%d пикс.\n"
-"OpenGL Renderer=%s\n"
-"X11 Vendor=%s\n"
+"Рендер OpenGL=%s\n"
+"Поставщик X11=%s\n"
 "\n"
 "%s\n"
 "[Устройства ввода]\n"
@@ -734,13 +734,14 @@ msgstr ""
 "\n"
 "%s\n"
 
-# Uptime и Load Average не переводить, не будут обновляться.
+# Uptime, Load Average и Available entropy in /dev/random не переводить — не будут обновляться!
 #: modules/computer.c:415
 #, c-format
 msgid ""
 "[$ShellParam$]\n"
 "UpdateInterval$Uptime=10000\n"
 "UpdateInterval$Load Average=1000\n"
+"UpdateInterval$Available entropy in /dev/random=1000\n"
 "[Version]\n"
 "Kernel=%s\n"
 "Version=%s\n"
@@ -754,11 +755,13 @@ msgid ""
 "Desktop Environment=%s\n"
 "[Misc]\n"
 "Uptime=...\n"
-"Load Average=..."
+"Load Average=...\n"
+"Available entropy in /dev/random=..."
 msgstr ""
 "[$ShellParam$]\n"
 "UpdateInterval$Uptime=10000\n"
 "UpdateInterval$Load Average=1000\n"
+"UpdateInterval$Available entropy in /dev/random=1000\n"
 "[Версия]\n"
 "Ядро=%s\n"
 "Версия=%s\n"
@@ -772,7 +775,8 @@ msgstr ""
 "Окружение рабочего стола=%s\n"
 "[Разное]\n"
 "Uptime=...\n"
-"Load Average=..."
+"Load Average=...\n"
+"Available entropy in /dev/random=..."
 
 #: modules/computer.c:444
 #, c-format
@@ -871,13 +875,13 @@ msgid ""
 msgstr ""
 "[Дисплей]\n"
 "Разрешение=%dx%d пикс.\n"
-"Производитель=%s\n"
+"Поставщик=%s\n"
 "Версия=%s\n"
 "[Монитор]\n"
 "%s[Расширения]\n"
 "%s[OpenGL]\n"
-"Производитель=%s\n"
-"Renderer=%s\n"
+"Поставщик=%s\n"
+"Рендер=%s\n"
 "Версия=%s\n"
 "Графическое ускорение=%s\n"
 
@@ -984,7 +988,7 @@ msgstr "Общая память"
 
 #: modules/devices.c:193
 msgid " (vendor unknown)"
-msgstr "(производитель неизвестен)"
+msgstr "(поставщик неизвестен)"
 
 #: modules/devices.c:195
 msgid " (model unknown)"
@@ -1012,7 +1016,7 @@ msgstr "Интерфейсы"
 
 #: modules/network.c:60
 msgid "IP Connections"
-msgstr "IP подключения"
+msgstr "IP Подключения"
 
 #: modules/network.c:61
 msgid "Routing Table"
@@ -1050,9 +1054,9 @@ msgstr ""
 "%s\n"
 "[$ShellParam$]\n"
 "ReloadInterval=3000\n"
-"ColumnTitle$TextValue=IP Address\n"
-"ColumnTitle$Value=Interface\n"
-"ColumnTitle$Extra1=MAC Address\n"
+"ColumnTitle$TextValue=IP-адрес\n"
+"ColumnTitle$Value=Интерфейс\n"
+"ColumnTitle$Extra1=MAC-адрес\n"
 "ShowColumnHeaders=true\n"
 
 #: modules/network.c:321
@@ -1068,8 +1072,8 @@ msgstr ""
 "[Name servers]\n"
 "%s\n"
 "[$ShellParam$]\n"
-"ColumnTitle$TextValue=IP Address\n"
-"ColumnTitle$Value=Name\n"
+"ColumnTitle$TextValue=IP-адрес\n"
+"ColumnTitle$Value=Имя\n"
 "ShowColumnHeaders=true\n"
 
 #: modules/network.c:331
@@ -1089,7 +1093,7 @@ msgstr ""
 "%s\n"
 "[$ShellParam$]\n"
 "ReloadInterval=3000\n"
-"ColumnTitle$TextValue= Локальный адрес\n"
+"ColumnTitle$TextValue=Локальный адрес\n"
 "ColumnTitle$Value=Протокол\n"
 "ColumnTitle$Extra1=Удалённый адрес\n"
 "ColumnTitle$Extra2=Состояние\n"
@@ -1114,7 +1118,7 @@ msgstr ""
 "ReloadInterval=3000\n"
 "ViewType=1\n"
 "ColumnTitle$TextValue=Интерфейс\n"
-"ColumnTitle$Value=IP адрес\n"
+"ColumnTitle$Value=IP-адрес\n"
 "ColumnTitle$Extra1=Отправлено\n"
 "ColumnTitle$Extra2=Получено\n"
 "ShowColumnHeaders=true\n"
@@ -1168,7 +1172,7 @@ msgstr "[Загрузки]\n"
 
 #: modules/computer/display.c:83
 msgid "vendor string"
-msgstr "строка производителя"
+msgstr "строка поставщика"
 
 #: modules/computer/display.c:84
 msgid "X.Org version"
@@ -1185,7 +1189,7 @@ msgstr "Монитор %d=%dx%d пикселей\n"
 
 #: modules/computer/environment.c:32
 msgid "[Environment Variables]\n"
-msgstr "[Переменные окружения]\n"
+msgstr "[Переменные среды]\n"
 
 #: hardinfo/util.c:102
 #: hardinfo/util.c:105
@@ -1264,7 +1268,7 @@ msgstr "выбирает формат отчёта (text, html)"
 
 #: hardinfo/util.c:388
 msgid "run benchmark; requires benchmark.so to be loaded"
-msgstr "запуск теста; требует чтобы benchmark.so был загружен"
+msgstr "запуск теста; требует, чтобы benchmark.so был загружен"
 
 #: hardinfo/util.c:394
 msgid "lists modules"
@@ -1302,12 +1306,12 @@ msgstr ""
 #: hardinfo/util.c:501
 #, c-format
 msgid "Couldn't find a Web browser to open URL %s."
-msgstr "Не могу найти веб-браузер для открытия URL %s."
+msgstr "Не удаётся найти веб-браузер для открытия URL %s."
 
 #: hardinfo/util.c:848
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\", load it?"
-msgstr "Модуль \"%s\" зависин от модуля \"%s\", загрузить его?"
+msgstr "Модуль \"%s\" зависит от модуля \"%s\", загрузить его?"
 
 #: hardinfo/util.c:871
 #, c-format
@@ -1321,7 +1325,7 @@ msgstr "Модули не могут быть загружены. Проверь
 
 #: hardinfo/util.c:920
 msgid "No module could be loaded. Please use hardinfo -l to list all available modules and try again with a valid module list."
-msgstr "Модули не могут быть загружены. Пожалуйста используйте hardinfo -l чтобы получить список доступных модулей и попробуйте снова с правильным списком модулей."
+msgstr "Не удается загрузить модули. Пожалуйста, используйте hardinfo -l для получения списка доступных модулей и попробуйте снова с правильным списком модулей."
 
 #: hardinfo/util.c:1096
 #, c-format
@@ -1357,20 +1361,20 @@ msgid ""
 msgstr ""
 "[Процессор]\n"
 "Название=%s\n"
-"Семья, модель, stepping=%d, %d, %d (%s)\n"
+"Семейство, модель, степпинг=%d, %d, %d (%s)\n"
 "Производитель=%s\n"
 "[Конфигурация]\n"
-"Размер кеша=%dkb\n"
+"Размер кэша=%dкб\n"
 "Частота=%.2fМГц\n"
 "BogoMIPS=%.2f\n"
-"Byte Order=%s\n"
+"Порядок байтов=%s\n"
 "[Функции]\n"
-"FDIV Bug=%s\n"
-"HLT Bug=%s\n"
-"F00F Bug=%s\n"
-"Coma Bug=%s\n"
-"Has FPU=%s\n"
-"[Кеш]\n"
+"Ошибка FDIV=%s\n"
+"Ошибка HLT=%s\n"
+"Ошибка F00F=%s\n"
+"Ошибка Coma=%s\n"
+"FPU=%s\n"
+"[Кэш]\n"
 "%s\n"
 "[Возможности]\n"
 "%s"
@@ -1604,6 +1608,9 @@ msgid ""
 "Media=%s\n"
 "Cache=%dkb\n"
 msgstr ""
+"Имя устройства=hd%c\n"
+"Медиа=%s\n"
+"Кэш=%dkb\n"
 
 #: modules/devices/storage.c:329
 #, c-format
@@ -1622,6 +1629,8 @@ msgid ""
 "[Capabilities]\n"
 "%s"
 msgstr ""
+"[Возможности]\n"
+"%s"
 
 #: modules/devices/storage.c:348
 #, c-format
@@ -1745,4 +1754,3 @@ msgstr ""
 #, fuzzy
 #~ msgid "AboutModule%s"
 #~ msgstr "О _модулях"
-
