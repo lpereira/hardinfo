@@ -93,7 +93,7 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
        flag will be set if we should support that.
 
        so i don't forget how to encode the images inside the html files:
-       http://en.wikipedia.org/wiki/Data:_URI_scheme */
+       https://en.wikipedia.org/wiki/Data:_URI_scheme */
 
     ctx->is_image_enabled = (g_key_file_get_boolean(keyfile,
 						    group,
