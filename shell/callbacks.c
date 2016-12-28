@@ -80,7 +80,7 @@ void cb_open_web_page()
 
 void cb_report_bug()
 {
-    open_url("http://github.com/lpereira/hardinfo");
+    open_url("https://github.com/lpereira/hardinfo");
 }
 
 void cb_refresh()
