@@ -1,6 +1,6 @@
 # - Define GNU standard installation directories
 # Provides install directory variables as defined for GNU software:
-#  http://www.gnu.org/prep/standards/html_node/Directory-Variables.html
+#  https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
 # Inclusion of this module defines the following variables:
 #  CMAKE_INSTALL_<dir>      - destination for files of a given type
 #  CMAKE_INSTALL_FULL_<dir> - corresponding absolute path
@@ -76,7 +76,7 @@ if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
   #  - we are on a 64 bits system
   # reason is: amd64 ABI: http://www.x86-64.org/documentation/abi.pdf
   # Note that the future of multi-arch handling may be even
-  # more complicated than that: http://wiki.debian.org/Multiarch
+  # more complicated than that: https://wiki.debian.org/Multiarch
   if(CMAKE_SYSTEM_NAME MATCHES "Linux"
       AND NOT CMAKE_CROSSCOMPILING
       AND NOT EXISTS "/etc/debian_version")
