@@ -87,7 +87,7 @@ msgstr "Основан на работах:"
 
 #: shell/callbacks.c:361
 msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
-msgstr "Реализация MD5 от Colin Plumb (подробности md5.c)"
+msgstr "Реализация MD5 от Colin Plumb (см. подробности в md5.c)"
 
 #: shell/callbacks.c:362
 msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
@@ -150,11 +150,11 @@ msgid ""
 "\n"
 "You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 msgstr ""
-"HardInfo это свободное программное обеспечение; вы можете распространять его и/или изменять под условиями Общей общественной лицензии GNU, которая была опубликована Фондом свободного программного обеспечения, версия 2.\n"
+"HardInfo — это свободное программное обеспечение; вы можете распространять его и/или изменять под условиями Общей общественной лицензии GNU, которая была опубликована Фондом свободного программного обеспечения, версия 2.\n"
 "\n"
-"Эта программа распространятся в надежде, что будет полезной, но БЕЗ КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Общественной лицензии GNU.\n"
+"Эта программа распространятся в надежде, что она будет полезной, но БЕЗ КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Общественной лицензии GNU.\n"
 "\n"
-"Вы должны были получить копию Общественной лицензии GNU вместе с этой программой; если нет, пишите в Фонд свободного программного обеспечения,  Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+"Вы должны были получить копию Общественной лицензии GNU вместе с этой программой; если нет, пишите в Фонд свободного программного обеспечения, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 
 #: shell/menu.c:35
 msgid "_Information"
@@ -397,14 +397,14 @@ msgid ""
 "\n"
 "Details: %s"
 msgstr ""
-"Ошибка во время выполнения \"%s\". Если проблема будет повторяться пожалуйста сообщите об ошибке. (Используйте опцию в меню Справка.)\n"
+"Ошибка во время выполнения \"%s\". Если проблема будет повторяться, пожалуйста, сообщите об ошибке. (Используйте опцию в меню Справка.)\n"
 "\n"
 "Подробности: %s"
 
 #: shell/syncmanager.c:518
 #, c-format
 msgid "Failed while performing \"%s\". Please file a bug report if this problem persists. (Use the Help→Report bug option.)"
-msgstr "Ошибка во время выполнения \"%s\". Пожалуйста сообщите об ошибке если проблема будет повторяться. (Используйте опцию в меню Справка.)"
+msgstr "Ошибка во время выполнения \"%s\". Если проблема будет повторяться, пожалуйста, сообщите об ошибке. (Используйте опцию в меню Справка.)"
 
 #: shell/syncmanager.c:646
 msgid "Network Updater"
@@ -505,7 +505,7 @@ msgstr "Тестирование: <b>%s</b>"
 
 #: modules/benchmark.c:377
 msgid "Benchmarking. Please do not move your mouse or press any keys."
-msgstr "Тестирование. Пожалуйста не двигайте мышь и не нажимайте на кнопки."
+msgstr "Тестирование. Пожалуйста, не двигайте мышь и не нажимайте на кнопки."
 
 #: modules/benchmark.c:381
 msgid "Cancel"
@@ -513,7 +513,7 @@ msgstr "Отмена"
 
 #: modules/benchmark.c:511
 msgid "Results in MiB/second. Higher is better."
-msgstr "Результаты в MiB/сек. Чем выше, тем лучше."
+msgstr "Результаты в МиБ/сек. Чем выше, тем лучше."
 
 #: modules/benchmark.c:514
 msgid "Results in HIMarks. Higher is better."
@@ -521,7 +521,7 @@ msgstr "Результаты в HIMarks. Чем выше, тем лучше."
 
 #: modules/benchmark.c:521
 msgid "Results in seconds. Lower is better."
-msgstr "Результат в секундах. Чем ниже тем лучше."
+msgstr "Результат в секундах. Чем ниже, тем лучше."
 
 #: modules/benchmark.c:529
 msgid "Benchmarks"
@@ -586,7 +586,7 @@ msgstr "Группы"
 #: modules/computer.c:104
 #, c-format
 msgid "%dMB (%dMB used)"
-msgstr "%dMB (%dMB занято)"
+msgstr "%dМб (%dМб занято)"
 
 #: modules/computer.c:200
 msgid "Scripting Languages"
@@ -1233,17 +1233,17 @@ msgstr "%.1f Б"
 #: hardinfo/util.c:118
 #, fuzzy, c-format
 msgid "%.1f KiB"
-msgstr "%.1f ГБ"
+msgstr "%.1f КиБ"
 
 #: hardinfo/util.c:120
 #, fuzzy, c-format
 msgid "%.1f MiB"
-msgstr "%.1f ГБ"
+msgstr "%.1f МиБ"
 
 #: hardinfo/util.c:122
 #, fuzzy, c-format
 msgid "%.1f GiB"
-msgstr "%.1f ГБ"
+msgstr "%.1f ГиБ"
 
 #: hardinfo/util.c:336
 msgid "Error"
@@ -1334,7 +1334,7 @@ msgstr "Сканирование: %s..."
 
 #: modules/devices/x86/processor.c:145
 msgid "Cache information not available=\n"
-msgstr "Информация о кеше недоступна=\n"
+msgstr "Информация о кэше недоступна=\n"
 
 #: modules/devices/x86/processor.c:484
 #, c-format
@@ -1457,7 +1457,7 @@ msgstr ""
 #: modules/computer/os.c:49
 #, c-format
 msgid "GNU C Library version %s (%sstable)"
-msgstr "Библиотека GNU C версии  %s (%sстабильна)"
+msgstr "Библиотека GNU C версии %s (%s стабильна)"
 
 #: modules/computer/os.c:51
 msgid "un"
