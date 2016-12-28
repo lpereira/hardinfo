@@ -16,7 +16,7 @@
     transform to the seat, too.
 
     Actual benchmark results can be found at:
-            http://www.coyotegulch.com
+            http://scottrobertladd.net/coyotegulch/
 
     Please do not use this information or algorithm in any way that might
     upset the balance of the universe or otherwise cause a disturbance in
