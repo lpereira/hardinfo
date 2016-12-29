@@ -179,7 +179,6 @@ gchar *computer_get_entropy_avail();
 
 OperatingSystem *computer_get_os(void);
 AlsaInfo *computer_get_alsainfo(void);
-LoadInfo *computer_get_loadinfo(void);
 MemoryInfo *computer_get_memory(void);
 UptimeInfo *computer_get_uptime(void);
 DisplayInfo *computer_get_display(void);

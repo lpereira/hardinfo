@@ -16,34 +16,53 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <string.h>
+
 #include "hardinfo.h"
 #include "computer.h"
 
-LoadInfo *
-computer_get_loadinfo(void)
+static gboolean
+computer_get_loadinfo(LoadInfo *li)
 {
-    LoadInfo *li = g_new0(LoadInfo, 1);
     FILE *procloadavg;
+    char buf[64];
+    int ret;
 
     procloadavg = fopen("/proc/loadavg", "r");
-    (void)fscanf(procloadavg, "%f %f %f", &(li->load1), &(li->load5),
-	   &(li->load15));
+    if (!procloadavg)
+        return FALSE;
+
+    if (!fgets(buf, sizeof(buf), procloadavg)) {
+        fclose(procloadavg);
+        return FALSE;
+    }
+
+    ret = sscanf(buf, "%f %f %f", &li->load1, &li->load5, &li->load15);
+    if (ret != 3) {
+        size_t len = strlen(buf);
+        size_t i;
+
+        for (i = 0; i < len; i++) {
+            if (buf[i] == '.')
+                buf[i] = ',';
+        }
+
+        ret = sscanf(buf, "%f %f %f", &li->load1, &li->load5, &li->load15);
+    }
+
     fclose(procloadavg);
 
-    return li;
+    return ret == 3;
 }
 
 gchar *
 computer_get_formatted_loadavg()
 {
-    LoadInfo *li;
-    gchar *tmp;
-    li = computer_get_loadinfo();
+    LoadInfo li;
 
-    tmp =
-	g_strdup_printf("%.2f, %.2f, %.2f", li->load1, li->load5,
-			li->load15);
+    if (!computer_get_loadinfo(&li))
+        return g_strdup(_("Couldn't obtain load average"));
 
-    g_free(li);
-    return tmp;
+    return g_strdup_printf("%.2f, %.2f, %.2f", li.load1, li.load5,
+        li.load15);
 }

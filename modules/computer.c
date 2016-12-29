@@ -98,7 +98,6 @@ gchar *hi_get_field(gchar * field)
 {
     gchar *tmp;
 
-    setlocale(LC_ALL, "C"); //Load Average is not updated if locale is not C, switch locale to C
 
     if (g_str_equal(field, "Memory")) {
 	MemoryInfo *mi = computer_get_memory();
@@ -118,7 +117,6 @@ gchar *hi_get_field(gchar * field)
     } else {
 	tmp = g_strdup("");
     }
-    setlocale(LC_ALL, "");// switch locale back to normal
     return tmp;
 }
 
