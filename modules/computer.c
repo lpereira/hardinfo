@@ -98,21 +98,20 @@ gchar *hi_get_field(gchar * field)
 {
     gchar *tmp;
 
-
-    if (g_str_equal(field, "Memory")) {
+    if (g_str_equal(field, _("Memory"))) {
 	MemoryInfo *mi = computer_get_memory();
 	tmp = g_strdup_printf(_("%dMB (%dMB used)"), mi->total, mi->used);
 	g_free(mi);
-    } else if (g_str_equal(field, "Uptime")) {
+    } else if (g_str_equal(field, _("Uptime"))) {
 	tmp = computer_get_formatted_uptime();
-    } else if (g_str_equal(field, "Date/Time")) {
+    } else if (g_str_equal(field, _("Date/Time"))) {
 	time_t t = time(NULL);
 
 	tmp = g_new0(gchar, 64);
 	strftime(tmp, 64, "%c", localtime(&t));
-    } else if (g_str_equal(field, "Load Average")) {
+    } else if (g_str_equal(field, _("Load Average"))) {
 	tmp = computer_get_formatted_loadavg();
-    } else if (g_str_equal(field, "Available entropy in /dev/random")) {
+    } else if (g_str_equal(field, _("Available entropy in /dev/random"))) {
 	tmp = computer_get_entropy_avail();
     } else {
 	tmp = g_strdup("");
