@@ -82,19 +82,19 @@ void scan_memory_do(void)
 
 void init_memory_labels(void)
 {
-    static struct {
+    static const struct {
         char *proc_label;
         char *real_label;
     } proc2real[] = {
-        { "MemTotal",	"Total Memory"        },
-        { "MemFree", 	"Free Memory"         },
-        { "SwapCached",	"Cached Swap"         },
-        { "HighTotal",	"High Memory"         },
-        { "HighFree",   "Free High Memory"    },
-        { "LowTotal",	"Low Memory"          },
-        { "LowFree",	"Free Low Memory"     },
-        { "SwapTotal",	"Virtual Memory"      },
-        { "SwapFree",   "Free Virtual Memory" },
+        { "MemTotal", N_("Total Memory") },
+        { "MemFree", N_("Free Memory") },
+        { "SwapCached",	N_("Cached Swap") },
+        { "HighTotal", N_("High Memory") },
+        { "HighFree", N_("Free High Memory") },
+        { "LowTotal", N_("Low Memory") },
+        { "LowFree", N_("Free Low Memory") },
+        { "SwapTotal", N_("Virtual Memory") },
+        { "SwapFree", N_("Free Virtual Memory") },
         { NULL },
     };
     gint i;
@@ -102,6 +102,7 @@ void init_memory_labels(void)
     memlabels = g_hash_table_new(g_str_hash, g_str_equal);
     
     for (i = 0; proc2real[i].proc_label; i++) {
-        g_hash_table_insert(memlabels, proc2real[i].proc_label, proc2real[i].real_label);
+        g_hash_table_insert(memlabels, proc2real[i].proc_label,
+            _(proc2real[i].real_label));
     }
 }
