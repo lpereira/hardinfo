@@ -131,8 +131,8 @@ gdouble benchmark_parallel_for(guint start, guint end,
         if (pbt->end > end)
             pbt->end = end;
 
-        thread = g_thread_create((GThreadFunc) benchmark_parallel_for_dispatcher,
-                                 pbt, TRUE, NULL);
+        thread = g_thread_new("dispatcher",
+            (GThreadFunc)benchmark_parallel_for_dispatcher, pbt);
         threads = g_slist_prepend(threads, thread);
 
         DEBUG("thread %d launched as context %p", thread_number, thread);
