@@ -992,7 +992,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 
 		ms = g_key_file_get_integer(key_file, group, key, NULL);
 
-		fu->field_name = g_strdup(strchr(key, '$') + 1);
+		fu->field_name = g_strdup(g_utf8_strchr(key, -1, '$') + 1);
 		fu->entry = entry;
 
 		sfutbl = g_new0(ShellFieldUpdateSource, 1);
@@ -1023,7 +1023,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		headers_visible = g_key_file_get_boolean(key_file, group, key, NULL);
 	    } else if (g_str_has_prefix(key, "ColumnTitle")) {
                 GtkTreeViewColumn *column = NULL;
-		gchar *value, *title = strchr(key, '$') + 1;
+		gchar *value, *title = g_utf8_strchr(key, -1, '$') + 1;
 
                 value = g_key_file_get_value(key_file, group, key, NULL);
 
@@ -1054,8 +1054,8 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 						     key, NULL), reload);
 	    } else if (g_str_has_prefix(key, "Icon")) {
 		GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
-							strchr(key,
-							       '$') + 1);
+							g_utf8_strchr(key,
+							       -1, '$') + 1);
 
 		if (iter) {
 		    gchar *file =
@@ -1118,7 +1118,7 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	    }
 	    
 	    /* FIXME: use g_key_file_get_string_list? */
-	    if (strchr(value, '|')) {
+	    if (g_utf8_strchr(value, -1, '|')) {
 		gchar **columns = g_strsplit(value, "|", 0);
 
 		gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, columns[0], -1);
@@ -1233,7 +1233,7 @@ static void update_progress()
 
 	gtk_tree_model_get(model, &iter, INFO_TREE_COL_VALUE, &tmp, -1);
 	cur = atof(tmp);
-	space = strchr(tmp, ' ');
+	space = g_utf8_strchr(tmp, -1, ' ');
 
 	pct = coeff * (cur - minv) + 1.0f;
 	if (shell->_order_type == SHELL_ORDER_ASCENDING)
