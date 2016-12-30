@@ -31,17 +31,12 @@ ProgramParameters params = { 0 };
 
 int main(int argc, char **argv)
 {
-	setlocale( LC_ALL, "" );
-    bindtextdomain( "hardinfo", "/usr/share/locale" );
-    textdomain( "hardinfo" );
-    
     GSList *modules;
 
-    DEBUG("HardInfo version " VERSION ". Debug version.");
+    bindtextdomain("hardinfo", "/usr/share/locale");
+    textdomain("hardinfo");
 
-    DEBUG("g_thread_init()");
-    if (!g_thread_supported())
-	g_thread_init(NULL);
+    DEBUG("HardInfo version " VERSION ". Debug version.");
 
     /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);
