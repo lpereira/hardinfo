@@ -150,22 +150,9 @@ static float adjust_sensor(gchar * name, float value)
     return math_postfix_eval(postfix, value);
 }
 
-static char *get_sensor_path(int number, char *prefix)
+static char *get_sensor_path(int number, const char *prefix)
 {
-    char *path, *last_slash;
-
-	path = g_strdup_printf("/sys/class/hwmon/hwmon%d/%s", number, prefix);
-    if (g_file_test(path, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-        return path;
-    }
-/*  we start at the top of hwmon, this fallback is not needed anymore
-    if ((last_slash = strrchr(path, '/'))) {
-        *last_slash = '\0';
-        return path;
-    }
-*/
-    g_free(path);
-    return NULL;
+    return g_strdup_printf("/sys/class/hwmon/hwmon%d/%s", number, prefix);
 }
 
 static char *determine_driver_for_hwmon_path(char *path)
@@ -215,16 +202,15 @@ static const struct HwmonSensor hwmon_sensors[] = {
     { NULL,             NULL,              NULL,     NULL,                      0.0,    0 },
 };
 
-const char *hwmon_prefix[] = { "device", "", NULL };
+static const char *hwmon_prefix[] = { "device", "", NULL };
 
 static void read_sensors_hwmon(void)
 {
     int hwmon, count;
     gchar *path_hwmon, *path_sensor, *tmp, *driver, *name, *mon;
-    char **prefix;
+    const char **prefix;
     
-    for (prefix = hwmon_prefix; *prefix; prefix++) 
-    {
+    for (prefix = hwmon_prefix; *prefix; prefix++) {
 		hwmon = 0;
 		path_hwmon = get_sensor_path(hwmon, *prefix);
 		while (path_hwmon && g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
