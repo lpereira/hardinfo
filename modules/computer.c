@@ -114,7 +114,7 @@ gchar *hi_get_field(gchar * field)
     } else if (g_str_equal(field, _("Available entropy in /dev/random"))) {
 	tmp = computer_get_entropy_avail();
     } else {
-	tmp = g_strdup("");
+	tmp = g_strdup_printf("Unknown field: %s", field);
     }
     return tmp;
 }
