@@ -611,7 +611,7 @@ static void module_unload(ShellModule * module)
     }
     
     g_free(module->name);
-    gdk_pixbuf_unref(module->icon);
+    g_object_unref(module->icon);
     
     for (entry = module->entries; entry; entry = entry->next) {
 	ShellModuleEntry *e = (ShellModuleEntry *)entry->data;
