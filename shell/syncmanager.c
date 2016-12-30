@@ -163,14 +163,18 @@ static gint _soup_get_xmlrpc_value_int(SoupMessage * msg,
 	goto bad;
     }
 
-    if (!soup_xmlrpc_extract_method_response(msg->response_body->data,
-					     msg->response_body->length,
-					     NULL,
-					     G_TYPE_INT, &int_value)) {
+    GVariant *value = soup_xmlrpc_parse_response(msg->response_body->data,
+                                                 msg->response_body->length,
+                                                 "h", NULL);
+    if (!value) {
 	SNA_ERROR(2, _("Could not parse XML-RPC response"));
+	goto bad;
     }
 
-  bad:
+    int_value = g_variant_get_int32(value);
+    g_variant_unref(value);
+
+bad:
     return int_value;
 }
 
@@ -187,14 +191,18 @@ static gchar *_soup_get_xmlrpc_value_string(SoupMessage * msg,
 	goto bad;
     }
 
-    if (!soup_xmlrpc_extract_method_response(msg->response_body->data,
-					     msg->response_body->length,
-					     NULL,
-					     G_TYPE_STRING, &string)) {
+    GVariant *value = soup_xmlrpc_parse_response(msg->response_body->data,
+                                                 msg->response_body->length,
+                                                 "s", NULL);
+    if (!value) {
 	SNA_ERROR(2, _("Could not parse XML-RPC response"));
+	goto bad;
     }
 
-  bad:
+    string = g_strdup(g_variant_get_string(value, NULL));
+    g_variant_unref(value);
+
+bad:
     return string;
 }
 
@@ -205,8 +213,7 @@ static gboolean _soup_xmlrpc_call(gchar * method, SyncNetAction * sna,
 
     sna->error = NULL;
 
-    msg = soup_xmlrpc_request_new(XMLRPC_SERVER_URI, method,
-				  G_TYPE_INVALID);
+    msg = soup_xmlrpc_message_new(XMLRPC_SERVER_URI, method, NULL, NULL);
     if (!msg)
 	return FALSE;
 
@@ -224,7 +231,8 @@ static gboolean _soup_xmlrpc_call_with_parameters(gchar * method,
 						  callback, ...)
 {
     SoupMessage *msg;
-    GValueArray *parameters;
+    GVariantBuilder builder;
+    GVariant *parameters;
     gchar *argument, *body;
     va_list ap;
 
@@ -236,24 +244,29 @@ static gboolean _soup_xmlrpc_call_with_parameters(gchar * method,
     if (!msg)
 	return FALSE;
 
-    parameters = g_value_array_new(1);
+    g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
     va_start(ap, callback);
     while ((argument = va_arg(ap, gchar *))) {
-	soup_value_array_append(parameters, G_TYPE_STRING, argument);
+        g_variant_builder_add(&builder, "s", argument);
 	DEBUG("with parameter: %s", argument);
     }
     va_end(ap);
+    parameters = g_variant_builder_end(&builder);
+    g_variant_builder_unref(&builder);
 
-    body = soup_xmlrpc_build_method_call(method, parameters->values,
-					 parameters->n_values);
-    g_value_array_free(parameters);
-    soup_message_set_request(msg, "text/xml",
-			     SOUP_MEMORY_TAKE, body, strlen (body));
+    body = soup_xmlrpc_build_request(method, parameters, NULL);
+    g_variant_unref(parameters);
+    if (body) {
+        soup_message_set_request(msg, "text/xml",
+                                 SOUP_MEMORY_TAKE, body, strlen(body));
 
-    soup_session_queue_message(session, msg, callback, sna);
-    g_main_run(loop);
+        soup_session_queue_message(session, msg, callback, sna);
+        g_main_run(loop);
 
-    return TRUE;
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 static void _action_check_api_version_got_response(SoupSession * session,
@@ -403,8 +416,7 @@ static void sync_dialog_start_sync(SyncDialog * sd)
     if (!session) {
 	SoupURI *proxy = sync_manager_get_proxy();
 
-	session =
-	    soup_session_async_new_with_options(SOUP_SESSION_TIMEOUT, 10,
+	session = soup_session_new_with_options(SOUP_SESSION_TIMEOUT, 10,
 						SOUP_SESSION_PROXY_URI,
 						proxy, NULL);
 	/* Crashes if we unref the proxy? O_o */
