@@ -752,7 +752,7 @@ static gboolean update_field(gpointer data)
     /* if the entry is still selected, update it */
     if (iter && fu->entry->selected && fu->entry->fieldfunc) {
 	GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
-	gchar *value = fu->entry->fieldfunc(fu->field_name);
+	gchar *value = fu->entry->fieldfunc(_(fu->field_name));
 
 	/*
 	 * this function is also used to feed the load graph when ViewType
@@ -1107,7 +1107,7 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 	value = g_key_file_get_value(key_file, group, key, NULL);
 	if (entry->fieldfunc && value && g_str_equal(value, "...")) {
 	    g_free(value);
-	    value = entry->fieldfunc(key);
+	    value = entry->fieldfunc(_(key));
 	}
 
 	if ((key && value) && g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
@@ -1146,7 +1146,7 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 
 		g_strfreev(tmp);
 	    } else {
-		gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
+		gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, _(key),
 				   INFO_TREE_COL_DATA, NULL, -1);
 	    }
 
