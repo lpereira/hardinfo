@@ -132,7 +132,7 @@ inline char *strend(gchar * str, gchar chr)
 	return NULL;
 
     char *p;
-    if ((p = strchr(str, chr)))
+    if ((p = g_utf8_strchr(str, -1, chr)))
 	*p = 0;
 
     return str;
