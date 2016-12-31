@@ -982,10 +982,6 @@ msgstr "Ресурсы"
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: modules/devices.c:178
-msgid "Total Memory"
-msgstr "Общая память"
-
 #: modules/devices.c:193
 msgid " (vendor unknown)"
 msgstr "(поставщик неизвестен)"
@@ -1190,6 +1186,42 @@ msgstr "Монитор %d=%dx%d пикселей\n"
 #: modules/computer/environment.c:32
 msgid "[Environment Variables]\n"
 msgstr "[Переменные среды]\n"
+
+#: modules/devices/devmemory.c:89
+msgid "Total Memory"
+msgstr "Общая память"
+
+#: modules/devices/devmemory.c:90
+msgid "Free Memory"
+msgstr "Свободная память"
+
+#: modules/devices/devmemory.c:91
+msgid "Cached Swap"
+msgstr "Кэш подкачки"
+
+#: modules/devices/devmemory.c:92
+msgid "High Memory"
+msgstr "Высокая память"
+
+#: modules/devices/devmemory.c:93
+msgid "Free High Memory"
+msgstr "Свободная высокая память"
+
+#: modules/devices/devmemory.c:94
+msgid "Low Memory"
+msgstr "Низкая память"
+
+#: modules/devices/devmemory.c:95
+msgid "Free Low Memory"
+msgstr "Свободная низкая память"
+
+#: modules/devices/devmemory.c:96
+msgid "Virtual Memory"
+msgstr "Виртуальная память"
+
+#: modules/devices/devmemory.c:97
+msgid "Free Virtual Memory"
+msgstr "Свободная виртуальная память"
 
 #: hardinfo/util.c:102
 #: hardinfo/util.c:105
