@@ -137,6 +137,13 @@ gboolean ui_init(int *argc, char ***argv);
 void     parameters_init(int *argc, char ***argv, ProgramParameters *params);
 extern   ProgramParameters params;
 
+/* Config stuff */
+extern gchar *config_file;
+
+gint		window_width;
+gint		window_height;
+gboolean	window_maximized;
+
 /* Module stuff */
 gchar		*module_call_method(gchar *method);
 gchar           *module_call_method_param(gchar * method, gchar * parameter);
@@ -158,6 +165,7 @@ void moreinfo_add_with_prefix(gchar *prefix, gchar *key, gchar *value);
 void moreinfo_add(gchar *key, gchar *value);
 void moreinfo_del_with_prefix(gchar *prefix);
 void moreinfo_clear(void);
+void on_quit(void);
 gchar *moreinfo_lookup_with_prefix(gchar *prefix, gchar *key);
 gchar *moreinfo_lookup(gchar *key);
 
