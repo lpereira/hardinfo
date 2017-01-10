@@ -33,6 +33,8 @@
 
 #include "callbacks.h"
 
+gchar *config_file;
+
 /*
  * Internal Prototypes ********************************************************
  */
@@ -408,12 +410,22 @@ static void create_window(void)
 
     shell = g_new0(Shell, 1);
 
+    config_file = g_build_filename(g_get_user_config_dir(), "hardinfo/hardinfo.conf", NULL);
+    load_config();
+
     shell->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_icon(GTK_WINDOW(shell->window),
 			icon_cache_get_pixbuf("logo.png"));
     shell_set_title(shell, NULL);
     gtk_window_set_default_size(GTK_WINDOW(shell->window), 800, 600);
-    g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
+    /*g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);*/
+    g_signal_connect(G_OBJECT(shell->window), "delete-event",
+		G_CALLBACK(on_quit), NULL);
+	g_signal_connect_after(G_OBJECT(shell->window), "delete-event",
+		G_CALLBACK(gtk_widget_hide_on_delete), NULL);
+	gtk_window_set_default_size (GTK_WINDOW(shell->window), window_width, window_height);
+    if (window_maximized == 1)
+		gtk_window_maximize(GTK_WINDOW(shell->window));
 
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_widget_show(vbox);
@@ -670,7 +682,7 @@ void shell_init(GSList * modules)
     }
 
     DEBUG("initializing shell");
-
+    
     create_window();
 
     shell_action_set_property("ConnectToAction", "is-important", TRUE);
@@ -1873,4 +1885,105 @@ static ShellTree *tree_new()
     gtk_widget_show_all(scroll);
 
     return shelltree;
+}
+
+/*
+ * configurationfile support
+ */
+
+static gboolean key_file_get_int( GKeyFile* kf, const char* group, const char* name, gboolean def )
+{
+    int ret;
+    GError* err = NULL;
+    ret = g_key_file_get_integer( kf, group, name, &err );
+    if( err )
+    {
+        ret = def;
+        g_error_free( err );
+    }
+    return ret;
+}
+
+static gboolean key_file_get_bool( GKeyFile* kf, const char* group, const char* name, gboolean def )
+{
+    return !!key_file_get_int(kf, group, name, def);
+}
+
+void load_config(void)
+{
+    static const char group[]="General";
+    GKeyFile *rc_file = g_key_file_new();
+    g_key_file_load_from_file(rc_file, config_file, 0, NULL);
+    window_width = key_file_get_int(rc_file, group, "window_width", 800 );
+    window_height = key_file_get_int(rc_file, group, "window_height", 600 );
+    window_maximized = key_file_get_int(rc_file, group, "window_maximized", FALSE );
+    g_key_file_free(rc_file);
+}
+
+static int check_config(void)
+{
+	static const char group[]="General";
+	int res=0;
+	GdkWindowState state;
+	
+    GKeyFile *rc_file = g_key_file_new();
+    g_key_file_load_from_file(rc_file, config_file, 0, NULL);
+    gtk_window_get_size(GTK_WINDOW(shell->window), &window_width, &window_height);
+	if(window_width != key_file_get_int(rc_file, group, "window_width", 800 ))
+	{
+		res=1;
+		goto out;
+	}
+	if(window_height != key_file_get_int(rc_file, group, "window_height", 600 ))
+	{
+		res=1;
+		goto out;
+	}
+	state = gdk_window_get_state(gtk_widget_get_window(GTK_WINDOW(shell->window)));
+	if(window_maximized != key_file_get_bool(rc_file, group, "window_maximized", FALSE ))
+	{
+		res=1;
+		goto out;
+	}
+out:
+    g_key_file_free(rc_file);
+	return res;
+}
+
+void save_config(void)
+{
+    char* dir_path;
+    FILE* rc_file ;
+    GdkWindowState state;
+
+    if(!check_config())
+    {
+    	return;
+    }
+
+    dir_path = g_path_get_dirname(config_file);
+    g_mkdir_with_parents(dir_path, 0700);
+    rc_file = fopen( config_file, "w" );
+    if(!rc_file) return;
+
+    rc_file = fopen(config_file, "w");
+    if(!rc_file) return;
+    fputs( "[General]\n", rc_file );
+    gtk_window_get_size(GTK_WINDOW(shell->window), &window_width, &window_height);
+    fprintf( rc_file, "window_width=%d\n", window_width);
+    fprintf( rc_file, "window_height=%d\n", window_height);
+    state = gdk_window_get_state(gtk_widget_get_window(GTK_WINDOW(shell->window)));
+    if (state & GDK_WINDOW_STATE_MAXIMIZED)
+        window_maximized = 1;
+        else window_maximized = 0;
+    fprintf( rc_file, "window_maximized=%d\n", window_maximized);
+    fclose(rc_file);
+}
+
+void on_quit(void)
+{
+    save_config();
+    free(config_file);
+
+    gtk_main_quit();
 }
