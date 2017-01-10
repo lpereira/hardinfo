@@ -87,7 +87,7 @@ static GtkActionEntry entries[] = {
     {"QuitAction", GTK_STOCK_QUIT,
      N_("_Quit"), "<control>Q",
      NULL,
-     G_CALLBACK(cb_quit)}
+     G_CALLBACK(on_quit)}
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
