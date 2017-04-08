@@ -34,6 +34,7 @@ struct _Processor {
     gchar *model_name;
     gchar *vendor_id;
     gchar *flags;
+    gchar *bugs;
     gint cache_size;
     gfloat bogomips, cpu_mhz;
 
