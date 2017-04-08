@@ -140,14 +140,14 @@ static gchar *__cache_get_info_as_string(Processor *processor)
     gchar *result = g_strdup("");
     GSList *cache_list;
     ProcessorCache *cache;
-    
+
     if (!processor->cache) {
         return g_strdup(_("Cache information not available=\n"));
     }
-    
+
     for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
         cache = (ProcessorCache *)cache_list->data;
-        
+
         result = h_strdup_cprintf("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n",
                                   result,
                                   cache->level,
@@ -156,7 +156,7 @@ static gchar *__cache_get_info_as_string(Processor *processor)
                                   cache->number_of_sets,
                                   cache->size);
     }
-    
+
     return result;
 }
 
@@ -165,18 +165,18 @@ static void __cache_obtain_info(Processor *processor, gint processor_number)
     ProcessorCache *cache;
     gchar *endpoint, *entry, *index;
     gint i;
-    
+
     endpoint = g_strdup_printf("/sys/devices/system/cpu/cpu%d/cache", processor_number);
-    
+
     for (i = 0; ; i++) {
       cache = g_new0(ProcessorCache, 1);
-      
+
       index = g_strdup_printf("index%d/", i);
 
       entry = g_strconcat(index, "type", NULL);
       cache->type = h_sysfs_read_string(endpoint, entry);
       g_free(entry);
-      
+
       if (!cache->type) {
         g_free(cache);
         g_free(index);
@@ -203,13 +203,13 @@ static void __cache_obtain_info(Processor *processor, gint processor_number)
       entry = g_strconcat(index, "ways_of_associativity", NULL);
       cache->ways_of_associativity = h_sysfs_read_int(endpoint, entry);
       g_free(entry);
-      
+
       g_free(index);
 
       processor->cache = g_slist_append(processor->cache, cache);
     }
 
-fail:    
+fail:
     g_free(endpoint);
 }
 
@@ -235,7 +235,7 @@ GSList *processor_scan(void)
 	    }
 
 	    processor = g_new0(Processor, 1);
-	    
+
 	    __cache_obtain_info(processor, processor_number++);
 	}
 
@@ -277,7 +277,7 @@ GSList *processor_scan(void)
 }
 
 /*
- * Sources: 
+ * Sources:
  * - Linux' cpufeature.h
  * - http://gentoo-wiki.com/Cpuinfo
  * - Intel IA-32 Architecture Software Development Manual
@@ -432,21 +432,21 @@ void cpu_flags_init(void)
 {
     gint i;
     gchar *path;
-    
+
     cpu_flags = g_hash_table_new(g_str_hash, g_str_equal);
-    
+
     path = g_build_filename(g_get_home_dir(), ".hardinfo", "cpuflags.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
         populate_cpu_flags_list_internal(cpu_flags);
     } else {
         GKeyFile *flags_file;
-        
+
         DEBUG("using %s as CPU flags database", path);
-        
+
         flags_file = g_key_file_new();
         if (g_key_file_load_from_file(flags_file, path, 0, NULL)) {
             gchar **flag_keys;
-            
+
             flag_keys = g_key_file_get_keys(flags_file, "flags",
                                             NULL, NULL);
             if (!flag_keys) {
@@ -467,23 +467,23 @@ void cpu_flags_init(void)
 
                 g_strfreev(flag_keys);
             }
-        } 
-        
+        }
+
         g_key_file_free(flags_file);
     }
-    
+
     g_free(path);
 }
 
 gchar *processor_get_capabilities_from_flags(gchar * strflags)
 {
     /* FIXME:
-     * - Separate between processor capabilities, additional instructions and whatnot.  
+     * - Separate between processor capabilities, additional instructions and whatnot.
      */
     gchar **flags, **old;
     gchar *tmp = NULL;
     gint j = 0;
-    
+
     if (!cpu_flags) {
         cpu_flags_init();
     }
@@ -493,7 +493,7 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 
     while (flags[j]) {
 	gchar *meaning = g_hash_table_lookup(cpu_flags, flags[j]);
-	
+
 	if (meaning) {
   	  tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
         } else {
@@ -512,7 +512,7 @@ gchar *processor_get_detailed_info(Processor * processor)
 
     tmp = processor_get_capabilities_from_flags(processor->flags);
     cache_info = __cache_get_info_as_string(processor);
-    
+
     ret = g_strdup_printf(_("[Processor]\n"
 			  "Name=%s\n"
 			  "Family, model, stepping=%d, %d, %d (%s)\n"
@@ -554,7 +554,7 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  tmp);
     g_free(tmp);
     g_free(cache_info);
-    
+
     return ret;
 }
 
@@ -587,7 +587,7 @@ gchar *processor_get_info(GSList * processors)
 			      "[Processors]\n"
 			      "%s", tmp);
 	g_free(tmp);
-	
+
 	return ret;
     }
 
