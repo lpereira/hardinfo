@@ -246,6 +246,7 @@ GSList *processor_scan(void)
 	    get_str("model name", processor->model_name);
 	    get_str("vendor_id", processor->vendor_id);
 	    get_str("flags", processor->flags);
+	    get_str("bugs", processor->bugs);
 	    get_int("cache size", processor->cache_size);
 	    get_float("cpu MHz", processor->cpu_mhz);
 	    get_float("bogomips", processor->bogomips);
@@ -413,6 +414,26 @@ static struct {
 	{ NULL,		NULL						},
 };
 
+static struct {
+    char *name, *meaning;
+} bug_meaning[] = {
+	{ "f00f",        "Intel F00F bug"    },
+	{ "fdiv",        "FPU FDIV"          },
+	{ "coma",        "Cyrix 6x86 coma"   },
+	{ "tlb_mmatch",  "AMD Erratum 383"   },
+	{ "apic_c1e",    "AMD Erratum 400"   },
+	{ "11ap",        "Bad local APIC aka 11AP"  },
+	{ "fxsave_leak", "FXSAVE leaks FOP/FIP/FOP" },
+	{ "clflush_monitor",  "AAI65, CLFLUSH required before MONITOR" },
+	{ "sysret_ss_attrs",  "SYSRET doesn't fix up SS attrs" },
+	{ "espfix",      "IRET to 16-bit SS corrupts ESP/RSP high bits" },
+	{ "null_seg",    "Nulling a selector preserves the base" },
+	{ "swapgs_fence","SWAPGS without input dep on GS" },
+	{ "monitor",     "IPI required to wake up remote CPU" },
+	{ "amd_e400",    "AMD Erratum 400" },
+	{ NULL,		NULL						},
+};
+
 GHashTable *cpu_flags = NULL;
 
 static void
@@ -425,6 +446,10 @@ populate_cpu_flags_list_internal(GHashTable *hash_table)
     for (i = 0; flag_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, flag_meaning[i].name,
                             flag_meaning[i].meaning);
+    }
+    for (i = 0; bug_meaning[i].name != NULL; i++) {
+        g_hash_table_insert(cpu_flags, bug_meaning[i].name,
+                            bug_meaning[i].meaning);
     }
 }
 
@@ -508,9 +533,10 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 
 gchar *processor_get_detailed_info(Processor * processor)
 {
-    gchar *tmp, *ret, *cache_info;
+    gchar *tmp_flags, *tmp_bugs, *ret, *cache_info;
 
-    tmp = processor_get_capabilities_from_flags(processor->flags);
+    tmp_flags = processor_get_capabilities_from_flags(processor->flags);
+    tmp_bugs = processor_get_capabilities_from_flags(processor->bugs);
     cache_info = __cache_get_info_as_string(processor);
 
     ret = g_strdup_printf(_("[Processor]\n"
@@ -531,6 +557,8 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  "[Cache]\n"
 			  "%s\n"
 			  "[Capabilities]\n"
+			  "%s"
+			  "[Bugs]\n"
 			  "%s"),
 			  processor->model_name,
 			  processor->family,
@@ -551,8 +579,9 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  processor->bug_coma ? processor->bug_coma : "no",
 			  processor->has_fpu  ? processor->has_fpu  : "no",
 			  cache_info,
-			  tmp);
-    g_free(tmp);
+			  tmp_flags, tmp_bugs);
+    g_free(tmp_flags);
+    g_free(tmp_bugs);
     g_free(cache_info);
 
     return ret;
