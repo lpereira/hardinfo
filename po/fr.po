@@ -407,7 +407,7 @@ msgstr ""
 #: shell//syncmanager.c:518
 #, c-format
 msgid "Failed while performing \"%s\". Please file a bug report if this problem persists. (Use the Help→Report bug option.)"
-msgstr "Échec lors de l'exécution de \"%s\". S'il vous plaît remplissez un rapport de bug si ce problème persiste. (Utilisez l'option Aide → Rapport de Bug.) \n"
+msgstr "Échec lors de l'exécution de \"%s\". S'il vous plaît remplissez un rapport de bug si ce problème persiste. (Utilisez l'option Aide → Rapport de Bug.)"
 
 #: shell//syncmanager.c:646
 msgid "Network Updater"
