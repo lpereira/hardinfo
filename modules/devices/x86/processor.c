@@ -220,6 +220,7 @@ GSList *processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[512];
     gint processor_number = 0;
+    gchar *tmp_bugs;
 
     cpuinfo = fopen("/proc/cpuinfo", "r");
     if (!cpuinfo)
@@ -258,6 +259,16 @@ GSList *processor_scan(void)
 	    get_str("hlt_bug", processor->bug_hlt);
 	    get_str("f00f_bug", processor->bug_f00f);
 	    get_str("coma_bug", processor->bug_coma);
+
+        if (processor->bugs == NULL || g_strcmp0(processor->bugs, "") == 0) {
+            g_free(processor->bugs);
+            /* make bugs list on old kernels that don't offer one */
+            processor->bugs = g_strdup_printf("%s%s%s%s",
+                    processor->bug_fdiv ? "fdiv"  : "",
+                    processor->bug_hlt  ? " _hlt" : "",
+                    processor->bug_f00f ? " f00f" : "",
+                    processor->bug_coma ? " coma" : "");
+        }
 
 	    get_int("model", processor->model);
 	    get_int("cpu family", processor->family);
@@ -551,6 +562,8 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
         }
 	j++;
     }
+    if (tmp == NULL || g_strcmp0(tmp, "") == 0)
+        tmp = g_strdup_printf("%s=%s\n", "empty", _("Empty List"));
 
     g_strfreev(old);
     return tmp;
@@ -575,10 +588,6 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  "BogoMIPS=%.2f\n"
 			  "Byte Order=%s\n"
 			  "[Features]\n"
-			  "FDIV Bug=%s\n"
-			  "HLT Bug=%s\n"
-			  "F00F Bug=%s\n"
-			  "Coma Bug=%s\n"
 			  "Has FPU=%s\n"
 			  "[Cache]\n"
 			  "%s\n"
@@ -601,10 +610,6 @@ gchar *processor_get_detailed_info(Processor * processor)
 #else
 			  "Big Endian",
 #endif
-			  processor->bug_fdiv ? processor->bug_fdiv : "no",
-			  processor->bug_hlt  ? processor->bug_hlt  : "no",
-			  processor->bug_f00f ? processor->bug_f00f : "no",
-			  processor->bug_coma ? processor->bug_coma : "no",
 			  processor->has_fpu  ? processor->has_fpu  : "no",
 			  cache_info,
 			  tmp_pm, tmp_bugs, tmp_flags);
