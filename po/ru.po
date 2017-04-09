@@ -1223,6 +1223,26 @@ msgstr "Виртуальная память"
 msgid "Free Virtual Memory"
 msgstr "Свободная виртуальная память"
 
+#: modules/devices/spd-decode.c:1475
+msgid ""
+"[SPD]\n"
+"Please load the eeprom module to obtain information about memory SPD=\n"
+"[$ShellParam$]\n"
+"ReloadInterval=500\n"
+msgstr ""
+"[SPD]\n"
+"Пожалуйста, загрузите модуль eeprom для получения информации о памяти SPD=\n"
+"[$ShellParam$]\n"
+"ReloadInterval=500\n"
+
+#: modules/devices/spd-decode.c:1480
+msgid ""
+"[SPD]\n"
+"Reading memory SPD not supported on this system=\n"
+msgstr ""
+"[SPD]\n"
+"Чтение памяти SPD не поддерживается на данной системе=\n"
+
 #: hardinfo/util.c:102
 #: hardinfo/util.c:105
 #: hardinfo/util.c:110
