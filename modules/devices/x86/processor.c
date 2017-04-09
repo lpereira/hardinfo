@@ -582,11 +582,11 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  "Has FPU=%s\n"
 			  "[Cache]\n"
 			  "%s\n"
-			  "[Capabilities]\n"
+			  "[Power Management]\n"
 			  "%s"
 			  "[Bugs]\n"
 			  "%s"
-			  "[Power Management]\n"
+			  "[Capabilities]\n"
 			  "%s"),
 			  processor->model_name,
 			  processor->family,
@@ -607,7 +607,7 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  processor->bug_coma ? processor->bug_coma : "no",
 			  processor->has_fpu  ? processor->has_fpu  : "no",
 			  cache_info,
-			  tmp_flags, tmp_bugs, tmp_pm);
+			  tmp_pm, tmp_bugs, tmp_flags);
     g_free(tmp_flags);
     g_free(tmp_bugs);
     g_free(tmp_pm);
