@@ -247,6 +247,7 @@ GSList *processor_scan(void)
 	    get_str("vendor_id", processor->vendor_id);
 	    get_str("flags", processor->flags);
 	    get_str("bugs", processor->bugs);
+	    get_str("power management", processor->pm);
 	    get_int("cache size", processor->cache_size);
 	    get_float("cpu MHz", processor->cpu_mhz);
 	    get_float("bogomips", processor->bogomips);
@@ -434,6 +435,26 @@ static struct {
 	{ NULL,		NULL						},
 };
 
+/* from arch/x86/kernel/cpu/powerflags.h */
+static struct {
+    char *name, *meaning;
+} pm_meaning[] = {
+	{ "ts",            "temperature sensor"     },
+	{ "fid",           "frequency id control"   },
+	{ "vid",           "voltage id control"     },
+	{ "ttp",           "thermal trip"           },
+	{ "tm",            "hardware thermal control"   },
+	{ "stc",           "software thermal control"   },
+	{ "100mhzsteps",   "100 MHz multiplier control" },
+	{ "hwpstate",      "hardware P-state control"   },
+/*	{ "",              "tsc invariant mapped to constant_tsc" }, */
+	{ "cpb",           "core performance boost"     },
+	{ "eff_freq_ro",   "Readonly aperf/mperf"       },
+	{ "proc_feedback", "processor feedback interface" },
+	{ "acc_power",     "accumulated power mechanism"  },
+	{ NULL,		NULL						},
+};
+
 GHashTable *cpu_flags = NULL;
 
 static void
@@ -450,6 +471,10 @@ populate_cpu_flags_list_internal(GHashTable *hash_table)
     for (i = 0; bug_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, bug_meaning[i].name,
                             bug_meaning[i].meaning);
+    }
+    for (i = 0; pm_meaning[i].name != NULL; i++) {
+        g_hash_table_insert(cpu_flags, pm_meaning[i].name,
+                            pm_meaning[i].meaning);
     }
 }
 
@@ -533,10 +558,11 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 
 gchar *processor_get_detailed_info(Processor * processor)
 {
-    gchar *tmp_flags, *tmp_bugs, *ret, *cache_info;
+    gchar *tmp_flags, *tmp_bugs, *tmp_pm, *ret, *cache_info;
 
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
     tmp_bugs = processor_get_capabilities_from_flags(processor->bugs);
+    tmp_pm = processor_get_capabilities_from_flags(processor->pm);
     cache_info = __cache_get_info_as_string(processor);
 
     ret = g_strdup_printf(_("[Processor]\n"
@@ -559,6 +585,8 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  "[Capabilities]\n"
 			  "%s"
 			  "[Bugs]\n"
+			  "%s"
+			  "[Power Management]\n"
 			  "%s"),
 			  processor->model_name,
 			  processor->family,
@@ -579,9 +607,10 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  processor->bug_coma ? processor->bug_coma : "no",
 			  processor->has_fpu  ? processor->has_fpu  : "no",
 			  cache_info,
-			  tmp_flags, tmp_bugs);
+			  tmp_flags, tmp_bugs, tmp_pm);
     g_free(tmp_flags);
     g_free(tmp_bugs);
+    g_free(tmp_pm);
     g_free(cache_info);
 
     return ret;

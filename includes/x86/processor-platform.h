@@ -35,6 +35,7 @@ struct _Processor {
     gchar *vendor_id;
     gchar *flags;
     gchar *bugs;
+    gchar *pm;             /* power management features */
     gint cache_size;
     gfloat bogomips, cpu_mhz;
 
