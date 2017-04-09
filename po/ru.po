@@ -1006,6 +1006,10 @@ msgstr "Обновить базу данных функций процессор
 msgid "Gathers information about hardware devices"
 msgstr "Собирает информацию об устройствах"
 
+#: modules/devices.c:500
+msgid "Resource information requires superuser privileges"
+msgstr "Для вывода информации о ресурсах нужны права администратора"
+
 #: modules/network.c:59
 msgid "Interfaces"
 msgstr "Интерфейсы"
