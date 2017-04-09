@@ -428,7 +428,7 @@ static struct {
 	{ "clflush_monitor",  "AAI65, CLFLUSH required before MONITOR" },
 	{ "sysret_ss_attrs",  "SYSRET doesn't fix up SS attrs" },
 	{ "espfix",      "IRET to 16-bit SS corrupts ESP/RSP high bits" },
-	{ "null_seg",    "Nulling a selector preserves the base" },
+	{ "null_seg",    "Nulling a selector preserves the base" },         /* see: detect_null_seg_behavior() */
 	{ "swapgs_fence","SWAPGS without input dep on GS" },
 	{ "monitor",     "IPI required to wake up remote CPU" },
 	{ "amd_e400",    "AMD Erratum 400" },
