@@ -136,7 +136,7 @@ msgstr "Проект GNOME"
 
 #: shell/callbacks.c:376
 msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
-msgstr "VMWare, Inc. (USB значок из VMWare Workstation 6)"
+msgstr "VMWare, Inc. (значок USB из VMWare Workstation 6)"
 
 #: shell/callbacks.c:387
 msgid "System information and benchmark tool"
