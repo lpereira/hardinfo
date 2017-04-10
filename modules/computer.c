@@ -444,8 +444,8 @@ gchar *callback_os()
 			   computer->os->hostname,
 			   computer->os->username,
 			   computer->os->language,
-			   computer->os->homedir, computer->os->desktop,
-			   computer->os->entropy_avail);
+			   computer->os->homedir,
+			   computer->os->desktop);
 }
 
 gchar *callback_modules()
