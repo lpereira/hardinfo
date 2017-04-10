@@ -4,3 +4,5 @@ config.h
 *.o
 *~
 arch/this
+build/
+
