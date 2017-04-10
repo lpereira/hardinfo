@@ -566,7 +566,7 @@ static gchar *get_benchmark_results()
 				    "machine=%s\n"
 				    "machineclock=%s\n"
 				    "machineram=%s\n"
-				    "nbenchmarks=%d\n",
+				    "nbenchmarks=%zu\n",
 				    machine,
 				    machineclock,
 				    machineram,
