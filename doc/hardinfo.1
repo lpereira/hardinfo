@@ -1,0 +1,49 @@
+.\" Manpage for hardinfo.
+.\" https://github.com/lpereira/hardinfo/.
+.TH HARDINFO "1" "April 2017" "0.5" "User Commands"
+.SH NAME
+hardinfo \- a system profiler and benchmark for Linux systems
+.SH USAGE
+hardinfo [OPTION...]
+.SH DESCRIPTION
+HardInfo is a system profiler and benchmark for Linux systems. It is able to
+obtain information from both hardware and basic software, and organize them
+in a simple to use GUI.
+
+Features include:
+- Report generation (in either HTML or plain text)
+- Benchmark result synchronization
+- Ability to explore the information on remote computers
+
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Show help options
+.TP
+\fB\-r\fR, \fB\-\-generate\-report\fR
+creates a report and prints to standard output
+.TP
+\fB\-f\fR, \fB\-\-report\-format\fR
+chooses a report format (text, html)
+.TP
+\fB\-b\fR, \fB\-\-run\-benchmark\fR
+run benchmark; requires benchmark.so to be loaded
+.TP
+\fB\-l\fR, \fB\-\-list\-modules\fR
+lists modules
+.TP
+\fB\-m\fR, \fB\-\-load\-module\fR
+specify module to load
+.TP
+\fB\-a\fR, \fB\-\-autoload\-deps\fR
+automatically load module dependencies
+.TP
+\fB\-x\fR, \fB\-\-xmlrpc\-server\fR
+run in XML\-RPC server mode
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+shows program version and quit
+.SH COPYRIGHT
+Hardinfo its created and Copyright by \(co 2003\-2009 Leandro A. F. Pereira \fI<leandro@hardinfo.org>\fR and currently 
+there's more mantainers commiting, see \fIhttps://github.com/lpereira/hardinfo/graphs/contributors\FR for complete list. 
+This manpage was created by PICCORO Lenz McKAY \fI<mckaygerhard@gmail.com>\fR for the hardinfo project.
