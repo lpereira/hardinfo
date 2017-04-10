@@ -213,6 +213,20 @@ fail:
     g_free(endpoint);
 }
 
+int processor_has_flag(gchar * strflags, gchar * strflag)
+{
+    gchar **flags;
+    gint ret = 0;
+
+    if (strflags == NULL || strflag == NULL)
+        return 0;
+
+    flags = g_strsplit(strflags, " ", 0);
+    ret = g_strv_contains((const gchar * const *)flags, strflag);
+    g_strfreev(flags);
+    return ret;
+}
+
 GSList *processor_scan(void)
 {
     GSList *procs = NULL;
@@ -263,11 +277,20 @@ GSList *processor_scan(void)
         if (processor->bugs == NULL || g_strcmp0(processor->bugs, "") == 0) {
             g_free(processor->bugs);
             /* make bugs list on old kernels that don't offer one */
-            processor->bugs = g_strdup_printf("%s%s%s%s",
-                    processor->bug_fdiv ? "fdiv"  : "",
+            processor->bugs = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s",
+                    /* the oldest bug workarounds indicated in /proc/cpuinfo */
+                    processor->bug_fdiv ? " fdiv" : "",
                     processor->bug_hlt  ? " _hlt" : "",
                     processor->bug_f00f ? " f00f" : "",
-                    processor->bug_coma ? " coma" : "");
+                    processor->bug_coma ? " coma" : "",
+                    /* these bug workarounds were reported as "features" in older kernels */
+                    processor_has_flag(processor->flags, "fxsave_leak")     ? " fxsave_leak" : "",
+                    processor_has_flag(processor->flags, "clflush_monitor") ? " clflush_monitor" : "",
+                    processor_has_flag(processor->flags, "11ap")            ? " 11ap" : "",
+                    processor_has_flag(processor->flags, "tlb_mmatch")      ? " tlb_mmatch" : "",
+                    processor_has_flag(processor->flags, "apic_c1e")        ? " apic_c1e" : "",
+                    ""); /* just to make adding lines easier */
+            g_strchug(processor->bugs);
         }
 
 	    get_int("model", processor->model);
