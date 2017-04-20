@@ -40,12 +40,28 @@ typedef enum {
 } LoadGraphColor;
 
 struct _LoadGraph {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_surface_t *buf;
+#else
     GdkPixmap     *buf;
+#endif
     GtkWidget     *area;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_t       *grid;
+#else
     GdkGC         *grid;
+#endif
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_t       *trace;
+#else
     GdkGC         *trace;
-    GdkGC	  *fill;
+#endif
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_t       *fill;
+#else
+    GdkGC	      *fill;
+#endif
 
     gint     	  *data;
     gfloat         scale;
