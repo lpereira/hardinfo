@@ -222,7 +222,7 @@ static struct {
   { "a01040",    "Unknown",    "2 Model B",           "1.0",    "1GB",      "Sony" },
   { "a01041",    "Q1 2015",    "2 Model B",           "1.1",    "1GB",      "Sony" },
   { "a21041",    "Q1 2015",    "2 Model B",           "1.1",    "1GB",      "Embest" },
-  { "a22042",    "Q3 2016",    "2 Model B",           "1.2",    "1GB",    "Embest" },  /* (with BCM2837) */
+  { "a22042",    "Q3 2016",    "2 Model B",           "1.2",    "1GB",      "Embest" },  /* (with BCM2837) */
   { "900021",    "Q3 2016",    "A+",                  "1.1",    "512MB",    "Sony" },
   { "900032",    "Q2 2016?",    "B+",                 "1.2",    "512MB",    "Sony" },
   { "900092",    "Q4 2015",    "Zero",                "1.2",    "512MB",    "Sony" },
@@ -236,6 +236,43 @@ static struct {
   { NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
+gchar *dt_get_model() {
+    FILE *dtmodel;
+    char *ret = NULL;
+    size_t fs, rlen;
+
+    dtmodel = fopen("/proc/device-tree/model", "r");
+    if (!dtmodel)
+        return NULL;
+
+    if (fseek(dtmodel, 0L, SEEK_END) == 0) {
+        fs = ftell(dtmodel);
+        if (fs == -1) {
+            fclose(dtmodel);
+            return NULL;
+        }
+
+        ret = g_malloc(sizeof(char) * (fs + 1));
+        if (fseek(dtmodel, 0L, SEEK_SET) != 0) {
+            g_free(ret);
+            fclose(dtmodel);
+            return NULL;
+        }
+
+        rlen = fread(ret, sizeof(char), fs, dtmodel);
+        if (ferror(dtmodel) != 0 ) {
+            g_free(ret);
+            fclose(dtmodel);
+            return NULL;
+        } else {
+            ret[rlen+1] = '\0';
+        }
+    }
+
+    fclose(dtmodel);
+    return ret;
+}
+
 gchar *rpi_get_boardname(void) {
     int i = 0, c = 0;
     gchar *ret = NULL;
@@ -247,7 +284,7 @@ gchar *rpi_get_boardname(void) {
 
     cpuinfo = fopen("/proc/cpuinfo", "r");
     if (!cpuinfo)
-    return NULL;
+        return NULL;
     while (fgets(buffer, 128, cpuinfo)) {
         gchar **tmp = g_strsplit(buffer, ":", 2);
         tmp[0] = g_strstrip(tmp[0]);
@@ -304,10 +341,21 @@ gchar *get_motherboard(void)
     else if (board_vendor && *board_vendor)
        return g_strconcat(board_vendor, _(" (model unknown)"), NULL);
 #else
-    /* maybe it is an rpi */
-    board_name = rpi_get_boardname();
-    if (board_name != NULL)
-        return board_name;
+    /* use device tree "model" */
+    board_vendor = dt_get_model();
+
+    if (board_vendor != NULL) {
+        /* maybe it is an rpi */
+        if (g_str_has_prefix(board_vendor, "Raspberry Pi")) {
+            /* try and get a more detailed board name */
+            board_name = rpi_get_boardname();
+            if (board_name != NULL) {
+                g_free(board_vendor);
+                return board_name;
+            }
+        }
+        return board_vendor;
+    }
 #endif
 
     return g_strdup(_("Unknown"));
