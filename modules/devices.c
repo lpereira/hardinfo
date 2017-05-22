@@ -195,14 +195,14 @@ gchar *get_memory_total(void)
     return moreinfo_lookup ("DEV:Total Memory"); //hi_more_info(N_("Total Memory"));
 }
 
-/* from: http://elinux.org/RPi_HardwareHistory */
+/* information table from: http://elinux.org/RPi_HardwareHistory */
 static struct {
     char *value, *intro, *model, *pcb, *mem, *mfg;
 } rpi_boardinfo[] = {
 /*  Value        Introduction  Model Name             PCB rev.  Memory       Manufacturer  *
  *                             Raspberry Pi %s                                            */
   { "Beta",      "Q1 2012",    "B (Beta)",            "?",      "256MB",    "(Beta board)" },
-  { "0002",      "Q1 2012",    "B",                   "1.0",    "256MB",    "" },
+  { "0002",      "Q1 2012",    "B",                   "1.0",    "256MB",    "?" },
   { "0003",      "Q3 2012",    "B (ECN0001)",         "1.0",    "256MB",    "(Fuses mod and D14 removed)" },
   { "0004",      "Q3 2012",    "B",                   "2.0",    "256MB",    "Sony"    },
   { "0005",      "Q4 2012",    "B",                   "2.0",    "256MB",    "Qisda"   },
@@ -222,15 +222,15 @@ static struct {
   { "a01040",    "Unknown",    "2 Model B",           "1.0",    "1GB",      "Sony" },
   { "a01041",    "Q1 2015",    "2 Model B",           "1.1",    "1GB",      "Sony" },
   { "a21041",    "Q1 2015",    "2 Model B",           "1.1",    "1GB",      "Embest" },
-  { "a22042",    "Q3 2016",    "2 Model B (with BCM2837)",    "1.2",    "1GB",    "Embest" },
+  { "a22042",    "Q3 2016",    "2 Model B",           "1.2",    "1GB",    "Embest" },  /* (with BCM2837) */
   { "900021",    "Q3 2016",    "A+",                  "1.1",    "512MB",    "Sony" },
   { "900032",    "Q2 2016?",    "B+",                 "1.2",    "512MB",    "Sony" },
   { "900092",    "Q4 2015",    "Zero",                "1.2",    "512MB",    "Sony" },
   { "900093",    "Q2 2016",    "Zero",                "1.3",    "512MB",    "Sony" },
-  { "920093",    "Q4 2016?",    "Zero",               "1.3",    "512MB",    "Embest" },
+  { "920093",    "Q4 2016?",   "Zero",                "1.3",    "512MB",    "Embest" },
   { "9000c1",    "Q1 2017",    "Zero W",              "1.1",    "512MB",    "Sony" },
   { "a02082",    "Q1 2016",    "3 Model B",           "1.2",    "1GB",      "Sony" },
-  { "a020a0",    "Q1 2017",    "Compute Module 3 (and CM3 Lite)",    "1.0",    "1GB",    "Sony" },
+  { "a020a0",    "Q1 2017",    "Compute Module 3 or CM3 Lite",    "1.0",    "1GB",    "Sony" },
   { "a22082",    "Q1 2016",    "3 Model B",           "1.2",    "1GB",    "Embest" },
   { "a32082",    "Q4 2016",    "3 Model B",           "1.2",    "1GB",    "Sony Japan" },
   { NULL, NULL, NULL, NULL, NULL, NULL }
