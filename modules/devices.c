@@ -236,44 +236,7 @@ static struct {
   { NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
-gchar *dt_get_model() {
-    FILE *dtmodel;
-    char *ret = NULL;
-    size_t fs, rlen;
-
-    dtmodel = fopen("/proc/device-tree/model", "r");
-    if (!dtmodel)
-        return NULL;
-
-    if (fseek(dtmodel, 0L, SEEK_END) == 0) {
-        fs = ftell(dtmodel);
-        if (fs == -1) {
-            fclose(dtmodel);
-            return NULL;
-        }
-
-        ret = g_malloc(sizeof(char) * (fs + 1));
-        if (fseek(dtmodel, 0L, SEEK_SET) != 0) {
-            g_free(ret);
-            fclose(dtmodel);
-            return NULL;
-        }
-
-        rlen = fread(ret, sizeof(char), fs, dtmodel);
-        if (ferror(dtmodel) != 0 ) {
-            g_free(ret);
-            fclose(dtmodel);
-            return NULL;
-        } else {
-            ret[rlen+1] = '\0';
-        }
-    }
-
-    fclose(dtmodel);
-    return ret;
-}
-
-gchar *rpi_get_boardname(void) {
+static gchar *rpi_get_boardname(void) {
     int i = 0, c = 0;
     gchar *ret = NULL;
     gchar *soc = NULL;
@@ -342,18 +305,17 @@ gchar *get_motherboard(void)
        return g_strconcat(board_vendor, _(" (model unknown)"), NULL);
 #else
     /* use device tree "model" */
-    board_vendor = dt_get_model();
+    if (g_file_get_contents("/proc/device-tree/model", &board_vendor, NULL, NULL)) {
 
-    if (board_vendor != NULL) {
-        /* maybe it is an rpi */
+        /* if a raspberry pi, try and get a more detailed name */
         if (g_str_has_prefix(board_vendor, "Raspberry Pi")) {
-            /* try and get a more detailed board name */
             board_name = rpi_get_boardname();
             if (board_name != NULL) {
                 g_free(board_vendor);
                 return board_name;
             }
         }
+
         return board_vendor;
     }
 #endif
