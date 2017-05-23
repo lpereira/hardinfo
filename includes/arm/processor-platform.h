@@ -22,9 +22,11 @@
 struct _Processor {
     gchar *model_name;
     gchar *flags;
-    gfloat bogomips, cpu_mhz;
+    gfloat bogomips;
 
-    gchar *has_fpu;
+    gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
+    gint cpukhz_max, cpukhz_min, cpukhz_cur; /* for arm/processor.c */
+    gint id;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */
