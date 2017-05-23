@@ -492,7 +492,7 @@ static struct {
 GHashTable *cpu_flags = NULL;
 
 static void
-populate_cpu_flags_list_internal(GHashTable *hash_table)
+populate_cpu_flags_list_internal()
 {
     int i;
 
@@ -521,7 +521,7 @@ void cpu_flags_init(void)
 
     path = g_build_filename(g_get_home_dir(), ".hardinfo", "cpuflags.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-        populate_cpu_flags_list_internal(cpu_flags);
+        populate_cpu_flags_list_internal();
     } else {
         GKeyFile *flags_file;
 
@@ -536,7 +536,7 @@ void cpu_flags_init(void)
             if (!flag_keys) {
                 DEBUG("error while using %s as CPU flags database, falling back to internal",
                       path);
-                populate_cpu_flags_list_internal(cpu_flags);
+                populate_cpu_flags_list_internal();
             } else {
                 for (i = 0; flag_keys[i]; i++) {
                     gchar *meaning;
