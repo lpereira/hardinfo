@@ -237,6 +237,20 @@ int processor_has_flag(gchar * strflags, gchar * strflag)
     return ret;
 }
 
+static gint get_cpu_int(const gchar* file, gint cpuid) {
+    gchar *tmp0 = NULL;
+    gchar *tmp1 = NULL;
+    gint ret = 0;
+
+    tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
+    g_file_get_contents(tmp0, &tmp1, NULL, NULL);
+    ret = atol(tmp1);
+
+    g_free(tmp0);
+    g_free(tmp1);
+    return ret;
+}
+
 GSList *processor_scan(void)
 {
     GSList *procs = NULL;
@@ -308,6 +322,13 @@ GSList *processor_scan(void)
 	    get_int("stepping", processor->stepping);
 
 	    get_int("processor", processor->id);
+
+        /* freq */
+        processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
+        processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
+        processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
+        if (processor->cpukhz_max)
+            processor->cpu_mhz = processor->cpukhz_max / 1000;
 	}
 	g_strfreev(tmp);
     }
@@ -620,6 +641,10 @@ gchar *processor_get_detailed_info(Processor * processor)
 			  "Frequency=%.2fMHz\n"
 			  "BogoMIPS=%.2f\n"
 			  "Byte Order=%s\n"
+			  "[Freq]\n"
+			  "Min=%d kHz\n"
+			  "Max=%d kHz\n"
+			  "Cur=%d kHz\n"
 			  "[Features]\n"
 			  "Has FPU=%s\n"
 			  "[Cache]\n"
@@ -643,6 +668,9 @@ gchar *processor_get_detailed_info(Processor * processor)
 #else
 			  "Big Endian",
 #endif
+			  processor->cpukhz_min,
+			  processor->cpukhz_max,
+			  processor->cpukhz_cur,
 			  processor->has_fpu  ? processor->has_fpu  : "no",
 			  cache_info,
 			  tmp_pm, tmp_bugs, tmp_flags);
