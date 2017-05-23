@@ -28,25 +28,25 @@ processor_scan(void)
 
     cpuinfo = fopen("/proc/cpuinfo", "r");
     if (!cpuinfo)
-	return NULL;
+    return NULL;
 
     processor = g_new0(Processor, 1);
     while (fgets(buffer, 128, cpuinfo)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
 
-	if (tmp[0] && tmp[1]) {
-	    tmp[0] = g_strstrip(tmp[0]);
-	    tmp[1] = g_strstrip(tmp[1]);
+        if (tmp[0] && tmp[1]) {
+            tmp[0] = g_strstrip(tmp[0]);
+            tmp[1] = g_strstrip(tmp[1]);
 
-		get_str("Processor", processor->model_name);
-		if (!processor->model_name)
-			get_str("model name", processor->model_name);
-	    get_str("Features", processor->flags);
-	    get_float("BogoMIPS", processor->bogomips);
+            get_str("Processor", processor->model_name);
+            if (!processor->model_name)
+                get_str("model name", processor->model_name);
+            get_str("Features", processor->flags);
+            get_float("BogoMIPS", processor->bogomips);
 
-	    get_str("Hardware", processor->has_fpu);
-	}
-	g_strfreev(tmp);
+            get_str("Hardware", processor->has_fpu);
+        }
+        g_strfreev(tmp);
     }
 
     processor->cpu_mhz = 0.0f;
@@ -61,20 +61,20 @@ processor_get_info(GSList *processors)
 {
         Processor *processor = (Processor *)processors->data;
         
-	return g_strdup_printf("[Processor]\n"
-	                       "Name=%s\n"
-	                       "Features=%s\n"
-			       "BogoMips=%.2f\n"
-			       "Endianesss="
+    return g_strdup_printf("[Processor]\n"
+                           "Name=%s\n"
+                           "Features=%s\n"
+                   "BogoMips=%.2f\n"
+                   "Endianesss="
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                               "Little Endian"
+                       "Little Endian"
 #else
-                               "Big Endian"
+                       "Big Endian"
 #endif
-                               "\n"
-			       "Hardware=%s\n",
-			       processor->model_name,
-			       processor->flags,
-			       processor->bogomips,
-			       processor->has_fpu);
+                       "\n"
+                   "Hardware=%s\n",
+                   processor->model_name,
+                   processor->flags,
+                   processor->bogomips,
+                   processor->has_fpu);
 }
