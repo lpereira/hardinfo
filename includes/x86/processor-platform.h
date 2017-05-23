@@ -37,7 +37,10 @@ struct _Processor {
     gchar *bugs;
     gchar *pm;             /* power management features */
     gint cache_size;
-    gfloat bogomips, cpu_mhz;
+    gfloat bogomips;
+
+    gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
+    gint cpukhz_max, cpukhz_min, cpukhz_cur; /* for arm/processor.c */
 
     gchar *has_fpu;
     gchar *bug_fdiv, *bug_hlt, *bug_f00f, *bug_coma;
