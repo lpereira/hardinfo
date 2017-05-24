@@ -27,6 +27,14 @@ struct _Processor {
     gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
     gint cpukhz_max, cpukhz_min, cpukhz_cur; /* for arm/processor.c */
     gint id;
+
+    gchar *cpu_implementer;
+    gchar *cpu_architecture;
+    gchar *cpu_variant;
+    gchar *cpu_part;
+    gchar *cpu_revision;
+
+    gint mode;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */
