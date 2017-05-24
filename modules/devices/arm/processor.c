@@ -19,6 +19,18 @@
 #include "hardinfo.h"
 #include "devices.h"
 
+enum {
+    ARM_A32 = 0,
+    ARM_A64 = 1,
+    ARM_A32_ON_A64 = 2,
+};
+
+static const gchar *arm_mode_str[] = {
+    "A32",
+    "A64",
+    "A32 on A64",
+};
+
 /* sources:
  *   https://unix.stackexchange.com/a/43563
  *   git:linux/arch/arm/kernel/setup.c
@@ -98,6 +110,30 @@ static gint get_cpu_int(const gchar* file, gint cpuid) {
     return ret;
 }
 
+static gboolean _g_strv_contains(const gchar * const * strv, const gchar *str) {
+    /* g_strv_contains() requires glib>2.44 */
+    //return g_strv_contains(strv, str);
+    gint i = 0;
+    while(strv[i] != NULL) {
+        if (g_strcmp0(strv[i], str) == 0)
+            return 1;
+        i++;
+    }
+    return 0;
+}
+
+int processor_has_flag(gchar * strflags, gchar * strflag)
+{
+    gchar **flags;
+    gint ret = 0;
+    if (strflags == NULL || strflag == NULL)
+        return 0;
+    flags = g_strsplit(strflags, " ", 0);
+    ret = _g_strv_contains((const gchar * const *)flags, strflag);
+    g_strfreev(flags);
+    return ret;
+}
+
 GSList *
 processor_scan(void)
 {
@@ -144,6 +180,22 @@ processor_scan(void)
                 get_str("model name", processor->model_name);
             get_str("Features", processor->flags);
             get_float("BogoMIPS", processor->bogomips);
+
+            get_str("CPU implementer", processor->cpu_implementer);
+            get_str("CPU architecture", processor->cpu_architecture);
+            get_str("CPU variant", processor->cpu_variant);
+            get_str("CPU part", processor->cpu_part);
+            get_str("CPU revision", processor->cpu_revision);
+
+            processor->mode = ARM_A32;
+            if ( processor_has_flag(processor->flags, "pmull")
+                 || processor_has_flag(processor->flags, "crc32") ) {
+#ifdef __aarch64__
+                processor->mode = ARM_A64;
+#else
+                processor->mode = ARM_A32_ON_A64;
+#endif
+            }
         }
         g_strfreev(tmp);
     }
@@ -193,6 +245,7 @@ processor_get_detailed_info(Processor *processor)
 
     ret = g_strdup_printf("[Processor]\n"
                            "Name=%s\n"
+                           "Mode=%s\n"
                    "BogoMips=%.2f\n"
                    "Endianesss="
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
@@ -205,14 +258,26 @@ processor_get_detailed_info(Processor *processor)
                        "Min=%d kHz\n"
                        "Max=%d kHz\n"
                        "Cur=%d kHz\n"
+                       "[ARM]\n"
+                       "Implementer=%s\n"
+                       "Architecture=%s\n"
+                       "Variant=%s\n"
+                       "Part=%s\n"
+                       "Revision=%s\n"
                        "[Capabilities]\n"
                        "%s"
                        "%s",
                    processor->model_name,
+                   arm_mode_str[processor->mode],
                    processor->bogomips,
                    processor->cpukhz_min,
                    processor->cpukhz_max,
                    processor->cpukhz_cur,
+                   processor->cpu_implementer,
+                   processor->cpu_architecture,
+                   processor->cpu_variant,
+                   processor->cpu_part,
+                   processor->cpu_revision,
                    tmp_flags,
                     "");
     g_free(tmp_flags);
