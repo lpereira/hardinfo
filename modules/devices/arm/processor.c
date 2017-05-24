@@ -143,6 +143,7 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
     gchar *tmpfreq_str = NULL;
+    GSList *pi = NULL;
 
     cpuinfo = fopen("/proc/cpuinfo", "r");
     if (!cpuinfo)
@@ -160,15 +161,6 @@ processor_scan(void)
             //get_int("processor", processor->id);
             processor->id = processor_number;
             processor_number++;
-
-            /* freq */
-            processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
-            processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
-            processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
-            if (processor->cpukhz_max)
-                processor->cpu_mhz = processor->cpukhz_max / 1000;
-            else
-                processor->cpu_mhz = 0.0f;
         }
 
         if (processor && tmp[0] && tmp[1]) {
@@ -186,16 +178,6 @@ processor_scan(void)
             get_str("CPU variant", processor->cpu_variant);
             get_str("CPU part", processor->cpu_part);
             get_str("CPU revision", processor->cpu_revision);
-
-            processor->mode = ARM_A32;
-            if ( processor_has_flag(processor->flags, "pmull")
-                 || processor_has_flag(processor->flags, "crc32") ) {
-#ifdef __aarch64__
-                processor->mode = ARM_A64;
-#else
-                processor->mode = ARM_A32_ON_A64;
-#endif
-            }
         }
         g_strfreev(tmp);
     }
@@ -204,6 +186,31 @@ processor_scan(void)
         procs = g_slist_append(procs, processor);
 
     fclose(cpuinfo);
+
+    /* data not from /proc/cpuinfo */
+    for (pi = procs; pi; pi = pi->next) {
+        processor = (Processor *) pi->data;
+
+        /* freq */
+        processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
+        processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
+        processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
+        if (processor->cpukhz_max)
+            processor->cpu_mhz = processor->cpukhz_max / 1000;
+        else
+            processor->cpu_mhz = 0.0f;
+
+        /* mode */
+        processor->mode = ARM_A32;
+        if ( processor_has_flag(processor->flags, "pmull")
+             || processor_has_flag(processor->flags, "crc32") ) {
+#ifdef __aarch64__
+                processor->mode = ARM_A64;
+#else
+                processor->mode = ARM_A32_ON_A64;
+#endif
+        }
+    }
 
     return procs;
 }
