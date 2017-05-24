@@ -22,11 +22,12 @@
 /* sources:
  *   https://unix.stackexchange.com/a/43563
  *   git:linux/arch/arm/kernel/setup.c
+ *   git:linux/arch/arm64/kernel/cpuinfo.c
  */
 static struct {
     char *name, *meaning;
 } flag_meaning[] = {
-    /* hw_cap */
+    /* arm/hw_cap */
     { "swp",	"SWP instruction (atomic read-modify-write)" },
     { "half",	"Half-word loads and stores" },
     { "thumb",	"Thumb (16-bit instruction set)" },
@@ -49,14 +50,24 @@ static struct {
     { "idiva",	"SDIV and UDIV hardware division in ARM mode" },
     { "idivt",	"SDIV and UDIV hardware division in Thumb mode" },
     { "lpae",	"40-bit Large Physical Address Extension" },
-    /* hw_cap2 */
+    /* arm/hw_cap2 */
     { "pmull",	"64x64->128-bit F2m multiplication (arch>8)" },
     { "aes",	"Crypto:AES (arch>8)" },
     { "sha1",	"Crypto:SHA1 (arch>8)" },
     { "sha2",	"Crypto:SHA2 (arch>8)" },
     { "crc32",	"CRC32 checksum instructions (arch>8)" },
-    /* ?? */
+    /* arm64/hw_cap */
+    { "fp",	"" },
     { "asimd",	"Advanced SIMD/NEON on AArch64 (arch>8)" },
+    { "atomics",	"" },
+    { "fphp",	"" },
+    { "asimdhp",	"" },
+    { "cpuid",	"" },
+    { "asimdrdm",	"" },
+    { "jscvt",	"" },
+    { "fcma",	"" },
+    { "lrcpc",	"" },
+
     { NULL, NULL},
 };
 
