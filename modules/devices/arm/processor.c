@@ -103,8 +103,8 @@ static gint get_cpu_int(const gchar* file, gint cpuid) {
 
     tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
     g_file_get_contents(tmp0, &tmp1, NULL, NULL);
-    ret = atol(tmp1);
-
+    if (tmp1)
+        ret = atol(tmp1);
     g_free(tmp0);
     g_free(tmp1);
     return ret;
@@ -134,23 +134,32 @@ int processor_has_flag(gchar * strflags, gchar * strflag)
     return ret;
 }
 
+#define PROC_CPUINFO "/proc/cpuinfo"
+
 GSList *
 processor_scan(void)
 {
     GSList *procs = NULL;
-    Processor *processor;
+    Processor *processor = NULL;
     gint processor_number = 0;
     FILE *cpuinfo;
     gchar buffer[128];
+    gchar *rep_pname = NULL;
     gchar *tmpfreq_str = NULL;
     GSList *pi = NULL;
 
-    cpuinfo = fopen("/proc/cpuinfo", "r");
+    cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
     return NULL;
 
     while (fgets(buffer, 128, cpuinfo)) {
         gchar **tmp = g_strsplit(buffer, ":", 2);
+        if (tmp[0] && tmp[1]) {
+            tmp[0] = g_strstrip(tmp[0]);
+            tmp[1] = g_strstrip(tmp[1]);
+        } else continue;
+
+        get_str("Processor", rep_pname);
 
         if (g_str_has_prefix(tmp[0], "processor")) {
             if (processor) {
@@ -158,18 +167,16 @@ processor_scan(void)
             }
 
             processor = g_new0(Processor, 1);
-            //get_int("processor", processor->id);
+            //get_int("processor", processor->id); //FIXME:
             processor->id = processor_number;
             processor_number++;
+
+            if (rep_pname)
+                processor->model_name = g_strdup(rep_pname);
         }
 
-        if (processor && tmp[0] && tmp[1]) {
-            tmp[0] = g_strstrip(tmp[0]);
-            tmp[1] = g_strstrip(tmp[1]);
-
-            get_str("Processor", processor->model_name);
-            if (!processor->model_name)
-                get_str("model name", processor->model_name);
+        if (processor) {
+            get_str("model name", processor->model_name);
             get_str("Features", processor->flags);
             get_float("BogoMIPS", processor->bogomips);
 
@@ -185,11 +192,44 @@ processor_scan(void)
     if (processor)
         procs = g_slist_append(procs, processor);
 
+    g_free(rep_pname);
     fclose(cpuinfo);
+
+    /* re-duplicate missing data for /proc/cpuinfo variant that de-duplicated it */
+#define REDUP(f) if (dproc->f && !processor->f) processor->f = g_strdup(dproc->f);
+    Processor *dproc;
+    GSList *l;
+    l = procs = g_slist_reverse(procs);
+    while (l) {
+        processor = l->data;
+        if (processor->flags) {
+            dproc = processor;
+        } else if (dproc) {
+            REDUP(flags);
+            REDUP(cpu_implementer);
+            REDUP(cpu_architecture);
+            REDUP(cpu_variant);
+            REDUP(cpu_part);
+            REDUP(cpu_revision);
+        }
+        l = g_slist_next(l);
+    }
+    procs = g_slist_reverse(procs);
 
     /* data not from /proc/cpuinfo */
     for (pi = procs; pi; pi = pi->next) {
         processor = (Processor *) pi->data;
+
+        /* strings can't be null or segfault later */
+#define UNKIFNULL(f) if (processor->f == NULL) processor->f = g_strdup("(Unknown)");
+#define EMPIFNULL(f) if (processor->f == NULL) processor->f = g_strdup("");
+        UNKIFNULL(model_name);
+        EMPIFNULL(flags);
+        UNKIFNULL(cpu_implementer);
+        UNKIFNULL(cpu_architecture);
+        UNKIFNULL(cpu_variant);
+        UNKIFNULL(cpu_part);
+        UNKIFNULL(cpu_revision);
 
         /* freq */
         processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
