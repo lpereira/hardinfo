@@ -19,6 +19,9 @@
 #include "hardinfo.h"
 #include "devices.h"
 
+#include "arm_data.h"
+#include "arm_data.c"
+
 enum {
     ARM_A32 = 0,
     ARM_A64 = 1,
@@ -31,68 +34,21 @@ static const gchar *arm_mode_str[] = {
     "A32 on A64",
 };
 
-/* sources:
- *   https://unix.stackexchange.com/a/43563
- *   git:linux/arch/arm/kernel/setup.c
- *   git:linux/arch/arm64/kernel/cpuinfo.c
- */
-static struct {
-    char *name, *meaning;
-} flag_meaning[] = {
-    /* arm/hw_cap */
-    { "swp",	"SWP instruction (atomic read-modify-write)" },
-    { "half",	"Half-word loads and stores" },
-    { "thumb",	"Thumb (16-bit instruction set)" },
-    { "26bit",	"26-Bit Model (Processor status register folded into program counter)" },
-    { "fastmult",	"32x32->64-bit multiplication" },
-    { "fpa",	"Floating point accelerator" },
-    { "vfp",	"VFP (early SIMD vector floating point instructions)" },
-    { "edsp",	"DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)" },
-    { "java",	"Jazelle (Java bytecode accelerator)" },
-    { "iwmmxt",	"SIMD instructions similar to Intel MMX" },
-    { "crunch",	"MaverickCrunch coprocessor (if kernel support enabled)" },
-    { "thumbee",	"ThumbEE" },
-    { "neon",	"Advanced SIMD/NEON on AArch32" },
-    { "evtstrm",	"kernel event stream using generic architected timer" },
-    { "vfpv3",	"VFP version 3" },
-    { "vfpv3d16",	"VFP version 3 with 16 D-registers" },
-    { "vfpv4",	"VFP version 4 with fast context switching" },
-    { "vfpd32",	"VFP with 32 D-registers" },
-    { "tls",	"TLS register" },
-    { "idiva",	"SDIV and UDIV hardware division in ARM mode" },
-    { "idivt",	"SDIV and UDIV hardware division in Thumb mode" },
-    { "lpae",	"40-bit Large Physical Address Extension" },
-    /* arm/hw_cap2 */
-    { "pmull",	"64x64->128-bit F2m multiplication (arch>8)" },
-    { "aes",	"Crypto:AES (arch>8)" },
-    { "sha1",	"Crypto:SHA1 (arch>8)" },
-    { "sha2",	"Crypto:SHA2 (arch>8)" },
-    { "crc32",	"CRC32 checksum instructions (arch>8)" },
-    /* arm64/hw_cap */
-    { "fp",	"" },
-    { "asimd",	"Advanced SIMD/NEON on AArch64 (arch>8)" },
-    { "atomics",	"" },
-    { "fphp",	"" },
-    { "asimdhp",	"" },
-    { "cpuid",	"" },
-    { "asimdrdm",	"" },
-    { "jscvt",	"" },
-    { "fcma",	"" },
-    { "lrcpc",	"" },
-
-    { NULL, NULL},
-};
-
 GHashTable *cpu_flags = NULL; /* FIXME: when is it freed? */
 
 static void
 populate_cpu_flags_list_internal()
 {
     int i;
+    gchar **afl, *fm;
+
     cpu_flags = g_hash_table_new(g_str_hash, g_str_equal);
-    for (i = 0; flag_meaning[i].name != NULL; i++) {
-        g_hash_table_insert(cpu_flags, flag_meaning[i].name,
-                            flag_meaning[i].meaning);
+    afl = g_strsplit(arm_flag_list(), " ", 0);
+    while(afl[i] != NULL) {
+        fm = (char *)arm_flag_meaning(afl[i]);
+        if (g_strcmp0(afl[i], "") != 0)
+            g_hash_table_insert(cpu_flags, afl[i], (fm) ? fm : "");
+        i++;
     }
 }
 
@@ -231,6 +187,11 @@ processor_scan(void)
         UNKIFNULL(cpu_part);
         UNKIFNULL(cpu_revision);
 
+        processor->decoded_name = arm_decoded_name(
+            processor->cpu_implementer, processor->cpu_part,
+            processor->cpu_variant, processor->cpu_revision,
+            processor->cpu_architecture, processor->model_name);
+
         /* freq */
         processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
         processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
@@ -287,11 +248,13 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 gchar *
 processor_get_detailed_info(Processor *processor)
 {
-    gchar *tmp_flags, *ret;
+    gchar *tmp_flags, *tmp_imp, *tmp_part, *ret;
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
-
+    tmp_imp = (char*)arm_implementer(processor->cpu_implementer);
+    tmp_part = (char *)arm_part(processor->cpu_implementer, processor->cpu_part);
     ret = g_strdup_printf("[Processor]\n"
-                           "Name=%s\n"
+                           "Linux Name=%s\n"
+                           "Decoded Name=%s\n"
                            "Mode=%s\n"
                    "BogoMips=%.2f\n"
                    "Endianesss="
@@ -306,24 +269,25 @@ processor_get_detailed_info(Processor *processor)
                        "Max=%d kHz\n"
                        "Cur=%d kHz\n"
                        "[ARM]\n"
-                       "Implementer=%s\n"
+                       "Implementer=[%s] %s\n"
+                       "Part=[%s] %s\n"
                        "Architecture=%s\n"
                        "Variant=%s\n"
-                       "Part=%s\n"
                        "Revision=%s\n"
                        "[Capabilities]\n"
                        "%s"
                        "%s",
                    processor->model_name,
+                   processor->decoded_name,
                    arm_mode_str[processor->mode],
                    processor->bogomips,
                    processor->cpukhz_min,
                    processor->cpukhz_max,
                    processor->cpukhz_cur,
-                   processor->cpu_implementer,
+                   processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
+                   processor->cpu_part, (tmp_part) ? tmp_part : "",
                    processor->cpu_architecture,
                    processor->cpu_variant,
-                   processor->cpu_part,
                    processor->cpu_revision,
                    tmp_flags,
                     "");
