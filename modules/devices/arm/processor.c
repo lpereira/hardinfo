@@ -97,7 +97,6 @@ processor_scan(void)
 {
     GSList *procs = NULL;
     Processor *processor = NULL;
-    gint processor_number = 0;
     FILE *cpuinfo;
     gchar buffer[128];
     gchar *rep_pname = NULL;
@@ -108,24 +107,44 @@ processor_scan(void)
     if (!cpuinfo)
     return NULL;
 
+#define CHECK_FOR(k) (g_str_has_prefix(tmp[0], k))
     while (fgets(buffer, 128, cpuinfo)) {
         gchar **tmp = g_strsplit(buffer, ":", 2);
         if (tmp[0] && tmp[1]) {
             tmp[0] = g_strstrip(tmp[0]);
             tmp[1] = g_strstrip(tmp[1]);
-        } else continue;
+        } else {
+            g_strfreev(tmp);
+            continue;
+        }
 
         get_str("Processor", rep_pname);
 
-        if (g_str_has_prefix(tmp[0], "processor")) {
+        if ( CHECK_FOR("processor") ) {
+            /* finish previous */
             if (processor) {
                 procs = g_slist_append(procs, processor);
             }
 
+            /* start next */
             processor = g_new0(Processor, 1);
-            //get_int("processor", processor->id); //FIXME:
-            processor->id = processor_number;
-            processor_number++;
+            processor->id = atol(tmp[1]);
+
+            if (rep_pname)
+                processor->model_name = g_strdup(rep_pname);
+
+            g_strfreev(tmp);
+            continue;
+        }
+
+        if (!processor &&
+            (  CHECK_FOR("model name")
+            || CHECK_FOR("Features")
+            || CHECK_FOR("BogoMIPS") ) ) {
+
+            /* single proc/core may not have "processor : n" */
+            processor = g_new0(Processor, 1);
+            processor->id = 0;
 
             if (rep_pname)
                 processor->model_name = g_strdup(rep_pname);
