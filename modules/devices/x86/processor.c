@@ -160,11 +160,12 @@ static gchar *__cache_get_info_as_string(Processor *processor)
     return result;
 }
 
-static void __cache_obtain_info(Processor *processor, gint processor_number)
+static void __cache_obtain_info(Processor *processor)
 {
     ProcessorCache *cache;
     gchar *endpoint, *entry, *index;
     gint i;
+    gint processor_number = processor->id;
 
     endpoint = g_strdup_printf("/sys/devices/system/cpu/cpu%d/cache", processor_number);
 
@@ -244,7 +245,8 @@ static gint get_cpu_int(const gchar* file, gint cpuid) {
 
     tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
     g_file_get_contents(tmp0, &tmp1, NULL, NULL);
-    ret = atol(tmp1);
+    if (tmp1)
+        ret = atol(tmp1);
 
     g_free(tmp0);
     g_free(tmp1);
@@ -253,50 +255,70 @@ static gint get_cpu_int(const gchar* file, gint cpuid) {
 
 GSList *processor_scan(void)
 {
-    GSList *procs = NULL;
+    GSList *procs = NULL, *l = NULL;
     Processor *processor = NULL;
     FILE *cpuinfo;
     gchar buffer[512];
-    gint processor_number = 0;
-    gchar *tmp_bugs;
 
     cpuinfo = fopen("/proc/cpuinfo", "r");
     if (!cpuinfo)
-	return NULL;
+        return NULL;
 
     while (fgets(buffer, 512, cpuinfo)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
+        if (!tmp[1] || !tmp[0]) {
+            g_strfreev(tmp);
+            continue;
+        }
 
-	if (g_str_has_prefix(tmp[0], "processor")) {
-	    if (processor) {
-		get_processor_strfamily(processor);
-		procs = g_slist_append(procs, processor);
-	    }
+        tmp[0] = g_strstrip(tmp[0]);
+        tmp[1] = g_strstrip(tmp[1]);
 
-	    processor = g_new0(Processor, 1);
+        if (g_str_has_prefix(tmp[0], "processor")) {
+            /* finish previous */
+            if (processor)
+                procs = g_slist_append(procs, processor);
 
-	    __cache_obtain_info(processor, processor_number++);
-	}
+            /* start next */
+            processor = g_new0(Processor, 1);
+            processor->id = atol(tmp[1]);
+            g_strfreev(tmp);
+            continue;
+        }
 
-	if (processor && tmp[0] && tmp[1]) {
-	    tmp[0] = g_strstrip(tmp[0]);
-	    tmp[1] = g_strstrip(tmp[1]);
+        if (processor) {
+            get_str("model name", processor->model_name);
+            get_str("vendor_id", processor->vendor_id);
+            get_str("flags", processor->flags);
+            get_str("bugs", processor->bugs);
+            get_str("power management", processor->pm);
+            get_int("cache size", processor->cache_size);
+            get_float("cpu MHz", processor->cpu_mhz);
+            get_float("bogomips", processor->bogomips);
 
-	    get_str("model name", processor->model_name);
-	    get_str("vendor_id", processor->vendor_id);
-	    get_str("flags", processor->flags);
-	    get_str("bugs", processor->bugs);
-	    get_str("power management", processor->pm);
-	    get_int("cache size", processor->cache_size);
-	    get_float("cpu MHz", processor->cpu_mhz);
-	    get_float("bogomips", processor->bogomips);
+            get_str("fpu", processor->has_fpu);
 
-	    get_str("fpu", processor->has_fpu);
+            get_str("fdiv_bug", processor->bug_fdiv);
+            get_str("hlt_bug", processor->bug_hlt);
+            get_str("f00f_bug", processor->bug_f00f);
+            get_str("coma_bug", processor->bug_coma);
 
-	    get_str("fdiv_bug", processor->bug_fdiv);
-	    get_str("hlt_bug", processor->bug_hlt);
-	    get_str("f00f_bug", processor->bug_f00f);
-	    get_str("coma_bug", processor->bug_coma);
+            get_int("model", processor->model);
+            get_int("cpu family", processor->family);
+            get_int("stepping", processor->stepping);
+        }
+        g_strfreev(tmp);
+    }
+
+    /* finish last */
+    if (processor)
+        procs = g_slist_append(procs, processor);
+
+    for (l = procs; l; l = l->next) {
+        processor = (Processor *) l->data;
+
+        get_processor_strfamily(processor);
+        __cache_obtain_info(processor);
 
         if (processor->bugs == NULL || g_strcmp0(processor->bugs, "") == 0) {
             g_free(processor->bugs);
@@ -317,11 +339,15 @@ GSList *processor_scan(void)
             g_strchug(processor->bugs);
         }
 
-	    get_int("model", processor->model);
-	    get_int("cpu family", processor->family);
-	    get_int("stepping", processor->stepping);
-
-	    get_int("processor", processor->id);
+        if (processor->pm == NULL || g_strcmp0(processor->pm, "") == 0) {
+            g_free(processor->pm);
+            /* make power management list on old kernels that don't offer one */
+            processor->pm = g_strdup_printf("%s%s",
+                    /* "hw_pstate" -> "hwpstate" */
+                    processor_has_flag(processor->flags, "hw_pstate") ? " hwpstate" : "",
+                    ""); /* just to make adding lines easier */
+            g_strchug(processor->pm);
+        }
 
         /* freq */
         processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
@@ -329,13 +355,6 @@ GSList *processor_scan(void)
         processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
         if (processor->cpukhz_max)
             processor->cpu_mhz = processor->cpukhz_max / 1000;
-	}
-	g_strfreev(tmp);
-    }
-
-    if (processor) {
-	get_processor_strfamily(processor);
-	procs = g_slist_append(procs, processor);
     }
 
     fclose(cpuinfo);
