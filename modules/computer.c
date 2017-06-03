@@ -368,6 +368,7 @@ gchar *callback_summary()
     gchar *input_devices, *printers;
     gchar *storage_devices, *summary;
     gchar *virt;
+    MemoryInfo *mi = computer_get_memory();
     
     processor_name  = module_call_method("devices::getProcessorName");
     alsa_cards      = computer_get_alsacards(computer);
@@ -382,7 +383,7 @@ gchar *callback_summary()
 			      "#ReloadInterval=5000\n"
 			      "[Computer]\n"
 			      "Processor=%s\n"
-			      "Memory=...\n"
+			      "Memory=%s\n"
 			      "Machine Type=%s\n"
 			      "Operating System=%s\n"
 			      "User Name=%s\n"
@@ -396,6 +397,7 @@ gchar *callback_summary()
 			      "\n%s\n"
 			      "\n%s\n"),
 			      processor_name,
+			      g_strdup_printf(_("%dMB (%dMB used)"), mi->total, mi->used),
 			      virt,
 			      computer->os->distro,
 			      computer->os->username,
@@ -412,6 +414,7 @@ gchar *callback_summary()
     g_free(printers);
     g_free(storage_devices);
     g_free(virt);
+    g_free(mi);
 
     return summary;
 }
