@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
-
+option(HARDINFO_NOSYNC "Disable database sync via libsoup" 0)
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
 
@@ -53,7 +53,9 @@ add_subdirectory(po)
 
 include(FindPkgConfig)
 pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
-pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
+if(NOT HARDINFO_NOSYNC)
+	pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
+endif()
 
 include_directories(
 	${CMAKE_SOURCE_DIR}
