@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
-option(HARDINFO_NOSYNC "Disable database sync via libsoup" 0)
+option(HARDINFO_NOSYNC "Disable database sync via libsoup" 1)
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
 
