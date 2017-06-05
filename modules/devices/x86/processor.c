@@ -214,18 +214,6 @@ fail:
     g_free(endpoint);
 }
 
-static gboolean _g_strv_contains(const gchar * const * strv, const gchar *str) {
-    /* g_strv_contains() requires glib>2.44 */
-    //return g_strv_contains(strv, str);
-    gint i = 0;
-    while(strv[i] != NULL) {
-        if (g_strcmp0(strv[i], str) == 0)
-            return 1;
-        i++;
-    }
-    return 0;
-}
-
 int processor_has_flag(gchar * strflags, gchar * strflag)
 {
     gchar **flags;
@@ -233,7 +221,7 @@ int processor_has_flag(gchar * strflags, gchar * strflag)
     if (strflags == NULL || strflag == NULL)
         return 0;
     flags = g_strsplit(strflags, " ", 0);
-    ret = _g_strv_contains((const gchar * const *)flags, strflag);
+    ret = g_strv_contains((const gchar * const *)flags, strflag);
     g_strfreev(flags);
     return ret;
 }
