@@ -60,25 +60,25 @@ gchar *find_program(gchar *program_name)
 		                   "/usr/bin", "/usr/sbin",
 		                   "/bin", "/sbin",
 		                   NULL };
-    
+
     /* we don't need to call stat() every time: cache the results */
     if (!cache) {
     	cache = g_hash_table_new(g_str_hash, g_str_equal);
     } else if ((temp = g_hash_table_lookup(cache, program_name))) {
     	return g_strdup(temp);
     }
-    
+
     for (i = 0; path[i]; i++) {
     	temp = g_build_filename(path[i], program_name, NULL);
-    	
+
     	if (g_file_test(temp, G_FILE_TEST_IS_EXECUTABLE)) {
     		g_hash_table_insert(cache, program_name, g_strdup(temp));
 		return temp;
     	}
-    	
+
     	g_free(temp);
     }
-    
+
     /* our search has failed; use GLib's search (which uses $PATH env var) */
     if ((temp = g_find_program_in_path(program_name))) {
     	g_hash_table_insert(cache, program_name, g_strdup(temp));
@@ -97,7 +97,7 @@ gchar *seconds_to_string(unsigned int seconds)
     minutes %= 60;
     days = hours / 24;
     hours %= 24;
-    
+
     gchar *wminutes;
     gchar *whours;
     gchar *wdays;
@@ -487,11 +487,11 @@ void open_url(gchar * url)
     };
     gint i = 0;
     gchar *browser = (gchar *)g_getenv("BROWSER");
-    
+
     if (!browser || *browser == '\0') {
     	browser = (gchar *)browsers[i++];
     }
-    
+
     do {
 	gchar *cmdline = g_strdup_printf("%s '%s'", browser, url);
 
@@ -501,7 +501,7 @@ void open_url(gchar * url)
 	}
 
 	g_free(cmdline);
-    	
+
     	browser = (gchar *)browsers[i++];
     } while (browser);
 
@@ -522,11 +522,11 @@ gchar *strreplacechr(gchar * string, gchar * replace, gchar new_char)
 gchar *strreplace(gchar *string, gchar *replace, gchar *replacement)
 {
     gchar **tmp, *ret;
-    
+
     tmp = g_strsplit(string, replace, 0);
     ret = g_strjoinv(replacement, tmp);
     g_strfreev(tmp);
-    
+
     return ret;
 }
 
@@ -544,12 +544,12 @@ static void module_register_methods(ShellModule * module)
     if (g_module_symbol
 	(module->dll, "hi_exported_methods", (gpointer) & get_methods)) {
 	ShellModuleMethod *methods;
-	
+
 	for (methods = get_methods(); methods->name; methods++) {
 	    ShellModuleMethod method = *methods;
 	    gchar *name = g_path_get_basename(g_module_name(module->dll));
 	    gchar *simple_name = strreplace(name, "lib", "");
-	    
+
 	    strend(simple_name, '.');
 
 	    method_name = g_strdup_printf("%s::%s", simple_name, method.name);
@@ -595,34 +595,34 @@ static gboolean remove_module_methods(gpointer key, gpointer value, gpointer dat
 static void module_unload(ShellModule * module)
 {
     GSList *entry;
-    
+
     if (module->dll) {
         gchar *name;
-        
+
         if (module->deinit) {
         	DEBUG("cleaning up module \"%s\"", module->name);
 		module->deinit();
 	} else {
 		DEBUG("module \"%s\" does not need cleanup", module->name);
 	}
-        
+
         name = g_path_get_basename(g_module_name(module->dll));
         g_hash_table_foreach_remove(__module_methods, remove_module_methods, name);
-        
+
     	g_module_close(module->dll);
     	g_free(name);
     }
-    
+
     g_free(module->name);
     g_object_unref(module->icon);
-    
+
     for (entry = module->entries; entry; entry = entry->next) {
 	ShellModuleEntry *e = (ShellModuleEntry *)entry->data;
-	
+
 	g_source_remove_by_user_data(e);
     	g_free(e);
     }
-    
+
     g_slist_free(module->entries);
     g_free(module);
 }
@@ -634,13 +634,13 @@ void module_unload_all(void)
     GSList *module, *merge_id;
 
     shell = shell_get_main_shell();
-    
+
     sync_manager_clear_entries();
     shell_clear_timeouts(shell);
     shell_clear_tree_models(shell);
     shell_clear_field_updates();
     shell_set_title(shell, NULL);
-    
+
     for (module = shell->tree->modules; module; module = module->next) {
     	module_unload((ShellModule *)module->data);
     }
@@ -651,7 +651,7 @@ void module_unload_all(void)
     }
     g_slist_free(shell->tree->modules);
     g_slist_free(shell->merge_ids);
-    
+
     shell->merge_ids = NULL;
     shell->tree->modules = NULL;
     shell->selected = NULL;
@@ -718,7 +718,7 @@ static ShellModule *module_load(gchar * filename)
    	 	        (gpointer) & (module->deinit));
         g_module_symbol(module->dll, "hi_module_get_summary",
    	 	        (gpointer) & (module->summaryfunc));
-   	 	        
+
 	entries = get_module_entries();
 	while (entries[i].name) {
 	    ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
@@ -1138,7 +1138,7 @@ gchar *module_entry_get_field(ShellModuleEntry * module_entry, gchar * field)
    if (module_entry->fieldfunc) {
    	return module_entry->fieldfunc(field);
    }
-   
+
    return NULL;
 }
 
@@ -1244,14 +1244,14 @@ h_sysfs_read_float(gchar *endpoint, gchar *entry)
 {
 	gchar *tmp, *buffer;
 	gfloat return_value = 0.0f;
-	
+
 	tmp = g_build_filename(endpoint, entry, NULL);
 	if (g_file_get_contents(tmp, &buffer, NULL, NULL))
 		return_value = atof(buffer);
-	
+
 	g_free(tmp);
 	g_free(buffer);
-	
+
 	return return_value;
 }
 
@@ -1260,14 +1260,14 @@ h_sysfs_read_int(gchar *endpoint, gchar *entry)
 {
 	gchar *tmp, *buffer;
 	gint return_value = 0;
-	
+
 	tmp = g_build_filename(endpoint, entry, NULL);
 	if (g_file_get_contents(tmp, &buffer, NULL, NULL))
 		return_value = atoi(buffer);
-	
+
 	g_free(tmp);
 	g_free(buffer);
-	
+
 	return return_value;
 }
 
@@ -1275,18 +1275,18 @@ gchar *
 h_sysfs_read_string(gchar *endpoint, gchar *entry)
 {
 	gchar *tmp, *return_value;
-	
+
 	tmp = g_build_filename(endpoint, entry, NULL);
 	if (!g_file_get_contents(tmp, &return_value, NULL, NULL)) {
 		g_free(return_value);
-		
+
 		return_value = NULL;
 	} else {
 		return_value = g_strstrip(return_value);
 	}
-	
+
 	g_free(tmp);
-	
+
 	return return_value;
 }
 
@@ -1322,7 +1322,7 @@ moreinfo_add_with_prefix(gchar *prefix, gchar *key, gchar *value)
 		DEBUG("moreinfo not initialized");
 		return;
 	}
-	
+
 	if (prefix) {
 		gchar *hashkey = g_strconcat(prefix, ":", key, NULL);
 		g_hash_table_insert(_moreinfo, hashkey, value);
@@ -1351,7 +1351,7 @@ moreinfo_del_with_prefix(gchar *prefix)
 		DEBUG("moreinfo not initialized");
 		return;
 	}
-	
+
 	g_hash_table_foreach_remove(_moreinfo, _moreinfo_del_cb, prefix);
 }
 
@@ -1372,7 +1372,7 @@ moreinfo_lookup_with_prefix(gchar *prefix, gchar *key)
 		DEBUG("moreinfo not initialized");
 		return 0;
 	}
-	
+
 	if (prefix) {
 		gchar *lookup_key = g_strconcat(prefix, ":", key, NULL);
 		gchar *result = g_hash_table_lookup(_moreinfo, lookup_key);
@@ -1388,3 +1388,17 @@ moreinfo_lookup(gchar *key)
 {
 	return moreinfo_lookup_with_prefix(NULL, key);
 }
+
+#if !GLIB_CHECK_VERSION(2,44,0)
+gboolean g_strv_contains(const gchar * const * strv, const gchar *str) {
+    /* g_strv_contains() requires glib>2.44
+     * fallback for older versions */
+    gint i = 0;
+    while(strv[i] != NULL) {
+        if (g_strcmp0(strv[i], str) == 0)
+            return 1;
+        i++;
+    }
+    return 0;
+}
+#endif
