@@ -23,6 +23,9 @@ Required:
 Optional (for synchronization/remote):
 - Libsoup 2.24 (or newer)
 
+If having trouble building with libsoup, disable it with:
+	cmake -DHARDINFO_NOSYNC=1
+
 BUILDING
 --------
 
