@@ -113,7 +113,7 @@ gchar *seconds_to_string(unsigned int seconds)
     return g_strdup_printf(wdays, whours, wminutes);
 }
 
-inline gchar *size_human_readable(gfloat size)
+gchar *size_human_readable(gfloat size)
 {
     if (size < KiB)
 	return g_strdup_printf(_("%.1f B"), size);
@@ -129,7 +129,7 @@ inline gchar *size_human_readable(gfloat size)
     return g_strdup_printf(_("%.1f PiB"), size / PiB);
 }
 
-inline char *strend(gchar * str, gchar chr)
+char *strend(gchar * str, gchar chr)
 {
     if (!str)
 	return NULL;
@@ -141,7 +141,7 @@ inline char *strend(gchar * str, gchar chr)
     return str;
 }
 
-inline void remove_quotes(gchar * str)
+void remove_quotes(gchar * str)
 {
     if (!str)
 	return;
@@ -152,7 +152,7 @@ inline void remove_quotes(gchar * str)
     strend(str, '"');
 }
 
-inline void remove_linefeed(gchar * str)
+void remove_linefeed(gchar * str)
 {
     strend(str, '\n');
 }
