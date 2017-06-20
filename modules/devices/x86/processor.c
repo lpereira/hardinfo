@@ -369,7 +369,7 @@ static struct {
 	{ "tsc",	"Time Stamp Counter and RDTSC instruction"	},
 	{ "msr",	"Model Specific Registers"			},
 	{ "pae",	"Physical Address Extensions"			},
-	{ "mce",	"Machine Check Architeture"			},
+	{ "mce",	"Machine Check Architecture"			},
 	{ "cx8",	"CMPXCHG8 instruction"				},
 	{ "apic",	"Advanced Programmable Interrupt Controller"	},
 	{ "sep",	"Fast System Call (SYSENTER/SYSEXIT)"		},

@@ -67,7 +67,7 @@ int main(int argc, char **argv)
     if (!binreloc_init(FALSE))
 	g_error(_("Failed to find runtime data.\n\n"
 		"\342\200\242 Is HardInfo correctly installed?\n"
-		"\342\200\242 See if %s and %s exists and you have read permision."),
+		"\342\200\242 See if %s and %s exists and you have read permission."),
 		PREFIX, LIBPREFIX);
 
     /* list all module names */
