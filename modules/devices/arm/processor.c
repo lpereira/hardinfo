@@ -45,6 +45,7 @@ populate_cpu_flags_list_internal()
     cpu_flags = g_hash_table_new(g_str_hash, g_str_equal);
     afl = g_strsplit(arm_flag_list(), " ", 0);
     while(afl[i] != NULL) {
+        printf(":( %s\n", afl[i]); /* FIXME: may segfault if removed */
         fm = (char *)arm_flag_meaning(afl[i]);
         if (g_strcmp0(afl[i], "") != 0)
             g_hash_table_insert(cpu_flags, afl[i], (fm) ? fm : "");
@@ -257,10 +258,12 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 gchar *
 processor_get_detailed_info(Processor *processor)
 {
-    gchar *tmp_flags, *tmp_imp, *tmp_part, *ret;
+    gchar *tmp_flags, *tmp_imp, *tmp_part, *tmp_arch, *ret;
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
     tmp_imp = (char*)arm_implementer(processor->cpu_implementer);
-    tmp_part = (char *)arm_part(processor->cpu_implementer, processor->cpu_part);
+    tmp_part = (char*)arm_part(processor->cpu_implementer, processor->cpu_part);
+    tmp_arch = (char*)arm_arch_more(processor->cpu_architecture);
+
     ret = g_strdup_printf("[Processor]\n"
                            "Linux Name=%s\n"
                            "Decoded Name=%s\n"
@@ -295,12 +298,13 @@ processor_get_detailed_info(Processor *processor)
                    processor->cpukhz_cur,
                    processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
                    processor->cpu_part, (tmp_part) ? tmp_part : "",
-                   processor->cpu_architecture, arm_arch_more(processor->cpu_architecture),
+                   processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
                    processor->cpu_variant,
                    processor->cpu_revision,
                    tmp_flags,
                     "");
     g_free(tmp_flags);
+
     return ret;
 }
 
