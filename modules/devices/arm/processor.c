@@ -34,25 +34,6 @@ static const gchar *arm_mode_str[] = {
     "A32 on A64",
 };
 
-GHashTable *cpu_flags = NULL; /* FIXME: when is it freed? */
-
-static void
-populate_cpu_flags_list_internal()
-{
-    int i;
-    gchar **afl, *fm;
-
-    cpu_flags = g_hash_table_new(g_str_hash, g_str_equal);
-    afl = g_strsplit(arm_flag_list(), " ", 0);
-    while(afl[i] != NULL) {
-        printf(":( %s\n", afl[i]); /* FIXME: may segfault if removed */
-        fm = (char *)arm_flag_meaning(afl[i]);
-        if (g_strcmp0(afl[i], "") != 0)
-            g_hash_table_insert(cpu_flags, afl[i], (fm) ? fm : "");
-        i++;
-    }
-}
-
 static gint get_cpu_int(const gchar* file, gint cpuid) {
     gchar *tmp0 = NULL;
     gchar *tmp1 = NULL;
@@ -232,14 +213,11 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
     gchar *tmp = NULL;
     gint j = 0;
 
-    if (!cpu_flags)
-        populate_cpu_flags_list_internal();
-
     flags = g_strsplit(strflags, " ", 0);
     old = flags;
 
     while (flags[j]) {
-        gchar *meaning = g_hash_table_lookup(cpu_flags, flags[j]);
+        const gchar *meaning = arm_flag_meaning( flags[j] );
 
         if (meaning) {
             tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
