@@ -24,6 +24,8 @@
 /* table lookups */
 const char *arm_implementer(const char *code);
 const char *arm_part(const char *imp_code, const char *part_code);
+const char *arm_arch(const char *cpuinfo_arch_str);
+const char *arm_arch_more(const char *cpuinfo_arch_str);
 
 /* cpu_implementer, cpu_part, cpu_variant, cpu_revision, cpu_architecture from /proc/cpuinfo
  * model_name is returned as a fallback if not enough data is known */
