@@ -184,9 +184,10 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-#define UNKIFNULL(f) if (processor->f == NULL) processor->f = g_strdup("(Unknown)");
-#define EMPIFNULL(f) if (processor->f == NULL) processor->f = g_strdup("");
-        UNKIFNULL(model_name);
+#define STRIFNULL(f,cs) if (processor->f == NULL) processor->f = g_strdup(cs);
+#define UNKIFNULL(f) STRIFNULL(f, "(Unknown)")
+#define EMPIFNULL(f) STRIFNULL(f, "")
+        STRIFNULL(model_name, "ARM Processor");
         EMPIFNULL(flags);
         UNKIFNULL(cpu_implementer);
         UNKIFNULL(cpu_architecture);
@@ -198,6 +199,7 @@ processor_scan(void)
             processor->cpu_implementer, processor->cpu_part,
             processor->cpu_variant, processor->cpu_revision,
             processor->cpu_architecture, processor->model_name);
+        UNKIFNULL(decoded_name);
 
         /* freq */
         processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
@@ -278,7 +280,7 @@ processor_get_detailed_info(Processor *processor)
                        "[ARM]\n"
                        "Implementer=[%s] %s\n"
                        "Part=[%s] %s\n"
-                       "Architecture=%s\n"
+                       "Architecture=[%s] %s\n"
                        "Variant=%s\n"
                        "Revision=%s\n"
                        "[Capabilities]\n"
@@ -293,7 +295,7 @@ processor_get_detailed_info(Processor *processor)
                    processor->cpukhz_cur,
                    processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
                    processor->cpu_part, (tmp_part) ? tmp_part : "",
-                   processor->cpu_architecture,
+                   processor->cpu_architecture, arm_arch_more(processor->cpu_architecture),
                    processor->cpu_variant,
                    processor->cpu_revision,
                    tmp_flags,

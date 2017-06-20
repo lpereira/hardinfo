@@ -114,6 +114,16 @@ static struct {
            { 0, NULL},
 };
 
+static struct {
+    char *code; char *name; char *more;
+} tab_arm_arch[] = {
+    { "7",	"AArch32",	"AArch32 (ARMv7)" },
+    { "8",	"AArch64",	"AArch64 (ARMv8)" },
+    { "AArch32",	"AArch32",	"AArch32 (ARMv7)" },
+    { "AArch64",	"AArch64",	"AArch64 (ARMv8)" },
+    { NULL, NULL, NULL },
+};
+
 static char all_flags[1024] = "";
 
 #define APPEND_FLAG(f) strcat(all_flags, f); strcat(all_flags, " ");
@@ -173,9 +183,31 @@ const char *arm_part(const char *imp_code, const char *part_code) {
     return NULL;
 }
 
+const char *arm_arch(const char *cpuinfo_arch_str) {
+    int i = 0;
+    if (cpuinfo_arch_str)
+    while(tab_arm_arch[i].code) {
+        if (strcmp(tab_arm_arch[i].code, cpuinfo_arch_str) == 0)
+            return tab_arm_arch[i].name;
+        i++;
+    }
+    return cpuinfo_arch_str;
+}
+
+const char *arm_arch_more(const char *cpuinfo_arch_str) {
+    int i = 0;
+    if (cpuinfo_arch_str)
+    while(tab_arm_arch[i].code) {
+        if (strcmp(tab_arm_arch[i].code, cpuinfo_arch_str) == 0)
+            return tab_arm_arch[i].more;
+        i++;
+    }
+    return cpuinfo_arch_str;
+}
+
 char *arm_decoded_name(const char *imp, const char *part, const char *var, const char *rev, const char *arch, const char *model_name) {
     char *dnbuff;
-    char *imp_name = NULL, *part_desc = NULL;
+    char *imp_name = NULL, *part_desc = NULL, *arch_name = NULL;
     int r = 0, p = 0;
     dnbuff = malloc(256);
     if (dnbuff) {
@@ -188,8 +220,15 @@ char *arm_decoded_name(const char *imp, const char *part, const char *var, const
             p = strtol(rev, NULL, 0);
             imp_name = (char*) arm_implementer(imp);
             part_desc = (char*) arm_part(imp, part);
+            arch_name = (char *) arm_arch(arch);
             if (imp_name || part_desc) {
-                sprintf(dnbuff, "%s %s r%dp%d (arch:%s)",
+                if (arch_name != arch)
+                    sprintf(dnbuff, "%s %s r%dp%d (%s)",
+                        (imp_name) ? imp_name : imp,
+                        (part_desc) ? part_desc : part,
+                        r, p, arch_name);
+                else
+                    sprintf(dnbuff, "%s %s r%dp%d (arch:%s)",
                         (imp_name) ? imp_name : imp,
                         (part_desc) ? part_desc : part,
                         r, p, arch);
