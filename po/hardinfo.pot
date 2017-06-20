@@ -1319,7 +1319,7 @@ msgid ""
 "Failed to find runtime data.\n"
 "\n"
 "• Is HardInfo correctly installed?\n"
-"• See if %s and %s exists and you have read permision."
+"• See if %s and %s exists and you have read permission."
 msgstr ""
 
 #: hardinfo//hardinfo.c:81
