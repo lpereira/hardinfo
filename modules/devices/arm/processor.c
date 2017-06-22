@@ -34,17 +34,23 @@ static const gchar *arm_mode_str[] = {
     "A32 on A64",
 };
 
-static gint get_cpu_int(const gchar* file, gint cpuid) {
+static gchar* get_cpu_str(const gchar* file, gint cpuid) {
     gchar *tmp0 = NULL;
     gchar *tmp1 = NULL;
-    gint ret = 0;
-
     tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
     g_file_get_contents(tmp0, &tmp1, NULL, NULL);
-    if (tmp1)
-        ret = atol(tmp1);
     g_free(tmp0);
-    g_free(tmp1);
+    return tmp1;
+}
+
+static gint get_cpu_int(const char* item, int cpuid) {
+    gchar *fc = NULL;
+    int ret = 0;
+    fc = get_cpu_str(item, cpuid);
+    if (fc) {
+        ret = atol(fc);
+        g_free(fc);
+    }
     return ret;
 }
 
@@ -183,7 +189,18 @@ processor_scan(void)
             processor->cpu_architecture, processor->model_name);
         UNKIFNULL(decoded_name);
 
+        /* topo */
+        processor->package_id = get_cpu_str("topology/physical_package_id", processor->id);
+        processor->core_id = get_cpu_str("topology/core_id", processor->id);
+        UNKIFNULL(package_id);
+        UNKIFNULL(core_id);
+
         /* freq */
+        processor->scaling_driver = get_cpu_str("cpufreq/scaling_driver", processor->id);
+        processor->scaling_governor = get_cpu_str("cpufreq/scaling_governor", processor->id);
+        UNKIFNULL(scaling_driver);
+        UNKIFNULL(scaling_governor);
+        processor->transition_latency = get_cpu_int("cpufreq/cpuinfo_transition_latency", processor->id);
         processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
         processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
         processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
@@ -254,10 +271,17 @@ processor_get_detailed_info(Processor *processor)
                        "Big Endian"
 #endif
                        "\n"
+                       "[Topology]\n"
+                       "ID=%d\n"
+                       "Socket=%s\n"
+                       "Core=%s\n"
                        "[Frequency Scaling]\n"
                        "Minimum=%d kHz\n"
                        "Maximum=%d kHz\n"
                        "Current=%d kHz\n"
+                       "Transition Latency=%d ns\n"
+                       "Governor=%s\n"
+                       "Driver=%s\n"
                        "[ARM]\n"
                        "Implementer=[%s] %s\n"
                        "Part=[%s] %s\n"
@@ -271,9 +295,15 @@ processor_get_detailed_info(Processor *processor)
                    processor->decoded_name,
                    arm_mode_str[processor->mode],
                    processor->bogomips,
+                   processor->id,
+                   processor->package_id,
+                   processor->core_id,
                    processor->cpukhz_min,
                    processor->cpukhz_max,
                    processor->cpukhz_cur,
+                   processor->transition_latency,
+                   processor->scaling_governor,
+                   processor->scaling_driver,
                    processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
                    processor->cpu_part, (tmp_part) ? tmp_part : "",
                    processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
