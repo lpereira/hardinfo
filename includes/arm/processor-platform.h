@@ -25,9 +25,12 @@ struct _Processor {
     gchar *flags;
     gfloat bogomips;
 
+    gint id;
+    gchar *package_id, *core_id;
     gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
     gint cpukhz_max, cpukhz_min, cpukhz_cur; /* for arm/processor.c */
-    gint id;
+    gchar *scaling_driver, *scaling_governor;
+    gint transition_latency;
 
     gchar *cpu_implementer;
     gchar *cpu_architecture;
