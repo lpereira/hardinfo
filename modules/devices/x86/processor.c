@@ -226,18 +226,23 @@ int processor_has_flag(gchar * strflags, gchar * strflag)
     return ret;
 }
 
-static gint get_cpu_int(const gchar* file, gint cpuid) {
+static gchar* get_cpu_str(const gchar* file, gint cpuid) {
     gchar *tmp0 = NULL;
     gchar *tmp1 = NULL;
-    gint ret = 0;
-
     tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
     g_file_get_contents(tmp0, &tmp1, NULL, NULL);
-    if (tmp1)
-        ret = atol(tmp1);
-
     g_free(tmp0);
-    g_free(tmp1);
+    return tmp1;
+}
+
+static gint get_cpu_int(const char* item, int cpuid) {
+    gchar *fc = NULL;
+    int ret = 0;
+    fc = get_cpu_str(item, cpuid);
+    if (fc) {
+        ret = atol(fc);
+        g_free(fc);
+    }
     return ret;
 }
 
@@ -337,7 +342,22 @@ GSList *processor_scan(void)
             g_strchug(processor->pm);
         }
 
+#define STRIFNULL(f,cs) if (processor->f == NULL) processor->f = g_strdup(cs);
+#define UNKIFNULL(f) STRIFNULL(f, "(Unknown)")
+#define EMPIFNULL(f) STRIFNULL(f, "")
+
+        /* topo */
+        processor->package_id = get_cpu_str("topology/physical_package_id", processor->id);
+        processor->core_id = get_cpu_str("topology/core_id", processor->id);
+        UNKIFNULL(package_id);
+        UNKIFNULL(core_id);
+
         /* freq */
+        processor->scaling_driver = get_cpu_str("cpufreq/scaling_driver", processor->id);
+        processor->scaling_governor = get_cpu_str("cpufreq/scaling_governor", processor->id);
+        UNKIFNULL(scaling_driver);
+        UNKIFNULL(scaling_governor);
+        processor->transition_latency = get_cpu_int("cpufreq/cpuinfo_transition_latency", processor->id);
         processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
         processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
         processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
@@ -640,47 +660,60 @@ gchar *processor_get_detailed_info(Processor * processor)
     cache_info = __cache_get_info_as_string(processor);
 
     ret = g_strdup_printf(_("[Processor]\n"
-			  "Name=%s\n"
-			  "Family, model, stepping=%d, %d, %d (%s)\n"
-			  "Vendor=%s\n"
-			  "[Configuration]\n"
-			  "Cache Size=%dkb\n"
-			  "Frequency=%.2fMHz\n"
-			  "BogoMIPS=%.2f\n"
-			  "Byte Order=%s\n"
-			  "[Frequency Scaling]\n"
-			  "Minimum=%d kHz\n"
-			  "Maximum=%d kHz\n"
-			  "Current=%d kHz\n"
-			  "[Features]\n"
-			  "Has FPU=%s\n"
-			  "[Cache]\n"
-			  "%s\n"
-			  "[Power Management]\n"
-			  "%s"
-			  "[Bugs]\n"
-			  "%s"
-			  "[Capabilities]\n"
-			  "%s"),
-			  processor->model_name,
-			  processor->family,
-			  processor->model,
-			  processor->stepping,
-			  processor->strmodel,
-			  vendor_get_name(processor->vendor_id),
-			  processor->cache_size,
-			  processor->cpu_mhz, processor->bogomips,
+                       "Name=%s\n"
+                       "Family, model, stepping=%d, %d, %d (%s)\n"
+                       "Vendor=%s\n"
+                       "[Configuration]\n"
+                       "Cache Size=%dkb\n"
+                       "Frequency=%.2fMHz\n"
+                       "BogoMIPS=%.2f\n"
+                       "Byte Order=%s\n"
+                       "[Topology]\n"
+                       "ID=%d\n"
+                       "Socket=%s\n"
+                       "Core=%s\n"
+                       "[Frequency Scaling]\n"
+                       "Minimum=%d kHz\n"
+                       "Maximum=%d kHz\n"
+                       "Current=%d kHz\n"
+                       "Transition Latency=%d ns\n"
+                       "Governor=%s\n"
+                       "Driver=%s\n"
+                       "[Features]\n"
+                       "Has FPU=%s\n"
+                       "[Cache]\n"
+                       "%s\n"
+                       "[Power Management]\n"
+                       "%s"
+                       "[Bugs]\n"
+                       "%s"
+                       "[Capabilities]\n"
+                       "%s"),
+                   processor->model_name,
+                   processor->family,
+                   processor->model,
+                   processor->stepping,
+                   processor->strmodel,
+                   vendor_get_name(processor->vendor_id),
+                   processor->cache_size,
+                   processor->cpu_mhz, processor->bogomips,
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-			  "Little Endian",
+                       "Little Endian",
 #else
-			  "Big Endian",
+                       "Big Endian",
 #endif
-			  processor->cpukhz_min,
-			  processor->cpukhz_max,
-			  processor->cpukhz_cur,
-			  processor->has_fpu  ? processor->has_fpu  : "no",
-			  cache_info,
-			  tmp_pm, tmp_bugs, tmp_flags);
+                   processor->id,
+                   processor->package_id,
+                   processor->core_id,
+                   processor->cpukhz_min,
+                   processor->cpukhz_max,
+                   processor->cpukhz_cur,
+                   processor->transition_latency,
+                   processor->scaling_governor,
+                   processor->scaling_driver,
+                   processor->has_fpu  ? processor->has_fpu  : "no",
+                   cache_info,
+                   tmp_pm, tmp_bugs, tmp_flags);
     g_free(tmp_flags);
     g_free(tmp_bugs);
     g_free(tmp_pm);
