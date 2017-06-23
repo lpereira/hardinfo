@@ -39,16 +39,18 @@ struct _Processor {
     gint cache_size;
     gfloat bogomips;
 
+    gint id;
+    gchar *package_id, *core_id;
     gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
     gint cpukhz_max, cpukhz_min, cpukhz_cur; /* for x86/processor.c */
+    gchar *scaling_driver, *scaling_governor;
+    gint transition_latency;
 
     gchar *has_fpu;
     gchar *bug_fdiv, *bug_hlt, *bug_f00f, *bug_coma;
 
     gint model, family, stepping;
     gchar *strmodel;
-
-    gint id;
 
     GSList *cache;
 };
