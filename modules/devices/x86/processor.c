@@ -752,12 +752,43 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 
 gchar *processor_get_detailed_info(Processor * processor)
 {
-    gchar *tmp_flags, *tmp_bugs, *tmp_pm, *ret, *cache_info;
+    gchar *tmp_flags, *tmp_bugs, *tmp_pm, *tmp_cpufreq, *tmp_topology, *ret, *cache_info;
 
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
     tmp_bugs = processor_get_capabilities_from_flags(processor->bugs);
     tmp_pm = processor_get_capabilities_from_flags(processor->pm);
     cache_info = __cache_get_info_as_string(processor);
+
+    tmp_topology = g_strdup_printf(
+                    "[Topology]\n"
+                    "ID=%d\n"
+                    "Socket=%s\n"
+                    "Core=%s\n",
+                   processor->id,
+                   processor->package_id,
+                   processor->core_id);
+
+    if (processor->cpukhz_min || processor->cpukhz_max || processor->cpukhz_cur) {
+        tmp_cpufreq = g_strdup_printf(
+                    "[Frequency Scaling]\n"
+                    "Minimum=%d kHz\n"
+                    "Maximum=%d kHz\n"
+                    "Current=%d kHz\n"
+                    "Transition Latency=%d ns\n"
+                    "Governor=%s\n"
+                    "Driver=%s\n",
+                   processor->cpukhz_min,
+                   processor->cpukhz_max,
+                   processor->cpukhz_cur,
+                   processor->transition_latency,
+                   processor->scaling_governor,
+                   processor->scaling_driver);
+    } else {
+        tmp_cpufreq = g_strdup_printf(
+                    "[Frequency Scaling]\n"
+                    "Driver=%s\n",
+                   processor->scaling_driver);
+    }
 
     ret = g_strdup_printf(_("[Processor]\n"
                        "Name=%s\n"
@@ -768,17 +799,8 @@ gchar *processor_get_detailed_info(Processor * processor)
                        "Frequency=%.2fMHz\n"
                        "BogoMIPS=%.2f\n"
                        "Byte Order=%s\n"
-                       "[Topology]\n"
-                       "ID=%d\n"
-                       "Socket=%s\n"
-                       "Core=%s\n"
-                       "[Frequency Scaling]\n"
-                       "Minimum=%d kHz\n"
-                       "Maximum=%d kHz\n"
-                       "Current=%d kHz\n"
-                       "Transition Latency=%d ns\n"
-                       "Governor=%s\n"
-                       "Driver=%s\n"
+                       "%s" /* topology */
+                       "%s" /* frequency scaling */
                        "[Features]\n"
                        "Has FPU=%s\n"
                        "[Cache]\n"
@@ -802,15 +824,8 @@ gchar *processor_get_detailed_info(Processor * processor)
 #else
                        "Big Endian",
 #endif
-                   processor->id,
-                   processor->package_id,
-                   processor->core_id,
-                   processor->cpukhz_min,
-                   processor->cpukhz_max,
-                   processor->cpukhz_cur,
-                   processor->transition_latency,
-                   processor->scaling_governor,
-                   processor->scaling_driver,
+                   tmp_topology,
+                   tmp_cpufreq,
                    processor->has_fpu  ? processor->has_fpu  : "no",
                    cache_info,
                    tmp_pm, tmp_bugs, tmp_flags);
@@ -818,7 +833,8 @@ gchar *processor_get_detailed_info(Processor * processor)
     g_free(tmp_bugs);
     g_free(tmp_pm);
     g_free(cache_info);
-
+    g_free(tmp_cpufreq);
+    g_free(tmp_topology);
     return ret;
 }
 
