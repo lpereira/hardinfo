@@ -1396,11 +1396,13 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     g_key_file_free(key_file);
     g_free(key_data);
 
-    switch (shell->view_type) {
-    case SHELL_VIEW_DUAL:
-    case SHELL_VIEW_LOAD_GRAPH:
-    case SHELL_VIEW_PROGRESS_DUAL:
-        g_idle_add(select_first_item, NULL);
+    if (!reload) {
+        switch (shell->view_type) {
+        case SHELL_VIEW_DUAL:
+        case SHELL_VIEW_LOAD_GRAPH:
+        case SHELL_VIEW_PROGRESS_DUAL:
+            g_idle_add(select_first_item, NULL);
+        }
     }
 }
 
