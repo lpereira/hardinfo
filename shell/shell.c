@@ -1299,6 +1299,17 @@ void shell_clear_field_updates(void)
     }
 }
 
+static gboolean
+select_first_item(gpointer data)
+{
+    GtkTreeIter first;
+
+    if (gtk_tree_model_get_iter_first(shell->info->model, &first))
+        gtk_tree_selection_select_iter(shell->info->selection, &first);
+
+    return FALSE;
+}
+
 static void
 module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
@@ -1384,6 +1395,13 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     g_strfreev(groups);
     g_key_file_free(key_file);
     g_free(key_data);
+
+    switch (shell->view_type) {
+    case SHELL_VIEW_DUAL:
+    case SHELL_VIEW_LOAD_GRAPH:
+    case SHELL_VIEW_PROGRESS_DUAL:
+        g_idle_add(select_first_item, NULL);
+    }
 }
 
 static void info_selected_show_extra(gchar * data)
