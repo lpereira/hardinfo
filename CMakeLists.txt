@@ -59,6 +59,8 @@ if(NOT HARDINFO_NOSYNC)
 	pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
 endif()
 
+include(FindZLIB REQUIRED)
+
 include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/includes
@@ -66,6 +68,7 @@ include_directories(
 	${CMAKE_BINARY_DIR}
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
+	${ZLIB_INCLUDE_DIRS}
 )
 link_directories(
 	${GTK_LIBRARY_DIRS}
@@ -134,6 +137,7 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/nqueens.c
 	modules/benchmark/raytrace.c
 	modules/benchmark/sha1.c
+	modules/benchmark/zlib.c
 )
 
 set_source_files_properties(
@@ -173,6 +177,7 @@ target_link_libraries(hardinfo
 	${LIBSOUP_LIBRARIES}
 	hardinfo-shell
 	m
+	${ZLIB_LIBRARIES}
 )
 
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)

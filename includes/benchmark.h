@@ -10,6 +10,7 @@ enum {
     BENCHMARK_CRYPTOHASH,
     BENCHMARK_FIB,
     BENCHMARK_NQUEENS,
+    BENCHMARK_ZLIB,
     BENCHMARK_FFT,
     BENCHMARK_RAYTRACE,
     BENCHMARK_GUI,
@@ -24,6 +25,7 @@ void benchmark_fish(void);
 void benchmark_gui(void);
 void benchmark_nqueens(void);
 void benchmark_raytrace(void);
+void benchmark_zlib(void);
 
 gdouble benchmark_parallel_for(guint start, guint end,
                                gpointer callback, gpointer callback_data);
