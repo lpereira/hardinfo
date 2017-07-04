@@ -489,16 +489,18 @@ gchar *callback_pci()
 
 gchar *callback_sensors()
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-                           "ColumnTitle$TextValue=Type\n"
-                           "ColumnTitle$Value=Driver\n"
-                           "ColumnTitle$Extra1=Sensor\n"
-                           "ColumnTitle$Extra2=Value\n"
+    return g_strdup_printf("[Sensors]\n"
+                           "%s\n"
+                           "[$ShellParam$]\n"
+                           "ViewType=2\n"
+                           "LoadGraphSuffix=\n"
+                           "ColumnTitle$TextValue=Sensor\n"
+                           "ColumnTitle$Value=Value\n"
+                           "ColumnTitle$Extra1=Type\n"
                            "ShowColumnHeaders=true\n"
-			   "ReloadInterval=5000\n"
-			   "[Sensors]\n"
-                           "%s\n",
-                           sensors);
+			   "RescanInterval=5000\n"
+			   "%s",
+                           sensors, lginterval);
 }
 
 gchar *callback_printers()

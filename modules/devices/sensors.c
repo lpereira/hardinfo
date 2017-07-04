@@ -131,10 +131,15 @@ static void add_sensor(const char *type,
                        const char *driver,
                        double value,
                        const char *unit) {
-    static int count = 0;
+    char key[64];
 
-    sensors = h_strdup_cprintf("%s#%d=%s|%s|%.2f%s\n",
-        sensors, type, count++, driver, sensor, value, unit);
+    sensors = h_strdup_cprintf("%s/%s=%.2f%s|%s\n", sensors,
+        driver, sensor, value, unit, type);
+
+    snprintf(key, sizeof(key), "%s/%s", driver, sensor);
+    moreinfo_add_with_prefix("DEV", key, g_strdup_printf("%.2f%s", value, unit));
+
+    lginterval = h_strdup_cprintf("UpdateInterval$%s=1000\n", lginterval, key);
 }
 
 static gchar *get_sensor_label(gchar *sensor) {
@@ -348,7 +353,7 @@ static void read_sensors_sys_thermal(void) {
 
                     add_sensor("Temperature",
                                entry,
-                               "thermal_zone",
+                               "thermal",
                                temperature / 1000.0,
                                "\302\260C");
 
@@ -423,15 +428,16 @@ static void read_sensors_hddtemp(void) {
 
 void scan_sensors_do(void) {
     g_free(sensors);
-
     sensors = g_strdup("");
+
+    g_free(lginterval);
+    lginterval = g_strdup("");
 
     read_sensors_hwmon();
     read_sensors_acpi();
     read_sensors_sys_thermal();
     read_sensors_omnibook();
     read_sensors_hddtemp();
-
     /* FIXME: Add support for  ibm acpi and more sensors */
 }
 
