@@ -126,6 +126,17 @@ static void read_sensor_labels(gchar *driver) {
     fclose(conf);
 }
 
+static void add_sensor(const char *type,
+                       const char *sensor,
+                       const char *driver,
+                       double value,
+                       const char *unit) {
+    static int count = 0;
+
+    sensors = h_strdup_cprintf("%s#%d=%s|%s|%.2f%s\n",
+        sensors, type, count++, driver, sensor, value, unit);
+}
+
 static gchar *get_sensor_label(gchar *sensor) {
     gchar *ret;
 
@@ -186,17 +197,37 @@ struct HwmonSensor {
     const char *friendly_name;
     const char *path_format;
     const char *key_format;
-    const char *value_format;
+    const char *unit;
     const float adjust_ratio;
     const int begin_at;
 };
 
 static const struct HwmonSensor hwmon_sensors[] = {
-    {"Cooling Fans", "%s/fan%d_input", "fan%d", "%s (%s)=%.0fRPM\n", 1.0, 1},
-    {"Temperature", "%s/temp%d_input", "temp%d", "%s (%s)=%.2f\302\260C\n",
-     1000.0, 1},
-    {"Voltage Values", "%s/in%d_input", "in%d", "%s (%s)=%.3fV\n", 1000.0, 0},
-    {NULL, NULL, NULL, NULL, 0.0, 0},
+    {
+        "Fan",
+        "%s/fan%d_input",
+        "fan%d",
+        "RPM",
+        1.0,
+        1
+    },
+    {
+        "Temperature",
+        "%s/temp%d_input",
+        "temp%d",
+        "\302\260C",
+        1000.0,
+        1
+    },
+    {
+        "Voltage",
+        "%s/in%d_input",
+        "in%d",
+        "V",
+        1000.0,
+        0
+    },
+    { }
 };
 
 static const char *hwmon_prefix[] = {"device", "", NULL};
@@ -220,7 +251,6 @@ static void read_sensors_hwmon(void) {
             }
 
             for (sensor = hwmon_sensors; sensor->friendly_name; sensor++) {
-                char *output = NULL;
                 DEBUG("current sensor type=%s", sensor->friendly_name);
 
                 for (count = sensor->begin_at;; count++) {
@@ -238,22 +268,20 @@ static void read_sensors_hwmon(void) {
                     mon = g_strdup_printf(sensor->key_format, count);
                     name = get_sensor_label(mon);
                     if (!g_str_equal(name, "ignore")) {
-                        output = h_strdup_cprintf(
-                            sensor->value_format, output, name, driver,
-                            adjust_sensor(mon,
-                                          atof(tmp) / sensor->adjust_ratio));
+                        float adjusted = adjust_sensor(mon,
+                            atof(tmp) / sensor->adjust_ratio);
+
+                        add_sensor(sensor->friendly_name,
+                                   name,
+                                   driver,
+                                   adjusted,
+                                   sensor->unit);
                     }
 
                     g_free(tmp);
                     g_free(mon);
                     g_free(name);
                     g_free(path_sensor);
-                }
-
-                if (output) {
-                    sensors = g_strconcat(sensors, "[", sensor->friendly_name,
-                                          "]\n", output, "\n", NULL);
-                    g_free(output);
                 }
             }
 
@@ -275,7 +303,6 @@ static void read_sensors_acpi(void) {
 
         if ((tz = g_dir_open(path_tz, 0, NULL))) {
             const gchar *entry;
-            gchar *temp = g_strdup("");
 
             while ((entry = g_dir_read_name(tz))) {
                 gchar *path =
@@ -287,16 +314,13 @@ static void read_sensors_acpi(void) {
 
                     sscanf(contents, "temperature: %d C", &temperature);
 
-                    temp = h_strdup_cprintf("\n%s=%d\302\260C\n", temp, entry,
-                                            temperature);
-
-                    g_free(contents);
+                    add_sensor("Temperature",
+                               entry,
+                               "ACPI Thermal Zone",
+                               temperature,
+                               "\302\260C");
                 }
             }
-
-            if (*temp != '\0')
-                sensors = h_strdup_cprintf("\n[ACPI Thermal Zone]\n%s", sensors,
-                                           temp);
 
             g_dir_close(tz);
         }
@@ -322,16 +346,15 @@ static void read_sensors_sys_thermal(void) {
 
                     sscanf(contents, "%d", &temperature);
 
-                    temp = h_strdup_cprintf("\n%s=%.2f\302\260C\n", temp, entry,
-                                            (1.0 * temperature / 1000));
+                    add_sensor("Temperature",
+                               entry,
+                               "thermal_zone",
+                               temperature / 1000.0,
+                               "\302\260C");
 
                     g_free(contents);
                 }
             }
-
-            if (*temp != '\0')
-                sensors = h_strdup_cprintf("\n[ACPI Thermal Zone (sysfs)]\n%s",
-                                           sensors, temp);
 
             g_dir_close(tz);
         }
@@ -347,9 +370,11 @@ static void read_sensors_omnibook(void) {
 
         sscanf(contents, "CPU temperature: %d C", &temperature);
 
-        sensors = h_strdup_cprintf("\n[Omnibook]\n"
-                                   "CPU temperature=%d\302\260C\n",
-                                   sensors, temperature);
+        add_sensor("Temperature",
+                   "CPU",
+                   "omnibook",
+                   temperature,
+                   "\302\260C\n");
 
         g_free(contents);
     }
@@ -357,49 +382,42 @@ static void read_sensors_omnibook(void) {
 
 static void read_sensors_hddtemp(void) {
     Socket *s;
-    static gchar *old = NULL;
     gchar buffer[1024];
     gint len = 0;
 
-    if ((s = sock_connect("127.0.0.1", 7634))) {
-        while (!len)
-            len = sock_read(s, buffer, sizeof(buffer));
-        sock_close(s);
+    if (!(s = sock_connect("127.0.0.1", 7634)))
+        return;
 
-        if (len > 2 && buffer[0] == '|' && buffer[1] == '/') {
-            gchar **disks;
-            int i;
+    while (!len)
+        len = sock_read(s, buffer, sizeof(buffer));
+    sock_close(s);
 
-            g_free(old);
+    if (len > 2 && buffer[0] == '|' && buffer[1] == '/') {
+        gchar **disks;
+        int i;
 
-            old = g_strdup("[Hard Disk Temperature]\n");
+        disks = g_strsplit(buffer, "\n", 0);
+        for (i = 0; disks[i]; i++) {
+            gchar **fields = g_strsplit(disks[i] + 1, "|", 5);
 
-            disks = g_strsplit(buffer, "\n", 0);
-            for (i = 0; disks[i]; i++) {
-                gchar **fields = g_strsplit(disks[i] + 1, "|", 5);
+            /*
+             * 0 -> /dev/hda
+             * 1 -> FUJITSU MHV2080AH
+             * 2 -> 41
+             * 3 -> C
+             */
+            const gchar *unit = strcmp(fields[3], "C")
+                ? "\302\260C" : "\302\260F";
+            add_sensor("Hard Drive",
+                       fields[1],
+                       "hddtemp",
+                       atoi(fields[2]),
+                       unit);
 
-                /*
-                 * 0 -> /dev/hda
-                 * 1 -> FUJITSU MHV2080AH
-                 * 2 -> 41
-                 * 3 -> C
-                 */
-                old =
-                    h_strdup_cprintf("\n%s (%s)=%s\302\260%s\n", old, fields[1],
-                                     fields[0], fields[2], fields[3]);
-
-                g_strfreev(fields);
-            }
-
-            g_strfreev(disks);
+            g_strfreev(fields);
         }
-    } else {
-        g_free(old);
-        old = NULL;
-    }
 
-    if (old) {
-        sensors = g_strconcat(sensors, "\n", old, NULL);
+        g_strfreev(disks);
     }
 }
 

@@ -490,7 +490,15 @@ gchar *callback_pci()
 gchar *callback_sensors()
 {
     return g_strdup_printf("[$ShellParam$]\n"
-			   "ReloadInterval=5000\n" "%s", sensors);
+                           "ColumnTitle$TextValue=Type\n"
+                           "ColumnTitle$Value=Driver\n"
+                           "ColumnTitle$Extra1=Sensor\n"
+                           "ColumnTitle$Extra2=Value\n"
+                           "ShowColumnHeaders=true\n"
+			   "ReloadInterval=5000\n"
+			   "[Sensors]\n"
+                           "%s\n",
+                           sensors);
 }
 
 gchar *callback_printers()
