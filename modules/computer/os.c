@@ -25,40 +25,40 @@ static gchar *
 get_libc_version(void)
 {
     FILE *libc;
-    gchar buf[256], *tmp, *p;
+    gchar buf[256], *tmp, *p, *ret = NULL;
     char *libc_paths[] = {
-		"/lib/ld-uClibc.so.0", "/lib64/ld-uClibc.so.0",
-		"/lib/libc.so.6", "/lib64/libc.so.6"
-	};
-	int i;
-	
-	for (i=0; i < 4; i++) {
-		if (g_file_test(libc_paths[i], G_FILE_TEST_EXISTS)) break;
-	}
-	switch (i) {
-		case 0: case 1: return g_strdup("uClibc Library");
-		case 2: case 3: break; // gnu libc, continue processing
-		default: goto err;
-	}
+        "/lib/ld-uClibc.so.0", "/lib64/ld-uClibc.so.0",
+        "/lib/libc.so.6", "/lib64/libc.so.6", "/lib/x86_64-linux-gnu/libc.so.6",
+    };
+    int i;
 
-    libc = popen(libc_paths[i], "r");
-    if (!libc) goto err;
+    for (i=0; i < 4; i++) {
+        if (g_file_test(libc_paths[i], G_FILE_TEST_EXISTS)) break;
+    }
+    switch (i) {
+        case 0: case 1:
+            ret = g_strdup("uClibc Library");
+            break;
+        case 2: case 3: case 4:
+            ret = g_strdup("GNU C Library (GLIBC)");
+            /* fall through and try to do better */
+        default:
+            memset(buf, 0, 256);
+            libc = popen("ldconfig -V", "r");
+            if (!libc) goto err;
+            (void)fgets(buf, 255, libc);
+            if (pclose(libc)) goto err;
+            tmp = strstr(buf, " ");
+            if (!tmp) goto err;
+            p = strstr(buf, "\n");
+            if (p) *p = 0;
+            g_free(ret);
+            ret = g_strdup_printf("%s", tmp + 1);
+            break;
+    }
 
-    (void)fgets(buf, 256, libc);
-    if (pclose(libc)) goto err;
-
-    tmp = strstr(buf, "version ");
-    if (!tmp) goto err;
-
-    p = strchr(tmp, ',');
-    if (p) *p = '\0';
-    else goto err;
-
-    return g_strdup_printf(_("GNU C Library version %s (%sstable)"),
-                           strchr(tmp, ' ') + 1,
-                           strstr(buf, " stable ") ? "" : _("un"));
-  err:
-    return g_strdup(_("Unknown"));
+err:
+    return (ret) ? ret : g_strdup(_("Unknown"));
 }
 
 #include <gdk/gdkx.h>
@@ -109,7 +109,7 @@ detect_desktop_environment(OperatingSystem * os)
     } else {
       unknown:
         os->desktop = NULL;
-        
+
 	if (!g_getenv("DISPLAY")) {
 	    os->desktop = g_strdup(_("Terminal"));
 	} else {
