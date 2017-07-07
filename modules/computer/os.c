@@ -31,11 +31,12 @@ get_libc_version(void)
         const char *test_cmd;
         const char *match_str;
         const char *lib_name;
+        int try_ver_str;
     } libs[] = {
-        { .test_cmd = "ldconfig -V", .match_str = "GLIBC", .lib_name = "GNU C Library" },
-        { .test_cmd = "ldconfig -v", .match_str = "uClibc", .lib_name = "uClibc or uClibc-ng" },
-        { .test_cmd = "diet", .match_str = "diet version", .lib_name = "diet libc" },
-        { NULL, NULL, NULL },
+        { .test_cmd = "ldconfig -V", .match_str = "GLIBC", .lib_name = "GNU C Library", 1 },
+        { .test_cmd = "ldconfig -v", .match_str = "uClibc", .lib_name = "uClibc or uClibc-ng", 0 },
+        { .test_cmd = "diet 2>&1", .match_str = "diet version", .lib_name = "diet libc", 1 },
+        { NULL, NULL, NULL, 0 },
     };
     int i = 0;
     while (libs[i].test_cmd != NULL) {
@@ -49,26 +50,22 @@ get_libc_version(void)
             p = strstr(buf, "\n"); if (p) *p = 0;
 
             if ( strstr(buf, libs[i].match_str) ) {
-                ver_str = strstr(buf, " "); /* skip the first word, likely "ldconfig" */
-                if (ver_str) ver_str++;
+                if (libs[i].try_ver_str) {
+                    ver_str = strstr(buf, " "); /* skip the first word, likely "ldconfig" or name of utility */
+                    if (ver_str) ver_str++;
+                }
                 break;
             }
         }
         i++;
     }
 
-    switch (i) {
-        case 0: /* GLIBC */
-        case 3: /* diet libc */
-            if (ver_str)
-                ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str );
-            else
-                ret = g_strdup(libs[i].lib_name);
-            break;
-        case 1: /* uClibc */
+    if (libs[i].try_ver_str && ver_str)
+        ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str );
+    else {
+        if (libs[i].lib_name != NULL)
             ret = g_strdup(libs[i].lib_name);
-            break;
-        default:
+        else
             ret = g_strdup(_("Unknown"));
     }
 
