@@ -24,41 +24,52 @@
 static gchar *
 get_libc_version(void)
 {
-    FILE *libc;
-    gchar buf[256], *tmp, *p;
-    char *libc_paths[] = {
-		"/lib/ld-uClibc.so.0", "/lib64/ld-uClibc.so.0",
-		"/lib/libc.so.6", "/lib64/libc.so.6"
-	};
-	int i;
-	
-	for (i=0; i < 4; i++) {
-		if (g_file_test(libc_paths[i], G_FILE_TEST_EXISTS)) break;
-	}
-	switch (i) {
-		case 0: case 1: return g_strdup("uClibc Library");
-		case 2: case 3: break; // gnu libc, continue processing
-		default: goto err;
-	}
+    FILE *testp;
+    gchar buf[256], *p, *ver_str = NULL, *ret = NULL;
 
-    libc = popen(libc_paths[i], "r");
-    if (!libc) goto err;
+    struct {
+        const char *test_cmd;
+        const char *match_str;
+        const char *lib_name;
+        int try_ver_str;
+    } libs[] = {
+        { "ldconfig -V", "GLIBC", "GNU C Library", 1 },
+        { "ldconfig -v", "uClibc", "uClibc or uClibc-ng", 0 },
+        { "diet 2>&1", "diet version", "diet libc", 1 },
+        { NULL, NULL, NULL, 0 },
+    };
+    int i = 0;
+    while (libs[i].test_cmd != NULL) {
+        memset(buf, 0, 256);
+        testp = popen(libs[i].test_cmd, "r");
+        if (testp) {
+            (void)fgets(buf, 255, testp);
+            pclose(testp);
 
-    (void)fgets(buf, 256, libc);
-    if (pclose(libc)) goto err;
+            /* limit to first line */
+            p = strstr(buf, "\n"); if (p) *p = 0;
 
-    tmp = strstr(buf, "version ");
-    if (!tmp) goto err;
+            if ( strstr(buf, libs[i].match_str) ) {
+                if (libs[i].try_ver_str) {
+                    ver_str = strstr(buf, " "); /* skip the first word, likely "ldconfig" or name of utility */
+                    if (ver_str) ver_str++;
+                }
+                break;
+            }
+        }
+        i++;
+    }
 
-    p = strchr(tmp, ',');
-    if (p) *p = '\0';
-    else goto err;
+    if (libs[i].try_ver_str && ver_str)
+        ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str );
+    else {
+        if (libs[i].lib_name != NULL)
+            ret = g_strdup(libs[i].lib_name);
+        else
+            ret = g_strdup(_("Unknown"));
+    }
 
-    return g_strdup_printf(_("GNU C Library version %s (%sstable)"),
-                           strchr(tmp, ' ') + 1,
-                           strstr(buf, " stable ") ? "" : _("un"));
-  err:
-    return g_strdup(_("Unknown"));
+    return ret;
 }
 
 #include <gdk/gdkx.h>
@@ -109,7 +120,7 @@ detect_desktop_environment(OperatingSystem * os)
     } else {
       unknown:
         os->desktop = NULL;
-        
+
 	if (!g_getenv("DISPLAY")) {
 	    os->desktop = g_strdup(_("Terminal"));
 	} else {
