@@ -24,41 +24,53 @@
 static gchar *
 get_libc_version(void)
 {
-    FILE *libc;
-    gchar buf[256], *tmp, *p, *ret = NULL;
-    char *libc_paths[] = {
-        "/lib/ld-uClibc.so.0", "/lib64/ld-uClibc.so.0",
-        "/lib/libc.so.6", "/lib64/libc.so.6", "/lib/x86_64-linux-gnu/libc.so.6",
+    FILE *testp;
+    gchar buf[256], *p, *ver_str = NULL, *ret = NULL;
+
+    struct {
+        const char *test_cmd;
+        const char *match_str;
+        const char *lib_name;
+    } libs[] = {
+        { .test_cmd = "ldconfig -V", .match_str = "GLIBC", .lib_name = "GNU C Library" },
+        { .test_cmd = "ldconfig -v", .match_str = "uClibc", .lib_name = "uClibc or uClibc-ng" },
+        { NULL, NULL, NULL },
     };
-    int i;
+    int i = 0;
+    while (libs[i].test_cmd != NULL) {
+        memset(buf, 0, 256);
+        testp = popen(libs[i].test_cmd, "r");
+        if (testp) {
+            (void)fgets(buf, 255, testp);
+            pclose(testp);
 
-    for (i=0; i < 4; i++) {
-        if (g_file_test(libc_paths[i], G_FILE_TEST_EXISTS)) break;
+            /* limit to first line */
+            p = strstr(buf, "\n"); if (p) *p = 0;
+
+            if ( strstr(buf, libs[i].match_str) ) {
+                ver_str = strstr(buf, " "); /* skip the first word, likely "ldconfig" */
+                if (ver_str) ver_str++;
+                break;
+            }
+        }
+        i++;
     }
+
     switch (i) {
-        case 0: case 1:
-            ret = g_strdup("uClibc Library");
+        case 0: /* GLIBC */
+            if (ver_str)
+                ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str );
+            else
+                ret = g_strdup(libs[i].lib_name);
             break;
-        case 2: case 3: case 4:
-            ret = g_strdup("GNU C Library (GLIBC)");
-            /* fall through and try to do better */
+        case 1: /* uClibc */
+            ret = g_strdup(libs[i].lib_name);
+            break;
         default:
-            memset(buf, 0, 256);
-            libc = popen("ldconfig -V", "r");
-            if (!libc) goto err;
-            (void)fgets(buf, 255, libc);
-            if (pclose(libc)) goto err;
-            tmp = strstr(buf, " ");
-            if (!tmp) goto err;
-            p = strstr(buf, "\n");
-            if (p) *p = 0;
-            g_free(ret);
-            ret = g_strdup_printf("%s", tmp + 1);
-            break;
+            ret = g_strdup(_("Unknown"));
     }
 
-err:
-    return (ret) ? ret : g_strdup(_("Unknown"));
+    return ret;
 }
 
 #include <gdk/gdkx.h>
