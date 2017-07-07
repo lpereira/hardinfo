@@ -34,6 +34,7 @@ get_libc_version(void)
     } libs[] = {
         { .test_cmd = "ldconfig -V", .match_str = "GLIBC", .lib_name = "GNU C Library" },
         { .test_cmd = "ldconfig -v", .match_str = "uClibc", .lib_name = "uClibc or uClibc-ng" },
+        { .test_cmd = "diet", .match_str = "diet version", .lib_name = "diet libc" },
         { NULL, NULL, NULL },
     };
     int i = 0;
@@ -58,6 +59,7 @@ get_libc_version(void)
 
     switch (i) {
         case 0: /* GLIBC */
+        case 3: /* diet libc */
             if (ver_str)
                 ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str );
             else
