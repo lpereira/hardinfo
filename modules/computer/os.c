@@ -33,9 +33,9 @@ get_libc_version(void)
         const char *lib_name;
         int try_ver_str;
     } libs[] = {
-        { .test_cmd = "ldconfig -V", .match_str = "GLIBC", .lib_name = "GNU C Library", 1 },
-        { .test_cmd = "ldconfig -v", .match_str = "uClibc", .lib_name = "uClibc or uClibc-ng", 0 },
-        { .test_cmd = "diet 2>&1", .match_str = "diet version", .lib_name = "diet libc", 1 },
+        { "ldconfig -V", "GLIBC", "GNU C Library", 1 },
+        { "ldconfig -v", "uClibc", "uClibc or uClibc-ng", 0 },
+        { "diet 2>&1", "diet version", "diet libc", 1 },
         { NULL, NULL, NULL, 0 },
     };
     int i = 0;
