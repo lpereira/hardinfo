@@ -793,7 +793,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                    _("Driver"), processor->scaling_driver);
     }
 
-    ret = g_strdup_printf(_("[%s]\n"
+    ret = g_strdup_printf("[%s]\n"
                        "Name=%s\n"
                        "Family, model, stepping=%d, %d, %d (%s)\n"
                        "Vendor=%s\n"
@@ -813,7 +813,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                        "[%s]\n" /* bugs */
                        "%s"
                        "[%s]\n" /* flags */
-                       "%s"),
+                       "%s",
                    _("Processor"),
                    processor->model_name,
                    processor->family,
