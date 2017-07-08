@@ -297,9 +297,9 @@ processor_get_detailed_info(Processor *processor)
                        "Linux Name=%s\n"
                        "Decoded Name=%s\n"
                        "Mode=%s\n"
-                       "%s=%.2f %s\n"
-                       "%s=%.2f\n"
-                       "%s=%s\n"
+                       "%s=%.2f %s\n"  /* frequency */
+                       "%s=%.2f\n"     /* bogomips */
+                       "%s=%s\n"       /* byte order */
                        "%s" /* topology */
                        "%s" /* frequency scaling */
                        "[ARM]\n"
@@ -310,7 +310,7 @@ processor_get_detailed_info(Processor *processor)
                        "Revision=%s\n"
                        "[%s]\n" /* flags */
                        "%s"
-                       "%s", /* empty */
+                       "%s",    /* empty */
                    _("Processor"),
                    processor->model_name,
                    processor->decoded_name,
