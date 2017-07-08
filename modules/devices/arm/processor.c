@@ -173,9 +173,9 @@ processor_scan(void)
 
         /* strings can't be null or segfault later */
 #define STRIFNULL(f,cs) if (processor->f == NULL) processor->f = g_strdup(cs);
-#define UNKIFNULL(f) STRIFNULL(f, "(Unknown)")
+#define UNKIFNULL(f) STRIFNULL(f, _("(Unknown)") )
 #define EMPIFNULL(f) STRIFNULL(f, "")
-        STRIFNULL(model_name, "ARM Processor");
+        STRIFNULL(model_name, _("ARM Processor") );
         EMPIFNULL(flags);
         UNKIFNULL(cpu_implementer);
         UNKIFNULL(cpu_architecture);
@@ -260,34 +260,37 @@ processor_get_detailed_info(Processor *processor)
     tmp_arch = (char*)arm_arch_more(processor->cpu_architecture);
 
     tmp_topology = g_strdup_printf(
-                    "[Topology]\n"
-                    "ID=%d\n"
-                    "Socket=%s\n"
-                    "Core=%s\n",
-                   processor->id,
-                   processor->package_id,
-                   processor->core_id);
+                    "[%s]\n"
+                    "%s=%d\n"
+                    "%s=%s\n"
+                    "%s=%s\n",
+                   _("Topology"),
+                   _("ID"), processor->id,
+                   _("Socket"), processor->package_id,
+                   _("Core"), processor->core_id);
 
     if (processor->cpukhz_min || processor->cpukhz_max || processor->cpukhz_cur) {
         tmp_cpufreq = g_strdup_printf(
-                    "[Frequency Scaling]\n"
-                    "Minimum=%d kHz\n"
-                    "Maximum=%d kHz\n"
-                    "Current=%d kHz\n"
-                    "Transition Latency=%d ns\n"
-                    "Governor=%s\n"
-                    "Driver=%s\n",
-                   processor->cpukhz_min,
-                   processor->cpukhz_max,
-                   processor->cpukhz_cur,
-                   processor->transition_latency,
-                   processor->scaling_governor,
-                   processor->scaling_driver);
+                    "[%s]\n"
+                    "%s=%d %s\n"
+                    "%s=%d %s\n"
+                    "%s=%d %s\n"
+                    "%s=%d %s\n"
+                    "%s=%s\n"
+                    "%s=%s\n",
+                   _("Frequency Scaling"),
+                   _("Minimum"), processor->cpukhz_min, _("kHz"),
+                   _("Maximum"), processor->cpukhz_max, _("kHz"),
+                   _("Current"), processor->cpukhz_cur, _("kHz"),
+                   _("Transition Latency"), processor->transition_latency, _("ns"),
+                   _("Governor"), processor->scaling_governor,
+                   _("Driver"), processor->scaling_driver);
     } else {
         tmp_cpufreq = g_strdup_printf(
-                    "[Frequency Scaling]\n"
-                    "Driver=%s\n",
-                   processor->scaling_driver);
+                    "[%s]\n"
+                    "%s=%s\n",
+                   _("Frequency Scaling"),
+                   _("Driver"), processor->scaling_driver);
     }
 
     ret = g_strdup_printf("[Processor]\n"
