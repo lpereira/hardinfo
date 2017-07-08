@@ -1,2 +1,2 @@
 update .pot : make pot in build/
-update .po files after .pot update : ?
+update .po files after .pot update : msgmerge XX.po hardinfo.pot > XX_.po && mv XX_.po XX.po
