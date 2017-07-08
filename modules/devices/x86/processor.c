@@ -793,27 +793,28 @@ gchar *processor_get_detailed_info(Processor * processor)
                    _("Driver"), processor->scaling_driver);
     }
 
-    ret = g_strdup_printf(_("[Processor]\n"
+    ret = g_strdup_printf(_("[%s]\n"
                        "Name=%s\n"
                        "Family, model, stepping=%d, %d, %d (%s)\n"
                        "Vendor=%s\n"
                        "[Configuration]\n"
                        "Cache Size=%dkb\n"
-                       "Frequency=%.2fMHz\n"
-                       "BogoMIPS=%.2f\n"
-                       "Byte Order=%s\n"
+                       "%s=%.2f %s\n"
+                       "%s=%.2f\n"
+                       "%s=%s\n"
                        "%s" /* topology */
                        "%s" /* frequency scaling */
                        "[Features]\n"
                        "Has FPU=%s\n"
                        "[Cache]\n"
                        "%s\n"
-                       "[Power Management]\n"
+                       "[%s]\n" /* pm */
                        "%s"
-                       "[Bugs]\n"
+                       "[%s]\n" /* bugs */
                        "%s"
-                       "[Capabilities]\n"
+                       "[%s]\n" /* flags */
                        "%s"),
+                   _("Processor"),
                    processor->model_name,
                    processor->family,
                    processor->model,
@@ -821,17 +822,21 @@ gchar *processor_get_detailed_info(Processor * processor)
                    processor->strmodel,
                    vendor_get_name(processor->vendor_id),
                    processor->cache_size,
-                   processor->cpu_mhz, processor->bogomips,
+                   _("Frequency"), processor->cpu_mhz, _("MHz"),
+                   _("BogoMips"), processor->bogomips,
+                   _("Byte Order"),
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                       "Little Endian",
+                   _("Little Endian"),
 #else
-                       "Big Endian",
+                   _("Big Endian"),
 #endif
                    tmp_topology,
                    tmp_cpufreq,
                    processor->has_fpu  ? processor->has_fpu  : "no",
                    cache_info,
-                   tmp_pm, tmp_bugs, tmp_flags);
+                   _("Power Management"), tmp_pm,
+                   _("Bug Workarounds"), tmp_bugs,
+                   _("Capabilities"), tmp_flags );
     g_free(tmp_flags);
     g_free(tmp_bugs);
     g_free(tmp_pm);

@@ -205,25 +205,26 @@ processor_get_detailed_info(Processor *processor)
                    _("Driver"), processor->scaling_driver);
     }
 
-    ret = g_strdup_printf("[Processor]\n"
-                           "Model=%s\n"
-                           "Revision=%s\n"
-                   "Frequency=%.2f MHz\n"
-                   "BogoMips=%.2f\n"
-                   "Byte Order="
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                       "Little Endian"
-#else
-                       "Big Endian"
-#endif
-                       "\n"
-                       "%s" /* topology */
-                       "%s" /* frequency scaling */
-                       "%s",/* empty */
+    ret = g_strdup_printf("[%s]\n"
+                   "Model=%s\n"
+                   "Revision=%s\n"
+                   "%s=%.2f %s\n"
+                   "%s=%.2f\n"
+                   "%s=%s\n"
+                   "%s" /* topology */
+                   "%s" /* frequency scaling */
+                   "%s",/* empty */
+                   _("Processor"),
                    processor->model_name,
                    processor->revision,
-                   processor->cpu_mhz,
-                   processor->bogomips,
+                   _("Frequency"), processor->cpu_mhz, _("MHz"),
+                   _("BogoMips"), processor->bogomips,
+                   _("Byte Order"),
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                   _("Little Endian"),
+#else
+                   _("Big Endian"),
+#endif
                    tmp_topology,
                    tmp_cpufreq,
                     "");

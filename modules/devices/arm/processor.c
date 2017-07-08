@@ -293,18 +293,13 @@ processor_get_detailed_info(Processor *processor)
                    _("Driver"), processor->scaling_driver);
     }
 
-    ret = g_strdup_printf("[Processor]\n"
-                           "Linux Name=%s\n"
-                           "Decoded Name=%s\n"
-                           "Mode=%s\n"
-                   "BogoMips=%.2f\n"
-                   "Endianesss="
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                       "Little Endian"
-#else
-                       "Big Endian"
-#endif
-                       "\n"
+    ret = g_strdup_printf("[%s]\n"
+                       "Linux Name=%s\n"
+                       "Decoded Name=%s\n"
+                       "Mode=%s\n"
+                       "%s=%.2f %s\n"
+                       "%s=%.2f\n"
+                       "%s=%s\n"
                        "%s" /* topology */
                        "%s" /* frequency scaling */
                        "[ARM]\n"
@@ -313,13 +308,21 @@ processor_get_detailed_info(Processor *processor)
                        "Architecture=[%s] %s\n"
                        "Variant=%s\n"
                        "Revision=%s\n"
-                       "[Capabilities]\n"
+                       "[%s]\n" /* flags */
                        "%s"
-                       "%s",
+                       "%s", /* empty */
+                   _("Processor"),
                    processor->model_name,
                    processor->decoded_name,
                    arm_mode_str[processor->mode],
-                   processor->bogomips,
+                   _("Frequency"), processor->cpu_mhz, _("MHz"),
+                   _("BogoMips"), processor->bogomips,
+                   _("Byte Order"),
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                   _("Little Endian"),
+#else
+                   _("Big Endian"),
+#endif
                    tmp_topology,
                    tmp_cpufreq,
                    processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
@@ -327,7 +330,7 @@ processor_get_detailed_info(Processor *processor)
                    processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
                    processor->cpu_variant,
                    processor->cpu_revision,
-                   tmp_flags,
+                   _("Capabilities"), tmp_flags,
                     "");
     g_free(tmp_flags);
     g_free(tmp_cpufreq);
