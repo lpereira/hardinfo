@@ -799,9 +799,9 @@ gchar *processor_get_detailed_info(Processor * processor)
                        "Vendor=%s\n"
                        "[Configuration]\n"
                        "Cache Size=%dkb\n"
-                       "%s=%.2f %s\n"
-                       "%s=%.2f\n"
-                       "%s=%s\n"
+                       "%s=%.2f %s\n" /* frequency */
+                       "%s=%.2f\n"    /* bogomips */
+                       "%s=%s\n"      /* byte order */
                        "%s" /* topology */
                        "%s" /* frequency scaling */
                        "[Features]\n"

@@ -208,9 +208,9 @@ processor_get_detailed_info(Processor *processor)
     ret = g_strdup_printf("[%s]\n"
                    "Model=%s\n"
                    "Revision=%s\n"
-                   "%s=%.2f %s\n"
-                   "%s=%.2f\n"
-                   "%s=%s\n"
+                   "%s=%.2f %s\n" /* frequency */
+                   "%s=%.2f\n"    /* bogomips */
+                   "%s=%s\n"      /* byte order */
                    "%s" /* topology */
                    "%s" /* frequency scaling */
                    "%s",/* empty */
