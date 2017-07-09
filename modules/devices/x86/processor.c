@@ -254,6 +254,10 @@ gchar *byte_order_str() {
 #endif
 }
 
+#ifndef PROC_CPUINFO
+#define PROC_CPUINFO "/proc/cpuinfo"
+#endif
+
 GSList *processor_scan(void)
 {
     GSList *procs = NULL, *l = NULL;
@@ -261,7 +265,7 @@ GSList *processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[512];
 
-    cpuinfo = fopen("/proc/cpuinfo", "r");
+    cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
         return NULL;
 

@@ -27,7 +27,9 @@ gchar *byte_order_str() {
 #endif
 }
 
+#ifndef PROC_CPUINFO
 #define PROC_CPUINFO "/proc/cpuinfo"
+#endif
 
 GSList *
 processors_scan(void)

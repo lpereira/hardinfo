@@ -4,6 +4,8 @@ cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
 option(HARDINFO_NOSYNC "Disable database sync via libsoup" 1)
+option(OVRARCH "Override HARDINFO_ARCH value" "")
+option(OVRCPUINFO "Specify a different file for /proc/cpuinfo" "")
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
 
@@ -45,6 +47,13 @@ elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sh{3,4}")
 	set(HARDINFO_ARCH "sh")
 else()
 	message(FATAL_ERROR "Unsupported architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+endif()
+
+if (OVRARCH)
+	set(HARDINFO_ARCH ${OVRARCH})
+endif()
+if (OVRCPUINFO)
+	add_definitions(-DPROC_CPUINFO=${OVRCPUINFO})
 endif()
 
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
