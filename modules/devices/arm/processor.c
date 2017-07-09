@@ -294,27 +294,27 @@ processor_get_detailed_info(Processor *processor)
     }
 
     ret = g_strdup_printf("[%s]\n"
-                       "Linux Name=%s\n"
-                       "Decoded Name=%s\n"
-                       "Mode=%s\n"
+                       "%s=%s\n"       /* linux name */
+                       "%s=%s\n"       /* decoded name */
+                       "%s=%s\n"       /* mode */
                        "%s=%.2f %s\n"  /* frequency */
                        "%s=%.2f\n"     /* bogomips */
                        "%s=%s\n"       /* byte order */
                        "%s" /* topology */
                        "%s" /* frequency scaling */
-                       "[ARM]\n"
-                       "Implementer=[%s] %s\n"
-                       "Part=[%s] %s\n"
-                       "Architecture=[%s] %s\n"
-                       "Variant=%s\n"
-                       "Revision=%s\n"
+                       "[%s]\n"    /* ARM */
+                       "%s=[%s] %s\n"  /* implementer */
+                       "%s=[%s] %s\n"  /* architecture */
+                       "%s=[%s] %s\n"  /* part */
+                       "%s=%s\n"       /* variant */
+                       "%s=%s\n"       /* revision */
                        "[%s]\n" /* flags */
                        "%s"
                        "%s",    /* empty */
                    _("Processor"),
-                   processor->model_name,
-                   processor->decoded_name,
-                   arm_mode_str[processor->mode],
+                   _("Linux Name"), processor->model_name,
+                   _("Decoded Name"), processor->decoded_name,
+                   _("Mode"), arm_mode_str[processor->mode],
                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                    _("BogoMips"), processor->bogomips,
                    _("Byte Order"),
@@ -325,11 +325,12 @@ processor_get_detailed_info(Processor *processor)
 #endif
                    tmp_topology,
                    tmp_cpufreq,
-                   processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
-                   processor->cpu_part, (tmp_part) ? tmp_part : "",
-                   processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
-                   processor->cpu_variant,
-                   processor->cpu_revision,
+                   _("ARM"),
+                   _("Implementer"), processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
+                   _("Architecture"), processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
+                   _("Part"), processor->cpu_part, (tmp_part) ? tmp_part : "",
+                   _("Variant"), processor->cpu_variant,
+                   _("Revision"), processor->cpu_revision,
                    _("Capabilities"), tmp_flags,
                     "");
     g_free(tmp_flags);

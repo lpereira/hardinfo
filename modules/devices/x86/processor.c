@@ -794,17 +794,17 @@ gchar *processor_get_detailed_info(Processor * processor)
     }
 
     ret = g_strdup_printf("[%s]\n"
-                       "Name=%s\n"
-                       "Family, model, stepping=%d, %d, %d (%s)\n"
-                       "Vendor=%s\n"
-                       "[Configuration]\n"
-                       "Cache Size=%dkb\n"
+                       "%s=%s\n"
+                       "%s=%d, %d, %d (%s)\n" /* family, model, stepping (decoded name) */
+                       "%s=%s\n"      /* vendor */
+                       "[%s]\n"       /* configuration */
+                       "%s=%d %s\n"   /* cache size (from cpuinfo) */
                        "%s=%.2f %s\n" /* frequency */
                        "%s=%.2f\n"    /* bogomips */
                        "%s=%s\n"      /* byte order */
-                       "%s" /* topology */
-                       "%s" /* frequency scaling */
-                       "[Cache]\n"
+                       "%s"     /* topology */
+                       "%s"     /* frequency scaling */
+                       "[%s]\n" /* cache */
                        "%s\n"
                        "[%s]\n" /* pm */
                        "%s"
@@ -813,13 +813,15 @@ gchar *processor_get_detailed_info(Processor * processor)
                        "[%s]\n" /* flags */
                        "%s",
                    _("Processor"),
-                   processor->model_name,
+                   _("Model Name"), processor->model_name,
+                   _("Family, model, stepping"),
                    processor->family,
                    processor->model,
                    processor->stepping,
                    processor->strmodel,
-                   vendor_get_name(processor->vendor_id),
-                   processor->cache_size,
+                   _("Vendor"), vendor_get_name(processor->vendor_id),
+                   _("Configuration"),
+                   _("Cache Size"), processor->cache_size, _("kb"),
                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                    _("BogoMips"), processor->bogomips,
                    _("Byte Order"),
@@ -830,7 +832,7 @@ gchar *processor_get_detailed_info(Processor * processor)
 #endif
                    tmp_topology,
                    tmp_cpufreq,
-                   cache_info,
+                   _("Cache"), cache_info,
                    _("Power Management"), tmp_pm,
                    _("Bug Workarounds"), tmp_bugs,
                    _("Capabilities"), tmp_flags );
