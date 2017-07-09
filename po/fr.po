@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-08 12:30-0500\n"
+"POT-Creation-Date: 2017-07-09 00:12-0500\n"
 "PO-Revision-Date: 2014-09-03\n"
 "Last-Translator: yolateng0 @olala22000\n"
 "Language-Team: LeFlood\n"
@@ -982,8 +982,8 @@ msgid "Unknown distribution"
 msgstr "Distribution inconnue"
 
 #: modules//devices.c:91 modules//devices/arm/processor.c:314
-#: modules//devices/ppc/processor.c:217 modules//devices/x86/processor.c:817
-#: modules//devices/x86_64/processor.c:817
+#: modules//devices/ppc/processor.c:217 modules//devices/x86/processor.c:815
+#: modules//devices/x86_64/processor.c:815
 msgid "Processor"
 msgstr "Processeur"
 
@@ -1145,6 +1145,18 @@ msgstr ""
 msgid "Driver"
 msgstr ""
 
+#: modules//devices/arm/processor.c:315
+msgid "Linux Name"
+msgstr ""
+
+#: modules//devices/arm/processor.c:316
+msgid "Decoded Name"
+msgstr ""
+
+#: modules//devices/arm/processor.c:317
+msgid "Mode"
+msgstr ""
+
 #: modules//devices/arm/processor.c:318 modules//devices/ppc/processor.c:220
 #: modules//devices/x86/processor.c:825 modules//devices/x86_64/processor.c:825
 msgid "Frequency"
@@ -1175,13 +1187,37 @@ msgstr ""
 msgid "Big Endian"
 msgstr ""
 
-#: modules//devices/arm/processor.c:333 modules//devices/x86/processor.c:839
-#: modules//devices/x86_64/processor.c:839
+#: modules//devices/arm/processor.c:328
+msgid "ARM"
+msgstr ""
+
+#: modules//devices/arm/processor.c:329
+msgid "Implementer"
+msgstr ""
+
+#: modules//devices/arm/processor.c:330
+msgid "Part"
+msgstr ""
+
+#: modules//devices/arm/processor.c:331
+msgid "Architecture"
+msgstr ""
+
+#: modules//devices/arm/processor.c:332
+msgid "Variant"
+msgstr ""
+
+#: modules//devices/arm/processor.c:333 modules//devices/ppc/processor.c:219
+msgid "Revision"
+msgstr ""
+
+#: modules//devices/arm/processor.c:334 modules//devices/x86/processor.c:838
+#: modules//devices/x86_64/processor.c:838
 msgid "Capabilities"
 msgstr ""
 
-#: modules//devices/arm/processor.c:354 modules//devices/ppc/processor.c:249
-#: modules//devices/x86/processor.c:862 modules//devices/x86_64/processor.c:862
+#: modules//devices/arm/processor.c:355 modules//devices/ppc/processor.c:249
+#: modules//devices/x86/processor.c:861 modules//devices/x86_64/processor.c:861
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
 msgstr ""
@@ -1302,6 +1338,10 @@ msgstr ""
 
 #: modules//devices/ppc/processor.c:142
 msgid "POWER Processor"
+msgstr ""
+
+#: modules//devices/ppc/processor.c:218
+msgid "Model"
 msgstr ""
 
 #: modules//devices/printers.c:81
@@ -1487,11 +1527,39 @@ msgstr ""
 msgid "Cache information not available=\n"
 msgstr ""
 
-#: modules//devices/x86/processor.c:837 modules//devices/x86_64/processor.c:837
+#: modules//devices/x86/processor.c:816 modules//devices/x86_64/processor.c:816
+msgid "Model Name"
+msgstr ""
+
+#: modules//devices/x86/processor.c:817 modules//devices/x86_64/processor.c:817
+msgid "Family, model, stepping"
+msgstr ""
+
+#: modules//devices/x86/processor.c:822 modules//devices/x86_64/processor.c:822
+msgid "Vendor"
+msgstr ""
+
+#: modules//devices/x86/processor.c:823 modules//devices/x86_64/processor.c:823
+msgid "Configuration"
+msgstr ""
+
+#: modules//devices/x86/processor.c:824 modules//devices/x86_64/processor.c:824
+msgid "Cache Size"
+msgstr ""
+
+#: modules//devices/x86/processor.c:824 modules//devices/x86_64/processor.c:824
+msgid "kb"
+msgstr ""
+
+#: modules//devices/x86/processor.c:835 modules//devices/x86_64/processor.c:835
+msgid "Cache"
+msgstr ""
+
+#: modules//devices/x86/processor.c:836 modules//devices/x86_64/processor.c:836
 msgid "Power Management"
 msgstr ""
 
-#: modules//devices/x86/processor.c:838 modules//devices/x86_64/processor.c:838
+#: modules//devices/x86/processor.c:837 modules//devices/x86_64/processor.c:837
 msgid "Bug Workarounds"
 msgstr ""
 
