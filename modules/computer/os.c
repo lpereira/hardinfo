@@ -31,10 +31,10 @@ get_libc_version(void)
 	gboolean try_ver_str;
 	gboolean use_stderr;
     } libs[] = {
-	{ "ldconfig -V", "GLIBC", "GNU C Library", TRUE, FALSE},
-	{ "ldconfig -V", "GNU libc", "GNU C Library", TRUE, FALSE},
-	{ "ldconfig -v", "uClibc", "uClibc or uClibc-ng", FALSE, FALSE},
-	{ "diet", "diet version", "diet libc", TRUE, TRUE},
+	{ "ldconfig -V", "GLIBC", N_("GNU C Library"), TRUE, FALSE},
+	{ "ldconfig -V", "GNU libc", N_("GNU C Library"), TRUE, FALSE},
+	{ "ldconfig -v", "uClibc", N_("uClibc or uClibc-ng"), FALSE, FALSE},
+	{ "diet", "diet version", N_("diet libc"), TRUE, TRUE},
 	{ NULL, NULL, NULL, 0},
     };
     gchar *ver_str = NULL, *to_free = NULL, *ret;
@@ -75,9 +75,9 @@ get_libc_version(void)
     }
 
     if (libs[i].try_ver_str && ver_str)
-	ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str);
+	ret = g_strdup_printf("%s / %s", _(libs[i].lib_name), ver_str);
     else if (libs[i].lib_name)
-	ret = g_strdup(libs[i].lib_name);
+	ret = g_strdup(_(libs[i].lib_name));
     else
         ret = g_strdup(_("Unknown"));
 
