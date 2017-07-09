@@ -1,0 +1,45 @@
+cpu             : SPARC-M7
+fpu             : SPARC-M7 integrated FPU
+pmu             : sparc-m7
+prom            : OBP 4.40.1 2016/04/25 06:45
+type            : sun4v
+ncpus probed    : 16
+ncpus active    : 16
+D$ parity tl1   : 0
+I$ parity tl1   : 0
+cpucaps         : flush,stbar,swap,muldiv,v9,blkinit,n2,mul32,div32,v8plus,popc,vis,vis2,ASIBlkInit,fmaf,vis3,hpc,ima,pause,cbcond,adp,aes,des,camellia,md5,sha1,sha256,sha512,mpmul,montmul,montsqr,crc32c
+Cpu0ClkTck      : 00000000f65c15b0
+Cpu1ClkTck      : 00000000f65c15b0
+Cpu2ClkTck      : 00000000f65c15b0
+Cpu3ClkTck      : 00000000f65c15b0
+Cpu4ClkTck      : 00000000f65c15b0
+Cpu5ClkTck      : 00000000f65c15b0
+Cpu6ClkTck      : 00000000f65c15b0
+Cpu7ClkTck      : 00000000f65c15b0
+Cpu8ClkTck      : 00000000f65c15b0
+Cpu9ClkTck      : 00000000f65c15b0
+Cpu10ClkTck     : 00000000f65c15b0
+Cpu11ClkTck     : 00000000f65c15b0
+Cpu12ClkTck     : 00000000f65c15b0
+Cpu13ClkTck     : 00000000f65c15b0
+Cpu14ClkTck     : 00000000f65c15b0
+Cpu15ClkTck     : 00000000f65c15b0
+MMU Type        : Hypervisor (sun4v)
+MMU PGSZs       : 8K,64K,4MB,256MB,2GB,16GB
+State:
+CPU0:           online
+CPU1:           online
+CPU2:           online
+CPU3:           online
+CPU4:           online
+CPU5:           online
+CPU6:           online
+CPU7:           online
+CPU8:           online
+CPU9:           online
+CPU10:          online
+CPU11:          online
+CPU12:          online
+CPU13:          online
+CPU14:          online
+CPU15:          online
