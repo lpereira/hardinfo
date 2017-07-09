@@ -54,6 +54,7 @@ if (OVRARCH)
 endif()
 if (OVRCPUINFO)
 	add_definitions(-DPROC_CPUINFO=${OVRCPUINFO})
+	message(STATUS "/proc/cpuinfo override: ${OVRCPUINFO}")
 endif()
 
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
