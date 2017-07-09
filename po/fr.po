@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-09 10:39-0500\n"
+"POT-Creation-Date: 2017-07-09 12:36-0500\n"
 "PO-Revision-Date: 2014-09-03\n"
 "Last-Translator: yolateng0 @olala22000\n"
 "Language-Team: LeFlood\n"
@@ -981,9 +981,12 @@ msgstr "Unknown (gestionnaire de fenêtres: %s)"
 msgid "Unknown distribution"
 msgstr "Distribution inconnue"
 
-#: modules//devices.c:91 modules//devices/arm/processor.c:314
-#: modules//devices/ppc/processor.c:217 modules//devices/x86/processor.c:815
-#: modules//devices/x86_64/processor.c:815
+#: modules//devices.c:91 modules//devices/alpha/processor.c:79
+#: modules//devices/arm/processor.c:322 modules//devices/ia64/processor.c:78
+#: modules//devices/mips/processor.c:75 modules//devices/parisc/processor.c:85
+#: modules//devices/ppc/processor.c:225 modules//devices/s390/processor.c:79
+#: modules//devices/sh/processor.c:75 modules//devices/sparc/processor.c:73
+#: modules//devices/x86/processor.c:823
 msgid "Processor"
 msgstr "Processeur"
 
@@ -1055,169 +1058,191 @@ msgstr "Collecte des informations des périphériques"
 msgid "Resource information requires superuser privileges"
 msgstr ""
 
-#: modules//devices/arm/processor.c:176 modules//devices/ppc/processor.c:140
-#: modules//devices/x86/processor.c:346 modules//devices/x86_64/processor.c:346
-msgid "(Unknown)"
-msgstr ""
-
-#: modules//devices/arm/processor.c:178
-msgid "ARM Processor"
-msgstr ""
-
-#: modules//devices/arm/processor.c:247 modules//devices/x86/processor.c:747
-#: modules//devices/x86_64/processor.c:747
-msgid "Empty List"
-msgstr ""
-
-#: modules//devices/arm/processor.c:267 modules//devices/ppc/processor.c:179
-#: modules//devices/x86/processor.c:767 modules//devices/x86_64/processor.c:767
-msgid "Topology"
-msgstr ""
-
-#: modules//devices/arm/processor.c:268 modules//devices/ppc/processor.c:180
-#: modules//devices/x86/processor.c:768 modules//devices/x86_64/processor.c:768
-msgid "ID"
-msgstr ""
-
-#: modules//devices/arm/processor.c:269 modules//devices/ppc/processor.c:181
-#: modules//devices/x86/processor.c:769 modules//devices/x86_64/processor.c:769
-msgid "Socket"
-msgstr ""
-
-#: modules//devices/arm/processor.c:270 modules//devices/ppc/processor.c:182
-#: modules//devices/x86/processor.c:770 modules//devices/x86_64/processor.c:770
-msgid "Core"
-msgstr ""
-
-#: modules//devices/arm/processor.c:281 modules//devices/arm/processor.c:292
-#: modules//devices/ppc/processor.c:193 modules//devices/ppc/processor.c:204
-#: modules//devices/x86/processor.c:781 modules//devices/x86/processor.c:792
-#: modules//devices/x86_64/processor.c:781
-#: modules//devices/x86_64/processor.c:792
-msgid "Frequency Scaling"
-msgstr ""
-
-#: modules//devices/arm/processor.c:282 modules//devices/ppc/processor.c:194
-#: modules//devices/x86/processor.c:782 modules//devices/x86_64/processor.c:782
-msgid "Minimum"
-msgstr ""
-
-#: modules//devices/arm/processor.c:282 modules//devices/arm/processor.c:283
-#: modules//devices/arm/processor.c:284 modules//devices/ppc/processor.c:194
-#: modules//devices/ppc/processor.c:195 modules//devices/ppc/processor.c:196
-#: modules//devices/x86/processor.c:782 modules//devices/x86/processor.c:783
-#: modules//devices/x86/processor.c:784 modules//devices/x86_64/processor.c:782
-#: modules//devices/x86_64/processor.c:783
-#: modules//devices/x86_64/processor.c:784
-msgid "kHz"
-msgstr ""
-
-#: modules//devices/arm/processor.c:283 modules//devices/ppc/processor.c:195
-#: modules//devices/x86/processor.c:783 modules//devices/x86_64/processor.c:783
-msgid "Maximum"
-msgstr ""
-
-#: modules//devices/arm/processor.c:284 modules//devices/ppc/processor.c:196
-#: modules//devices/x86/processor.c:784 modules//devices/x86_64/processor.c:784
-msgid "Current"
-msgstr ""
-
-#: modules//devices/arm/processor.c:285 modules//devices/ppc/processor.c:197
-#: modules//devices/x86/processor.c:785 modules//devices/x86_64/processor.c:785
-msgid "Transition Latency"
-msgstr ""
-
-#: modules//devices/arm/processor.c:285 modules//devices/ppc/processor.c:197
-#: modules//devices/x86/processor.c:785 modules//devices/x86_64/processor.c:785
-msgid "ns"
-msgstr ""
-
-#: modules//devices/arm/processor.c:286 modules//devices/ppc/processor.c:198
-#: modules//devices/x86/processor.c:786 modules//devices/x86_64/processor.c:786
-msgid "Governor"
-msgstr ""
-
-#: modules//devices/arm/processor.c:287 modules//devices/arm/processor.c:293
-#: modules//devices/ppc/processor.c:199 modules//devices/ppc/processor.c:205
-#: modules//devices/x86/processor.c:787 modules//devices/x86/processor.c:793
-#: modules//devices/x86_64/processor.c:787
-#: modules//devices/x86_64/processor.c:793
-msgid "Driver"
-msgstr ""
-
-#: modules//devices/arm/processor.c:315
-msgid "Linux Name"
-msgstr ""
-
-#: modules//devices/arm/processor.c:316
-msgid "Decoded Name"
-msgstr ""
-
-#: modules//devices/arm/processor.c:317
-msgid "Mode"
-msgstr ""
-
-#: modules//devices/arm/processor.c:318 modules//devices/ppc/processor.c:220
-#: modules//devices/x86/processor.c:825 modules//devices/x86_64/processor.c:825
-msgid "Frequency"
-msgstr ""
-
-#: modules//devices/arm/processor.c:318 modules//devices/ppc/processor.c:220
-#: modules//devices/x86/processor.c:825 modules//devices/x86_64/processor.c:825
-msgid "MHz"
-msgstr ""
-
-#: modules//devices/arm/processor.c:319 modules//devices/ppc/processor.c:221
-#: modules//devices/x86/processor.c:826 modules//devices/x86_64/processor.c:826
-msgid "BogoMips"
-msgstr ""
-
-#: modules//devices/arm/processor.c:320 modules//devices/ppc/processor.c:222
-#: modules//devices/x86/processor.c:827 modules//devices/x86_64/processor.c:827
-msgid "Byte Order"
-msgstr ""
-
-#: modules//devices/arm/processor.c:322 modules//devices/ppc/processor.c:224
-#: modules//devices/x86/processor.c:829 modules//devices/x86_64/processor.c:829
+#: modules//devices/alpha/processor.c:24 modules//devices/arm/processor.c:59
+#: modules//devices/ia64/processor.c:24 modules//devices/m68k/processor.c:24
+#: modules//devices/mips/processor.c:24 modules//devices/parisc/processor.c:24
+#: modules//devices/ppc/processor.c:44 modules//devices/s390/processor.c:24
+#: modules//devices/sh/processor.c:24 modules//devices/sparc/processor.c:24
+#: modules//devices/x86/processor.c:251
 msgid "Little Endian"
 msgstr ""
 
-#: modules//devices/arm/processor.c:324 modules//devices/ppc/processor.c:226
-#: modules//devices/x86/processor.c:831 modules//devices/x86_64/processor.c:831
+#: modules//devices/alpha/processor.c:26 modules//devices/arm/processor.c:61
+#: modules//devices/ia64/processor.c:26 modules//devices/m68k/processor.c:26
+#: modules//devices/mips/processor.c:26 modules//devices/parisc/processor.c:26
+#: modules//devices/ppc/processor.c:46 modules//devices/s390/processor.c:26
+#: modules//devices/sh/processor.c:26 modules//devices/sparc/processor.c:26
+#: modules//devices/x86/processor.c:253
 msgid "Big Endian"
 msgstr ""
 
-#: modules//devices/arm/processor.c:328
-msgid "ARM"
+#: modules//devices/alpha/processor.c:80 modules//devices/ia64/processor.c:79
+#: modules//devices/m68k/processor.c:80 modules//devices/mips/processor.c:77
+#: modules//devices/ppc/processor.c:226 modules//devices/s390/processor.c:80
+#: modules//devices/sh/processor.c:77
+msgid "Model"
 msgstr ""
 
-#: modules//devices/arm/processor.c:329
-msgid "Implementer"
+#: modules//devices/alpha/processor.c:81
+msgid "Platform String"
 msgstr ""
 
-#: modules//devices/arm/processor.c:330
-msgid "Part"
+#: modules//devices/alpha/processor.c:82 modules//devices/arm/processor.c:327
+#: modules//devices/ia64/processor.c:82 modules//devices/m68k/processor.c:82
+#: modules//devices/mips/processor.c:79 modules//devices/parisc/processor.c:90
+#: modules//devices/ppc/processor.c:229 modules//devices/s390/processor.c:82
+#: modules//devices/sh/processor.c:79 modules//devices/x86/processor.c:834
+msgid "BogoMips"
+msgstr ""
+
+#: modules//devices/alpha/processor.c:83 modules//devices/arm/processor.c:328
+#: modules//devices/ia64/processor.c:83 modules//devices/m68k/processor.c:83
+#: modules//devices/mips/processor.c:80 modules//devices/parisc/processor.c:91
+#: modules//devices/ppc/processor.c:230 modules//devices/s390/processor.c:83
+#: modules//devices/sh/processor.c:80 modules//devices/sparc/processor.c:76
+#: modules//devices/x86/processor.c:835
+msgid "Byte Order"
+msgstr ""
+
+#: modules//devices/arm/processor.c:184 modules//devices/ppc/processor.c:148
+#: modules//devices/x86/processor.c:354
+msgid "(Unknown)"
+msgstr ""
+
+#: modules//devices/arm/processor.c:186
+msgid "ARM Processor"
+msgstr ""
+
+#: modules//devices/arm/processor.c:255 modules//devices/x86/processor.c:755
+msgid "Empty List"
+msgstr ""
+
+#: modules//devices/arm/processor.c:275 modules//devices/ppc/processor.c:187
+#: modules//devices/x86/processor.c:775
+msgid "Topology"
+msgstr ""
+
+#: modules//devices/arm/processor.c:276 modules//devices/ppc/processor.c:188
+#: modules//devices/x86/processor.c:776
+msgid "ID"
+msgstr ""
+
+#: modules//devices/arm/processor.c:277 modules//devices/ppc/processor.c:189
+#: modules//devices/x86/processor.c:777
+msgid "Socket"
+msgstr ""
+
+#: modules//devices/arm/processor.c:278 modules//devices/ppc/processor.c:190
+#: modules//devices/x86/processor.c:778
+msgid "Core"
+msgstr ""
+
+#: modules//devices/arm/processor.c:289 modules//devices/arm/processor.c:300
+#: modules//devices/ppc/processor.c:201 modules//devices/ppc/processor.c:212
+#: modules//devices/x86/processor.c:789 modules//devices/x86/processor.c:800
+msgid "Frequency Scaling"
+msgstr ""
+
+#: modules//devices/arm/processor.c:290 modules//devices/ppc/processor.c:202
+#: modules//devices/x86/processor.c:790
+msgid "Minimum"
+msgstr ""
+
+#: modules//devices/arm/processor.c:290 modules//devices/arm/processor.c:291
+#: modules//devices/arm/processor.c:292 modules//devices/ppc/processor.c:202
+#: modules//devices/ppc/processor.c:203 modules//devices/ppc/processor.c:204
+#: modules//devices/x86/processor.c:790 modules//devices/x86/processor.c:791
+#: modules//devices/x86/processor.c:792
+msgid "kHz"
+msgstr ""
+
+#: modules//devices/arm/processor.c:291 modules//devices/ppc/processor.c:203
+#: modules//devices/x86/processor.c:791
+msgid "Maximum"
+msgstr ""
+
+#: modules//devices/arm/processor.c:292 modules//devices/ppc/processor.c:204
+#: modules//devices/x86/processor.c:792
+msgid "Current"
+msgstr ""
+
+#: modules//devices/arm/processor.c:293 modules//devices/ppc/processor.c:205
+#: modules//devices/x86/processor.c:793
+msgid "Transition Latency"
+msgstr ""
+
+#: modules//devices/arm/processor.c:293 modules//devices/ppc/processor.c:205
+#: modules//devices/x86/processor.c:793
+msgid "ns"
+msgstr ""
+
+#: modules//devices/arm/processor.c:294 modules//devices/ppc/processor.c:206
+#: modules//devices/x86/processor.c:794
+msgid "Governor"
+msgstr ""
+
+#: modules//devices/arm/processor.c:295 modules//devices/arm/processor.c:301
+#: modules//devices/ppc/processor.c:207 modules//devices/ppc/processor.c:213
+#: modules//devices/x86/processor.c:795 modules//devices/x86/processor.c:801
+msgid "Driver"
+msgstr ""
+
+#: modules//devices/arm/processor.c:323
+msgid "Linux Name"
+msgstr ""
+
+#: modules//devices/arm/processor.c:324
+msgid "Decoded Name"
+msgstr ""
+
+#: modules//devices/arm/processor.c:325
+msgid "Mode"
+msgstr ""
+
+#: modules//devices/arm/processor.c:326 modules//devices/m68k/processor.c:81
+#: modules//devices/mips/processor.c:78 modules//devices/parisc/processor.c:89
+#: modules//devices/ppc/processor.c:228 modules//devices/sh/processor.c:78
+#: modules//devices/x86/processor.c:833
+msgid "Frequency"
+msgstr ""
+
+#: modules//devices/arm/processor.c:326 modules//devices/ia64/processor.c:81
+#: modules//devices/m68k/processor.c:81 modules//devices/mips/processor.c:78
+#: modules//devices/parisc/processor.c:89 modules//devices/ppc/processor.c:228
+#: modules//devices/sh/processor.c:78 modules//devices/x86/processor.c:833
+msgid "MHz"
 msgstr ""
 
 #: modules//devices/arm/processor.c:331
-msgid "Architecture"
+msgid "ARM"
 msgstr ""
 
 #: modules//devices/arm/processor.c:332
+msgid "Implementer"
+msgstr ""
+
+#: modules//devices/arm/processor.c:333
+msgid "Part"
+msgstr ""
+
+#: modules//devices/arm/processor.c:334 modules//devices/ia64/processor.c:80
+msgid "Architecture"
+msgstr ""
+
+#: modules//devices/arm/processor.c:335
 msgid "Variant"
 msgstr ""
 
-#: modules//devices/arm/processor.c:333 modules//devices/ppc/processor.c:219
+#: modules//devices/arm/processor.c:336 modules//devices/ppc/processor.c:227
 msgid "Revision"
 msgstr ""
 
-#: modules//devices/arm/processor.c:334 modules//devices/x86/processor.c:838
-#: modules//devices/x86_64/processor.c:838
+#: modules//devices/arm/processor.c:337 modules//devices/x86/processor.c:841
 msgid "Capabilities"
 msgstr ""
 
-#: modules//devices/arm/processor.c:355 modules//devices/ppc/processor.c:249
-#: modules//devices/x86/processor.c:861 modules//devices/x86_64/processor.c:861
+#: modules//devices/arm/processor.c:358 modules//devices/ppc/processor.c:252
+#: modules//devices/x86/processor.c:864
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
 msgstr ""
@@ -1336,12 +1361,24 @@ msgstr ""
 msgid "Free Virtual Memory"
 msgstr ""
 
-#: modules//devices/ppc/processor.c:142
-msgid "POWER Processor"
+#: modules//devices/ia64/processor.c:81
+msgid "Family"
 msgstr ""
 
-#: modules//devices/ppc/processor.c:218
-msgid "Model"
+#: modules//devices/mips/processor.c:76 modules//devices/sh/processor.c:76
+msgid "System Type"
+msgstr ""
+
+#: modules//devices/parisc/processor.c:88 modules//devices/x86/processor.c:824
+msgid "Model Name"
+msgstr ""
+
+#: modules//devices/parisc/processor.c:92 modules//devices/x86/processor.c:838
+msgid "Cache"
+msgstr ""
+
+#: modules//devices/ppc/processor.c:150
+msgid "POWER Processor"
 msgstr ""
 
 #: modules//devices/printers.c:81
@@ -1412,6 +1449,10 @@ msgid ""
 msgstr ""
 "[Printers]\n"
 "Aucune imprimante trouvée=\n"
+
+#: modules//devices/s390/processor.c:81
+msgid "Processors"
+msgstr ""
 
 #: modules//devices/spd-decode.c:1475
 msgid ""
@@ -1523,48 +1564,40 @@ msgstr ""
 "[Speeds]\n"
 "%s"
 
-#: modules//devices/x86/processor.c:145 modules//devices/x86_64/processor.c:145
+#: modules//devices/x86/processor.c:145
 msgid "Cache information not available=\n"
 msgstr ""
 
-#: modules//devices/x86/processor.c:151 modules//devices/x86_64/processor.c:151
+#: modules//devices/x86/processor.c:151
 #, c-format
 msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
 msgstr ""
 
-#: modules//devices/x86/processor.c:816 modules//devices/x86_64/processor.c:816
-msgid "Model Name"
-msgstr ""
-
-#: modules//devices/x86/processor.c:817 modules//devices/x86_64/processor.c:817
+#: modules//devices/x86/processor.c:825
 msgid "Family, model, stepping"
 msgstr ""
 
-#: modules//devices/x86/processor.c:822 modules//devices/x86_64/processor.c:822
+#: modules//devices/x86/processor.c:830
 msgid "Vendor"
 msgstr ""
 
-#: modules//devices/x86/processor.c:823 modules//devices/x86_64/processor.c:823
+#: modules//devices/x86/processor.c:831
 msgid "Configuration"
 msgstr ""
 
-#: modules//devices/x86/processor.c:824 modules//devices/x86_64/processor.c:824
+#: modules//devices/x86/processor.c:832
 msgid "Cache Size"
 msgstr ""
 
-#: modules//devices/x86/processor.c:824 modules//devices/x86_64/processor.c:824
+#: modules//devices/x86/processor.c:832
 msgid "kb"
 msgstr ""
 
-#: modules//devices/x86/processor.c:835 modules//devices/x86_64/processor.c:835
-msgid "Cache"
-msgstr ""
-
-#: modules//devices/x86/processor.c:836 modules//devices/x86_64/processor.c:836
+#: modules//devices/x86/processor.c:839
 msgid "Power Management"
 msgstr ""
 
-#: modules//devices/x86/processor.c:837 modules//devices/x86_64/processor.c:837
+#: modules//devices/x86/processor.c:840
 msgid "Bug Workarounds"
 msgstr ""
 
