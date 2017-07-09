@@ -1194,12 +1194,12 @@ msgstr ""
 #: modules//devices/arm/processor.c:318 modules//devices/ppc/processor.c:220
 #: modules//devices/x86/processor.c:825 modules//devices/x86_64/processor.c:825
 msgid "Frequency"
-msgstr ""
+msgstr "Частота"
 
 #: modules//devices/arm/processor.c:318 modules//devices/ppc/processor.c:220
 #: modules//devices/x86/processor.c:825 modules//devices/x86_64/processor.c:825
 msgid "MHz"
-msgstr ""
+msgstr "МГц"
 
 #: modules//devices/arm/processor.c:319 modules//devices/ppc/processor.c:221
 #: modules//devices/x86/processor.c:826 modules//devices/x86_64/processor.c:826
@@ -1209,7 +1209,7 @@ msgstr ""
 #: modules//devices/arm/processor.c:320 modules//devices/ppc/processor.c:222
 #: modules//devices/x86/processor.c:827 modules//devices/x86_64/processor.c:827
 msgid "Byte Order"
-msgstr ""
+msgstr "Порядок байтов"
 
 #: modules//devices/arm/processor.c:322 modules//devices/ppc/processor.c:224
 #: modules//devices/x86/processor.c:829 modules//devices/x86_64/processor.c:829
@@ -1248,7 +1248,7 @@ msgstr ""
 #: modules//devices/arm/processor.c:334 modules//devices/x86/processor.c:838
 #: modules//devices/x86_64/processor.c:838
 msgid "Capabilities"
-msgstr ""
+msgstr "Возможности"
 
 #: modules//devices/arm/processor.c:355 modules//devices/ppc/processor.c:249
 #: modules//devices/x86/processor.c:861 modules//devices/x86_64/processor.c:861
@@ -1567,31 +1567,31 @@ msgstr "Информация о кэше недоступна=\n"
 
 #: modules//devices/x86/processor.c:816 modules//devices/x86_64/processor.c:816
 msgid "Model Name"
-msgstr ""
+msgstr "Название"
 
 #: modules//devices/x86/processor.c:817 modules//devices/x86_64/processor.c:817
 msgid "Family, model, stepping"
-msgstr ""
+msgstr "Семейство, модель, степпинг"
 
 #: modules//devices/x86/processor.c:822 modules//devices/x86_64/processor.c:822
 msgid "Vendor"
-msgstr ""
+msgstr "Производитель"
 
 #: modules//devices/x86/processor.c:823 modules//devices/x86_64/processor.c:823
 msgid "Configuration"
-msgstr ""
+msgstr "Конфигурация"
 
 #: modules//devices/x86/processor.c:824 modules//devices/x86_64/processor.c:824
 msgid "Cache Size"
-msgstr ""
+msgstr "Размер кэша"
 
 #: modules//devices/x86/processor.c:824 modules//devices/x86_64/processor.c:824
 msgid "kb"
-msgstr ""
+msgstr "кб"
 
 #: modules//devices/x86/processor.c:835 modules//devices/x86_64/processor.c:835
 msgid "Cache"
-msgstr ""
+msgstr "Кэш"
 
 #: modules//devices/x86/processor.c:836 modules//devices/x86_64/processor.c:836
 msgid "Power Management"
