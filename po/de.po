@@ -1046,7 +1046,7 @@ msgstr ""
 
 #: modules//devices/arm/processor.c:178
 msgid "ARM Processor"
-msgstr ""
+msgstr "ARM Prozessor"
 
 #: modules//devices/arm/processor.c:247 modules//devices/x86/processor.c:747
 #: modules//devices/x86_64/processor.c:747
@@ -1127,12 +1127,12 @@ msgstr ""
 #: modules//devices/x86_64/processor.c:787
 #: modules//devices/x86_64/processor.c:793
 msgid "Driver"
-msgstr ""
+msgstr "Treiber"
 
 #: modules//devices/arm/processor.c:318 modules//devices/ppc/processor.c:220
 #: modules//devices/x86/processor.c:825 modules//devices/x86_64/processor.c:825
 msgid "Frequency"
-msgstr ""
+msgstr "Taktfrequenz"
 
 #: modules//devices/arm/processor.c:318 modules//devices/ppc/processor.c:220
 #: modules//devices/x86/processor.c:825 modules//devices/x86_64/processor.c:825
@@ -1147,7 +1147,7 @@ msgstr ""
 #: modules//devices/arm/processor.c:320 modules//devices/ppc/processor.c:222
 #: modules//devices/x86/processor.c:827 modules//devices/x86_64/processor.c:827
 msgid "Byte Order"
-msgstr ""
+msgstr "Byte-Reihenfolge"
 
 #: modules//devices/arm/processor.c:322 modules//devices/ppc/processor.c:224
 #: modules//devices/x86/processor.c:829 modules//devices/x86_64/processor.c:829
@@ -1162,7 +1162,7 @@ msgstr ""
 #: modules//devices/arm/processor.c:333 modules//devices/x86/processor.c:839
 #: modules//devices/x86_64/processor.c:839
 msgid "Capabilities"
-msgstr ""
+msgstr "Fähigkeiten"
 
 #: modules//devices/arm/processor.c:354 modules//devices/ppc/processor.c:249
 #: modules//devices/x86/processor.c:862 modules//devices/x86_64/processor.c:862
@@ -1294,7 +1294,7 @@ msgstr ""
 
 #: modules//devices/ppc/processor.c:142
 msgid "POWER Processor"
-msgstr ""
+msgstr "POWER Prozessor"
 
 #: modules//devices/printers.c:81
 msgid "⚬ Can do black and white printing=\n"
