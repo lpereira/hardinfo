@@ -304,8 +304,8 @@ processor_get_detailed_info(Processor *processor)
                        "%s" /* frequency scaling */
                        "[%s]\n"    /* ARM */
                        "%s=[%s] %s\n"  /* implementer */
-                       "%s=[%s] %s\n"  /* architecture */
                        "%s=[%s] %s\n"  /* part */
+                       "%s=[%s] %s\n"  /* architecture */
                        "%s=%s\n"       /* variant */
                        "%s=%s\n"       /* revision */
                        "[%s]\n" /* flags */
@@ -327,8 +327,8 @@ processor_get_detailed_info(Processor *processor)
                    tmp_cpufreq,
                    _("ARM"),
                    _("Implementer"), processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
-                   _("Architecture"), processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
                    _("Part"), processor->cpu_part, (tmp_part) ? tmp_part : "",
+                   _("Architecture"), processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
                    _("Variant"), processor->cpu_variant,
                    _("Revision"), processor->cpu_revision,
                    _("Capabilities"), tmp_flags,
