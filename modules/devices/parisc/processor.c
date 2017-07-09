@@ -19,6 +19,16 @@
 #include "hardinfo.h"
 #include "devices.h"
 
+gchar *byte_order_str() {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    return _("Little Endian");
+#else
+    return _("Big Endian");
+#endif
+}
+
+#define PROC_CPUINFO "/proc/cpuinfo"
+
 GSList *
 processors_scan(void)
 {
@@ -26,30 +36,30 @@ processors_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
 
-    cpuinfo = fopen("/proc/cpuinfo", "r");
+    cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
-	return NULL;
+        return NULL;
 
     processor = g_new0(Processor, 1);
     while (fgets(buffer, 128, cpuinfo)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
 
-	if (tmp[0] && tmp[1]) {
-	    tmp[0] = g_strstrip(tmp[0]);
-	    tmp[1] = g_strstrip(tmp[1]);
+        if (tmp[0] && tmp[1]) {
+            tmp[0] = g_strstrip(tmp[0]);
+            tmp[1] = g_strstrip(tmp[1]);
 
-	    get_str("cpu family", processor->model_name);
-	    get_str("cpu", processor->vendor_id);
-	    get_float("cpu MHz", processor->cpu_mhz);
-	    get_float("bogomips", processor->bogomips);
-	    
-	    get_str("model name", processor->strmodel);
-	    
-	    get_int("I-cache", processor->has_fpu);
-	    get_int("D-cache", processor->flags);
+            get_str("cpu family", processor->model_name);
+            get_str("cpu", processor->vendor_id);
+            get_float("cpu MHz", processor->cpu_mhz);
+            get_float("bogomips", processor->bogomips);
 
-	}
-	g_strfreev(tmp);
+            get_str("model name", processor->strmodel);
+
+            get_int("I-cache", processor->has_fpu);
+            get_int("D-cache", processor->flags);
+
+        }
+        g_strfreev(tmp);
     }
 
     fclose(cpuinfo);
@@ -61,27 +71,25 @@ gchar *
 processor_get_info(GSList *processors)
 {
         Processor *processor = (Processor *)processors->data;
-        
-	return  g_strdup_printf("[Processor]\n"
-	                       "CPU Family=%s\n"
-	                       "CPU=%s\n"
-                               "Frequency=%.2fMHz\n"
-			       "Bogomips=%.2f\n"
-			       "Model Name=%s\n"
-			       "Byte Order=%s\n"
-			       "[Cache]\n"
-			       "I-Cache=%s\n"
-			       "D-Cache=%s\n",
-			       processor->model_name,
-			       processor->vendor_id,
-			       processor->cpu_mhz,
-			       processor->bogomips,
-			       processor->strmodel,
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                               "Little Endian",
-#else
-                               "Big Endian",
-#endif
-			       processor->has_fpu,
-			       processor->flags);
+
+    return  g_strdup_printf("[%s]\n"
+                        "CPU Family=%s\n"
+                        "CPU=%s\n"
+                        "%s=%s\n"      /* model name */
+                        "%s=%.2f %s\n" /* frequency */
+                        "%s=%.2f\n"    /* bogomips */
+                        "%s=%s\n"      /* byte order */
+                        "[%s]\n"
+                        "I-Cache=%s\n"
+                        "D-Cache=%s\n",
+                   _("Processor"),
+                   processor->model_name,
+                   processor->vendor_id,
+                   _("Model Name"), processor->strmodel,
+                   _("Frequency"), processor->cpu_mhz _("MHz"),
+                   _("BogoMips"), processor->bogomips,
+                   _("Byte Order"), byte_order_str(),
+                   _("Cache"),
+                   processor->has_fpu,
+                   processor->flags);
 }
