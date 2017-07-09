@@ -66,7 +66,7 @@ get_libc_version(void)
 
         if (libs[i].try_ver_str) {
             /* skip the first word, likely "ldconfig" or name of utility */
-            ver_str = strstr(p, " ");
+            ver_str = strchr(p, ' ');
             if (ver_str)
                 ver_str++;
         }
