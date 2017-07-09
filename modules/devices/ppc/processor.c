@@ -206,8 +206,8 @@ processor_get_detailed_info(Processor *processor)
     }
 
     ret = g_strdup_printf("[%s]\n"
-                   "Model=%s\n"
-                   "Revision=%s\n"
+                   "%s=%s\n"  /* model */
+                   "%s=%s\n"  /* revision */
                    "%s=%.2f %s\n" /* frequency */
                    "%s=%.2f\n"    /* bogomips */
                    "%s=%s\n"      /* byte order */
@@ -215,8 +215,8 @@ processor_get_detailed_info(Processor *processor)
                    "%s" /* frequency scaling */
                    "%s",/* empty */
                    _("Processor"),
-                   processor->model_name,
-                   processor->revision,
+                   _("Model"), processor->model_name,
+                   _("Revision"), processor->revision,
                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                    _("BogoMips"), processor->bogomips,
                    _("Byte Order"),
