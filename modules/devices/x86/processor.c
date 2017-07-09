@@ -148,7 +148,7 @@ static gchar *__cache_get_info_as_string(Processor *processor)
     for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
         cache = (ProcessorCache *)cache_list->data;
 
-        result = h_strdup_cprintf("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n",
+        result = h_strdup_cprintf(_("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"),
                                   result,
                                   cache->level,
                                   cache->type,

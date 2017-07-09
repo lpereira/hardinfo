@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-09 00:12-0500\n"
+"POT-Creation-Date: 2017-07-09 10:39-0500\n"
 "PO-Revision-Date: 2014-09-03\n"
 "Last-Translator: yolateng0 @olala22000\n"
 "Language-Team: LeFlood\n"
@@ -1525,6 +1525,11 @@ msgstr ""
 
 #: modules//devices/x86/processor.c:145 modules//devices/x86_64/processor.c:145
 msgid "Cache information not available=\n"
+msgstr ""
+
+#: modules//devices/x86/processor.c:151 modules//devices/x86_64/processor.c:151
+#, c-format
+msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
 msgstr ""
 
 #: modules//devices/x86/processor.c:816 modules//devices/x86_64/processor.c:816
