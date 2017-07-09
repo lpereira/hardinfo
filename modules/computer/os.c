@@ -24,50 +24,64 @@
 static gchar *
 get_libc_version(void)
 {
-    FILE *testp;
-    gchar buf[256], *p, *ver_str = NULL, *ret = NULL;
-
-    struct {
-        const char *test_cmd;
-        const char *match_str;
-        const char *lib_name;
-        int try_ver_str;
+    static const struct {
+	const char *test_cmd;
+	const char *match_str;
+	const char *lib_name;
+	gboolean try_ver_str;
+	gboolean use_stderr;
     } libs[] = {
-        { "ldconfig -V", "GLIBC", "GNU C Library", 1 },
-        { "ldconfig -v", "uClibc", "uClibc or uClibc-ng", 0 },
-        { "diet 2>&1", "diet version", "diet libc", 1 },
-        { NULL, NULL, NULL, 0 },
+	{ "ldconfig -V", "GLIBC", "GNU C Library", TRUE, FALSE},
+	{ "ldconfig -V", "GNU libc", "GNU C Library", TRUE, FALSE},
+	{ "ldconfig -v", "uClibc", "uClibc or uClibc-ng", FALSE, FALSE},
+	{ "diet", "diet version", "diet libc", TRUE, TRUE},
+	{ NULL, NULL, NULL, 0},
     };
-    int i = 0;
-    while (libs[i].test_cmd != NULL) {
-        memset(buf, 0, 256);
-        testp = popen(libs[i].test_cmd, "r");
-        if (testp) {
-            (void)fgets(buf, 255, testp);
-            pclose(testp);
+    gchar *ver_str = NULL, *to_free = NULL, *ret;
+    int i;
 
-            /* limit to first line */
-            p = strstr(buf, "\n"); if (p) *p = 0;
+    for (i = 0; libs[i].test_cmd; i++) {
+        gboolean spawned;
+        gchar *out, *err, *p;
 
-            if ( strstr(buf, libs[i].match_str) ) {
-                if (libs[i].try_ver_str) {
-                    ver_str = strstr(buf, " "); /* skip the first word, likely "ldconfig" or name of utility */
-                    if (ver_str) ver_str++;
-                }
-                break;
-            }
+        spawned = g_spawn_command_line_sync(libs[i].test_cmd,
+            &out, &err, NULL, NULL);
+        if (!spawned)
+            continue;
+
+        if (libs[i].use_stderr) {
+            p = strend(err, '\n');
+            g_free(out);
+            to_free = err;
+        } else {
+            p = strend(out, '\n');
+            g_free(err);
+            to_free = out;
         }
-        i++;
+
+        if (!strstr(p, libs[i].match_str)) {
+            g_free(to_free);
+            continue;
+        }
+
+        if (libs[i].try_ver_str) {
+            /* skip the first word, likely "ldconfig" or name of utility */
+            ver_str = strstr(p, " ");
+            if (ver_str)
+                ver_str++;
+        }
+
+        break;
     }
 
     if (libs[i].try_ver_str && ver_str)
-        ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str );
-    else {
-        if (libs[i].lib_name != NULL)
-            ret = g_strdup(libs[i].lib_name);
-        else
-            ret = g_strdup(_("Unknown"));
-    }
+	ret = g_strdup_printf("%s / %s", libs[i].lib_name, ver_str);
+    else if (libs[i].lib_name)
+	ret = g_strdup(libs[i].lib_name);
+    else
+        ret = g_strdup(_("Unknown"));
+
+    g_free(to_free);
 
     return ret;
 }
