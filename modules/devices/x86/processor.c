@@ -804,8 +804,6 @@ gchar *processor_get_detailed_info(Processor * processor)
                        "%s=%s\n"      /* byte order */
                        "%s" /* topology */
                        "%s" /* frequency scaling */
-                       "[Features]\n"
-                       "Has FPU=%s\n"
                        "[Cache]\n"
                        "%s\n"
                        "[%s]\n" /* pm */
@@ -832,7 +830,6 @@ gchar *processor_get_detailed_info(Processor * processor)
 #endif
                    tmp_topology,
                    tmp_cpufreq,
-                   processor->has_fpu  ? processor->has_fpu  : "no",
                    cache_info,
                    _("Power Management"), tmp_pm,
                    _("Bug Workarounds"), tmp_bugs,
