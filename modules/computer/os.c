@@ -35,9 +35,8 @@ get_libc_version(void)
 	{ "ldconfig -V", "GNU libc", N_("GNU C Library"), TRUE, FALSE},
 	{ "ldconfig -v", "uClibc", N_("uClibc or uClibc-ng"), FALSE, FALSE},
 	{ "diet", "diet version", N_("diet libc"), TRUE, TRUE},
-	{ NULL, NULL, NULL, 0},
+	{ }
     };
-    gchar *ver_str = NULL, *to_free = NULL, *ret;
     int i;
 
     for (i = 0; libs[i].test_cmd; i++) {
@@ -50,40 +49,30 @@ get_libc_version(void)
             continue;
 
         if (libs[i].use_stderr) {
-            p = strend(err, '\n');
+            p = strend(idle_free(err), '\n');
             g_free(out);
-            to_free = err;
         } else {
-            p = strend(out, '\n');
+            p = strend(idle_free(out), '\n');
             g_free(err);
-            to_free = out;
         }
 
-        if (!p || !strstr(p, libs[i].match_str)) {
-            g_free(to_free);
+        if (!p || !strstr(p, libs[i].match_str))
             continue;
-        }
 
         if (libs[i].try_ver_str) {
             /* skip the first word, likely "ldconfig" or name of utility */
-            ver_str = strchr(p, ' ');
-            if (ver_str)
-                ver_str++;
+            const gchar *ver_str = strchr(p, ' ');
+
+            if (ver_str) {
+                return g_strdup_printf("%s / %s", _(libs[i].lib_name),
+                    ver_str + 1);
+            }
         }
 
-        break;
+	return g_strdup(_(libs[i].lib_name));
     }
 
-    if (libs[i].try_ver_str && ver_str)
-	ret = g_strdup_printf("%s / %s", _(libs[i].lib_name), ver_str);
-    else if (libs[i].lib_name)
-	ret = g_strdup(_(libs[i].lib_name));
-    else
-        ret = g_strdup(_("Unknown"));
-
-    g_free(to_free);
-
-    return ret;
+    return g_strdup(_("Unknown"));
 }
 
 #include <gdk/gdkx.h>
