@@ -19,6 +19,16 @@
 #include "hardinfo.h"
 #include "devices.h"
 
+gchar *byte_order_str() {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    return _("Little Endian");
+#else
+    return _("Big Endian");
+#endif
+}
+
+#define PROC_CPUINFO "/proc/cpuinfo"
+
 GSList *
 processor_scan(void)
 {
@@ -26,22 +36,22 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
 
-    cpuinfo = fopen("/proc/cpuinfo", "r");
+    cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
-	return NULL;
+        return NULL;
 
     processor = g_new0(Processor, 1);
     while (fgets(buffer, 128, cpuinfo)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
 
-	if (tmp[0] && tmp[1]) {
-	    tmp[0] = g_strstrip(tmp[0]);
-	    tmp[1] = g_strstrip(tmp[1]);
+        if (tmp[0] && tmp[1]) {
+            tmp[0] = g_strstrip(tmp[0]);
+            tmp[1] = g_strstrip(tmp[1]);
 
-	    get_str("cpu", processor->model_name);
-	    get_str("fpu", processor->has_fpu);
-	}
-	g_strfreev(tmp);
+            get_str("cpu", processor->model_name);
+            get_str("fpu", processor->has_fpu);
+        }
+        g_strfreev(tmp);
     }
 
     fclose(cpuinfo);
@@ -54,11 +64,14 @@ processor_scan(void)
 gchar *
 processor_get_info(GSList *processors)
 {
-        Processor *processor = (Processor *)processors->data;
-        
-	return g_strdup_printf("[Processor]\n"
-	                       "CPU=%s\n"
-	                       "FPU=%s\n",
-			       processor->model_name,
-			       processor->has_fpu);
+    Processor *processor = (Processor *)processors->data;
+
+    return g_strdup_printf("[%s]\n"
+                           "CPU=%s\n"
+                           "FPU=%s\n"
+                           "%s=%s\n", /* byte order */
+                   _("Processor"),
+                   processor->model_name,
+                   processor->has_fpu,
+                   _("Byte Order"), byte_order_str() );
 }

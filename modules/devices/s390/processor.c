@@ -19,6 +19,16 @@
 #include "hardinfo.h"
 #include "devices.h"
 
+gchar *byte_order_str() {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    return _("Little Endian");
+#else
+    return _("Big Endian");
+#endif
+}
+
+#define PROC_CPUINFO "/proc/cpuinfo"
+
 GSList *
 processor_scan(void)
 {
@@ -26,28 +36,28 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
 
-    cpuinfo = fopen("/proc/cpuinfo", "r");
+    cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
-	return NULL;
+        return NULL;
 
     processor = g_new0(Processor, 1);
     while (fgets(buffer, 128, cpuinfo)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
 
-	if (tmp[0] && tmp[1]) {
-	    tmp[0] = g_strstrip(tmp[0]);
-	    tmp[1] = g_strstrip(tmp[1]);
+        if (tmp[0] && tmp[1]) {
+            tmp[0] = g_strstrip(tmp[0]);
+            tmp[1] = g_strstrip(tmp[1]);
 
-	    get_str("vendor_id", processor->vendor_id);
-	    get_float("# processors", processor->cache_size);
-	    get_int("bogomips per cpu", processor->bogomips);
+            get_str("vendor_id", processor->vendor_id);
+            get_float("# processors", processor->cache_size);
+            get_int("bogomips per cpu", processor->bogomips);
 
-	}
-	g_strfreev(tmp);
+        }
+        g_strfreev(tmp);
     }
 
     processor->cpu_mhz = 0.0f;
-    
+
     processor->model_name = g_strconcat("S390 ", processor->vendor_id, NULL);
     g_free(processor->vendor_id);
 
@@ -59,20 +69,17 @@ processor_scan(void)
 gchar *
 processor_get_info(GSList *processors)
 {
-        Processor *processor = (Processor *)processors->data;
-        
-	return g_strdup_printf("[Processor]\n"
-                               "Model=%s\n"
-	                       "Processors=%d\n"
-	                       "BogoMips per CPU=%.2f"
-	                       "Byte Order=%s\n",
-			       processor->model_name,
-			       processor->cache_size,
-			       processor->bogomips,
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                               "Little Endian"
-#else
-                               "Big Endian"
-#endif
-                              );
+    Processor *processor = (Processor *)processors->data;
+
+    return g_strdup_printf("[%s]\n"
+                        "%s=%s\n"      /* model */
+                        "%s=%d\n"      /* proc count */
+                        "%s=%.2f\n"    /* bogomips */
+                        "%s=%s\n",     /* byte order */
+                        _("Processor"),
+                        _("Model"), processor->model_name,
+                        _("Processors"), processor->cache_size,
+                        _("BogoMips"), processor->bogomips,
+                        _("Byte Order"), byte_order_str()
+                        );
 }

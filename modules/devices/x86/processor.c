@@ -246,6 +246,14 @@ static gint get_cpu_int(const char* item, int cpuid) {
     return ret;
 }
 
+gchar *byte_order_str() {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    return _("Little Endian");
+#else
+    return _("Big Endian");
+#endif
+}
+
 GSList *processor_scan(void)
 {
     GSList *procs = NULL, *l = NULL;
@@ -824,12 +832,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                    _("Cache Size"), processor->cache_size, _("kb"),
                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                    _("BogoMips"), processor->bogomips,
-                   _("Byte Order"),
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                   _("Little Endian"),
-#else
-                   _("Big Endian"),
-#endif
+                   _("Byte Order"), byte_order_str(),
                    tmp_topology,
                    tmp_cpufreq,
                    _("Cache"), cache_info,
