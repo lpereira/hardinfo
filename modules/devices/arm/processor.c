@@ -74,7 +74,9 @@ int processor_has_flag(gchar * strflags, gchar * strflag)
     return ret;
 }
 
+#ifndef PROC_CPUINFO
 #define PROC_CPUINFO "/proc/cpuinfo"
+#endif
 
 GSList *
 processor_scan(void)
