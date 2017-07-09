@@ -59,7 +59,7 @@ get_libc_version(void)
             to_free = out;
         }
 
-        if (!strstr(p, libs[i].match_str)) {
+        if (!p || !strstr(p, libs[i].match_str)) {
             g_free(to_free);
             continue;
         }
