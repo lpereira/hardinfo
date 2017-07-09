@@ -50,6 +50,7 @@ processor_scan(void)
             tmp[0] = g_strstrip(tmp[0]);
             tmp[1] = g_strstrip(tmp[1]);
 
+            get_str("cpucaps", processor->cpucaps);
             get_str("cpu", processor->model_name);
             get_str("fpu", processor->has_fpu);
         }
@@ -71,9 +72,12 @@ processor_get_info(GSList *processors)
     return g_strdup_printf("[%s]\n"
                            "CPU=%s\n"
                            "FPU=%s\n"
-                           "%s=%s\n", /* byte order */
+                           "%s=%s\n"   /* byte order */
+                           "%s=%s\n",
                    _("Processor"),
                    processor->model_name,
                    processor->has_fpu,
-                   _("Byte Order"), byte_order_str() );
+                   _("Byte Order"), byte_order_str(),
+                   _("Capabilities"), processor->cpucaps
+                   );
 }
