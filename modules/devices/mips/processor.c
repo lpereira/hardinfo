@@ -50,8 +50,8 @@ processor_scan(void)
             tmp[0] = g_strstrip(tmp[0]);
             tmp[1] = g_strstrip(tmp[1]);
 
-            get_str("system type", processor->model_name);
-            get_str("cpu model", processor->vendor_id);
+            get_str("system type", processor->vendor_id);
+            get_str("cpu model", processor->model_name);
             get_float("cpu MHz", processor->cpu_mhz);
             get_float("BogoMIPS", processor->bogomips);
         }
@@ -75,9 +75,9 @@ processor_get_info(GSList *processors)
                         "%s=%.2f\n"    /* bogomips */
                         "%s=%s\n",     /* byte order */
                     _("Processor"),
-                    _("System Type"), processor->model_name,
-                    _("Model"), processor->vendor_id,
-                    _("Frequency"), processor->cpu_mhz _("MHz"),
+                    _("Model"), processor->model_name,
+                    _("System Type"), processor->vendor_id,
+                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                     _("BogoMips"), processor->bogomips,
                     _("Byte Order"), byte_order_str()
                    );

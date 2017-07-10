@@ -88,7 +88,7 @@ processor_get_info(GSList *processors)
                    processor->model_name,
                    processor->vendor_id,
                    _("Model Name"), processor->strmodel,
-                   _("Frequency"), processor->cpu_mhz _("MHz"),
+                   _("Frequency"), processor->cpu_mhz, _("MHz"),
                    _("BogoMips"), processor->bogomips,
                    _("Byte Order"), byte_order_str(),
                    _("Cache"),
