@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-10 00:27-0500\n"
+"POT-Creation-Date: 2017-07-10 12:39-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -873,12 +873,13 @@ msgstr ""
 
 #: modules//devices.c:91
 #: modules//devices/alpha/processor.c:79
-#: modules//devices/arm/processor.c:236
-#: modules//devices/ia64/processor.c:79
+#: modules//devices/arm/processor.c:235
+#: modules//devices/ia64/processor.c:151
 #: modules//devices/m68k/processor.c:75
 #: modules//devices/mips/processor.c:66
-#: modules//devices/parisc/processor.c:74
-#: modules//devices/ppc/processor.c:151
+#: modules//devices/parisc/processor.c:146
+#: modules//devices/ppc/processor.c:149
+#: modules//devices/riscv/processor.c:173
 #: modules//devices/s390/processor.c:69
 #: modules//devices/sh/processor.c:75
 #: modules//devices/sparc/processor.c:66
@@ -955,10 +956,12 @@ msgid "Resource information requires superuser privileges"
 msgstr ""
 
 #: modules//devices/alpha/processor.c:80
-#: modules//devices/ia64/processor.c:84
+#: modules//devices/ia64/processor.c:157
 #: modules//devices/m68k/processor.c:76
 #: modules//devices/mips/processor.c:67
-#: modules//devices/ppc/processor.c:152
+#: modules//devices/parisc/processor.c:147
+#: modules//devices/ppc/processor.c:150
+#: modules//devices/riscv/processor.c:174
 #: modules//devices/s390/processor.c:70
 msgid "Model"
 msgstr ""
@@ -968,24 +971,26 @@ msgid "Platform String"
 msgstr ""
 
 #: modules//devices/alpha/processor.c:82
-#: modules//devices/arm/processor.c:240
-#: modules//devices/ia64/processor.c:86
+#: modules//devices/arm/processor.c:239
+#: modules//devices/ia64/processor.c:159
 #: modules//devices/m68k/processor.c:79
 #: modules//devices/mips/processor.c:69
-#: modules//devices/parisc/processor.c:78
-#: modules//devices/ppc/processor.c:154
+#: modules//devices/parisc/processor.c:150
+#: modules//devices/ppc/processor.c:152
+#: modules//devices/riscv/processor.c:178
 #: modules//devices/sh/processor.c:79
 #: modules//devices/x86/processor.c:748
 msgid "Frequency"
 msgstr ""
 
 #: modules//devices/alpha/processor.c:82
-#: modules//devices/arm/processor.c:240
-#: modules//devices/ia64/processor.c:86
+#: modules//devices/arm/processor.c:239
+#: modules//devices/ia64/processor.c:159
 #: modules//devices/m68k/processor.c:79
 #: modules//devices/mips/processor.c:69
-#: modules//devices/parisc/processor.c:78
-#: modules//devices/ppc/processor.c:154
+#: modules//devices/parisc/processor.c:150
+#: modules//devices/ppc/processor.c:152
+#: modules//devices/riscv/processor.c:178
 #: modules//devices/sh/processor.c:79
 #: modules//devices/sh/processor.c:80
 #: modules//devices/sh/processor.c:81
@@ -994,12 +999,12 @@ msgid "MHz"
 msgstr ""
 
 #: modules//devices/alpha/processor.c:83
-#: modules//devices/arm/processor.c:241
-#: modules//devices/ia64/processor.c:87
+#: modules//devices/arm/processor.c:240
+#: modules//devices/ia64/processor.c:160
 #: modules//devices/m68k/processor.c:80
 #: modules//devices/mips/processor.c:70
-#: modules//devices/parisc/processor.c:79
-#: modules//devices/ppc/processor.c:155
+#: modules//devices/parisc/processor.c:151
+#: modules//devices/ppc/processor.c:153
 #: modules//devices/s390/processor.c:72
 #: modules//devices/sh/processor.c:82
 #: modules//devices/x86/processor.c:749
@@ -1007,12 +1012,13 @@ msgid "BogoMips"
 msgstr ""
 
 #: modules//devices/alpha/processor.c:84
-#: modules//devices/arm/processor.c:242
-#: modules//devices/ia64/processor.c:88
+#: modules//devices/arm/processor.c:241
+#: modules//devices/ia64/processor.c:161
 #: modules//devices/m68k/processor.c:81
 #: modules//devices/mips/processor.c:71
-#: modules//devices/parisc/processor.c:80
-#: modules//devices/ppc/processor.c:156
+#: modules//devices/parisc/processor.c:152
+#: modules//devices/ppc/processor.c:154
+#: modules//devices/riscv/processor.c:179
 #: modules//devices/s390/processor.c:73
 #: modules//devices/sh/processor.c:83
 #: modules//devices/sparc/processor.c:69
@@ -1020,62 +1026,69 @@ msgstr ""
 msgid "Byte Order"
 msgstr ""
 
-#: modules//devices/arm/processor.c:142
+#: modules//devices/arm/processor.c:141
 msgid "ARM Processor"
 msgstr ""
 
-#: modules//devices/arm/processor.c:200
+#: modules//devices/arm/processor.c:199
+#: modules//devices/riscv/processor.c:147
 #: modules//devices/x86/processor.c:701
 msgid "Empty List"
 msgstr ""
 
-#: modules//devices/arm/processor.c:237
+#: modules//devices/arm/processor.c:236
 msgid "Linux Name"
 msgstr ""
 
-#: modules//devices/arm/processor.c:238
+#: modules//devices/arm/processor.c:237
 msgid "Decoded Name"
 msgstr ""
 
-#: modules//devices/arm/processor.c:239
+#: modules//devices/arm/processor.c:238
 msgid "Mode"
 msgstr ""
 
-#: modules//devices/arm/processor.c:245
+#: modules//devices/arm/processor.c:244
 msgid "ARM"
 msgstr ""
 
-#: modules//devices/arm/processor.c:246
+#: modules//devices/arm/processor.c:245
 msgid "Implementer"
 msgstr ""
 
-#: modules//devices/arm/processor.c:247
+#: modules//devices/arm/processor.c:246
 msgid "Part"
 msgstr ""
 
-#: modules//devices/arm/processor.c:248
-#: modules//devices/ia64/processor.c:82
+#: modules//devices/arm/processor.c:247
+#: modules//devices/ia64/processor.c:154
+#: modules//devices/parisc/processor.c:148
+#: modules//devices/riscv/processor.c:175
 msgid "Architecture"
 msgstr ""
 
-#: modules//devices/arm/processor.c:249
+#: modules//devices/arm/processor.c:248
 msgid "Variant"
 msgstr ""
 
-#: modules//devices/arm/processor.c:250
-#: modules//devices/ia64/processor.c:85
-#: modules//devices/ppc/processor.c:153
+#: modules//devices/arm/processor.c:249
+#: modules//devices/ia64/processor.c:158
+#: modules//devices/ppc/processor.c:151
 msgid "Revision"
 msgstr ""
 
-#: modules//devices/arm/processor.c:251
+#: modules//devices/arm/processor.c:250
+#: modules//devices/riscv/processor.c:182
 #: modules//devices/sparc/processor.c:70
 #: modules//devices/x86/processor.c:756
 msgid "Capabilities"
 msgstr ""
 
-#: modules//devices/arm/processor.c:272
-#: modules//devices/ppc/processor.c:178
+#: modules//devices/arm/processor.c:271
+#: modules//devices/ia64/processor.c:185
+#: modules//devices/parisc/processor.c:180
+#: modules//devices/ppc/processor.c:176
+#: modules//devices/riscv/processor.c:203
 #: modules//devices/x86/processor.c:779
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
@@ -1236,27 +1249,40 @@ msgstr ""
 msgid "Free Virtual Memory"
 msgstr ""
 
-#: modules//devices/ia64/processor.c:57
+#: modules//devices/ia64/processor.c:108
 msgid "IA64 Processor"
 msgstr ""
 
-#: modules//devices/ia64/processor.c:80
+#: modules//devices/ia64/processor.c:152
 #: modules//devices/sh/processor.c:76
 #: hardinfo//hardinfo.c:76
 msgid "Name"
 msgstr ""
 
-#: modules//devices/ia64/processor.c:81
+#: modules//devices/ia64/processor.c:153
 #: modules//devices/x86/processor.c:745
 msgid "Vendor"
 msgstr ""
 
-#: modules//devices/ia64/processor.c:83
+#: modules//devices/ia64/processor.c:155
+msgid "Architecture Revision"
+msgstr ""
+
+#: modules//devices/ia64/processor.c:156
 #: modules//devices/sh/processor.c:78
 msgid "Family"
 msgstr ""
 
+#: modules//devices/ia64/processor.c:162
+msgid "CPU regs"
+msgstr ""
+
+#: modules//devices/ia64/processor.c:163
+msgid "Features"
+msgstr ""
+
 #: modules//devices/m68k/processor.c:77
+#: modules//devices/riscv/processor.c:177
 msgid "MMU"
 msgstr ""
 
@@ -1273,17 +1299,28 @@ msgstr ""
 msgid "System Type"
 msgstr ""
 
-#: modules//devices/parisc/processor.c:77
-#: modules//devices/x86/processor.c:739
-msgid "Model Name"
+#: modules//devices/parisc/processor.c:107
+msgid "PA-RISC Processor"
 msgstr ""
 
-#: modules//devices/parisc/processor.c:81
+#: modules//devices/parisc/processor.c:149
+msgid "System"
+msgstr ""
+
+#: modules//devices/parisc/processor.c:153
+msgid "HVersion"
+msgstr ""
+
+#: modules//devices/parisc/processor.c:154
+msgid "SVersion"
+msgstr ""
+
+#: modules//devices/parisc/processor.c:155
 #: modules//devices/x86/processor.c:753
 msgid "Cache"
 msgstr ""
 
-#: modules//devices/ppc/processor.c:118
+#: modules//devices/ppc/processor.c:117
 msgid "POWER Processor"
 msgstr ""
 
@@ -1351,6 +1388,14 @@ msgstr ""
 msgid ""
 "[Printers]\n"
 "No printers found=\n"
+msgstr ""
+
+#: modules//devices/riscv/processor.c:107
+msgid "RISC-V Processor"
+msgstr ""
+
+#: modules//devices/riscv/processor.c:176
+msgid "uarch"
 msgstr ""
 
 #: modules//devices/s390/processor.c:71
@@ -1477,6 +1522,10 @@ msgstr ""
 #: modules//devices/x86/processor.c:152
 #, c-format
 msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
+msgstr ""
+
+#: modules//devices/x86/processor.c:739
+msgid "Model Name"
 msgstr ""
 
 #: modules//devices/x86/processor.c:740
