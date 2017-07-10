@@ -26,8 +26,10 @@ struct _Processor {
     gfloat bogomips, cpu_mhz;
 
     gchar *has_fpu;
-    
+
     gchar *strmodel;
+
+    gchar *icache_str, *dcache_str;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */
