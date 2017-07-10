@@ -17,6 +17,8 @@ do_test() {
 #do_test sparc data/sparc_m7_cpuinfo
 #do_test mips data/mips_loongson_cpuinfo
 #do_test alpha data/alpha_as_cpuinfo
-do_test parisc data/parisc_hppa_fortex4_cpuinfo
+#do_test parisc data/parisc_hppa_fortex4_cpuinfo
+do_test ia64 data/ia64_x2_cpuinfo
+
 
 

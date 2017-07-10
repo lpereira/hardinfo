@@ -24,6 +24,9 @@ struct _Processor {
     gchar *vendor_id;
     gfloat bogomips, cpu_mhz;
     gchar *strmodel;
+
+    gchar *family, *arch;
+    gint model, revision;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */
