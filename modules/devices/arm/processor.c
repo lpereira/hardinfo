@@ -43,7 +43,6 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
     gchar *rep_pname = NULL;
-    gchar *tmpfreq_str = NULL;
     GSList *pi = NULL;
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
