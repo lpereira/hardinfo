@@ -68,17 +68,16 @@ static struct {
     { "sha2",	N_("Crypto:SHA2 (arch>8)") },
     { "crc32",	N_("CRC32 checksum instructions (arch>8)") },
     /* arm64/hw_cap */
-    { "fp",	N_("") },
+    { "fp",       "" },
     { "asimd",	N_("Advanced SIMD/NEON on AArch64 (arch>8)") },
-    { "atomics",	N_("") },
-    { "fphp",	N_("") },
-    { "asimdhp",	N_("") },
-    { "cpuid",	N_("") },
-    { "asimdrdm",	N_("") },
-    { "jscvt",	N_("") },
-    { "fcma",	N_("") },
-    { "lrcpc",	N_("") },
-
+    { "atomics",  "" },
+    { "fphp",     "" },
+    { "asimdhp",  "" },
+    { "cpuid",    "" },
+    { "asimdrdm", "" },
+    { "jscvt",    "" },
+    { "fcma",     "" },
+    { "lrcpc",    "" },
     { NULL, NULL},
 };
 
