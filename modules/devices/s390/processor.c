@@ -57,13 +57,12 @@ processor_scan(void)
         }
         g_strfreev(tmp);
     }
+    fclose(cpuinfo);
 
     processor->cpu_mhz = 0.0f;
 
     processor->model_name = g_strconcat("S390 ", processor->vendor_id, NULL);
     g_free(processor->vendor_id);
-
-    fclose(cpuinfo);
 
     return g_slist_append(NULL, processor);
 }

@@ -22,4 +22,5 @@ do_test() {
 #do_test m68k data/m68k_sun3_cpuinfo
 #do_test sh data/sh_dreamcast_cpuinfo
 #do_test sh data/sh_sh3_cpuinfo
-do_test sh data/sh_sh64_cpuinfo
+#do_test sh data/sh_sh64_cpuinfo
+do_test s390 data/s390_hurcules_cpuinfo
