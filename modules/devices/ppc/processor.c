@@ -18,38 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
-
-static gchar* get_cpu_str(const gchar* file, gint cpuid) {
-    gchar *tmp0 = NULL;
-    gchar *tmp1 = NULL;
-    tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
-    g_file_get_contents(tmp0, &tmp1, NULL, NULL);
-    g_free(tmp0);
-    return tmp1;
-}
-
-static gint get_cpu_int(const char* item, int cpuid) {
-    gchar *fc = NULL;
-    int ret = 0;
-    fc = get_cpu_str(item, cpuid);
-    if (fc) {
-        ret = atol(fc);
-        g_free(fc);
-    }
-    return ret;
-}
-
-gchar *byte_order_str() {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    return _("Little Endian");
-#else
-    return _("Big Endian");
-#endif
-}
-
-#ifndef PROC_CPUINFO
-#define PROC_CPUINFO "/proc/cpuinfo"
-#endif
+#include "cpu_util.h"
 
 GSList *
 processor_scan(void)
@@ -146,29 +115,15 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-#define STRIFNULL(f,cs) if (processor->f == NULL) processor->f = g_strdup(cs);
-#define UNKIFNULL(f) STRIFNULL(f, _("(Unknown)") )
-#define EMPIFNULL(f) STRIFNULL(f, "")
         STRIFNULL(model_name, _("POWER Processor") );
         UNKIFNULL(revision);
 
-        /* topo */
-        processor->package_id = get_cpu_str("topology/physical_package_id", processor->id);
-        processor->core_id = get_cpu_str("topology/core_id", processor->id);
-        UNKIFNULL(package_id);
-        UNKIFNULL(core_id);
+        /* topo & freq */
+        processor->cpufreq = cpufreq_new(processor->id);
+        processor->cputopo = cputopo_new(processor->id);
 
-        /* freq */
-        processor->scaling_driver = get_cpu_str("cpufreq/scaling_driver", processor->id);
-        processor->scaling_governor = get_cpu_str("cpufreq/scaling_governor", processor->id);
-        UNKIFNULL(scaling_driver);
-        UNKIFNULL(scaling_governor);
-        processor->transition_latency = get_cpu_int("cpufreq/cpuinfo_transition_latency", processor->id);
-        processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
-        processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
-        processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
-        if (processor->cpukhz_max)
-            processor->cpu_mhz = processor->cpukhz_max / 1000;
+        if (processor->cpufreq->cpukhz_max)
+            processor->cpu_mhz = processor->cpufreq->cpukhz_max / 1000;
 
     }
 
@@ -181,39 +136,8 @@ processor_get_detailed_info(Processor *processor)
 {
     gchar *tmp_cpufreq, *tmp_topology, *ret;
 
-    tmp_topology = g_strdup_printf(
-                    "[%s]\n"
-                    "%s=%d\n"
-                    "%s=%s\n"
-                    "%s=%s\n",
-                   _("Topology"),
-                   _("ID"), processor->id,
-                   _("Socket"), processor->package_id,
-                   _("Core"), processor->core_id);
-
-    if (processor->cpukhz_min || processor->cpukhz_max || processor->cpukhz_cur) {
-        tmp_cpufreq = g_strdup_printf(
-                    "[%s]\n"
-                    "%s=%d %s\n"
-                    "%s=%d %s\n"
-                    "%s=%d %s\n"
-                    "%s=%d %s\n"
-                    "%s=%s\n"
-                    "%s=%s\n",
-                   _("Frequency Scaling"),
-                   _("Minimum"), processor->cpukhz_min, _("kHz"),
-                   _("Maximum"), processor->cpukhz_max, _("kHz"),
-                   _("Current"), processor->cpukhz_cur, _("kHz"),
-                   _("Transition Latency"), processor->transition_latency, _("ns"),
-                   _("Governor"), processor->scaling_governor,
-                   _("Driver"), processor->scaling_driver);
-    } else {
-        tmp_cpufreq = g_strdup_printf(
-                    "[%s]\n"
-                    "%s=%s\n",
-                   _("Frequency Scaling"),
-                   _("Driver"), processor->scaling_driver);
-    }
+    tmp_topology = cputopo_section_str(processor->cputopo);
+    tmp_cpufreq = cpufreq_section_str(processor->cpufreq);
 
     ret = g_strdup_printf("[%s]\n"
                    "%s=%s\n"  /* model */

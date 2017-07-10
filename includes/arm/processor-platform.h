@@ -19,6 +19,8 @@
 #ifndef __PROCESSOR_PLATFORM_H__
 #define __PROCESSOR_PLATFORM_H__
 
+#include "cpu_util.h"
+
 struct _Processor {
     gchar *model_name;
     gchar *decoded_name;
@@ -26,11 +28,9 @@ struct _Processor {
     gfloat bogomips;
 
     gint id;
-    gchar *package_id, *core_id;
     gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
-    gint cpukhz_max, cpukhz_min, cpukhz_cur; /* for arm/processor.c */
-    gchar *scaling_driver, *scaling_governor;
-    gint transition_latency;
+    cpu_topology_data *cputopo;
+    cpufreq_data *cpufreq;
 
     gchar *cpu_implementer;
     gchar *cpu_architecture;
