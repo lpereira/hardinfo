@@ -358,14 +358,19 @@ static ShellNote *note_new(void)
     note->label = gtk_label_new("");
     note->event_box = gtk_event_box_new();
     button = gtk_button_new();
-    
+
     border_box = gtk_event_box_new();
     gtk_container_set_border_width(GTK_CONTAINER(border_box), 1);
     gtk_container_add(GTK_CONTAINER(note->event_box), border_box);
     gtk_widget_show(border_box);
-    
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_override_background_color(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
+    gtk_widget_override_background_color(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
+#else
     gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
     gtk_widget_modify_bg(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
+#endif
 
     icon = icon_cache_get_image("close.png");
     gtk_widget_show(icon);
@@ -374,7 +379,11 @@ static ShellNote *note_new(void)
     g_signal_connect(G_OBJECT(button), "clicked", (GCallback) close_note,
 		     NULL);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
+#else
     hbox = gtk_hbox_new(FALSE, 3);
+#endif
     icon = icon_cache_get_image("dialog-information.png");
 
     gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
@@ -415,14 +424,22 @@ static void create_window(void)
     gtk_window_set_default_size(GTK_WINDOW(shell->window), 800, 600);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#else
     vbox = gtk_vbox_new(FALSE, 0);
+#endif
     gtk_widget_show(vbox);
     gtk_container_add(GTK_CONTAINER(shell->window), vbox);
     shell->vbox = vbox;
 
     menu_init(shell);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+#else
     hbox = gtk_hbox_new(FALSE, 5);
+#endif
     gtk_widget_show(hbox);
     gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 3);
 
@@ -432,23 +449,39 @@ static void create_window(void)
     gtk_box_pack_end(GTK_BOX(hbox), shell->progress, FALSE, FALSE, 5);
 
     shell->status = gtk_label_new("");
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_valign(GTK_MISC(shell->status), GTK_ALIGN_CENTER);
+#else
     gtk_misc_set_alignment(GTK_MISC(shell->status), 0.0, 0.5);
+#endif
     gtk_widget_show(shell->status);
     gtk_box_pack_start(GTK_BOX(hbox), shell->status, FALSE, FALSE, 5);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    shell->hpaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+#else
     shell->hpaned = gtk_hpaned_new();
+#endif
     gtk_widget_show(shell->hpaned);
     gtk_box_pack_end(GTK_BOX(vbox), shell->hpaned, TRUE, TRUE, 0);
     gtk_paned_set_position(GTK_PANED(shell->hpaned), 210);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+#else
     vbox = gtk_vbox_new(FALSE, 5);
+#endif
     gtk_widget_show(vbox);
     gtk_paned_add2(GTK_PANED(shell->hpaned), vbox);
 
     shell->note = note_new();
     gtk_box_pack_end(GTK_BOX(vbox), shell->note->event_box, FALSE, FALSE, 0);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    shell->vpaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+#else
     shell->vpaned = gtk_vpaned_new();
+#endif
     gtk_box_pack_start(GTK_BOX(vbox), shell->vpaned, TRUE, TRUE, 0);
     gtk_widget_show(shell->vpaned);
 
@@ -648,15 +681,24 @@ ShellSummary *summary_new(void)
     
     summary = g_new0(ShellSummary, 1);
     summary->scroll = gtk_scrolled_window_new(NULL, NULL);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    summary->view = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+#else
     summary->view = gtk_vbox_new(FALSE, 5);
+#endif
     summary->items = NULL;
 
     gtk_container_set_border_width(GTK_CONTAINER(summary->view), 6);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(summary->scroll),
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_container_add(GTK_SCROLLED_WINDOW(summary->scroll),
+                                          summary->view);
+#else
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(summary->scroll),
                                           summary->view);
+#endif
     gtk_widget_show_all(summary->scroll);    
 
     return summary;
@@ -810,11 +852,17 @@ static gboolean reload_section(gpointer data)
 	double pos_info_scroll, pos_more_scroll;
 	
 	/* save current position */
+#if GTK_CHECK_VERSION(2, 0, 0)
 	pos_info_scroll = RANGE_GET_VALUE(info, vscrollbar);
 	pos_more_scroll = RANGE_GET_VALUE(moreinfo, vscrollbar);
+#endif
 	
 	/* avoid drawing the window while we reload */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gdk_window_freeze_updates(shell->window/*->window*/);
+#else
 	gdk_window_freeze_updates(shell->window->window);
+#endif
 	
 	/* gets the current selected path */
 	if (gtk_tree_selection_get_selected
@@ -840,7 +888,11 @@ static gboolean reload_section(gpointer data)
         }
         	
 	/* make the window drawable again */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gdk_window_thaw_updates(shell->window/*->window*/);
+#else
 	gdk_window_thaw_updates(shell->window->window);
+#endif
     }
 
     /* destroy the timeout: it'll be set up again */
@@ -934,8 +986,13 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
 	gtk_widget_show(shell->notebook);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
 	gtk_paned_set_position(GTK_PANED(shell->vpaned),
+			       shell->hpaned/*->allocation.height / 2*/);
+#else
+    gtk_paned_set_position(GTK_PANED(shell->vpaned),
 			       shell->hpaned->allocation.height / 2);
+#endif
 	break;
     case SHELL_VIEW_LOAD_GRAPH:
         gtk_widget_show(shell->info->scroll);
@@ -943,9 +1000,16 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 	gtk_widget_show(shell->notebook);
 	load_graph_clear(shell->loadgraph);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
 	gtk_paned_set_position(GTK_PANED(shell->vpaned),
+			       shell->hpaned/*->allocation.height*/ -
+			       shell->loadgraph->height - 16);
+#else
+    gtk_paned_set_position(GTK_PANED(shell->vpaned),
 			       shell->hpaned->allocation.height -
 			       shell->loadgraph->height - 16);
+#endif
+	
 	break;
     case SHELL_VIEW_PROGRESS_DUAL:
 	gtk_widget_show(shell->notebook);
@@ -1324,7 +1388,11 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     key_data = module_entry_function(entry);
 
     /* */
+#if GTK_CHECK_VERSION(3, 0, 0)
+	gdk_window_freeze_updates(shell->info->view/*->window*/);
+#else
     gdk_window_freeze_updates(shell->info->view->window);
+#endif
 
     g_object_ref(shell->info->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
@@ -1375,7 +1443,11 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), shell->info->model);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+	gdk_window_thaw_updates(shell->info->view/*->window*/);
+#else
     gdk_window_thaw_updates(shell->info->view->window);
+#endif
     shell_set_note_from_entry(entry);
 
     if (shell->view_type == SHELL_VIEW_PROGRESS || shell->view_type == SHELL_VIEW_PROGRESS_DUAL) {
@@ -1512,20 +1584,40 @@ static void shell_summary_add_item(ShellSummary *summary,
      gtk_frame_set_shadow_type(GTK_FRAME(frame),
                                GTK_SHADOW_NONE);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+     frame_label_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+#else
      frame_label_box = gtk_hbox_new(FALSE, 5);
+#endif
      frame_image = icon_cache_get_image(icon);
      frame_label = gtk_label_new(name);
      gtk_label_set_use_markup(GTK_LABEL(frame_label), TRUE);
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_image, FALSE, FALSE, 0);
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_label, FALSE, FALSE, 0);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+     gtk_widget_set_halign(alignment, GTK_ALIGN_CENTER);
+     gtk_widget_set_valign(alignment, GTK_ALIGN_CENTER);
+#else
      alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
+#endif
      gtk_widget_show(alignment);
      gtk_container_add(GTK_CONTAINER(frame), alignment);
+#if GTK_CHECK_VERSION(3, 0, 0)
+     gtk_widget_set_margin_top(alignment, 0);
+     gtk_widget_set_margin_bottom(alignment, 0);
+     gtk_widget_set_margin_start(alignment, 48);
+     gtk_widget_set_margin_end(alignment, 0);
+#else
      gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 48, 0);
+#endif
 
      content = gtk_label_new(temp);
+#if GTK_CHECK_VERSION(3, 0, 0)
+     gtk_widget_set_valign(GTK_MISC(content), GTK_ALIGN_CENTER);
+#else
      gtk_misc_set_alignment(GTK_MISC(content), 0.0, 0.5);
+#endif
      gtk_container_add(GTK_CONTAINER(alignment), content);
 
      gtk_widget_show_all(frame);
@@ -1639,6 +1731,7 @@ static void module_selected(gpointer data)
     ShellModuleEntry *entry;
     static ShellModuleEntry *current = NULL;
     static gboolean updating = FALSE;
+    GtkScrollbar		*hscrollbar, *vscrollbar;
 
     /* Gets the currently selected item on the left-side TreeView; if there is no
        selection, silently return */
@@ -1680,10 +1773,17 @@ static void module_selected(gpointer data)
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->info->view));
 
 	/* urgh. why don't GTK do this when the model is cleared? */
+#if GTK_CHECK_VERSION(3, 0, 0)
         RANGE_SET_VALUE(info, vscrollbar, 0.0);
         RANGE_SET_VALUE(info, hscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
         RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
+#else
+        RANGE_SET_VALUE(info, vscrollbar, 0.0);
+        RANGE_SET_VALUE(info, hscrollbar, 0.0);
+        RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
+        RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
+#endif
 
 	title = g_strdup_printf("%s - %s", shell->selected_module->name, entry->name);
 	shell_set_title(shell, title);
