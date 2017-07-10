@@ -22,6 +22,9 @@
 #include "devices.h"
 #include "cpu_util.h"
 
+#include "riscv_data.h"
+#include "riscv_data.c"
+
 GSList *
 processor_scan(void)
 {
@@ -122,6 +125,8 @@ processor_scan(void)
         UNKIFNULL(isa);
         UNKIFNULL(uarch);
 
+        processor->flags = riscv_isa_to_flags(processor->isa);
+
         /* topo & freq */
         processor->cpufreq = cpufreq_new(processor->id);
         processor->cputopo = cputopo_new(processor->id);
@@ -135,12 +140,37 @@ processor_scan(void)
     return procs;
 }
 
+gchar *processor_get_capabilities_from_flags(gchar * strflags)
+{
+    gchar **flags, **old;
+    gchar *tmp = NULL;
+    gint j = 0;
+
+    flags = g_strsplit(strflags, " ", 0);
+    old = flags;
+
+    while (flags[j]) {
+        const gchar *meaning = riscv_ext_meaning( flags[j] );
+
+        if (meaning) {
+            tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
+        } else {
+            tmp = h_strdup_cprintf("%s=\n", tmp, flags[j]);
+        }
+        j++;
+    }
+    if (tmp == NULL || g_strcmp0(tmp, "") == 0)
+        tmp = g_strdup_printf("%s=%s\n", "empty", _("Empty List"));
+
+    g_strfreev(old);
+    return tmp;
+}
 
 gchar *
 processor_get_detailed_info(Processor *processor)
 {
-    gchar *tmp_cpufreq, *tmp_topology, *ret;
-
+    gchar *tmp_flags, *tmp_cpufreq, *tmp_topology, *ret;
+    tmp_flags = processor_get_capabilities_from_flags(processor->flags);
     tmp_topology = cputopo_section_str(processor->cputopo);
     tmp_cpufreq = cpufreq_section_str(processor->cpufreq);
 
@@ -153,6 +183,8 @@ processor_get_detailed_info(Processor *processor)
                    "%s=%s\n"      /* byte order */
                    "%s" /* topology */
                    "%s" /* frequency scaling */
+                   "[%s]\n" /* extensions */
+                   "%s"
                    "%s",/* empty */
                    _("Processor"),
                    _("Model"), processor->model_name,
@@ -163,7 +195,9 @@ processor_get_detailed_info(Processor *processor)
                    _("Byte Order"), byte_order_str(),
                    tmp_topology,
                    tmp_cpufreq,
+                   _("Capabilities"), tmp_flags,
                     "");
+    g_free(tmp_flags);
     g_free(tmp_cpufreq);
     g_free(tmp_topology);
     return ret;

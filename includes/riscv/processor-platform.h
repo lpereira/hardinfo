@@ -29,6 +29,7 @@ struct _Processor {
 
     gchar *model_name;
     gchar *mmu, *isa, *uarch;
+    gchar *flags; /* expanded from isa */
     gfloat bogomips; /* not used */
 };
 
