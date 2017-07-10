@@ -19,7 +19,7 @@ do_test() {
 #do_test alpha data/alpha_as_cpuinfo
 #do_test parisc data/parisc_hppa_fortex4_cpuinfo
 #do_test ia64 data/ia64_x2_cpuinfo
-do_test m68k data/m68k_sun3_cpuinfo
-
-
-
+#do_test m68k data/m68k_sun3_cpuinfo
+#do_test sh data/sh_dreamcast_cpuinfo
+#do_test sh data/sh_sh3_cpuinfo
+do_test sh data/sh_sh64_cpuinfo
