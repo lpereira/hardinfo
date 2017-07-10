@@ -97,23 +97,7 @@ processor_scan(void)
     g_free(rep_pname);
     fclose(cpuinfo);
 
-    /* re-duplicate missing data for /proc/cpuinfo variant that de-duplicated it */
-#define REDUP(f) if (dproc->f && !processor->f) processor->f = g_strdup(dproc->f);
-    Processor *dproc;
-    GSList *l;
-    l = procs = g_slist_reverse(procs);
-    while (l) {
-        processor = l->data;
-        if (processor->model_name) {
-            dproc = processor;
-        } else if (dproc) {
-            //REDUP(mmu);
-            //REDUP(isa);
-            //REDUP(uarch);
-        }
-        l = g_slist_next(l);
-    }
-    procs = g_slist_reverse(procs);
+    /* TODO: redup */
 
     /* data not from /proc/cpuinfo */
     for (pi = procs; pi; pi = pi->next) {

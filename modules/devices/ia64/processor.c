@@ -20,8 +20,6 @@
 #include "devices.h"
 #include "cpu_util.h"
 
-#include "cpu_util.h"
-
 GSList *
 processor_scan(void)
 {
@@ -30,7 +28,6 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
     gchar *rep_pname = NULL;
-    gchar *toss = NULL;
     GSList *pi = NULL;
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
