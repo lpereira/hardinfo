@@ -114,6 +114,7 @@ set(MODULE_computer_SOURCES
 )
 set(MODULE_devices_SOURCES
 	modules/devices.c
+	modules/devices/cpu_util.c
 	modules/devices/${HARDINFO_ARCH}/processor.c
 	modules/devices/battery.c
 	modules/devices/devmemory.c
