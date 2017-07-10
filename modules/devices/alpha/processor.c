@@ -37,6 +37,7 @@ processor_scan(void)
     Processor *processor;
     FILE *cpuinfo;
     gchar buffer[128];
+    long long hz = 0;
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
@@ -53,6 +54,7 @@ processor_scan(void)
             get_str("cpu model", processor->model_name);
             get_float("BogoMIPS", processor->bogomips);
             get_str("platform string", processor->strmodel);
+            get_str("cycle frequency [Hz]", processor->cycle_frequency_hz_str);
 
         }
         g_strfreev(tmp);
@@ -61,7 +63,13 @@ processor_scan(void)
     gchar *tmp = g_strconcat("Alpha ", processor->model_name, NULL);
     g_free(processor->model_name);
     processor->model_name = tmp;
-    processor->cpu_mhz = 0.0f;
+
+    if (processor->cycle_frequency_hz_str) {
+        hz = atoll(processor->cycle_frequency_hz_str);
+        processor->cpu_mhz = hz;
+        processor->cpu_mhz /= 1000000;
+    } else
+        processor->cpu_mhz = 0.0f;
 
     fclose(cpuinfo);
 
@@ -76,11 +84,13 @@ processor_get_info(GSList *processors)
     return g_strdup_printf("[%s]\n"
                         "%s=%s\n"
                         "%s=%s\n"
+                        "%s=%.2f %s\n" /* frequency */
                         "%s=%.2f\n"    /* bogomips */
                         "%s=%s\n",     /* byte order */
                     _("Processor"),
                     _("Model"), processor->model_name,
                     _("Platform String"), processor->strmodel,
+                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                     _("BogoMips"), processor->bogomips,
                     _("Byte Order"), byte_order_str()
                     );
