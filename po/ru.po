@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo puppy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-10 12:39-0500\n"
+"POT-Creation-Date: 2017-07-10 18:17-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -1018,10 +1018,10 @@ msgstr "Неизвестный дистрибутив"
 #: modules//devices.c:91 modules//devices/alpha/processor.c:79
 #: modules//devices/arm/processor.c:235 modules//devices/ia64/processor.c:151
 #: modules//devices/m68k/processor.c:75 modules//devices/mips/processor.c:66
-#: modules//devices/parisc/processor.c:146 modules//devices/ppc/processor.c:149
-#: modules//devices/riscv/processor.c:173 modules//devices/s390/processor.c:69
-#: modules//devices/sh/processor.c:75 modules//devices/sparc/processor.c:66
-#: modules//devices/x86/processor.c:738
+#: modules//devices/parisc/processor.c:146
+#: modules//devices/ppc/processor.c:149 modules//devices/riscv/processor.c:173
+#: modules//devices/s390/processor.c:69 modules//devices/sh/processor.c:75
+#: modules//devices/sparc/processor.c:66 modules//devices/x86/processor.c:738
 msgid "Processor"
 msgstr "Процессор"
 
@@ -1095,8 +1095,9 @@ msgstr "Для вывода информации о ресурсах нужны 
 
 #: modules//devices/alpha/processor.c:80 modules//devices/ia64/processor.c:157
 #: modules//devices/m68k/processor.c:76 modules//devices/mips/processor.c:67
-#: modules//devices/parisc/processor.c:147 modules//devices/ppc/processor.c:150
-#: modules//devices/riscv/processor.c:174 modules//devices/s390/processor.c:70
+#: modules//devices/parisc/processor.c:147
+#: modules//devices/ppc/processor.c:150 modules//devices/riscv/processor.c:174
+#: modules//devices/s390/processor.c:70
 msgid "Model"
 msgstr ""
 
@@ -1106,7 +1107,8 @@ msgstr ""
 
 #: modules//devices/alpha/processor.c:82 modules//devices/arm/processor.c:239
 #: modules//devices/ia64/processor.c:159 modules//devices/m68k/processor.c:79
-#: modules//devices/mips/processor.c:69 modules//devices/parisc/processor.c:150
+#: modules//devices/mips/processor.c:69
+#: modules//devices/parisc/processor.c:150
 #: modules//devices/ppc/processor.c:152 modules//devices/riscv/processor.c:178
 #: modules//devices/sh/processor.c:79 modules//devices/x86/processor.c:748
 msgid "Frequency"
@@ -1114,7 +1116,8 @@ msgstr "Частота"
 
 #: modules//devices/alpha/processor.c:82 modules//devices/arm/processor.c:239
 #: modules//devices/ia64/processor.c:159 modules//devices/m68k/processor.c:79
-#: modules//devices/mips/processor.c:69 modules//devices/parisc/processor.c:150
+#: modules//devices/mips/processor.c:69
+#: modules//devices/parisc/processor.c:150
 #: modules//devices/ppc/processor.c:152 modules//devices/riscv/processor.c:178
 #: modules//devices/sh/processor.c:79 modules//devices/sh/processor.c:80
 #: modules//devices/sh/processor.c:81 modules//devices/x86/processor.c:748
@@ -1123,7 +1126,8 @@ msgstr "МГц"
 
 #: modules//devices/alpha/processor.c:83 modules//devices/arm/processor.c:240
 #: modules//devices/ia64/processor.c:160 modules//devices/m68k/processor.c:80
-#: modules//devices/mips/processor.c:70 modules//devices/parisc/processor.c:151
+#: modules//devices/mips/processor.c:70
+#: modules//devices/parisc/processor.c:151
 #: modules//devices/ppc/processor.c:153 modules//devices/s390/processor.c:72
 #: modules//devices/sh/processor.c:82 modules//devices/x86/processor.c:749
 msgid "BogoMips"
@@ -1131,12 +1135,125 @@ msgstr ""
 
 #: modules//devices/alpha/processor.c:84 modules//devices/arm/processor.c:241
 #: modules//devices/ia64/processor.c:161 modules//devices/m68k/processor.c:81
-#: modules//devices/mips/processor.c:71 modules//devices/parisc/processor.c:152
+#: modules//devices/mips/processor.c:71
+#: modules//devices/parisc/processor.c:152
 #: modules//devices/ppc/processor.c:154 modules//devices/riscv/processor.c:179
 #: modules//devices/s390/processor.c:73 modules//devices/sh/processor.c:83
 #: modules//devices/sparc/processor.c:69 modules//devices/x86/processor.c:750
 msgid "Byte Order"
 msgstr "Порядок байтов"
+
+#: modules//devices/arm/arm_data.c:42
+msgid "SWP instruction (atomic read-modify-write)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:43
+msgid "Half-word loads and stores"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:44
+msgid "Thumb (16-bit instruction set)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:45
+msgid "26-Bit Model (Processor status register folded into program counter)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:46
+msgid "32x32->64-bit multiplication"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:47
+msgid "Floating point accelerator"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:48
+msgid "VFP (early SIMD vector floating point instructions)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:49
+msgid "DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:50
+msgid "Jazelle (Java bytecode accelerator)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:51
+msgid "SIMD instructions similar to Intel MMX"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:52
+msgid "MaverickCrunch coprocessor (if kernel support enabled)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:53
+msgid "ThumbEE"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:54
+msgid "Advanced SIMD/NEON on AArch32"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:55
+msgid "kernel event stream using generic architected timer"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:56
+msgid "VFP version 3"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:57
+msgid "VFP version 3 with 16 D-registers"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:58
+msgid "VFP version 4 with fast context switching"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:59
+msgid "VFP with 32 D-registers"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:60
+msgid "TLS register"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:61
+msgid "SDIV and UDIV hardware division in ARM mode"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:62
+msgid "SDIV and UDIV hardware division in Thumb mode"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:63
+msgid "40-bit Large Physical Address Extension"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:65
+msgid "64x64->128-bit F2m multiplication (arch>8)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:66
+msgid "Crypto:AES (arch>8)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:67
+msgid "Crypto:SHA1 (arch>8)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:68
+msgid "Crypto:SHA2 (arch>8)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:69
+msgid "CRC32 checksum instructions (arch>8)"
+msgstr ""
+
+#: modules//devices/arm/arm_data.c:72
+msgid "Advanced SIMD/NEON on AArch64 (arch>8)"
+msgstr ""
 
 #: modules//devices/arm/processor.c:141
 msgid "ARM Processor"
@@ -1192,8 +1309,9 @@ msgid "Capabilities"
 msgstr "Возможности"
 
 #: modules//devices/arm/processor.c:271 modules//devices/ia64/processor.c:185
-#: modules//devices/parisc/processor.c:180 modules//devices/ppc/processor.c:176
-#: modules//devices/riscv/processor.c:203 modules//devices/x86/processor.c:779
+#: modules//devices/parisc/processor.c:180
+#: modules//devices/ppc/processor.c:176 modules//devices/riscv/processor.c:203
+#: modules//devices/x86/processor.c:779
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
 msgstr "%s$CPU%d$%s=%.2fМГц\n"
@@ -1434,7 +1552,8 @@ msgstr ""
 msgid "SVersion"
 msgstr ""
 
-#: modules//devices/parisc/processor.c:155 modules//devices/x86/processor.c:753
+#: modules//devices/parisc/processor.c:155
+#: modules//devices/x86/processor.c:753
 msgid "Cache"
 msgstr "Кэш"
 
@@ -1519,6 +1638,78 @@ msgstr ""
 
 #: modules//devices/riscv/processor.c:176
 msgid "uarch"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:36
+msgid "32-bit"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:37
+msgid "64-bit"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:38
+msgid "128-bit"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:39
+msgid "Base embedded integer instructions (15 registers)"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:40
+msgid "Base integer instructions (31 registers)"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:41
+msgid "Hardware integer multiply and divide"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:42
+msgid "Atomic memory operations"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:43
+msgid "Compressed 16-bit instructions"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:44
+msgid "Floating-point instructions, single-precision"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:45
+msgid "Floating-point instructions, double-precision"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:46
+msgid "Floating-point instructions, quad-precision"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:47
+msgid "Bit manipulation instructions"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:48
+msgid "Vector operations"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:49
+msgid "Transactional memory"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:50
+msgid "Packed SIMD instructions"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:51
+msgid "Decimal floating-point instructions"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:52
+msgid "Dynamically translated languages"
+msgstr ""
+
+#: modules//devices/riscv/riscv_data.c:53
+msgid "User-level interrupts"
 msgstr ""
 
 #: modules//devices/s390/processor.c:71
@@ -1664,6 +1855,929 @@ msgstr "Информация о кэше недоступна=\n"
 #: modules//devices/x86/processor.c:152
 #, c-format
 msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
+msgstr ""
+
+#: modules//devices/x86/processor.c:339
+msgid "Onboard FPU (floating point support)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:340
+msgid "Virtual 8086 mode enhancements"
+msgstr ""
+
+#: modules//devices/x86/processor.c:341
+msgid "Debugging Extensions (CR4.DE)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:342
+msgid "Page Size Extensions (4MB memory pages)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:343
+msgid "Time Stamp Counter (RDTSC)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:344
+msgid "Model-Specific Registers (RDMSR, WRMSR)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:345
+msgid "Physical Address Extensions (support for more than 4GB of RAM)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:346
+msgid "Machine Check Exception"
+msgstr ""
+
+#: modules//devices/x86/processor.c:347
+msgid "CMPXCHG8 instruction (64-bit compare-and-swap)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:348
+msgid "Onboard APIC"
+msgstr ""
+
+#: modules//devices/x86/processor.c:349
+msgid "SYSENTER/SYSEXIT"
+msgstr ""
+
+#: modules//devices/x86/processor.c:350
+msgid "Memory Type Range Registers"
+msgstr ""
+
+#: modules//devices/x86/processor.c:351
+msgid "Page Global Enable (global bit in PDEs and PTEs)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:352
+msgid "Machine Check Architecture"
+msgstr ""
+
+#: modules//devices/x86/processor.c:353
+msgid "CMOV instructions (conditional move) (also FCMOV)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:354
+msgid "Page Attribute Table"
+msgstr ""
+
+#: modules//devices/x86/processor.c:355
+msgid "36-bit PSEs (huge pages)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:356
+msgid "Processor serial number"
+msgstr ""
+
+#: modules//devices/x86/processor.c:357
+msgid "Cache Line Flush instruction"
+msgstr ""
+
+#: modules//devices/x86/processor.c:358
+msgid "Debug Store (buffer for debugging and profiling instructions)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:359
+msgid "ACPI via MSR (temperature monitoring and clock speed modulation)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:360
+msgid "Multimedia Extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:361
+msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
+msgstr ""
+
+#: modules//devices/x86/processor.c:362
+msgid "Intel SSE vector instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:363
+msgid "SSE2"
+msgstr ""
+
+#: modules//devices/x86/processor.c:364
+msgid "CPU self snoop"
+msgstr ""
+
+#: modules//devices/x86/processor.c:365
+msgid "Hyper-Threading"
+msgstr ""
+
+#: modules//devices/x86/processor.c:366
+msgid "Automatic clock control (Thermal Monitor)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:367
+msgid ""
+"Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
+"x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:368
+msgid "Pending Break Enable (PBE# pin) wakeup support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:371
+msgid "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:372
+msgid "Multiprocessing Capable."
+msgstr ""
+
+#: modules//devices/x86/processor.c:373
+msgid "Execute Disable"
+msgstr ""
+
+#: modules//devices/x86/processor.c:374
+msgid "AMD MMX extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:375
+msgid "FXSAVE/FXRSTOR optimizations"
+msgstr ""
+
+#: modules//devices/x86/processor.c:376
+msgid "One GB pages (allows hugepagesz=1G)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:377
+msgid "Read Time-Stamp Counter and Processor ID"
+msgstr ""
+
+#: modules//devices/x86/processor.c:378
+msgid "Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:379
+msgid "3DNow! (AMD vector instructions, competing with Intel's SSE1)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:380
+msgid "AMD 3DNow! extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:382
+msgid "CPU in recovery mode"
+msgstr ""
+
+#: modules//devices/x86/processor.c:383
+msgid "Longrun power control"
+msgstr ""
+
+#: modules//devices/x86/processor.c:384
+msgid "LongRun table interface"
+msgstr ""
+
+#: modules//devices/x86/processor.c:386
+msgid "Cyrix MMX extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:387
+msgid "AMD K6 nonstandard MTRRs"
+msgstr ""
+
+#: modules//devices/x86/processor.c:388
+msgid "Cyrix ARRs (= MTRRs)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:389
+msgid "Centaur MCRs (= MTRRs)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:390
+msgid "TSC ticks at a constant rate"
+msgstr ""
+
+#: modules//devices/x86/processor.c:391
+msgid "SMP kernel running on UP"
+msgstr ""
+
+#: modules//devices/x86/processor.c:392
+msgid "Always-Running Timer"
+msgstr ""
+
+#: modules//devices/x86/processor.c:393
+msgid "Intel Architectural PerfMon"
+msgstr ""
+
+#: modules//devices/x86/processor.c:394
+msgid "Precise-Event Based Sampling"
+msgstr ""
+
+#: modules//devices/x86/processor.c:395
+msgid "Branch Trace Store"
+msgstr ""
+
+#: modules//devices/x86/processor.c:396
+msgid "rep microcode works well"
+msgstr ""
+
+#: modules//devices/x86/processor.c:397
+msgid "AMD accumulated power mechanism"
+msgstr ""
+
+#: modules//devices/x86/processor.c:398
+msgid "The NOPL (0F 1F) instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:399
+msgid "cpu topology enum extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:400
+msgid "TSC is known to be reliable"
+msgstr ""
+
+#: modules//devices/x86/processor.c:401
+msgid "TSC does not stop in C states"
+msgstr ""
+
+#: modules//devices/x86/processor.c:402
+msgid "has extended APICID (8 bits)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:403
+msgid "multi-node processor"
+msgstr ""
+
+#: modules//devices/x86/processor.c:404
+msgid "APERFMPERF"
+msgstr ""
+
+#: modules//devices/x86/processor.c:405
+msgid "Non lazy FPU restore"
+msgstr ""
+
+#: modules//devices/x86/processor.c:406
+msgid "TSC doesn't stop in S3 state"
+msgstr ""
+
+#: modules//devices/x86/processor.c:407
+msgid "CPU has recoverable machine checks"
+msgstr ""
+
+#: modules//devices/x86/processor.c:410
+msgid "SSE-3 (“Prescott New Instructions”)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:411
+msgid ""
+"Perform a Carry-Less Multiplication of Quadword instruction — accelerator "
+"for GCM)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:412
+msgid "64-bit Debug Store"
+msgstr ""
+
+#: modules//devices/x86/processor.c:413
+msgid "Monitor/Mwait support (Intel SSE3 supplements)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:414
+msgid "CPL Qual. Debug Store"
+msgstr ""
+
+#: modules//devices/x86/processor.c:415
+msgid "Intel VMX"
+msgstr ""
+
+#: modules//devices/x86/processor.c:416
+msgid "TXT (TPM support)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:417
+msgid "Enhanced SpeedStep"
+msgstr ""
+
+#: modules//devices/x86/processor.c:418
+msgid "Thermal Monitor 2"
+msgstr ""
+
+#: modules//devices/x86/processor.c:419
+msgid "Supplemental SSE-3"
+msgstr ""
+
+#: modules//devices/x86/processor.c:420
+msgid "Context ID"
+msgstr ""
+
+#: modules//devices/x86/processor.c:421
+msgid "silicon debug"
+msgstr ""
+
+#: modules//devices/x86/processor.c:422
+msgid "Fused multiply-add"
+msgstr ""
+
+#: modules//devices/x86/processor.c:423
+msgid "CMPXCHG16B"
+msgstr ""
+
+#: modules//devices/x86/processor.c:424
+msgid "Send Task Priority Messages"
+msgstr ""
+
+#: modules//devices/x86/processor.c:425
+msgid "Performance Capabilities"
+msgstr ""
+
+#: modules//devices/x86/processor.c:426
+msgid "Process Context Identifiers"
+msgstr ""
+
+#: modules//devices/x86/processor.c:427
+msgid "Direct Cache Access"
+msgstr ""
+
+#: modules//devices/x86/processor.c:428
+msgid "SSE-4.1"
+msgstr ""
+
+#: modules//devices/x86/processor.c:429
+msgid "SSE-4.2"
+msgstr ""
+
+#: modules//devices/x86/processor.c:430
+msgid "x2APIC"
+msgstr ""
+
+#: modules//devices/x86/processor.c:431
+msgid "Move Data After Swapping Bytes instruction"
+msgstr ""
+
+#: modules//devices/x86/processor.c:432
+msgid ""
+"Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i."
+"e. bit count)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:433
+msgid "Tsc deadline timer"
+msgstr ""
+
+#: modules//devices/x86/processor.c:434
+msgid "Advanced Encryption Standard (New Instructions)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:435
+msgid "Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY"
+msgstr ""
+
+#: modules//devices/x86/processor.c:436
+msgid "Advanced Vector Extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:437
+msgid "16-bit fp conversions (CVT16)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:438
+msgid "Read Random Number from hardware random number generator instruction"
+msgstr ""
+
+#: modules//devices/x86/processor.c:439
+msgid "Running on a hypervisor"
+msgstr ""
+
+#: modules//devices/x86/processor.c:441
+msgid "Random Number Generator present (xstore)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:442
+msgid "Random Number Generator enabled"
+msgstr ""
+
+#: modules//devices/x86/processor.c:443
+msgid "on-CPU crypto (xcrypt)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:444
+msgid "on-CPU crypto enabled"
+msgstr ""
+
+#: modules//devices/x86/processor.c:445
+msgid "Advanced Cryptography Engine v2"
+msgstr ""
+
+#: modules//devices/x86/processor.c:446
+msgid "ACE v2 enabled"
+msgstr ""
+
+#: modules//devices/x86/processor.c:447
+msgid "PadLock Hash Engine"
+msgstr ""
+
+#: modules//devices/x86/processor.c:448
+msgid "PHE enabled"
+msgstr ""
+
+#: modules//devices/x86/processor.c:449
+msgid "PadLock Montgomery Multiplier"
+msgstr ""
+
+#: modules//devices/x86/processor.c:450
+msgid "PMM enabled"
+msgstr ""
+
+#: modules//devices/x86/processor.c:452
+msgid "Load AH from Flags (LAHF) and Store AH into Flags (SAHF) in long mode"
+msgstr ""
+
+#: modules//devices/x86/processor.c:453
+msgid "If yes HyperThreading not valid"
+msgstr ""
+
+#: modules//devices/x86/processor.c:454
+msgid "\"Secure virtual machine\": AMD-V"
+msgstr ""
+
+#: modules//devices/x86/processor.c:455
+msgid "Extended APIC space"
+msgstr ""
+
+#: modules//devices/x86/processor.c:456
+msgid "CR8 in 32-bit mode"
+msgstr ""
+
+#: modules//devices/x86/processor.c:457
+msgid "Advanced Bit Manipulation"
+msgstr ""
+
+#: modules//devices/x86/processor.c:458
+msgid "SSE-4A"
+msgstr ""
+
+#: modules//devices/x86/processor.c:459
+msgid ""
+"indicates if a general-protection exception (#GP) is generated when some "
+"legacy SSE instructions operate on unaligned data. Also depends on CR0 and "
+"Alignment Checking bit"
+msgstr ""
+
+#: modules//devices/x86/processor.c:460
+msgid "3DNow prefetch instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:461
+msgid ""
+"indicates OS Visible Workaround, which allows the OS to work around "
+"processor errata."
+msgstr ""
+
+#: modules//devices/x86/processor.c:462
+msgid "Instruction Based Sampling"
+msgstr ""
+
+#: modules//devices/x86/processor.c:463
+msgid "extended AVX instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:464
+msgid "SKINIT/STGI instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:465
+msgid "Watchdog timer"
+msgstr ""
+
+#: modules//devices/x86/processor.c:466
+msgid "Light Weight Profiling"
+msgstr ""
+
+#: modules//devices/x86/processor.c:467
+msgid "4 operands MAC instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:468
+msgid "translation cache extension"
+msgstr ""
+
+#: modules//devices/x86/processor.c:469
+msgid "NodeId MSR"
+msgstr ""
+
+#: modules//devices/x86/processor.c:470
+msgid "Trailing Bit Manipulation"
+msgstr ""
+
+#: modules//devices/x86/processor.c:471
+msgid "Topology Extensions CPUID leafs"
+msgstr ""
+
+#: modules//devices/x86/processor.c:472
+msgid "Core Performance Counter Extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:473
+msgid "NB Performance Counter Extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:474
+msgid "data breakpoint extension"
+msgstr ""
+
+#: modules//devices/x86/processor.c:475
+msgid "performance time-stamp counter"
+msgstr ""
+
+#: modules//devices/x86/processor.c:476
+msgid "L2 Performance Counter Extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:477
+msgid "MWAIT extension (MONITORX/MWAITX)"
+msgstr ""
+
+#: modules//devices/x86/processor.c:479
+msgid "AMD Core Performance Boost"
+msgstr ""
+
+#: modules//devices/x86/processor.c:480
+msgid "IA32_ENERGY_PERF_BIAS support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:481
+msgid "AMD HW-PState"
+msgstr ""
+
+#: modules//devices/x86/processor.c:482
+msgid "AMD ProcFeedbackInterface"
+msgstr ""
+
+#: modules//devices/x86/processor.c:483
+msgid "Intel Processor Tracing"
+msgstr ""
+
+#: modules//devices/x86/processor.c:485
+msgid "Intel TPR Shadow"
+msgstr ""
+
+#: modules//devices/x86/processor.c:486
+msgid "Intel Virtual NMI"
+msgstr ""
+
+#: modules//devices/x86/processor.c:487
+msgid "Intel FlexPriority"
+msgstr ""
+
+#: modules//devices/x86/processor.c:488
+msgid "Intel Extended Page Table"
+msgstr ""
+
+#: modules//devices/x86/processor.c:489
+msgid "Intel Virtual Processor ID"
+msgstr ""
+
+#: modules//devices/x86/processor.c:490
+msgid "prefer VMMCALL to VMCALL"
+msgstr ""
+
+#: modules//devices/x86/processor.c:492
+msgid "{RD/WR}{FS/GS}BASE instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:493
+msgid "TSC adjustment MSR"
+msgstr ""
+
+#: modules//devices/x86/processor.c:494
+msgid "1st group bit manipulation extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:495
+msgid "Hardware Lock Elision"
+msgstr ""
+
+#: modules//devices/x86/processor.c:496
+msgid "AVX2 instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:497
+msgid "Supervisor Mode Execution Protection"
+msgstr ""
+
+#: modules//devices/x86/processor.c:498
+msgid "2nd group bit manipulation extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:499
+msgid "Enhanced REP MOVSB/STOSB"
+msgstr ""
+
+#: modules//devices/x86/processor.c:500
+msgid "Invalidate Processor Context ID"
+msgstr ""
+
+#: modules//devices/x86/processor.c:501
+msgid "Restricted Transactional Memory"
+msgstr ""
+
+#: modules//devices/x86/processor.c:502
+msgid "Cache QoS Monitoring"
+msgstr ""
+
+#: modules//devices/x86/processor.c:503
+msgid "Memory Protection Extension"
+msgstr ""
+
+#: modules//devices/x86/processor.c:504
+msgid "AVX-512 foundation"
+msgstr ""
+
+#: modules//devices/x86/processor.c:505
+msgid "AVX-512 Double/Quad instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:506
+msgid "The RDSEED instruction"
+msgstr ""
+
+#: modules//devices/x86/processor.c:507
+msgid "The ADCX and ADOX instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:508
+msgid "Supervisor Mode Access Prevention"
+msgstr ""
+
+#: modules//devices/x86/processor.c:509
+msgid "CLFLUSHOPT instruction"
+msgstr ""
+
+#: modules//devices/x86/processor.c:510
+msgid "CLWB instruction"
+msgstr ""
+
+#: modules//devices/x86/processor.c:511
+msgid "AVX-512 Prefetch"
+msgstr ""
+
+#: modules//devices/x86/processor.c:512
+msgid "AVX-512 Exponential and Reciprocal"
+msgstr ""
+
+#: modules//devices/x86/processor.c:513
+msgid "AVX-512 Conflict Detection"
+msgstr ""
+
+#: modules//devices/x86/processor.c:514
+msgid "SHA1/SHA256 Instruction Extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:515
+msgid "AVX-512 Byte/Word instructions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:516
+msgid "AVX-512 128/256 Vector Length extensions"
+msgstr ""
+
+#: modules//devices/x86/processor.c:518
+msgid "Optimized XSAVE"
+msgstr ""
+
+#: modules//devices/x86/processor.c:519
+msgid "XSAVEC"
+msgstr ""
+
+#: modules//devices/x86/processor.c:520
+msgid "XGETBV with ECX = 1"
+msgstr ""
+
+#: modules//devices/x86/processor.c:521
+msgid "XSAVES/XRSTORS"
+msgstr ""
+
+#: modules//devices/x86/processor.c:523
+msgid "LLC QoS"
+msgstr ""
+
+#: modules//devices/x86/processor.c:525
+msgid "LLC occupancy monitoring"
+msgstr ""
+
+#: modules//devices/x86/processor.c:526
+msgid "LLC total MBM monitoring"
+msgstr ""
+
+#: modules//devices/x86/processor.c:527
+msgid "LLC local MBM monitoring"
+msgstr ""
+
+#: modules//devices/x86/processor.c:529
+msgid "CLZERO instruction"
+msgstr ""
+
+#: modules//devices/x86/processor.c:530
+msgid "instructions retired performance counter"
+msgstr ""
+
+#: modules//devices/x86/processor.c:532
+msgid "digital thermal sensor"
+msgstr ""
+
+#: modules//devices/x86/processor.c:533
+msgid "Intel Dynamic Acceleration"
+msgstr ""
+
+#: modules//devices/x86/processor.c:534
+msgid "Always Running APIC Timer"
+msgstr ""
+
+#: modules//devices/x86/processor.c:535
+msgid "Intel Power Limit Notification"
+msgstr ""
+
+#: modules//devices/x86/processor.c:536
+msgid "Intel Package Thermal Status"
+msgstr ""
+
+#: modules//devices/x86/processor.c:537
+msgid "Intel Hardware P-states"
+msgstr ""
+
+#: modules//devices/x86/processor.c:538
+msgid "HWP notification"
+msgstr ""
+
+#: modules//devices/x86/processor.c:539
+msgid "HWP Activity Window"
+msgstr ""
+
+#: modules//devices/x86/processor.c:540
+msgid "HWP Energy Performance Preference"
+msgstr ""
+
+#: modules//devices/x86/processor.c:541
+msgid "HWP package-level request"
+msgstr ""
+
+#: modules//devices/x86/processor.c:543
+msgid "AMD Nested Page Table support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:544
+msgid "AMD LBR Virtualization support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:545
+msgid "AMD SVM locking MSR"
+msgstr ""
+
+#: modules//devices/x86/processor.c:546
+msgid "AMD SVM next_rip save"
+msgstr ""
+
+#: modules//devices/x86/processor.c:547
+msgid "AMD TSC scaling support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:548
+msgid "AMD VMCB clean bits support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:549
+msgid "AMD flush-by-ASID support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:550
+msgid "AMD Decode Assists support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:551
+msgid "AMD filtered pause intercept"
+msgstr ""
+
+#: modules//devices/x86/processor.c:552
+msgid "AMD pause filter threshold"
+msgstr ""
+
+#: modules//devices/x86/processor.c:553
+msgid "Virtual Interrupt Controller"
+msgstr ""
+
+#: modules//devices/x86/processor.c:555
+msgid "Protection Keys for Userspace"
+msgstr ""
+
+#: modules//devices/x86/processor.c:556
+msgid "OS Protection Keys Enable"
+msgstr ""
+
+#: modules//devices/x86/processor.c:558
+msgid "MCA overflow recovery support"
+msgstr ""
+
+#: modules//devices/x86/processor.c:559
+msgid "uncorrectable error containment and recovery"
+msgstr ""
+
+#: modules//devices/x86/processor.c:560
+msgid "Scalable MCA"
+msgstr ""
+
+#: modules//devices/x86/processor.c:567
+msgid "Intel F00F bug"
+msgstr ""
+
+#: modules//devices/x86/processor.c:568
+msgid "FPU FDIV"
+msgstr ""
+
+#: modules//devices/x86/processor.c:569
+msgid "Cyrix 6x86 coma"
+msgstr ""
+
+#: modules//devices/x86/processor.c:570
+msgid "AMD Erratum 383"
+msgstr ""
+
+#: modules//devices/x86/processor.c:571 modules//devices/x86/processor.c:580
+msgid "AMD Erratum 400"
+msgstr ""
+
+#: modules//devices/x86/processor.c:572
+msgid "Bad local APIC aka 11AP"
+msgstr ""
+
+#: modules//devices/x86/processor.c:573
+msgid "FXSAVE leaks FOP/FIP/FOP"
+msgstr ""
+
+#: modules//devices/x86/processor.c:574
+msgid "AAI65, CLFLUSH required before MONITOR"
+msgstr ""
+
+#: modules//devices/x86/processor.c:575
+msgid "SYSRET doesn't fix up SS attrs"
+msgstr ""
+
+#: modules//devices/x86/processor.c:576
+msgid "IRET to 16-bit SS corrupts ESP/RSP high bits"
+msgstr ""
+
+#: modules//devices/x86/processor.c:577
+msgid "Nulling a selector preserves the base"
+msgstr ""
+
+#: modules//devices/x86/processor.c:578
+msgid "SWAPGS without input dep on GS"
+msgstr ""
+
+#: modules//devices/x86/processor.c:579
+msgid "IPI required to wake up remote CPU"
+msgstr ""
+
+#: modules//devices/x86/processor.c:588
+msgid "temperature sensor"
+msgstr ""
+
+#: modules//devices/x86/processor.c:589
+msgid "frequency id control"
+msgstr ""
+
+#: modules//devices/x86/processor.c:590
+msgid "voltage id control"
+msgstr ""
+
+#: modules//devices/x86/processor.c:591
+msgid "thermal trip"
+msgstr ""
+
+#: modules//devices/x86/processor.c:592
+msgid "hardware thermal control"
+msgstr ""
+
+#: modules//devices/x86/processor.c:593
+msgid "software thermal control"
+msgstr ""
+
+#: modules//devices/x86/processor.c:594
+msgid "100 MHz multiplier control"
+msgstr ""
+
+#: modules//devices/x86/processor.c:595
+msgid "hardware P-state control"
+msgstr ""
+
+#: modules//devices/x86/processor.c:597
+msgid "core performance boost"
+msgstr ""
+
+#: modules//devices/x86/processor.c:598
+msgid "Readonly aperf/mperf"
+msgstr ""
+
+#: modules//devices/x86/processor.c:599
+msgid "processor feedback interface"
+msgstr ""
+
+#: modules//devices/x86/processor.c:600
+msgid "accumulated power mechanism"
 msgstr ""
 
 #: modules//devices/x86/processor.c:739
