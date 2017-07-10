@@ -18,18 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
-
-gchar *byte_order_str() {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    return _("Little Endian");
-#else
-    return _("Big Endian");
-#endif
-}
-
-#ifndef PROC_CPUINFO
-#define PROC_CPUINFO "/proc/cpuinfo"
-#endif
+#include "cpu_util.h"
 
 GSList *
 processor_scan(void)
@@ -60,6 +49,8 @@ processor_scan(void)
         g_strfreev(tmp);
     }
 
+    fclose(cpuinfo);
+
     gchar *tmp = g_strconcat("Alpha ", processor->model_name, NULL);
     g_free(processor->model_name);
     processor->model_name = tmp;
@@ -70,8 +61,6 @@ processor_scan(void)
         processor->cpu_mhz /= 1000000;
     } else
         processor->cpu_mhz = 0.0f;
-
-    fclose(cpuinfo);
 
     return g_slist_append(NULL, processor);
 }

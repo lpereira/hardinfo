@@ -18,18 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
-
-gchar *byte_order_str() {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    return _("Little Endian");
-#else
-    return _("Big Endian");
-#endif
-}
-
-#ifndef PROC_CPUINFO
-#define PROC_CPUINFO "/proc/cpuinfo"
-#endif
+#include "cpu_util.h"
 
 GSList *
 processor_scan(void)
@@ -70,13 +59,13 @@ processor_get_info(GSList *processors)
     Processor *processor = (Processor *)processors->data;
 
     return g_strdup_printf("[%s]\n"
-                           "CPU=%s\n"
-                           "FPU=%s\n"
+                           "%s=%s\n"   /* cpu */
+                           "%s=%s\n"   /* fpu */
                            "%s=%s\n"   /* byte order */
-                           "%s=%s\n",
+                           "%s=%s\n",  /* caps */
                    _("Processor"),
-                   processor->model_name,
-                   processor->has_fpu,
+                   _("CPU"), processor->model_name,
+                   _("FPU"), processor->has_fpu,
                    _("Byte Order"), byte_order_str(),
                    _("Capabilities"), processor->cpucaps
                    );
