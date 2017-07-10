@@ -32,7 +32,7 @@ gchar *byte_order_str() {
 #endif
 
 GSList *
-processors_scan(void)
+processor_scan(void)
 {
     Processor *processor;
     FILE *cpuinfo;
@@ -51,14 +51,12 @@ processors_scan(void)
             tmp[1] = g_strstrip(tmp[1]);
 
             get_str("cpu family", processor->model_name);
-            get_str("cpu", processor->vendor_id);
             get_float("cpu MHz", processor->cpu_mhz);
+            get_str("cpu", processor->vendor_id);
             get_float("bogomips", processor->bogomips);
-
             get_str("model name", processor->strmodel);
-
-            get_int("I-cache", processor->has_fpu);
-            get_int("D-cache", processor->flags);
+            get_str("I-cache", processor->icache_str);
+            get_str("D-cache", processor->dcache_str);
 
         }
         g_strfreev(tmp);
@@ -92,6 +90,6 @@ processor_get_info(GSList *processors)
                    _("BogoMips"), processor->bogomips,
                    _("Byte Order"), byte_order_str(),
                    _("Cache"),
-                   processor->has_fpu,
-                   processor->flags);
+                   processor->icache_str,
+                   processor->dcache_str);
 }
