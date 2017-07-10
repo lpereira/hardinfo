@@ -18,18 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
-
-gchar *byte_order_str() {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    return _("Little Endian");
-#else
-    return _("Big Endian");
-#endif
-}
-
-#ifndef PROC_CPUINFO
-#define PROC_CPUINFO "/proc/cpuinfo"
-#endif
+#include "cpu_util.h"
 
 GSList *
 processor_scan(void)
@@ -63,10 +52,8 @@ processor_scan(void)
 
     fclose(cpuinfo);
 
-    if (!processor->model_name)
-        processor->model_name = _("SuperH Processor");
-    if (!processor->vendor_id)
-        processor->vendor_id = _("(Unknown)");
+    STRIFNULL(model_name, _("SuperH Processor"));
+    UNKIFNULL(vendor_id);
 
     return g_slist_append(NULL, processor);
 }

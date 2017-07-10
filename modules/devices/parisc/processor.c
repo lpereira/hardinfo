@@ -18,18 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
-
-gchar *byte_order_str() {
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    return _("Little Endian");
-#else
-    return _("Big Endian");
-#endif
-}
-
-#ifndef PROC_CPUINFO
-#define PROC_CPUINFO "/proc/cpuinfo"
-#endif
+#include "cpu_util.h"
 
 GSList *
 processor_scan(void)
