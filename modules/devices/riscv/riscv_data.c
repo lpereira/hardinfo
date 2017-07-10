@@ -26,24 +26,24 @@
 static struct {
     char *name, *meaning;
 } tab_ext_meaning[] = {
-    { "rv32",	"32-bit" },
-    { "rv64",	"64-bit" },
-    { "rv128",	"128-bit" },
-    { "rv_E",	"Base embedded integer instructions (15 registers)" },
-    { "rv_I",	"Base integer instructions (31 registers)" },
-    { "rv_M",	"Hardware integer multiply and divide" },
-    { "rv_A",	"Atomic memory operations" },
-    { "rv_C",	"Compressed 16-bit instructions" },
-    { "rv_F",	"Floating-point instructions, single-precision" },
-    { "rv_D",	"Floating-point instructions, double-precision" },
-    { "rv_Q",	"Floating-point instructions, quad-precision" },
-    { "rv_B",	"Bit manipulation instructions" },
-    { "rv_V",	"Vector operations" },
-    { "rv_T",	"Transactional memory" },
-    { "rv_P",	"Packed SIMD instructions" },
-    { "rv_L",	"Decimal floating-point instructions" },
-    { "rv_J",	"Dynamically translated languages" },
-    { "rv_N",	"User-level interrupts" },
+    { "RV32",	"32-bit" },
+    { "RV64",	"64-bit" },
+    { "RV128",	"128-bit" },
+    { "E",	"Base embedded integer instructions (15 registers)" },
+    { "I",	"Base integer instructions (31 registers)" },
+    { "M",	"Hardware integer multiply and divide" },
+    { "A",	"Atomic memory operations" },
+    { "C",	"Compressed 16-bit instructions" },
+    { "F",	"Floating-point instructions, single-precision" },
+    { "D",	"Floating-point instructions, double-precision" },
+    { "Q",	"Floating-point instructions, quad-precision" },
+    { "B",	"Bit manipulation instructions" },
+    { "V",	"Vector operations" },
+    { "T",	"Transactional memory" },
+    { "P",	"Packed SIMD instructions" },
+    { "L",	"Decimal floating-point instructions" },
+    { "J",	"Dynamically translated languages" },
+    { "N",	"User-level interrupts" },
     { NULL, NULL }
 };
 
@@ -57,7 +57,7 @@ const char *riscv_ext_meaning(const char *ext) {
         else
             l = strlen(ext);
         while(tab_ext_meaning[i].name != NULL) {
-            if (strncmp(tab_ext_meaning[i].name, ext, l) == 0)
+            if (strncasecmp(tab_ext_meaning[i].name, ext, l) == 0)
                 return tab_ext_meaning[i].meaning;
             i++;
         }
@@ -67,62 +67,118 @@ const char *riscv_ext_meaning(const char *ext) {
 
 /* see RISC-V spec 2.2: Chapter 22: ISA Subset Naming Conventions */
 
+/* Spec says case-insensitve, but I prefer single-letter extensions
+ * capped and version string (like "2p1") with a lowercase p. */
+#define RV_FIX_CASE(fstr,vo) \
+    p = fstr; while (*p != 0 && *p != ':') { if (!vo) *p = toupper(*p); p++; } \
+    if (*p == ':') while (*p != 0) { if (*p == 'P') *p = 'p'; p++; }
+
+static int riscv_isa_next(const char *isap, char *flag) {
+    char *p = NULL, *start = NULL;
+    char *next_sep = NULL, *next_digit = NULL;
+    int skip_len = 0, tag_len = 0, ver_len = 0, has_ver = 0;
+    char ext_str[32], ver_str[32];
+
+    if (isap == NULL)
+        return 0;
+
+    /* find start by skipping any '_' */
+    start = (char*)isap;
+    while (*start != 0 && *start == '_') { start++; skip_len++; };
+    if (*start == 0)
+        return 0;
+
+    /* find next '_' or \0 */
+    p = start; while (*p != 0 && *p != '_') { p++; }; next_sep = p;
+
+    /* find next digit that may be a version, find length of version */
+    p = start; while (*p != 0 && !isdigit(*p)) { p++; };
+    if (isdigit(*p)) next_digit = p;
+    if (next_digit) {
+        while (*p != 0 && (isdigit(*p) || *p == 'p' || *p == 'P') ) {
+            if ((*p == 'p' || *p == 'P') && !isdigit(*(p+1)) )
+                break;
+            ver_len++;
+            p++;
+        }
+    }
+
+    /* is next version nearer than next separator */
+    p = start;
+    if (next_digit && next_digit < next_sep)
+        tag_len = next_digit - p;
+    else {
+        tag_len = next_sep - p;
+        ver_len = 0;
+    }
+
+    switch(*p) {
+        case 'S': case 's': /* supervisor extension */
+        case 'X': case 'x': /* custom extension */
+            /* custom supervisor extension (SX..) handled by S */
+            break;
+        default: /* single character (standard) extension */
+            tag_len = 1;
+            if (next_digit != p+1) ver_len = 0;
+            break;
+    }
+
+    memset(ext_str, 0, 32);
+    memset(ver_str, 0, 32);
+    if (ver_len) {
+        strncpy(ext_str, p, tag_len);
+        strncpy(ver_str, next_digit, ver_len);
+        sprintf(flag, "%s:%s", ext_str, ver_str);
+        if (tag_len == 1) {
+            RV_FIX_CASE(flag, 0);
+        } else {
+            RV_FIX_CASE(flag, 1);
+        }
+        return skip_len + tag_len + ver_len;
+    } else {
+        strncpy(ext_str, p, tag_len);
+        sprintf(flag, "%s", ext_str);
+        if (tag_len == 1) { RV_FIX_CASE(flag, 0); }
+        return skip_len + tag_len;
+    }
+}
+
 #define FSTR_SIZE 1024
-#define EAT_VERSION() if (isdigit(*ps)) while(isdigit(*ps) || *ps == 'p' ) { ps++; };
-#define CP_EXT_FLAG() while(*ps != 0 && *ps != '_' && *ps != ' ') { if (isdigit(*ps)) { EAT_VERSION(); break; } *pd = *ps; ps++; pd++; }; *pd = ' '; pd++;
-#define ADD_EXT_FLAG(ext) l = strlen(ext); strncpy(pd, ext " ", l + 1); pd += l + 1;
+#define RV_CHECK_FOR(e) ( strncasecmp(ps, e, 2) == 0 )
+#define ADD_EXT_FLAG(ext) el = strlen(ext); strncpy(pd, ext, el); strncpy(pd + el, " ", 1); pd += el + 1;
 char *riscv_isa_to_flags(const char *isa) {
     char *flags = NULL, *ps = (char*)isa, *pd = NULL;
-    char ext[64] = "", ver[64] = "";
-    int l = 0;
+    char flag_buf[64] = "";
+    int isa_len = 0, tl = 0, el = 0; /* el used in macro */
+
     if (isa) {
+        isa_len = strlen(isa);
         flags = malloc(FSTR_SIZE);
         if (flags) {
             memset(flags, 0, FSTR_SIZE);
+            ps = (char*)isa;
             pd = flags;
-            if ( strncmp(ps, "rv", 2) == 0
-                || strncmp(ps, "RV", 2) == 0 ) {
-                ps += 2;
-            }
-            if ( strncmp(ps, "32", 2) == 0 ) {
-                ADD_EXT_FLAG("rv32");
-                ps += 2;
-            } else if ( strncmp(ps, "64", 2) == 0 ) {
-                ADD_EXT_FLAG("rv64");
-                ps += 2;
-            } else if ( strncmp(ps, "128", 3) == 0) {
-                ADD_EXT_FLAG("rv128");
-                ps += 3;
-            }
-            while (*ps != 0) {
-                switch(*ps) {
-                    case 'G': case 'g': /* G = IMAFD */
-                        ADD_EXT_FLAG("rv_I");
-                        ADD_EXT_FLAG("rv_M");
-                        ADD_EXT_FLAG("rv_A");
-                        ADD_EXT_FLAG("rv_F");
-                        ADD_EXT_FLAG("rv_D");
-                        break;
-                    case 'E': case 'e': ADD_EXT_FLAG("rv_E"); break;
-                    case 'I': case 'i': ADD_EXT_FLAG("rv_I"); break;
-                    case 'M': case 'm': ADD_EXT_FLAG("rv_M"); break;
-                    case 'A': case 'a': ADD_EXT_FLAG("rv_A"); break;
-                    case 'C': case 'c': ADD_EXT_FLAG("rv_C"); break;
-                    case 'F': case 'f': ADD_EXT_FLAG("rv_F"); break;
-                    case 'D': case 'd': ADD_EXT_FLAG("rv_D"); break;
-                    case 'Q': case 'q': ADD_EXT_FLAG("rv_Q"); break;
-                    case 'P': case 'p': ADD_EXT_FLAG("rv_P"); break;
-                    case 'B': case 'b': ADD_EXT_FLAG("rv_B"); break;
-                    case 'V': case 'v': ADD_EXT_FLAG("rv_V"); break;
-                    case 'J': case 'j': ADD_EXT_FLAG("rv_J"); break;
-                    case 'N': case 'n': ADD_EXT_FLAG("rv_N"); break;
-                    case 'S': case 's': CP_EXT_FLAG(); break; /* supervisor extension */
-                    case 'X': case 'x': CP_EXT_FLAG(); break; /* custom extension */
-                    /* custom supervisor extension (SX..) handled by S */
-                    default: break;
+            if ( RV_CHECK_FOR("RV") )
+            { ps += 2; }
+            if ( RV_CHECK_FOR("32") )
+            { ADD_EXT_FLAG("RV32"); ps += 2; }
+            else if ( RV_CHECK_FOR("64") )
+            { ADD_EXT_FLAG("RV64"); ps += 2; }
+            else if ( RV_CHECK_FOR("128") )
+            { ADD_EXT_FLAG("RV128"); ps += 3; }
+
+            while(tl = riscv_isa_next(ps, flag_buf)) {
+                if (flag_buf[0] == 'G') { /* G = IMAFD */
+                    flag_buf[0] = 'I'; ADD_EXT_FLAG(flag_buf);
+                    flag_buf[0] = 'M'; ADD_EXT_FLAG(flag_buf);
+                    flag_buf[0] = 'A'; ADD_EXT_FLAG(flag_buf);
+                    flag_buf[0] = 'F'; ADD_EXT_FLAG(flag_buf);
+                    flag_buf[0] = 'D'; ADD_EXT_FLAG(flag_buf);
+                } else {
+                    ADD_EXT_FLAG(flag_buf);
                 }
-                ps++;
-                EAT_VERSION();
+                ps += tl;
+                if (ps - isa >= isa_len) break; /* just in case */
             }
         }
     }

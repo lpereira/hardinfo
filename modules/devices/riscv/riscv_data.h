@@ -21,7 +21,10 @@
 #ifndef _RISCVDATA_H_
 #define _RISCVDATA_H_
 
+/* convert RISC-V ISA string to flags list */
 char *riscv_isa_to_flags(const char *isa);
+
+/* get meaning of flag */
 const char *riscv_ext_meaning(const char *ext);
 
 #endif
