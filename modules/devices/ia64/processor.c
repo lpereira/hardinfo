@@ -37,6 +37,7 @@ processor_scan(void)
     Processor *processor;
     FILE *cpuinfo;
     gchar buffer[128];
+    gchar *toss = NULL;
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
@@ -50,16 +51,21 @@ processor_scan(void)
             tmp[0] = g_strstrip(tmp[0]);
             tmp[1] = g_strstrip(tmp[1]);
 
-            get_str("vendor", processor->model_name);
-            get_str("arch", processor->vendor_id);
-            get_str("family", processor->strmodel);
+            get_str("archrev", toss); /* ignore this or "arch" will catch it below */
+
+            get_str("vendor", processor->vendor_id);
+            get_str("arch", processor->arch);
+            get_str("family", processor->family);
+            get_int("model", processor->model);
+            get_int("revision", processor->revision);
             get_float("BogoMIPS", processor->bogomips);
+            get_float("cpu MHz", processor->cpu_mhz);
 
         }
         g_strfreev(tmp);
     }
 
-    processor->cpu_mhz = 0.0f;
+    processor->model_name = _("IA64 Processor");
 
     fclose(cpuinfo);
 
@@ -72,15 +78,23 @@ processor_get_info(GSList *processors)
     Processor *processor = (Processor *)processors->data;
 
     return g_strdup_printf("[%s]\n"
-                        "%s=%s\n"
-                        "%s=%s\n"
-                        "%s=%s %s\n"
+                        "%s=%s\n"      /* name */
+                        "%s=%s\n"      /* vendor */
+                        "%s=%s\n"      /* arch */
+                        "%s=%s\n"      /* family */
+                        "%s=%d\n"      /* model no. */
+                        "%s=%d\n"      /* revision */
+                        "%s=%.2f %s\n" /* frequency */
                         "%s=%.2f\n"    /* bogomips */
                         "%s=%s\n",     /* byte order */
                     _("Processor"),
-                    _("Model"), processor->model_name,
-                    _("Architecture"), processor->vendor_id,    /* ?? */
-                    _("Family"), processor->strmodel, _("MHz"), /* MHz?? */
+                    _("Name"), processor->model_name,
+                    _("Vendor"), processor->vendor_id,
+                    _("Architecture"), processor->arch,
+                    _("Family"), processor->family,
+                    _("Model"), processor->model,
+                    _("Revision"), processor->revision,
+                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                     _("BogoMips"), processor->bogomips,
                     _("Byte Order"), byte_order_str()
                               );
