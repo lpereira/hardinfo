@@ -4,8 +4,11 @@ DATADER=`pwd`
 do_test() {
     ARCH="$1"
     CPUINFO="$DATADER/$2"
-    cmake .. -DOVRARCH=$ARCH -DOVRCPUINFO=\"$CPUINFO\"
+    mkdir "build-$ARCH"
+    cd "build-$ARCH"
+    cmake ../.. -DOVRARCH=$ARCH -DOVRCPUINFO=\"$CPUINFO\"
     make
+    cd ..
 }
 
 #do_test x86 data/x86_pent_cpuinfo
