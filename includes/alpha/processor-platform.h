@@ -23,6 +23,7 @@ struct _Processor {
     gchar *model_name;
     gfloat bogomips, cpu_mhz;
     gchar *strmodel;
+    gchar *cycle_frequency_hz_str;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */

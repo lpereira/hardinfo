@@ -16,3 +16,5 @@ do_test() {
 #do_test arm data/arm_jetsontx2_cpuinfo
 #do_test sparc data/sparc_m7_cpuinfo
 #do_test mips data/mips_loongson_cpuinfo
+do_test alpha data/alpha_as_cpuinfo
+
