@@ -13,4 +13,6 @@ do_test() {
 #do_test ppc data/ppc_g5_cpuinfo
 #do_test ppc data/power8_cpuinfo
 #do_test arm data/arm_rpi3_aarch64_cpuinfo
-do_test sparc data/sparc_m7_cpuinfo
+#do_test arm data/arm_jetsontx2_cpuinfo
+#do_test sparc data/sparc_m7_cpuinfo
+#do_test mips data/mips_loongson_cpuinfo
