@@ -1,0 +1,6 @@
+CPU:            68020
+MMU:            Sun-3
+FPU:            68881
+Clocking:       19.9MHz
+BogoMips:       4.97
+Calibration: 24896 loops

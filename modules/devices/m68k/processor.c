@@ -51,10 +51,11 @@ processor_scan(void)
             tmp[1] = g_strstrip(tmp[1]);
 
             get_str("CPU", processor->model_name);
+            get_str("MMU", processor->mmu_name);
+            get_str("FPU", processor->fpu_name);
             get_float("Clocking", processor->cpu_mhz);
-            get_float("bogomips", processor->bogomips);
-
-            get_str("FPU", processor->has_fpu); /* not used? */
+            get_float("BogoMips", processor->bogomips);
+            get_str("Calibration", processor->calibration);
         }
         g_strfreev(tmp);
     }
@@ -74,14 +75,21 @@ processor_get_info(GSList *processors)
 {
     Processor *processor = (Processor *)processors->data;
 
-    return g_strdup_printf("[Processor]\n"
-                        "%s=%s\n"
+    return g_strdup_printf("[%s]\n"
+                        "%s=%s\n"      /* cpu */
+                        "%s=%s\n"      /* mmu */
+                        "%s=%s\n"      /* fpu */
                         "%s=%.2f %s\n" /* frequency */
                         "%s=%.2f\n"    /* bogomips */
-                        "%s=%s\n",     /* byte order */
+                        "%s=%s\n"      /* byte order */
+                        "%s=%s\n",     /* calibration */
+                    _("Processor"),
                     _("Model"), processor->model_name,
+                    _("MMU"), processor->mmu_name,
+                    _("FPU"), processor->fpu_name,
                     _("Frequency"), processor->cpu_mhz, _("MHz"),
                     _("BogoMips"), processor->bogomips,
-                    _("Byte Order"), byte_order_str()
+                    _("Byte Order"), byte_order_str(),
+                    _("Calibration"), processor->calibration
                         );
 }
