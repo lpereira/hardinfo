@@ -24,6 +24,9 @@
 /* convert RISC-V ISA string to flags list */
 char *riscv_isa_to_flags(const char *isa);
 
+/* all known extensions as flags list */
+const char *riscv_ext_list(void);
+
 /* get meaning of flag */
 const char *riscv_ext_meaning(const char *ext);
 

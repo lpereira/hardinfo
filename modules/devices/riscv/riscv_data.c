@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "riscv_data.h"
 
 #ifndef _
@@ -33,26 +34,41 @@
 static struct {
     char *name, *meaning;
 } tab_ext_meaning[] = {
-    { "RV32",	N_("32-bit") },
-    { "RV64",	N_("64-bit") },
-    { "RV128",	N_("128-bit") },
-    { "E",	N_("Base embedded integer instructions (15 registers)") },
-    { "I",	N_("Base integer instructions (31 registers)") },
-    { "M",	N_("Hardware integer multiply and divide") },
-    { "A",	N_("Atomic memory operations") },
-    { "C",	N_("Compressed 16-bit instructions") },
-    { "F",	N_("Floating-point instructions, single-precision") },
-    { "D",	N_("Floating-point instructions, double-precision") },
-    { "Q",	N_("Floating-point instructions, quad-precision") },
-    { "B",	N_("Bit manipulation instructions") },
-    { "V",	N_("Vector operations") },
-    { "T",	N_("Transactional memory") },
-    { "P",	N_("Packed SIMD instructions") },
-    { "L",	N_("Decimal floating-point instructions") },
-    { "J",	N_("Dynamically translated languages") },
-    { "N",	N_("User-level interrupts") },
+    { "RV32",  N_("RISC-V 32-bit") },
+    { "RV64",  N_("RISC-V 64-bit") },
+    { "RV128", N_("RISC-V 128-bit") },
+    { "E",     N_("Base embedded integer instructions (15 registers)") },
+    { "I",     N_("Base integer instructions (31 registers)") },
+    { "M",     N_("Hardware integer multiply and divide") },
+    { "A",     N_("Atomic memory operations") },
+    { "C",     N_("Compressed 16-bit instructions") },
+    { "F",     N_("Floating-point instructions, single-precision") },
+    { "D",     N_("Floating-point instructions, double-precision") },
+    { "Q",     N_("Floating-point instructions, quad-precision") },
+    { "B",     N_("Bit manipulation instructions") },
+    { "V",     N_("Vector operations") },
+    { "T",     N_("Transactional memory") },
+    { "P",     N_("Packed SIMD instructions") },
+    { "L",     N_("Decimal floating-point instructions") },
+    { "J",     N_("Dynamically translated languages") },
+    { "N",     N_("User-level interrupts") },
     { NULL, NULL }
 };
+
+static char all_extensions[1024] = "";
+
+#define APPEND_EXT(f) strcat(all_extensions, f); strcat(all_extensions, " ");
+const char *riscv_ext_list() {
+    int i = 0, built = 0;
+    built = strlen(all_extensions);
+    if (!built) {
+        while(tab_ext_meaning[i].name != NULL) {
+            APPEND_EXT(tab_ext_meaning[i].name);
+            i++;
+        }
+    }
+    return all_extensions;
+}
 
 const char *riscv_ext_meaning(const char *ext) {
     int i = 0, l = 0;
@@ -64,8 +80,11 @@ const char *riscv_ext_meaning(const char *ext) {
         else
             l = strlen(ext);
         while(tab_ext_meaning[i].name != NULL) {
-            if (strncasecmp(tab_ext_meaning[i].name, ext, l) == 0)
-                return _(tab_ext_meaning[i].meaning);
+            if (strncasecmp(tab_ext_meaning[i].name, ext, l) == 0) {
+                if (tab_ext_meaning[i].meaning != NULL)
+                    return _(tab_ext_meaning[i].meaning);
+                else return NULL;
+            }
             i++;
         }
     }
@@ -83,7 +102,7 @@ const char *riscv_ext_meaning(const char *ext) {
 static int riscv_isa_next(const char *isap, char *flag) {
     char *p = NULL, *start = NULL;
     char *next_sep = NULL, *next_digit = NULL;
-    int skip_len = 0, tag_len = 0, ver_len = 0, has_ver = 0;
+    int skip_len = 0, tag_len = 0, ver_len = 0;
     char ext_str[32], ver_str[32];
 
     if (isap == NULL)
@@ -174,7 +193,7 @@ char *riscv_isa_to_flags(const char *isa) {
             else if ( RV_CHECK_FOR("128") )
             { ADD_EXT_FLAG("RV128"); ps += 3; }
 
-            while(tl = riscv_isa_next(ps, flag_buf)) {
+            while( (tl = riscv_isa_next(ps, flag_buf)) ) {
                 if (flag_buf[0] == 'G') { /* G = IMAFD */
                     flag_buf[0] = 'I'; ADD_EXT_FLAG(flag_buf);
                     flag_buf[0] = 'M'; ADD_EXT_FLAG(flag_buf);
