@@ -50,9 +50,9 @@ gchar* get_cpu_str(const gchar* file, gint cpuid) {
     return tmp1;
 }
 
-gint get_cpu_int(const char* item, int cpuid) {
+gint get_cpu_int(const char* item, int cpuid, int null_val) {
     gchar *fc = NULL;
-    int ret = 0;
+    int ret = null_val;
     fc = get_cpu_str(item, cpuid);
     if (fc) {
         ret = atol(fc);
@@ -76,13 +76,15 @@ cpufreq_data *cpufreq_new(gint id)
 void cpufreq_update(cpufreq_data *cpufd, int cur_only)
 {
     if (cpufd) {
-        cpufd->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", cpufd->id);
+        cpufd->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", cpufd->id, 0);
         if (cur_only) return;
         cpufd->scaling_driver = get_cpu_str("cpufreq/scaling_driver", cpufd->id);
         cpufd->scaling_governor = get_cpu_str("cpufreq/scaling_governor", cpufd->id);
-        cpufd->transition_latency = get_cpu_int("cpufreq/cpuinfo_transition_latency", cpufd->id);
-        cpufd->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", cpufd->id);
-        cpufd->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", cpufd->id);
+        cpufd->transition_latency = get_cpu_int("cpufreq/cpuinfo_transition_latency", cpufd->id, 0);
+        cpufd->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", cpufd->id, 0);
+        cpufd->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", cpufd->id, 0);
+        if (cpufd->scaling_driver == NULL) cpufd->scaling_driver = g_strdup("(Unknown)");
+        if (cpufd->scaling_governor == NULL) cpufd->scaling_governor = g_strdup("(Unknown)");
     }
 }
 
@@ -95,6 +97,7 @@ void cpufreq_free(cpufreq_data *cpufd)
     g_free(cpufd);
 }
 
+#define CPU_TOPO_NULL -9877
 cpu_topology_data *cputopo_new(gint id)
 {
     cpu_topology_data *cputd;
@@ -102,8 +105,10 @@ cpu_topology_data *cputopo_new(gint id)
     if (cputd) {
         memset(cputd, 0, sizeof(cpu_topology_data));
         cputd->id = id;
-        cputd->socket_id = get_cpu_int("topology/physical_package_id", id);
-        cputd->core_id = get_cpu_int("topology/core_id", id);
+        cputd->socket_id = get_cpu_int("topology/physical_package_id", id, CPU_TOPO_NULL);
+        cputd->core_id = get_cpu_int("topology/core_id", id, CPU_TOPO_NULL);
+        cputd->book_id = get_cpu_int("topology/book_id", id, CPU_TOPO_NULL);
+        cputd->drawer_id = get_cpu_int("topology/drawer_id", id, CPU_TOPO_NULL);
     }
     return cputd;
 
@@ -147,16 +152,33 @@ gchar *cpufreq_section_str(cpufreq_data *cpufd)
 
 gchar *cputopo_section_str(cpu_topology_data *cputd)
 {
+    static const char na[] = N_("(Not Available)");
+    char sock_str[64] = "", core_str[64] = "";
+    char book_str[64] = "", drawer_str[64] = "";
+
     if (cputd == NULL)
         return g_strdup("");
+
+    if (cputd->socket_id != CPU_TOPO_NULL && cputd->socket_id != -1)
+        sprintf(sock_str, "%s=%d\n", _("Socket"), cputd->socket_id);
+    else
+        sprintf(sock_str, "%s=%s\n", _("Socket"), na);
+
+    if (cputd->core_id != CPU_TOPO_NULL)
+        sprintf(core_str, "%s=%d\n", _("Core"), cputd->core_id);
+    else
+        sprintf(core_str, "%s=%s\n", _("Core"), na);
+
+    if (cputd->book_id != CPU_TOPO_NULL)
+        sprintf(core_str, "%s=%d\n", _("Book"), cputd->book_id);
+    if (cputd->book_id != CPU_TOPO_NULL)
+        sprintf(core_str, "%s=%d\n", _("Drawer"), cputd->drawer_id);
 
     return g_strdup_printf(
                     "[%s]\n"
                     "%s=%d\n"
-                    "%s=%d\n"
-                    "%s=%d\n",
+                    "%s%s%s%s",
                    _("Topology"),
                    _("ID"), cputd->id,
-                   _("Socket"), cputd->socket_id,
-                   _("Core"), cputd->core_id);
+                   sock_str, core_str, book_str, drawer_str );
 }
