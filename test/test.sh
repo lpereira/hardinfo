@@ -7,7 +7,7 @@ do_test() {
     mkdir "build-$ARCH"
     cd "build-$ARCH"
     cmake ../.. -DOVRARCH=$ARCH -DOVRCPUINFO=\"$CPUINFO\"
-    make
+    make -j
     cd ..
 }
 
@@ -29,4 +29,3 @@ do_test() {
 #do_test s390 data/s390_hurcules_cpuinfo
 #do_test riscv data/riscv_sim_cpuinfo
 #do_test riscv data/riscv_fake_cpuinfo
-
