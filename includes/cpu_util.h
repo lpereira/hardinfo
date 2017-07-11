@@ -16,7 +16,7 @@ gchar *byte_order_str(void);
 
 /* from /sys/devices/system/cpu/cpu%d/%s */
 gchar* get_cpu_str(const gchar* file, gint cpuid);
-gint get_cpu_int(const char* item, int cpuid);
+gint get_cpu_int(const char* item, int cpuid, int null_val);
 
 /* space delimted list of flags, finds flag */
 int processor_has_flag(gchar * strflags, gchar * strflag);
@@ -32,6 +32,8 @@ typedef struct {
     gint id; /* thread */
     gint socket_id;
     gint core_id;
+    gint book_id;
+    gint drawer_id;
 } cpu_topology_data;
 
 cpufreq_data *cpufreq_new(gint id);
