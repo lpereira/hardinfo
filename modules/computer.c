@@ -236,7 +236,7 @@ void scan_dev(gboolean reload)
        gboolean found;
 
        if (!detect_lang[i].regex) {
-            dev_list = h_strdup_cprintf("[%s]\n", dev_list, detect_lang[i].compiler_name);
+            dev_list = h_strdup_cprintf("[%s]\n", dev_list, _(detect_lang[i].compiler_name));
             continue;
        }
 
