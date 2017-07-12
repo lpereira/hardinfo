@@ -654,23 +654,23 @@ msgstr "Процессор"
 
 #: modules/computer.c:427
 msgid "Machine Type"
-msgstr ""
+msgstr "Тип машины"
 
 #: modules/computer.c:429 modules/computer.c:506
 msgid "User Name"
-msgstr ""
+msgstr "Пользователь"
 
 #: modules/computer.c:432
 msgid "Resolution"
-msgstr ""
+msgstr "Разрешение"
 
 #: modules/computer.c:434
 msgid "OpenGL Renderer"
-msgstr ""
+msgstr "Рендер OpenGL"
 
 #: modules/computer.c:435
 msgid "X11 Vendor"
-msgstr ""
+msgstr "оставщик X11"
 
 #: modules/computer.c:437 modules/devices.c:98
 msgid "Input Devices"
@@ -702,43 +702,43 @@ msgstr ""
 
 #: modules/computer.c:499 modules/computer.c:501 hardinfo/hardinfo.c:76
 msgid "Version"
-msgstr ""
+msgstr "Версия"
 
 #: modules/computer.c:500
 msgid "Kernel"
-msgstr ""
+msgstr "Ядро"
 
 #: modules/computer.c:502
 msgid "C Library"
-msgstr ""
+msgstr "Библиотека C"
 
 #: modules/computer.c:503
 msgid "Distribution"
-msgstr ""
+msgstr "Дистрибутив"
 
 #: modules/computer.c:504
 msgid "Current Session"
-msgstr ""
+msgstr "Текущая сессия"
 
 #: modules/computer.c:505
 msgid "Computer Name"
-msgstr ""
+msgstr "Имя компьютера"
 
 #: modules/computer.c:507
 msgid "#Language"
-msgstr ""
+msgstr "#Язык"
 
 #: modules/computer.c:508
 msgid "Home Directory"
-msgstr ""
+msgstr "Домашний каталог"
 
 #: modules/computer.c:509
 msgid "Desktop Environment"
-msgstr ""
+msgstr "Домашний каталог"
 
 #: modules/computer.c:510
 msgid "Misc"
-msgstr ""
+msgstr "Разное"
 
 #: modules/computer.c:518
 #, c-format
