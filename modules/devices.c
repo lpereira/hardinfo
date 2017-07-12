@@ -465,12 +465,18 @@ gchar *callback_spd()
 gchar *callback_memory()
 {
     return g_strdup_printf("[Memory]\n"
-			   "%s\n"
-			   "[$ShellParam$]\n"
-			   "ViewType=2\n"
-			   "LoadGraphSuffix= kB\n"
-			   "RescanInterval=2000\n"
-			   "%s\n", meminfo, lginterval);
+               "%s\n"
+               "[$ShellParam$]\n"
+               "ViewType=2\n"
+               "LoadGraphSuffix= kB\n"
+               "RescanInterval=2000\n"
+               "ColumnTitle$TextValue=%s\n"
+               "ColumnTitle$Extra1=%s\n"
+               "ColumnTitle$Value=%s\n"
+               "ShowColumnHeaders=true\n"
+               "%s\n", meminfo,
+               _("Field"), _("Description"), _("Value"), /* column labels */
+               lginterval);
 }
 
 gchar *callback_battery()
@@ -494,13 +500,15 @@ gchar *callback_sensors()
                            "[$ShellParam$]\n"
                            "ViewType=2\n"
                            "LoadGraphSuffix=\n"
-                           "ColumnTitle$TextValue=Sensor\n"
-                           "ColumnTitle$Value=Value\n"
-                           "ColumnTitle$Extra1=Type\n"
+                           "ColumnTitle$TextValue=%s\n"
+                           "ColumnTitle$Value=%s\n"
+                           "ColumnTitle$Extra1=%s\n"
                            "ShowColumnHeaders=true\n"
-			   "RescanInterval=5000\n"
-			   "%s",
-                           sensors, lginterval);
+                           "RescanInterval=5000\n"
+                           "%s",
+                           sensors,
+                           _("Sensor"), _("Value"), _("Type"), /* column labels */
+                           lginterval);
 }
 
 gchar *callback_printers()
