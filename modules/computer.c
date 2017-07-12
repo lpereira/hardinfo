@@ -376,27 +376,6 @@ gchar *callback_summary()
     storage_devices = module_call_method("devices::getStorageDevices");
     virt            = computer_get_virtualization();
 
-    /* keep translations in the .po until the old labels can be salvaged */
-    gchar *save_me = N_("[$ShellParam$]\n"
-                  "UpdateInterval$Memory=1000\n"
-                  "UpdateInterval$Date/Time=1000\n"
-                  "#ReloadInterval=5000\n"
-                  "[Computer]\n"
-                  "Processor=%s\n"
-                  "Memory=...\n"
-                  "Machine Type=%s\n"
-                  "Operating System=%s\n"
-                  "User Name=%s\n"
-                  "Date/Time=...\n"
-                  "[Display]\n"
-                  "Resolution=%dx%d pixels\n"
-                  "OpenGL Renderer=%s\n"
-                  "X11 Vendor=%s\n"
-                  "\n%s\n"
-                  "[Input Devices]\n%s\n"
-                  "\n%s\n"
-                  "\n%s\n");
-
     summary = g_strdup_printf("[$ShellParam$]\n"
                   "UpdateInterval$%s=1000\n"
                   "UpdateInterval$%s=1000\n"
@@ -409,7 +388,7 @@ gchar *callback_summary()
 /*User Name*/     "%s=%s\n"
 /*Date/Time*/     "%s=...\n"
                   "[%s]\n"
-/*Resolution*/    "%s=%dx%d pixels\n"
+/*Resolution*/    "%s=%dx%d %s\n"
 /*OpenGL Rend*/   "%s=%s\n"
 /*X11 Vendor*/    "%s=%s\n"
                   "\n%s\n"
@@ -431,6 +410,7 @@ gchar *callback_summary()
                   _("Display"),
                   _("Resolution"),
                   computer->display->width, computer->display->height,
+                  _(/*/label for resolution */ "pixels"),
                   _("OpenGL Renderer"), computer->display->ogl_renderer,
                   _("X11 Vendor"), computer->display->vendor,
                   alsa_cards,
@@ -449,27 +429,6 @@ gchar *callback_summary()
 
 gchar *callback_os()
 {
-    /* keep translations in the .po until the old labels can be salvaged */
-    gchar* save_me = N_("[$ShellParam$]\n"
-               "UpdateInterval$Uptime=10000\n"
-               "UpdateInterval$Load Average=1000\n"
-               "UpdateInterval$Available entropy in /dev/random=1000\n"
-               "[Version]\n"
-               "Kernel=%s\n"
-               "Version=%s\n"
-               "C Library=%s\n"
-               "Distribution=%s\n"
-               "[Current Session]\n"
-               "Computer Name=%s\n"
-               "User Name=%s\n"
-               "#Language=%s\n"
-               "Home Directory=%s\n"
-               "Desktop Environment=%s\n"
-               "[Misc]\n"
-               "Uptime=...\n"
-               "Load Average=...\n"
-               "Available entropy in /dev/random=...\n");
-
     return g_strdup_printf("[$ShellParam$]\n"
                   "UpdateInterval$%s=10000\n"
                   "UpdateInterval$%s=1000\n"
