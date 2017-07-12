@@ -26,11 +26,11 @@ computer_get_uptime(void)
     gulong minutes;
 
     if ((procuptime = fopen("/proc/uptime", "r")) != NULL) {
-	(void)fscanf(procuptime, "%lu", &minutes);
-	ui->minutes = minutes / 60;
-	fclose(procuptime);
+        (void)fscanf(procuptime, "%lu", &minutes);
+        ui->minutes = minutes / 60;
+        fclose(procuptime);
     } else {
-	return NULL;
+        return NULL;
     }
 
     ui->hours = ui->minutes / 60;
@@ -45,32 +45,26 @@ gchar *
 computer_get_formatted_uptime()
 {
     UptimeInfo *ui;
-    gchar *tmp;
+    gchar *days_fmt, *hours_fmt, *minutes_fmt, *full_fmt, *ret;
 
     ui = computer_get_uptime();
 
-    /* FIXME: Use ngettext */
-#define plural(x) ((x > 1) ? "s" : "")
+    days_fmt = ngettext("%d day", "%d days", ui->days);
+    hours_fmt = ngettext("%d hour", "%d hours", ui->hours);
+    minutes_fmt = ngettext("%d minute", "%d minutes", ui->minutes);
 
     if (ui->days < 1) {
-	if (ui->hours < 1) {
-	    tmp =
-		g_strdup_printf("%d minute%s", ui->minutes,
-				plural(ui->minutes));
-	} else {
-	    tmp =
-		g_strdup_printf("%d hour%s, %d minute%s", ui->hours,
-				plural(ui->hours), ui->minutes,
-				plural(ui->minutes));
-	}
+        if (ui->hours < 1) {
+            ret = g_strdup_printf(minutes_fmt, ui->minutes);
+        } else {
+            full_fmt = g_strdup_printf("%s %s", hours_fmt, minutes_fmt);
+            ret = g_strdup_printf(full_fmt, ui->hours, ui->minutes);
+        }
     } else {
-	tmp =
-	    g_strdup_printf("%d day%s, %d hour%s and %d minute%s",
-			    ui->days, plural(ui->days), ui->hours,
-			    plural(ui->hours), ui->minutes,
-			    plural(ui->minutes));
+        full_fmt = g_strdup_printf("%s %s %s", days_fmt, hours_fmt, minutes_fmt);
+        ret = g_strdup_printf(full_fmt, ui->days, ui->hours, ui->minutes);
     }
 
     g_free(ui);
-    return tmp;
+    return ret;
 }
