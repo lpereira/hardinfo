@@ -25,8 +25,10 @@
 #include "vendor.h"
 #include <libintl.h>
 #include <locale.h>
-#define _(STRING)    gettext(STRING)
+#define _(STRING) gettext(STRING)
 #define N_(STRING) (STRING)
+#define C_(CTX, STRING) pgettext(CTX, STRING)
+#define NC_(CTX, STRING) (STRING)
 
 typedef enum {
   MODULE_FLAG_NONE = 0,
