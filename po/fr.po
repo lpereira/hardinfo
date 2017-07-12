@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-12 04:12-0500\n"
+"POT-Creation-Date: 2017-07-12 04:06-0500\n"
 "PO-Revision-Date: 2014-09-03\n"
 "Last-Translator: yolateng0 @olala22000\n"
 "Language-Team: LeFlood\n"
@@ -440,7 +440,7 @@ msgstr ""
 
 #: modules/computer.c:107 modules/computer.c:422 modules/computer.c:430
 msgid "Date/Time"
-msgstr ""
+msgstr "Date/Heure"
 
 #: modules/computer.c:112 modules/computer.c:497 modules/computer.c:512
 msgid "Load Average"
@@ -646,11 +646,11 @@ msgstr ""
 
 #: modules/computer.c:429 modules/computer.c:506
 msgid "User Name"
-msgstr ""
+msgstr "Utilisateur"
 
 #: modules/computer.c:432
 msgid "Resolution"
-msgstr ""
+msgstr "Résolution"
 
 #: modules/computer.c:434
 msgid "OpenGL Renderer"
