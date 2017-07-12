@@ -65,12 +65,12 @@ void scan_memory_do(void)
         if (tmp)
             tmp_label = _(tmp);
         else
-            tmp_label = newkeys[0];
+            tmp_label = ""; /* or newkeys[0] */
         /* although it doesn't matter... */
 
         moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
 
-        tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "\n", NULL);
+        tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "|", tmp_label, "\n", NULL);
         g_free(meminfo);
         meminfo = tmp;
 
