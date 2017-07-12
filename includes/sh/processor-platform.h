@@ -23,6 +23,10 @@ struct _Processor {
     gchar *model_name;
     gchar *vendor_id;
     gfloat bogomips, cpu_mhz;
+
+    gfloat bus_mhz, mod_mhz;
+
+    gchar *family;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */

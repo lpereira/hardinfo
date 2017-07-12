@@ -1,2 +1,15 @@
-update .pot : make pot in build/
-update .po files after .pot update : ?
+
+To update the .pot and existing translations use:
+    bash updatepo.sh
+
+-----
+
+update .pot :
+    --don't!-- make pot in build/
+    absolute paths will appear in the .pot
+    try :
+    xgettext -d hardinfo -o hardinfo.pot -k_ -kN_ -kC_:1c,2 -kNC_:1c,2 -c/ --from-code=UTF-8 ...
+
+update .po files after .pot update :
+    msgmerge -N XX.po hardinfo.pot > XX_.po && mv XX_.po XX.po
+

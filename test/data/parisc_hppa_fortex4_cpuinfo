@@ -1,0 +1,59 @@
+processor       : 0
+cpu family      : PA-RISC 2.0
+cpu             : PA8500 (PCX-W)
+cpu MHz         : 440.000000
+model           : 9000/785/J7000
+model name      : Forte W 4-way
+hversion        : 0x00005bf0
+sversion        : 0x00000491
+I-cache         : 512 KB
+D-cache         : 1024 KB (WB)
+ITLB entries    : 160
+DTLB entries    : 160 - shared with ITLB
+bogomips        : 878.18
+software id     : 2002742099
+
+processor       : 1
+cpu family      : PA-RISC 2.0
+cpu             : PA8500 (PCX-W)
+cpu MHz         : 440.000000
+model           : 9000/785/J7000
+model name      : Forte W 4-way
+hversion        : 0x00005bf0
+sversion        : 0x00000491
+I-cache         : 512 KB
+D-cache         : 1024 KB (WB)
+ITLB entries    : 160
+DTLB entries    : 160 - shared with ITLB
+bogomips        : 878.18
+software id     : 2002742099
+
+processor       : 2
+cpu family      : PA-RISC 2.0
+cpu             : PA8500 (PCX-W)
+cpu MHz         : 440.000000
+model           : 9000/785/J7000
+model name      : Forte W 4-way
+hversion        : 0x00005bf0
+sversion        : 0x00000491
+I-cache         : 512 KB
+D-cache         : 1024 KB (WB)
+ITLB entries    : 160
+DTLB entries    : 160 - shared with ITLB
+bogomips        : 878.18
+software id     : 2002742099
+
+processor       : 3
+cpu family      : PA-RISC 2.0
+cpu             : PA8500 (PCX-W)
+cpu MHz         : 440.000000
+model           : 9000/785/J7000
+model name      : Forte W 4-way
+hversion        : 0x00005bf0
+sversion        : 0x00000491
+I-cache         : 512 KB
+D-cache         : 1024 KB (WB)
+ITLB entries    : 160
+DTLB entries    : 160 - shared with ITLB
+bogomips        : 878.18
+software id : 2002742099

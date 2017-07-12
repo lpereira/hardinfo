@@ -39,15 +39,16 @@ scan_users_do(void)
 
     while (passwd_) {
         gchar *key = g_strdup_printf("USER%s", passwd_->pw_name);
-        gchar *val = g_strdup_printf("[User Information]\n"
-                "User ID=%d\n"
-                "Group ID=%d\n"
-                "Home directory=%s\n"
-                "Default shell=%s\n",
-                (gint) passwd_->pw_uid,
-                (gint) passwd_->pw_gid,
-                passwd_->pw_dir,
-                passwd_->pw_shell);
+        gchar *val = g_strdup_printf("[%s]\n"
+                "%s=%d\n"
+                "%s=%d\n"
+                "%s=%s\n"
+                "%s=%s\n",
+                _("User Information"),
+                _("User ID"), (gint) passwd_->pw_uid,
+                _("Group ID"), (gint) passwd_->pw_gid,
+                _("Home directory"), passwd_->pw_dir,
+                _("Default shell"), passwd_->pw_shell);
         moreinfo_add_with_prefix("COMP", key, val);
 
         strend(passwd_->pw_gecos, ',');
@@ -55,6 +56,6 @@ scan_users_do(void)
         passwd_ = getpwent();
         g_free(key);
     }
-    
+
     endpwent();
 }

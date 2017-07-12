@@ -4,6 +4,8 @@ cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
 option(HARDINFO_NOSYNC "Disable database sync via libsoup" 1)
+set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
+set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
 
@@ -20,7 +22,7 @@ endif()
 if(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "i[3-6]86")
 	set(HARDINFO_ARCH "x86")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "x86_64")
-	set(HARDINFO_ARCH "x86_64")
+	set(HARDINFO_ARCH "x86")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "(ppc|ppc32|ppc64|ppc64le)")
 	set(HARDINFO_ARCH "ppc")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "mips")
@@ -31,7 +33,7 @@ elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sparc{32,64}")
 	set(HARDINFO_ARCH "sparc")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "arm.*")
 	set(HARDINFO_ARCH "arm")
-elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64*")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64.*")
 	set(HARDINFO_ARCH "arm")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "ia64")
 	set(HARDINFO_ARCH "ia64")
@@ -41,10 +43,20 @@ elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "s390.*")
 	set(HARDINFO_ARCH "s390")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "m68k")
 	set(HARDINFO_ARCH "m68k")
-elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sh{3,4}")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sh[3-5]")
 	set(HARDINFO_ARCH "sh")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "(riscv|riscv32|riscv64)")
+	set(HARDINFO_ARCH "riscv")
 else()
 	message(FATAL_ERROR "Unsupported architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+endif()
+
+if (OVRARCH)
+	set(HARDINFO_ARCH ${OVRARCH})
+endif()
+if (OVRCPUINFO)
+	add_definitions(-DPROC_CPUINFO=${OVRCPUINFO})
+	message(STATUS "/proc/cpuinfo override: ${OVRCPUINFO}")
 endif()
 
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
@@ -104,6 +116,7 @@ set(MODULE_computer_SOURCES
 )
 set(MODULE_devices_SOURCES
 	modules/devices.c
+	modules/devices/cpu_util.c
 	modules/devices/${HARDINFO_ARCH}/processor.c
 	modules/devices/battery.c
 	modules/devices/devmemory.c

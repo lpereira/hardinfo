@@ -19,12 +19,18 @@ DEPENDENCIES
 Required:
 - GTK+ 2.10 (or newer)
 - GLib 2.10 (or newer)
+- Zlib (for zlib benchmark)
 
 Optional (for synchronization/remote):
 - Libsoup 2.24 (or newer)
 
 If having trouble building with libsoup, disable it with:
 	cmake -DHARDINFO_NOSYNC=1
+
+If using Debian/Ubuntu or similar, and non-English language
+doesn't work, try:
+	cmake -DCMAKE_INSTALL_PREFIX=/usr
+
 
 BUILDING
 --------
@@ -48,6 +54,8 @@ There are some variables that can be changed:
 				and are not recommended for general use
 	CMAKE_INSTALL_PREFIX	Sets the installation prefix.
 	[Default: /usr/local]
+	HARDINFO_NOSYNC		Disables network synchronization
+	[Default: 1]
 
 To set a variable, pass use cmake's -D command-line parameter. For example:
 

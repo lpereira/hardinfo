@@ -189,7 +189,7 @@ static gchar *dev_list = NULL;
 void scan_dev(gboolean reload)
 {
     SCAN_START();
-    
+
     int i;
     struct {
        gchar *compiler_name;
@@ -222,11 +222,11 @@ void scan_dev(gboolean reload)
        { N_("QMake"), "qmake --version", "\\d+\\.\\S+", TRUE},
        { N_("CMake"), "cmake --version", "\\d+\\.\\d+\\.?\\d*", TRUE},
     };
-    
+
     g_free(dev_list);
-    
+
     dev_list = g_strdup("");
-    
+
     for (i = 0; i < G_N_ELEMENTS(detect_lang); i++) {
        gchar *version = NULL;
        gchar *output;
@@ -234,18 +234,18 @@ void scan_dev(gboolean reload)
        GRegex *regex;
        GMatchInfo *match_info;
        gboolean found;
-       
+
        if (!detect_lang[i].regex) {
-            dev_list = h_strdup_cprintf("[%s]\n", dev_list, detect_lang[i].compiler_name);
+            dev_list = h_strdup_cprintf("[%s]\n", dev_list, _(detect_lang[i].compiler_name));
             continue;
        }
-       
+
        if (detect_lang[i].stdout) {
             found = g_spawn_command_line_sync(detect_lang[i].version_command, &output, NULL, NULL, NULL);
        } else {
             found = g_spawn_command_line_sync(detect_lang[i].version_command, NULL, &output, NULL, NULL);
        }
-       
+
        if (found) {
            regex = g_regex_new(detect_lang[i].regex, 0, 0, NULL);
 
@@ -253,25 +253,25 @@ void scan_dev(gboolean reload)
            if (g_match_info_matches(match_info)) {
                version = g_match_info_fetch(match_info, 0);
            }
-           
+
            g_match_info_free(match_info);
            g_regex_unref(regex);
            g_free(output);
        }
-       
+
        if (version) {
            dev_list = h_strdup_cprintf("%s=%s\n", dev_list, detect_lang[i].compiler_name, version);
            g_free(version);
        } else {
            dev_list = h_strdup_cprintf(_("%s=Not found\n"), dev_list, detect_lang[i].compiler_name);
        }
-       
+
        temp = g_strdup_printf(_("Detecting version: %s"),
                               detect_lang[i].compiler_name);
        shell_status_update(temp);
        g_free(temp);
     }
-    
+
     SCAN_END();
 }
 
@@ -324,18 +324,18 @@ gchar *computer_get_virtualization()
         { " hypervisor", "Virtual (hypervisor present)"} ,
         { NULL }
     };
-    
+
     DEBUG("Detecting virtual machine");
 
     if (g_file_test("/proc/xen", G_FILE_TEST_EXISTS)) {
          DEBUG("/proc/xen found; assuming Xen");
          return g_strdup("Xen");
     }
-    
+
     for (i = 0; files[i+1]; i++) {
          gchar buffer[512];
          FILE *file;
-         
+
          if ((file = fopen(files[i], "r"))) {
               while (!found && fgets(buffer, 512, file)) {
                   for (j = 0; vm_types[j+1].str; j++) {
@@ -345,20 +345,20 @@ gchar *computer_get_virtualization()
                       }
                   }
               }
-              
+
               fclose(file);
-              
+
               if (found) {
                   DEBUG("%s found (by reading file %s)",
                         vm_types[j].vmtype, files[i]);
                   return g_strdup(vm_types[j].vmtype);
               }
          }
-         
+
     }
-    
+
     DEBUG("no virtual machine detected; assuming physical machine");
-    
+
     return g_strdup(_("Physical machine"));
 }
 
@@ -368,7 +368,7 @@ gchar *callback_summary()
     gchar *input_devices, *printers;
     gchar *storage_devices, *summary;
     gchar *virt;
-    
+
     processor_name  = module_call_method("devices::getProcessorName");
     alsa_cards      = computer_get_alsacards(computer);
     input_devices   = module_call_method("devices::getInputDevices");
@@ -376,35 +376,46 @@ gchar *callback_summary()
     storage_devices = module_call_method("devices::getStorageDevices");
     virt            = computer_get_virtualization();
 
-    summary = g_strdup_printf(_("[$ShellParam$]\n"
-			      "UpdateInterval$Memory=1000\n"
-			      "UpdateInterval$Date/Time=1000\n"
-			      "#ReloadInterval=5000\n"
-			      "[Computer]\n"
-			      "Processor=%s\n"
-			      "Memory=...\n"
-			      "Machine Type=%s\n"
-			      "Operating System=%s\n"
-			      "User Name=%s\n"
-			      "Date/Time=...\n"
-			      "[Display]\n"
-			      "Resolution=%dx%d pixels\n"
-			      "OpenGL Renderer=%s\n"
-			      "X11 Vendor=%s\n"
-			      "\n%s\n"
-			      "[Input Devices]\n%s\n"
-			      "\n%s\n"
-			      "\n%s\n"),
-			      processor_name,
-			      virt,
-			      computer->os->distro,
-			      computer->os->username,
-			      computer->display->width,
-			      computer->display->height,
-			      computer->display->ogl_renderer,
-			      computer->display->vendor,
-			      alsa_cards,
-			      input_devices, printers, storage_devices);
+    summary = g_strdup_printf("[$ShellParam$]\n"
+                  "UpdateInterval$%s=1000\n"
+                  "UpdateInterval$%s=1000\n"
+                  "#ReloadInterval=5000\n"
+                  "[%s]\n"
+/*Processor*/     "%s=%s\n"
+/*Memory*/        "%s=...\n"
+/*Machine Type*/  "%s=%s\n"
+/*Operating Sys*/ "%s=%s\n"
+/*User Name*/     "%s=%s\n"
+/*Date/Time*/     "%s=...\n"
+                  "[%s]\n"
+/*Resolution*/    "%s=%dx%d %s\n"
+/*OpenGL Rend*/   "%s=%s\n"
+/*X11 Vendor*/    "%s=%s\n"
+                  "\n%s\n"
+/*Input Devices*/ "[%s]\n%s\n"
+                  "\n%s\n"
+                  "\n%s\n",
+
+                  /* Update Intervals */
+                  _("Memory"),
+                  _("Date/Time"),
+
+                  _("Computer"),
+                  _("Processor"), processor_name,
+                  _("Memory"),
+                  _("Machine Type"), virt,
+                  _("Operating System"), computer->os->distro,
+                  _("User Name"), computer->os->username,
+                  _("Date/Time"),
+                  _("Display"),
+                  _("Resolution"),
+                  computer->display->width, computer->display->height,
+                  _(/*/label for resolution */ "pixels"),
+                  _("OpenGL Renderer"), computer->display->ogl_renderer,
+                  _("X11 Vendor"), computer->display->vendor,
+                  alsa_cards,
+                  _("Input Devices"),
+                  input_devices, printers, storage_devices);
 
     g_free(processor_name);
     g_free(alsa_cards);
@@ -418,34 +429,47 @@ gchar *callback_summary()
 
 gchar *callback_os()
 {
-    return g_strdup_printf(_("[$ShellParam$]\n"
-			   "UpdateInterval$Uptime=10000\n"
-			   "UpdateInterval$Load Average=1000\n"
-			   "UpdateInterval$Available entropy in /dev/random=1000\n"
-			   "[Version]\n"
-			   "Kernel=%s\n"
-			   "Version=%s\n"
-			   "C Library=%s\n"
-			   "Distribution=%s\n"
-			   "[Current Session]\n"
-			   "Computer Name=%s\n"
-			   "User Name=%s\n"
-			   "#Language=%s\n"
-			   "Home Directory=%s\n"
-			   "Desktop Environment=%s\n"
-			   "[Misc]\n"
-			   "Uptime=...\n"
-			   "Load Average=...\n"
-			   "Available entropy in /dev/random=..."),
-			   computer->os->kernel,
-			   computer->os->kernel_version,
-			   computer->os->libc,
-			   computer->os->distro,
-			   computer->os->hostname,
-			   computer->os->username,
-			   computer->os->language,
-			   computer->os->homedir,
-			   computer->os->desktop);
+    return g_strdup_printf("[$ShellParam$]\n"
+                  "UpdateInterval$%s=10000\n"
+                  "UpdateInterval$%s=1000\n"
+                  "UpdateInterval$%s=1000\n"
+
+                  "[%s]\n"
+/*Kernel*/        "%s=%s\n"
+/*Version*/       "%s=%s\n"
+/*C Library*/     "%s=%s\n"
+/*Distribution*/  "%s=%s\n"
+                  "[%s]\n"
+/*Computer Name*/ "%s=%s\n"
+/*User Name*/     "%s=%s\n"
+/*#Language*/     "%s=%s\n"
+/*Home Dir*/      "%s=%s\n"
+/*Desktop Env*/   "%s=%s\n"
+                  "[%s]\n"
+/*Uptime*/        "%s=...\n"
+/*Load Average*/  "%s=...\n"
+/*Entropy*/       "%s=...\n",
+
+               /* Update Intervals */
+               _("Uptime"),
+               _("Available entropy in /dev/random"),
+               _("Load Average"),
+
+               _("Version"),
+               _("Kernel"), computer->os->kernel,
+               _("Version"), computer->os->kernel_version,
+               _("C Library"), computer->os->libc,
+               _("Distribution"), computer->os->distro,
+               _("Current Session"),
+               _("Computer Name"), computer->os->hostname,
+               _("User Name"), computer->os->username,
+               _("#Language"), computer->os->language,
+               _("Home Directory"), computer->os->homedir,
+               _("Desktop Environment"), computer->os->desktop,
+               _("Misc"),
+               _("Uptime"),
+               _("Load Average"),
+               _("Available entropy in /dev/random") );
 }
 
 gchar *callback_modules()
@@ -569,16 +593,16 @@ gchar *get_display_summary(void)
 gchar *get_kernel_module_description(gchar *module)
 {
     gchar *description;
-    
+
     if (!_module_hash_table) {
         scan_modules(FALSE);
     }
-    
+
     description = g_hash_table_lookup(_module_hash_table, module);
     if (!description) {
         return NULL;
     }
-    
+
     return g_strdup(description);
 }
 
@@ -587,7 +611,7 @@ gchar *get_audio_cards(void)
     if (!computer->alsa) {
       computer->alsa = computer_get_alsainfo();
     }
-    
+
     return computer_get_alsacards(computer);
 }
 
@@ -672,7 +696,7 @@ void hi_module_deinit(void)
         g_free(computer->os->boots);
         g_free(computer->os);
     }
-    
+
     if (computer->display) {
         g_free(computer->display->ogl_vendor);
         g_free(computer->display->ogl_renderer);
@@ -684,15 +708,15 @@ void hi_module_deinit(void)
         g_free(computer->display->monitors);
         g_free(computer->display);
     }
-    
+
     if (computer->alsa) {
         g_slist_free(computer->alsa->cards);
         g_free(computer->alsa);
     }
-    
+
     g_free(computer->date_time);
     g_free(computer);
-    
+
     moreinfo_del_with_prefix("COMP");
 }
 

@@ -18,6 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
+#include "cpu_util.h"
 
 #include "arm_data.h"
 #include "arm_data.c"
@@ -34,40 +35,6 @@ static const gchar *arm_mode_str[] = {
     "A32 on A64",
 };
 
-static gchar* get_cpu_str(const gchar* file, gint cpuid) {
-    gchar *tmp0 = NULL;
-    gchar *tmp1 = NULL;
-    tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
-    g_file_get_contents(tmp0, &tmp1, NULL, NULL);
-    g_free(tmp0);
-    return tmp1;
-}
-
-static gint get_cpu_int(const char* item, int cpuid) {
-    gchar *fc = NULL;
-    int ret = 0;
-    fc = get_cpu_str(item, cpuid);
-    if (fc) {
-        ret = atol(fc);
-        g_free(fc);
-    }
-    return ret;
-}
-
-int processor_has_flag(gchar * strflags, gchar * strflag)
-{
-    gchar **flags;
-    gint ret = 0;
-    if (strflags == NULL || strflag == NULL)
-        return 0;
-    flags = g_strsplit(strflags, " ", 0);
-    ret = g_strv_contains((const gchar * const *)flags, strflag);
-    g_strfreev(flags);
-    return ret;
-}
-
-#define PROC_CPUINFO "/proc/cpuinfo"
-
 GSList *
 processor_scan(void)
 {
@@ -76,7 +43,6 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
     gchar *rep_pname = NULL;
-    gchar *tmpfreq_str = NULL;
     GSList *pi = NULL;
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
@@ -172,10 +138,7 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-#define STRIFNULL(f,cs) if (processor->f == NULL) processor->f = g_strdup(cs);
-#define UNKIFNULL(f) STRIFNULL(f, "(Unknown)")
-#define EMPIFNULL(f) STRIFNULL(f, "")
-        STRIFNULL(model_name, "ARM Processor");
+        STRIFNULL(model_name, _("ARM Processor") );
         EMPIFNULL(flags);
         UNKIFNULL(cpu_implementer);
         UNKIFNULL(cpu_architecture);
@@ -189,23 +152,12 @@ processor_scan(void)
             processor->cpu_architecture, processor->model_name);
         UNKIFNULL(decoded_name);
 
-        /* topo */
-        processor->package_id = get_cpu_str("topology/physical_package_id", processor->id);
-        processor->core_id = get_cpu_str("topology/core_id", processor->id);
-        UNKIFNULL(package_id);
-        UNKIFNULL(core_id);
+        /* topo & freq */
+        processor->cpufreq = cpufreq_new(processor->id);
+        processor->cputopo = cputopo_new(processor->id);
 
-        /* freq */
-        processor->scaling_driver = get_cpu_str("cpufreq/scaling_driver", processor->id);
-        processor->scaling_governor = get_cpu_str("cpufreq/scaling_governor", processor->id);
-        UNKIFNULL(scaling_driver);
-        UNKIFNULL(scaling_governor);
-        processor->transition_latency = get_cpu_int("cpufreq/cpuinfo_transition_latency", processor->id);
-        processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
-        processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
-        processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
-        if (processor->cpukhz_max)
-            processor->cpu_mhz = processor->cpukhz_max / 1000;
+        if (processor->cpufreq->cpukhz_max)
+            processor->cpu_mhz = processor->cpufreq->cpukhz_max / 1000;
         else
             processor->cpu_mhz = 0.0f;
 
@@ -259,72 +211,43 @@ processor_get_detailed_info(Processor *processor)
     tmp_part = (char*)arm_part(processor->cpu_implementer, processor->cpu_part);
     tmp_arch = (char*)arm_arch_more(processor->cpu_architecture);
 
-    tmp_topology = g_strdup_printf(
-                    "[Topology]\n"
-                    "ID=%d\n"
-                    "Socket=%s\n"
-                    "Core=%s\n",
-                   processor->id,
-                   processor->package_id,
-                   processor->core_id);
+    tmp_topology = cputopo_section_str(processor->cputopo);
+    tmp_cpufreq = cpufreq_section_str(processor->cpufreq);
 
-    if (processor->cpukhz_min || processor->cpukhz_max || processor->cpukhz_cur) {
-        tmp_cpufreq = g_strdup_printf(
-                    "[Frequency Scaling]\n"
-                    "Minimum=%d kHz\n"
-                    "Maximum=%d kHz\n"
-                    "Current=%d kHz\n"
-                    "Transition Latency=%d ns\n"
-                    "Governor=%s\n"
-                    "Driver=%s\n",
-                   processor->cpukhz_min,
-                   processor->cpukhz_max,
-                   processor->cpukhz_cur,
-                   processor->transition_latency,
-                   processor->scaling_governor,
-                   processor->scaling_driver);
-    } else {
-        tmp_cpufreq = g_strdup_printf(
-                    "[Frequency Scaling]\n"
-                    "Driver=%s\n",
-                   processor->scaling_driver);
-    }
-
-    ret = g_strdup_printf("[Processor]\n"
-                           "Linux Name=%s\n"
-                           "Decoded Name=%s\n"
-                           "Mode=%s\n"
-                   "BogoMips=%.2f\n"
-                   "Endianesss="
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                       "Little Endian"
-#else
-                       "Big Endian"
-#endif
-                       "\n"
+    ret = g_strdup_printf("[%s]\n"
+                       "%s=%s\n"       /* linux name */
+                       "%s=%s\n"       /* decoded name */
+                       "%s=%s\n"       /* mode */
+                       "%s=%.2f %s\n"  /* frequency */
+                       "%s=%.2f\n"     /* bogomips */
+                       "%s=%s\n"       /* byte order */
                        "%s" /* topology */
                        "%s" /* frequency scaling */
-                       "[ARM]\n"
-                       "Implementer=[%s] %s\n"
-                       "Part=[%s] %s\n"
-                       "Architecture=[%s] %s\n"
-                       "Variant=%s\n"
-                       "Revision=%s\n"
-                       "[Capabilities]\n"
+                       "[%s]\n"    /* ARM */
+                       "%s=[%s] %s\n"  /* implementer */
+                       "%s=[%s] %s\n"  /* part */
+                       "%s=[%s] %s\n"  /* architecture */
+                       "%s=%s\n"       /* variant */
+                       "%s=%s\n"       /* revision */
+                       "[%s]\n" /* flags */
                        "%s"
-                       "%s",
-                   processor->model_name,
-                   processor->decoded_name,
-                   arm_mode_str[processor->mode],
-                   processor->bogomips,
+                       "%s",    /* empty */
+                   _("Processor"),
+                   _("Linux Name"), processor->model_name,
+                   _("Decoded Name"), processor->decoded_name,
+                   _("Mode"), arm_mode_str[processor->mode],
+                   _("Frequency"), processor->cpu_mhz, _("MHz"),
+                   _("BogoMips"), processor->bogomips,
+                   _("Byte Order"), byte_order_str(),
                    tmp_topology,
                    tmp_cpufreq,
-                   processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
-                   processor->cpu_part, (tmp_part) ? tmp_part : "",
-                   processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
-                   processor->cpu_variant,
-                   processor->cpu_revision,
-                   tmp_flags,
+                   _("ARM"),
+                   _("Implementer"), processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
+                   _("Part"), processor->cpu_part, (tmp_part) ? tmp_part : "",
+                   _("Architecture"), processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
+                   _("Variant"), processor->cpu_variant,
+                   _("Revision"), processor->cpu_revision,
+                   _("Capabilities"), tmp_flags,
                     "");
     g_free(tmp_flags);
     g_free(tmp_cpufreq);

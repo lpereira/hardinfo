@@ -18,28 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
-
-static gchar* get_cpu_str(const gchar* file, gint cpuid) {
-    gchar *tmp0 = NULL;
-    gchar *tmp1 = NULL;
-    tmp0 = g_strdup_printf("/sys/devices/system/cpu/cpu%d/%s", cpuid, file);
-    g_file_get_contents(tmp0, &tmp1, NULL, NULL);
-    g_free(tmp0);
-    return tmp1;
-}
-
-static gint get_cpu_int(const char* item, int cpuid) {
-    gchar *fc = NULL;
-    int ret = 0;
-    fc = get_cpu_str(item, cpuid);
-    if (fc) {
-        ret = atol(fc);
-        g_free(fc);
-    }
-    return ret;
-}
-
-#define PROC_CPUINFO "/proc/cpuinfo"
+#include "cpu_util.h"
 
 GSList *
 processor_scan(void)
@@ -49,7 +28,6 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
     gchar *rep_pname = NULL;
-    gchar *tmpfreq_str = NULL;
     GSList *pi = NULL;
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
@@ -136,91 +114,44 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-#define STRIFNULL(f,cs) if (processor->f == NULL) processor->f = g_strdup(cs);
-#define UNKIFNULL(f) STRIFNULL(f, "(Unknown)")
-#define EMPIFNULL(f) STRIFNULL(f, "")
-        STRIFNULL(model_name, "POWER Processor");
+        STRIFNULL(model_name, _("POWER Processor") );
         UNKIFNULL(revision);
 
-        /* topo */
-        processor->package_id = get_cpu_str("topology/physical_package_id", processor->id);
-        processor->core_id = get_cpu_str("topology/core_id", processor->id);
-        UNKIFNULL(package_id);
-        UNKIFNULL(core_id);
+        /* topo & freq */
+        processor->cpufreq = cpufreq_new(processor->id);
+        processor->cputopo = cputopo_new(processor->id);
 
-        /* freq */
-        processor->scaling_driver = get_cpu_str("cpufreq/scaling_driver", processor->id);
-        processor->scaling_governor = get_cpu_str("cpufreq/scaling_governor", processor->id);
-        UNKIFNULL(scaling_driver);
-        UNKIFNULL(scaling_governor);
-        processor->transition_latency = get_cpu_int("cpufreq/cpuinfo_transition_latency", processor->id);
-        processor->cpukhz_cur = get_cpu_int("cpufreq/scaling_cur_freq", processor->id);
-        processor->cpukhz_min = get_cpu_int("cpufreq/scaling_min_freq", processor->id);
-        processor->cpukhz_max = get_cpu_int("cpufreq/scaling_max_freq", processor->id);
-        if (processor->cpukhz_max)
-            processor->cpu_mhz = processor->cpukhz_max / 1000;
+        if (processor->cpufreq->cpukhz_max)
+            processor->cpu_mhz = processor->cpufreq->cpukhz_max / 1000;
 
     }
 
     return procs;
 }
 
-
 gchar *
 processor_get_detailed_info(Processor *processor)
 {
     gchar *tmp_cpufreq, *tmp_topology, *ret;
 
-    tmp_topology = g_strdup_printf(
-                    "[Topology]\n"
-                    "ID=%d\n"
-                    "Socket=%s\n"
-                    "Core=%s\n",
-                   processor->id,
-                   processor->package_id,
-                   processor->core_id);
+    tmp_topology = cputopo_section_str(processor->cputopo);
+    tmp_cpufreq = cpufreq_section_str(processor->cpufreq);
 
-    if (processor->cpukhz_min || processor->cpukhz_max || processor->cpukhz_cur) {
-        tmp_cpufreq = g_strdup_printf(
-                    "[Frequency Scaling]\n"
-                    "Minimum=%d kHz\n"
-                    "Maximum=%d kHz\n"
-                    "Current=%d kHz\n"
-                    "Transition Latency=%d ns\n"
-                    "Governor=%s\n"
-                    "Driver=%s\n",
-                   processor->cpukhz_min,
-                   processor->cpukhz_max,
-                   processor->cpukhz_cur,
-                   processor->transition_latency,
-                   processor->scaling_governor,
-                   processor->scaling_driver);
-    } else {
-        tmp_cpufreq = g_strdup_printf(
-                    "[Frequency Scaling]\n"
-                    "Driver=%s\n",
-                   processor->scaling_driver);
-    }
-
-    ret = g_strdup_printf("[Processor]\n"
-                           "Model=%s\n"
-                           "Revision=%s\n"
-                   "Frequency=%.2f MHz\n"
-                   "BogoMips=%.2f\n"
-                   "Byte Order="
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                       "Little Endian"
-#else
-                       "Big Endian"
-#endif
-                       "\n"
-                       "%s" /* topology */
-                       "%s" /* frequency scaling */
-                       "%s",/* empty */
-                   processor->model_name,
-                   processor->revision,
-                   processor->cpu_mhz,
-                   processor->bogomips,
+    ret = g_strdup_printf("[%s]\n"
+                   "%s=%s\n"  /* model */
+                   "%s=%s\n"  /* revision */
+                   "%s=%.2f %s\n" /* frequency */
+                   "%s=%.2f\n"    /* bogomips */
+                   "%s=%s\n"      /* byte order */
+                   "%s" /* topology */
+                   "%s" /* frequency scaling */
+                   "%s",/* empty */
+                   _("Processor"),
+                   _("Model"), processor->model_name,
+                   _("Revision"), processor->revision,
+                   _("Frequency"), processor->cpu_mhz, _("MHz"),
+                   _("BogoMips"), processor->bogomips,
+                   _("Byte Order"), byte_order_str(),
                    tmp_topology,
                    tmp_cpufreq,
                     "");
