@@ -177,22 +177,22 @@ gchar *get_processor_frequency(void)
 gchar *get_pci_device_description(gchar *pci_id)
 {
     gchar *description;
-    
+
     if (!_pci_devices) {
         scan_pci(FALSE);
     }
-    
+
     if ((description = g_hash_table_lookup(_pci_devices, pci_id))) {
         return g_strdup(description);
     }
-    
+
     return NULL;
 }
 
 gchar *get_memory_total(void)
 {
     scan_memory(FALSE);
-    return moreinfo_lookup ("DEV:Total Memory"); //hi_more_info(N_("Total Memory"));
+    return moreinfo_lookup ("DEV:MemTotal");
 }
 
 /* information table from: http://elinux.org/RPi_HardwareHistory */
@@ -296,7 +296,7 @@ gchar *get_motherboard(void)
 
     board_name = moreinfo_lookup("DEV:DMI:Board:Name");
     board_vendor = moreinfo_lookup("DEV:DMI:Board:Vendor");
-    
+
     if (board_name && board_vendor && *board_name && *board_vendor)
        return g_strconcat(board_vendor, " ", board_name, NULL);
     else if (board_name && *board_name)
@@ -344,7 +344,7 @@ ShellModuleMethod *hi_exported_methods(void)
 gchar *hi_more_info(gchar * entry)
 {
     gchar *info = moreinfo_lookup_with_prefix("DEV", entry);
-    
+
     if (info)
 	return g_strdup(info);
 
@@ -574,7 +574,7 @@ void hi_module_init(void)
         .save_to = "cpuflags.conf",
         .get_data = NULL
       };
-      
+
       sync_manager_add_entry(&se);
     }
 #endif	/* defined(ARCH_x86) */
