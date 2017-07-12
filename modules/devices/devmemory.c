@@ -61,13 +61,16 @@ void scan_memory_do(void)
         g_strstrip(newkeys[1]);
 
         /* try to find a localizable label */
-        tmp_label = g_hash_table_lookup(memlabels, newkeys[0]);
-        if (tmp_label == NULL)
+        tmp = g_hash_table_lookup(memlabels, newkeys[0]);
+        if (tmp)
+            tmp_label = _(tmp);
+        else
             tmp_label = newkeys[0];
+        /* although it doesn't matter... */
 
         moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
 
-        tmp = g_strconcat(meminfo, _(tmp_label), "=", newkeys[1], "\n", NULL);
+        tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "\n", NULL);
         g_free(meminfo);
         meminfo = tmp;
 
