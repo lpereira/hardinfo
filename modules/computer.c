@@ -198,8 +198,12 @@ void scan_dev(gboolean reload)
        gboolean stdout;
     } detect_lang[] = {
        { N_("Scripting Languages"), NULL, FALSE },
-       { N_("CPython"), "python -V", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Python"), "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Python2"), "python2 -V", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Python3"), "python3 -V", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Perl"), "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Perl6 (VM)"), "perl6 -v", "(?<=This is ).*", TRUE },
+       { N_("Perl6"), "perl6 -v", "(?<=implementing Perl )\\w*\\.\\w*", TRUE },
        { N_("PHP"), "php --version", "\\d+\\.\\d+\\.\\S+", TRUE},
        { N_("Ruby"), "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Bash"), "bash --version", "\\d+\\.\\d+\\.\\S+", TRUE},
@@ -229,7 +233,7 @@ void scan_dev(gboolean reload)
 
     for (i = 0; i < G_N_ELEMENTS(detect_lang); i++) {
        gchar *version = NULL;
-       gchar *output;
+       gchar *output, *ignored;
        gchar *temp;
        GRegex *regex;
        GMatchInfo *match_info;
@@ -241,10 +245,11 @@ void scan_dev(gboolean reload)
        }
 
        if (detect_lang[i].stdout) {
-            found = g_spawn_command_line_sync(detect_lang[i].version_command, &output, NULL, NULL, NULL);
+            found = g_spawn_command_line_sync(detect_lang[i].version_command, &output, &ignored, NULL, NULL);
        } else {
-            found = g_spawn_command_line_sync(detect_lang[i].version_command, NULL, &output, NULL, NULL);
+            found = g_spawn_command_line_sync(detect_lang[i].version_command, &ignored, &output, NULL, NULL);
        }
+       g_free(ignored);
 
        if (found) {
            regex = g_regex_new(detect_lang[i].regex, 0, 0, NULL);
