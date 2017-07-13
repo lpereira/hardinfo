@@ -11,12 +11,12 @@ fi
 
 mv hardinfo.pot hardinfo.pot.old
 echo "" > hardinfo.pot # empty existing file to join (-j) with
-for d in shell/ modules/ hardinfo/;
+for d in hardinfo/ shell/ modules/;
 do
     # work form hardinfo root to get reasonable file reference comments
     cd ..
     echo -n `pwd`; echo "/$d ..."
-    find "$d" -type f -name "*.c" -print | xargs xgettext -j -d hardinfo -o "$DER/hardinfo.pot" -k_ -kN_ -kC_:1c,2 -kNC_:1c,2 -c/ --from-code=UTF-8
+    find "$d" -type f -name "*.c" -print | sort | xargs xgettext -j -d hardinfo -o "$DER/hardinfo.pot" -k_ -kN_ -kC_:1c,2 -kNC_:1c,2 -c/ --from-code=UTF-8
     cd "$DER"
 done;
 
