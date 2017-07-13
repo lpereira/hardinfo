@@ -184,6 +184,7 @@ computer_get_language(void)
     while (tab_lang_env[i] != NULL) {
         env = g_strdup( g_getenv(tab_lang_env[i]) );
         if (env != NULL)  break;
+        i++;
     }
 
     if (env != NULL)
