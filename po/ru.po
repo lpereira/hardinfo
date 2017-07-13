@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo puppy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-12 04:12-0500\n"
+"POT-Creation-Date: 2017-07-12 23:20-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -15,6 +15,347 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+
+#: hardinfo/hardinfo.c:48
+msgid ""
+"Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n"
+"\n"
+msgstr ""
+
+#: hardinfo/hardinfo.c:50
+#, c-format
+msgid ""
+"Compile-time options:\n"
+"  Release version:   %s (%s)\n"
+"  BinReloc enabled:  %s\n"
+"  Data prefix:       %s\n"
+"  Library prefix:    %s\n"
+"  Compiled on:       %s %s (%s)\n"
+msgstr ""
+
+#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57
+#: modules/devices/printers.c:138
+msgid "Yes"
+msgstr "Да"
+
+#: hardinfo/hardinfo.c:57 modules/computer.c:545
+#: modules/devices/printers.c:138
+msgid "No"
+msgstr "Нет"
+
+#: hardinfo/hardinfo.c:68
+#, c-format
+msgid ""
+"Failed to find runtime data.\n"
+"\n"
+"• Is HardInfo correctly installed?\n"
+"• See if %s and %s exists and you have read permission."
+msgstr ""
+
+#: hardinfo/hardinfo.c:75
+#, c-format
+msgid ""
+"Modules:\n"
+"%-20s%-15s%-12s\n"
+msgstr ""
+
+#: hardinfo/hardinfo.c:76
+msgid "File Name"
+msgstr ""
+
+#: hardinfo/hardinfo.c:76 modules/devices/ia64/processor.c:152
+#: modules/devices/sh/processor.c:76
+msgid "Name"
+msgstr ""
+
+#: hardinfo/hardinfo.c:76 modules/computer.c:458 modules/computer.c:460
+msgid "Version"
+msgstr "Версия"
+
+#: hardinfo/hardinfo.c:123
+#, c-format
+msgid "Unknown benchmark ``%s'' or libbenchmark.so not loaded"
+msgstr ""
+
+#: hardinfo/hardinfo.c:151
+msgid "Don't know what to do. Exiting."
+msgstr ""
+
+#: hardinfo/util.c:105
+#, c-format
+msgid "%d day, "
+msgid_plural "%d days, "
+msgstr[0] "%d день"
+msgstr[1] "%d дня"
+msgstr[2] "%d дней"
+
+#: hardinfo/util.c:106
+#, c-format
+msgid "%d hour, "
+msgid_plural "%d hours, "
+msgstr[0] "%d час"
+msgstr[1] "%d часа"
+msgstr[2] "%d часов"
+
+#: hardinfo/util.c:107 hardinfo/util.c:110 modules/computer/uptime.c:54
+#, c-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d минута"
+msgstr[1] "%d минуты"
+msgstr[2] "%d минут"
+
+#: hardinfo/util.c:119
+#, c-format
+msgid "%.1f B"
+msgstr "%.1f Б"
+
+#: hardinfo/util.c:121
+#, fuzzy, c-format
+msgid "%.1f KiB"
+msgstr "%.1f КиБ"
+
+#: hardinfo/util.c:123
+#, fuzzy, c-format
+msgid "%.1f MiB"
+msgstr "%.1f МиБ"
+
+#: hardinfo/util.c:125
+#, fuzzy, c-format
+msgid "%.1f GiB"
+msgstr "%.1f ГиБ"
+
+#: hardinfo/util.c:127
+#, c-format
+msgid "%.1f TiB"
+msgstr ""
+
+#: hardinfo/util.c:129
+#, c-format
+msgid "%.1f PiB"
+msgstr ""
+
+#: hardinfo/util.c:343
+msgid "Error"
+msgstr "Ошибка"
+
+#: hardinfo/util.c:343 hardinfo/util.c:359
+msgid "Warning"
+msgstr "Предупреждение"
+
+#: hardinfo/util.c:358
+msgid "Fatal Error"
+msgstr "Фатальная ошибка"
+
+#: hardinfo/util.c:383
+msgid "creates a report and prints to standard output"
+msgstr "создаёт отчёт и выводит на стандартный вывод"
+
+#: hardinfo/util.c:389
+msgid "chooses a report format (text, html)"
+msgstr "выбирает формат отчёта (text, html)"
+
+#: hardinfo/util.c:395
+msgid "run benchmark; requires benchmark.so to be loaded"
+msgstr "запуск теста; требует, чтобы benchmark.so был загружен"
+
+#: hardinfo/util.c:401
+msgid "lists modules"
+msgstr "список модулей"
+
+#: hardinfo/util.c:407
+msgid "specify module to load"
+msgstr "укажите модуль для загрузки"
+
+#: hardinfo/util.c:413
+msgid "automatically load module dependencies"
+msgstr "автоматически загружает зависимости модулей"
+
+#: hardinfo/util.c:420
+msgid "run in XML-RPC server mode"
+msgstr "запуск в режиме сервера XML-RPC"
+
+#: hardinfo/util.c:427
+msgid "shows program version and quit"
+msgstr "показывает версию программы и выходит"
+
+#: hardinfo/util.c:432
+msgid "- System Profiler and Benchmark tool"
+msgstr "- Инструмент для тестирования и проверки свойств системы"
+
+#: hardinfo/util.c:442
+#, c-format
+msgid ""
+"Unrecognized arguments.\n"
+"Try ``%s --help'' for more information.\n"
+msgstr ""
+"Неизвестные аргументы.\n"
+"Используйте `%s --help' для справки.\n"
+
+#: hardinfo/util.c:508
+#, c-format
+msgid "Couldn't find a Web browser to open URL %s."
+msgstr "Не удаётся найти веб-браузер для открытия URL %s."
+
+#: hardinfo/util.c:855
+#, c-format
+msgid "Module \"%s\" depends on module \"%s\", load it?"
+msgstr "Модуль \"%s\" зависит от модуля \"%s\", загрузить его?"
+
+#: hardinfo/util.c:878
+#, c-format
+msgid "Module \"%s\" depends on module \"%s\"."
+msgstr "Модуль \"%s\" зависит от модуля \"%s\"."
+
+#: hardinfo/util.c:923
+#, c-format
+msgid "No module could be loaded. Check permissions on \"%s\" and try again."
+msgstr ""
+"Модули не могут быть загружены. Проверьте разрешения на \"%s\" и попробуйте "
+"снова."
+
+#: hardinfo/util.c:927
+msgid ""
+"No module could be loaded. Please use hardinfo -l to list all available "
+"modules and try again with a valid module list."
+msgstr ""
+"Не удается загрузить модули. Пожалуйста, используйте hardinfo -l для "
+"получения списка доступных модулей и попробуйте снова с правильным списком "
+"модулей."
+
+#: hardinfo/util.c:1103
+#, c-format
+msgid "Scanning: %s..."
+msgstr "Сканирование: %s..."
+
+#: hardinfo/util.c:1113 shell/callbacks.c:67 shell/shell.c:303
+#: shell/shell.c:721 shell/shell.c:1695 modules/benchmark.c:440
+#: modules/benchmark.c:448
+msgid "Done."
+msgstr "Выполнено."
+
+#: shell/callbacks.c:47
+msgid "Save Image"
+msgstr "Сохранить изображение"
+
+#: shell/callbacks.c:63
+msgid "Saving image..."
+msgstr "Сохранение изображения..."
+
+#: shell/callbacks.c:151
+#, c-format
+msgid "%s Module"
+msgstr "%s модуль"
+
+#: shell/callbacks.c:158
+#, c-format
+msgid ""
+"Written by %s\n"
+"Licensed under %s"
+msgstr ""
+"Автор программы %s\n"
+"Лицензия %s"
+
+#: shell/callbacks.c:172
+#, c-format
+msgid "No about information is associated with the %s module."
+msgstr "Нет информации о модуле %s."
+
+#: shell/callbacks.c:186
+msgid "Author:"
+msgstr "Автор:"
+
+#: shell/callbacks.c:189
+msgid "Contributors:"
+msgstr "Участники:"
+
+#: shell/callbacks.c:193
+msgid "Based on work by:"
+msgstr "Основан на работах:"
+
+#: shell/callbacks.c:194
+msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
+msgstr "Реализация MD5 от Colin Plumb (см. подробности в md5.c)"
+
+#: shell/callbacks.c:195
+msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
+msgstr "Реализация SHA1 от Steve Reid (см. подробности в sha1.c) "
+
+#: shell/callbacks.c:196
+msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
+msgstr "Реализация Blowfish от Paul Kocher (см. подробности в blowfich.c)"
+
+#: shell/callbacks.c:197
+msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
+msgstr "Тест Raytracing от John Walker (см. подробности в fbench.c)"
+
+#: shell/callbacks.c:198
+msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
+msgstr "Тест FFT Скотта от Robert Ladd (см. подробности в fbench.c)"
+
+#: shell/callbacks.c:199
+msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
+msgstr "Часть кода основана на x86cpucaps от Osamu Kayasono"
+
+#: shell/callbacks.c:200
+msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
+msgstr "Список поставщиков основан на GtkSysInfo от Pissens Sebastien"
+
+#: shell/callbacks.c:201
+msgid "DMI support based on code by Stewart Adam"
+msgstr "Поддержка DMI основана на коде от Stewart Adam"
+
+#: shell/callbacks.c:202
+msgid "SCSI support based on code by Pascal F. Martin"
+msgstr "Поддержка SCSI основана на коде от Pascal F. Martin"
+
+#: shell/callbacks.c:206
+#, fuzzy
+msgid "Jakub Szypulka"
+msgstr "Jakub Szypulka"
+
+#: shell/callbacks.c:207
+msgid "Tango Project"
+msgstr "Проект Tango"
+
+#: shell/callbacks.c:208
+msgid "The GNOME Project"
+msgstr "Проект GNOME"
+
+#: shell/callbacks.c:209
+msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
+msgstr "VMWare, Inc. (значок USB из VMWare Workstation 6)"
+
+#: shell/callbacks.c:220
+msgid "System information and benchmark tool"
+msgstr "Информация о системе и тестирование"
+
+#: shell/callbacks.c:225
+msgid ""
+"HardInfo is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation, version 2.\n"
+"\n"
+"This program is distributed in the hope that it will be useful, but WITHOUT "
+"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
+"FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
+"more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with "
+"this program; if not, write to the Free Software Foundation, Inc., 51 "
+"Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+"HardInfo — это свободное программное обеспечение; вы можете распространять "
+"его и/или изменять под условиями Общей общественной лицензии GNU, которая "
+"была опубликована Фондом свободного программного обеспечения, версия 2.\n"
+"\n"
+"Эта программа распространятся в надежде, что она будет полезной, но БЕЗ "
+"КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ "
+"КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Общественной лицензии GNU.\n"
+"\n"
+"Вы должны были получить копию Общественной лицензии GNU вместе с этой "
+"программой; если нет, пишите в Фонд свободного программного обеспечения, "
+"Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 
 #: shell/menu.c:35
 msgid "_Information"
@@ -144,11 +485,6 @@ msgstr "Выбор: все"
 msgid "_Generate"
 msgstr "_Сгенерировать"
 
-#: shell/shell.c:303 shell/shell.c:721 shell/shell.c:1695 shell/callbacks.c:67
-#: modules/benchmark.c:440 modules/benchmark.c:448 hardinfo/util.c:1113
-msgid "Done."
-msgstr "Выполнено."
-
 #: shell/shell.c:396
 #, c-format
 msgid "%s - System Information"
@@ -262,134 +598,153 @@ msgstr "Сетевое обновление"
 msgid "_Synchronize"
 msgstr "_Синхронизировать"
 
-#: shell/callbacks.c:47
-msgid "Save Image"
-msgstr "Сохранить изображение"
-
-#: shell/callbacks.c:63
-msgid "Saving image..."
-msgstr "Сохранение изображения..."
-
-#: shell/callbacks.c:151
-#, c-format
-msgid "%s Module"
-msgstr "%s модуль"
-
-#: shell/callbacks.c:158
-#, c-format
-msgid ""
-"Written by %s\n"
-"Licensed under %s"
-msgstr ""
-"Автор программы %s\n"
-"Лицензия %s"
-
-#: shell/callbacks.c:172
-#, c-format
-msgid "No about information is associated with the %s module."
-msgstr "Нет информации о модуле %s."
-
-#: shell/callbacks.c:186
-msgid "Author:"
-msgstr "Автор:"
-
-#: shell/callbacks.c:189
-msgid "Contributors:"
-msgstr "Участники:"
-
-#: shell/callbacks.c:193
-msgid "Based on work by:"
-msgstr "Основан на работах:"
-
-#: shell/callbacks.c:194
-msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
-msgstr "Реализация MD5 от Colin Plumb (см. подробности в md5.c)"
-
-#: shell/callbacks.c:195
-msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
-msgstr "Реализация SHA1 от Steve Reid (см. подробности в sha1.c) "
-
-#: shell/callbacks.c:196
-msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
-msgstr "Реализация Blowfish от Paul Kocher (см. подробности в blowfich.c)"
-
-#: shell/callbacks.c:197
-msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
-msgstr "Тест Raytracing от John Walker (см. подробности в fbench.c)"
-
-#: shell/callbacks.c:198
-msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
-msgstr "Тест FFT Скотта от Robert Ladd (см. подробности в fbench.c)"
-
-#: shell/callbacks.c:199
-msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
-msgstr "Часть кода основана на x86cpucaps от Osamu Kayasono"
-
-#: shell/callbacks.c:200
-msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
-msgstr "Список поставщиков основан на GtkSysInfo от Pissens Sebastien"
-
-#: shell/callbacks.c:201
-msgid "DMI support based on code by Stewart Adam"
-msgstr "Поддержка DMI основана на коде от Stewart Adam"
-
-#: shell/callbacks.c:202
-msgid "SCSI support based on code by Pascal F. Martin"
-msgstr "Поддержка SCSI основана на коде от Pascal F. Martin"
-
-#: shell/callbacks.c:206
+#: modules/benchmark.c:52
 #, fuzzy
-msgid "Jakub Szypulka"
-msgstr "Jakub Szypulka"
+msgid "CPU Blowfish"
+msgstr "ЦПУ МГц"
 
-#: shell/callbacks.c:207
-msgid "Tango Project"
-msgstr "Проект Tango"
+#: modules/benchmark.c:53
+#, fuzzy
+msgid "CPU CryptoHash"
+msgstr "ЦПУ МГц"
 
-#: shell/callbacks.c:208
-msgid "The GNOME Project"
-msgstr "Проект GNOME"
+#: modules/benchmark.c:54
+#, fuzzy
+msgid "CPU Fibonacci"
+msgstr "ЦПУ МГц"
 
-#: shell/callbacks.c:209
-msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
-msgstr "VMWare, Inc. (значок USB из VMWare Workstation 6)"
+#: modules/benchmark.c:55
+#, fuzzy
+msgid "CPU N-Queens"
+msgstr "ЦПУ МГц"
 
-#: shell/callbacks.c:220
-msgid "System information and benchmark tool"
-msgstr "Информация о системе и тестирование"
-
-#: shell/callbacks.c:225
-msgid ""
-"HardInfo is free software; you can redistribute it and/or modify it under "
-"the terms of the GNU General Public License as published by the Free "
-"Software Foundation, version 2.\n"
-"\n"
-"This program is distributed in the hope that it will be useful, but WITHOUT "
-"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-"FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
-"more details.\n"
-"\n"
-"You should have received a copy of the GNU General Public License along with "
-"this program; if not, write to the Free Software Foundation, Inc., 51 "
-"Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+#: modules/benchmark.c:56
+msgid "CPU Zlib"
 msgstr ""
-"HardInfo — это свободное программное обеспечение; вы можете распространять "
-"его и/или изменять под условиями Общей общественной лицензии GNU, которая "
-"была опубликована Фондом свободного программного обеспечения, версия 2.\n"
-"\n"
-"Эта программа распространятся в надежде, что она будет полезной, но БЕЗ "
-"КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ "
-"КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Общественной лицензии GNU.\n"
-"\n"
-"Вы должны были получить копию Общественной лицензии GNU вместе с этой "
-"программой; если нет, пишите в Фонд свободного программного обеспечения, "
-"Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+
+#: modules/benchmark.c:57
+msgid "FPU FFT"
+msgstr ""
+
+#: modules/benchmark.c:58
+msgid "FPU Raytracing"
+msgstr ""
+
+#: modules/benchmark.c:59
+msgid "GPU Drawing"
+msgstr ""
+
+#: modules/benchmark.c:225
+#, c-format
+msgid ""
+"[$ShellParam$]\n"
+"Zebra=1\n"
+"OrderType=%d\n"
+"ViewType=3\n"
+"ColumnTitle$Extra1=CPU Clock\n"
+"ColumnTitle$Progress=Results\n"
+"ColumnTitle$TextValue=CPU\n"
+"ShowColumnHeaders=true\n"
+"[%s]\n"
+"<big><b>This Machine</b></big>=%.3f|%s MHz\n"
+"%s"
+msgstr ""
+"[$ShellParam$]\n"
+"Zebra=1\n"
+"OrderType=%d\n"
+"ViewType=3\n"
+"ColumnTitle$Extra1=Частота процессора\n"
+"ColumnTitle$Progress=Результаты\n"
+"ColumnTitle$TextValue=Процессор\n"
+"ShowColumnHeaders=true\n"
+"[%s]\n"
+"<big><b>Эта машина</b></big>=%.3f|%s MHz\n"
+"%s"
+
+#: modules/benchmark.c:238
+#, c-format
+msgid ""
+"[$ShellParam$]\n"
+"Zebra=1\n"
+"OrderType=%d\n"
+"ViewType=3\n"
+"ColumnTitle$Extra1=CPU Clock\n"
+"ColumnTitle$Progress=Results\n"
+"ColumnTitle$TextValue=CPU\n"
+"ShowColumnHeaders=true\n"
+"[%s]\n"
+"%s"
+msgstr ""
+"[$ShellParam$]\n"
+"Zebra=1\n"
+"OrderType=%d\n"
+"ViewType=3\n"
+"ColumnTitle$Extra1=Частота процессора\n"
+"ColumnTitle$Progress=Результаты\n"
+"ColumnTitle$TextValue=Процессор\n"
+"ShowColumnHeaders=true\n"
+"[%s]\n"
+"%s"
+
+#: modules/benchmark.c:372
+#, c-format
+msgid "Benchmarking: <b>%s</b>."
+msgstr "Тестирование: <b>%s</b>"
+
+#: modules/benchmark.c:386
+msgid "Benchmarking. Please do not move your mouse or press any keys."
+msgstr "Тестирование. Пожалуйста, не двигайте мышь и не нажимайте на кнопки."
+
+#: modules/benchmark.c:390
+msgid "Cancel"
+msgstr "Отмена"
+
+#: modules/benchmark.c:527
+msgid "Results in MiB/second. Higher is better."
+msgstr "Результаты в МиБ/сек. Чем выше, тем лучше."
+
+#: modules/benchmark.c:531
+msgid "Results in HIMarks. Higher is better."
+msgstr "Результаты в HIMarks. Чем выше, тем лучше."
+
+#: modules/benchmark.c:538
+msgid "Results in seconds. Lower is better."
+msgstr "Результат в секундах. Чем ниже, тем лучше."
+
+#: modules/benchmark.c:546
+msgid "Benchmarks"
+msgstr "Тесты"
+
+#: modules/benchmark.c:564
+msgid "Perform tasks and compare with other systems"
+msgstr "Выполняет задания и сравнивает с другими системами"
+
+#: modules/benchmark.c:654
+msgid "Send benchmark results"
+msgstr "Отправить результаты тестирования"
+
+#: modules/benchmark.c:659
+msgid "Receive benchmark results"
+msgstr "Принять результаты тестирования"
+
+#: modules/computer/alsa.c:26
+msgid "[Audio Devices]\n"
+msgstr "[Аудио устройства]\n"
+
+#: modules/computer/alsa.c:33
+#, c-format
+msgid "Audio Adapter#%d=%s\n"
+msgstr "Звуковая карта#%d=%s\n"
+
+#: modules/computer/boots.c:33
+msgid "[Boots]\n"
+msgstr "[Загрузки]\n"
 
 #: modules/computer.c:68
 msgid "Summary"
 msgstr "Общая информация"
 
-#: modules/computer.c:69 modules/computer.c:428
+#: modules/computer.c:69 modules/computer.c:407
 msgid "Operating System"
 msgstr "Операционная система"
 
@@ -409,7 +764,7 @@ msgstr "Языки"
 msgid "Filesystems"
 msgstr "Файловые системы"
 
-#: modules/computer.c:74 modules/computer.c:431
+#: modules/computer.c:74 modules/computer.c:410
 msgid "Display"
 msgstr "Дисплей"
 
@@ -429,7 +784,7 @@ msgstr "Пользователи"
 msgid "Groups"
 msgstr "Группы"
 
-#: modules/computer.c:101 modules/computer.c:421 modules/computer.c:426
+#: modules/computer.c:101 modules/computer.c:400 modules/computer.c:405
 #: modules/devices.c:92
 msgid "Memory"
 msgstr "Память"
@@ -439,20 +794,20 @@ msgstr "Память"
 msgid "%dMB (%dMB used)"
 msgstr "%dМб (%dМб занято)"
 
-#: modules/computer.c:105 modules/computer.c:495 modules/computer.c:511
+#: modules/computer.c:105 modules/computer.c:454 modules/computer.c:470
 msgid "Uptime"
 msgstr "Время работы"
 
-#: modules/computer.c:107 modules/computer.c:422 modules/computer.c:430
+#: modules/computer.c:107 modules/computer.c:401 modules/computer.c:409
 msgid "Date/Time"
 msgstr "Дата/время"
 
 # Должно совпадать с таким-же полем в строке 430 computer.c
-#: modules/computer.c:112 modules/computer.c:497 modules/computer.c:512
+#: modules/computer.c:112 modules/computer.c:456 modules/computer.c:471
 msgid "Load Average"
 msgstr "Средняя нагрузка"
 
-#: modules/computer.c:114 modules/computer.c:496 modules/computer.c:513
+#: modules/computer.c:114 modules/computer.c:455 modules/computer.c:472
 msgid "Available entropy in /dev/random"
 msgstr ""
 
@@ -586,161 +941,86 @@ msgstr ""
 msgid "Physical machine"
 msgstr "Физическая машина"
 
-# Memory и Date/Time не переводить — не будут обновляться!
-#: modules/computer.c:380
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"UpdateInterval$Memory=1000\n"
-"UpdateInterval$Date/Time=1000\n"
-"#ReloadInterval=5000\n"
-"[Computer]\n"
-"Processor=%s\n"
-"Memory=...\n"
-"Machine Type=%s\n"
-"Operating System=%s\n"
-"User Name=%s\n"
-"Date/Time=...\n"
-"[Display]\n"
-"Resolution=%dx%d pixels\n"
-"OpenGL Renderer=%s\n"
-"X11 Vendor=%s\n"
-"\n"
-"%s\n"
-"[Input Devices]\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s\n"
-msgstr ""
-"[$ShellParam$]\n"
-"UpdateInterval$Память=1000\n"
-"UpdateInterval$Date/Time=1000\n"
-"#ReloadInterval=5000\n"
-"[Компьютер]\n"
-"Процессор=%s\n"
-"Память=...\n"
-"Тип машины=%s\n"
-"Операционная система=%s\n"
-"Пользователь=%s\n"
-"Date/Time=...\n"
-"[Дисплей]\n"
-"Разрешение=%dx%d пикс.\n"
-"Рендер OpenGL=%s\n"
-"Поставщик X11=%s\n"
-"\n"
-"%s\n"
-"[Устройства ввода]\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s\n"
-
-#: modules/computer.c:424 modules/computer.c:680
+#: modules/computer.c:403 modules/computer.c:639
 msgid "Computer"
 msgstr "Компьютер"
 
-#: modules/computer.c:425 modules/devices.c:91
-#: modules/devices/alpha/processor.c:79 modules/devices/arm/processor.c:235
-#: modules/devices/s390/processor.c:123 modules/devices/m68k/processor.c:75
-#: modules/devices/sh/processor.c:75 modules/devices/parisc/processor.c:146
-#: modules/devices/ia64/processor.c:151 modules/devices/ppc/processor.c:149
-#: modules/devices/mips/processor.c:66 modules/devices/riscv/processor.c:173
-#: modules/devices/x86/processor.c:738 modules/devices/sparc/processor.c:66
+#: modules/computer.c:404 modules/devices/alpha/processor.c:79
+#: modules/devices/arm/processor.c:235 modules/devices.c:91
+#: modules/devices/ia64/processor.c:151 modules/devices/m68k/processor.c:75
+#: modules/devices/mips/processor.c:66 modules/devices/parisc/processor.c:146
+#: modules/devices/ppc/processor.c:149 modules/devices/riscv/processor.c:173
+#: modules/devices/s390/processor.c:123 modules/devices/sh/processor.c:75
+#: modules/devices/sparc/processor.c:66 modules/devices/x86/processor.c:738
 msgid "Processor"
 msgstr "Процессор"
 
-#: modules/computer.c:427
+#: modules/computer.c:406
 msgid "Machine Type"
 msgstr "Тип машины"
 
-#: modules/computer.c:429 modules/computer.c:506
+#: modules/computer.c:408 modules/computer.c:465
 msgid "User Name"
 msgstr "Пользователь"
 
-#: modules/computer.c:432
+#: modules/computer.c:411
 msgid "Resolution"
 msgstr "Разрешение"
 
-#: modules/computer.c:434
+#. /label for resolution
+#: modules/computer.c:413
+msgid "pixels"
+msgstr ""
+
+#: modules/computer.c:414
 msgid "OpenGL Renderer"
 msgstr "Рендер OpenGL"
 
-#: modules/computer.c:435
+#: modules/computer.c:415
 msgid "X11 Vendor"
 msgstr "оставщик X11"
 
-#: modules/computer.c:437 modules/devices.c:98
+#: modules/computer.c:417 modules/devices.c:98
 msgid "Input Devices"
 msgstr "Устройства ввода"
 
-#: modules/computer.c:453
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"UpdateInterval$Uptime=10000\n"
-"UpdateInterval$Load Average=1000\n"
-"UpdateInterval$Available entropy in /dev/random=1000\n"
-"[Version]\n"
-"Kernel=%s\n"
-"Version=%s\n"
-"C Library=%s\n"
-"Distribution=%s\n"
-"[Current Session]\n"
-"Computer Name=%s\n"
-"User Name=%s\n"
-"#Language=%s\n"
-"Home Directory=%s\n"
-"Desktop Environment=%s\n"
-"[Misc]\n"
-"Uptime=...\n"
-"Load Average=...\n"
-"Available entropy in /dev/random=...\n"
-msgstr ""
-
-#: modules/computer.c:499 modules/computer.c:501 hardinfo/hardinfo.c:76
-msgid "Version"
-msgstr "Версия"
-
-#: modules/computer.c:500
+#: modules/computer.c:459
 msgid "Kernel"
 msgstr "Ядро"
 
-#: modules/computer.c:502
+#: modules/computer.c:461
 msgid "C Library"
 msgstr "Библиотека C"
 
-#: modules/computer.c:503
+#: modules/computer.c:462
 msgid "Distribution"
 msgstr "Дистрибутив"
 
-#: modules/computer.c:504
+#: modules/computer.c:463
 msgid "Current Session"
 msgstr "Текущая сессия"
 
-#: modules/computer.c:505
+#: modules/computer.c:464
 msgid "Computer Name"
 msgstr "Имя компьютера"
 
-#: modules/computer.c:507
+#: modules/computer.c:466
 msgid "#Language"
 msgstr "#Язык"
 
-#: modules/computer.c:508
+#: modules/computer.c:467
 msgid "Home Directory"
 msgstr "Домашний каталог"
 
-#: modules/computer.c:509
+#: modules/computer.c:468
 msgid "Desktop Environment"
 msgstr "Домашний каталог"
 
-#: modules/computer.c:510
+#: modules/computer.c:469
 msgid "Misc"
 msgstr "Разное"
 
-#: modules/computer.c:518
+#: modules/computer.c:477
 #, c-format
 msgid ""
 "[Loaded Modules]\n"
@@ -757,7 +1037,7 @@ msgstr ""
 "ColumnTitle$Value=Описание\n"
 "ShowColumnHeaders=true\n"
 
-#: modules/computer.c:529
+#: modules/computer.c:488
 #, c-format
 msgid ""
 "[$ShellParam$]\n"
@@ -774,7 +1054,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: modules/computer.c:539
+#: modules/computer.c:498
 #, c-format
 msgid ""
 "[$ShellParam$]\n"
@@ -793,7 +1073,7 @@ msgstr ""
 "[Available Languages]\n"
 "%s"
 
-#: modules/computer.c:550
+#: modules/computer.c:509
 #, c-format
 msgid ""
 "[$ShellParam$]\n"
@@ -820,7 +1100,7 @@ msgstr ""
 "[Mounted File Systems]\n"
 "%s\n"
 
-#: modules/computer.c:564
+#: modules/computer.c:523
 #, c-format
 msgid ""
 "[Display]\n"
@@ -847,15 +1127,11 @@ msgstr ""
 "Версия=%s\n"
 "Графическое ускорение=%s\n"
 
-#: modules/computer.c:586
+#: modules/computer.c:545
 msgid "Y_es"
 msgstr "Есть"
 
-#: modules/computer.c:586 modules/devices/printers.c:138 hardinfo/hardinfo.c:57
-msgid "No"
-msgstr "Нет"
-
-#: modules/computer.c:600
+#: modules/computer.c:559
 #, c-format
 msgid ""
 "[$ShellParam$]\n"
@@ -874,158 +1150,36 @@ msgstr ""
 "[Groups]\n"
 "%s\n"
 
-#: modules/computer.c:774
+#: modules/computer.c:733
 msgid "Gathers high-level computer information"
 msgstr "Собирает высокоуровневую информацию о компьютере"
-
-#: modules/benchmark.c:52
-#, fuzzy
-msgid "CPU Blowfish"
-msgstr "ЦПУ МГц"
-
-#: modules/benchmark.c:53
-#, fuzzy
-msgid "CPU CryptoHash"
-msgstr "ЦПУ МГц"
-
-#: modules/benchmark.c:54
-#, fuzzy
-msgid "CPU Fibonacci"
-msgstr "ЦПУ МГц"
-
-#: modules/benchmark.c:55
-#, fuzzy
-msgid "CPU N-Queens"
-msgstr "ЦПУ МГц"
-
-#: modules/benchmark.c:56
-msgid "CPU Zlib"
-msgstr ""
-
-#: modules/benchmark.c:57
-msgid "FPU FFT"
-msgstr ""
-
-#: modules/benchmark.c:58
-msgid "FPU Raytracing"
-msgstr ""
-
-#: modules/benchmark.c:59
-msgid "GPU Drawing"
-msgstr ""
-
-#: modules/benchmark.c:225
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=CPU Clock\n"
-"ColumnTitle$Progress=Results\n"
-"ColumnTitle$TextValue=CPU\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"<big><b>This Machine</b></big>=%.3f|%s MHz\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=Частота процессора\n"
-"ColumnTitle$Progress=Результаты\n"
-"ColumnTitle$TextValue=Процессор\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"<big><b>Эта машина</b></big>=%.3f|%s MHz\n"
-"%s"
-
-#: modules/benchmark.c:238
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=CPU Clock\n"
-"ColumnTitle$Progress=Results\n"
-"ColumnTitle$TextValue=CPU\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=Частота процессора\n"
-"ColumnTitle$Progress=Результаты\n"
-"ColumnTitle$TextValue=Процессор\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"%s"
-
-#: modules/benchmark.c:372
-#, c-format
-msgid "Benchmarking: <b>%s</b>."
-msgstr "Тестирование: <b>%s</b>"
-
-#: modules/benchmark.c:386
-msgid "Benchmarking. Please do not move your mouse or press any keys."
-msgstr "Тестирование. Пожалуйста, не двигайте мышь и не нажимайте на кнопки."
-
-#: modules/benchmark.c:390
-msgid "Cancel"
-msgstr "Отмена"
-
-#: modules/benchmark.c:527
-msgid "Results in MiB/second. Higher is better."
-msgstr "Результаты в МиБ/сек. Чем выше, тем лучше."
-
-#: modules/benchmark.c:531
-msgid "Results in HIMarks. Higher is better."
-msgstr "Результаты в HIMarks. Чем выше, тем лучше."
-
-#: modules/benchmark.c:538
-msgid "Results in seconds. Lower is better."
-msgstr "Результат в секундах. Чем ниже, тем лучше."
-
-#: modules/benchmark.c:546
-msgid "Benchmarks"
-msgstr "Тесты"
-
-#: modules/benchmark.c:564
-msgid "Perform tasks and compare with other systems"
-msgstr "Выполняет задания и сравнивает с другими системами"
-
-#: modules/benchmark.c:654
-msgid "Send benchmark results"
-msgstr "Отправить результаты тестирования"
-
-#: modules/benchmark.c:659
-msgid "Receive benchmark results"
-msgstr "Принять результаты тестирования"
-
-#: modules/computer/boots.c:33
-msgid "[Boots]\n"
-msgstr "[Загрузки]\n"
 
 #: modules/computer/display.c:122
 #, c-format
 msgid "Monitor %d=%dx%d pixels\n"
 msgstr "Монитор %d=%dx%d пикселей\n"
 
-#: modules/computer/os.c:57
-#, c-format
-msgid "GNU C Library version %s (%sstable)"
-msgstr "Библиотека GNU C версии %s (%s стабильна)"
+#: modules/computer/environment.c:32
+msgid "[Environment Variables]\n"
+msgstr "[Переменные среды]\n"
 
-#: modules/computer/os.c:59
-msgid "un"
-msgstr "не"
+#: modules/computer/loadavg.c:64
+msgid "Couldn't obtain load average"
+msgstr ""
 
-#: modules/computer/os.c:61 modules/computer/os.c:138 modules/devices.c:171
+#: modules/computer/os.c:34 modules/computer/os.c:35
+msgid "GNU C Library"
+msgstr ""
+
+#: modules/computer/os.c:36
+msgid "uClibc or uClibc-ng"
+msgstr ""
+
+#: modules/computer/os.c:37
+msgid "diet libc"
+msgstr ""
+
+#: modules/computer/os.c:75 modules/computer/os.c:152 modules/devices.c:171
 #: modules/devices.c:323 modules/devices/printers.c:99
 #: modules/devices/printers.c:106 modules/devices/printers.c:116
 #: modules/devices/printers.c:131 modules/devices/printers.c:140
@@ -1033,276 +1187,87 @@ msgstr "не"
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: modules/computer/os.c:80
+#: modules/computer/os.c:94
 #, c-format
 msgid "Version: %s"
 msgstr "Версия: %s"
 
-#: modules/computer/os.c:114
+#: modules/computer/os.c:128
 msgid "Terminal"
 msgstr "Терминал"
 
-#: modules/computer/os.c:134
+#: modules/computer/os.c:148
 #, c-format
 msgid "Unknown (Window Manager: %s)"
 msgstr "Неизвестно (Оконный менеджер: %s)"
 
-#: modules/computer/os.c:185
+#. /bits of entropy for rng (0)
+#: modules/computer/os.c:162
+msgid "(None or not available)"
+msgstr ""
+
+#. /bits of entropy for rng (low/poor value)
+#: modules/computer/os.c:163
+#, c-format
+msgid "%d bits (low)"
+msgstr ""
+
+#. /bits of entropy for rng (medium value)
+#: modules/computer/os.c:164
+#, c-format
+msgid "%d bits (medium)"
+msgstr ""
+
+#. /bits of entropy for rng (high/good value)
+#: modules/computer/os.c:165
+#, c-format
+msgid "%d bits (healthy)"
+msgstr ""
+
+#: modules/computer/os.c:204
 msgid "Unknown distribution"
 msgstr "Неизвестный дистрибутив"
 
-#: modules/computer/environment.c:32
-msgid "[Environment Variables]\n"
-msgstr "[Переменные среды]\n"
-
-#: modules/computer/alsa.c:26
-msgid "[Audio Devices]\n"
-msgstr "[Аудио устройства]\n"
-
-#: modules/computer/alsa.c:33
+#: modules/computer/uptime.c:52
 #, c-format
-msgid "Audio Adapter#%d=%s\n"
-msgstr "Звуковая карта#%d=%s\n"
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
-#: modules/computer/loadavg.c:64
-msgid "Couldn't obtain load average"
-msgstr ""
-
-#: modules/devices.c:93
-msgid "PCI Devices"
-msgstr "Устройства PCI"
-
-#: modules/devices.c:94
-msgid "USB Devices"
-msgstr "Устройства USB"
-
-#: modules/devices.c:95
-msgid "Printers"
-msgstr "Принтеры"
-
-#: modules/devices.c:96
-msgid "Battery"
-msgstr "Батарея"
-
-#: modules/devices.c:97
-msgid "Sensors"
-msgstr "Сенсоры"
-
-#: modules/devices.c:99
-msgid "Storage"
-msgstr "Устройства хранения"
-
-#: modules/devices.c:101
-msgid "DMI"
-msgstr ""
-
-#: modules/devices.c:102
-msgid "Memory SPD"
-msgstr "Память SPD"
-
-#: modules/devices.c:104
-msgid "Resources"
-msgstr "Ресурсы"
-
-#: modules/devices.c:303
-msgid " (vendor unknown)"
-msgstr "(поставщик неизвестен)"
-
-#: modules/devices.c:305
-msgid " (model unknown)"
-msgstr "(модель неизвестна)"
-
-#: modules/devices.c:478
-msgid "Field"
-msgstr ""
-
-#: modules/devices.c:478
-msgid "Description"
-msgstr ""
-
-#: modules/devices.c:478 modules/devices.c:510
-msgid "Value"
-msgstr ""
-
-#: modules/devices.c:510
-msgid "Sensor"
-msgstr ""
-
-#: modules/devices.c:510
-msgid "Type"
-msgstr ""
-
-#: modules/devices.c:556
-msgid "Devices"
-msgstr "Устройства"
-
-#: modules/devices.c:568
-msgid "Update PCI ID listing"
-msgstr "Обновить список PCI ID"
-
-#: modules/devices.c:580
-msgid "Update CPU feature database"
-msgstr "Обновить базу данных функций процессора"
-
-#: modules/devices.c:608
-msgid "Gathers information about hardware devices"
-msgstr "Собирает информацию об устройствах"
-
-#: modules/devices.c:627
-msgid "Resource information requires superuser privileges"
-msgstr "Для вывода информации о ресурсах нужны права администратора"
-
-#: modules/network.c:59
-msgid "Interfaces"
-msgstr "Интерфейсы"
-
-#: modules/network.c:60
-msgid "IP Connections"
-msgstr "IP Подключения"
-
-#: modules/network.c:61
-msgid "Routing Table"
-msgstr "Таблица маршрутизации"
-
-#: modules/network.c:62
-msgid "ARP Table"
-msgstr "Таблица ARP"
-
-#: modules/network.c:63
-msgid "DNS Servers"
-msgstr "DNS сервера"
-
-#: modules/network.c:64
-msgid "Statistics"
-msgstr "Статистика"
-
-#: modules/network.c:65
-msgid "Shared Directories"
-msgstr "Общие каталоги"
-
-#: modules/network.c:300
+#: modules/computer/uptime.c:53
 #, c-format
-msgid ""
-"[ARP Table]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=IP Address\n"
-"ColumnTitle$Value=Interface\n"
-"ColumnTitle$Extra1=MAC Address\n"
-"ShowColumnHeaders=true\n"
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: modules/computer/users.c:47
+msgid "User Information"
 msgstr ""
-"[Таблица ARP]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=IP-адрес\n"
-"ColumnTitle$Value=Интерфейс\n"
-"ColumnTitle$Extra1=MAC-адрес\n"
-"ShowColumnHeaders=true\n"
 
-#: modules/network.c:321
-#, c-format
-msgid ""
-"[Name servers]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=IP Address\n"
-"ColumnTitle$Value=Name\n"
-"ShowColumnHeaders=true\n"
+#: modules/computer/users.c:48
+msgid "User ID"
 msgstr ""
-"[Name servers]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=IP-адрес\n"
-"ColumnTitle$Value=Имя\n"
-"ShowColumnHeaders=true\n"
 
-#: modules/network.c:331
-#, c-format
-msgid ""
-"[Connections]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Local Address\n"
-"ColumnTitle$Value=Protocol\n"
-"ColumnTitle$Extra1=Foreign Address\n"
-"ColumnTitle$Extra2=State\n"
-"ShowColumnHeaders=true\n"
+#: modules/computer/users.c:49
+msgid "Group ID"
 msgstr ""
-"[Connections]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Локальный адрес\n"
-"ColumnTitle$Value=Протокол\n"
-"ColumnTitle$Extra1=Удалённый адрес\n"
-"ColumnTitle$Extra2=Состояние\n"
-"ShowColumnHeaders=true\n"
 
-#: modules/network.c:345
-#, c-format
-msgid ""
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Interface\n"
-"ColumnTitle$Value=IP Address\n"
-"ColumnTitle$Extra1=Sent\n"
-"ColumnTitle$Extra2=Received\n"
-"ShowColumnHeaders=true\n"
-"%s"
+#: modules/computer/users.c:50
+msgid "Home directory"
 msgstr ""
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Интерфейс\n"
-"ColumnTitle$Value=IP-адрес\n"
-"ColumnTitle$Extra1=Отправлено\n"
-"ColumnTitle$Extra2=Получено\n"
-"ShowColumnHeaders=true\n"
-"%s"
 
-#: modules/network.c:361
-#, c-format
-msgid ""
-"[IP routing table]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ViewType=0\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Destination / Gateway\n"
-"ColumnTitle$Value=Interface\n"
-"ColumnTitle$Extra1=Flags\n"
-"ColumnTitle$Extra2=Mask\n"
-"ShowColumnHeaders=true\n"
+#: modules/computer/users.c:51
+msgid "Default shell"
 msgstr ""
-"[IP routing table]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ViewType=0\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Цель / Шлюз\n"
-"ColumnTitle$Value=Интерфейс\n"
-"ColumnTitle$Extra1=Флаги\n"
-"ColumnTitle$Extra2=Маска\n"
-"ShowColumnHeaders=true\n"
 
-#: modules/network.c:399
-msgid "Network"
-msgstr "Сеть"
-
-#: modules/network.c:432
-msgid "Gathers information about this computer's network connection"
-msgstr "Собирает информацию о сетевых подключениях"
-
-#: modules/devices/alpha/processor.c:80 modules/devices/s390/processor.c:124
-#: modules/devices/m68k/processor.c:76 modules/devices/parisc/processor.c:147
-#: modules/devices/ia64/processor.c:157 modules/devices/ppc/processor.c:150
-#: modules/devices/mips/processor.c:67 modules/devices/riscv/processor.c:174
+#: modules/devices/alpha/processor.c:80 modules/devices/ia64/processor.c:157
+#: modules/devices/m68k/processor.c:76 modules/devices/mips/processor.c:67
+#: modules/devices/parisc/processor.c:147 modules/devices/ppc/processor.c:150
+#: modules/devices/riscv/processor.c:174 modules/devices/s390/processor.c:124
 msgid "Model"
 msgstr ""
 
@@ -1311,152 +1276,38 @@ msgid "Platform String"
 msgstr ""
 
 #: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
-#: modules/devices/m68k/processor.c:79 modules/devices/sh/processor.c:79
-#: modules/devices/parisc/processor.c:150 modules/devices/ia64/processor.c:159
-#: modules/devices/ppc/processor.c:152 modules/devices/mips/processor.c:69
-#: modules/devices/riscv/processor.c:178 modules/devices/x86/processor.c:748
+#: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:79
+#: modules/devices/mips/processor.c:69 modules/devices/parisc/processor.c:150
+#: modules/devices/ppc/processor.c:152 modules/devices/riscv/processor.c:178
+#: modules/devices/sh/processor.c:79 modules/devices/x86/processor.c:748
 msgid "Frequency"
 msgstr "Частота"
 
 #: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
-#: modules/devices/m68k/processor.c:79 modules/devices/sh/processor.c:79
-#: modules/devices/sh/processor.c:80 modules/devices/sh/processor.c:81
-#: modules/devices/parisc/processor.c:150 modules/devices/ia64/processor.c:159
-#: modules/devices/ppc/processor.c:152 modules/devices/mips/processor.c:69
-#: modules/devices/riscv/processor.c:178 modules/devices/x86/processor.c:748
+#: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:79
+#: modules/devices/mips/processor.c:69 modules/devices/parisc/processor.c:150
+#: modules/devices/ppc/processor.c:152 modules/devices/riscv/processor.c:178
+#: modules/devices/sh/processor.c:79 modules/devices/sh/processor.c:80
+#: modules/devices/sh/processor.c:81 modules/devices/x86/processor.c:748
 msgid "MHz"
 msgstr "МГц"
 
 #: modules/devices/alpha/processor.c:83 modules/devices/arm/processor.c:240
-#: modules/devices/s390/processor.c:126 modules/devices/m68k/processor.c:80
-#: modules/devices/sh/processor.c:82 modules/devices/parisc/processor.c:151
-#: modules/devices/ia64/processor.c:160 modules/devices/ppc/processor.c:153
-#: modules/devices/mips/processor.c:70 modules/devices/x86/processor.c:749
+#: modules/devices/ia64/processor.c:160 modules/devices/m68k/processor.c:80
+#: modules/devices/mips/processor.c:70 modules/devices/parisc/processor.c:151
+#: modules/devices/ppc/processor.c:153 modules/devices/s390/processor.c:126
+#: modules/devices/sh/processor.c:82 modules/devices/x86/processor.c:749
 msgid "BogoMips"
 msgstr ""
 
 #: modules/devices/alpha/processor.c:84 modules/devices/arm/processor.c:241
-#: modules/devices/s390/processor.c:127 modules/devices/m68k/processor.c:81
-#: modules/devices/sh/processor.c:83 modules/devices/parisc/processor.c:152
-#: modules/devices/ia64/processor.c:161 modules/devices/ppc/processor.c:154
-#: modules/devices/mips/processor.c:71 modules/devices/riscv/processor.c:179
-#: modules/devices/x86/processor.c:750 modules/devices/sparc/processor.c:69
+#: modules/devices/ia64/processor.c:161 modules/devices/m68k/processor.c:81
+#: modules/devices/mips/processor.c:71 modules/devices/parisc/processor.c:152
+#: modules/devices/ppc/processor.c:154 modules/devices/riscv/processor.c:179
+#: modules/devices/s390/processor.c:127 modules/devices/sh/processor.c:83
+#: modules/devices/sparc/processor.c:69 modules/devices/x86/processor.c:750
 msgid "Byte Order"
 msgstr "Порядок байтов"
-
-#: modules/devices/devmemory.c:93
-msgid "Total Memory"
-msgstr "Общая память"
-
-#: modules/devices/devmemory.c:94
-msgid "Free Memory"
-msgstr "Свободная память"
-
-#: modules/devices/devmemory.c:95
-msgid "Cached Swap"
-msgstr "Кэш подкачки"
-
-#: modules/devices/devmemory.c:96
-msgid "High Memory"
-msgstr "Высокая память"
-
-#: modules/devices/devmemory.c:97
-msgid "Free High Memory"
-msgstr "Свободная высокая память"
-
-#: modules/devices/devmemory.c:98
-msgid "Low Memory"
-msgstr "Низкая память"
-
-#: modules/devices/devmemory.c:99
-msgid "Free Low Memory"
-msgstr "Свободная низкая память"
-
-#: modules/devices/devmemory.c:100
-msgid "Virtual Memory"
-msgstr "Виртуальная память"
-
-#: modules/devices/devmemory.c:101
-msgid "Free Virtual Memory"
-msgstr "Свободная виртуальная память"
-
-#: modules/devices/battery.c:181
-#, c-format
-msgid ""
-"\n"
-"[Battery: %s]\n"
-"State=%s (load: %s)\n"
-"Capacity=%s / %s (%.2f%%)\n"
-"Battery Technology=%s (%s)\n"
-"Manufacturer=%s\n"
-"Model Number=%s\n"
-"Serial Number=%s\n"
-msgstr ""
-"\n"
-"[Батарея: %s]\n"
-"Состояние=%s (нагрузка: %s)\n"
-"Емкость=%s / %s (%.2f%%)\n"
-"Технология батареи=%s (%s)\n"
-"Изготовитель=%s\n"
-"Номер модели=%s\n"
-"Серийный номер=%s\n"
-
-#: modules/devices/battery.c:258
-#, c-format
-msgid ""
-"\n"
-"[Battery: %s]\n"
-"State=%s\n"
-"Capacity=%s / %s\n"
-"Battery Technology=%s\n"
-"Manufacturer=%s\n"
-"Model Number=%s\n"
-"Serial Number=%s\n"
-msgstr ""
-
-#: modules/devices/battery.c:346
-#, c-format
-msgid ""
-"\n"
-"[Battery (APM)]\n"
-"Charge=%d%%\n"
-"Remaining Charge=%s of %s\n"
-"Using=%s\n"
-"APM driver version=%s\n"
-"APM BIOS version=%s\n"
-msgstr ""
-"\n"
-"[Батарея (APM)]\n"
-"Заряд=%d%%\n"
-"Оставшийся заряд=%s из %s\n"
-"Используется=%s\n"
-"APM драйвер версии=%s\n"
-"APM BIOS версии=%s\n"
-
-#: modules/devices/battery.c:358
-#, c-format
-msgid ""
-"\n"
-"[Battery (APM)]\n"
-"Charge=%d%%\n"
-"Using=%s\n"
-"APM driver version=%s\n"
-"APM BIOS version=%s\n"
-msgstr ""
-"\n"
-"[Батарея (APM)]\n"
-"Заряд=%d%%\n"
-"Используется=%s\n"
-"APM драйвер версии=%s\n"
-"APM BIOS версии=%s\n"
-
-#: modules/devices/battery.c:385
-msgid ""
-"[No batteries]\n"
-"No batteries found on this system=\n"
-msgstr ""
-"[No batteries]\n"
-"Батареи не найдены на этой системе=\n"
 
 #. /hw_cap
 #: modules/devices/arm/arm_data.c:42
@@ -1605,8 +1456,9 @@ msgstr ""
 msgid "Part"
 msgstr ""
 
-#: modules/devices/arm/processor.c:247 modules/devices/parisc/processor.c:148
-#: modules/devices/ia64/processor.c:154 modules/devices/riscv/processor.c:175
+#: modules/devices/arm/processor.c:247 modules/devices/ia64/processor.c:154
+#: modules/devices/parisc/processor.c:148
+#: modules/devices/riscv/processor.c:175
 msgid "Architecture"
 msgstr ""
 
@@ -1620,24 +1472,311 @@ msgid "Revision"
 msgstr ""
 
 #: modules/devices/arm/processor.c:250 modules/devices/riscv/processor.c:182
-#: modules/devices/x86/processor.c:756 modules/devices/sparc/processor.c:70
+#: modules/devices/sparc/processor.c:70 modules/devices/x86/processor.c:756
 msgid "Capabilities"
 msgstr "Возможности"
 
-#: modules/devices/arm/processor.c:271 modules/devices/s390/processor.c:149
-#: modules/devices/parisc/processor.c:180 modules/devices/ia64/processor.c:185
-#: modules/devices/ppc/processor.c:176 modules/devices/riscv/processor.c:203
+#: modules/devices/arm/processor.c:271 modules/devices/ia64/processor.c:185
+#: modules/devices/parisc/processor.c:180 modules/devices/ppc/processor.c:176
+#: modules/devices/riscv/processor.c:203 modules/devices/s390/processor.c:149
 #: modules/devices/x86/processor.c:779
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
 msgstr "%s$CPU%d$%s=%.2fМГц\n"
 
-#: modules/devices/s390/processor.c:92
-msgid "S390 Processor"
+#: modules/devices/battery.c:181
+#, c-format
+msgid ""
+"\n"
+"[Battery: %s]\n"
+"State=%s (load: %s)\n"
+"Capacity=%s / %s (%.2f%%)\n"
+"Battery Technology=%s (%s)\n"
+"Manufacturer=%s\n"
+"Model Number=%s\n"
+"Serial Number=%s\n"
+msgstr ""
+"\n"
+"[Батарея: %s]\n"
+"Состояние=%s (нагрузка: %s)\n"
+"Емкость=%s / %s (%.2f%%)\n"
+"Технология батареи=%s (%s)\n"
+"Изготовитель=%s\n"
+"Номер модели=%s\n"
+"Серийный номер=%s\n"
+
+#: modules/devices/battery.c:258
+#, c-format
+msgid ""
+"\n"
+"[Battery: %s]\n"
+"State=%s\n"
+"Capacity=%s / %s\n"
+"Battery Technology=%s\n"
+"Manufacturer=%s\n"
+"Model Number=%s\n"
+"Serial Number=%s\n"
 msgstr ""
 
-#: modules/devices/s390/processor.c:125
-msgid "ID String"
+#: modules/devices/battery.c:346
+#, c-format
+msgid ""
+"\n"
+"[Battery (APM)]\n"
+"Charge=%d%%\n"
+"Remaining Charge=%s of %s\n"
+"Using=%s\n"
+"APM driver version=%s\n"
+"APM BIOS version=%s\n"
+msgstr ""
+"\n"
+"[Батарея (APM)]\n"
+"Заряд=%d%%\n"
+"Оставшийся заряд=%s из %s\n"
+"Используется=%s\n"
+"APM драйвер версии=%s\n"
+"APM BIOS версии=%s\n"
+
+#: modules/devices/battery.c:358
+#, c-format
+msgid ""
+"\n"
+"[Battery (APM)]\n"
+"Charge=%d%%\n"
+"Using=%s\n"
+"APM driver version=%s\n"
+"APM BIOS version=%s\n"
+msgstr ""
+"\n"
+"[Батарея (APM)]\n"
+"Заряд=%d%%\n"
+"Используется=%s\n"
+"APM драйвер версии=%s\n"
+"APM BIOS версии=%s\n"
+
+#: modules/devices/battery.c:385
+msgid ""
+"[No batteries]\n"
+"No batteries found on this system=\n"
+msgstr ""
+"[No batteries]\n"
+"Батареи не найдены на этой системе=\n"
+
+#: modules/devices.c:93
+msgid "PCI Devices"
+msgstr "Устройства PCI"
+
+#: modules/devices.c:94
+msgid "USB Devices"
+msgstr "Устройства USB"
+
+#: modules/devices.c:95
+msgid "Printers"
+msgstr "Принтеры"
+
+#: modules/devices.c:96
+msgid "Battery"
+msgstr "Батарея"
+
+#: modules/devices.c:97
+msgid "Sensors"
+msgstr "Сенсоры"
+
+#: modules/devices.c:99
+msgid "Storage"
+msgstr "Устройства хранения"
+
+#: modules/devices.c:101
+msgid "DMI"
+msgstr ""
+
+#: modules/devices.c:102
+msgid "Memory SPD"
+msgstr "Память SPD"
+
+#: modules/devices.c:104
+msgid "Resources"
+msgstr "Ресурсы"
+
+#: modules/devices.c:303
+msgid " (vendor unknown)"
+msgstr "(поставщик неизвестен)"
+
+#: modules/devices.c:305
+msgid " (model unknown)"
+msgstr "(модель неизвестна)"
+
+#: modules/devices.c:478
+msgid "Field"
+msgstr ""
+
+#: modules/devices.c:478
+msgid "Description"
+msgstr ""
+
+#: modules/devices.c:478 modules/devices.c:510
+msgid "Value"
+msgstr ""
+
+#: modules/devices.c:510
+msgid "Sensor"
+msgstr ""
+
+#: modules/devices.c:510
+msgid "Type"
+msgstr ""
+
+#: modules/devices.c:556
+msgid "Devices"
+msgstr "Устройства"
+
+#: modules/devices.c:568
+msgid "Update PCI ID listing"
+msgstr "Обновить список PCI ID"
+
+#: modules/devices.c:580
+msgid "Update CPU feature database"
+msgstr "Обновить базу данных функций процессора"
+
+#: modules/devices.c:608
+msgid "Gathers information about hardware devices"
+msgstr "Собирает информацию об устройствах"
+
+#: modules/devices.c:627
+msgid "Resource information requires superuser privileges"
+msgstr "Для вывода информации о ресурсах нужны права администратора"
+
+#: modules/devices/cpu_util.c:26
+msgid "Little Endian"
+msgstr ""
+
+#: modules/devices/cpu_util.c:28
+msgid "Big Endian"
+msgstr ""
+
+#: modules/devices/cpu_util.c:137 modules/devices/cpu_util.c:148
+msgid "Frequency Scaling"
+msgstr ""
+
+#: modules/devices/cpu_util.c:138
+msgid "Minimum"
+msgstr ""
+
+#: modules/devices/cpu_util.c:138 modules/devices/cpu_util.c:139
+#: modules/devices/cpu_util.c:140
+msgid "kHz"
+msgstr ""
+
+#: modules/devices/cpu_util.c:139
+msgid "Maximum"
+msgstr ""
+
+#: modules/devices/cpu_util.c:140
+msgid "Current"
+msgstr ""
+
+#: modules/devices/cpu_util.c:141
+msgid "Transition Latency"
+msgstr ""
+
+#: modules/devices/cpu_util.c:141
+msgid "ns"
+msgstr ""
+
+#: modules/devices/cpu_util.c:142
+msgid "Governor"
+msgstr ""
+
+#: modules/devices/cpu_util.c:143 modules/devices/cpu_util.c:149
+msgid "Driver"
+msgstr ""
+
+#: modules/devices/cpu_util.c:155
+msgid "(Not Available)"
+msgstr ""
+
+#: modules/devices/cpu_util.c:163 modules/devices/cpu_util.c:165
+msgid "Socket"
+msgstr ""
+
+#: modules/devices/cpu_util.c:168 modules/devices/cpu_util.c:170
+msgid "Core"
+msgstr ""
+
+#: modules/devices/cpu_util.c:173
+msgid "Book"
+msgstr ""
+
+#: modules/devices/cpu_util.c:175
+msgid "Drawer"
+msgstr ""
+
+#: modules/devices/cpu_util.c:181
+msgid "Topology"
+msgstr ""
+
+#: modules/devices/cpu_util.c:182
+msgid "ID"
+msgstr ""
+
+#: modules/devices/devmemory.c:93
+msgid "Total Memory"
+msgstr "Общая память"
+
+#: modules/devices/devmemory.c:94
+msgid "Free Memory"
+msgstr "Свободная память"
+
+#: modules/devices/devmemory.c:95
+msgid "Cached Swap"
+msgstr "Кэш подкачки"
+
+#: modules/devices/devmemory.c:96
+msgid "High Memory"
+msgstr "Высокая память"
+
+#: modules/devices/devmemory.c:97
+msgid "Free High Memory"
+msgstr "Свободная высокая память"
+
+#: modules/devices/devmemory.c:98
+msgid "Low Memory"
+msgstr "Низкая память"
+
+#: modules/devices/devmemory.c:99
+msgid "Free Low Memory"
+msgstr "Свободная низкая память"
+
+#: modules/devices/devmemory.c:100
+msgid "Virtual Memory"
+msgstr "Виртуальная память"
+
+#: modules/devices/devmemory.c:101
+msgid "Free Virtual Memory"
+msgstr "Свободная виртуальная память"
+
+#: modules/devices/ia64/processor.c:108
+msgid "IA64 Processor"
+msgstr ""
+
+#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:745
+msgid "Vendor"
+msgstr "Производитель"
+
+#: modules/devices/ia64/processor.c:155
+msgid "Architecture Revision"
+msgstr ""
+
+#: modules/devices/ia64/processor.c:156 modules/devices/sh/processor.c:78
+msgid "Family"
+msgstr ""
+
+#: modules/devices/ia64/processor.c:162
+msgid "CPU regs"
+msgstr ""
+
+#: modules/devices/ia64/processor.c:163
+msgid "Features"
 msgstr ""
 
 #: modules/devices/m68k/processor.c:77 modules/devices/riscv/processor.c:177
@@ -1651,6 +1790,228 @@ msgstr ""
 #: modules/devices/m68k/processor.c:82
 msgid "Calibration"
 msgstr ""
+
+#: modules/devices/mips/processor.c:68
+msgid "System Type"
+msgstr ""
+
+#: modules/devices/parisc/processor.c:107
+msgid "PA-RISC Processor"
+msgstr ""
+
+#: modules/devices/parisc/processor.c:149
+msgid "System"
+msgstr ""
+
+#: modules/devices/parisc/processor.c:153
+msgid "HVersion"
+msgstr ""
+
+#: modules/devices/parisc/processor.c:154
+msgid "SVersion"
+msgstr ""
+
+#: modules/devices/parisc/processor.c:155 modules/devices/x86/processor.c:753
+msgid "Cache"
+msgstr "Кэш"
+
+#: modules/devices/ppc/processor.c:117
+msgid "POWER Processor"
+msgstr ""
+
+#: modules/devices/printers.c:81
+msgid "⚬ Can do black and white printing=\n"
+msgstr "⚬ Может печатать черно-белым=\n"
+
+#: modules/devices/printers.c:83
+msgid "⚬ Can do color printing=\n"
+msgstr "⚬ Может печатать цветным=\n"
+
+#: modules/devices/printers.c:85
+#, fuzzy
+msgid "⚬ Can do duplexing=\n"
+msgstr "Не исправлять:"
+
+#: modules/devices/printers.c:87
+#, fuzzy
+msgid "⚬ Can do staple output=\n"
+msgstr "Выходной файл не может быть переименован."
+
+#: modules/devices/printers.c:89
+msgid "⚬ Can do copies=\n"
+msgstr "⚬ Можно делать копии=\n"
+
+#: modules/devices/printers.c:91
+msgid "⚬ Can collate copies=\n"
+msgstr "⚬ Can collate copies=\n"
+
+#: modules/devices/printers.c:93
+msgid "⚬ Printer is rejecting jobs=\n"
+msgstr "⚬ Printer is rejecting jobs=\n"
+
+#: modules/devices/printers.c:95
+msgid "⚬ Printer was automatically discovered and added=\n"
+msgstr "⚬ Принтер был автоматически найден и добавлен=\n"
+
+#: modules/devices/printers.c:110
+msgid "Idle"
+msgstr "Неактивен"
+
+#: modules/devices/printers.c:112
+msgid "Printing a Job"
+msgstr "Печатается задача"
+
+#: modules/devices/printers.c:114
+msgid "Stopped"
+msgstr "Остановлен"
+
+#: modules/devices/printers.c:190
+msgid ""
+"[Printers]\n"
+"No suitable CUPS library found="
+msgstr ""
+"[Принтеры]\n"
+"Подходящей библиотеки CUPS не найдено="
+
+#: modules/devices/printers.c:200
+msgid "[Printers (CUPS)]\n"
+msgstr "[Принтеры (CUPS)]\n"
+
+#: modules/devices/printers.c:263
+msgid ""
+"[Printers]\n"
+"No printers found=\n"
+msgstr ""
+"[Принтеры]\n"
+"Принтеры не найдены=\n"
+
+#: modules/devices/riscv/processor.c:107
+msgid "RISC-V Processor"
+msgstr ""
+
+#: modules/devices/riscv/processor.c:176
+msgid "uarch"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:37
+msgid "RISC-V 32-bit"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:38
+msgid "RISC-V 64-bit"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:39
+msgid "RISC-V 128-bit"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:40
+msgid "Base embedded integer instructions (15 registers)"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:41
+msgid "Base integer instructions (31 registers)"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:42
+msgid "Hardware integer multiply and divide"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:43
+msgid "Atomic memory operations"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:44
+msgid "Compressed 16-bit instructions"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:45
+msgid "Floating-point instructions, single-precision"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:46
+msgid "Floating-point instructions, double-precision"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:47
+msgid "Floating-point instructions, quad-precision"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:48
+msgid "Bit manipulation instructions"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:49
+msgid "Vector operations"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:50
+msgid "Transactional memory"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:51
+msgid "Packed SIMD instructions"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:52
+msgid "Decimal floating-point instructions"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:53
+msgid "Dynamically translated languages"
+msgstr ""
+
+#: modules/devices/riscv/riscv_data.c:54
+msgid "User-level interrupts"
+msgstr ""
+
+#: modules/devices/s390/processor.c:92
+msgid "S390 Processor"
+msgstr ""
+
+#: modules/devices/s390/processor.c:125
+msgid "ID String"
+msgstr ""
+
+#: modules/devices/sh/processor.c:55
+msgid "SuperH Processor"
+msgstr ""
+
+#: modules/devices/sh/processor.c:77
+msgid "Machine"
+msgstr ""
+
+#: modules/devices/sh/processor.c:80
+msgid "Bus Frequency"
+msgstr ""
+
+#: modules/devices/sh/processor.c:81
+msgid "Module Frequency"
+msgstr ""
+
+#: modules/devices/sparc/processor.c:67
+msgid "CPU"
+msgstr ""
+
+#: modules/devices/spd-decode.c:1475
+msgid ""
+"[SPD]\n"
+"Please load the eeprom module to obtain information about memory SPD=\n"
+"[$ShellParam$]\n"
+"ReloadInterval=500\n"
+msgstr ""
+"[SPD]\n"
+"Пожалуйста, загрузите модуль eeprom для получения информации о памяти SPD=\n"
+"[$ShellParam$]\n"
+"ReloadInterval=500\n"
+
+#: modules/devices/spd-decode.c:1480
+msgid ""
+"[SPD]\n"
+"Reading memory SPD not supported on this system=\n"
+msgstr ""
+"[SPD]\n"
+"Чтение памяти SPD не поддерживается на данной системе=\n"
 
 #: modules/devices/storage.c:46
 msgid ""
@@ -1743,252 +2104,6 @@ msgid ""
 msgstr ""
 "[Скорости]\n"
 "%s"
-
-#: modules/devices/cpu_util.c:26
-msgid "Little Endian"
-msgstr ""
-
-#: modules/devices/cpu_util.c:28
-msgid "Big Endian"
-msgstr ""
-
-#: modules/devices/cpu_util.c:137 modules/devices/cpu_util.c:148
-msgid "Frequency Scaling"
-msgstr ""
-
-#: modules/devices/cpu_util.c:138
-msgid "Minimum"
-msgstr ""
-
-#: modules/devices/cpu_util.c:138 modules/devices/cpu_util.c:139
-#: modules/devices/cpu_util.c:140
-msgid "kHz"
-msgstr ""
-
-#: modules/devices/cpu_util.c:139
-msgid "Maximum"
-msgstr ""
-
-#: modules/devices/cpu_util.c:140
-msgid "Current"
-msgstr ""
-
-#: modules/devices/cpu_util.c:141
-msgid "Transition Latency"
-msgstr ""
-
-#: modules/devices/cpu_util.c:141
-msgid "ns"
-msgstr ""
-
-#: modules/devices/cpu_util.c:142
-msgid "Governor"
-msgstr ""
-
-#: modules/devices/cpu_util.c:143 modules/devices/cpu_util.c:149
-msgid "Driver"
-msgstr ""
-
-#: modules/devices/cpu_util.c:155
-msgid "(Not Available)"
-msgstr ""
-
-#: modules/devices/cpu_util.c:163 modules/devices/cpu_util.c:165
-msgid "Socket"
-msgstr ""
-
-#: modules/devices/cpu_util.c:168 modules/devices/cpu_util.c:170
-msgid "Core"
-msgstr ""
-
-#: modules/devices/cpu_util.c:173
-msgid "Book"
-msgstr ""
-
-#: modules/devices/cpu_util.c:175
-msgid "Drawer"
-msgstr ""
-
-#: modules/devices/cpu_util.c:181
-msgid "Topology"
-msgstr ""
-
-#: modules/devices/cpu_util.c:182
-msgid "ID"
-msgstr ""
-
-#: modules/devices/sh/processor.c:55
-msgid "SuperH Processor"
-msgstr ""
-
-#: modules/devices/sh/processor.c:76 modules/devices/ia64/processor.c:152
-#: hardinfo/hardinfo.c:76
-msgid "Name"
-msgstr ""
-
-#: modules/devices/sh/processor.c:77
-msgid "Machine"
-msgstr ""
-
-#: modules/devices/sh/processor.c:78 modules/devices/ia64/processor.c:156
-msgid "Family"
-msgstr ""
-
-#: modules/devices/sh/processor.c:80
-msgid "Bus Frequency"
-msgstr ""
-
-#: modules/devices/sh/processor.c:81
-msgid "Module Frequency"
-msgstr ""
-
-#: modules/devices/parisc/processor.c:107
-msgid "PA-RISC Processor"
-msgstr ""
-
-#: modules/devices/parisc/processor.c:149
-msgid "System"
-msgstr ""
-
-#: modules/devices/parisc/processor.c:153
-msgid "HVersion"
-msgstr ""
-
-#: modules/devices/parisc/processor.c:154
-msgid "SVersion"
-msgstr ""
-
-#: modules/devices/parisc/processor.c:155 modules/devices/x86/processor.c:753
-msgid "Cache"
-msgstr "Кэш"
-
-#: modules/devices/ia64/processor.c:108
-msgid "IA64 Processor"
-msgstr ""
-
-#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:745
-msgid "Vendor"
-msgstr "Производитель"
-
-#: modules/devices/ia64/processor.c:155
-msgid "Architecture Revision"
-msgstr ""
-
-#: modules/devices/ia64/processor.c:162
-msgid "CPU regs"
-msgstr ""
-
-#: modules/devices/ia64/processor.c:163
-msgid "Features"
-msgstr ""
-
-#: modules/devices/spd-decode.c:1475
-msgid ""
-"[SPD]\n"
-"Please load the eeprom module to obtain information about memory SPD=\n"
-"[$ShellParam$]\n"
-"ReloadInterval=500\n"
-msgstr ""
-"[SPD]\n"
-"Пожалуйста, загрузите модуль eeprom для получения информации о памяти SPD=\n"
-"[$ShellParam$]\n"
-"ReloadInterval=500\n"
-
-#: modules/devices/spd-decode.c:1480
-msgid ""
-"[SPD]\n"
-"Reading memory SPD not supported on this system=\n"
-msgstr ""
-"[SPD]\n"
-"Чтение памяти SPD не поддерживается на данной системе=\n"
-
-#: modules/devices/ppc/processor.c:117
-msgid "POWER Processor"
-msgstr ""
-
-#: modules/devices/mips/processor.c:68
-msgid "System Type"
-msgstr ""
-
-#: modules/devices/riscv/processor.c:107
-msgid "RISC-V Processor"
-msgstr ""
-
-#: modules/devices/riscv/processor.c:176
-msgid "uarch"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:37
-msgid "RISC-V 32-bit"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:38
-msgid "RISC-V 64-bit"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:39
-msgid "RISC-V 128-bit"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:40
-msgid "Base embedded integer instructions (15 registers)"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:41
-msgid "Base integer instructions (31 registers)"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:42
-msgid "Hardware integer multiply and divide"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:43
-msgid "Atomic memory operations"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:44
-msgid "Compressed 16-bit instructions"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:45
-msgid "Floating-point instructions, single-precision"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:46
-msgid "Floating-point instructions, double-precision"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:47
-msgid "Floating-point instructions, quad-precision"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:48
-msgid "Bit manipulation instructions"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:49
-msgid "Vector operations"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:50
-msgid "Transactional memory"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:51
-msgid "Packed SIMD instructions"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:52
-msgid "Decimal floating-point instructions"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:53
-msgid "Dynamically translated languages"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:54
-msgid "User-level interrupts"
-msgstr ""
 
 #: modules/devices/x86/processor.c:146
 msgid "Cache information not available=\n"
@@ -2953,272 +3068,208 @@ msgstr ""
 msgid "Bug Workarounds"
 msgstr ""
 
-#: modules/devices/printers.c:81
-msgid "⚬ Can do black and white printing=\n"
-msgstr "⚬ Может печатать черно-белым=\n"
+#: modules/network.c:59
+msgid "Interfaces"
+msgstr "Интерфейсы"
 
-#: modules/devices/printers.c:83
-msgid "⚬ Can do color printing=\n"
-msgstr "⚬ Может печатать цветным=\n"
+#: modules/network.c:60
+msgid "IP Connections"
+msgstr "IP Подключения"
 
-#: modules/devices/printers.c:85
-#, fuzzy
-msgid "⚬ Can do duplexing=\n"
-msgstr "Не исправлять:"
+#: modules/network.c:61
+msgid "Routing Table"
+msgstr "Таблица маршрутизации"
 
-#: modules/devices/printers.c:87
-#, fuzzy
-msgid "⚬ Can do staple output=\n"
-msgstr "Выходной файл не может быть переименован."
+#: modules/network.c:62
+msgid "ARP Table"
+msgstr "Таблица ARP"
 
-#: modules/devices/printers.c:89
-msgid "⚬ Can do copies=\n"
-msgstr "⚬ Можно делать копии=\n"
+#: modules/network.c:63
+msgid "DNS Servers"
+msgstr "DNS сервера"
 
-#: modules/devices/printers.c:91
-msgid "⚬ Can collate copies=\n"
-msgstr "⚬ Can collate copies=\n"
+#: modules/network.c:64
+msgid "Statistics"
+msgstr "Статистика"
 
-#: modules/devices/printers.c:93
-msgid "⚬ Printer is rejecting jobs=\n"
-msgstr "⚬ Printer is rejecting jobs=\n"
+#: modules/network.c:65
+msgid "Shared Directories"
+msgstr "Общие каталоги"
 
-#: modules/devices/printers.c:95
-msgid "⚬ Printer was automatically discovered and added=\n"
-msgstr "⚬ Принтер был автоматически найден и добавлен=\n"
-
-#: modules/devices/printers.c:110
-msgid "Idle"
-msgstr "Неактивен"
-
-#: modules/devices/printers.c:112
-msgid "Printing a Job"
-msgstr "Печатается задача"
-
-#: modules/devices/printers.c:114
-msgid "Stopped"
-msgstr "Остановлен"
-
-#: modules/devices/printers.c:138 hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57
-msgid "Yes"
-msgstr "Да"
-
-#: modules/devices/printers.c:190
-msgid ""
-"[Printers]\n"
-"No suitable CUPS library found="
-msgstr ""
-"[Принтеры]\n"
-"Подходящей библиотеки CUPS не найдено="
-
-#: modules/devices/printers.c:200
-msgid "[Printers (CUPS)]\n"
-msgstr "[Принтеры (CUPS)]\n"
-
-#: modules/devices/printers.c:263
-msgid ""
-"[Printers]\n"
-"No printers found=\n"
-msgstr ""
-"[Принтеры]\n"
-"Принтеры не найдены=\n"
-
-#: modules/devices/sparc/processor.c:67
-msgid "CPU"
-msgstr ""
-
-#: hardinfo/util.c:105
-#, c-format
-msgid "%d day, "
-msgid_plural "%d days, "
-msgstr[0] "%d день"
-msgstr[1] "%d дня"
-msgstr[2] "%d дней"
-
-#: hardinfo/util.c:106
-#, c-format
-msgid "%d hour, "
-msgid_plural "%d hours, "
-msgstr[0] "%d час"
-msgstr[1] "%d часа"
-msgstr[2] "%d часов"
-
-#: hardinfo/util.c:107 hardinfo/util.c:110
-#, c-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d минута"
-msgstr[1] "%d минуты"
-msgstr[2] "%d минут"
-
-#: hardinfo/util.c:119
-#, c-format
-msgid "%.1f B"
-msgstr "%.1f Б"
-
-#: hardinfo/util.c:121
-#, fuzzy, c-format
-msgid "%.1f KiB"
-msgstr "%.1f КиБ"
-
-#: hardinfo/util.c:123
-#, fuzzy, c-format
-msgid "%.1f MiB"
-msgstr "%.1f МиБ"
-
-#: hardinfo/util.c:125
-#, fuzzy, c-format
-msgid "%.1f GiB"
-msgstr "%.1f ГиБ"
-
-#: hardinfo/util.c:127
-#, c-format
-msgid "%.1f TiB"
-msgstr ""
-
-#: hardinfo/util.c:129
-#, c-format
-msgid "%.1f PiB"
-msgstr ""
-
-#: hardinfo/util.c:343
-msgid "Error"
-msgstr "Ошибка"
-
-#: hardinfo/util.c:343 hardinfo/util.c:359
-msgid "Warning"
-msgstr "Предупреждение"
-
-#: hardinfo/util.c:358
-msgid "Fatal Error"
-msgstr "Фатальная ошибка"
-
-#: hardinfo/util.c:383
-msgid "creates a report and prints to standard output"
-msgstr "создаёт отчёт и выводит на стандартный вывод"
-
-#: hardinfo/util.c:389
-msgid "chooses a report format (text, html)"
-msgstr "выбирает формат отчёта (text, html)"
-
-#: hardinfo/util.c:395
-msgid "run benchmark; requires benchmark.so to be loaded"
-msgstr "запуск теста; требует, чтобы benchmark.so был загружен"
-
-#: hardinfo/util.c:401
-msgid "lists modules"
-msgstr "список модулей"
-
-#: hardinfo/util.c:407
-msgid "specify module to load"
-msgstr "укажите модуль для загрузки"
-
-#: hardinfo/util.c:413
-msgid "automatically load module dependencies"
-msgstr "автоматически загружает зависимости модулей"
-
-#: hardinfo/util.c:420
-msgid "run in XML-RPC server mode"
-msgstr "запуск в режиме сервера XML-RPC"
-
-#: hardinfo/util.c:427
-msgid "shows program version and quit"
-msgstr "показывает версию программы и выходит"
-
-#: hardinfo/util.c:432
-msgid "- System Profiler and Benchmark tool"
-msgstr "- Инструмент для тестирования и проверки свойств системы"
-
-#: hardinfo/util.c:442
+#: modules/network.c:300
 #, c-format
 msgid ""
-"Unrecognized arguments.\n"
-"Try ``%s --help'' for more information.\n"
+"[ARP Table]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=IP Address\n"
+"ColumnTitle$Value=Interface\n"
+"ColumnTitle$Extra1=MAC Address\n"
+"ShowColumnHeaders=true\n"
 msgstr ""
-"Неизвестные аргументы.\n"
-"Используйте `%s --help' для справки.\n"
+"[Таблица ARP]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=IP-адрес\n"
+"ColumnTitle$Value=Интерфейс\n"
+"ColumnTitle$Extra1=MAC-адрес\n"
+"ShowColumnHeaders=true\n"
 
-#: hardinfo/util.c:508
-#, c-format
-msgid "Couldn't find a Web browser to open URL %s."
-msgstr "Не удаётся найти веб-браузер для открытия URL %s."
-
-#: hardinfo/util.c:855
-#, c-format
-msgid "Module \"%s\" depends on module \"%s\", load it?"
-msgstr "Модуль \"%s\" зависит от модуля \"%s\", загрузить его?"
-
-#: hardinfo/util.c:878
-#, c-format
-msgid "Module \"%s\" depends on module \"%s\"."
-msgstr "Модуль \"%s\" зависит от модуля \"%s\"."
-
-#: hardinfo/util.c:923
-#, c-format
-msgid "No module could be loaded. Check permissions on \"%s\" and try again."
-msgstr ""
-"Модули не могут быть загружены. Проверьте разрешения на \"%s\" и попробуйте "
-"снова."
-
-#: hardinfo/util.c:927
-msgid ""
-"No module could be loaded. Please use hardinfo -l to list all available "
-"modules and try again with a valid module list."
-msgstr ""
-"Не удается загрузить модули. Пожалуйста, используйте hardinfo -l для "
-"получения списка доступных модулей и попробуйте снова с правильным списком "
-"модулей."
-
-#: hardinfo/util.c:1103
-#, c-format
-msgid "Scanning: %s..."
-msgstr "Сканирование: %s..."
-
-#: hardinfo/hardinfo.c:48
-msgid ""
-"Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n"
-"\n"
-msgstr ""
-
-#: hardinfo/hardinfo.c:50
+#: modules/network.c:321
 #, c-format
 msgid ""
-"Compile-time options:\n"
-"  Release version:   %s (%s)\n"
-"  BinReloc enabled:  %s\n"
-"  Data prefix:       %s\n"
-"  Library prefix:    %s\n"
-"  Compiled on:       %s %s (%s)\n"
+"[Name servers]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=IP Address\n"
+"ColumnTitle$Value=Name\n"
+"ShowColumnHeaders=true\n"
 msgstr ""
+"[Name servers]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=IP-адрес\n"
+"ColumnTitle$Value=Имя\n"
+"ShowColumnHeaders=true\n"
 
-#: hardinfo/hardinfo.c:68
+#: modules/network.c:331
 #, c-format
 msgid ""
-"Failed to find runtime data.\n"
-"\n"
-"• Is HardInfo correctly installed?\n"
-"• See if %s and %s exists and you have read permission."
+"[Connections]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=Local Address\n"
+"ColumnTitle$Value=Protocol\n"
+"ColumnTitle$Extra1=Foreign Address\n"
+"ColumnTitle$Extra2=State\n"
+"ShowColumnHeaders=true\n"
 msgstr ""
+"[Connections]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=Локальный адрес\n"
+"ColumnTitle$Value=Протокол\n"
+"ColumnTitle$Extra1=Удалённый адрес\n"
+"ColumnTitle$Extra2=Состояние\n"
+"ShowColumnHeaders=true\n"
 
-#: hardinfo/hardinfo.c:75
+#: modules/network.c:345
 #, c-format
 msgid ""
-"Modules:\n"
-"%-20s%-15s%-12s\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Interface\n"
+"ColumnTitle$Value=IP Address\n"
+"ColumnTitle$Extra1=Sent\n"
+"ColumnTitle$Extra2=Received\n"
+"ShowColumnHeaders=true\n"
+"%s"
 msgstr ""
+"%s\n"
+"[$ShellParam$]\n"
+"ReloadInterval=3000\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Интерфейс\n"
+"ColumnTitle$Value=IP-адрес\n"
+"ColumnTitle$Extra1=Отправлено\n"
+"ColumnTitle$Extra2=Получено\n"
+"ShowColumnHeaders=true\n"
+"%s"
 
-#: hardinfo/hardinfo.c:76
-msgid "File Name"
-msgstr ""
-
-#: hardinfo/hardinfo.c:123
+#: modules/network.c:361
 #, c-format
-msgid "Unknown benchmark ``%s'' or libbenchmark.so not loaded"
+msgid ""
+"[IP routing table]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ViewType=0\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=Destination / Gateway\n"
+"ColumnTitle$Value=Interface\n"
+"ColumnTitle$Extra1=Flags\n"
+"ColumnTitle$Extra2=Mask\n"
+"ShowColumnHeaders=true\n"
 msgstr ""
+"[IP routing table]\n"
+"%s\n"
+"[$ShellParam$]\n"
+"ViewType=0\n"
+"ReloadInterval=3000\n"
+"ColumnTitle$TextValue=Цель / Шлюз\n"
+"ColumnTitle$Value=Интерфейс\n"
+"ColumnTitle$Extra1=Флаги\n"
+"ColumnTitle$Extra2=Маска\n"
+"ShowColumnHeaders=true\n"
 
-#: hardinfo/hardinfo.c:151
-msgid "Don't know what to do. Exiting."
-msgstr ""
+#: modules/network.c:399
+msgid "Network"
+msgstr "Сеть"
+
+#: modules/network.c:432
+msgid "Gathers information about this computer's network connection"
+msgstr "Собирает информацию о сетевых подключениях"
+
+# Memory и Date/Time не переводить — не будут обновляться!
+#~ msgid ""
+#~ "[$ShellParam$]\n"
+#~ "UpdateInterval$Memory=1000\n"
+#~ "UpdateInterval$Date/Time=1000\n"
+#~ "#ReloadInterval=5000\n"
+#~ "[Computer]\n"
+#~ "Processor=%s\n"
+#~ "Memory=...\n"
+#~ "Machine Type=%s\n"
+#~ "Operating System=%s\n"
+#~ "User Name=%s\n"
+#~ "Date/Time=...\n"
+#~ "[Display]\n"
+#~ "Resolution=%dx%d pixels\n"
+#~ "OpenGL Renderer=%s\n"
+#~ "X11 Vendor=%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "[Input Devices]\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ msgstr ""
+#~ "[$ShellParam$]\n"
+#~ "UpdateInterval$Память=1000\n"
+#~ "UpdateInterval$Date/Time=1000\n"
+#~ "#ReloadInterval=5000\n"
+#~ "[Компьютер]\n"
+#~ "Процессор=%s\n"
+#~ "Память=...\n"
+#~ "Тип машины=%s\n"
+#~ "Операционная система=%s\n"
+#~ "Пользователь=%s\n"
+#~ "Date/Time=...\n"
+#~ "[Дисплей]\n"
+#~ "Разрешение=%dx%d пикс.\n"
+#~ "Рендер OpenGL=%s\n"
+#~ "Поставщик X11=%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "[Устройства ввода]\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+
+#~ msgid "GNU C Library version %s (%sstable)"
+#~ msgstr "Библиотека GNU C версии %s (%s стабильна)"
+
+#~ msgid "un"
+#~ msgstr "не"
 
 # Uptime, Load Average и Available entropy in /dev/random не переводить — не будут обновляться!
 #~ msgid ""
