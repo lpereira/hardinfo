@@ -18,6 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
+#include "cpu_util.h"
 
 GSList *
 processor_scan(void)
@@ -26,32 +27,33 @@ processor_scan(void)
     FILE *cpuinfo;
     gchar buffer[128];
 
-    cpuinfo = fopen("/proc/cpuinfo", "r");
+    cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
-	return NULL;
+        return NULL;
 
     processor = g_new0(Processor, 1);
     while (fgets(buffer, 128, cpuinfo)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
 
-	if (tmp[0] && tmp[1]) {
-	    tmp[0] = g_strstrip(tmp[0]);
-	    tmp[1] = g_strstrip(tmp[1]);
+        if (tmp[0] && tmp[1]) {
+            tmp[0] = g_strstrip(tmp[0]);
+            tmp[1] = g_strstrip(tmp[1]);
 
-	    get_str("CPU", processor->model_name);
-	    get_float("Clocking", processor->cpu_mhz);
-	    get_float("bogomips", processor->bogomips);
-
-	    get_str("FPU", processor->has_fpu);
-	}
-	g_strfreev(tmp);
+            get_str("CPU", processor->model_name);
+            get_str("MMU", processor->mmu_name);
+            get_str("FPU", processor->fpu_name);
+            get_float("Clocking", processor->cpu_mhz);
+            get_float("BogoMips", processor->bogomips);
+            get_str("Calibration", processor->calibration);
+        }
+        g_strfreev(tmp);
     }
-    
+
     gchar *tmp;
     tmp = g_strconcat("Motorola ", processor->model_name, NULL);
     g_free(processor->model_name);
     processor->model_name = tmp;
-    
+
     fclose(cpuinfo);
 
     return g_slist_append(NULL, processor);
@@ -60,20 +62,23 @@ processor_scan(void)
 gchar *
 processor_get_info(GSList *processors)
 {
-        Processor *processor = (Processor *)processors->data;
-        
-	return g_strdup_printf("[Processor]\n"
-	                       "Name=%s\n"
-			       "Frequency=%.2fMHz\n"
-			       "BogoMips=%.2f\n"
-			       "Byte Order=%s\n",
-			       processor->model_name,
-			       processor->cpu_mhz,
-			       processor->bogomips,
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-                               "Little Endian"
-#else
-                               "Big Endian"
-#endif
-                               );
+    Processor *processor = (Processor *)processors->data;
+
+    return g_strdup_printf("[%s]\n"
+                        "%s=%s\n"      /* cpu */
+                        "%s=%s\n"      /* mmu */
+                        "%s=%s\n"      /* fpu */
+                        "%s=%.2f %s\n" /* frequency */
+                        "%s=%.2f\n"    /* bogomips */
+                        "%s=%s\n"      /* byte order */
+                        "%s=%s\n",     /* calibration */
+                    _("Processor"),
+                    _("Model"), processor->model_name,
+                    _("MMU"), processor->mmu_name,
+                    _("FPU"), processor->fpu_name,
+                    _("Frequency"), processor->cpu_mhz, _("MHz"),
+                    _("BogoMips"), processor->bogomips,
+                    _("Byte Order"), byte_order_str(),
+                    _("Calibration"), processor->calibration
+                        );
 }

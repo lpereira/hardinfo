@@ -18,6 +18,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
+#include "cpu_util.h"
 
 /*
  * This function is partly based on x86cpucaps
@@ -148,7 +149,7 @@ static gchar *__cache_get_info_as_string(Processor *processor)
     for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
         cache = (ProcessorCache *)cache_list->data;
 
-        result = h_strdup_cprintf("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n",
+        result = h_strdup_cprintf(_("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"),
                                   result,
                                   cache->level,
                                   cache->type,
@@ -160,11 +161,12 @@ static gchar *__cache_get_info_as_string(Processor *processor)
     return result;
 }
 
-static void __cache_obtain_info(Processor *processor, gint processor_number)
+static void __cache_obtain_info(Processor *processor)
 {
     ProcessorCache *cache;
     gchar *endpoint, *entry, *index;
     gint i;
+    gint processor_number = processor->id;
 
     endpoint = g_strdup_printf("/sys/devices/system/cpu/cpu%d/cache", processor_number);
 
@@ -215,261 +217,394 @@ fail:
 
 GSList *processor_scan(void)
 {
-    GSList *procs = NULL;
+    GSList *procs = NULL, *l = NULL;
     Processor *processor = NULL;
     FILE *cpuinfo;
     gchar buffer[512];
-    gint processor_number = 0;
-    gchar *tmp_bugs;
 
-    cpuinfo = fopen("/proc/cpuinfo", "r");
+    cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
-	return NULL;
+        return NULL;
 
     while (fgets(buffer, 512, cpuinfo)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
+        if (!tmp[1] || !tmp[0]) {
+            g_strfreev(tmp);
+            continue;
+        }
 
-	if (g_str_has_prefix(tmp[0], "processor")) {
-	    if (processor) {
-		get_processor_strfamily(processor);
-		procs = g_slist_append(procs, processor);
-	    }
+        tmp[0] = g_strstrip(tmp[0]);
+        tmp[1] = g_strstrip(tmp[1]);
 
-	    processor = g_new0(Processor, 1);
+        if (g_str_has_prefix(tmp[0], "processor")) {
+            /* finish previous */
+            if (processor)
+                procs = g_slist_append(procs, processor);
 
-	    __cache_obtain_info(processor, processor_number++);
-	}
+            /* start next */
+            processor = g_new0(Processor, 1);
+            processor->id = atol(tmp[1]);
+            g_strfreev(tmp);
+            continue;
+        }
 
-	if (processor && tmp[0] && tmp[1]) {
-	    tmp[0] = g_strstrip(tmp[0]);
-	    tmp[1] = g_strstrip(tmp[1]);
+        if (processor) {
+            get_str("model name", processor->model_name);
+            get_str("vendor_id", processor->vendor_id);
+            get_str("flags", processor->flags);
+            get_str("bugs", processor->bugs);
+            get_str("power management", processor->pm);
+            get_int("cache size", processor->cache_size);
+            get_float("cpu MHz", processor->cpu_mhz);
+            get_float("bogomips", processor->bogomips);
 
-	    get_str("model name", processor->model_name);
-	    get_str("vendor_id", processor->vendor_id);
-	    get_str("flags", processor->flags);
-	    get_str("bugs", processor->bugs);
-	    get_str("power management", processor->pm);
-	    get_int("cache size", processor->cache_size);
-	    get_float("cpu MHz", processor->cpu_mhz);
-	    get_float("bogomips", processor->bogomips);
+            get_str("fpu", processor->has_fpu);
 
-	    get_str("fpu", processor->has_fpu);
+            get_str("fdiv_bug", processor->bug_fdiv);
+            get_str("hlt_bug", processor->bug_hlt);
+            get_str("f00f_bug", processor->bug_f00f);
+            get_str("coma_bug", processor->bug_coma);
 
-	    get_str("fdiv_bug", processor->bug_fdiv);
-	    get_str("hlt_bug", processor->bug_hlt);
-	    get_str("f00f_bug", processor->bug_f00f);
-	    get_str("coma_bug", processor->bug_coma);
+            get_int("model", processor->model);
+            get_int("cpu family", processor->family);
+            get_int("stepping", processor->stepping);
+        }
+        g_strfreev(tmp);
+    }
+
+    fclose(cpuinfo);
+
+    /* finish last */
+    if (processor)
+        procs = g_slist_append(procs, processor);
+
+    for (l = procs; l; l = l->next) {
+        processor = (Processor *) l->data;
+
+        get_processor_strfamily(processor);
+        __cache_obtain_info(processor);
 
         if (processor->bugs == NULL || g_strcmp0(processor->bugs, "") == 0) {
             g_free(processor->bugs);
             /* make bugs list on old kernels that don't offer one */
-            processor->bugs = g_strdup_printf("%s%s%s%s",
-                    processor->bug_fdiv ? "fdiv"  : "",
+            processor->bugs = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s",
+                    /* the oldest bug workarounds indicated in /proc/cpuinfo */
+                    processor->bug_fdiv ? " fdiv" : "",
                     processor->bug_hlt  ? " _hlt" : "",
                     processor->bug_f00f ? " f00f" : "",
-                    processor->bug_coma ? " coma" : "");
+                    processor->bug_coma ? " coma" : "",
+                    /* these bug workarounds were reported as "features" in older kernels */
+                    processor_has_flag(processor->flags, "fxsave_leak")     ? " fxsave_leak" : "",
+                    processor_has_flag(processor->flags, "clflush_monitor") ? " clflush_monitor" : "",
+                    processor_has_flag(processor->flags, "11ap")            ? " 11ap" : "",
+                    processor_has_flag(processor->flags, "tlb_mmatch")      ? " tlb_mmatch" : "",
+                    processor_has_flag(processor->flags, "apic_c1e")        ? " apic_c1e" : "",
+                    ""); /* just to make adding lines easier */
+            g_strchug(processor->bugs);
         }
 
-	    get_int("model", processor->model);
-	    get_int("cpu family", processor->family);
-	    get_int("stepping", processor->stepping);
+        if (processor->pm == NULL || g_strcmp0(processor->pm, "") == 0) {
+            g_free(processor->pm);
+            /* make power management list on old kernels that don't offer one */
+            processor->pm = g_strdup_printf("%s%s",
+                    /* "hw_pstate" -> "hwpstate" */
+                    processor_has_flag(processor->flags, "hw_pstate") ? " hwpstate" : "",
+                    ""); /* just to make adding lines easier */
+            g_strchug(processor->pm);
+        }
 
-	    get_int("processor", processor->id);
-	}
-	g_strfreev(tmp);
+        /* topo & freq */
+        processor->cpufreq = cpufreq_new(processor->id);
+        processor->cputopo = cputopo_new(processor->id);
+
+        if (processor->cpufreq->cpukhz_max)
+            processor->cpu_mhz = processor->cpufreq->cpukhz_max / 1000;
     }
-
-    if (processor) {
-	get_processor_strfamily(processor);
-	procs = g_slist_append(procs, processor);
-    }
-
-    fclose(cpuinfo);
 
     return procs;
 }
 
 /*
  * Sources:
- * - Linux' cpufeature.h
- * - http://gentoo-wiki.com/Cpuinfo
+ * - https://unix.stackexchange.com/a/43540
+ * - https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/arch/x86/include/asm/cpufeatures.h?id=refs/tags/v4.9
  * - Intel IA-32 Architecture Software Development Manual
- * - https://unix.stackexchange.com/questions/43539/what-do-the-flags-in-proc-cpuinfo-mean
+ * - http://gentoo-wiki.com/Cpuinfo
  */
 static struct {
     char *name, *meaning;
 } flag_meaning[] = {
-	{ "3dnow",	"3DNow! Technology"				},
-	{ "3dnowext",	"Extended 3DNow! Technology"			},
-	{ "fpu",	"Floating Point Unit"				},
-	{ "vme",	"Virtual 86 Mode Extension"			},
-	{ "de",		"Debug Extensions - I/O breakpoints"		},
-	{ "pse",	"Page Size Extensions (4MB pages)"		},
-	{ "tsc",	"Time Stamp Counter and RDTSC instruction"	},
-	{ "msr",	"Model Specific Registers"			},
-	{ "pae",	"Physical Address Extensions"			},
-	{ "mce",	"Machine Check Architeture"			},
-	{ "cx8",	"CMPXCHG8 instruction"				},
-	{ "apic",	"Advanced Programmable Interrupt Controller"	},
-	{ "sep",	"Fast System Call (SYSENTER/SYSEXIT)"		},
-	{ "mtrr",	"Memory Type Range Registers"			},
-	{ "pge",	"Page Global Enable"				},
-	{ "mca",	"Machine Check Architecture"			},
-	{ "cmov",	"Conditional Move instruction"			},
-	{ "pat",	"Page Attribute Table"				},
-	{ "pse36",	"36bit Page Size Extensions"			},
-	{ "psn",	"96 bit Processor Serial Number"		},
-	{ "mmx",	"MMX technology"				},
-	{ "mmxext",	"Extended MMX Technology"			},
-	{ "cflush",	"Cache Flush"					},
-	{ "dtes",	"Debug Trace Store"				},
-	{ "fxsr",	"FXSAVE and FXRSTOR instructions"		},
-	{ "kni",	"Streaming SIMD instructions"			},
-	{ "xmm",	"Streaming SIMD instructions"			},
-	{ "ht",		"HyperThreading"				},
-	{ "mp",		"Multiprocessing Capable"			},
-	{ "sse",	"SSE instructions"				},
-	{ "sse2",	"SSE2 (WNI) instructions"			},
-	{ "acc",	"Automatic Clock Control"			},
-	{ "ia64",	"IA64 Instructions"				},
-	{ "syscall",	"SYSCALL and SYSEXIT instructions"		},
-	{ "nx",		"No-execute Page Protection"			},
-	{ "xd",		"Execute Disable"				},
-	{ "clflush",	"Cache Line Flush instruction"			},
-	{ "acpi",	"Thermal Monitor and Software Controlled Clock"	},
-	{ "dts",	"Debug Store"					},
-	{ "ss",		"Self Snoop"					},
-	{ "tm",		"Thermal Monitor"				},
-	{ "pbe",	"Pending Break Enable"				},
-	{ "pb",		"Pending Break Enable"				},
-	{ "pn",		"Processor serial number"			},
-	{ "ds",		"Debug Store"					},
-	{ "xmm2",	"Streaming SIMD Extensions-2"			},
-	{ "xmm3",	"Streaming SIMD Extensions-3"			},
-	{ "selfsnoop",	"CPU self snoop"				},
-	{ "rdtscp",	"RDTSCP"					},
-	{ "recovery",	"CPU in recovery mode"				},
-	{ "longrun",	"Longrun power control"				},
-	{ "lrti",	"LongRun table interface"			},
-	{ "cxmmx",	"Cyrix MMX extensions"				},
-	{ "k6_mtrr",	"AMD K6 nonstandard MTRRs"			},
-	{ "cyrix_arr",	"Cyrix ARRs (= MTRRs)"				},
-	{ "centaur_mcr","Centaur MCRs (= MTRRs)"			},
-	{ "constant_tsc","TSC ticks at a constant rate"			},
-	{ "up",		"smp kernel running on up"			},
-	{ "fxsave_leak","FXSAVE leaks FOP/FIP/FOP"			},
-	{ "arch_perfmon","Intel Architectural PerfMon"			},
-	{ "pebs",	"Precise-Event Based Sampling"			},
-	{ "bts",	"Branch Trace Store"				},
-	{ "sync_rdtsc",	"RDTSC synchronizes the CPU"			},
-	{ "rep_good",	"rep microcode works well on this CPU"		},
-	{ "mwait",	"Monitor/Mwait support"				},
-	{ "ds_cpl",	"CPL Qualified Debug Store"			},
-	{ "est",	"Enhanced SpeedStep"				},
-	{ "tm2",	"Thermal Monitor 2"				},
-	{ "cid",	"Context ID"					},
-	{ "xtpr",	"Send Task Priority Messages"			},
-	{ "xstore",	"on-CPU RNG present (xstore insn)"		},
-	{ "xstore_en",	"on-CPU RNG enabled"				},
-	{ "xcrypt",	"on-CPU crypto (xcrypt insn)"			},
-	{ "xcrypt_en",	"on-CPU crypto enabled"				},
-	{ "ace2",	"Advanced Cryptography Engine v2"		},
-	{ "ace2_en",	"ACE v2 enabled"				},
-	{ "phe",	"PadLock Hash Engine"				},
-	{ "phe_en",	"PHE enabled"					},
-	{ "pmm",	"PadLock Montgomery Multiplier"			},
-	{ "pmm_en",	"PMM enabled"					},
-	{ "lahf_lm",	"LAHF/SAHF in long mode"			},
-	{ "cmp_legacy",	"HyperThreading not valid"			},
-	{ "lm",		"LAHF/SAHF in long mode"			},
-	{ "ds_cpl",	"CPL Qualified Debug Store"			},
-	{ "vmx",	"Virtualization support (Intel)"		},
-	{ "svm",	"Virtualization support (AMD)"			},
-	{ "est",	"Enhanced SpeedStep"				},
-	{ "tm2",	"Thermal Monitor 2"				},
-	{ "ssse3",	"Supplemental Streaming SIMD Extension 3"	},
-	{ "cx16",	"CMPXCHG16B instruction"			},
-	{ "xptr",	"Send Task Priority Messages"			},
-	{ "pebs",	"Precise Event Based Sampling"			},
-	{ "bts",	"Branch Trace Store"				},
-	{ "ida",	"Intel Dynamic Acceleration"			},
-	{ "arch_perfmon","Intel Architectural PerfMon"			},
-	{ "pni",	"Streaming SIMD Extension 3 (Prescott New Instruction)"	},
-	{ "rep_good",	"rep microcode works well on this CPU"		},
-	{ "ts",		"Thermal Sensor"				},
-	{ "sse3",	"Streaming SIMD Extension 3"			},
-	{ "sse4",	"Streaming SIMD Extension 4"			},
-	{ "tni",	"Tejas New Instruction"				},
-	{ "nni",	"Nehalem New Instruction"			},
-	{ "tpr",	"Task Priority Register"			},
-	{ "vid",	"Voltage Identifier"				},
-	{ "fid", 	"Frequency Identifier"				},
-	{ "dtes64", 	"64-bit Debug Store"				},
-	{ "monitor", 	"Monitor/Mwait support"				},
-	{ "sse4_1",     "Streaming SIMD Extension 4.1"                  },
-	{ "sse4_2",     "Streaming SIMD Extension 4.2"                  },
-	{ "nopl",       "NOPL instructions"                             },
-	{ "cxmmx",      "Cyrix MMX extensions"                          },
-	{ "xtopology",  "CPU topology enum extensions"                  },
-	{ "nonstop_tsc", "TSC does not stop in C states"                },
-	{ "eagerfpu",   "Non lazy FPU restor"                           },
-	{ "pclmulqdq",  "Perform a Carry-Less Multiplication of Quadword instruction" },
-	{ "smx",        "Safer mode: TXT (TPM support)"                 },
-	{ "pdcm",       "Performance capabilities"                      },
-	{ "pcid",       "Process Context Identifiers"                   },
-	{ "x2apic",     "x2APIC"                                        },
-	{ "popcnt",     "Set bit count instructions"                    },
-	{ "aes",        "Advanced Encryption Standard"                  },
-	{ "aes-ni",     "Advanced Encryption Standard (New Instructions)" },
-	{ "xsave",      "Save Processor Extended States"                },
-	{ "avx",        "Advanced Vector Instructions"                  },
-	{ NULL,		NULL						},
+/* Intel-defined CPU features, CPUID level 0x00000001 (edx)
+ * See also Wikipedia and table 2-27 in Intel Advanced Vector Extensions Programming Reference */
+    { "fpu",     N_("Onboard FPU (floating point support)") },
+    { "vme",     N_("Virtual 8086 mode enhancements") },
+    { "de",      N_("Debugging Extensions (CR4.DE)") },
+    { "pse",     N_("Page Size Extensions (4MB memory pages)") },
+    { "tsc",     N_("Time Stamp Counter (RDTSC)") },
+    { "msr",     N_("Model-Specific Registers (RDMSR, WRMSR)") },
+    { "pae",     N_("Physical Address Extensions (support for more than 4GB of RAM)") },
+    { "mce",     N_("Machine Check Exception") },
+    { "cx8",     N_("CMPXCHG8 instruction (64-bit compare-and-swap)") },
+    { "apic",    N_("Onboard APIC") },
+    { "sep",     N_("SYSENTER/SYSEXIT") },
+    { "mtrr",    N_("Memory Type Range Registers") },
+    { "pge",     N_("Page Global Enable (global bit in PDEs and PTEs)") },
+    { "mca",     N_("Machine Check Architecture") },
+    { "cmov",    N_("CMOV instructions (conditional move) (also FCMOV)") },
+    { "pat",     N_("Page Attribute Table") },
+    { "pse36",   N_("36-bit PSEs (huge pages)") },
+    { "pn",      N_("Processor serial number") },
+    { "clflush", N_("Cache Line Flush instruction") },
+    { "dts",     N_("Debug Store (buffer for debugging and profiling instructions), or alternately: digital thermal sensor") },
+    { "acpi",    N_("ACPI via MSR (temperature monitoring and clock speed modulation)") },
+    { "mmx",     N_("Multimedia Extensions") },
+    { "fxsr",    N_("FXSAVE/FXRSTOR, CR4.OSFXSR") },
+    { "sse",     N_("Intel SSE vector instructions") },
+    { "sse2",    N_("SSE2") },
+    { "ss",      N_("CPU self snoop") },
+    { "ht",      N_("Hyper-Threading") },
+    { "tm",      N_("Automatic clock control (Thermal Monitor)") },
+    { "ia64",    N_("Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)") },
+    { "pbe",     N_("Pending Break Enable (PBE# pin) wakeup support") },
+/* AMD-defined CPU features, CPUID level 0x80000001
+ * See also Wikipedia and table 2-23 in Intel Advanced Vector Extensions Programming Reference */
+    { "syscall",  N_("SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)") },
+    { "mp",       N_("Multiprocessing Capable.") },
+    { "nx",       N_("Execute Disable") },
+    { "mmxext",   N_("AMD MMX extensions") },
+    { "fxsr_opt", N_("FXSAVE/FXRSTOR optimizations") },
+    { "pdpe1gb",  N_("One GB pages (allows hugepagesz=1G)") },
+    { "rdtscp",   N_("Read Time-Stamp Counter and Processor ID") },
+    { "lm",       N_("Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)") },
+    { "3dnow",    N_("3DNow! (AMD vector instructions, competing with Intel's SSE1)") },
+    { "3dnowext", N_("AMD 3DNow! extensions") },
+/* Transmeta-defined CPU features, CPUID level 0x80860001 */
+    { "recovery", N_("CPU in recovery mode") },
+    { "longrun",  N_("Longrun power control") },
+    { "lrti",     N_("LongRun table interface") },
+/* Other features, Linux-defined mapping */
+    { "cxmmx",        N_("Cyrix MMX extensions") },
+    { "k6_mtrr",      N_("AMD K6 nonstandard MTRRs") },
+    { "cyrix_arr",    N_("Cyrix ARRs (= MTRRs)") },
+    { "centaur_mcr",  N_("Centaur MCRs (= MTRRs)") },
+    { "constant_tsc", N_("TSC ticks at a constant rate") },
+    { "up",           N_("SMP kernel running on UP") },
+    { "art",          N_("Always-Running Timer") },
+    { "arch_perfmon", N_("Intel Architectural PerfMon") },
+    { "pebs",         N_("Precise-Event Based Sampling") },
+    { "bts",          N_("Branch Trace Store") },
+    { "rep_good",     N_("rep microcode works well") },
+    { "acc_power",    N_("AMD accumulated power mechanism") },
+    { "nopl",         N_("The NOPL (0F 1F) instructions") },
+    { "xtopology",    N_("cpu topology enum extensions") },
+    { "tsc_reliable", N_("TSC is known to be reliable") },
+    { "nonstop_tsc",  N_("TSC does not stop in C states") },
+    { "extd_apicid",  N_("has extended APICID (8 bits)") },
+    { "amd_dcm",      N_("multi-node processor") },
+    { "aperfmperf",   N_("APERFMPERF") },
+    { "eagerfpu",     N_("Non lazy FPU restore") },
+    { "nonstop_tsc_s3", N_("TSC doesn't stop in S3 state") },
+    { "mce_recovery",   N_("CPU has recoverable machine checks") },
+/* Intel-defined CPU features, CPUID level 0x00000001 (ecx)
+ * See also Wikipedia and table 2-26 in Intel Advanced Vector Extensions Programming Reference */
+    { "pni",       N_("SSE-3 (“Prescott New Instructions”)") },
+    { "pclmulqdq", N_("Perform a Carry-Less Multiplication of Quadword instruction — accelerator for GCM)") },
+    { "dtes64",    N_("64-bit Debug Store") },
+    { "monitor",   N_("Monitor/Mwait support (Intel SSE3 supplements)") },
+    { "ds_cpl",    N_("CPL Qual. Debug Store") },
+    { "vmx",       N_("Hardware virtualization, Intel VMX") },
+    { "smx",       N_("Safer mode TXT (TPM support)") },
+    { "est",       N_("Enhanced SpeedStep") },
+    { "tm2",       N_("Thermal Monitor 2") },
+    { "ssse3",     N_("Supplemental SSE-3") },
+    { "cid",       N_("Context ID") },
+    { "sdbg",      N_("silicon debug") },
+    { "fma",       N_("Fused multiply-add") },
+    { "cx16",      N_("CMPXCHG16B") },
+    { "xtpr",      N_("Send Task Priority Messages") },
+    { "pdcm",      N_("Performance Capabilities") },
+    { "pcid",      N_("Process Context Identifiers") },
+    { "dca",       N_("Direct Cache Access") },
+    { "sse4_1",    N_("SSE-4.1") },
+    { "sse4_2",    N_("SSE-4.2") },
+    { "x2apic",    N_("x2APIC") },
+    { "movbe",     N_("Move Data After Swapping Bytes instruction") },
+    { "popcnt",    N_("Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i.e. bit count)") },
+    { "tsc_deadline_timer", N_("Tsc deadline timer") },
+    { "aes/aes-ni",  N_("Advanced Encryption Standard (New Instructions)") },
+    { "xsave",       N_("Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY") },
+    { "avx",         N_("Advanced Vector Extensions") },
+    { "f16c",        N_("16-bit fp conversions (CVT16)") },
+    { "rdrand",      N_("Read Random Number from hardware random number generator instruction") },
+    { "hypervisor",  N_("Running on a hypervisor") },
+/* VIA/Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001 */
+    { "rng",     N_("Random Number Generator present (xstore)") },
+    { "rng_en",  N_("Random Number Generator enabled") },
+    { "ace",     N_("on-CPU crypto (xcrypt)") },
+    { "ace_en",  N_("on-CPU crypto enabled") },
+    { "ace2",    N_("Advanced Cryptography Engine v2") },
+    { "ace2_en", N_("ACE v2 enabled") },
+    { "phe",     N_("PadLock Hash Engine") },
+    { "phe_en",  N_("PHE enabled") },
+    { "pmm",     N_("PadLock Montgomery Multiplier") },
+    { "pmm_en",  N_("PMM enabled") },
+/* More extended AMD flags: CPUID level 0x80000001, ecx */
+    { "lahf_lm",       N_("Load AH from Flags (LAHF) and Store AH into Flags (SAHF) in long mode") },
+    { "cmp_legacy",    N_("If yes HyperThreading not valid") },
+    { "svm",           N_("\"Secure virtual machine\": AMD-V") },
+    { "extapic",       N_("Extended APIC space") },
+    { "cr8_legacy",    N_("CR8 in 32-bit mode") },
+    { "abm",           N_("Advanced Bit Manipulation") },
+    { "sse4a",         N_("SSE-4A") },
+    { "misalignsse",   N_("indicates if a general-protection exception (#GP) is generated when some legacy SSE instructions operate on unaligned data. Also depends on CR0 and Alignment Checking bit") },
+    { "3dnowprefetch", N_("3DNow prefetch instructions") },
+    { "osvw",          N_("indicates OS Visible Workaround, which allows the OS to work around processor errata.") },
+    { "ibs",           N_("Instruction Based Sampling") },
+    { "xop",           N_("extended AVX instructions") },
+    { "skinit",        N_("SKINIT/STGI instructions") },
+    { "wdt",           N_("Watchdog timer") },
+    { "lwp",           N_("Light Weight Profiling") },
+    { "fma4",          N_("4 operands MAC instructions") },
+    { "tce",           N_("translation cache extension") },
+    { "nodeid_msr",    N_("NodeId MSR") },
+    { "tbm",           N_("Trailing Bit Manipulation") },
+    { "topoext",       N_("Topology Extensions CPUID leafs") },
+    { "perfctr_core",  N_("Core Performance Counter Extensions") },
+    { "perfctr_nb",    N_("NB Performance Counter Extensions") },
+    { "bpext",         N_("data breakpoint extension") },
+    { "ptsc",          N_("performance time-stamp counter") },
+    { "perfctr_l2",    N_("L2 Performance Counter Extensions") },
+    { "mwaitx",        N_("MWAIT extension (MONITORX/MWAITX)") },
+/* Auxiliary flags: Linux defined - For features scattered in various CPUID levels */
+    { "cpb",           N_("AMD Core Performance Boost") },
+    { "epb",           N_("IA32_ENERGY_PERF_BIAS support") },
+    { "hw_pstate",     N_("AMD HW-PState") },
+    { "proc_feedback", N_("AMD ProcFeedbackInterface") },
+    { "intel_pt",      N_("Intel Processor Tracing") },
+/* Virtualization flags: Linux defined */
+    { "tpr_shadow",   N_("Intel TPR Shadow") },
+    { "vnmi",         N_("Intel Virtual NMI") },
+    { "flexpriority", N_("Intel FlexPriority") },
+    { "ept",          N_("Intel Extended Page Table") },
+    { "vpid",         N_("Intel Virtual Processor ID") },
+    { "vmmcall",      N_("prefer VMMCALL to VMCALL") },
+/* Intel-defined CPU features, CPUID level 0x00000007:0 (ebx) */
+    { "fsgsbase",   N_("{RD/WR}{FS/GS}BASE instructions") },
+    { "tsc_adjust", N_("TSC adjustment MSR") },
+    { "bmi1",       N_("1st group bit manipulation extensions") },
+    { "hle",        N_("Hardware Lock Elision") },
+    { "avx2",       N_("AVX2 instructions") },
+    { "smep",       N_("Supervisor Mode Execution Protection") },
+    { "bmi2",       N_("2nd group bit manipulation extensions") },
+    { "erms",       N_("Enhanced REP MOVSB/STOSB") },
+    { "invpcid",    N_("Invalidate Processor Context ID") },
+    { "rtm",        N_("Restricted Transactional Memory") },
+    { "cqm",        N_("Cache QoS Monitoring") },
+    { "mpx",        N_("Memory Protection Extension") },
+    { "avx512f",    N_("AVX-512 foundation") },
+    { "avx512dq",   N_("AVX-512 Double/Quad instructions") },
+    { "rdseed",     N_("The RDSEED instruction") },
+    { "adx",        N_("The ADCX and ADOX instructions") },
+    { "smap",       N_("Supervisor Mode Access Prevention") },
+    { "clflushopt", N_("CLFLUSHOPT instruction") },
+    { "clwb",       N_("CLWB instruction") },
+    { "avx512pf",   N_("AVX-512 Prefetch") },
+    { "avx512er",   N_("AVX-512 Exponential and Reciprocal") },
+    { "avx512cd",   N_("AVX-512 Conflict Detection") },
+    { "sha_ni",     N_("SHA1/SHA256 Instruction Extensions") },
+    { "avx512bw",   N_("AVX-512 Byte/Word instructions") },
+    { "avx512vl",   N_("AVX-512 128/256 Vector Length extensions") },
+/* Extended state features, CPUID level 0x0000000d:1 (eax) */
+    { "xsaveopt",   N_("Optimized XSAVE") },
+    { "xsavec",     N_("XSAVEC") },
+    { "xgetbv1",    N_("XGETBV with ECX = 1") },
+    { "xsaves",     N_("XSAVES/XRSTORS") },
+/* Intel-defined CPU QoS sub-leaf, CPUID level 0x0000000F:0 (edx) */
+    { "cqm_llc",    N_("LLC QoS") },
+/* Intel-defined CPU QoS sub-leaf, CPUID level 0x0000000F:1 (edx) */
+    { "cqm_occup_llc",  N_("LLC occupancy monitoring") },
+    { "cqm_mbm_total",  N_("LLC total MBM monitoring") },
+    { "cqm_mbm_local",  N_("LLC local MBM monitoring") },
+/* AMD-defined CPU features, CPUID level 0x80000008 (ebx) */
+    { "clzero",     N_("CLZERO instruction") },
+    { "irperf",     N_("instructions retired performance counter") },
+/* Thermal and Power Management leaf, CPUID level 0x00000006 (eax) */
+    { "dtherm",     N_("digital thermal sensor") }, /* formerly dts */
+    { "ida",        N_("Intel Dynamic Acceleration") },
+    { "arat",       N_("Always Running APIC Timer") },
+    { "pln",        N_("Intel Power Limit Notification") },
+    { "pts",        N_("Intel Package Thermal Status") },
+    { "hwp",        N_("Intel Hardware P-states") },
+    { "hwp_notify", N_("HWP notification") },
+    { "hwp_act_window", N_("HWP Activity Window") },
+    { "hwp_epp",        N_("HWP Energy Performance Preference") },
+    { "hwp_pkg_req",    N_("HWP package-level request") },
+/* AMD SVM Feature Identification, CPUID level 0x8000000a (edx) */
+    { "npt",           N_("AMD Nested Page Table support") },
+    { "lbrv",          N_("AMD LBR Virtualization support") },
+    { "svm_lock",      N_("AMD SVM locking MSR") },
+    { "nrip_save",     N_("AMD SVM next_rip save") },
+    { "tsc_scale",     N_("AMD TSC scaling support") },
+    { "vmcb_clean",    N_("AMD VMCB clean bits support") },
+    { "flushbyasid",   N_("AMD flush-by-ASID support") },
+    { "decodeassists", N_("AMD Decode Assists support") },
+    { "pausefilter",   N_("AMD filtered pause intercept") },
+    { "pfthreshold",   N_("AMD pause filter threshold") },
+    { "avic",          N_("Virtual Interrupt Controller") },
+/* Intel-defined CPU features, CPUID level 0x00000007:0 (ecx) */
+    { "pku",       N_("Protection Keys for Userspace") },
+    { "ospke",     N_("OS Protection Keys Enable") },
+/* AMD-defined CPU features, CPUID level 0x80000007 (ebx) */
+    { "overflow_recov", N_("MCA overflow recovery support") },
+    { "succor",         N_("uncorrectable error containment and recovery") },
+    { "smca",           N_("Scalable MCA") },
+    { NULL, NULL},
 };
 
 static struct {
     char *name, *meaning;
 } bug_meaning[] = {
-	{ "f00f",        "Intel F00F bug"    },
-	{ "fdiv",        "FPU FDIV"          },
-	{ "coma",        "Cyrix 6x86 coma"   },
-	{ "tlb_mmatch",  "AMD Erratum 383"   },
-	{ "apic_c1e",    "AMD Erratum 400"   },
-	{ "11ap",        "Bad local APIC aka 11AP"  },
-	{ "fxsave_leak", "FXSAVE leaks FOP/FIP/FOP" },
-	{ "clflush_monitor",  "AAI65, CLFLUSH required before MONITOR" },
-	{ "sysret_ss_attrs",  "SYSRET doesn't fix up SS attrs" },
-	{ "espfix",      "IRET to 16-bit SS corrupts ESP/RSP high bits" },
-	{ "null_seg",    "Nulling a selector preserves the base" },         /* see: detect_null_seg_behavior() */
-	{ "swapgs_fence","SWAPGS without input dep on GS" },
-	{ "monitor",     "IPI required to wake up remote CPU" },
-	{ "amd_e400",    "AMD Erratum 400" },
-	{ NULL,		NULL						},
+	{ "f00f",        N_("Intel F00F bug")    },
+	{ "fdiv",        N_("FPU FDIV")          },
+	{ "coma",        N_("Cyrix 6x86 coma")   },
+	{ "tlb_mmatch",  N_("AMD Erratum 383")   },
+	{ "apic_c1e",    N_("AMD Erratum 400")   },
+	{ "11ap",        N_("Bad local APIC aka 11AP")  },
+	{ "fxsave_leak", N_("FXSAVE leaks FOP/FIP/FOP") },
+	{ "clflush_monitor",  N_("AAI65, CLFLUSH required before MONITOR") },
+	{ "sysret_ss_attrs",  N_("SYSRET doesn't fix up SS attrs") },
+	{ "espfix",      N_("IRET to 16-bit SS corrupts ESP/RSP high bits") },
+	{ "null_seg",    N_("Nulling a selector preserves the base") },         /* see: detect_null_seg_behavior() */
+	{ "swapgs_fence", N_("SWAPGS without input dep on GS") },
+	{ "monitor",     N_("IPI required to wake up remote CPU") },
+	{ "amd_e400",    N_("AMD Erratum 400") },
+	{ NULL,		NULL },
 };
 
 /* from arch/x86/kernel/cpu/powerflags.h */
 static struct {
     char *name, *meaning;
 } pm_meaning[] = {
-	{ "ts",            "temperature sensor"     },
-	{ "fid",           "frequency id control"   },
-	{ "vid",           "voltage id control"     },
-	{ "ttp",           "thermal trip"           },
-	{ "tm",            "hardware thermal control"   },
-	{ "stc",           "software thermal control"   },
-	{ "100mhzsteps",   "100 MHz multiplier control" },
-	{ "hwpstate",      "hardware P-state control"   },
-/*	{ "",              "tsc invariant mapped to constant_tsc" }, */
-	{ "cpb",           "core performance boost"     },
-	{ "eff_freq_ro",   "Readonly aperf/mperf"       },
-	{ "proc_feedback", "processor feedback interface" },
-	{ "acc_power",     "accumulated power mechanism"  },
+	{ "ts",            N_("temperature sensor")     },
+	{ "fid",           N_("frequency id control")   },
+	{ "vid",           N_("voltage id control")     },
+	{ "ttp",           N_("thermal trip")           },
+	{ "tm",            N_("hardware thermal control")   },
+	{ "stc",           N_("software thermal control")   },
+	{ "100mhzsteps",   N_("100 MHz multiplier control") },
+	{ "hwpstate",      N_("hardware P-state control")   },
+/*	{ "",              N_("tsc invariant mapped to constant_tsc") }, */
+	{ "cpb",           N_("core performance boost")     },
+	{ "eff_freq_ro",   N_("Readonly aperf/mperf")       },
+	{ "proc_feedback", N_("processor feedback interface") },
+	{ "acc_power",     N_("accumulated power mechanism")  },
 	{ NULL,		NULL						},
 };
 
 GHashTable *cpu_flags = NULL;
 
 static void
-populate_cpu_flags_list_internal(GHashTable *hash_table)
+populate_cpu_flags_list_internal()
 {
     int i;
 
@@ -477,15 +612,15 @@ populate_cpu_flags_list_internal(GHashTable *hash_table)
 
     for (i = 0; flag_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, flag_meaning[i].name,
-                            flag_meaning[i].meaning);
+                            _(flag_meaning[i].meaning) );
     }
     for (i = 0; bug_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, bug_meaning[i].name,
-                            bug_meaning[i].meaning);
+                            _(bug_meaning[i].meaning) );
     }
     for (i = 0; pm_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, pm_meaning[i].name,
-                            pm_meaning[i].meaning);
+                            _(pm_meaning[i].meaning) );
     }
 }
 
@@ -498,7 +633,7 @@ void cpu_flags_init(void)
 
     path = g_build_filename(g_get_home_dir(), ".hardinfo", "cpuflags.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-        populate_cpu_flags_list_internal(cpu_flags);
+        populate_cpu_flags_list_internal();
     } else {
         GKeyFile *flags_file;
 
@@ -513,7 +648,7 @@ void cpu_flags_init(void)
             if (!flag_keys) {
                 DEBUG("error while using %s as CPU flags database, falling back to internal",
                       path);
-                populate_cpu_flags_list_internal(cpu_flags);
+                populate_cpu_flags_list_internal();
             } else {
                 for (i = 0; flag_keys[i]; i++) {
                     gchar *meaning;
@@ -571,53 +706,60 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 
 gchar *processor_get_detailed_info(Processor * processor)
 {
-    gchar *tmp_flags, *tmp_bugs, *tmp_pm, *ret, *cache_info;
+    gchar *tmp_flags, *tmp_bugs, *tmp_pm, *tmp_cpufreq, *tmp_topology, *ret, *cache_info;
 
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
     tmp_bugs = processor_get_capabilities_from_flags(processor->bugs);
     tmp_pm = processor_get_capabilities_from_flags(processor->pm);
     cache_info = __cache_get_info_as_string(processor);
 
-    ret = g_strdup_printf(_("[Processor]\n"
-			  "Name=%s\n"
-			  "Family, model, stepping=%d, %d, %d (%s)\n"
-			  "Vendor=%s\n"
-			  "[Configuration]\n"
-			  "Cache Size=%dkb\n"
-			  "Frequency=%.2fMHz\n"
-			  "BogoMIPS=%.2f\n"
-			  "Byte Order=%s\n"
-			  "[Features]\n"
-			  "Has FPU=%s\n"
-			  "[Cache]\n"
-			  "%s\n"
-			  "[Power Management]\n"
-			  "%s"
-			  "[Bugs]\n"
-			  "%s"
-			  "[Capabilities]\n"
-			  "%s"),
-			  processor->model_name,
-			  processor->family,
-			  processor->model,
-			  processor->stepping,
-			  processor->strmodel,
-			  vendor_get_name(processor->vendor_id),
-			  processor->cache_size,
-			  processor->cpu_mhz, processor->bogomips,
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-			  "Little Endian",
-#else
-			  "Big Endian",
-#endif
-			  processor->has_fpu  ? processor->has_fpu  : "no",
-			  cache_info,
-			  tmp_pm, tmp_bugs, tmp_flags);
+    tmp_topology = cputopo_section_str(processor->cputopo);
+    tmp_cpufreq = cpufreq_section_str(processor->cpufreq);
+
+    ret = g_strdup_printf("[%s]\n"
+                       "%s=%s\n"
+                       "%s=%d, %d, %d (%s)\n" /* family, model, stepping (decoded name) */
+                       "%s=%s\n"      /* vendor */
+                       "[%s]\n"       /* configuration */
+                       "%s=%d %s\n"   /* cache size (from cpuinfo) */
+                       "%s=%.2f %s\n" /* frequency */
+                       "%s=%.2f\n"    /* bogomips */
+                       "%s=%s\n"      /* byte order */
+                       "%s"     /* topology */
+                       "%s"     /* frequency scaling */
+                       "[%s]\n" /* cache */
+                       "%s\n"
+                       "[%s]\n" /* pm */
+                       "%s"
+                       "[%s]\n" /* bugs */
+                       "%s"
+                       "[%s]\n" /* flags */
+                       "%s",
+                   _("Processor"),
+                   _("Model Name"), processor->model_name,
+                   _("Family, model, stepping"),
+                   processor->family,
+                   processor->model,
+                   processor->stepping,
+                   processor->strmodel,
+                   _("Vendor"), vendor_get_name(processor->vendor_id),
+                   _("Configuration"),
+                   _("Cache Size"), processor->cache_size, _("kb"),
+                   _("Frequency"), processor->cpu_mhz, _("MHz"),
+                   _("BogoMips"), processor->bogomips,
+                   _("Byte Order"), byte_order_str(),
+                   tmp_topology,
+                   tmp_cpufreq,
+                   _("Cache"), cache_info,
+                   _("Power Management"), tmp_pm,
+                   _("Bug Workarounds"), tmp_bugs,
+                   _("Capabilities"), tmp_flags );
     g_free(tmp_flags);
     g_free(tmp_bugs);
     g_free(tmp_pm);
     g_free(cache_info);
-
+    g_free(tmp_cpufreq);
+    g_free(tmp_topology);
     return ret;
 }
 

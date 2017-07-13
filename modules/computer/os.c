@@ -24,40 +24,54 @@
 static gchar *
 get_libc_version(void)
 {
-    FILE *libc;
-    gchar buf[256], *tmp, *p;
-    char *libc_paths[] = {
-		"/lib/ld-uClibc.so.0", "/lib64/ld-uClibc.so.0",
-		"/lib/libc.so.6", "/lib64/libc.so.6"
-	};
-	int i;
-	
-	for (i=0; i < 4; i++) {
-		if (g_file_test(libc_paths[i], G_FILE_TEST_EXISTS)) break;
-	}
-	switch (i) {
-		case 0: case 1: return g_strdup("uClibc Library");
-		case 2: case 3: break; // gnu libc, continue processing
-		default: goto err;
-	}
+    static const struct {
+	const char *test_cmd;
+	const char *match_str;
+	const char *lib_name;
+	gboolean try_ver_str;
+	gboolean use_stderr;
+    } libs[] = {
+	{ "ldconfig -V", "GLIBC", N_("GNU C Library"), TRUE, FALSE},
+	{ "ldconfig -V", "GNU libc", N_("GNU C Library"), TRUE, FALSE},
+	{ "ldconfig -v", "uClibc", N_("uClibc or uClibc-ng"), FALSE, FALSE},
+	{ "diet", "diet version", N_("diet libc"), TRUE, TRUE},
+	{ }
+    };
+    int i;
 
-    libc = popen(libc_paths[i], "r");
-    if (!libc) goto err;
+    for (i = 0; libs[i].test_cmd; i++) {
+        gboolean spawned;
+        gchar *out, *err, *p;
 
-    (void)fgets(buf, 256, libc);
-    if (pclose(libc)) goto err;
+        spawned = g_spawn_command_line_sync(libs[i].test_cmd,
+            &out, &err, NULL, NULL);
+        if (!spawned)
+            continue;
 
-    tmp = strstr(buf, "version ");
-    if (!tmp) goto err;
+        if (libs[i].use_stderr) {
+            p = strend(idle_free(err), '\n');
+            g_free(out);
+        } else {
+            p = strend(idle_free(out), '\n');
+            g_free(err);
+        }
 
-    p = strchr(tmp, ',');
-    if (p) *p = '\0';
-    else goto err;
+        if (!p || !strstr(p, libs[i].match_str))
+            continue;
 
-    return g_strdup_printf(_("GNU C Library version %s (%sstable)"),
-                           strchr(tmp, ' ') + 1,
-                           strstr(buf, " stable ") ? "" : _("un"));
-  err:
+        if (libs[i].try_ver_str) {
+            /* skip the first word, likely "ldconfig" or name of utility */
+            const gchar *ver_str = strchr(p, ' ');
+
+            if (ver_str) {
+                return g_strdup_printf("%s / %s", _(libs[i].lib_name),
+                    ver_str + 1);
+            }
+        }
+
+	return g_strdup(_(libs[i].lib_name));
+    }
+
     return g_strdup(_("Unknown"));
 }
 
@@ -109,7 +123,7 @@ detect_desktop_environment(OperatingSystem * os)
     } else {
       unknown:
         os->desktop = NULL;
-        
+
 	if (!g_getenv("DISPLAY")) {
 	    os->desktop = g_strdup(_("Terminal"));
 	} else {
@@ -144,12 +158,17 @@ detect_desktop_environment(OperatingSystem * os)
 gchar *
 computer_get_entropy_avail(void)
 {
+    gchar tab_entropy_fstr[][32] = {
+      N_(/*/bits of entropy for rng (0)*/              "(None or not available)"),
+      N_(/*/bits of entropy for rng (low/poor value)*/  "%d bits (low)"),
+      N_(/*/bits of entropy for rng (medium value)*/    "%d bits (medium)"),
+      N_(/*/bits of entropy for rng (high/good value)*/ "%d bits (healthy)")
+    };
     gint bits = h_sysfs_read_int("/proc/sys/kernel/random", "entropy_avail");
-    if (bits < 200)
-        return g_strdup_printf("%d bits (low)", bits);
-    if (bits < 3000)
-        return g_strdup_printf("%d bits (medium)", bits);
-    return g_strdup_printf("%d bits (healthy)", bits);
+    if (bits > 3000) return g_strdup_printf(_(tab_entropy_fstr[3]), bits);
+    if (bits > 200)  return g_strdup_printf(_(tab_entropy_fstr[2]), bits);
+    if (bits > 1)    return g_strdup_printf(_(tab_entropy_fstr[1]), bits);
+    return g_strdup_printf(_(tab_entropy_fstr[0]), bits);
 }
 
 OperatingSystem *

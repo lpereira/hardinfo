@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
-
+option(HARDINFO_NOSYNC "Disable database sync via libsoup" 1)
+set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
+set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
 
@@ -20,8 +22,8 @@ endif()
 if(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "i[3-6]86")
 	set(HARDINFO_ARCH "x86")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "x86_64")
-	set(HARDINFO_ARCH "x86_64")
-elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "ppc{32,64}")
+	set(HARDINFO_ARCH "x86")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "(ppc|ppc32|ppc64|ppc64le)")
 	set(HARDINFO_ARCH "ppc")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "mips")
 	set(HARDINFO_ARCH "mips")
@@ -31,6 +33,8 @@ elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sparc{32,64}")
 	set(HARDINFO_ARCH "sparc")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "arm.*")
 	set(HARDINFO_ARCH "arm")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64.*")
+	set(HARDINFO_ARCH "arm")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "ia64")
 	set(HARDINFO_ARCH "ia64")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "alpha")
@@ -39,10 +43,20 @@ elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "s390.*")
 	set(HARDINFO_ARCH "s390")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "m68k")
 	set(HARDINFO_ARCH "m68k")
-elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sh{3,4}")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sh[3-5]")
 	set(HARDINFO_ARCH "sh")
+elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "(riscv|riscv32|riscv64)")
+	set(HARDINFO_ARCH "riscv")
 else()
 	message(FATAL_ERROR "Unsupported architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+endif()
+
+if (OVRARCH)
+	set(HARDINFO_ARCH ${OVRARCH})
+endif()
+if (OVRCPUINFO)
+	add_definitions(-DPROC_CPUINFO=${OVRCPUINFO})
+	message(STATUS "/proc/cpuinfo override: ${OVRCPUINFO}")
 endif()
 
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
@@ -53,7 +67,11 @@ add_subdirectory(po)
 
 include(FindPkgConfig)
 pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
-pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
+if(NOT HARDINFO_NOSYNC)
+	pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
+endif()
+
+include(FindZLIB REQUIRED)
 
 include_directories(
 	${CMAKE_SOURCE_DIR}
@@ -62,6 +80,7 @@ include_directories(
 	${CMAKE_BINARY_DIR}
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
+	${ZLIB_INCLUDE_DIRS}
 )
 link_directories(
 	${GTK_LIBRARY_DIRS}
@@ -97,6 +116,7 @@ set(MODULE_computer_SOURCES
 )
 set(MODULE_devices_SOURCES
 	modules/devices.c
+	modules/devices/cpu_util.c
 	modules/devices/${HARDINFO_ARCH}/processor.c
 	modules/devices/battery.c
 	modules/devices/devmemory.c
@@ -130,6 +150,7 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/nqueens.c
 	modules/benchmark/raytrace.c
 	modules/benchmark/sha1.c
+	modules/benchmark/zlib.c
 )
 
 set_source_files_properties(
@@ -169,6 +190,7 @@ target_link_libraries(hardinfo
 	${LIBSOUP_LIBRARIES}
 	hardinfo-shell
 	m
+	${ZLIB_LIBRARIES}
 )
 
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)

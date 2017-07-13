@@ -20,7 +20,6 @@ macro(add_translations_catalog NLS_PACKAGE)
     add_custom_target (pot COMMENT “Building translation catalog.”)
     find_program (XGETTEXT_EXECUTABLE xgettext)
 
-
     set(C_SOURCE "")
 
     foreach(FILES_INPUT ${ARGN})
@@ -36,6 +35,6 @@ macro(add_translations_catalog NLS_PACKAGE)
 
     add_custom_command (TARGET pot COMMAND
         ${XGETTEXT_EXECUTABLE} -d ${NLS_PACKAGE} -o ${CMAKE_CURRENT_SOURCE_DIR}/${NLS_PACKAGE}.pot
-        ${VALA_SOURCE} ${C_SOURCE} --keyword="_" --keyword="N_" --from-code=UTF-8
+        ${VALA_SOURCE} ${C_SOURCE} -k_ -kN_ -kC_:1c,2 -kNC_:1c,2 -c/ --from-code=UTF-8
         )
 endmacro()

@@ -36,6 +36,7 @@ void scan_bfsh(gboolean reload);
 void scan_cryptohash(gboolean reload);
 void scan_fib(gboolean reload);
 void scan_nqueens(gboolean reload);
+void scan_zlib(gboolean reload);
 void scan_gui(gboolean reload);
 
 gchar *callback_fft();
@@ -44,6 +45,7 @@ gchar *callback_bfsh();
 gchar *callback_fib();
 gchar *callback_cryptohash();
 gchar *callback_nqueens();
+gchar *callback_zlib();
 gchar *callback_gui();
 
 static ModuleEntry entries[] = {
@@ -51,6 +53,7 @@ static ModuleEntry entries[] = {
     {N_("CPU CryptoHash"), "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NONE},
     {N_("CPU Fibonacci"), "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NONE},
     {N_("CPU N-Queens"), "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NONE},
+    {N_("CPU Zlib"), "file-roller.png", callback_zlib, scan_zlib, MODULE_FLAG_NONE},
     {N_("FPU FFT"), "fft.png", callback_fft, scan_fft, MODULE_FLAG_NONE},
     {N_("FPU Raytracing"), "raytrace.png", callback_raytr, scan_raytr, MODULE_FLAG_NONE},
     {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
@@ -306,6 +309,12 @@ gchar *callback_fib()
 				     "CPU Fibonacci");
 }
 
+gchar *callback_zlib()
+{
+    return benchmark_include_results(bench_results[BENCHMARK_ZLIB],
+				     "CPU Zlib");
+}
+
 typedef struct _BenchmarkDialog BenchmarkDialog;
 struct _BenchmarkDialog {
     GtkWidget *dialog;
@@ -504,12 +513,20 @@ void scan_fib(gboolean reload)
     SCAN_END();
 }
 
+void scan_zlib(gboolean reload)
+{
+    SCAN_START();
+    do_benchmark(benchmark_zlib, BENCHMARK_ZLIB);
+    SCAN_END();
+}
+
 const gchar *hi_note_func(gint entry)
 {
     switch (entry) {
     case BENCHMARK_CRYPTOHASH:
 	return _("Results in MiB/second. Higher is better.");
 
+    case BENCHMARK_ZLIB:
     case BENCHMARK_GUI:
         return _("Results in HIMarks. Higher is better.");
 
@@ -566,7 +583,7 @@ static gchar *get_benchmark_results()
 				    "machine=%s\n"
 				    "machineclock=%s\n"
 				    "machineram=%s\n"
-				    "nbenchmarks=%d\n",
+				    "nbenchmarks=%zu\n",
 				    machine,
 				    machineclock,
 				    machineram,

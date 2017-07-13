@@ -19,11 +19,18 @@
 #ifndef __PROCESSOR_PLATFORM_H__
 #define __PROCESSOR_PLATFORM_H__
 
+#include "cpu_util.h"
+
 struct _Processor {
+    gint id;
+    gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
+    cpu_topology_data *cputopo;
+    cpufreq_data *cpufreq;
+
     gchar *model_name;
-    gchar *vendor_id;
-    gint cache_size;
-    gfloat bogomips, cpu_mhz;
+    gchar *revision;
+    /* gint cache_size; */
+    gfloat bogomips;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */

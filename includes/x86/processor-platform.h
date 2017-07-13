@@ -19,6 +19,8 @@
 #ifndef __PROCESSOR_PLATFORM_H__
 #define __PROCESSOR_PLATFORM_H__
 
+#include "cpu_util.h"
+
 typedef struct _ProcessorCache ProcessorCache;
 
 struct _ProcessorCache {
@@ -37,15 +39,18 @@ struct _Processor {
     gchar *bugs;
     gchar *pm;             /* power management features */
     gint cache_size;
-    gfloat bogomips, cpu_mhz;
+    gfloat bogomips;
+
+    gint id;
+    gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
+    cpu_topology_data *cputopo;
+    cpufreq_data *cpufreq;
 
     gchar *has_fpu;
     gchar *bug_fdiv, *bug_hlt, *bug_f00f, *bug_coma;
 
     gint model, family, stepping;
     gchar *strmodel;
-
-    gint id;
 
     GSList *cache;
 };

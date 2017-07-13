@@ -23,10 +23,10 @@ GHashTable *memlabels = NULL;
 
 void scan_memory_do(void)
 {
-    gchar **keys, *tmp;
+    gchar **keys, *tmp, *tmp_label;
     static gint offset = -1;
     gint i;
-    
+
     if (offset == -1) {
         /* gah. linux 2.4 adds three lines of data we don't need in
            /proc/meminfo */
@@ -38,38 +38,42 @@ void scan_memory_do(void)
             offset = 0;
         }
     }
-    
+
     g_file_get_contents("/proc/meminfo", &meminfo, NULL, NULL);
-    
+
     keys = g_strsplit(meminfo, "\n", 0);
 
     g_free(meminfo);
     g_free(lginterval);
-    
+
     meminfo = g_strdup("");
     lginterval = g_strdup("");
-    
+
     for (i = offset; keys[i]; i++) {
         gchar **newkeys = g_strsplit(keys[i], ":", 0);
-        
+
         if (!newkeys[0]) {
             g_strfreev(newkeys);
             break;
         }
-        
+
+        g_strstrip(newkeys[0]);
         g_strstrip(newkeys[1]);
-        
-        if ((tmp = g_hash_table_lookup(memlabels, newkeys[0]))) {
-            g_free(newkeys[0]);
-            newkeys[0] = g_strdup(tmp);
-        }
-        
+
+        /* try to find a localizable label */
+        tmp = g_hash_table_lookup(memlabels, newkeys[0]);
+        if (tmp)
+            tmp_label = _(tmp);
+        else
+            tmp_label = ""; /* or newkeys[0] */
+        /* although it doesn't matter... */
+
         moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
 
-        tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "\n", NULL);
+        tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "|", tmp_label, "\n", NULL);
         g_free(meminfo);
         meminfo = tmp;
-        
+
         tmp = g_strconcat(lginterval,
                           "UpdateInterval$", newkeys[0], "=1000\n", NULL);
         g_free(lginterval);
@@ -86,21 +90,21 @@ void init_memory_labels(void)
         char *proc_label;
         char *real_label;
     } proc2real[] = {
-        { "MemTotal", N_("Total Memory") },
-        { "MemFree", N_("Free Memory") },
-        { "SwapCached",	N_("Cached Swap") },
-        { "HighTotal", N_("High Memory") },
-        { "HighFree", N_("Free High Memory") },
-        { "LowTotal", N_("Low Memory") },
-        { "LowFree", N_("Free Low Memory") },
-        { "SwapTotal", N_("Virtual Memory") },
-        { "SwapFree", N_("Free Virtual Memory") },
+        { "MemTotal",   N_("Total Memory") },
+        { "MemFree",    N_("Free Memory") },
+        { "SwapCached", N_("Cached Swap") },
+        { "HighTotal",  N_("High Memory") },
+        { "HighFree",   N_("Free High Memory") },
+        { "LowTotal",   N_("Low Memory") },
+        { "LowFree",    N_("Free Low Memory") },
+        { "SwapTotal",  N_("Virtual Memory") },
+        { "SwapFree",   N_("Free Virtual Memory") },
         { NULL },
     };
     gint i;
 
     memlabels = g_hash_table_new(g_str_hash, g_str_equal);
-    
+
     for (i = 0; proc2real[i].proc_label; i++) {
         g_hash_table_insert(memlabels, proc2real[i].proc_label,
             _(proc2real[i].real_label));

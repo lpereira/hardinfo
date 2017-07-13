@@ -1,0 +1,19 @@
+cpu                     : Alpha
+cpu model               : EV56
+cpu variation           : 7
+cpu revision            : 0
+cpu serial number       :
+system type             : Rawhide
+system variation        : Tincup
+system revision         : 0
+system serial number    : BT00000000
+cycle frequency [Hz]    : 531914893
+timer frequency [Hz]    : 1200.00
+page size [bytes]       : 8192
+phys. address bits      : 40
+max. addr. space #      : 127
+BogoMIPS                : 1063.92
+kernel unaligned acc    : 0 (pc=0,va=0)
+user unaligned acc      : 0 (pc=0,va=0)
+platform string         : AlphaServer 1200 5/533 4MB
+cpus detected : 1

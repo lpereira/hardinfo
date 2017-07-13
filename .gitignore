@@ -4,3 +4,7 @@ config.h
 *.o
 *~
 arch/this
+build/
+test/build-*
+po/*.old
+

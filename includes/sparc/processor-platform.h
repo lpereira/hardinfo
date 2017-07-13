@@ -23,6 +23,7 @@ struct _Processor {
     gchar *model_name;
     gchar *has_fpu;
     gfloat cpu_mhz;
+    gchar *cpucaps;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */

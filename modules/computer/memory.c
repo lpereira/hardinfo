@@ -28,23 +28,23 @@ computer_get_memory(void)
 
     procmem = fopen("/proc/meminfo", "r");
     if (!procmem)
-	return NULL;
+        return NULL;
     mi = g_new0(MemoryInfo, 1);
 
     while (fgets(buffer, 128, procmem)) {
-	gchar **tmp = g_strsplit(buffer, ":", 2);
+        gchar **tmp = g_strsplit(buffer, ":", 2);
 
-	tmp[0] = g_strstrip(tmp[0]);
-	tmp[1] = g_strstrip(tmp[1]);
+        tmp[0] = g_strstrip(tmp[0]);
+        tmp[1] = g_strstrip(tmp[1]);
 
-	get_int("MemTotal", mi->total);
-	get_int("MemFree", mi->free);
-	get_int("Cached", mi->cached);
+        get_int("MemTotal", mi->total);
+        get_int("MemFree", mi->free);
+        get_int("Cached", mi->cached);
 
-	g_strfreev(tmp);
+        g_strfreev(tmp);
     }
     fclose(procmem);
-    
+
     mi->used = mi->total - mi->free;
 
     mi->total  /= 1000;

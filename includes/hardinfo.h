@@ -25,8 +25,10 @@
 #include "vendor.h"
 #include <libintl.h>
 #include <locale.h>
-#define _(STRING)    gettext(STRING)
+#define _(STRING) gettext(STRING)
 #define N_(STRING) (STRING)
+#define C_(CTX, STRING) pgettext(CTX, STRING)
+#define NC_(CTX, STRING) (STRING)
 
 typedef enum {
   MODULE_FLAG_NONE = 0,
@@ -46,9 +48,9 @@ struct _ProgramParameters {
   gboolean list_modules;
   gboolean autoload_deps;
   gboolean run_xmlrpc_server;
-  
+
   gint     report_format;
-  
+
   gchar  **use_modules;
   gchar   *run_benchmark;
   gchar   *path_lib;
@@ -160,5 +162,11 @@ void moreinfo_del_with_prefix(gchar *prefix);
 void moreinfo_clear(void);
 gchar *moreinfo_lookup_with_prefix(gchar *prefix, gchar *key);
 gchar *moreinfo_lookup(gchar *key);
+
+#if !GLIB_CHECK_VERSION(2,44,0)
+    /* g_strv_contains() requires glib>2.44
+     * fallback for older versions in hardinfo/util.c */
+gboolean g_strv_contains(const gchar * const * strv, const gchar *str);
+#endif
 
 #endif				/* __HARDINFO_H__ */
