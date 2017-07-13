@@ -171,6 +171,36 @@ computer_get_entropy_avail(void)
     return g_strdup_printf(_(tab_entropy_fstr[0]), bits);
 }
 
+gchar *
+computer_get_language(void)
+{
+    gchar *tab_lang_env[] =
+        { "LANGUAGE", "LANG", "LC_ALL", "LC_MESSAGES", NULL };
+    gchar *lc = NULL, *env = NULL, *ret = NULL;
+    gint i = 0;
+
+    lc = setlocale(LC_ALL, NULL);
+
+    while (tab_lang_env[i] != NULL) {
+        env = g_strdup( g_getenv(tab_lang_env[i]) );
+        if (env != NULL)  break;
+    }
+
+    if (env != NULL)
+        if (lc != NULL)
+            ret = g_strdup_printf("%s (%s)", lc, env);
+        else
+            ret = g_strdup_printf("%s", env);
+    else
+        if (lc != NULL)
+            ret = g_strdup_printf("%s", lc);
+
+    if (ret == NULL)
+        ret = g_strdup( _("(Unknown)") );
+
+    return ret;
+}
+
 OperatingSystem *
 computer_get_os(void)
 {
@@ -263,7 +293,7 @@ computer_get_os(void)
     os->kernel = g_strdup_printf("%s %s (%s)", utsbuf.sysname,
 				 utsbuf.release, utsbuf.machine);
     os->hostname = g_strdup(utsbuf.nodename);
-    os->language = g_strdup(g_getenv("LC_MESSAGES"));
+    os->language = computer_get_language();
     os->homedir = g_strdup(g_get_home_dir());
     os->username = g_strdup_printf("%s (%s)",
 				   g_get_user_name(), g_get_real_name());

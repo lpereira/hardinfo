@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-12 23:20-0500\n"
+"POT-Creation-Date: 2017-07-13 00:27-0500\n"
 "PO-Revision-Date: 2013-02-18 17:11-0300\n"
 "Last-Translator: Fernando López <flopez@linti.unlp.edu.ar>\n"
 "Language-Team: Fernando López <soportelihuen@linti.unlp.edu.ar>\n"
@@ -43,13 +43,11 @@ msgstr ""
 "  Prefijo de bibliotecas: %s\n"
 "  Compilado en:           %s %s (%s)\n"
 
-#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57
-#: modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57 modules/devices/printers.c:138
 msgid "Yes"
 msgstr "Sí"
 
-#: hardinfo/hardinfo.c:57 modules/computer.c:545
-#: modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:57 modules/computer.c:545 modules/devices/printers.c:138
 msgid "No"
 msgstr "_No"
 
@@ -743,7 +741,7 @@ msgstr "[Arranques]\n"
 msgid "Summary"
 msgstr "Resumen"
 
-#: modules/computer.c:69 modules/computer.c:407
+#: modules/computer.c:69 modules/computer.c:407 modules/computer.c:680
 msgid "Operating System"
 msgstr "Sistema operativo"
 
@@ -998,7 +996,7 @@ msgid "Computer Name"
 msgstr ""
 
 #: modules/computer.c:466
-msgid "#Language"
+msgid "Language"
 msgstr ""
 
 #: modules/computer.c:467
@@ -1143,7 +1141,35 @@ msgstr ""
 "[Grupos]\n"
 "%s\n"
 
-#: modules/computer.c:733
+#: modules/computer.c:681 modules/devices/sparc/processor.c:67
+msgid "CPU"
+msgstr ""
+
+#: modules/computer.c:681
+msgid "RAM"
+msgstr ""
+
+#: modules/computer.c:681
+msgid "Motherboard"
+msgstr ""
+
+#: modules/computer.c:681
+msgid "Graphics"
+msgstr ""
+
+#: modules/computer.c:682 modules/devices.c:99
+msgid "Storage"
+msgstr "Almacenamiento"
+
+#: modules/computer.c:682 modules/devices.c:95
+msgid "Printers"
+msgstr "Impresoras"
+
+#: modules/computer.c:682
+msgid "Audio"
+msgstr ""
+
+#: modules/computer.c:737
 msgid "Gathers high-level computer information"
 msgstr "Obtiene información del equipo de alto nivel"
 
@@ -1217,7 +1243,11 @@ msgstr ""
 msgid "%d bits (healthy)"
 msgstr ""
 
-#: modules/computer/os.c:204
+#: modules/computer/os.c:199
+msgid "(Unknown)"
+msgstr ""
+
+#: modules/computer/os.c:234
 msgid "Unknown distribution"
 msgstr "Distribución desconocida"
 
@@ -1448,8 +1478,7 @@ msgid "Part"
 msgstr ""
 
 #: modules/devices/arm/processor.c:247 modules/devices/ia64/processor.c:154
-#: modules/devices/parisc/processor.c:148
-#: modules/devices/riscv/processor.c:175
+#: modules/devices/parisc/processor.c:148 modules/devices/riscv/processor.c:175
 msgid "Architecture"
 msgstr ""
 
@@ -1561,10 +1590,6 @@ msgstr "Dispositivos PCI"
 msgid "USB Devices"
 msgstr "Dispositivos USB"
 
-#: modules/devices.c:95
-msgid "Printers"
-msgstr "Impresoras"
-
 #: modules/devices.c:96
 msgid "Battery"
 msgstr "Batería"
@@ -1572,10 +1597,6 @@ msgstr "Batería"
 #: modules/devices.c:97
 msgid "Sensors"
 msgstr "Sensores"
-
-#: modules/devices.c:99
-msgid "Storage"
-msgstr "Almacenamiento"
 
 #: modules/devices.c:101
 msgid "DMI"
@@ -1976,10 +1997,6 @@ msgstr ""
 
 #: modules/devices/sh/processor.c:81
 msgid "Module Frequency"
-msgstr ""
-
-#: modules/devices/sparc/processor.c:67
-msgid "CPU"
 msgstr ""
 
 #: modules/devices/spd-decode.c:1475
