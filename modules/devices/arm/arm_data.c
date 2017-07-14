@@ -23,11 +23,11 @@
 #include <string.h>
 #include "arm_data.h"
 
-#ifndef _
-#define _(String) String
+#ifndef C_
+#define C_(Ctx, String) String
 #endif
-#ifndef N_
-#define N_(String) String
+#ifndef NC_
+#define NC_(Ctx, String) String
 #endif
 
 /* sources:
@@ -39,37 +39,37 @@ static struct {
     char *name, *meaning;
 } tab_flag_meaning[] = {
     /* arm/hw_cap */
-    { "swp",      N_("SWP instruction (atomic read-modify-write)") },
-    { "half",     N_("Half-word loads and stores") },
-    { "thumb",    N_("Thumb (16-bit instruction set)") },
-    { "26bit",    N_("26-Bit Model (Processor status register folded into program counter)") },
-    { "fastmult", N_("32x32->64-bit multiplication") },
-    { "fpa",      N_("Floating point accelerator") },
-    { "vfp",      N_("VFP (early SIMD vector floating point instructions)") },
-    { "edsp",     N_("DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)") },
-    { "java",     N_("Jazelle (Java bytecode accelerator)") },
-    { "iwmmxt",   N_("SIMD instructions similar to Intel MMX") },
-    { "crunch",   N_("MaverickCrunch coprocessor (if kernel support enabled)") },
-    { "thumbee",  N_("ThumbEE") },
-    { "neon",     N_("Advanced SIMD/NEON on AArch32") },
-    { "evtstrm",  N_("kernel event stream using generic architected timer") },
-    { "vfpv3",    N_("VFP version 3") },
-    { "vfpv3d16", N_("VFP version 3 with 16 D-registers") },
-    { "vfpv4",    N_("VFP version 4 with fast context switching") },
-    { "vfpd32",   N_("VFP with 32 D-registers") },
-    { "tls",      N_("TLS register") },
-    { "idiva",    N_("SDIV and UDIV hardware division in ARM mode") },
-    { "idivt",    N_("SDIV and UDIV hardware division in Thumb mode") },
-    { "lpae",     N_("40-bit Large Physical Address Extension") },
+    { "swp",      NC_("arm-flag", /*/flag:swp*/      "SWP instruction (atomic read-modify-write)") },
+    { "half",     NC_("arm-flag", /*/flag:half*/     "Half-word loads and stores") },
+    { "thumb",    NC_("arm-flag", /*/flag:thumb*/    "Thumb (16-bit instruction set)") },
+    { "26bit",    NC_("arm-flag", /*/flag:26bit*/    "26-Bit Model (Processor status register folded into program counter)") },
+    { "fastmult", NC_("arm-flag", /*/flag:fastmult*/ "32x32->64-bit multiplication") },
+    { "fpa",      NC_("arm-flag", /*/flag:fpa*/      "Floating point accelerator") },
+    { "vfp",      NC_("arm-flag", /*/flag:vfp*/      "VFP (early SIMD vector floating point instructions)") },
+    { "edsp",     NC_("arm-flag", /*/flag:edsp*/     "DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)") },
+    { "java",     NC_("arm-flag", /*/flag:java*/     "Jazelle (Java bytecode accelerator)") },
+    { "iwmmxt",   NC_("arm-flag", /*/flag:iwmmxt*/   "SIMD instructions similar to Intel MMX") },
+    { "crunch",   NC_("arm-flag", /*/flag:crunch*/   "MaverickCrunch coprocessor (if kernel support enabled)") },
+    { "thumbee",  NC_("arm-flag", /*/flag:thumbee*/  "ThumbEE") },
+    { "neon",     NC_("arm-flag", /*/flag:neon*/     "Advanced SIMD/NEON on AArch32") },
+    { "evtstrm",  NC_("arm-flag", /*/flag:evtstrm*/  "Kernel event stream using generic architected timer") },
+    { "vfpv3",    NC_("arm-flag", /*/flag:vfpv3*/    "VFP version 3") },
+    { "vfpv3d16", NC_("arm-flag", /*/flag:vfpv3d16*/ "VFP version 3 with 16 D-registers") },
+    { "vfpv4",    NC_("arm-flag", /*/flag:vfpv4*/    "VFP version 4 with fast context switching") },
+    { "vfpd32",   NC_("arm-flag", /*/flag:vfpd32*/   "VFP with 32 D-registers") },
+    { "tls",      NC_("arm-flag", /*/flag:tls*/      "TLS register") },
+    { "idiva",    NC_("arm-flag", /*/flag:idiva*/    "SDIV and UDIV hardware division in ARM mode") },
+    { "idivt",    NC_("arm-flag", /*/flag:idivt*/    "SDIV and UDIV hardware division in Thumb mode") },
+    { "lpae",     NC_("arm-flag", /*/flag:lpae*/     "40-bit Large Physical Address Extension") },
     /* arm/hw_cap2 */
-    { "pmull",    N_("64x64->128-bit F2m multiplication (arch>8)") },
-    { "aes",      N_("Crypto:AES (arch>8)") },
-    { "sha1",     N_("Crypto:SHA1 (arch>8)") },
-    { "sha2",     N_("Crypto:SHA2 (arch>8)") },
-    { "crc32",    N_("CRC32 checksum instructions (arch>8)") },
+    { "pmull",    NC_("arm-flag", /*/flag:pmull*/    "64x64->128-bit F2m multiplication (arch>8)") },
+    { "aes",      NC_("arm-flag", /*/flag:aes*/      "Crypto:AES (arch>8)") },
+    { "sha1",     NC_("arm-flag", /*/flag:sha1*/     "Crypto:SHA1 (arch>8)") },
+    { "sha2",     NC_("arm-flag", /*/flag:sha2*/     "Crypto:SHA2 (arch>8)") },
+    { "crc32",    NC_("arm-flag", /*/flag:crc32*/    "CRC32 checksum instructions (arch>8)") },
     /* arm64/hw_cap */
     { "fp",       NULL },
-    { "asimd",    N_("Advanced SIMD/NEON on AArch64 (arch>8)") },
+    { "asimd",    NC_("arm-flag", /*/flag:asimd*/    "Advanced SIMD/NEON on AArch64 (arch>8)") },
     { "atomics",  NULL },
     { "fphp",     NULL },
     { "asimdhp",  NULL },
@@ -151,7 +151,7 @@ const char *arm_flag_meaning(const char *flag) {
     while(tab_flag_meaning[i].name != NULL) {
         if (strcmp(tab_flag_meaning[i].name, flag) == 0) {
             if (tab_flag_meaning[i].meaning != NULL)
-                return _(tab_flag_meaning[i].meaning);
+                return C_("arm-flag", tab_flag_meaning[i].meaning);
             else return NULL;
         }
         i++;
