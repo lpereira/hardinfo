@@ -91,26 +91,35 @@ gchar *find_program(gchar *program_name)
 gchar *seconds_to_string(unsigned int seconds)
 {
     unsigned int hours, minutes, days;
+    const gchar *days_fmt, *hours_fmt, *minutes_fmt, *seconds_fmt;
+    gchar *full_fmt, *ret = g_strdup("");
 
     minutes = seconds / 60;
+    seconds %= 60;
     hours = minutes / 60;
     minutes %= 60;
     days = hours / 24;
     hours %= 24;
 
-    gchar *wminutes;
-    gchar *whours;
-    gchar *wdays;
+    days_fmt = ngettext("%d day", "%d days", days);
+    hours_fmt = ngettext("%d hour", "%d hours", hours);
+    minutes_fmt = ngettext("%d minute", "%d minutes", minutes);
+    seconds_fmt = ngettext("%d second", "%d seconds", seconds);
 
-    wdays = ngettext("%d day, ", "%d days, ", days);
-    whours = ngettext("%d hour, ", "%d hours, ", hours);
-    wminutes = ngettext("%d minute", "%d minutes", minutes);
-    if (days < 1) {
-	if (hours < 1)
-	    return g_strdup_printf(ngettext("%d minute", "%d minutes", minutes), minutes);
-	return g_strdup_printf(whours, wminutes);
+    if (days) {
+        full_fmt = g_strdup_printf("%s %s %s %s", days_fmt, hours_fmt, minutes_fmt, seconds_fmt);
+        ret = g_strdup_printf(full_fmt, days, hours, minutes, seconds);
+    } else if (hours) {
+        full_fmt = g_strdup_printf("%s %s %s", hours_fmt, minutes_fmt, seconds_fmt);
+        ret = g_strdup_printf(full_fmt, hours, minutes, seconds);
+    } else if (minutes) {
+        full_fmt = g_strdup_printf("%s %s", minutes_fmt, seconds_fmt);
+        ret = g_strdup_printf(full_fmt, minutes, seconds);
+    } else {
+        ret = g_strdup_printf(seconds_fmt, seconds);
     }
-    return g_strdup_printf(wdays, whours, wminutes);
+    g_free(full_fmt);
+    return ret;
 }
 
 gchar *size_human_readable(gfloat size)
