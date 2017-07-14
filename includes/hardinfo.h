@@ -23,11 +23,11 @@
 #include "config.h"
 #include "shell.h"
 #include "vendor.h"
-#include <libintl.h>
 #include <locale.h>
-#define _(STRING) gettext(STRING)
+#include "gettext.h"  /* https://www.gnu.org/software/gettext/manual/html_node/lib_002fgettext_002eh.html */
+#define _(STRING) (char*)gettext(STRING)
 #define N_(STRING) (STRING)
-#define C_(CTX, STRING) pgettext(CTX, STRING)
+#define C_(CTX, STRING) (char*)pgettext_expr(CTX, STRING)
 #define NC_(CTX, STRING) (STRING)
 
 typedef enum {

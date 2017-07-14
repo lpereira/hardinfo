@@ -24,34 +24,34 @@
 #include <ctype.h>
 #include "riscv_data.h"
 
-#ifndef _
-#define _(String) String
+#ifndef C_
+#define C_(Ctx, String) String
 #endif
-#ifndef N_
-#define N_(String) String
+#ifndef NC_
+#define NC_(Ctx, String) String
 #endif
 
 static struct {
     char *name, *meaning;
 } tab_ext_meaning[] = {
-    { "RV32",  N_("RISC-V 32-bit") },
-    { "RV64",  N_("RISC-V 64-bit") },
-    { "RV128", N_("RISC-V 128-bit") },
-    { "E",     N_("Base embedded integer instructions (15 registers)") },
-    { "I",     N_("Base integer instructions (31 registers)") },
-    { "M",     N_("Hardware integer multiply and divide") },
-    { "A",     N_("Atomic memory operations") },
-    { "C",     N_("Compressed 16-bit instructions") },
-    { "F",     N_("Floating-point instructions, single-precision") },
-    { "D",     N_("Floating-point instructions, double-precision") },
-    { "Q",     N_("Floating-point instructions, quad-precision") },
-    { "B",     N_("Bit manipulation instructions") },
-    { "V",     N_("Vector operations") },
-    { "T",     N_("Transactional memory") },
-    { "P",     N_("Packed SIMD instructions") },
-    { "L",     N_("Decimal floating-point instructions") },
-    { "J",     N_("Dynamically translated languages") },
-    { "N",     N_("User-level interrupts") },
+    { "RV32",  NC_("rv-ext", /*/ext:RV32*/  "RISC-V 32-bit") },
+    { "RV64",  NC_("rv-ext", /*/ext:RV64*/  "RISC-V 64-bit") },
+    { "RV128", NC_("rv-ext", /*/ext:RV128*/ "RISC-V 128-bit") },
+    { "E",     NC_("rv-ext", /*/ext:E*/ "Base embedded integer instructions (15 registers)") },
+    { "I",     NC_("rv-ext", /*/ext:I*/ "Base integer instructions (31 registers)") },
+    { "M",     NC_("rv-ext", /*/ext:M*/ "Hardware integer multiply and divide") },
+    { "A",     NC_("rv-ext", /*/ext:A*/ "Atomic memory operations") },
+    { "C",     NC_("rv-ext", /*/ext:C*/ "Compressed 16-bit instructions") },
+    { "F",     NC_("rv-ext", /*/ext:F*/ "Floating-point instructions, single-precision") },
+    { "D",     NC_("rv-ext", /*/ext:D*/ "Floating-point instructions, double-precision") },
+    { "Q",     NC_("rv-ext", /*/ext:Q*/ "Floating-point instructions, quad-precision") },
+    { "B",     NC_("rv-ext", /*/ext:B*/ "Bit manipulation instructions") },
+    { "V",     NC_("rv-ext", /*/ext:V*/ "Vector operations") },
+    { "T",     NC_("rv-ext", /*/ext:T*/ "Transactional memory") },
+    { "P",     NC_("rv-ext", /*/ext:P*/ "Packed SIMD instructions") },
+    { "L",     NC_("rv-ext", /*/ext:L*/ "Decimal floating-point instructions") },
+    { "J",     NC_("rv-ext", /*/ext:J*/ "Dynamically translated languages") },
+    { "N",     NC_("rv-ext", /*/ext:N*/ "User-level interrupts") },
     { NULL, NULL }
 };
 
@@ -82,7 +82,7 @@ const char *riscv_ext_meaning(const char *ext) {
         while(tab_ext_meaning[i].name != NULL) {
             if (strncasecmp(tab_ext_meaning[i].name, ext, l) == 0) {
                 if (tab_ext_meaning[i].meaning != NULL)
-                    return _(tab_ext_meaning[i].meaning);
+                    return C_("rv-ext", tab_ext_meaning[i].meaning);
                 else return NULL;
             }
             i++;
