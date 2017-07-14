@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 {
     GSList *modules;
 
-    bindtextdomain("hardinfo", "/usr/share/locale");
+    bindtextdomain("hardinfo", LOCALEDIR);
     textdomain("hardinfo");
 
     DEBUG("HardInfo version " VERSION ". Debug version.");
@@ -111,13 +111,13 @@ int main(int argc, char **argv)
 
     /* initialize vendor database */
     vendor_init();
-    
+
     /* initialize moreinfo */
     moreinfo_init();
 
     if (params.run_benchmark) {
         gchar *result;
-        
+
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
         if (!result) {
           g_error(_("Unknown benchmark ``%s'' or libbenchmark.so not loaded"), params.run_benchmark);
