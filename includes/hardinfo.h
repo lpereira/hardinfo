@@ -30,6 +30,10 @@
 #define C_(CTX, STRING) pgettext(CTX, STRING)
 #define NC_(CTX, STRING) (STRING)
 
+#ifndef LOCALEDIR
+#define LOCALEDIR "/usr/share/locale"
+#endif
+
 typedef enum {
   MODULE_FLAG_NONE = 0,
   MODULE_FLAG_NO_REMOTE = 1<<0,

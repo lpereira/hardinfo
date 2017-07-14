@@ -59,6 +59,9 @@ if (OVRCPUINFO)
 	message(STATUS "/proc/cpuinfo override: ${OVRCPUINFO}")
 endif()
 
+add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_PREFIX}/share/locale")
+message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/share/locale")
+
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
 
 add_definitions("-std=gnu89")
