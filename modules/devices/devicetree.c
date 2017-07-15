@@ -22,6 +22,19 @@
 #include <sys/types.h>
 #include "devices.h"
 
+static char *get_dt_string(char *p) {
+    char fn[256];
+    char *ret = NULL, *rep = NULL;
+    snprintf(fn, 256, "/proc/device-tree/%s", p);
+    g_file_get_contents(fn, &ret, NULL, NULL);
+    if (ret) {
+        while((rep = strchr(ret, '\n'))) *rep = ' ';
+    }
+    return ret;
+}
+
+#include "devicetree/rpi_data.c"
+
 gchar *dtree_info = NULL;
 
 static void add_to_moreinfo(const char *group, const char *key, char *value)
@@ -32,12 +45,23 @@ static void add_to_moreinfo(const char *group, const char *key, char *value)
 
 void __scan_dtree()
 {
-    char *model = NULL;
-    g_file_get_contents("/proc/device-tree/model", &model, NULL, NULL);
+    char *model = NULL, *serial = NULL, *special = NULL;
+    model = get_dt_string("model");
+    serial = get_dt_string("serial-number");
+
+    if ( strstr(model, "Raspberry Pi") != NULL )
+        special = rpi_board_details();
+    else
+        special = "";
 
     dtree_info = g_strdup_printf(
             "[%s]\n"
-            "%s=%s\n",
+            "%s=%s\n"
+            "%s=%s\n"
+            "%s",
             _("Device Tree"),
-            _("Model"), model);
+            _("Model"), model,
+            _("Serial Number"), serial,
+            special
+            );
 }
