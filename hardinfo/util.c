@@ -730,6 +730,8 @@ static ShellModule *module_load(gchar * filename)
 
 	entries = get_module_entries();
 	while (entries[i].name) {
+        if (*entries[i].name == '#') { i++; continue; } /* skip */
+
 	    ShellModuleEntry *entry = g_new0(ShellModuleEntry, 1);
 
 	    if (params.gui_running) {
