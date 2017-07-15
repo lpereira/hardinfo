@@ -12,7 +12,7 @@
 #define UNKIFNULL(f) STRIFNULL(f, _("(Unknown)") )
 #define EMPIFNULL(f) STRIFNULL(f, "")
 
-gchar *byte_order_str(void);
+const gchar *byte_order_str(void);
 
 /* from /sys/devices/system/cpu/cpu%d/%s */
 gchar* get_cpu_str(const gchar* file, gint cpuid);
