@@ -198,8 +198,12 @@ void scan_dev(gboolean reload)
        gboolean stdout;
     } detect_lang[] = {
        { N_("Scripting Languages"), NULL, FALSE },
-       { N_("CPython"), "python -V", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Python"), "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Python2"), "python2 -V", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Python3"), "python3 -V", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Perl"), "perl -v", "\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Perl6 (VM)"), "perl6 -v", "(?<=This is ).*", TRUE },
+       { N_("Perl6"), "perl6 -v", "(?<=implementing Perl )\\w*\\.\\w*", TRUE },
        { N_("PHP"), "php --version", "\\d+\\.\\d+\\.\\S+", TRUE},
        { N_("Ruby"), "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Bash"), "bash --version", "\\d+\\.\\d+\\.\\S+", TRUE},
@@ -229,7 +233,7 @@ void scan_dev(gboolean reload)
 
     for (i = 0; i < G_N_ELEMENTS(detect_lang); i++) {
        gchar *version = NULL;
-       gchar *output;
+       gchar *output, *ignored;
        gchar *temp;
        GRegex *regex;
        GMatchInfo *match_info;
@@ -241,10 +245,11 @@ void scan_dev(gboolean reload)
        }
 
        if (detect_lang[i].stdout) {
-            found = g_spawn_command_line_sync(detect_lang[i].version_command, &output, NULL, NULL, NULL);
+            found = g_spawn_command_line_sync(detect_lang[i].version_command, &output, &ignored, NULL, NULL);
        } else {
-            found = g_spawn_command_line_sync(detect_lang[i].version_command, NULL, &output, NULL, NULL);
+            found = g_spawn_command_line_sync(detect_lang[i].version_command, &ignored, &output, NULL, NULL);
        }
+       g_free(ignored);
 
        if (found) {
            regex = g_regex_new(detect_lang[i].regex, 0, 0, NULL);
@@ -463,7 +468,7 @@ gchar *callback_os()
                _("Current Session"),
                _("Computer Name"), computer->os->hostname,
                _("User Name"), computer->os->username,
-               _("#Language"), computer->os->language,
+               _("Language"), computer->os->language,
                _("Home Directory"), computer->os->homedir,
                _("Desktop Environment"), computer->os->desktop,
                _("Misc"),
@@ -653,30 +658,34 @@ gchar **hi_module_get_dependencies(void)
 
 gchar *hi_module_get_summary(void)
 {
-    return g_strdup("[Operating System]\n"
+    return g_strdup_printf("[%s]\n"
                     "Icon=os.png\n"
                     "Method=computer::getOS\n"
-                    "[CPU]\n"
+                    "[%s]\n"
                     "Icon=processor.png\n"
                     "Method=devices::getProcessorName\n"
-                    "[RAM]\n"
+                    "[%s]\n"
                     "Icon=memory.png\n"
                     "Method=devices::getMemoryTotal\n"
-                    "[Motherboard]\n"
+                    "[%s]\n"
                     "Icon=module.png\n"
                     "Method=devices::getMotherboard\n"
-                    "[Graphics]\n"
+                    "[%s]\n"
                     "Icon=monitor.png\n"
                     "Method=computer::getDisplaySummary\n"
-                    "[Storage]\n"
+                    "[%s]\n"
                     "Icon=hdd.png\n"
                     "Method=devices::getStorageDevices\n"
-                    "[Printers]\n"
+                    "[%s]\n"
                     "Icon=printer.png\n"
                     "Method=devices::getPrinters\n"
-                    "[Audio]\n"
+                    "[%s]\n"
                     "Icon=audio.png\n"
-                    "Method=computer::getAudioCards\n");
+                    "Method=computer::getAudioCards\n",
+                    _("Operating System"),
+                    _("CPU"), _("RAM"), _("Motherboard"), _("Graphics"),
+                    _("Storage"), _("Printers"), _("Audio")
+                    );
 }
 
 void hi_module_deinit(void)

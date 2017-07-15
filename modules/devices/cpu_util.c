@@ -21,7 +21,7 @@
 #include "hardinfo.h"
 #include "cpu_util.h"
 
-gchar *byte_order_str() {
+const gchar *byte_order_str() {
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
     return _("Little Endian");
 #else
