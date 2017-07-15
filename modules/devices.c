@@ -376,7 +376,9 @@ gchar *callback_spd()
 
 gchar *callback_dtree()
 {
-    return g_strdup(dtree_info);
+    return g_strdup_printf("%s"
+        "[$ShellParam$]\n"
+        "ViewType=1\n", dtree_info);
 }
 
 gchar *callback_memory()
