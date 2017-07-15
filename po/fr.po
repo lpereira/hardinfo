@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-15 02:01-0500\n"
+"POT-Creation-Date: 2017-07-15 03:10-0500\n"
 "PO-Revision-Date: 2014-09-03\n"
 "Last-Translator: yolateng0 @olala22000\n"
 "Language-Team: LeFlood\n"
@@ -965,7 +965,7 @@ msgstr "Ordinateur"
 #: modules/devices/mips/processor.c:66 modules/devices/parisc/processor.c:146
 #: modules/devices/ppc/processor.c:149 modules/devices/riscv/processor.c:173
 #: modules/devices/s390/processor.c:123 modules/devices/sh/processor.c:75
-#: modules/devices/sparc/processor.c:66 modules/devices/x86/processor.c:745
+#: modules/devices/sparc/processor.c:66 modules/devices/x86/processor.c:398
 msgid "Processor"
 msgstr "Processeur"
 
@@ -1309,7 +1309,7 @@ msgstr ""
 #: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:79
 #: modules/devices/mips/processor.c:69 modules/devices/parisc/processor.c:150
 #: modules/devices/ppc/processor.c:152 modules/devices/riscv/processor.c:178
-#: modules/devices/sh/processor.c:79 modules/devices/x86/processor.c:755
+#: modules/devices/sh/processor.c:79 modules/devices/x86/processor.c:408
 msgid "Frequency"
 msgstr ""
 
@@ -1318,7 +1318,7 @@ msgstr ""
 #: modules/devices/mips/processor.c:69 modules/devices/parisc/processor.c:150
 #: modules/devices/ppc/processor.c:152 modules/devices/riscv/processor.c:178
 #: modules/devices/sh/processor.c:79 modules/devices/sh/processor.c:80
-#: modules/devices/sh/processor.c:81 modules/devices/x86/processor.c:755
+#: modules/devices/sh/processor.c:81 modules/devices/x86/processor.c:408
 msgid "MHz"
 msgstr ""
 
@@ -1326,7 +1326,7 @@ msgstr ""
 #: modules/devices/ia64/processor.c:160 modules/devices/m68k/processor.c:80
 #: modules/devices/mips/processor.c:70 modules/devices/parisc/processor.c:151
 #: modules/devices/ppc/processor.c:153 modules/devices/s390/processor.c:126
-#: modules/devices/sh/processor.c:82 modules/devices/x86/processor.c:756
+#: modules/devices/sh/processor.c:82 modules/devices/x86/processor.c:409
 msgid "BogoMips"
 msgstr ""
 
@@ -1335,7 +1335,7 @@ msgstr ""
 #: modules/devices/mips/processor.c:71 modules/devices/parisc/processor.c:152
 #: modules/devices/ppc/processor.c:154 modules/devices/riscv/processor.c:179
 #: modules/devices/s390/processor.c:127 modules/devices/sh/processor.c:83
-#: modules/devices/sparc/processor.c:69 modules/devices/x86/processor.c:757
+#: modules/devices/sparc/processor.c:69 modules/devices/x86/processor.c:410
 msgid "Byte Order"
 msgstr ""
 
@@ -1514,7 +1514,7 @@ msgid "ARM Processor"
 msgstr ""
 
 #: modules/devices/arm/processor.c:199 modules/devices/riscv/processor.c:147
-#: modules/devices/x86/processor.c:708
+#: modules/devices/x86/processor.c:361
 msgid "Empty List"
 msgstr ""
 
@@ -1557,14 +1557,14 @@ msgid "Revision"
 msgstr ""
 
 #: modules/devices/arm/processor.c:250 modules/devices/riscv/processor.c:182
-#: modules/devices/sparc/processor.c:70 modules/devices/x86/processor.c:763
+#: modules/devices/sparc/processor.c:70 modules/devices/x86/processor.c:416
 msgid "Capabilities"
 msgstr ""
 
 #: modules/devices/arm/processor.c:271 modules/devices/ia64/processor.c:185
 #: modules/devices/parisc/processor.c:180 modules/devices/ppc/processor.c:176
 #: modules/devices/riscv/processor.c:203 modules/devices/s390/processor.c:149
-#: modules/devices/x86/processor.c:786
+#: modules/devices/x86/processor.c:439
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
 msgstr ""
@@ -1836,7 +1836,7 @@ msgstr ""
 msgid "IA64 Processor"
 msgstr ""
 
-#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:752
+#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:405
 msgid "Vendor"
 msgstr ""
 
@@ -1888,7 +1888,7 @@ msgstr ""
 msgid "SVersion"
 msgstr ""
 
-#: modules/devices/parisc/processor.c:155 modules/devices/x86/processor.c:760
+#: modules/devices/parisc/processor.c:155 modules/devices/x86/processor.c:413
 msgid "Cache"
 msgstr ""
 
@@ -2210,149 +2210,177 @@ msgstr ""
 "[Speeds]\n"
 "%s"
 
-#: modules/devices/x86/processor.c:146
+#: modules/devices/x86/processor.c:149
 msgid "Cache information not available=\n"
 msgstr ""
 
-#: modules/devices/x86/processor.c:152
+#: modules/devices/x86/processor.c:155
 #, c-format
 msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
 msgstr ""
 
 #. /cache type, as appears in: Level 1 (Data)
-#: modules/devices/x86/processor.c:167
+#: modules/devices/x86/processor.c:170
 msgctxt "cache-type"
 msgid "Data"
 msgstr ""
 
 #. /cache type, as appears in: Level 1 (Instruction)
-#: modules/devices/x86/processor.c:168
+#: modules/devices/x86/processor.c:171
 msgctxt "cache-type"
 msgid "Instruction"
 msgstr ""
 
 #. /cache type, as appears in: Level 2 (Unified)
-#: modules/devices/x86/processor.c:169
+#: modules/devices/x86/processor.c:172
 msgctxt "cache-type"
 msgid "Unified"
 msgstr ""
 
+#: modules/devices/x86/processor.c:399
+msgid "Model Name"
+msgstr ""
+
+#: modules/devices/x86/processor.c:400
+msgid "Family, model, stepping"
+msgstr ""
+
+#: modules/devices/x86/processor.c:406
+msgid "Configuration"
+msgstr ""
+
+#: modules/devices/x86/processor.c:407
+msgid "Cache Size"
+msgstr ""
+
+#: modules/devices/x86/processor.c:407
+msgid "kb"
+msgstr ""
+
+#: modules/devices/x86/processor.c:414
+msgid "Power Management"
+msgstr ""
+
+#: modules/devices/x86/processor.c:415
+msgid "Bug Workarounds"
+msgstr ""
+
 #. /flag:fpu
-#: modules/devices/x86/processor.c:347
+#: modules/devices/x86/x86_data.c:43
 msgctxt "x86-flag"
 msgid "Onboard FPU (floating point support)"
 msgstr ""
 
 #. /flag:vme
-#: modules/devices/x86/processor.c:348
+#: modules/devices/x86/x86_data.c:44
 msgctxt "x86-flag"
 msgid "Virtual 8086 mode enhancements"
 msgstr ""
 
 #. /flag:de
-#: modules/devices/x86/processor.c:349
+#: modules/devices/x86/x86_data.c:45
 msgctxt "x86-flag"
 msgid "Debugging Extensions (CR4.DE)"
 msgstr ""
 
 #. /flag:pse
-#: modules/devices/x86/processor.c:350
+#: modules/devices/x86/x86_data.c:46
 msgctxt "x86-flag"
 msgid "Page Size Extensions (4MB memory pages)"
 msgstr ""
 
 #. /flag:tsc
-#: modules/devices/x86/processor.c:351
+#: modules/devices/x86/x86_data.c:47
 msgctxt "x86-flag"
 msgid "Time Stamp Counter (RDTSC)"
 msgstr ""
 
 #. /flag:msr
-#: modules/devices/x86/processor.c:352
+#: modules/devices/x86/x86_data.c:48
 msgctxt "x86-flag"
 msgid "Model-Specific Registers (RDMSR, WRMSR)"
 msgstr ""
 
 #. /flag:pae
-#: modules/devices/x86/processor.c:353
+#: modules/devices/x86/x86_data.c:49
 msgctxt "x86-flag"
 msgid "Physical Address Extensions (support for more than 4GB of RAM)"
 msgstr ""
 
 #. /flag:mce
-#: modules/devices/x86/processor.c:354
+#: modules/devices/x86/x86_data.c:50
 msgctxt "x86-flag"
 msgid "Machine Check Exception"
 msgstr ""
 
 #. /flag:cx8
-#: modules/devices/x86/processor.c:355
+#: modules/devices/x86/x86_data.c:51
 msgctxt "x86-flag"
 msgid "CMPXCHG8 instruction (64-bit compare-and-swap)"
 msgstr ""
 
 #. /flag:apic
-#: modules/devices/x86/processor.c:356
+#: modules/devices/x86/x86_data.c:52
 msgctxt "x86-flag"
 msgid "Onboard APIC"
 msgstr ""
 
 #. /flag:sep
-#: modules/devices/x86/processor.c:357
+#: modules/devices/x86/x86_data.c:53
 msgctxt "x86-flag"
 msgid "SYSENTER/SYSEXIT"
 msgstr ""
 
 #. /flag:mtrr
-#: modules/devices/x86/processor.c:358
+#: modules/devices/x86/x86_data.c:54
 msgctxt "x86-flag"
 msgid "Memory Type Range Registers"
 msgstr ""
 
 #. /flag:pge
-#: modules/devices/x86/processor.c:359
+#: modules/devices/x86/x86_data.c:55
 msgctxt "x86-flag"
 msgid "Page Global Enable (global bit in PDEs and PTEs)"
 msgstr ""
 
 #. /flag:mca
-#: modules/devices/x86/processor.c:360
+#: modules/devices/x86/x86_data.c:56
 msgctxt "x86-flag"
 msgid "Machine Check Architecture"
 msgstr ""
 
 #. /flag:cmov
-#: modules/devices/x86/processor.c:361
+#: modules/devices/x86/x86_data.c:57
 msgctxt "x86-flag"
 msgid "CMOV instructions (conditional move) (also FCMOV)"
 msgstr ""
 
 #. /flag:pat
-#: modules/devices/x86/processor.c:362
+#: modules/devices/x86/x86_data.c:58
 msgctxt "x86-flag"
 msgid "Page Attribute Table"
 msgstr ""
 
 #. /flag:pse36
-#: modules/devices/x86/processor.c:363
+#: modules/devices/x86/x86_data.c:59
 msgctxt "x86-flag"
 msgid "36-bit PSEs (huge pages)"
 msgstr ""
 
 #. /flag:pn
-#: modules/devices/x86/processor.c:364
+#: modules/devices/x86/x86_data.c:60
 msgctxt "x86-flag"
 msgid "Processor serial number"
 msgstr ""
 
 #. /flag:clflush
-#: modules/devices/x86/processor.c:365
+#: modules/devices/x86/x86_data.c:61
 msgctxt "x86-flag"
 msgid "Cache Line Flush instruction"
 msgstr ""
 
 #. /flag:dts
-#: modules/devices/x86/processor.c:366
+#: modules/devices/x86/x86_data.c:62
 msgctxt "x86-flag"
 msgid ""
 "Debug Store (buffer for debugging and profiling instructions), or "
@@ -2360,55 +2388,55 @@ msgid ""
 msgstr ""
 
 #. /flag:acpi
-#: modules/devices/x86/processor.c:367
+#: modules/devices/x86/x86_data.c:63
 msgctxt "x86-flag"
 msgid "ACPI via MSR (temperature monitoring and clock speed modulation)"
 msgstr ""
 
 #. /flag:mmx
-#: modules/devices/x86/processor.c:368
+#: modules/devices/x86/x86_data.c:64
 msgctxt "x86-flag"
 msgid "Multimedia Extensions"
 msgstr ""
 
 #. /flag:fxsr
-#: modules/devices/x86/processor.c:369
+#: modules/devices/x86/x86_data.c:65
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
 msgstr ""
 
 #. /flag:sse
-#: modules/devices/x86/processor.c:370
+#: modules/devices/x86/x86_data.c:66
 msgctxt "x86-flag"
 msgid "Intel SSE vector instructions"
 msgstr ""
 
 #. /flag:sse2
-#: modules/devices/x86/processor.c:371
+#: modules/devices/x86/x86_data.c:67
 msgctxt "x86-flag"
 msgid "SSE2"
 msgstr ""
 
 #. /flag:ss
-#: modules/devices/x86/processor.c:372
+#: modules/devices/x86/x86_data.c:68
 msgctxt "x86-flag"
 msgid "CPU self snoop"
 msgstr ""
 
 #. /flag:ht
-#: modules/devices/x86/processor.c:373
+#: modules/devices/x86/x86_data.c:69
 msgctxt "x86-flag"
 msgid "Hyper-Threading"
 msgstr ""
 
 #. /flag:tm
-#: modules/devices/x86/processor.c:374
+#: modules/devices/x86/x86_data.c:70
 msgctxt "x86-flag"
 msgid "Automatic clock control (Thermal Monitor)"
 msgstr ""
 
 #. /flag:ia64
-#: modules/devices/x86/processor.c:375
+#: modules/devices/x86/x86_data.c:71
 msgctxt "x86-flag"
 msgid ""
 "Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
@@ -2416,229 +2444,229 @@ msgid ""
 msgstr ""
 
 #. /flag:pbe
-#: modules/devices/x86/processor.c:376
+#: modules/devices/x86/x86_data.c:72
 msgctxt "x86-flag"
 msgid "Pending Break Enable (PBE# pin) wakeup support"
 msgstr ""
 
 #. /flag:syscall
-#: modules/devices/x86/processor.c:379
+#: modules/devices/x86/x86_data.c:75
 msgctxt "x86-flag"
 msgid "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
 msgstr ""
 
 #. /flag:mp
-#: modules/devices/x86/processor.c:380
+#: modules/devices/x86/x86_data.c:76
 msgctxt "x86-flag"
 msgid "Multiprocessing Capable."
 msgstr ""
 
 #. /flag:nx
-#: modules/devices/x86/processor.c:381
+#: modules/devices/x86/x86_data.c:77
 msgctxt "x86-flag"
 msgid "Execute Disable"
 msgstr ""
 
 #. /flag:mmxext
-#: modules/devices/x86/processor.c:382
+#: modules/devices/x86/x86_data.c:78
 msgctxt "x86-flag"
 msgid "AMD MMX extensions"
 msgstr ""
 
 #. /flag:fxsr_opt
-#: modules/devices/x86/processor.c:383
+#: modules/devices/x86/x86_data.c:79
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR optimizations"
 msgstr ""
 
 #. /flag:pdpe1gb
-#: modules/devices/x86/processor.c:384
+#: modules/devices/x86/x86_data.c:80
 msgctxt "x86-flag"
 msgid "One GB pages (allows hugepagesz=1G)"
 msgstr ""
 
 #. /flag:rdtscp
-#: modules/devices/x86/processor.c:385
+#: modules/devices/x86/x86_data.c:81
 msgctxt "x86-flag"
 msgid "Read Time-Stamp Counter and Processor ID"
 msgstr ""
 
 #. /flag:lm
-#: modules/devices/x86/processor.c:386
+#: modules/devices/x86/x86_data.c:82
 msgctxt "x86-flag"
 msgid "Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)"
 msgstr ""
 
 #. /flag:3dnow
-#: modules/devices/x86/processor.c:387
+#: modules/devices/x86/x86_data.c:83
 msgctxt "x86-flag"
 msgid "3DNow! (AMD vector instructions, competing with Intel's SSE1)"
 msgstr ""
 
 #. /flag:3dnowext
-#: modules/devices/x86/processor.c:388
+#: modules/devices/x86/x86_data.c:84
 msgctxt "x86-flag"
 msgid "AMD 3DNow! extensions"
 msgstr ""
 
 #. /flag:recovery
-#: modules/devices/x86/processor.c:390
+#: modules/devices/x86/x86_data.c:86
 msgctxt "x86-flag"
 msgid "CPU in recovery mode"
 msgstr ""
 
 #. /flag:longrun
-#: modules/devices/x86/processor.c:391
+#: modules/devices/x86/x86_data.c:87
 msgctxt "x86-flag"
 msgid "Longrun power control"
 msgstr ""
 
 #. /flag:lrti
-#: modules/devices/x86/processor.c:392
+#: modules/devices/x86/x86_data.c:88
 msgctxt "x86-flag"
 msgid "LongRun table interface"
 msgstr ""
 
 #. /flag:cxmmx
-#: modules/devices/x86/processor.c:394
+#: modules/devices/x86/x86_data.c:90
 msgctxt "x86-flag"
 msgid "Cyrix MMX extensions"
 msgstr ""
 
 #. /flag:k6_mtrr
-#: modules/devices/x86/processor.c:395
+#: modules/devices/x86/x86_data.c:91
 msgctxt "x86-flag"
 msgid "AMD K6 nonstandard MTRRs"
 msgstr ""
 
 #. /flag:cyrix_arr
-#: modules/devices/x86/processor.c:396
+#: modules/devices/x86/x86_data.c:92
 msgctxt "x86-flag"
 msgid "Cyrix ARRs (= MTRRs)"
 msgstr ""
 
 #. /flag:centaur_mcr
-#: modules/devices/x86/processor.c:397
+#: modules/devices/x86/x86_data.c:93
 msgctxt "x86-flag"
 msgid "Centaur MCRs (= MTRRs)"
 msgstr ""
 
 #. /flag:constant_tsc
-#: modules/devices/x86/processor.c:398
+#: modules/devices/x86/x86_data.c:94
 msgctxt "x86-flag"
 msgid "TSC ticks at a constant rate"
 msgstr ""
 
 #. /flag:up
-#: modules/devices/x86/processor.c:399
+#: modules/devices/x86/x86_data.c:95
 msgctxt "x86-flag"
 msgid "SMP kernel running on UP"
 msgstr ""
 
 #. /flag:art
-#: modules/devices/x86/processor.c:400
+#: modules/devices/x86/x86_data.c:96
 msgctxt "x86-flag"
 msgid "Always-Running Timer"
 msgstr ""
 
 #. /flag:arch_perfmon
-#: modules/devices/x86/processor.c:401
+#: modules/devices/x86/x86_data.c:97
 msgctxt "x86-flag"
 msgid "Intel Architectural PerfMon"
 msgstr ""
 
 #. /flag:pebs
-#: modules/devices/x86/processor.c:402
+#: modules/devices/x86/x86_data.c:98
 msgctxt "x86-flag"
 msgid "Precise-Event Based Sampling"
 msgstr ""
 
 #. /flag:bts
-#: modules/devices/x86/processor.c:403
+#: modules/devices/x86/x86_data.c:99
 msgctxt "x86-flag"
 msgid "Branch Trace Store"
 msgstr ""
 
 #. /flag:rep_good
-#: modules/devices/x86/processor.c:404
+#: modules/devices/x86/x86_data.c:100
 msgctxt "x86-flag"
 msgid "rep microcode works well"
 msgstr ""
 
 #. /flag:acc_power
-#: modules/devices/x86/processor.c:405
+#: modules/devices/x86/x86_data.c:101
 msgctxt "x86-flag"
 msgid "AMD accumulated power mechanism"
 msgstr ""
 
 #. /flag:nopl
-#: modules/devices/x86/processor.c:406
+#: modules/devices/x86/x86_data.c:102
 msgctxt "x86-flag"
 msgid "The NOPL (0F 1F) instructions"
 msgstr ""
 
 #. /flag:xtopology
-#: modules/devices/x86/processor.c:407
+#: modules/devices/x86/x86_data.c:103
 msgctxt "x86-flag"
 msgid "cpu topology enum extensions"
 msgstr ""
 
 #. /flag:tsc_reliable
-#: modules/devices/x86/processor.c:408
+#: modules/devices/x86/x86_data.c:104
 msgctxt "x86-flag"
 msgid "TSC is known to be reliable"
 msgstr ""
 
 #. /flag:nonstop_tsc
-#: modules/devices/x86/processor.c:409
+#: modules/devices/x86/x86_data.c:105
 msgctxt "x86-flag"
 msgid "TSC does not stop in C states"
 msgstr ""
 
 #. /flag:extd_apicid
-#: modules/devices/x86/processor.c:410
+#: modules/devices/x86/x86_data.c:106
 msgctxt "x86-flag"
 msgid "has extended APICID (8 bits)"
 msgstr ""
 
 #. /flag:amd_dcm
-#: modules/devices/x86/processor.c:411
+#: modules/devices/x86/x86_data.c:107
 msgctxt "x86-flag"
 msgid "multi-node processor"
 msgstr ""
 
 #. /flag:aperfmperf
-#: modules/devices/x86/processor.c:412
+#: modules/devices/x86/x86_data.c:108
 msgctxt "x86-flag"
 msgid "APERFMPERF"
 msgstr ""
 
 #. /flag:eagerfpu
-#: modules/devices/x86/processor.c:413
+#: modules/devices/x86/x86_data.c:109
 msgctxt "x86-flag"
 msgid "Non lazy FPU restore"
 msgstr ""
 
 #. /flag:nonstop_tsc_s3
-#: modules/devices/x86/processor.c:414
+#: modules/devices/x86/x86_data.c:110
 msgctxt "x86-flag"
 msgid "TSC doesn't stop in S3 state"
 msgstr ""
 
 #. /flag:mce_recovery
-#: modules/devices/x86/processor.c:415
+#: modules/devices/x86/x86_data.c:111
 msgctxt "x86-flag"
 msgid "CPU has recoverable machine checks"
 msgstr ""
 
 #. /flag:pni
-#: modules/devices/x86/processor.c:418
+#: modules/devices/x86/x86_data.c:114
 msgctxt "x86-flag"
 msgid "SSE-3 (\"Prescott New Instructions\")"
 msgstr ""
 
 #. /flag:pclmulqdq
-#: modules/devices/x86/processor.c:419
+#: modules/devices/x86/x86_data.c:115
 msgctxt "x86-flag"
 msgid ""
 "Perform a Carry-Less Multiplication of Quadword instruction - accelerator "
@@ -2646,127 +2674,127 @@ msgid ""
 msgstr ""
 
 #. /flag:dtes64
-#: modules/devices/x86/processor.c:420
+#: modules/devices/x86/x86_data.c:116
 msgctxt "x86-flag"
 msgid "64-bit Debug Store"
 msgstr ""
 
 #. /flag:monitor
-#: modules/devices/x86/processor.c:421
+#: modules/devices/x86/x86_data.c:117
 msgctxt "x86-flag"
 msgid "Monitor/Mwait support (Intel SSE3 supplements)"
 msgstr ""
 
 #. /flag:ds_cpl
-#: modules/devices/x86/processor.c:422
+#: modules/devices/x86/x86_data.c:118
 msgctxt "x86-flag"
 msgid "CPL Qual. Debug Store"
 msgstr ""
 
 #. /flag:vmx
-#: modules/devices/x86/processor.c:423
+#: modules/devices/x86/x86_data.c:119
 msgctxt "x86-flag"
 msgid "Hardware virtualization, Intel VMX"
 msgstr ""
 
 #. /flag:smx
-#: modules/devices/x86/processor.c:424
+#: modules/devices/x86/x86_data.c:120
 msgctxt "x86-flag"
 msgid "Safer mode TXT (TPM support)"
 msgstr ""
 
 #. /flag:est
-#: modules/devices/x86/processor.c:425
+#: modules/devices/x86/x86_data.c:121
 msgctxt "x86-flag"
 msgid "Enhanced SpeedStep"
 msgstr ""
 
 #. /flag:tm2
-#: modules/devices/x86/processor.c:426
+#: modules/devices/x86/x86_data.c:122
 msgctxt "x86-flag"
 msgid "Thermal Monitor 2"
 msgstr ""
 
 #. /flag:ssse3
-#: modules/devices/x86/processor.c:427
+#: modules/devices/x86/x86_data.c:123
 msgctxt "x86-flag"
 msgid "Supplemental SSE-3"
 msgstr ""
 
 #. /flag:cid
-#: modules/devices/x86/processor.c:428
+#: modules/devices/x86/x86_data.c:124
 msgctxt "x86-flag"
 msgid "Context ID"
 msgstr ""
 
 #. /flag:sdbg
-#: modules/devices/x86/processor.c:429
+#: modules/devices/x86/x86_data.c:125
 msgctxt "x86-flag"
 msgid "silicon debug"
 msgstr ""
 
 #. /flag:fma
-#: modules/devices/x86/processor.c:430
+#: modules/devices/x86/x86_data.c:126
 msgctxt "x86-flag"
 msgid "Fused multiply-add"
 msgstr ""
 
 #. /flag:cx16
-#: modules/devices/x86/processor.c:431
+#: modules/devices/x86/x86_data.c:127
 msgctxt "x86-flag"
 msgid "CMPXCHG16B"
 msgstr ""
 
 #. /flag:xtpr
-#: modules/devices/x86/processor.c:432
+#: modules/devices/x86/x86_data.c:128
 msgctxt "x86-flag"
 msgid "Send Task Priority Messages"
 msgstr ""
 
 #. /flag:pdcm
-#: modules/devices/x86/processor.c:433
+#: modules/devices/x86/x86_data.c:129
 msgctxt "x86-flag"
 msgid "Performance Capabilities"
 msgstr ""
 
 #. /flag:pcid
-#: modules/devices/x86/processor.c:434
+#: modules/devices/x86/x86_data.c:130
 msgctxt "x86-flag"
 msgid "Process Context Identifiers"
 msgstr ""
 
 #. /flag:dca
-#: modules/devices/x86/processor.c:435
+#: modules/devices/x86/x86_data.c:131
 msgctxt "x86-flag"
 msgid "Direct Cache Access"
 msgstr ""
 
 #. /flag:sse4_1
-#: modules/devices/x86/processor.c:436
+#: modules/devices/x86/x86_data.c:132
 msgctxt "x86-flag"
 msgid "SSE-4.1"
 msgstr ""
 
 #. /flag:sse4_2
-#: modules/devices/x86/processor.c:437
+#: modules/devices/x86/x86_data.c:133
 msgctxt "x86-flag"
 msgid "SSE-4.2"
 msgstr ""
 
 #. /flag:x2apic
-#: modules/devices/x86/processor.c:438
+#: modules/devices/x86/x86_data.c:134
 msgctxt "x86-flag"
 msgid "x2APIC"
 msgstr ""
 
 #. /flag:movbe
-#: modules/devices/x86/processor.c:439
+#: modules/devices/x86/x86_data.c:135
 msgctxt "x86-flag"
 msgid "Move Data After Swapping Bytes instruction"
 msgstr ""
 
 #. /flag:popcnt
-#: modules/devices/x86/processor.c:440
+#: modules/devices/x86/x86_data.c:136
 msgctxt "x86-flag"
 msgid ""
 "Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i."
@@ -2774,152 +2802,152 @@ msgid ""
 msgstr ""
 
 #. /flag:tsc_deadline_timer
-#: modules/devices/x86/processor.c:441
+#: modules/devices/x86/x86_data.c:137
 msgctxt "x86-flag"
 msgid "Tsc deadline timer"
 msgstr ""
 
 #. /flag:aes/aes-ni
-#: modules/devices/x86/processor.c:442
+#: modules/devices/x86/x86_data.c:138
 msgctxt "x86-flag"
 msgid "Advanced Encryption Standard (New Instructions)"
 msgstr ""
 
 #. /flag:xsave
-#: modules/devices/x86/processor.c:443
+#: modules/devices/x86/x86_data.c:139
 msgctxt "x86-flag"
 msgid "Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY"
 msgstr ""
 
 #. /flag:avx
-#: modules/devices/x86/processor.c:444
+#: modules/devices/x86/x86_data.c:140
 msgctxt "x86-flag"
 msgid "Advanced Vector Extensions"
 msgstr ""
 
 #. /flag:f16c
-#: modules/devices/x86/processor.c:445
+#: modules/devices/x86/x86_data.c:141
 msgctxt "x86-flag"
 msgid "16-bit fp conversions (CVT16)"
 msgstr ""
 
 #. /flag:rdrand
-#: modules/devices/x86/processor.c:446
+#: modules/devices/x86/x86_data.c:142
 msgctxt "x86-flag"
 msgid "Read Random Number from hardware random number generator instruction"
 msgstr ""
 
 #. /flag:hypervisor
-#: modules/devices/x86/processor.c:447
+#: modules/devices/x86/x86_data.c:143
 msgctxt "x86-flag"
 msgid "Running on a hypervisor"
 msgstr ""
 
 #. /Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001
 #. /flag:rng
-#: modules/devices/x86/processor.c:449
+#: modules/devices/x86/x86_data.c:145
 msgctxt "x86-flag"
 msgid "Random Number Generator present (xstore)"
 msgstr ""
 
 #. /flag:rng_en
-#: modules/devices/x86/processor.c:450
+#: modules/devices/x86/x86_data.c:146
 msgctxt "x86-flag"
 msgid "Random Number Generator enabled"
 msgstr ""
 
 #. /flag:ace
-#: modules/devices/x86/processor.c:451
+#: modules/devices/x86/x86_data.c:147
 msgctxt "x86-flag"
 msgid "on-CPU crypto (xcrypt)"
 msgstr ""
 
 #. /flag:ace_en
-#: modules/devices/x86/processor.c:452
+#: modules/devices/x86/x86_data.c:148
 msgctxt "x86-flag"
 msgid "on-CPU crypto enabled"
 msgstr ""
 
 #. /flag:ace2
-#: modules/devices/x86/processor.c:453
+#: modules/devices/x86/x86_data.c:149
 msgctxt "x86-flag"
 msgid "Advanced Cryptography Engine v2"
 msgstr ""
 
 #. /flag:ace2_en
-#: modules/devices/x86/processor.c:454
+#: modules/devices/x86/x86_data.c:150
 msgctxt "x86-flag"
 msgid "ACE v2 enabled"
 msgstr ""
 
 #. /flag:phe
-#: modules/devices/x86/processor.c:455
+#: modules/devices/x86/x86_data.c:151
 msgctxt "x86-flag"
 msgid "PadLock Hash Engine"
 msgstr ""
 
 #. /flag:phe_en
-#: modules/devices/x86/processor.c:456
+#: modules/devices/x86/x86_data.c:152
 msgctxt "x86-flag"
 msgid "PHE enabled"
 msgstr ""
 
 #. /flag:pmm
-#: modules/devices/x86/processor.c:457
+#: modules/devices/x86/x86_data.c:153
 msgctxt "x86-flag"
 msgid "PadLock Montgomery Multiplier"
 msgstr ""
 
 #. /flag:pmm_en
-#: modules/devices/x86/processor.c:458
+#: modules/devices/x86/x86_data.c:154
 msgctxt "x86-flag"
 msgid "PMM enabled"
 msgstr ""
 
 #. /flag:lahf_lm
-#: modules/devices/x86/processor.c:460
+#: modules/devices/x86/x86_data.c:156
 msgctxt "x86-flag"
 msgid "Load AH from Flags (LAHF) and Store AH into Flags (SAHF) in long mode"
 msgstr ""
 
 #. /flag:cmp_legacy
-#: modules/devices/x86/processor.c:461
+#: modules/devices/x86/x86_data.c:157
 msgctxt "x86-flag"
 msgid "If yes HyperThreading not valid"
 msgstr ""
 
 #. /flag:svm
-#: modules/devices/x86/processor.c:462
+#: modules/devices/x86/x86_data.c:158
 msgctxt "x86-flag"
 msgid "\"Secure virtual machine\": AMD-V"
 msgstr ""
 
 #. /flag:extapic
-#: modules/devices/x86/processor.c:463
+#: modules/devices/x86/x86_data.c:159
 msgctxt "x86-flag"
 msgid "Extended APIC space"
 msgstr ""
 
 #. /flag:cr8_legacy
-#: modules/devices/x86/processor.c:464
+#: modules/devices/x86/x86_data.c:160
 msgctxt "x86-flag"
 msgid "CR8 in 32-bit mode"
 msgstr ""
 
 #. /flag:abm
-#: modules/devices/x86/processor.c:465
+#: modules/devices/x86/x86_data.c:161
 msgctxt "x86-flag"
 msgid "Advanced Bit Manipulation"
 msgstr ""
 
 #. /flag:sse4a
-#: modules/devices/x86/processor.c:466
+#: modules/devices/x86/x86_data.c:162
 msgctxt "x86-flag"
 msgid "SSE-4A"
 msgstr ""
 
 #. /flag:misalignsse
-#: modules/devices/x86/processor.c:467
+#: modules/devices/x86/x86_data.c:163
 msgctxt "x86-flag"
 msgid ""
 "indicates if a general-protection exception (#GP) is generated when some "
@@ -2928,13 +2956,13 @@ msgid ""
 msgstr ""
 
 #. /flag:3dnowprefetch
-#: modules/devices/x86/processor.c:468
+#: modules/devices/x86/x86_data.c:164
 msgctxt "x86-flag"
 msgid "3DNow prefetch instructions"
 msgstr ""
 
 #. /flag:osvw
-#: modules/devices/x86/processor.c:469
+#: modules/devices/x86/x86_data.c:165
 msgctxt "x86-flag"
 msgid ""
 "indicates OS Visible Workaround, which allows the OS to work around "
@@ -2942,710 +2970,683 @@ msgid ""
 msgstr ""
 
 #. /flag:ibs
-#: modules/devices/x86/processor.c:470
+#: modules/devices/x86/x86_data.c:166
 msgctxt "x86-flag"
 msgid "Instruction Based Sampling"
 msgstr ""
 
 #. /flag:xop
-#: modules/devices/x86/processor.c:471
+#: modules/devices/x86/x86_data.c:167
 msgctxt "x86-flag"
 msgid "extended AVX instructions"
 msgstr ""
 
 #. /flag:skinit
-#: modules/devices/x86/processor.c:472
+#: modules/devices/x86/x86_data.c:168
 msgctxt "x86-flag"
 msgid "SKINIT/STGI instructions"
 msgstr ""
 
 #. /flag:wdt
-#: modules/devices/x86/processor.c:473
+#: modules/devices/x86/x86_data.c:169
 msgctxt "x86-flag"
 msgid "Watchdog timer"
 msgstr ""
 
 #. /flag:lwp
-#: modules/devices/x86/processor.c:474
+#: modules/devices/x86/x86_data.c:170
 msgctxt "x86-flag"
 msgid "Light Weight Profiling"
 msgstr ""
 
 #. /flag:fma4
-#: modules/devices/x86/processor.c:475
+#: modules/devices/x86/x86_data.c:171
 msgctxt "x86-flag"
 msgid "4 operands MAC instructions"
 msgstr ""
 
 #. /flag:tce
-#: modules/devices/x86/processor.c:476
+#: modules/devices/x86/x86_data.c:172
 msgctxt "x86-flag"
 msgid "translation cache extension"
 msgstr ""
 
 #. /flag:nodeid_msr
-#: modules/devices/x86/processor.c:477
+#: modules/devices/x86/x86_data.c:173
 msgctxt "x86-flag"
 msgid "NodeId MSR"
 msgstr ""
 
 #. /flag:tbm
-#: modules/devices/x86/processor.c:478
+#: modules/devices/x86/x86_data.c:174
 msgctxt "x86-flag"
 msgid "Trailing Bit Manipulation"
 msgstr ""
 
 #. /flag:topoext
-#: modules/devices/x86/processor.c:479
+#: modules/devices/x86/x86_data.c:175
 msgctxt "x86-flag"
 msgid "Topology Extensions CPUID leafs"
 msgstr ""
 
 #. /flag:perfctr_core
-#: modules/devices/x86/processor.c:480
+#: modules/devices/x86/x86_data.c:176
 msgctxt "x86-flag"
 msgid "Core Performance Counter Extensions"
 msgstr ""
 
 #. /flag:perfctr_nb
-#: modules/devices/x86/processor.c:481
+#: modules/devices/x86/x86_data.c:177
 msgctxt "x86-flag"
 msgid "NB Performance Counter Extensions"
 msgstr ""
 
 #. /flag:bpext
-#: modules/devices/x86/processor.c:482
+#: modules/devices/x86/x86_data.c:178
 msgctxt "x86-flag"
 msgid "data breakpoint extension"
 msgstr ""
 
 #. /flag:ptsc
-#: modules/devices/x86/processor.c:483
+#: modules/devices/x86/x86_data.c:179
 msgctxt "x86-flag"
 msgid "performance time-stamp counter"
 msgstr ""
 
 #. /flag:perfctr_l2
-#: modules/devices/x86/processor.c:484
+#: modules/devices/x86/x86_data.c:180
 msgctxt "x86-flag"
 msgid "L2 Performance Counter Extensions"
 msgstr ""
 
 #. /flag:mwaitx
-#: modules/devices/x86/processor.c:485
+#: modules/devices/x86/x86_data.c:181
 msgctxt "x86-flag"
 msgid "MWAIT extension (MONITORX/MWAITX)"
 msgstr ""
 
 #. /flag:cpb
-#: modules/devices/x86/processor.c:487
+#: modules/devices/x86/x86_data.c:183
 msgctxt "x86-flag"
 msgid "AMD Core Performance Boost"
 msgstr ""
 
 #. /flag:epb
-#: modules/devices/x86/processor.c:488
+#: modules/devices/x86/x86_data.c:184
 msgctxt "x86-flag"
 msgid "IA32_ENERGY_PERF_BIAS support"
 msgstr ""
 
 #. /flag:hw_pstate
-#: modules/devices/x86/processor.c:489
+#: modules/devices/x86/x86_data.c:185
 msgctxt "x86-flag"
 msgid "AMD HW-PState"
 msgstr ""
 
 #. /flag:proc_feedback
-#: modules/devices/x86/processor.c:490
+#: modules/devices/x86/x86_data.c:186
 msgctxt "x86-flag"
 msgid "AMD ProcFeedbackInterface"
 msgstr ""
 
 #. /flag:intel_pt
-#: modules/devices/x86/processor.c:491
+#: modules/devices/x86/x86_data.c:187
 msgctxt "x86-flag"
 msgid "Intel Processor Tracing"
 msgstr ""
 
 #. /flag:tpr_shadow
-#: modules/devices/x86/processor.c:493
+#: modules/devices/x86/x86_data.c:189
 msgctxt "x86-flag"
 msgid "Intel TPR Shadow"
 msgstr ""
 
 #. /flag:vnmi
-#: modules/devices/x86/processor.c:494
+#: modules/devices/x86/x86_data.c:190
 msgctxt "x86-flag"
 msgid "Intel Virtual NMI"
 msgstr ""
 
 #. /flag:flexpriority
-#: modules/devices/x86/processor.c:495
+#: modules/devices/x86/x86_data.c:191
 msgctxt "x86-flag"
 msgid "Intel FlexPriority"
 msgstr ""
 
 #. /flag:ept
-#: modules/devices/x86/processor.c:496
+#: modules/devices/x86/x86_data.c:192
 msgctxt "x86-flag"
 msgid "Intel Extended Page Table"
 msgstr ""
 
 #. /flag:vpid
-#: modules/devices/x86/processor.c:497
+#: modules/devices/x86/x86_data.c:193
 msgctxt "x86-flag"
 msgid "Intel Virtual Processor ID"
 msgstr ""
 
 #. /flag:vmmcall
-#: modules/devices/x86/processor.c:498
+#: modules/devices/x86/x86_data.c:194
 msgctxt "x86-flag"
 msgid "prefer VMMCALL to VMCALL"
 msgstr ""
 
 #. /flag:fsgsbase
-#: modules/devices/x86/processor.c:500
+#: modules/devices/x86/x86_data.c:196
 msgctxt "x86-flag"
 msgid "{RD/WR}{FS/GS}BASE instructions"
 msgstr ""
 
 #. /flag:tsc_adjust
-#: modules/devices/x86/processor.c:501
+#: modules/devices/x86/x86_data.c:197
 msgctxt "x86-flag"
 msgid "TSC adjustment MSR"
 msgstr ""
 
 #. /flag:bmi1
-#: modules/devices/x86/processor.c:502
+#: modules/devices/x86/x86_data.c:198
 msgctxt "x86-flag"
 msgid "1st group bit manipulation extensions"
 msgstr ""
 
 #. /flag:hle
-#: modules/devices/x86/processor.c:503
+#: modules/devices/x86/x86_data.c:199
 msgctxt "x86-flag"
 msgid "Hardware Lock Elision"
 msgstr ""
 
 #. /flag:avx2
-#: modules/devices/x86/processor.c:504
+#: modules/devices/x86/x86_data.c:200
 msgctxt "x86-flag"
 msgid "AVX2 instructions"
 msgstr ""
 
 #. /flag:smep
-#: modules/devices/x86/processor.c:505
+#: modules/devices/x86/x86_data.c:201
 msgctxt "x86-flag"
 msgid "Supervisor Mode Execution Protection"
 msgstr ""
 
 #. /flag:bmi2
-#: modules/devices/x86/processor.c:506
+#: modules/devices/x86/x86_data.c:202
 msgctxt "x86-flag"
 msgid "2nd group bit manipulation extensions"
 msgstr ""
 
 #. /flag:erms
-#: modules/devices/x86/processor.c:507
+#: modules/devices/x86/x86_data.c:203
 msgctxt "x86-flag"
 msgid "Enhanced REP MOVSB/STOSB"
 msgstr ""
 
 #. /flag:invpcid
-#: modules/devices/x86/processor.c:508
+#: modules/devices/x86/x86_data.c:204
 msgctxt "x86-flag"
 msgid "Invalidate Processor Context ID"
 msgstr ""
 
 #. /flag:rtm
-#: modules/devices/x86/processor.c:509
+#: modules/devices/x86/x86_data.c:205
 msgctxt "x86-flag"
 msgid "Restricted Transactional Memory"
 msgstr ""
 
 #. /flag:cqm
-#: modules/devices/x86/processor.c:510
+#: modules/devices/x86/x86_data.c:206
 msgctxt "x86-flag"
 msgid "Cache QoS Monitoring"
 msgstr ""
 
 #. /flag:mpx
-#: modules/devices/x86/processor.c:511
+#: modules/devices/x86/x86_data.c:207
 msgctxt "x86-flag"
 msgid "Memory Protection Extension"
 msgstr ""
 
 #. /flag:avx512f
-#: modules/devices/x86/processor.c:512
+#: modules/devices/x86/x86_data.c:208
 msgctxt "x86-flag"
 msgid "AVX-512 foundation"
 msgstr ""
 
 #. /flag:avx512dq
-#: modules/devices/x86/processor.c:513
+#: modules/devices/x86/x86_data.c:209
 msgctxt "x86-flag"
 msgid "AVX-512 Double/Quad instructions"
 msgstr ""
 
 #. /flag:rdseed
-#: modules/devices/x86/processor.c:514
+#: modules/devices/x86/x86_data.c:210
 msgctxt "x86-flag"
 msgid "The RDSEED instruction"
 msgstr ""
 
 #. /flag:adx
-#: modules/devices/x86/processor.c:515
+#: modules/devices/x86/x86_data.c:211
 msgctxt "x86-flag"
 msgid "The ADCX and ADOX instructions"
 msgstr ""
 
 #. /flag:smap
-#: modules/devices/x86/processor.c:516
+#: modules/devices/x86/x86_data.c:212
 msgctxt "x86-flag"
 msgid "Supervisor Mode Access Prevention"
 msgstr ""
 
 #. /flag:clflushopt
-#: modules/devices/x86/processor.c:517
+#: modules/devices/x86/x86_data.c:213
 msgctxt "x86-flag"
 msgid "CLFLUSHOPT instruction"
 msgstr ""
 
 #. /flag:clwb
-#: modules/devices/x86/processor.c:518
+#: modules/devices/x86/x86_data.c:214
 msgctxt "x86-flag"
 msgid "CLWB instruction"
 msgstr ""
 
 #. /flag:avx512pf
-#: modules/devices/x86/processor.c:519
+#: modules/devices/x86/x86_data.c:215
 msgctxt "x86-flag"
 msgid "AVX-512 Prefetch"
 msgstr ""
 
 #. /flag:avx512er
-#: modules/devices/x86/processor.c:520
+#: modules/devices/x86/x86_data.c:216
 msgctxt "x86-flag"
 msgid "AVX-512 Exponential and Reciprocal"
 msgstr ""
 
 #. /flag:avx512cd
-#: modules/devices/x86/processor.c:521
+#: modules/devices/x86/x86_data.c:217
 msgctxt "x86-flag"
 msgid "AVX-512 Conflict Detection"
 msgstr ""
 
 #. /flag:sha_ni
-#: modules/devices/x86/processor.c:522
+#: modules/devices/x86/x86_data.c:218
 msgctxt "x86-flag"
 msgid "SHA1/SHA256 Instruction Extensions"
 msgstr ""
 
 #. /flag:avx512bw
-#: modules/devices/x86/processor.c:523
+#: modules/devices/x86/x86_data.c:219
 msgctxt "x86-flag"
 msgid "AVX-512 Byte/Word instructions"
 msgstr ""
 
 #. /flag:avx512vl
-#: modules/devices/x86/processor.c:524
+#: modules/devices/x86/x86_data.c:220
 msgctxt "x86-flag"
 msgid "AVX-512 128/256 Vector Length extensions"
 msgstr ""
 
 #. /flag:xsaveopt
-#: modules/devices/x86/processor.c:526
+#: modules/devices/x86/x86_data.c:222
 msgctxt "x86-flag"
 msgid "Optimized XSAVE"
 msgstr ""
 
 #. /flag:xsavec
-#: modules/devices/x86/processor.c:527
+#: modules/devices/x86/x86_data.c:223
 msgctxt "x86-flag"
 msgid "XSAVEC"
 msgstr ""
 
 #. /flag:xgetbv1
-#: modules/devices/x86/processor.c:528
+#: modules/devices/x86/x86_data.c:224
 msgctxt "x86-flag"
 msgid "XGETBV with ECX = 1"
 msgstr ""
 
 #. /flag:xsaves
-#: modules/devices/x86/processor.c:529
+#: modules/devices/x86/x86_data.c:225
 msgctxt "x86-flag"
 msgid "XSAVES/XRSTORS"
 msgstr ""
 
 #. /flag:cqm_llc
-#: modules/devices/x86/processor.c:531
+#: modules/devices/x86/x86_data.c:227
 msgctxt "x86-flag"
 msgid "LLC QoS"
 msgstr ""
 
 #. /flag:cqm_occup_llc
-#: modules/devices/x86/processor.c:533
+#: modules/devices/x86/x86_data.c:229
 msgctxt "x86-flag"
 msgid "LLC occupancy monitoring"
 msgstr ""
 
 #. /flag:cqm_mbm_total
-#: modules/devices/x86/processor.c:534
+#: modules/devices/x86/x86_data.c:230
 msgctxt "x86-flag"
 msgid "LLC total MBM monitoring"
 msgstr ""
 
 #. /flag:cqm_mbm_local
-#: modules/devices/x86/processor.c:535
+#: modules/devices/x86/x86_data.c:231
 msgctxt "x86-flag"
 msgid "LLC local MBM monitoring"
 msgstr ""
 
 #. /flag:clzero
-#: modules/devices/x86/processor.c:537
+#: modules/devices/x86/x86_data.c:233
 msgctxt "x86-flag"
 msgid "CLZERO instruction"
 msgstr ""
 
 #. /flag:irperf
-#: modules/devices/x86/processor.c:538
+#: modules/devices/x86/x86_data.c:234
 msgctxt "x86-flag"
 msgid "instructions retired performance counter"
 msgstr ""
 
 #. /flag:dtherm
-#: modules/devices/x86/processor.c:540
+#: modules/devices/x86/x86_data.c:236
 msgctxt "x86-flag"
 msgid "digital thermal sensor"
 msgstr ""
 
 #. /flag:ida
-#: modules/devices/x86/processor.c:541
+#: modules/devices/x86/x86_data.c:237
 msgctxt "x86-flag"
 msgid "Intel Dynamic Acceleration"
 msgstr ""
 
 #. /flag:arat
-#: modules/devices/x86/processor.c:542
+#: modules/devices/x86/x86_data.c:238
 msgctxt "x86-flag"
 msgid "Always Running APIC Timer"
 msgstr ""
 
 #. /flag:pln
-#: modules/devices/x86/processor.c:543
+#: modules/devices/x86/x86_data.c:239
 msgctxt "x86-flag"
 msgid "Intel Power Limit Notification"
 msgstr ""
 
 #. /flag:pts
-#: modules/devices/x86/processor.c:544
+#: modules/devices/x86/x86_data.c:240
 msgctxt "x86-flag"
 msgid "Intel Package Thermal Status"
 msgstr ""
 
 #. /flag:hwp
-#: modules/devices/x86/processor.c:545
+#: modules/devices/x86/x86_data.c:241
 msgctxt "x86-flag"
 msgid "Intel Hardware P-states"
 msgstr ""
 
 #. /flag:hwp_notify
-#: modules/devices/x86/processor.c:546
+#: modules/devices/x86/x86_data.c:242
 msgctxt "x86-flag"
 msgid "HWP notification"
 msgstr ""
 
 #. /flag:hwp_act_window
-#: modules/devices/x86/processor.c:547
+#: modules/devices/x86/x86_data.c:243
 msgctxt "x86-flag"
 msgid "HWP Activity Window"
 msgstr ""
 
 #. /flag:hwp_epp
-#: modules/devices/x86/processor.c:548
+#: modules/devices/x86/x86_data.c:244
 msgctxt "x86-flag"
 msgid "HWP Energy Performance Preference"
 msgstr ""
 
 #. /flag:hwp_pkg_req
-#: modules/devices/x86/processor.c:549
+#: modules/devices/x86/x86_data.c:245
 msgctxt "x86-flag"
 msgid "HWP package-level request"
 msgstr ""
 
 #. /flag:npt
-#: modules/devices/x86/processor.c:551
+#: modules/devices/x86/x86_data.c:247
 msgctxt "x86-flag"
 msgid "AMD Nested Page Table support"
 msgstr ""
 
 #. /flag:lbrv
-#: modules/devices/x86/processor.c:552
+#: modules/devices/x86/x86_data.c:248
 msgctxt "x86-flag"
 msgid "AMD LBR Virtualization support"
 msgstr ""
 
 #. /flag:svm_lock
-#: modules/devices/x86/processor.c:553
+#: modules/devices/x86/x86_data.c:249
 msgctxt "x86-flag"
 msgid "AMD SVM locking MSR"
 msgstr ""
 
 #. /flag:nrip_save
-#: modules/devices/x86/processor.c:554
+#: modules/devices/x86/x86_data.c:250
 msgctxt "x86-flag"
 msgid "AMD SVM next_rip save"
 msgstr ""
 
 #. /flag:tsc_scale
-#: modules/devices/x86/processor.c:555
+#: modules/devices/x86/x86_data.c:251
 msgctxt "x86-flag"
 msgid "AMD TSC scaling support"
 msgstr ""
 
 #. /flag:vmcb_clean
-#: modules/devices/x86/processor.c:556
+#: modules/devices/x86/x86_data.c:252
 msgctxt "x86-flag"
 msgid "AMD VMCB clean bits support"
 msgstr ""
 
 #. /flag:flushbyasid
-#: modules/devices/x86/processor.c:557
+#: modules/devices/x86/x86_data.c:253
 msgctxt "x86-flag"
 msgid "AMD flush-by-ASID support"
 msgstr ""
 
 #. /flag:decodeassists
-#: modules/devices/x86/processor.c:558
+#: modules/devices/x86/x86_data.c:254
 msgctxt "x86-flag"
 msgid "AMD Decode Assists support"
 msgstr ""
 
 #. /flag:pausefilter
-#: modules/devices/x86/processor.c:559
+#: modules/devices/x86/x86_data.c:255
 msgctxt "x86-flag"
 msgid "AMD filtered pause intercept"
 msgstr ""
 
 #. /flag:pfthreshold
-#: modules/devices/x86/processor.c:560
+#: modules/devices/x86/x86_data.c:256
 msgctxt "x86-flag"
 msgid "AMD pause filter threshold"
 msgstr ""
 
 #. /flag:avic
-#: modules/devices/x86/processor.c:561
+#: modules/devices/x86/x86_data.c:257
 msgctxt "x86-flag"
 msgid "Virtual Interrupt Controller"
 msgstr ""
 
 #. /flag:pku
-#: modules/devices/x86/processor.c:563
+#: modules/devices/x86/x86_data.c:259
 msgctxt "x86-flag"
 msgid "Protection Keys for Userspace"
 msgstr ""
 
 #. /flag:ospke
-#: modules/devices/x86/processor.c:564
+#: modules/devices/x86/x86_data.c:260
 msgctxt "x86-flag"
 msgid "OS Protection Keys Enable"
 msgstr ""
 
 #. /flag:overflow_recov
-#: modules/devices/x86/processor.c:566
+#: modules/devices/x86/x86_data.c:262
 msgctxt "x86-flag"
 msgid "MCA overflow recovery support"
 msgstr ""
 
 #. /flag:succor
-#: modules/devices/x86/processor.c:567
+#: modules/devices/x86/x86_data.c:263
 msgctxt "x86-flag"
 msgid "uncorrectable error containment and recovery"
 msgstr ""
 
 #. /flag:smca
-#: modules/devices/x86/processor.c:568
+#: modules/devices/x86/x86_data.c:264
 msgctxt "x86-flag"
 msgid "Scalable MCA"
 msgstr ""
 
 #. /bug:f00f
-#: modules/devices/x86/processor.c:575
+#: modules/devices/x86/x86_data.c:267
 msgctxt "x86-flag"
 msgid "Intel F00F bug"
 msgstr ""
 
 #. /bug:fdiv
-#: modules/devices/x86/processor.c:576
+#: modules/devices/x86/x86_data.c:268
 msgctxt "x86-flag"
 msgid "FPU FDIV"
 msgstr ""
 
 #. /bug:coma
-#: modules/devices/x86/processor.c:577
+#: modules/devices/x86/x86_data.c:269
 msgctxt "x86-flag"
 msgid "Cyrix 6x86 coma"
 msgstr ""
 
 #. /bug:tlb_mmatch
-#: modules/devices/x86/processor.c:578
+#: modules/devices/x86/x86_data.c:270
 msgctxt "x86-flag"
 msgid "AMD Erratum 383"
 msgstr ""
 
 #. /bug:apic_c1e
 #. /bug:amd_e400
-#: modules/devices/x86/processor.c:579 modules/devices/x86/processor.c:588
+#: modules/devices/x86/x86_data.c:271 modules/devices/x86/x86_data.c:280
 msgctxt "x86-flag"
 msgid "AMD Erratum 400"
 msgstr ""
 
 #. /bug:11ap
-#: modules/devices/x86/processor.c:580
+#: modules/devices/x86/x86_data.c:272
 msgctxt "x86-flag"
 msgid "Bad local APIC aka 11AP"
 msgstr ""
 
 #. /bug:fxsave_leak
-#: modules/devices/x86/processor.c:581
+#: modules/devices/x86/x86_data.c:273
 msgctxt "x86-flag"
 msgid "FXSAVE leaks FOP/FIP/FOP"
 msgstr ""
 
 #. /bug:clflush_monitor
-#: modules/devices/x86/processor.c:582
+#: modules/devices/x86/x86_data.c:274
 msgctxt "x86-flag"
 msgid "AAI65, CLFLUSH required before MONITOR"
 msgstr ""
 
 #. /bug:sysret_ss_attrs
-#: modules/devices/x86/processor.c:583
+#: modules/devices/x86/x86_data.c:275
 msgctxt "x86-flag"
 msgid "SYSRET doesn't fix up SS attrs"
 msgstr ""
 
 #. /bug:espfix
-#: modules/devices/x86/processor.c:584
+#: modules/devices/x86/x86_data.c:276
 msgctxt "x86-flag"
 msgid "IRET to 16-bit SS corrupts ESP/RSP high bits"
 msgstr ""
 
 #. /bug:null_seg
-#: modules/devices/x86/processor.c:585
+#: modules/devices/x86/x86_data.c:277
 msgctxt "x86-flag"
 msgid "Nulling a selector preserves the base"
 msgstr ""
 
 #. /bug:swapgs_fence
-#: modules/devices/x86/processor.c:586
+#: modules/devices/x86/x86_data.c:278
 msgctxt "x86-flag"
 msgid "SWAPGS without input dep on GS"
 msgstr ""
 
 #. /bug:monitor
-#: modules/devices/x86/processor.c:587
+#: modules/devices/x86/x86_data.c:279
 msgctxt "x86-flag"
 msgid "IPI required to wake up remote CPU"
 msgstr ""
 
+#. /x86/kernel/cpu/powerflags.h
 #. /flag:pm:ts
-#: modules/devices/x86/processor.c:596
+#: modules/devices/x86/x86_data.c:283
 msgctxt "x86-flag"
 msgid "temperature sensor"
 msgstr ""
 
 #. /flag:pm:fid
-#: modules/devices/x86/processor.c:597
+#: modules/devices/x86/x86_data.c:284
 msgctxt "x86-flag"
 msgid "frequency id control"
 msgstr ""
 
 #. /flag:pm:vid
-#: modules/devices/x86/processor.c:598
+#: modules/devices/x86/x86_data.c:285
 msgctxt "x86-flag"
 msgid "voltage id control"
 msgstr ""
 
 #. /flag:pm:ttp
-#: modules/devices/x86/processor.c:599
+#: modules/devices/x86/x86_data.c:286
 msgctxt "x86-flag"
 msgid "thermal trip"
 msgstr ""
 
 #. /flag:pm:tm
-#: modules/devices/x86/processor.c:600
+#: modules/devices/x86/x86_data.c:287
 msgctxt "x86-flag"
 msgid "hardware thermal control"
 msgstr ""
 
 #. /flag:pm:stc
-#: modules/devices/x86/processor.c:601
+#: modules/devices/x86/x86_data.c:288
 msgctxt "x86-flag"
 msgid "software thermal control"
 msgstr ""
 
 #. /flag:pm:100mhzsteps
-#: modules/devices/x86/processor.c:602
+#: modules/devices/x86/x86_data.c:289
 msgctxt "x86-flag"
 msgid "100 MHz multiplier control"
 msgstr ""
 
 #. /flag:pm:hwpstate
-#: modules/devices/x86/processor.c:603
+#: modules/devices/x86/x86_data.c:290
 msgctxt "x86-flag"
 msgid "hardware P-state control"
 msgstr ""
 
 #. /flag:pm:cpb
-#: modules/devices/x86/processor.c:604
+#: modules/devices/x86/x86_data.c:291
 msgctxt "x86-flag"
 msgid "core performance boost"
 msgstr ""
 
 #. /flag:pm:eff_freq_ro
-#: modules/devices/x86/processor.c:605
+#: modules/devices/x86/x86_data.c:292
 msgctxt "x86-flag"
 msgid "Readonly aperf/mperf"
 msgstr ""
 
 #. /flag:pm:proc_feedback
-#: modules/devices/x86/processor.c:606
+#: modules/devices/x86/x86_data.c:293
 msgctxt "x86-flag"
 msgid "processor feedback interface"
 msgstr ""
 
 #. /flag:pm:acc_power
-#: modules/devices/x86/processor.c:607
+#: modules/devices/x86/x86_data.c:294
 msgctxt "x86-flag"
 msgid "accumulated power mechanism"
-msgstr ""
-
-#: modules/devices/x86/processor.c:746
-msgid "Model Name"
-msgstr ""
-
-#: modules/devices/x86/processor.c:747
-msgid "Family, model, stepping"
-msgstr ""
-
-#: modules/devices/x86/processor.c:753
-msgid "Configuration"
-msgstr ""
-
-#: modules/devices/x86/processor.c:754
-msgid "Cache Size"
-msgstr ""
-
-#: modules/devices/x86/processor.c:754
-msgid "kb"
-msgstr ""
-
-#: modules/devices/x86/processor.c:761
-msgid "Power Management"
-msgstr ""
-
-#: modules/devices/x86/processor.c:762
-msgid "Bug Workarounds"
 msgstr ""
 
 #: modules/network.c:59
