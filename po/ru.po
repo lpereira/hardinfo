@@ -1488,115 +1488,143 @@ msgstr ""
 
 #. /hw_cap
 #: modules/devices/arm/arm_data.c:42
+msgctxt "arm-flag"
 msgid "SWP instruction (atomic read-modify-write)"
 msgstr "Инструкция SWP (атомарное чтение-изменение-запись)"
 
 #: modules/devices/arm/arm_data.c:43
+msgctxt "arm-flag"
 msgid "Half-word loads and stores"
 msgstr "Загрузка и хранение полуслова"
 
 #: modules/devices/arm/arm_data.c:44
+msgctxt "arm-flag"
 msgid "Thumb (16-bit instruction set)"
 msgstr "Thumb (набор 16-битных инструкций)"
 
 #: modules/devices/arm/arm_data.c:45
+msgctxt "arm-flag"
 msgid "26-Bit Model (Processor status register folded into program counter)"
 msgstr "26-битная модель (регистр статуса процессора вложен в счетчик программы)"
 
 #: modules/devices/arm/arm_data.c:46
+msgctxt "arm-flag"
 msgid "32x32->64-bit multiplication"
 msgstr "32x32->64-битное умножение"
 
 #: modules/devices/arm/arm_data.c:47
+msgctxt "arm-flag"
 msgid "Floating point accelerator"
 msgstr "Ускоритель плавающей точки"
 
 #: modules/devices/arm/arm_data.c:48
+msgctxt "arm-flag"
 msgid "VFP (early SIMD vector floating point instructions)"
 msgstr "VFP (ранний вектор SIMD инструкций плавающей точки)"
 
 #: modules/devices/arm/arm_data.c:49
+msgctxt "arm-flag"
 msgid "DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)"
 msgstr "расширения DSP (вариант 'e' процессоров ARM9 и выше)"
 
 #: modules/devices/arm/arm_data.c:50
+msgctxt "arm-flag"
 msgid "Jazelle (Java bytecode accelerator)"
 msgstr "Jazelle (ускоритель байт-кода Java)"
 
 #: modules/devices/arm/arm_data.c:51
+msgctxt "arm-flag"
 msgid "SIMD instructions similar to Intel MMX"
 msgstr "Инструкции SIMD, схожие с Intel MMX"
 
 #: modules/devices/arm/arm_data.c:52
+msgctxt "arm-flag"
 msgid "MaverickCrunch coprocessor (if kernel support enabled)"
 msgstr "Сопроцессор MaverickCrunch (при наличии поддержки в ядре)"
 
 #: modules/devices/arm/arm_data.c:53
+msgctxt "arm-flag"
 msgid "ThumbEE"
 msgstr ""
 
 #: modules/devices/arm/arm_data.c:54
+msgctxt "arm-flag"
 msgid "Advanced SIMD/NEON on AArch32"
 msgstr "Дополнительный SIMD/NEON на AArch32"
 
 #: modules/devices/arm/arm_data.c:55
+msgctxt "arm-flag"
 msgid "kernel event stream using generic architected timer"
 msgstr "поток событий ядра с использованием общего архитектурного таймера"
 
 #: modules/devices/arm/arm_data.c:56
+msgctxt "arm-flag"
 msgid "VFP version 3"
 msgstr "VFP версии 3"
 
 #: modules/devices/arm/arm_data.c:57
+msgctxt "arm-flag"
 msgid "VFP version 3 with 16 D-registers"
 msgstr "VFP версии 3 с 16 D-регистрами"
 
 #: modules/devices/arm/arm_data.c:58
+msgctxt "arm-flag"
 msgid "VFP version 4 with fast context switching"
 msgstr "VFP версии 4 с быстрым контекстным переключением"
 
 #: modules/devices/arm/arm_data.c:59
+msgctxt "arm-flag"
 msgid "VFP with 32 D-registers"
 msgstr "VFP с 32 D-регистрами"
 
 #: modules/devices/arm/arm_data.c:60
+msgctxt "arm-flag"
 msgid "TLS register"
 msgstr "Регистр TLS"
 
 #: modules/devices/arm/arm_data.c:61
+msgctxt "arm-flag"
 msgid "SDIV and UDIV hardware division in ARM mode"
 msgstr "Аппаратное разделение SDIV и UDIV в режиме ARM"
 
 #: modules/devices/arm/arm_data.c:62
+msgctxt "arm-flag"
 msgid "SDIV and UDIV hardware division in Thumb mode"
 msgstr "Аппаратное разделение SDIV и UDIV в режиме Thumb"
 
 #: modules/devices/arm/arm_data.c:63
+msgctxt "arm-flag"
 msgid "40-bit Large Physical Address Extension"
 msgstr "40-битное большое физическое адресное расширение"
 
 #. /hw_cap2
 #: modules/devices/arm/arm_data.c:65
+msgctxt "arm-flag"
 msgid "64x64->128-bit F2m multiplication (arch>8)"
 msgstr "64x64->128-битное умножение F2m (arch>8)"
 
 #: modules/devices/arm/arm_data.c:66
+msgctxt "arm-flag"
 msgid "Crypto:AES (arch>8)"
 msgstr "Крипто:AES (arch>8)"
 
 #: modules/devices/arm/arm_data.c:67
+msgctxt "arm-flag"
 msgid "Crypto:SHA1 (arch>8)"
 msgstr "Крипто:SHA1 (arch>8)"
 
 #: modules/devices/arm/arm_data.c:68
+msgctxt "arm-flag"
 msgid "Crypto:SHA2 (arch>8)"
 msgstr "Крипто:SHA2 (arch>8)"
 
 #: modules/devices/arm/arm_data.c:69
+msgctxt "arm-flag"
 msgid "CRC32 checksum instructions (arch>8)"
 msgstr "инструкции контрольной суммы CRC32 (arch>8)"
 
 #: modules/devices/arm/arm_data.c:72
+msgctxt "arm-flag"
 msgid "Advanced SIMD/NEON on AArch64 (arch>8)"
 msgstr "Дополнительный SIMD/NEON на AArch64 (arch>8)"
 
@@ -1954,74 +1982,92 @@ msgid "uarch"
 msgstr ""
 
 #: modules/devices/riscv/riscv_data.c:37
+msgctxt "rv-ext"
 msgid "RISC-V 32-bit"
 msgstr "32-битная RISC-V"
 
 #: modules/devices/riscv/riscv_data.c:38
+msgctxt "rv-ext"
 msgid "RISC-V 64-bit"
 msgstr "64-битная RISC-V"
 
 #: modules/devices/riscv/riscv_data.c:39
+msgctxt "rv-ext"
 msgid "RISC-V 128-bit"
 msgstr "128-битная RISC-V"
 
 #: modules/devices/riscv/riscv_data.c:40
+msgctxt "rv-ext"
 msgid "Base embedded integer instructions (15 registers)"
 msgstr "Базовые встроенные целочисленные инструкции (15 регистров)"
 
 #: modules/devices/riscv/riscv_data.c:41
+msgctxt "rv-ext"
 msgid "Base integer instructions (31 registers)"
 msgstr "Базовые целочисленные инструкции (31 регистр)"
 
 #: modules/devices/riscv/riscv_data.c:42
+msgctxt "rv-ext"
 msgid "Hardware integer multiply and divide"
 msgstr "Аппаратное умножение и деление целых чисел"
 
 #: modules/devices/riscv/riscv_data.c:43
+msgctxt "rv-ext"
 msgid "Atomic memory operations"
 msgstr "Атомные операции с памятью"
 
 #: modules/devices/riscv/riscv_data.c:44
+msgctxt "rv-ext"
 msgid "Compressed 16-bit instructions"
 msgstr "Сжатые 16-битные инструкции"
 
 #: modules/devices/riscv/riscv_data.c:45
+msgctxt "rv-ext"
 msgid "Floating-point instructions, single-precision"
 msgstr "Инструкции с плавающей запятой, одинарной точности"
 
 #: modules/devices/riscv/riscv_data.c:46
+msgctxt "rv-ext"
 msgid "Floating-point instructions, double-precision"
 msgstr "Инструкции с плавающей запятой, двойной точности"
 
 #: modules/devices/riscv/riscv_data.c:47
+msgctxt "rv-ext"
 msgid "Floating-point instructions, quad-precision"
 msgstr "Инструкции с плавающей запятой, четверной точности"
 
 #: modules/devices/riscv/riscv_data.c:48
+msgctxt "rv-ext"
 msgid "Bit manipulation instructions"
 msgstr "Инструкции манипуляции битами"
 
 #: modules/devices/riscv/riscv_data.c:49
+msgctxt "rv-ext"
 msgid "Vector operations"
 msgstr "Векторные операции"
 
 #: modules/devices/riscv/riscv_data.c:50
+msgctxt "rv-ext"
 msgid "Transactional memory"
 msgstr "Переходная память"
 
 #: modules/devices/riscv/riscv_data.c:51
+msgctxt "rv-ext"
 msgid "Packed SIMD instructions"
 msgstr "Сжатые инструкции SIMD"
 
 #: modules/devices/riscv/riscv_data.c:52
+msgctxt "rv-ext"
 msgid "Decimal floating-point instructions"
 msgstr "Десятичные инструкции с плавающей запятой"
 
 #: modules/devices/riscv/riscv_data.c:53
+msgctxt "rv-ext"
 msgid "Dynamically translated languages"
 msgstr "Языки с динамической трансляцией"
 
 #: modules/devices/riscv/riscv_data.c:54
+msgctxt "rv-ext"
 msgid "User-level interrupts"
 msgstr "Прерывания пользовательского уровня"
 
@@ -2035,120 +2081,149 @@ msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
 msgstr "Уровень %d (%s)=%d-канальный множественно-ассоциативный, %d множеств, размер %d кБ\n"
 
 #: modules/devices/x86/processor.c:339
+msgctxt "x86-flag"
 msgid "Onboard FPU (floating point support)"
 msgstr "Встроенный FPU (поддержка плавающей запятой)"
 
 #: modules/devices/x86/processor.c:340
+msgctxt "x86-flag"
 msgid "Virtual 8086 mode enhancements"
 msgstr "Улучшения виртуального режима 8086"
 
 #: modules/devices/x86/processor.c:341
+msgctxt "x86-flag"
 msgid "Debugging Extensions (CR4.DE)"
 msgstr "Расширения отладки (CR4.DE)"
 
 #: modules/devices/x86/processor.c:342
+msgctxt "x86-flag"
 msgid "Page Size Extensions (4MB memory pages)"
 msgstr "Расширения размера страницы (страницы памяти 4 Мб)"
 
 #: modules/devices/x86/processor.c:343
+msgctxt "x86-flag"
 msgid "Time Stamp Counter (RDTSC)"
 msgstr "Счетчик временной метки (RDTSC)"
 
 #: modules/devices/x86/processor.c:344
+msgctxt "x86-flag"
 msgid "Model-Specific Registers (RDMSR, WRMSR)"
 msgstr "Регистры конкретной модели (RDMSR, WRMSR)"
 
 #: modules/devices/x86/processor.c:345
+msgctxt "x86-flag"
 msgid "Physical Address Extensions (support for more than 4GB of RAM)"
 msgstr "Расширения физического адреса (поддержка более 4 Гб ОЗУ)"
 
 #: modules/devices/x86/processor.c:346
+msgctxt "x86-flag"
 msgid "Machine Check Exception"
 msgstr "Исключение машинного контроля"
 
 #: modules/devices/x86/processor.c:347
+msgctxt "x86-flag"
 msgid "CMPXCHG8 instruction (64-bit compare-and-swap)"
 msgstr "Инструкция CMPXCHG8 (64-битное сравнение-и-подкачка)"
 
 #: modules/devices/x86/processor.c:348
+msgctxt "x86-flag"
 msgid "Onboard APIC"
 msgstr "Встроенный APIC"
 
 #: modules/devices/x86/processor.c:349
+msgctxt "x86-flag"
 msgid "SYSENTER/SYSEXIT"
 msgstr ""
 
 #: modules/devices/x86/processor.c:350
+msgctxt "x86-flag"
 msgid "Memory Type Range Registers"
 msgstr "Регистры диапазона типа памяти"
 
 #: modules/devices/x86/processor.c:351
+msgctxt "x86-flag"
 msgid "Page Global Enable (global bit in PDEs and PTEs)"
 msgstr "Включение глобальной страницы (глобальный бит в PDE и PTE)"
 
 #: modules/devices/x86/processor.c:352
+msgctxt "x86-flag"
 msgid "Machine Check Architecture"
 msgstr "Архитектура машинного контроля"
 
 #: modules/devices/x86/processor.c:353
+msgctxt "x86-flag"
 msgid "CMOV instructions (conditional move) (also FCMOV)"
 msgstr "Инструкции CMOV (условная пересылка данных) (также FCMOV)"
 
 #: modules/devices/x86/processor.c:354
+msgctxt "x86-flag"
 msgid "Page Attribute Table"
 msgstr "Таблица атрибутов страницы"
 
 #: modules/devices/x86/processor.c:355
+msgctxt "x86-flag"
 msgid "36-bit PSEs (huge pages)"
 msgstr "36-битные PSE (огромные страницы)"
 
 #: modules/devices/x86/processor.c:356
+msgctxt "x86-flag"
 msgid "Processor serial number"
 msgstr "Серийный номер процессора"
 
 #: modules/devices/x86/processor.c:357
+msgctxt "x86-flag"
 msgid "Cache Line Flush instruction"
 msgstr "Инструкция Cache Line Flush"
 
 #: modules/devices/x86/processor.c:358
+msgctxt "x86-flag"
 msgid ""
 "Debug Store (buffer for debugging and profiling instructions), or "
 "alternately: digital thermal sensor"
 msgstr ""
 
 #: modules/devices/x86/processor.c:359
+msgctxt "x86-flag"
 msgid "ACPI via MSR (temperature monitoring and clock speed modulation)"
 msgstr "ACPI через MSR (мониторинг температуры и модуляции тактовой частоты)"
 
 #: modules/devices/x86/processor.c:360
+msgctxt "x86-flag"
 msgid "Multimedia Extensions"
 msgstr "Расширения мультимедиа"
 
 #: modules/devices/x86/processor.c:361
+msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
 msgstr ""
 
 #: modules/devices/x86/processor.c:362
+msgctxt "x86-flag"
 msgid "Intel SSE vector instructions"
 msgstr "Векторные инструкции Intel SSE"
 
 #: modules/devices/x86/processor.c:363
+msgctxt "x86-flag"
 msgid "SSE2"
 msgstr ""
 
 #: modules/devices/x86/processor.c:364
+msgctxt "x86-flag"
 msgid "CPU self snoop"
 msgstr "Проверка процессора"
 
 #: modules/devices/x86/processor.c:365
+msgctxt "x86-flag"
 msgid "Hyper-Threading"
 msgstr "Многопоточность (Hyper-Threading)"
 
 #: modules/devices/x86/processor.c:366
+msgctxt "x86-flag"
 msgid "Automatic clock control (Thermal Monitor)"
 msgstr "Автоматический контроль частоты (монитор температуры)"
 
 #: modules/devices/x86/processor.c:367
+msgctxt "x86-flag"
 msgid ""
 "Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
 "x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
@@ -2157,154 +2232,192 @@ msgstr ""
 "x86 от Intel с флагом x86-64 или \"AMD64\"-битной с флагом bit)"
 
 #: modules/devices/x86/processor.c:368
+msgctxt "x86-flag"
 msgid "Pending Break Enable (PBE# pin) wakeup support"
 msgstr "Поддержка пробуждения Pending Break Enable (PBE# pin)"
 
 #: modules/devices/x86/processor.c:371
+msgctxt "x86-flag"
 msgid "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
 msgstr "SYSCALL (Быстрый вызов системы) и SYSRET (Возврат после быстрого вызова системы)"
 
 #: modules/devices/x86/processor.c:372
+msgctxt "x86-flag"
 msgid "Multiprocessing Capable."
 msgstr "Возможна работа в многопроцессном режиме."
 
 #: modules/devices/x86/processor.c:373
+msgctxt "x86-flag"
 msgid "Execute Disable"
 msgstr "Выполнение отключено"
 
 #: modules/devices/x86/processor.c:374
+msgctxt "x86-flag"
 msgid "AMD MMX extensions"
 msgstr "Расширения AMD MMX"
 
 #: modules/devices/x86/processor.c:375
+msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR optimizations"
 msgstr "Оптимизации FXSAVE/FXRSTOR"
 
 #: modules/devices/x86/processor.c:376
+msgctxt "x86-flag"
 msgid "One GB pages (allows hugepagesz=1G)"
 msgstr "Страница размером 1 Гб (разрешает hugepagesz=1G)"
 
 #: modules/devices/x86/processor.c:377
+msgctxt "x86-flag"
 msgid "Read Time-Stamp Counter and Processor ID"
 msgstr "Чтение счетчика временной метки и ID процессора"
 
 #: modules/devices/x86/processor.c:378
+msgctxt "x86-flag"
 msgid "Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)"
 msgstr "Длинный режим (x86-64: amd64, также известен как Intel 64, т.е. совместимый с 64-бит)"
 
 #: modules/devices/x86/processor.c:379
+msgctxt "x86-flag"
 msgid "3DNow! (AMD vector instructions, competing with Intel's SSE1)"
 msgstr "3DNow! (векторные инструкции AMD, конкурируют с SSE1 от Intel)"
 
 #: modules/devices/x86/processor.c:380
+msgctxt "x86-flag"
 msgid "AMD 3DNow! extensions"
 msgstr "Расширения AMD 3DNow!"
 
 #: modules/devices/x86/processor.c:382
+msgctxt "x86-flag"
 msgid "CPU in recovery mode"
 msgstr "Процессор в режиме восстановления"
 
 #: modules/devices/x86/processor.c:383
+msgctxt "x86-flag"
 msgid "Longrun power control"
 msgstr "Управление питанием LongRun"
 
 #: modules/devices/x86/processor.c:384
+msgctxt "x86-flag"
 msgid "LongRun table interface"
 msgstr "Интерфейс таблицы LongRun"
 
 #: modules/devices/x86/processor.c:386
+msgctxt "x86-flag"
 msgid "Cyrix MMX extensions"
 msgstr "Расширения Cyrix MMX"
 
 #: modules/devices/x86/processor.c:387
+msgctxt "x86-flag"
 msgid "AMD K6 nonstandard MTRRs"
 msgstr "Нестандартные диапазонные регистры типа памяти (MTRR) AMD K6"
 
 #: modules/devices/x86/processor.c:388
+msgctxt "x86-flag"
 msgid "Cyrix ARRs (= MTRRs)"
 msgstr "Регистры адресного диапазона (ARR) Cyrix (= диапазонные регистры типа памяти (MTRR))"
 
 #: modules/devices/x86/processor.c:389
+msgctxt "x86-flag"
 msgid "Centaur MCRs (= MTRRs)"
 msgstr "Сбросы мастер-контроля (MCR) Centaur (= диапазонные регистры типа памяти (MTRR))"
 
 #: modules/devices/x86/processor.c:390
+msgctxt "x86-flag"
 msgid "TSC ticks at a constant rate"
 msgstr "Счетчик метки времени (TSC) работает на постоянной частоте"
 
 #: modules/devices/x86/processor.c:391
+msgctxt "x86-flag"
 msgid "SMP kernel running on UP"
 msgstr "Ядро SMP запущено на UP"
 
 #: modules/devices/x86/processor.c:392
+msgctxt "x86-flag"
 msgid "Always-Running Timer"
 msgstr "Постоянный таймер"
 
 #: modules/devices/x86/processor.c:393
+msgctxt "x86-flag"
 msgid "Intel Architectural PerfMon"
 msgstr "Архитектурный монитор призводительности Intel"
 
 #: modules/devices/x86/processor.c:394
+msgctxt "x86-flag"
 msgid "Precise-Event Based Sampling"
 msgstr "Сэмплинг, основанный на точных событиях"
 
 #: modules/devices/x86/processor.c:395
+msgctxt "x86-flag"
 msgid "Branch Trace Store"
 msgstr "Хранилище отслеживания ветви"
 
 #: modules/devices/x86/processor.c:396
+msgctxt "x86-flag"
 msgid "rep microcode works well"
 msgstr "микрокод rep работает нормально"
 
 #: modules/devices/x86/processor.c:397
+msgctxt "x86-flag"
 msgid "AMD accumulated power mechanism"
 msgstr "Механизм накопления питания AMD"
 
 #: modules/devices/x86/processor.c:398
+msgctxt "x86-flag"
 msgid "The NOPL (0F 1F) instructions"
 msgstr "Инструкции NOPL (0F 1F)"
 
 #: modules/devices/x86/processor.c:399
+msgctxt "x86-flag"
 msgid "cpu topology enum extensions"
 msgstr "расширения cpu топологии enum"
 
 #: modules/devices/x86/processor.c:400
+msgctxt "x86-flag"
 msgid "TSC is known to be reliable"
 msgstr "Счетчик метки времени (TSC) считается надежным"
 
 #: modules/devices/x86/processor.c:401
+msgctxt "x86-flag"
 msgid "TSC does not stop in C states"
 msgstr "Счетчик метки времени (TSC) не останавливается в состояниях C"
 
 #: modules/devices/x86/processor.c:402
+msgctxt "x86-flag"
 msgid "has extended APICID (8 bits)"
 msgstr "имеются расширенные APICID (8 бит)"
 
 #: modules/devices/x86/processor.c:403
+msgctxt "x86-flag"
 msgid "multi-node processor"
 msgstr "многоузловой процессор"
 
 #: modules/devices/x86/processor.c:404
+msgctxt "x86-flag"
 msgid "APERFMPERF"
 msgstr ""
 
 #: modules/devices/x86/processor.c:405
+msgctxt "x86-flag"
 msgid "Non lazy FPU restore"
 msgstr "Неленивое восстановление FPU"
 
 #: modules/devices/x86/processor.c:406
+msgctxt "x86-flag"
 msgid "TSC doesn't stop in S3 state"
 msgstr "Счетчик метки времени (TSC) не останавливается в состоянии S3"
 
 #: modules/devices/x86/processor.c:407
+msgctxt "x86-flag"
 msgid "CPU has recoverable machine checks"
 msgstr "У процессора есть возможность восстановить машинный контроль"
 
 #: modules/devices/x86/processor.c:410
+msgctxt "x86-flag"
 msgid "SSE-3 (“Prescott New Instructions”)"
 msgstr "SSE-3 (“Новые инструкции Prescott”)"
 
 #: modules/devices/x86/processor.c:411
+msgctxt "x86-flag"
 msgid ""
 "Perform a Carry-Less Multiplication of Quadword instruction — accelerator "
 "for GCM)"
@@ -2313,86 +2426,107 @@ msgstr ""
 " — ускоряет GCM)"
 
 #: modules/devices/x86/processor.c:412
+msgctxt "x86-flag"
 msgid "64-bit Debug Store"
 msgstr "Хранилище 64-битной отладки"
 
 #: modules/devices/x86/processor.c:413
+msgctxt "x86-flag"
 msgid "Monitor/Mwait support (Intel SSE3 supplements)"
 msgstr "Поддержка Monitor/Mwait (дополняет Intel SSE3)"
 
 #: modules/devices/x86/processor.c:414
+msgctxt "x86-flag"
 msgid "CPL Qual. Debug Store"
 msgstr "Хранилище отладки CPL Qual."
 
 #: modules/devices/x86/processor.c:415
+msgctxt "x86-flag"
 msgid "Hardware virtualization, Intel VMX"
 msgstr "Аппаратная виртуализация, Intel VMX"
 
 #: modules/devices/x86/processor.c:416
+msgctxt "x86-flag"
 msgid "Safer mode TXT (TPM support)"
 msgstr "Безопасный режим TXT (поддержка TPM)"
 
 #: modules/devices/x86/processor.c:417
+msgctxt "x86-flag"
 msgid "Enhanced SpeedStep"
 msgstr "Технология энергосбережения Enhanced SpeedStep"
 
 #: modules/devices/x86/processor.c:418
+msgctxt "x86-flag"
 msgid "Thermal Monitor 2"
 msgstr "Монитор температуры 2"
 
 #: modules/devices/x86/processor.c:419
+msgctxt "x86-flag"
 msgid "Supplemental SSE-3"
 msgstr "Дополнительный SSE-3"
 
 #: modules/devices/x86/processor.c:420
+msgctxt "x86-flag"
 msgid "Context ID"
 msgstr "ID контекста"
 
 #: modules/devices/x86/processor.c:421
+msgctxt "x86-flag"
 msgid "silicon debug"
 msgstr "отладка кремния"
 
 #: modules/devices/x86/processor.c:422
+msgctxt "x86-flag"
 msgid "Fused multiply-add"
 msgstr "Умножение-сложение с однократным округлением"
 
 #: modules/devices/x86/processor.c:423
+msgctxt "x86-flag"
 msgid "CMPXCHG16B"
 msgstr ""
 
 #: modules/devices/x86/processor.c:424
+msgctxt "x86-flag"
 msgid "Send Task Priority Messages"
 msgstr "Отправлять сообщения о приоритете задач"
 
 #: modules/devices/x86/processor.c:425
+msgctxt "x86-flag"
 msgid "Performance Capabilities"
 msgstr "Возможности производительности"
 
 #: modules/devices/x86/processor.c:426
+msgctxt "x86-flag"
 msgid "Process Context Identifiers"
 msgstr "Идентификаторы контекста процесса"
 
 #: modules/devices/x86/processor.c:427
+msgctxt "x86-flag"
 msgid "Direct Cache Access"
 msgstr "Прямой доступ к кэшу"
 
 #: modules/devices/x86/processor.c:428
+msgctxt "x86-flag"
 msgid "SSE-4.1"
 msgstr ""
 
 #: modules/devices/x86/processor.c:429
+msgctxt "x86-flag"
 msgid "SSE-4.2"
 msgstr ""
 
 #: modules/devices/x86/processor.c:430
+msgctxt "x86-flag"
 msgid "x2APIC"
 msgstr ""
 
 #: modules/devices/x86/processor.c:431
+msgctxt "x86-flag"
 msgid "Move Data After Swapping Bytes instruction"
 msgstr "Инструкция переноса данных после подкачки байт"
 
 #: modules/devices/x86/processor.c:432
+msgctxt "x86-flag"
 msgid ""
 "Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i."
 "e. bit count)"
@@ -2401,103 +2535,128 @@ msgstr ""
 "е. счетчик бит)"
 
 #: modules/devices/x86/processor.c:433
+msgctxt "x86-flag"
 msgid "Tsc deadline timer"
 msgstr "Таймер окончания счетчика метки времени (TSC)"
 
 #: modules/devices/x86/processor.c:434
+msgctxt "x86-flag"
 msgid "Advanced Encryption Standard (New Instructions)"
 msgstr "Стандарт дополнительного шифрования (новые инструкции)"
 
 #: modules/devices/x86/processor.c:435
+msgctxt "x86-flag"
 msgid "Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY"
 msgstr "Сохранение расширенных состояний процессора: также добавляет XGETBY,XRSTOR,XSETBY"
 
 #: modules/devices/x86/processor.c:436
+msgctxt "x86-flag"
 msgid "Advanced Vector Extensions"
 msgstr "Дополнительные векторные расширения"
 
 #: modules/devices/x86/processor.c:437
+msgctxt "x86-flag"
 msgid "16-bit fp conversions (CVT16)"
 msgstr "16-битные конверсии fp (CVT16)"
 
 #: modules/devices/x86/processor.c:438
+msgctxt "x86-flag"
 msgid "Read Random Number from hardware random number generator instruction"
 msgstr "Инструкция считывания случайного числа из аппаратного генератора"
 
 #: modules/devices/x86/processor.c:439
+msgctxt "x86-flag"
 msgid "Running on a hypervisor"
 msgstr "Запущено в гипервизоре"
 
 #. /Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001
 #: modules/devices/x86/processor.c:441
+msgctxt "x86-flag"
 msgid "Random Number Generator present (xstore)"
 msgstr "Наличие генератора случайных чисел (xstore)"
 
 #: modules/devices/x86/processor.c:442
+msgctxt "x86-flag"
 msgid "Random Number Generator enabled"
 msgstr "Генератор случайных чисел включен"
 
 #: modules/devices/x86/processor.c:443
+msgctxt "x86-flag"
 msgid "on-CPU crypto (xcrypt)"
 msgstr "шифрование на процессоре (xcrypt)"
 
 #: modules/devices/x86/processor.c:444
+msgctxt "x86-flag"
 msgid "on-CPU crypto enabled"
 msgstr "шифрование на процессоре включено"
 
 #: modules/devices/x86/processor.c:445
+msgctxt "x86-flag"
 msgid "Advanced Cryptography Engine v2"
 msgstr ""
 
 #: modules/devices/x86/processor.c:446
+msgctxt "x86-flag"
 msgid "ACE v2 enabled"
 msgstr "ACE v2 включен"
 
 #: modules/devices/x86/processor.c:447
+msgctxt "x86-flag"
 msgid "PadLock Hash Engine"
 msgstr "Движок контрольных сумм PadLock"
 
 #: modules/devices/x86/processor.c:448
+msgctxt "x86-flag"
 msgid "PHE enabled"
 msgstr "PHE включен"
 
 #: modules/devices/x86/processor.c:449
+msgctxt "x86-flag"
 msgid "PadLock Montgomery Multiplier"
 msgstr "Множитель PadLock Montgomery"
 
 #: modules/devices/x86/processor.c:450
+msgctxt "x86-flag"
 msgid "PMM enabled"
 msgstr "PMM включен"
 
 #: modules/devices/x86/processor.c:452
+msgctxt "x86-flag"
 msgid "Load AH from Flags (LAHF) and Store AH into Flags (SAHF) in long mode"
 msgstr "Загрузка AH из флагов (LAHF) и хранение AH в флагах (SAHF) в длинном режиме"
 
 #: modules/devices/x86/processor.c:453
+msgctxt "x86-flag"
 msgid "If yes HyperThreading not valid"
 msgstr "Если да, многопоточность не работает"
 
 #: modules/devices/x86/processor.c:454
+msgctxt "x86-flag"
 msgid "\"Secure virtual machine\": AMD-V"
 msgstr "\"Безопасная виртуальная машина\": AMD-V"
 
 #: modules/devices/x86/processor.c:455
+msgctxt "x86-flag"
 msgid "Extended APIC space"
 msgstr "Расширенное пространство APIC"
 
 #: modules/devices/x86/processor.c:456
+msgctxt "x86-flag"
 msgid "CR8 in 32-bit mode"
 msgstr "CR8 в 32-битном режиме"
 
 #: modules/devices/x86/processor.c:457
+msgctxt "x86-flag"
 msgid "Advanced Bit Manipulation"
 msgstr "Дополнительное управление битами"
 
 #: modules/devices/x86/processor.c:458
+msgctxt "x86-flag"
 msgid "SSE-4A"
 msgstr ""
 
 #: modules/devices/x86/processor.c:459
+msgctxt "x86-flag"
 msgid ""
 "indicates if a general-protection exception (#GP) is generated when some "
 "legacy SSE instructions operate on unaligned data. Also depends on CR0 and "
@@ -2508,10 +2667,12 @@ msgstr ""
 "бита проверки выравнивания"
 
 #: modules/devices/x86/processor.c:460
+msgctxt "x86-flag"
 msgid "3DNow prefetch instructions"
 msgstr "инструкции 3DNow prefetch"
 
 #: modules/devices/x86/processor.c:461
+msgctxt "x86-flag"
 msgid ""
 "indicates OS Visible Workaround, which allows the OS to work around "
 "processor errata."
@@ -2520,370 +2681,462 @@ msgstr ""
 "процессора."
 
 #: modules/devices/x86/processor.c:462
+msgctxt "x86-flag"
 msgid "Instruction Based Sampling"
 msgstr "Сэмплинг, основанный на инструкциях"
 
 #: modules/devices/x86/processor.c:463
+msgctxt "x86-flag"
 msgid "extended AVX instructions"
 msgstr "расширенные инструкции AVX"
 
 #: modules/devices/x86/processor.c:464
+msgctxt "x86-flag"
 msgid "SKINIT/STGI instructions"
 msgstr "инструкции SKINIT/STGI"
 
 #: modules/devices/x86/processor.c:465
+msgctxt "x86-flag"
 msgid "Watchdog timer"
 msgstr "Сторожевой таймер"
 
 #: modules/devices/x86/processor.c:466
+msgctxt "x86-flag"
 msgid "Light Weight Profiling"
 msgstr "Легковесное профилирование"
 
 #: modules/devices/x86/processor.c:467
+msgctxt "x86-flag"
 msgid "4 operands MAC instructions"
 msgstr "Инструкции MAC 4 операндов"
 
 #: modules/devices/x86/processor.c:468
+msgctxt "x86-flag"
 msgid "translation cache extension"
 msgstr "расширение переноса кэша"
 
 #: modules/devices/x86/processor.c:469
+msgctxt "x86-flag"
 msgid "NodeId MSR"
 msgstr ""
 
 #: modules/devices/x86/processor.c:470
+msgctxt "x86-flag"
 msgid "Trailing Bit Manipulation"
 msgstr "Скользящее манипулирование битами"
 
 #: modules/devices/x86/processor.c:471
+msgctxt "x86-flag"
 msgid "Topology Extensions CPUID leafs"
 msgstr "Расширения топологии потоков CPUID"
 
 #: modules/devices/x86/processor.c:472
+msgctxt "x86-flag"
 msgid "Core Performance Counter Extensions"
 msgstr "Расширения счетчика производительности ядра"
 
 #: modules/devices/x86/processor.c:473
+msgctxt "x86-flag"
 msgid "NB Performance Counter Extensions"
 msgstr "Расширения счетчика производительности NB"
 
 #: modules/devices/x86/processor.c:474
+msgctxt "x86-flag"
 msgid "data breakpoint extension"
 msgstr "расширение точки прерывания данных"
 
 #: modules/devices/x86/processor.c:475
+msgctxt "x86-flag"
 msgid "performance time-stamp counter"
 msgstr "счетчик временной метки производительности"
 
 #: modules/devices/x86/processor.c:476
+msgctxt "x86-flag"
 msgid "L2 Performance Counter Extensions"
 msgstr "Расширения счетчика производительности L2"
 
 #: modules/devices/x86/processor.c:477
+msgctxt "x86-flag"
 msgid "MWAIT extension (MONITORX/MWAITX)"
 msgstr "Расширение MWAIT (MONITORX/MWAITX)"
 
 #: modules/devices/x86/processor.c:479
+msgctxt "x86-flag"
 msgid "AMD Core Performance Boost"
 msgstr "Увеличение производительности ядра AMD"
 
 #: modules/devices/x86/processor.c:480
+msgctxt "x86-flag"
 msgid "IA32_ENERGY_PERF_BIAS support"
 msgstr "Поддержка IA32_ENERGY_PERF_BIAS"
 
 #: modules/devices/x86/processor.c:481
+msgctxt "x86-flag"
 msgid "AMD HW-PState"
 msgstr ""
 
 #: modules/devices/x86/processor.c:482
+msgctxt "x86-flag"
 msgid "AMD ProcFeedbackInterface"
 msgstr ""
 
 #: modules/devices/x86/processor.c:483
+msgctxt "x86-flag"
 msgid "Intel Processor Tracing"
 msgstr "Отслеживание процессора Intel"
 
 #: modules/devices/x86/processor.c:485
+msgctxt "x86-flag"
 msgid "Intel TPR Shadow"
 msgstr ""
 
 #: modules/devices/x86/processor.c:486
+msgctxt "x86-flag"
 msgid "Intel Virtual NMI"
 msgstr ""
 
 #: modules/devices/x86/processor.c:487
+msgctxt "x86-flag"
 msgid "Intel FlexPriority"
 msgstr ""
 
 #: modules/devices/x86/processor.c:488
+msgctxt "x86-flag"
 msgid "Intel Extended Page Table"
 msgstr ""
 
 #: modules/devices/x86/processor.c:489
+msgctxt "x86-flag"
 msgid "Intel Virtual Processor ID"
 msgstr ""
 
 #: modules/devices/x86/processor.c:490
+msgctxt "x86-flag"
 msgid "prefer VMMCALL to VMCALL"
 msgstr "предпочитать VMMCALL, а не VMCALL"
 
 #: modules/devices/x86/processor.c:492
+msgctxt "x86-flag"
 msgid "{RD/WR}{FS/GS}BASE instructions"
 msgstr "Инструкции {RD/WR}{FS/GS}BASE"
 
 #: modules/devices/x86/processor.c:493
+msgctxt "x86-flag"
 msgid "TSC adjustment MSR"
 msgstr "TSC выраснивание MSR"
 
 #: modules/devices/x86/processor.c:494
+msgctxt "x86-flag"
 msgid "1st group bit manipulation extensions"
 msgstr "Расширения управления битами 1-й группы"
 
 #: modules/devices/x86/processor.c:495
+msgctxt "x86-flag"
 msgid "Hardware Lock Elision"
 msgstr "Аппаратная блокировка Elision"
 
 #: modules/devices/x86/processor.c:496
+msgctxt "x86-flag"
 msgid "AVX2 instructions"
 msgstr "Инструкции AVX2"
 
 #: modules/devices/x86/processor.c:497
+msgctxt "x86-flag"
 msgid "Supervisor Mode Execution Protection"
 msgstr "Защита выполнения режима супервизора"
 
 #: modules/devices/x86/processor.c:498
+msgctxt "x86-flag"
 msgid "2nd group bit manipulation extensions"
 msgstr "Расширения управления битами 2-й группы"
 
 #: modules/devices/x86/processor.c:499
+msgctxt "x86-flag"
 msgid "Enhanced REP MOVSB/STOSB"
 msgstr "Расширенный REP MOVSB/STOSB"
 
 #: modules/devices/x86/processor.c:500
+msgctxt "x86-flag"
 msgid "Invalidate Processor Context ID"
 msgstr "Аннулировать ID контекста процессора"
 
 #: modules/devices/x86/processor.c:501
+msgctxt "x86-flag"
 msgid "Restricted Transactional Memory"
 msgstr "Ограниченная память переносов"
 
 #: modules/devices/x86/processor.c:502
+msgctxt "x86-flag"
 msgid "Cache QoS Monitoring"
 msgstr "Мониторинг кэша QoS"
 
 #: modules/devices/x86/processor.c:503
+msgctxt "x86-flag"
 msgid "Memory Protection Extension"
 msgstr "Расширение защиты памяти"
 
 #: modules/devices/x86/processor.c:504
+msgctxt "x86-flag"
 msgid "AVX-512 foundation"
 msgstr "Основа AVX-512"
 
 #: modules/devices/x86/processor.c:505
+msgctxt "x86-flag"
 msgid "AVX-512 Double/Quad instructions"
 msgstr "Инструкции AVX-512 Double/Quad"
 
 #: modules/devices/x86/processor.c:506
+msgctxt "x86-flag"
 msgid "The RDSEED instruction"
 msgstr "Инструкция RDSEED"
 
 #: modules/devices/x86/processor.c:507
+msgctxt "x86-flag"
 msgid "The ADCX and ADOX instructions"
 msgstr "Инструкции ADCX и ADOX"
 
 #: modules/devices/x86/processor.c:508
+msgctxt "x86-flag"
 msgid "Supervisor Mode Access Prevention"
 msgstr "Предотвращение доступа к режиму супервизора"
 
 #: modules/devices/x86/processor.c:509
+msgctxt "x86-flag"
 msgid "CLFLUSHOPT instruction"
 msgstr "Инструкция CLFLUSHOPT"
 
 #: modules/devices/x86/processor.c:510
+msgctxt "x86-flag"
 msgid "CLWB instruction"
 msgstr "Инструкция CLWB"
 
 #: modules/devices/x86/processor.c:511
+msgctxt "x86-flag"
 msgid "AVX-512 Prefetch"
 msgstr ""
 
 #: modules/devices/x86/processor.c:512
+msgctxt "x86-flag"
 msgid "AVX-512 Exponential and Reciprocal"
 msgstr ""
 
 #: modules/devices/x86/processor.c:513
+msgctxt "x86-flag"
 msgid "AVX-512 Conflict Detection"
 msgstr "Обнаружения конфликтов AVX-512"
 
 #: modules/devices/x86/processor.c:514
+msgctxt "x86-flag"
 msgid "SHA1/SHA256 Instruction Extensions"
 msgstr "Расширения инструкций SHA1/SHA256"
 
 #: modules/devices/x86/processor.c:515
+msgctxt "x86-flag"
 msgid "AVX-512 Byte/Word instructions"
 msgstr "Инструкции AVX-512 Byte/Word"
 
 #: modules/devices/x86/processor.c:516
+msgctxt "x86-flag"
 msgid "AVX-512 128/256 Vector Length extensions"
 msgstr "Расширения длины вектора AVX-512 128/256"
 
 #: modules/devices/x86/processor.c:518
+msgctxt "x86-flag"
 msgid "Optimized XSAVE"
 msgstr "Оптимизированный XSAVE"
 
 #: modules/devices/x86/processor.c:519
+msgctxt "x86-flag"
 msgid "XSAVEC"
 msgstr ""
 
 #: modules/devices/x86/processor.c:520
+msgctxt "x86-flag"
 msgid "XGETBV with ECX = 1"
 msgstr "XGETBV с ECX = 1"
 
 #: modules/devices/x86/processor.c:521
+msgctxt "x86-flag"
 msgid "XSAVES/XRSTORS"
 msgstr ""
 
 #: modules/devices/x86/processor.c:523
+msgctxt "x86-flag"
 msgid "LLC QoS"
 msgstr ""
 
 #: modules/devices/x86/processor.c:525
+msgctxt "x86-flag"
 msgid "LLC occupancy monitoring"
 msgstr "Мониторинг занятости LLC"
 
 #: modules/devices/x86/processor.c:526
+msgctxt "x86-flag"
 msgid "LLC total MBM monitoring"
 msgstr "Полный MBM-мониторинг LLC"
 
 #: modules/devices/x86/processor.c:527
+msgctxt "x86-flag"
 msgid "LLC local MBM monitoring"
 msgstr "Локальный MBM-мониторинг LLC"
 
 #: modules/devices/x86/processor.c:529
+msgctxt "x86-flag"
 msgid "CLZERO instruction"
 msgstr "Инструкция CLZERO"
 
 #: modules/devices/x86/processor.c:530
+msgctxt "x86-flag"
 msgid "instructions retired performance counter"
 msgstr "инструкции счетчика отложенной производительности"
 
 #: modules/devices/x86/processor.c:532
+msgctxt "x86-flag"
 msgid "digital thermal sensor"
 msgstr "цифровой сенсор температуры"
 
 #: modules/devices/x86/processor.c:533
+msgctxt "x86-flag"
 msgid "Intel Dynamic Acceleration"
 msgstr "Динамическое ускорение Intel"
 
 #: modules/devices/x86/processor.c:534
+msgctxt "x86-flag"
 msgid "Always Running APIC Timer"
 msgstr "Таймер APIC всегда запущен"
 
 #: modules/devices/x86/processor.c:535
+msgctxt "x86-flag"
 msgid "Intel Power Limit Notification"
 msgstr "Уведомление о лимите энергии Intel"
 
 #: modules/devices/x86/processor.c:536
+msgctxt "x86-flag"
 msgid "Intel Package Thermal Status"
 msgstr "Статус температуры Intel"
 
 #: modules/devices/x86/processor.c:537
+msgctxt "x86-flag"
 msgid "Intel Hardware P-states"
 msgstr "Аппаратные P-states Intel"
 
 #: modules/devices/x86/processor.c:538
+msgctxt "x86-flag"
 msgid "HWP notification"
 msgstr "Уведомление HWP"
 
 #: modules/devices/x86/processor.c:539
+msgctxt "x86-flag"
 msgid "HWP Activity Window"
 msgstr "Окно активности HWP"
 
 #: modules/devices/x86/processor.c:540
+msgctxt "x86-flag"
 msgid "HWP Energy Performance Preference"
 msgstr "Настройка производительности энергии HWP"
 
 #: modules/devices/x86/processor.c:541
+msgctxt "x86-flag"
 msgid "HWP package-level request"
 msgstr "Запрос уровня пакета HWP"
 
 #: modules/devices/x86/processor.c:543
+msgctxt "x86-flag"
 msgid "AMD Nested Page Table support"
 msgstr "Поддержка таблиц вложенной страницы AMD"
 
 #: modules/devices/x86/processor.c:544
+msgctxt "x86-flag"
 msgid "AMD LBR Virtualization support"
 msgstr "Поддержка виртуализации AMD LBR"
 
 #: modules/devices/x86/processor.c:545
+msgctxt "x86-flag"
 msgid "AMD SVM locking MSR"
 msgstr "Блокировка MSR AMD SVM"
 
 #: modules/devices/x86/processor.c:546
+msgctxt "x86-flag"
 msgid "AMD SVM next_rip save"
 msgstr "Сохранение next_rip AMD SVM"
 
 #: modules/devices/x86/processor.c:547
+msgctxt "x86-flag"
 msgid "AMD TSC scaling support"
 msgstr "Поддержка масштабирования AMD TSC"
 
 #: modules/devices/x86/processor.c:548
+msgctxt "x86-flag"
 msgid "AMD VMCB clean bits support"
 msgstr "Поддержка чистых бит AMD VMCB"
 
 #: modules/devices/x86/processor.c:549
+msgctxt "x86-flag"
 msgid "AMD flush-by-ASID support"
 msgstr "Поддержка AMD flush-by-ASID"
 
 #: modules/devices/x86/processor.c:550
+msgctxt "x86-flag"
 msgid "AMD Decode Assists support"
 msgstr "Поддержка помощи декодирования"
 
 #: modules/devices/x86/processor.c:551
+msgctxt "x86-flag"
 msgid "AMD filtered pause intercept"
 msgstr "Перехват фильтрованной паузы AMD"
 
 #: modules/devices/x86/processor.c:552
+msgctxt "x86-flag"
 msgid "AMD pause filter threshold"
 msgstr "Порог фильтра паузы AMD"
 
 #: modules/devices/x86/processor.c:553
+msgctxt "x86-flag"
 msgid "Virtual Interrupt Controller"
 msgstr "Контроллер виртуального прерывания"
 
 #: modules/devices/x86/processor.c:555
+msgctxt "x86-flag"
 msgid "Protection Keys for Userspace"
 msgstr "Ключи защиты для пространства пользователя"
 
 #: modules/devices/x86/processor.c:556
+msgctxt "x86-flag"
 msgid "OS Protection Keys Enable"
 msgstr "Включение защиты ключей ОС"
 
 #: modules/devices/x86/processor.c:558
+msgctxt "x86-flag"
 msgid "MCA overflow recovery support"
 msgstr "Поддержка восстановления после переполнения MCA"
 
 #: modules/devices/x86/processor.c:559
+msgctxt "x86-flag"
 msgid "uncorrectable error containment and recovery"
 msgstr "неисправимое содержание ошибки и восстановление"
 
 #: modules/devices/x86/processor.c:560
+msgctxt "x86-flag"
 msgid "Scalable MCA"
 msgstr "Масштабируемый MCA"
 
 #: modules/devices/x86/processor.c:567
+msgctxt "x86-flag"
 msgid "Intel F00F bug"
 msgstr "Ошибка Intel F00F"
 
 #: modules/devices/x86/processor.c:568
+msgctxt "x86-flag"
 msgid "FPU FDIV"
 msgstr ""
 
 #: modules/devices/x86/processor.c:569
+msgctxt "x86-flag"
 msgid "Cyrix 6x86 coma"
 msgstr ""
 
 #: modules/devices/x86/processor.c:570
+msgctxt "x86-flag"
 msgid "AMD Erratum 383"
 msgstr ""
 
@@ -2892,82 +3145,102 @@ msgid "AMD Erratum 400"
 msgstr ""
 
 #: modules/devices/x86/processor.c:572
+msgctxt "x86-flag"
 msgid "Bad local APIC aka 11AP"
 msgstr "Неверный локальный APIC или 11AP"
 
 #: modules/devices/x86/processor.c:573
+msgctxt "x86-flag"
 msgid "FXSAVE leaks FOP/FIP/FOP"
 msgstr "FXSAVE утекает FOP/FIP/FOP"
 
 #: modules/devices/x86/processor.c:574
+msgctxt "x86-flag"
 msgid "AAI65, CLFLUSH required before MONITOR"
 msgstr "AAI65, CLFLUSH требуются до MONITOR"
 
 #: modules/devices/x86/processor.c:575
+msgctxt "x86-flag"
 msgid "SYSRET doesn't fix up SS attrs"
 msgstr "SYSRET не исправляет атрибуты SS"
 
 #: modules/devices/x86/processor.c:576
+msgctxt "x86-flag"
 msgid "IRET to 16-bit SS corrupts ESP/RSP high bits"
 msgstr "IRET на 16-битные SS прерывает высшие биты ESP/RSP"
 
 #: modules/devices/x86/processor.c:577
+msgctxt "x86-flag"
 msgid "Nulling a selector preserves the base"
 msgstr "Обнуление селектора продпочитается основному"
 
 #: modules/devices/x86/processor.c:578
+msgctxt "x86-flag"
 msgid "SWAPGS without input dep on GS"
 msgstr "SWAPGS без ввода зависит от GS"
 
 #: modules/devices/x86/processor.c:579
+msgctxt "x86-flag"
 msgid "IPI required to wake up remote CPU"
 msgstr "требуется IPI для удаленного пробуждения процессора"
 
 #: modules/devices/x86/processor.c:588
+msgctxt "x86-flag"
 msgid "temperature sensor"
 msgstr "сенсор температуры"
 
 #: modules/devices/x86/processor.c:589
+msgctxt "x86-flag"
 msgid "frequency id control"
 msgstr "контроль частоты id"
 
 #: modules/devices/x86/processor.c:590
+msgctxt "x86-flag"
 msgid "voltage id control"
 msgstr "контроль вольтажа id"
 
 #: modules/devices/x86/processor.c:591
+msgctxt "x86-flag"
 msgid "thermal trip"
 msgstr "изменение температуры"
 
 #: modules/devices/x86/processor.c:592
+msgctxt "x86-flag"
 msgid "hardware thermal control"
 msgstr "аппаратный контроль температуры"
 
 #: modules/devices/x86/processor.c:593
+msgctxt "x86-flag"
 msgid "software thermal control"
 msgstr "программный контроль температуры"
 
 #: modules/devices/x86/processor.c:594
+msgctxt "x86-flag"
 msgid "100 MHz multiplier control"
 msgstr "контроль множителя 100 МГц"
 
 #: modules/devices/x86/processor.c:595
+msgctxt "x86-flag"
 msgid "hardware P-state control"
 msgstr "аппаратное управление P-state"
 
 #: modules/devices/x86/processor.c:597
+msgctxt "x86-flag"
 msgid "core performance boost"
 msgstr "повышение производительности ядра"
 
 #: modules/devices/x86/processor.c:598
+msgctxt "x86-flag"
 msgid "Readonly aperf/mperf"
 msgstr "aperf/mperf только для чтения"
 
 #: modules/devices/x86/processor.c:599
+msgctxt "x86-flag"
 msgid "processor feedback interface"
 msgstr "интерфейс отзыва процессора"
 
 #: modules/devices/x86/processor.c:600
+msgctxt "x86-flag"
 msgid "accumulated power mechanism"
 msgstr "механизм накопления питания"
 
