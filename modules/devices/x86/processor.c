@@ -619,15 +619,15 @@ populate_cpu_flags_list_internal()
 
     for (i = 0; flag_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, flag_meaning[i].name,
-                            C_("x86-flag", flag_meaning[i].meaning) );
+                            g_strdup( C_("x86-flag", flag_meaning[i].meaning) ) );
     }
     for (i = 0; bug_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, bug_meaning[i].name,
-                            C_("x86-flag", bug_meaning[i].meaning) );
+                            g_strdup( C_("x86-flag", bug_meaning[i].meaning) ) );
     }
     for (i = 0; pm_meaning[i].name != NULL; i++) {
         g_hash_table_insert(cpu_flags, pm_meaning[i].name,
-                            C_("x86-flag", pm_meaning[i].meaning) );
+                            g_strdup( C_("x86-flag", pm_meaning[i].meaning) ) );
     }
 }
 
