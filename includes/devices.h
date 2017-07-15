@@ -90,4 +90,6 @@ extern gchar *dmi_info;
 extern gchar *spd_info;
 #endif
 
+extern gchar *dtree_info;
+
 #endif /* __DEVICES_H__ */
