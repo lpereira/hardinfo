@@ -75,6 +75,7 @@ gboolean root_required_for_resources(void);
 gchar *hi_more_info(gchar *entry);
 
 enum {
+    ENTRY_DTREE,
     ENTRY_PROCESSOR,
     ENTRY_MEMORY,
     ENTRY_PCI,
@@ -84,7 +85,6 @@ enum {
     ENTRY_SENSORS,
     ENTRY_INPUT,
     ENTRY_STORAGE,
-    ENTRY_DTREE,
     ENTRY_DMI,
     ENTRY_SPD,
     ENTRY_RESOURCES
