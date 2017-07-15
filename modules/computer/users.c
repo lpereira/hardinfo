@@ -47,8 +47,8 @@ scan_users_do(void)
                 _("User Information"),
                 _("User ID"), (gint) passwd_->pw_uid,
                 _("Group ID"), (gint) passwd_->pw_gid,
-                _("Home directory"), passwd_->pw_dir,
-                _("Default shell"), passwd_->pw_shell);
+                _("Home Directory"), passwd_->pw_dir,
+                _("Default Shell"), passwd_->pw_shell);
         moreinfo_add_with_prefix("COMP", key, val);
 
         strend(passwd_->pw_gecos, ',');
