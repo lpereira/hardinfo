@@ -103,11 +103,14 @@ static ModuleEntry entries[] = {
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     [ENTRY_DMI] = {N_("DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
     [ENTRY_SPD] = {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
+    [ENTRY_DTREE] = {"#"},
 #else
+    [ENTRY_DMI] = {"#"},
+    [ENTRY_SPD] = {"#"},
     [ENTRY_DTREE] = {N_("Device Tree"), "devices.png", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
     [ENTRY_RESOURCES] = {N_("Resources"), "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
-    {NULL}
+    { NULL }
 };
 
 static GSList *processors = NULL;
