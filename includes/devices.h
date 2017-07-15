@@ -38,8 +38,6 @@ typedef struct _Processor Processor;
 /* Processor */
 GSList *processor_scan(void);
 void get_processor_strfamily(Processor * processor);
-void cpu_flags_init(void);
-gchar *processor_get_capabilities_from_flags(gchar * strflags);
 gchar *processor_get_detailed_info(Processor * processor);
 gchar *processor_get_info(GSList * processors);
 
