@@ -51,6 +51,7 @@ gchar *callback_usb();
 gchar *callback_dmi();
 gchar *callback_spd();
 #endif
+gchar *callback_dtree();
 gchar *callback_device_resources();
 
 void scan_processors(gboolean reload);
@@ -66,6 +67,7 @@ void scan_usb(gboolean reload);
 void scan_dmi(gboolean reload);
 void scan_spd(gboolean reload);
 #endif
+void scan_dtree(gboolean reload);
 void scan_device_resources(gboolean reload);
 
 gboolean root_required_for_resources(void);
@@ -82,6 +84,7 @@ enum {
     ENTRY_SENSORS,
     ENTRY_INPUT,
     ENTRY_STORAGE,
+    ENTRY_DTREE,
     ENTRY_DMI,
     ENTRY_SPD,
     ENTRY_RESOURCES
@@ -100,6 +103,8 @@ static ModuleEntry entries[] = {
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     [ENTRY_DMI] = {N_("DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
     [ENTRY_SPD] = {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
+#else
+    [ENTRY_DTREE] = {N_("Device Tree"), "devices.png", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
     [ENTRY_RESOURCES] = {N_("Resources"), "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     {NULL}
@@ -377,6 +382,13 @@ void scan_spd(gboolean reload)
 }
 #endif
 
+void scan_dtree(gboolean reload)
+{
+    SCAN_START();
+    __scan_dtree();
+    SCAN_END();
+}
+
 void scan_processors(gboolean reload)
 {
     SCAN_START();
@@ -461,6 +473,11 @@ gchar *callback_spd()
     return g_strdup(spd_info);
 }
 #endif
+
+gchar *callback_dtree()
+{
+    return g_strdup(dtree_info);
+}
 
 gchar *callback_memory()
 {

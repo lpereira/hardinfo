@@ -124,6 +124,7 @@ set(MODULE_devices_SOURCES
 	modules/devices/battery.c
 	modules/devices/devmemory.c
 	modules/devices/dmi.c
+	modules/devices/devicetree.c
 	modules/devices/inputdevices.c
 	modules/devices/pci.c
 	modules/devices/printers.c
