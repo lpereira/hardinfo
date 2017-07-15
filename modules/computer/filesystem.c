@@ -16,8 +16,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Some code from xfce4-mount-plugin, version 0.4.3
- *  Copyright (C) 2005 Jean-Baptiste jb_dul@yahoo.com 
- *  Distributed under the terms of GNU GPL 2. 
+ *  Copyright (C) 2005 Jean-Baptiste jb_dul@yahoo.com
+ *  Distributed under the terms of GNU GPL 2.
  */
 
 #include <string.h>
@@ -41,62 +41,64 @@ scan_filesystems(void)
 
     mtab = fopen("/etc/mtab", "r");
     if (!mtab)
-	return;
+        return;
 
     while (fgets(buf, 1024, mtab)) {
-	gfloat size, used, avail;
-	gchar **tmp;
+        gfloat size, used, avail;
+        gchar **tmp;
 
-	tmp = g_strsplit(buf, " ", 0);
-	if (!statfs(tmp[1], &sfs)) {
-		gfloat use_ratio;
+        tmp = g_strsplit(buf, " ", 0);
+        if (!statfs(tmp[1], &sfs)) {
+                gfloat use_ratio;
 
-		size = (float) sfs.f_bsize * (float) sfs.f_blocks;
-		avail = (float) sfs.f_bsize * (float) sfs.f_bavail;
-		used = size - avail;
+                size = (float) sfs.f_bsize * (float) sfs.f_blocks;
+                avail = (float) sfs.f_bsize * (float) sfs.f_bavail;
+                used = size - avail;
 
-		if (size == 0.0f) {
-			continue;
-		}
+                if (size == 0.0f) {
+                        continue;
+                }
 
-		if (avail == 0.0f) {
-			use_ratio = 100.0f;
-		} else {
-			use_ratio = 100.0f * (used / size);
-		}
+                if (avail == 0.0f) {
+                        use_ratio = 100.0f;
+                } else {
+                        use_ratio = 100.0f * (used / size);
+                }
 
-		gchar *strsize = size_human_readable(size),
-		      *stravail = size_human_readable(avail),
-	  	      *strused = size_human_readable(used);
+                gchar *strsize = size_human_readable(size),
+                      *stravail = size_human_readable(avail),
+                      *strused = size_human_readable(used);
 
-		gchar *strhash;
-		
-		strreplacechr(tmp[0], "#", '_');
-		strhash = g_strdup_printf("[%s]\n"
-					  "Filesystem=%s\n"
-					  "Mounted As=%s\n"
-					  "Mount Point=%s\n"
-					  "Size=%s\n"
-					  "Used=%s\n"
-					  "Available=%s\n",
-					  tmp[0],
-					  tmp[2],
-					  strstr(tmp[3], "rw") ? "Read-Write" :
-					  "Read-Only", tmp[1], strsize, strused,
-					  stravail);
-               gchar *key = g_strdup_printf("FS%d", ++count);
-		moreinfo_add_with_prefix("COMP", key, strhash);
-		g_free(key);
+                gchar *strhash;
 
-		fs_list = h_strdup_cprintf("$FS%d$%s=%.2f %% (%s of %s)|%s\n",
-					  fs_list,
-					  count, tmp[0], use_ratio, stravail, strsize, tmp[1]);
+                strreplacechr(tmp[0], "#", '_');
+                strhash = g_strdup_printf("[%s]\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "%s=%s\n",
+                        tmp[0], /* path */
+                        _("Filesystem"), tmp[2],
+                        _("Mounted As"), ( strstr(tmp[3], "rw") != NULL) ? _("Read-Write") : _("Read-Only"),
+                        _("Mount Point"), tmp[1],
+                        _("Size"), strsize,
+                        _("Used"), strused,
+                        _("Available"), stravail);
+                gchar *key = g_strdup_printf("FS%d", ++count);
+                moreinfo_add_with_prefix("COMP", key, strhash);
+                g_free(key);
 
-		g_free(strsize);
-		g_free(stravail);
-		g_free(strused);
-	}
-	g_strfreev(tmp);
+                fs_list = h_strdup_cprintf("$FS%d$%s=%.2f %% (%s of %s)|%s\n",
+                                          fs_list,
+                                          count, tmp[0], use_ratio, stravail, strsize, tmp[1]);
+
+                g_free(strsize);
+                g_free(stravail);
+                g_free(strused);
+        }
+        g_strfreev(tmp);
     }
 
     fclose(mtab);

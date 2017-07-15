@@ -125,15 +125,15 @@ gchar *seconds_to_string(unsigned int seconds)
 gchar *size_human_readable(gfloat size)
 {
     if (size < KiB)
-	return g_strdup_printf(_("%.1f B"), size);
+        return g_strdup_printf(_("%.1f B"), size);
     if (size < MiB)
-	return g_strdup_printf(_("%.1f KiB"), size / KiB);
+        return g_strdup_printf(_("%.1f KiB"), size / KiB);
     if (size < GiB)
-	return g_strdup_printf(_("%.1f MiB"), size / MiB);
+        return g_strdup_printf(_("%.1f MiB"), size / MiB);
     if (size < TiB)
-	return g_strdup_printf(_("%.1f GiB"), size / GiB);
+        return g_strdup_printf(_("%.1f GiB"), size / GiB);
     if (size < PiB)
-	return g_strdup_printf(_("%.1f TiB"), size / TiB);
+        return g_strdup_printf(_("%.1f TiB"), size / TiB);
 
     return g_strdup_printf(_("%.1f PiB"), size / PiB);
 }
