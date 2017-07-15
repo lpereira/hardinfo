@@ -468,7 +468,7 @@ gchar *callback_os()
                _("Current Session"),
                _("Computer Name"), computer->os->hostname,
                _("User Name"), computer->os->username,
-               _("#Language"), computer->os->language,
+               _("Language"), computer->os->language,
                _("Home Directory"), computer->os->homedir,
                _("Desktop Environment"), computer->os->desktop,
                _("Misc"),
@@ -658,30 +658,34 @@ gchar **hi_module_get_dependencies(void)
 
 gchar *hi_module_get_summary(void)
 {
-    return g_strdup("[Operating System]\n"
+    return g_strdup_printf("[%s]\n"
                     "Icon=os.png\n"
                     "Method=computer::getOS\n"
-                    "[CPU]\n"
+                    "[%s]\n"
                     "Icon=processor.png\n"
                     "Method=devices::getProcessorName\n"
-                    "[RAM]\n"
+                    "[%s]\n"
                     "Icon=memory.png\n"
                     "Method=devices::getMemoryTotal\n"
-                    "[Motherboard]\n"
+                    "[%s]\n"
                     "Icon=module.png\n"
                     "Method=devices::getMotherboard\n"
-                    "[Graphics]\n"
+                    "[%s]\n"
                     "Icon=monitor.png\n"
                     "Method=computer::getDisplaySummary\n"
-                    "[Storage]\n"
+                    "[%s]\n"
                     "Icon=hdd.png\n"
                     "Method=devices::getStorageDevices\n"
-                    "[Printers]\n"
+                    "[%s]\n"
                     "Icon=printer.png\n"
                     "Method=devices::getPrinters\n"
-                    "[Audio]\n"
+                    "[%s]\n"
                     "Icon=audio.png\n"
-                    "Method=computer::getAudioCards\n");
+                    "Method=computer::getAudioCards\n",
+                    _("Operating System"),
+                    _("CPU"), _("RAM"), _("Motherboard"), _("Graphics"),
+                    _("Storage"), _("Printers"), _("Audio")
+                    );
 }
 
 void hi_module_deinit(void)
