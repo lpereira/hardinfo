@@ -200,99 +200,6 @@ gchar *get_memory_total(void)
     return moreinfo_lookup ("DEV:MemTotal");
 }
 
-/* information table from: http://elinux.org/RPi_HardwareHistory */
-static struct {
-    char *value, *intro, *model, *pcb, *mem, *mfg;
-} rpi_boardinfo[] = {
-/*  Value        Introduction  Model Name             PCB rev.  Memory       Manufacturer  *
- *                             Raspberry Pi %s                                            */
-  { "Beta",      "Q1 2012",    "B (Beta)",            "?",      "256MB",    "(Beta board)" },
-  { "0002",      "Q1 2012",    "B",                   "1.0",    "256MB",    "?" },
-  { "0003",      "Q3 2012",    "B (ECN0001)",         "1.0",    "256MB",    "(Fuses mod and D14 removed)" },
-  { "0004",      "Q3 2012",    "B",                   "2.0",    "256MB",    "Sony"    },
-  { "0005",      "Q4 2012",    "B",                   "2.0",    "256MB",    "Qisda"   },
-  { "0006",      "Q4 2012",    "B",                   "2.0",    "256MB",    "Egoman"  },
-  { "0007",      "Q1 2013",    "A",                   "2.0",    "256MB",    "Egoman"  },
-  { "0008",      "Q1 2013",    "A",                   "2.0",    "256MB",    "Sony"    },
-  { "0009",      "Q1 2013",    "A",                   "2.0",    "256MB",    "Qisda"   },
-  { "000d",      "Q4 2012",    "B",                   "2.0",    "512MB",    "Egoman" },
-  { "000e",      "Q4 2012",    "B",                   "2.0",    "512MB",    "Sony" },
-  { "000f",      "Q4 2012",    "B",                   "2.0",    "512MB",    "Qisda" },
-  { "0010",      "Q3 2014",    "B+",                  "1.0",    "512MB",    "Sony" },
-  { "0011",      "Q2 2014",    "Compute Module 1",    "1.0",    "512MB",    "Sony" },
-  { "0012",      "Q4 2014",    "A+",                  "1.1",    "256MB",    "Sony" },
-  { "0013",      "Q1 2015",    "B+",                  "1.2",    "512MB",    "?" },
-  { "0014",      "Q2 2014",    "Compute Module 1",    "1.0",    "512MB",    "Embest" },
-  { "0015",      "?",          "A+",                  "1.1",    "256MB/512MB",    "Embest" },
-  { "a01040",    "Unknown",    "2 Model B",           "1.0",    "1GB",      "Sony" },
-  { "a01041",    "Q1 2015",    "2 Model B",           "1.1",    "1GB",      "Sony" },
-  { "a21041",    "Q1 2015",    "2 Model B",           "1.1",    "1GB",      "Embest" },
-  { "a22042",    "Q3 2016",    "2 Model B",           "1.2",    "1GB",      "Embest" },  /* (with BCM2837) */
-  { "900021",    "Q3 2016",    "A+",                  "1.1",    "512MB",    "Sony" },
-  { "900032",    "Q2 2016?",    "B+",                 "1.2",    "512MB",    "Sony" },
-  { "900092",    "Q4 2015",    "Zero",                "1.2",    "512MB",    "Sony" },
-  { "900093",    "Q2 2016",    "Zero",                "1.3",    "512MB",    "Sony" },
-  { "920093",    "Q4 2016?",   "Zero",                "1.3",    "512MB",    "Embest" },
-  { "9000c1",    "Q1 2017",    "Zero W",              "1.1",    "512MB",    "Sony" },
-  { "a02082",    "Q1 2016",    "3 Model B",           "1.2",    "1GB",      "Sony" },
-  { "a020a0",    "Q1 2017",    "Compute Module 3 or CM3 Lite",    "1.0",    "1GB",    "Sony" },
-  { "a22082",    "Q1 2016",    "3 Model B",           "1.2",    "1GB",    "Embest" },
-  { "a32082",    "Q4 2016",    "3 Model B",           "1.2",    "1GB",    "Sony Japan" },
-  { NULL, NULL, NULL, NULL, NULL, NULL }
-};
-
-static gchar *rpi_get_boardname(void) {
-    int i = 0, c = 0;
-    gchar *ret = NULL;
-    gchar *soc = NULL;
-    gchar *revision = NULL;
-    int overvolt = 0;
-    FILE *cpuinfo;
-    gchar buffer[128];
-
-    cpuinfo = fopen("/proc/cpuinfo", "r");
-    if (!cpuinfo)
-        return NULL;
-    while (fgets(buffer, 128, cpuinfo)) {
-        gchar **tmp = g_strsplit(buffer, ":", 2);
-        tmp[0] = g_strstrip(tmp[0]);
-        tmp[1] = g_strstrip(tmp[1]);
-        get_str("Revision", revision);
-        get_str("Hardware", soc);
-    }
-    fclose(cpuinfo);
-
-    if (revision == NULL || soc == NULL) {
-        g_free(soc);
-        g_free(revision);
-        return NULL;
-    }
-
-    if (g_str_has_prefix(revision, "1000"))
-        overvolt = 1;
-
-    while (rpi_boardinfo[i].value != NULL) {
-        if (overvolt)
-            /* +4 to ignore the 1000 prefix */
-            c = g_strcmp0(revision+4, rpi_boardinfo[i].value);
-        else
-            c = g_strcmp0(revision, rpi_boardinfo[i].value);
-
-        if (c == 0) {
-            ret = g_strdup_printf("Raspberry Pi %s (%s) pcb-rev:%s soc:%s mem:%s mfg-by:%s%s",
-                rpi_boardinfo[i].model, rpi_boardinfo[i].intro,
-                rpi_boardinfo[i].pcb, soc,
-                rpi_boardinfo[i].mem, rpi_boardinfo[i].mfg,
-                (overvolt) ? " (over-volted)" : "" );
-            break;
-        }
-        i++;
-    }
-    g_free(soc);
-    g_free(revision);
-    return ret;
-}
-
 gchar *get_motherboard(void)
 {
     char *board_name, *board_vendor;
@@ -311,16 +218,6 @@ gchar *get_motherboard(void)
 #else
     /* use device tree "model" */
     if (g_file_get_contents("/proc/device-tree/model", &board_vendor, NULL, NULL)) {
-
-        /* if a raspberry pi, try and get a more detailed name */
-        if (g_str_has_prefix(board_vendor, "Raspberry Pi")) {
-            board_name = rpi_get_boardname();
-            if (board_name != NULL) {
-                g_free(board_vendor);
-                return board_name;
-            }
-        }
-
         return board_vendor;
     }
 #endif
