@@ -149,6 +149,7 @@ static gchar *rpi_board_details(void) {
                 _("PCB Revision"), rpi_boardinfo[i].pcb,
                 _("Introduction"), rpi_boardinfo[i].intro,
                 _("Manufacturer"), rpi_boardinfo[i].mfg,
+                _("RCode"), rpi_boardinfo[i].value,
                 _("SOC (spec)"), rpi_boardinfo[i].soc,
                 _("Memory (spec)"), rpi_boardinfo[i].mem,
                 _("Serial Number"), serial,
