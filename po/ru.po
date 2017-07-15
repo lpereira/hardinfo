@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo puppy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-12 04:12-0500\n"
+"POT-Creation-Date: 2017-07-15 02:01-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -15,6 +15,368 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+
+#: hardinfo/hardinfo.c:48
+msgid ""
+"Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n"
+"\n"
+msgstr ""
+"Copyright (C) 2003-2009 Leandro A. F. Pereira. Смотрите файл COPYING для "
+"более подробной информации.\n"
+"\n"
+
+#: hardinfo/hardinfo.c:50
+#, c-format
+msgid ""
+"Compile-time options:\n"
+"  Release version:   %s (%s)\n"
+"  BinReloc enabled:  %s\n"
+"  Data prefix:       %s\n"
+"  Library prefix:    %s\n"
+"  Compiled on:       %s %s (%s)\n"
+msgstr ""
+"Настройки компиляции:\n"
+"  Release version:    %s (%s)\n"
+"  BinReloc включен:   %s\n"
+"  Префикс данных:     %s\n"
+"  Префикс библиотеки: %s\n"
+"  Скомпилировано на:  %s %s (%s)\n"
+
+#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57 modules/devices/printers.c:138
+msgid "Yes"
+msgstr "Да"
+
+#: hardinfo/hardinfo.c:57 modules/computer.c:550 modules/devices/printers.c:138
+msgid "No"
+msgstr "Нет"
+
+#: hardinfo/hardinfo.c:68
+#, c-format
+msgid ""
+"Failed to find runtime data.\n"
+"\n"
+"• Is HardInfo correctly installed?\n"
+"• See if %s and %s exists and you have read permission."
+msgstr ""
+"Не удалось найти данные среды выполнения.\n"
+"\n"
+"• Правильно ли установлен HardInfo?\n"
+"• Проверьте, существуют ли %s и %s и есть ли у вас право на чтение."
+
+#: hardinfo/hardinfo.c:75
+#, c-format
+msgid ""
+"Modules:\n"
+"%-20s%-15s%-12s\n"
+msgstr ""
+"Модули:\n"
+"%-20s%-15s%-12s\n"
+
+#: hardinfo/hardinfo.c:76
+msgid "File Name"
+msgstr "Имя файла"
+
+#: hardinfo/hardinfo.c:76 modules/devices/ia64/processor.c:152
+#: modules/devices/sh/processor.c:76
+msgid "Name"
+msgstr "Имя"
+
+#: hardinfo/hardinfo.c:76 modules/computer.c:463 modules/computer.c:465
+msgid "Version"
+msgstr "Версия"
+
+#: hardinfo/hardinfo.c:123
+#, c-format
+msgid "Unknown benchmark ``%s'' or libbenchmark.so not loaded"
+msgstr "Тест ``%s'' неизвестен или библиотека libbenchmark.so не загружена"
+
+#: hardinfo/hardinfo.c:151
+msgid "Don't know what to do. Exiting."
+msgstr "Неизвестно, что делать. Выход."
+
+#: hardinfo/util.c:104 modules/computer/uptime.c:53
+#, c-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d день"
+msgstr[1] "%d дня"
+msgstr[2] "%d дней"
+
+#: hardinfo/util.c:105 modules/computer/uptime.c:54
+#, c-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d час"
+msgstr[1] "%d часа"
+msgstr[2] "%d часов"
+
+#: hardinfo/util.c:106 modules/computer/uptime.c:55
+#, c-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d минута"
+msgstr[1] "%d минуты"
+msgstr[2] "%d минут"
+
+#: hardinfo/util.c:107
+#, c-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: hardinfo/util.c:128
+#, c-format
+msgid "%.1f B"
+msgstr "%.1f Б"
+
+#: hardinfo/util.c:130
+#, fuzzy, c-format
+msgid "%.1f KiB"
+msgstr "%.1f КиБ"
+
+#: hardinfo/util.c:132
+#, fuzzy, c-format
+msgid "%.1f MiB"
+msgstr "%.1f МиБ"
+
+#: hardinfo/util.c:134
+#, fuzzy, c-format
+msgid "%.1f GiB"
+msgstr "%.1f ГиБ"
+
+#: hardinfo/util.c:136
+#, c-format
+msgid "%.1f TiB"
+msgstr "%.1f ТиБ"
+
+#: hardinfo/util.c:138
+#, c-format
+msgid "%.1f PiB"
+msgstr "%.1f ПиБ"
+
+#: hardinfo/util.c:352
+msgid "Error"
+msgstr "Ошибка"
+
+#: hardinfo/util.c:352 hardinfo/util.c:368
+msgid "Warning"
+msgstr "Предупреждение"
+
+#: hardinfo/util.c:367
+msgid "Fatal Error"
+msgstr "Фатальная ошибка"
+
+#: hardinfo/util.c:392
+msgid "creates a report and prints to standard output"
+msgstr "создаёт отчёт и выводит на стандартный вывод"
+
+#: hardinfo/util.c:398
+msgid "chooses a report format (text, html)"
+msgstr "выбирает формат отчёта (text, html)"
+
+#: hardinfo/util.c:404
+msgid "run benchmark; requires benchmark.so to be loaded"
+msgstr "запуск теста; требует, чтобы benchmark.so был загружен"
+
+#: hardinfo/util.c:410
+msgid "lists modules"
+msgstr "список модулей"
+
+#: hardinfo/util.c:416
+msgid "specify module to load"
+msgstr "укажите модуль для загрузки"
+
+#: hardinfo/util.c:422
+msgid "automatically load module dependencies"
+msgstr "автоматически загружает зависимости модулей"
+
+#: hardinfo/util.c:429
+msgid "run in XML-RPC server mode"
+msgstr "запуск в режиме сервера XML-RPC"
+
+#: hardinfo/util.c:436
+msgid "shows program version and quit"
+msgstr "показывает версию программы и выходит"
+
+#: hardinfo/util.c:441
+msgid "- System Profiler and Benchmark tool"
+msgstr "- Инструмент для тестирования и проверки свойств системы"
+
+#: hardinfo/util.c:451
+#, c-format
+msgid ""
+"Unrecognized arguments.\n"
+"Try ``%s --help'' for more information.\n"
+msgstr ""
+"Неизвестные аргументы.\n"
+"Используйте `%s --help' для справки.\n"
+
+#: hardinfo/util.c:517
+#, c-format
+msgid "Couldn't find a Web browser to open URL %s."
+msgstr "Не удаётся найти веб-браузер для открытия URL %s."
+
+#: hardinfo/util.c:864
+#, c-format
+msgid "Module \"%s\" depends on module \"%s\", load it?"
+msgstr "Модуль \"%s\" зависит от модуля \"%s\", загрузить его?"
+
+#: hardinfo/util.c:887
+#, c-format
+msgid "Module \"%s\" depends on module \"%s\"."
+msgstr "Модуль \"%s\" зависит от модуля \"%s\"."
+
+#: hardinfo/util.c:932
+#, c-format
+msgid "No module could be loaded. Check permissions on \"%s\" and try again."
+msgstr ""
+"Модули не могут быть загружены. Проверьте разрешения на \"%s\" и попробуйте "
+"снова."
+
+#: hardinfo/util.c:936
+msgid ""
+"No module could be loaded. Please use hardinfo -l to list all available "
+"modules and try again with a valid module list."
+msgstr ""
+"Не удается загрузить модули. Пожалуйста, используйте hardinfo -l для "
+"получения списка доступных модулей и попробуйте снова с правильным списком "
+"модулей."
+
+#: hardinfo/util.c:1112
+#, c-format
+msgid "Scanning: %s..."
+msgstr "Сканирование: %s..."
+
+#: hardinfo/util.c:1122 shell/callbacks.c:67 shell/shell.c:303
+#: shell/shell.c:721 shell/shell.c:1695 modules/benchmark.c:440
+#: modules/benchmark.c:448
+msgid "Done."
+msgstr "Выполнено."
+
+#: shell/callbacks.c:47
+msgid "Save Image"
+msgstr "Сохранить изображение"
+
+#: shell/callbacks.c:63
+msgid "Saving image..."
+msgstr "Сохранение изображения..."
+
+#: shell/callbacks.c:151
+#, c-format
+msgid "%s Module"
+msgstr "%s модуль"
+
+#: shell/callbacks.c:158
+#, c-format
+msgid ""
+"Written by %s\n"
+"Licensed under %s"
+msgstr ""
+"Автор программы %s\n"
+"Лицензия %s"
+
+#: shell/callbacks.c:172
+#, c-format
+msgid "No about information is associated with the %s module."
+msgstr "Нет информации о модуле %s."
+
+#: shell/callbacks.c:186
+msgid "Author:"
+msgstr "Автор:"
+
+#: shell/callbacks.c:189
+msgid "Contributors:"
+msgstr "Участники:"
+
+#: shell/callbacks.c:193
+msgid "Based on work by:"
+msgstr "Основан на работах:"
+
+#: shell/callbacks.c:194
+msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
+msgstr "Реализация MD5 от Colin Plumb (см. подробности в md5.c)"
+
+#: shell/callbacks.c:195
+msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
+msgstr "Реализация SHA1 от Steve Reid (см. подробности в sha1.c) "
+
+#: shell/callbacks.c:196
+msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
+msgstr "Реализация Blowfish от Paul Kocher (см. подробности в blowfich.c)"
+
+#: shell/callbacks.c:197
+msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
+msgstr "Тест Raytracing от John Walker (см. подробности в fbench.c)"
+
+#: shell/callbacks.c:198
+msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
+msgstr "Тест FFT Скотта от Robert Ladd (см. подробности в fbench.c)"
+
+#: shell/callbacks.c:199
+msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
+msgstr "Часть кода основана на x86cpucaps от Osamu Kayasono"
+
+#: shell/callbacks.c:200
+msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
+msgstr "Список поставщиков основан на GtkSysInfo от Pissens Sebastien"
+
+#: shell/callbacks.c:201
+msgid "DMI support based on code by Stewart Adam"
+msgstr "Поддержка DMI основана на коде от Stewart Adam"
+
+#: shell/callbacks.c:202
+msgid "SCSI support based on code by Pascal F. Martin"
+msgstr "Поддержка SCSI основана на коде от Pascal F. Martin"
+
+#: shell/callbacks.c:206
+#, fuzzy
+msgid "Jakub Szypulka"
+msgstr "Jakub Szypulka"
+
+#: shell/callbacks.c:207
+msgid "Tango Project"
+msgstr "Проект Tango"
+
+#: shell/callbacks.c:208
+msgid "The GNOME Project"
+msgstr "Проект GNOME"
+
+#: shell/callbacks.c:209
+msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
+msgstr "VMWare, Inc. (значок USB из VMWare Workstation 6)"
+
+#: shell/callbacks.c:220
+msgid "System information and benchmark tool"
+msgstr "Информация о системе и тестирование"
+
+#: shell/callbacks.c:225
+msgid ""
+"HardInfo is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation, version 2.\n"
+"\n"
+"This program is distributed in the hope that it will be useful, but WITHOUT "
+"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
+"FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
+"more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with "
+"this program; if not, write to the Free Software Foundation, Inc., 51 "
+"Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+"HardInfo — это свободное программное обеспечение; вы можете распространять "
+"его и/или изменять под условиями Общей общественной лицензии GNU, которая "
+"была опубликована Фондом свободного программного обеспечения, версия 2.\n"
+"\n"
+"Эта программа распространятся в надежде, что она будет полезной, но БЕЗ "
+"КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ "
+"КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Общественной лицензии GNU.\n"
+"\n"
+"Вы должны были получить копию Общественной лицензии GNU вместе с этой "
+"программой; если нет, пишите в Фонд свободного программного обеспечения, "
+"Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 
 #: shell/menu.c:35
 msgid "_Information"
@@ -144,11 +506,6 @@ msgstr "Выбор: все"
 msgid "_Generate"
 msgstr "_Сгенерировать"
 
-#: shell/shell.c:303 shell/shell.c:721 shell/shell.c:1695 shell/callbacks.c:67
-#: modules/benchmark.c:440 modules/benchmark.c:448 hardinfo/util.c:1113
-msgid "Done."
-msgstr "Выполнено."
-
 #: shell/shell.c:396
 #, c-format
 msgid "%s - System Information"
@@ -193,8 +550,8 @@ msgstr ""
 msgid ""
 "HardInfo was compiled without libsoup support. (Network Updater requires it.)"
 msgstr ""
-"HardInfo был скомпилирован без поддержки библиотеки libsoup. (Нужна для сетевого "
-"обновления.)"
+"HardInfo был скомпилирован без поддержки библиотеки libsoup. (Нужна для "
+"сетевого обновления.)"
 
 #: shell/syncmanager.c:161 shell/syncmanager.c:189
 #, c-format
@@ -261,638 +618,6 @@ msgstr "Сетевое обновление"
 #: shell/syncmanager.c:739
 msgid "_Synchronize"
 msgstr "_Синхронизировать"
-
-#: shell/callbacks.c:47
-msgid "Save Image"
-msgstr "Сохранить изображение"
-
-#: shell/callbacks.c:63
-msgid "Saving image..."
-msgstr "Сохранение изображения..."
-
-#: shell/callbacks.c:151
-#, c-format
-msgid "%s Module"
-msgstr "%s модуль"
-
-#: shell/callbacks.c:158
-#, c-format
-msgid ""
-"Written by %s\n"
-"Licensed under %s"
-msgstr ""
-"Автор программы %s\n"
-"Лицензия %s"
-
-#: shell/callbacks.c:172
-#, c-format
-msgid "No about information is associated with the %s module."
-msgstr "Нет информации о модуле %s."
-
-#: shell/callbacks.c:186
-msgid "Author:"
-msgstr "Автор:"
-
-#: shell/callbacks.c:189
-msgid "Contributors:"
-msgstr "Участники:"
-
-#: shell/callbacks.c:193
-msgid "Based on work by:"
-msgstr "Основан на работах:"
-
-#: shell/callbacks.c:194
-msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
-msgstr "Реализация MD5 от Colin Plumb (см. подробности в md5.c)"
-
-#: shell/callbacks.c:195
-msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
-msgstr "Реализация SHA1 от Steve Reid (см. подробности в sha1.c) "
-
-#: shell/callbacks.c:196
-msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
-msgstr "Реализация Blowfish от Paul Kocher (см. подробности в blowfich.c)"
-
-#: shell/callbacks.c:197
-msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
-msgstr "Тест Raytracing от John Walker (см. подробности в fbench.c)"
-
-#: shell/callbacks.c:198
-msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
-msgstr "Тест FFT Скотта от Robert Ladd (см. подробности в fbench.c)"
-
-#: shell/callbacks.c:199
-msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
-msgstr "Часть кода основана на x86cpucaps от Osamu Kayasono"
-
-#: shell/callbacks.c:200
-msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
-msgstr "Список поставщиков основан на GtkSysInfo от Pissens Sebastien"
-
-#: shell/callbacks.c:201
-msgid "DMI support based on code by Stewart Adam"
-msgstr "Поддержка DMI основана на коде от Stewart Adam"
-
-#: shell/callbacks.c:202
-msgid "SCSI support based on code by Pascal F. Martin"
-msgstr "Поддержка SCSI основана на коде от Pascal F. Martin"
-
-#: shell/callbacks.c:206
-#, fuzzy
-msgid "Jakub Szypulka"
-msgstr "Jakub Szypulka"
-
-#: shell/callbacks.c:207
-msgid "Tango Project"
-msgstr "Проект Tango"
-
-#: shell/callbacks.c:208
-msgid "The GNOME Project"
-msgstr "Проект GNOME"
-
-#: shell/callbacks.c:209
-msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
-msgstr "VMWare, Inc. (значок USB из VMWare Workstation 6)"
-
-#: shell/callbacks.c:220
-msgid "System information and benchmark tool"
-msgstr "Информация о системе и тестирование"
-
-#: shell/callbacks.c:225
-msgid ""
-"HardInfo is free software; you can redistribute it and/or modify it under "
-"the terms of the GNU General Public License as published by the Free "
-"Software Foundation, version 2.\n"
-"\n"
-"This program is distributed in the hope that it will be useful, but WITHOUT "
-"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-"FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
-"more details.\n"
-"\n"
-"You should have received a copy of the GNU General Public License along with "
-"this program; if not, write to the Free Software Foundation, Inc., 51 "
-"Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
-msgstr ""
-"HardInfo — это свободное программное обеспечение; вы можете распространять "
-"его и/или изменять под условиями Общей общественной лицензии GNU, которая "
-"была опубликована Фондом свободного программного обеспечения, версия 2.\n"
-"\n"
-"Эта программа распространятся в надежде, что она будет полезной, но БЕЗ "
-"КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ "
-"КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Общественной лицензии GNU.\n"
-"\n"
-"Вы должны были получить копию Общественной лицензии GNU вместе с этой "
-"программой; если нет, пишите в Фонд свободного программного обеспечения, "
-"Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
-
-#: modules/computer.c:68
-msgid "Summary"
-msgstr "Общая информация"
-
-#: modules/computer.c:69 modules/computer.c:428
-msgid "Operating System"
-msgstr "Операционная система"
-
-#: modules/computer.c:70
-msgid "Kernel Modules"
-msgstr "Модули ядра"
-
-#: modules/computer.c:71
-msgid "Boots"
-msgstr "Загрузки"
-
-#: modules/computer.c:72
-msgid "Languages"
-msgstr "Языки"
-
-#: modules/computer.c:73
-msgid "Filesystems"
-msgstr "Файловые системы"
-
-#: modules/computer.c:74 modules/computer.c:431
-msgid "Display"
-msgstr "Дисплей"
-
-#: modules/computer.c:75
-msgid "Environment Variables"
-msgstr "Переменные среды"
-
-#: modules/computer.c:77
-msgid "Development"
-msgstr "Разработка"
-
-#: modules/computer.c:79
-msgid "Users"
-msgstr "Пользователи"
-
-#: modules/computer.c:80
-msgid "Groups"
-msgstr "Группы"
-
-#: modules/computer.c:101 modules/computer.c:421 modules/computer.c:426
-#: modules/devices.c:92
-msgid "Memory"
-msgstr "Память"
-
-#: modules/computer.c:103
-#, c-format
-msgid "%dMB (%dMB used)"
-msgstr "%dМб (%dМб занято)"
-
-#: modules/computer.c:105 modules/computer.c:495 modules/computer.c:511
-msgid "Uptime"
-msgstr "Время работы"
-
-#: modules/computer.c:107 modules/computer.c:422 modules/computer.c:430
-msgid "Date/Time"
-msgstr "Дата/время"
-
-# Должно совпадать с таким-же полем в строке 430 computer.c
-#: modules/computer.c:112 modules/computer.c:497 modules/computer.c:512
-msgid "Load Average"
-msgstr "Средняя нагрузка"
-
-#: modules/computer.c:114 modules/computer.c:496 modules/computer.c:513
-msgid "Available entropy in /dev/random"
-msgstr "Доступная энтропия в /dev/random"
-
-#: modules/computer.c:162
-msgid "(None or not available)"
-msgstr "(Нет или недоступно)"
-
-#: modules/computer.c:163
-msgid "%d bits (low)"
-msgstr "%d бит (низкая)"
-
-#: modules/computer.c:164
-msgid "%d bits (medium)"
-msgstr "%d бит (средняя)"
-
-#: modules/computer.c:165
-msgid "%d bits (healthy)"
-msgstr "%d бит (огромная)"
-
-#: modules/computer.c:200
-msgid "Scripting Languages"
-msgstr "Скриптовые языки"
-
-#: modules/computer.c:201
-msgid "CPython"
-msgstr ""
-
-#: modules/computer.c:202
-#, fuzzy
-msgid "Perl"
-msgstr "Perl"
-
-#: modules/computer.c:203
-msgid "PHP"
-msgstr ""
-
-#: modules/computer.c:204
-msgid "Ruby"
-msgstr ""
-
-#: modules/computer.c:205
-msgid "Bash"
-msgstr ""
-
-#: modules/computer.c:206
-msgid "Compilers"
-msgstr "Компиляторы"
-
-#: modules/computer.c:207
-msgid "C (GCC)"
-msgstr ""
-
-#: modules/computer.c:208
-msgid "C (Clang)"
-msgstr ""
-
-#: modules/computer.c:209
-msgid "D (dmd)"
-msgstr ""
-
-#: modules/computer.c:210
-#, fuzzy
-msgid "Java"
-msgstr "Язык программирования Java"
-
-#: modules/computer.c:211
-#, fuzzy
-msgid "CSharp (Mono, old)"
-msgstr "Найдена старая установка %s."
-
-#: modules/computer.c:212
-#, fuzzy
-msgid "CSharp (Mono)"
-msgstr "Моноширинный шрифт"
-
-#: modules/computer.c:213
-#, fuzzy
-msgid "Vala"
-msgstr "базы данных vala"
-
-#: modules/computer.c:214
-msgid "Haskell (GHC)"
-msgstr ""
-
-#: modules/computer.c:215
-msgid "FreePascal"
-msgstr ""
-
-#: modules/computer.c:216
-msgid "Go"
-msgstr ""
-
-#: modules/computer.c:217
-msgid "Tools"
-msgstr "Инструменты"
-
-#: modules/computer.c:218
-msgid "make"
-msgstr ""
-
-#: modules/computer.c:219
-msgid "GDB"
-msgstr ""
-
-#: modules/computer.c:220
-msgid "strace"
-msgstr ""
-
-#: modules/computer.c:221
-msgid "valgrind"
-msgstr ""
-
-#: modules/computer.c:222
-msgid "QMake"
-msgstr ""
-
-#: modules/computer.c:223
-msgid "CMake"
-msgstr ""
-
-#: modules/computer.c:266
-#, c-format
-msgid "%s=Not found\n"
-msgstr "%s=Не найдено\n"
-
-#: modules/computer.c:269
-#, c-format
-msgid "Detecting version: %s"
-msgstr "Определена версия: %s"
-
-#: modules/computer.c:280
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Program\n"
-"ColumnTitle$Value=Version\n"
-"ShowColumnHeaders=true\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Программа\n"
-"ColumnTitle$Value=Версия\n"
-"ShowColumnHeaders=true\n"
-"%s"
-
-#: modules/computer.c:362
-msgid "Physical machine"
-msgstr "Физическая машина"
-
-# Memory и Date/Time не переводить — не будут обновляться!
-#: modules/computer.c:380
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"UpdateInterval$Memory=1000\n"
-"UpdateInterval$Date/Time=1000\n"
-"#ReloadInterval=5000\n"
-"[Computer]\n"
-"Processor=%s\n"
-"Memory=...\n"
-"Machine Type=%s\n"
-"Operating System=%s\n"
-"User Name=%s\n"
-"Date/Time=...\n"
-"[Display]\n"
-"Resolution=%dx%d pixels\n"
-"OpenGL Renderer=%s\n"
-"X11 Vendor=%s\n"
-"\n"
-"%s\n"
-"[Input Devices]\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s\n"
-msgstr ""
-"[$ShellParam$]\n"
-"UpdateInterval$Память=1000\n"
-"UpdateInterval$Date/Time=1000\n"
-"#ReloadInterval=5000\n"
-"[Компьютер]\n"
-"Процессор=%s\n"
-"Память=...\n"
-"Тип машины=%s\n"
-"Операционная система=%s\n"
-"Пользователь=%s\n"
-"Date/Time=...\n"
-"[Дисплей]\n"
-"Разрешение=%dx%d пикселей\n"
-"Рендер OpenGL=%s\n"
-"Поставщик X11=%s\n"
-"\n"
-"%s\n"
-"[Устройства ввода]\n"
-"%s\n"
-"\n"
-"%s\n"
-"\n"
-"%s\n"
-
-#: modules/computer.c:424 modules/computer.c:680
-msgid "Computer"
-msgstr "Компьютер"
-
-#: modules/computer.c:425 modules/devices.c:91
-#: modules/devices/alpha/processor.c:79 modules/devices/arm/processor.c:235
-#: modules/devices/s390/processor.c:123 modules/devices/m68k/processor.c:75
-#: modules/devices/sh/processor.c:75 modules/devices/parisc/processor.c:146
-#: modules/devices/ia64/processor.c:151 modules/devices/ppc/processor.c:149
-#: modules/devices/mips/processor.c:66 modules/devices/riscv/processor.c:173
-#: modules/devices/x86/processor.c:738 modules/devices/sparc/processor.c:66
-msgid "Processor"
-msgstr "Процессор"
-
-#: modules/computer.c:427
-msgid "Machine Type"
-msgstr "Тип машины"
-
-#: modules/computer.c:429 modules/computer.c:506
-msgid "User Name"
-msgstr "Пользователь"
-
-#: modules/computer.c:432
-msgid "Resolution"
-msgstr "Разрешение"
-
-#: modules/computer.c:434
-msgid "OpenGL Renderer"
-msgstr "Рендер OpenGL"
-
-#: modules/computer.c:435
-msgid "X11 Vendor"
-msgstr "Поставщик X11"
-
-#: modules/computer.c:437 modules/devices.c:98
-msgid "Input Devices"
-msgstr "Устройства ввода"
-
-#: modules/computer.c:453
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"UpdateInterval$Uptime=10000\n"
-"UpdateInterval$Load Average=1000\n"
-"UpdateInterval$Available entropy in /dev/random=1000\n"
-"[Version]\n"
-"Kernel=%s\n"
-"Version=%s\n"
-"C Library=%s\n"
-"Distribution=%s\n"
-"[Current Session]\n"
-"Computer Name=%s\n"
-"User Name=%s\n"
-"#Language=%s\n"
-"Home Directory=%s\n"
-"Desktop Environment=%s\n"
-"[Misc]\n"
-"Uptime=...\n"
-"Load Average=...\n"
-"Available entropy in /dev/random=...\n"
-msgstr ""
-
-#: modules/computer.c:499 modules/computer.c:501 hardinfo/hardinfo.c:76
-msgid "Version"
-msgstr "Версия"
-
-#: modules/computer.c:500
-msgid "Kernel"
-msgstr "Ядро"
-
-#: modules/computer.c:502
-msgid "C Library"
-msgstr "Библиотека C"
-
-#: modules/computer.c:503
-msgid "Distribution"
-msgstr "Дистрибутив"
-
-#: modules/computer.c:504
-msgid "Current Session"
-msgstr "Текущая сессия"
-
-#: modules/computer.c:505
-msgid "Computer Name"
-msgstr "Имя компьютера"
-
-#: modules/computer.c:507
-msgid "#Language"
-msgstr "#Язык"
-
-#: modules/computer.c:508
-msgid "Home Directory"
-msgstr "Домашний каталог"
-
-#: modules/computer.c:509
-msgid "Desktop Environment"
-msgstr "Домашний каталог"
-
-#: modules/computer.c:510
-msgid "Misc"
-msgstr "Разное"
-
-#: modules/computer.c:518
-#, c-format
-msgid ""
-"[Loaded Modules]\n"
-"%s[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Name\n"
-"ColumnTitle$Value=Description\n"
-"ShowColumnHeaders=true\n"
-msgstr ""
-"[Loaded Modules]\n"
-"%s[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Имя\n"
-"ColumnTitle$Value=Описание\n"
-"ShowColumnHeaders=true\n"
-
-#: modules/computer.c:529
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Date & Time\n"
-"ColumnTitle$Value=Kernel Version\n"
-"ShowColumnHeaders=true\n"
-"\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Дата и время\n"
-"ColumnTitle$Value=Версия ядра\n"
-"ShowColumnHeaders=true\n"
-"\n"
-"%s"
-
-#: modules/computer.c:539
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Language Code\n"
-"ColumnTitle$Value=Name\n"
-"ShowColumnHeaders=true\n"
-"[Available Languages]\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Код языка\n"
-"ColumnTitle$Value=Название\n"
-"ShowColumnHeaders=true\n"
-"[Available Languages]\n"
-"%s"
-
-#: modules/computer.c:550
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ViewType=4\n"
-"ReloadInterval=5000\n"
-"Zebra=1\n"
-"NormalizePercentage=false\n"
-"ColumnTitle$Extra1=Mount Point\n"
-"ColumnTitle$Progress=Usage\n"
-"ColumnTitle$TextValue=Device\n"
-"ShowColumnHeaders=true\n"
-"[Mounted File Systems]\n"
-"%s\n"
-msgstr ""
-"[$ShellParam$]\n"
-"ViewType=4\n"
-"ReloadInterval=5000\n"
-"Zebra=1\n"
-"NormalizePercentage=false\n"
-"ColumnTitle$Extra1=Точка монтирования\n"
-"ColumnTitle$Progress=Использование\n"
-"ColumnTitle$TextValue=Устройство\n"
-"ShowColumnHeaders=true\n"
-"[Mounted File Systems]\n"
-"%s\n"
-
-#: modules/computer.c:564
-#, c-format
-msgid ""
-"[Display]\n"
-"Resolution=%dx%d pixels\n"
-"Vendor=%s\n"
-"Version=%s\n"
-"[Monitors]\n"
-"%s[Extensions]\n"
-"%s[OpenGL]\n"
-"Vendor=%s\n"
-"Renderer=%s\n"
-"Version=%s\n"
-"Direct Rendering=%s\n"
-msgstr ""
-"[Дисплей]\n"
-"Разрешение=%dx%d пикселей\n"
-"Поставщик=%s\n"
-"Версия=%s\n"
-"[Монитор]\n"
-"%s[Расширения]\n"
-"%s[OpenGL]\n"
-"Поставщик=%s\n"
-"Рендер=%s\n"
-"Версия=%s\n"
-"Графическое ускорение=%s\n"
-
-#: modules/computer.c:586
-msgid "Y_es"
-msgstr "Есть"
-
-#: modules/computer.c:586 modules/devices/printers.c:138 hardinfo/hardinfo.c:57
-msgid "No"
-msgstr "Нет"
-
-#: modules/computer.c:600
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ReloadInterval=10000\n"
-"ColumnTitle$TextValue=Name\n"
-"ColumnTitle$Value=Group ID\n"
-"ShowColumnHeaders=true\n"
-"[Groups]\n"
-"%s\n"
-msgstr ""
-"[$ShellParam$]\n"
-"ReloadInterval=10000\n"
-"ColumnTitle$TextValue=Имя\n"
-"ColumnTitle$Value=ID группы\n"
-"ShowColumnHeaders=true\n"
-"[Groups]\n"
-"%s\n"
-
-#: modules/computer.c:774
-msgid "Gathers high-level computer information"
-msgstr "Собирает высокоуровневую информацию о компьютере"
 
 #: modules/benchmark.c:52
 #, fuzzy
@@ -1023,54 +748,6 @@ msgstr "Отправить результаты тестирования"
 msgid "Receive benchmark results"
 msgstr "Принять результаты тестирования"
 
-#: modules/computer/boots.c:33
-msgid "[Boots]\n"
-msgstr "[Загрузки]\n"
-
-#: modules/computer/display.c:122
-#, c-format
-msgid "Monitor %d=%dx%d pixels\n"
-msgstr "Монитор %d=%dx%d пикселей\n"
-
-#: modules/computer/os.c:57
-#, c-format
-msgid "GNU C Library version %s (%sstable)"
-msgstr "Библиотека GNU C версии %s (%s стабильна)"
-
-#: modules/computer/os.c:59
-msgid "un"
-msgstr "не"
-
-#: modules/computer/os.c:61 modules/computer/os.c:138 modules/devices.c:171
-#: modules/devices.c:323 modules/devices/printers.c:99
-#: modules/devices/printers.c:106 modules/devices/printers.c:116
-#: modules/devices/printers.c:131 modules/devices/printers.c:140
-#: modules/devices/printers.c:243
-msgid "Unknown"
-msgstr "Неизвестно"
-
-#: modules/computer/os.c:80
-#, c-format
-msgid "Version: %s"
-msgstr "Версия: %s"
-
-#: modules/computer/os.c:114
-msgid "Terminal"
-msgstr "Терминал"
-
-#: modules/computer/os.c:134
-#, c-format
-msgid "Unknown (Window Manager: %s)"
-msgstr "Неизвестно (Оконный менеджер: %s)"
-
-#: modules/computer/os.c:185
-msgid "Unknown distribution"
-msgstr "Неизвестный дистрибутив"
-
-#: modules/computer/environment.c:32
-msgid "[Environment Variables]\n"
-msgstr "[Переменные среды]\n"
-
 #: modules/computer/alsa.c:26
 msgid "[Audio Devices]\n"
 msgstr "[Аудио устройства]\n"
@@ -1080,9 +757,927 @@ msgstr "[Аудио устройства]\n"
 msgid "Audio Adapter#%d=%s\n"
 msgstr "Звуковая карта#%d=%s\n"
 
+#: modules/computer/boots.c:33
+msgid "[Boots]\n"
+msgstr "[Загрузки]\n"
+
+#: modules/computer.c:68
+msgid "Summary"
+msgstr "Общая информация"
+
+#: modules/computer.c:69 modules/computer.c:412 modules/computer.c:685
+msgid "Operating System"
+msgstr "Операционная система"
+
+#: modules/computer.c:70
+msgid "Kernel Modules"
+msgstr "Модули ядра"
+
+#: modules/computer.c:71
+msgid "Boots"
+msgstr "Загрузки"
+
+#: modules/computer.c:72
+msgid "Languages"
+msgstr "Языки"
+
+#: modules/computer.c:73
+msgid "Filesystems"
+msgstr "Файловые системы"
+
+#: modules/computer.c:74 modules/computer.c:415
+msgid "Display"
+msgstr "Дисплей"
+
+#: modules/computer.c:75
+msgid "Environment Variables"
+msgstr "Переменные среды"
+
+#: modules/computer.c:77
+msgid "Development"
+msgstr "Разработка"
+
+#: modules/computer.c:79
+msgid "Users"
+msgstr "Пользователи"
+
+#: modules/computer.c:80
+msgid "Groups"
+msgstr "Группы"
+
+#: modules/computer.c:101 modules/computer.c:405 modules/computer.c:410
+#: modules/devices.c:92
+msgid "Memory"
+msgstr "Память"
+
+#: modules/computer.c:103
+#, c-format
+msgid "%dMB (%dMB used)"
+msgstr "%dМб (%dМб занято)"
+
+#: modules/computer.c:105 modules/computer.c:459 modules/computer.c:475
+msgid "Uptime"
+msgstr "Время работы"
+
+#: modules/computer.c:107 modules/computer.c:406 modules/computer.c:414
+msgid "Date/Time"
+msgstr "Дата/время"
+
+# Должно совпадать с таким-же полем в строке 430 computer.c
+#: modules/computer.c:112 modules/computer.c:461 modules/computer.c:476
+msgid "Load Average"
+msgstr "Средняя нагрузка"
+
+#: modules/computer.c:114 modules/computer.c:460 modules/computer.c:477
+msgid "Available entropy in /dev/random"
+msgstr "Доступная энтропия в /dev/random"
+
+#: modules/computer.c:200
+msgid "Scripting Languages"
+msgstr "Скриптовые языки"
+
+#: modules/computer.c:201
+msgid "Python"
+msgstr ""
+
+#: modules/computer.c:202
+msgid "Python2"
+msgstr ""
+
+#: modules/computer.c:203
+msgid "Python3"
+msgstr ""
+
+#: modules/computer.c:204
+#, fuzzy
+msgid "Perl"
+msgstr "Perl"
+
+#: modules/computer.c:205
+msgid "Perl6 (VM)"
+msgstr ""
+
+#: modules/computer.c:206
+msgid "Perl6"
+msgstr ""
+
+#: modules/computer.c:207
+msgid "PHP"
+msgstr ""
+
+#: modules/computer.c:208
+msgid "Ruby"
+msgstr ""
+
+#: modules/computer.c:209
+msgid "Bash"
+msgstr ""
+
+#: modules/computer.c:210
+msgid "Compilers"
+msgstr "Компиляторы"
+
+#: modules/computer.c:211
+msgid "C (GCC)"
+msgstr ""
+
+#: modules/computer.c:212
+msgid "C (Clang)"
+msgstr ""
+
+#: modules/computer.c:213
+msgid "D (dmd)"
+msgstr ""
+
+#: modules/computer.c:214
+#, fuzzy
+msgid "Java"
+msgstr "Язык программирования Java"
+
+#: modules/computer.c:215
+#, fuzzy
+msgid "CSharp (Mono, old)"
+msgstr "Найдена старая установка %s."
+
+#: modules/computer.c:216
+#, fuzzy
+msgid "CSharp (Mono)"
+msgstr "Моноширинный шрифт"
+
+#: modules/computer.c:217
+#, fuzzy
+msgid "Vala"
+msgstr "базы данных vala"
+
+#: modules/computer.c:218
+msgid "Haskell (GHC)"
+msgstr ""
+
+#: modules/computer.c:219
+msgid "FreePascal"
+msgstr ""
+
+#: modules/computer.c:220
+msgid "Go"
+msgstr ""
+
+#: modules/computer.c:221
+msgid "Tools"
+msgstr "Инструменты"
+
+#: modules/computer.c:222
+msgid "make"
+msgstr ""
+
+#: modules/computer.c:223
+msgid "GDB"
+msgstr ""
+
+#: modules/computer.c:224
+msgid "strace"
+msgstr ""
+
+#: modules/computer.c:225
+msgid "valgrind"
+msgstr ""
+
+#: modules/computer.c:226
+msgid "QMake"
+msgstr ""
+
+#: modules/computer.c:227
+msgid "CMake"
+msgstr ""
+
+#: modules/computer.c:271
+#, c-format
+msgid "%s=Not found\n"
+msgstr "%s=Не найдено\n"
+
+#: modules/computer.c:274
+#, c-format
+msgid "Detecting version: %s"
+msgstr "Определена версия: %s"
+
+#: modules/computer.c:285
+#, c-format
+msgid ""
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=Program\n"
+"ColumnTitle$Value=Version\n"
+"ShowColumnHeaders=true\n"
+"%s"
+msgstr ""
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=Программа\n"
+"ColumnTitle$Value=Версия\n"
+"ShowColumnHeaders=true\n"
+"%s"
+
+#: modules/computer.c:367
+msgid "Physical machine"
+msgstr "Физическая машина"
+
+#: modules/computer.c:408 modules/computer.c:644
+msgid "Computer"
+msgstr "Компьютер"
+
+#: modules/computer.c:409 modules/devices/alpha/processor.c:79
+#: modules/devices/arm/processor.c:235 modules/devices.c:91
+#: modules/devices/ia64/processor.c:151 modules/devices/m68k/processor.c:75
+#: modules/devices/mips/processor.c:66 modules/devices/parisc/processor.c:146
+#: modules/devices/ppc/processor.c:149 modules/devices/riscv/processor.c:173
+#: modules/devices/s390/processor.c:123 modules/devices/sh/processor.c:75
+#: modules/devices/sparc/processor.c:66 modules/devices/x86/processor.c:745
+msgid "Processor"
+msgstr "Процессор"
+
+#: modules/computer.c:411
+msgid "Machine Type"
+msgstr "Тип машины"
+
+#: modules/computer.c:413 modules/computer.c:470
+msgid "User Name"
+msgstr "Пользователь"
+
+#: modules/computer.c:416
+msgid "Resolution"
+msgstr "Разрешение"
+
+#. /label for resolution
+#: modules/computer.c:418
+msgid "pixels"
+msgstr ""
+
+#: modules/computer.c:419
+msgid "OpenGL Renderer"
+msgstr "Рендер OpenGL"
+
+#: modules/computer.c:420
+msgid "X11 Vendor"
+msgstr "Поставщик X11"
+
+#: modules/computer.c:422 modules/devices.c:98
+msgid "Input Devices"
+msgstr "Устройства ввода"
+
+#: modules/computer.c:464
+msgid "Kernel"
+msgstr "Ядро"
+
+#: modules/computer.c:466
+msgid "C Library"
+msgstr "Библиотека C"
+
+#: modules/computer.c:467
+msgid "Distribution"
+msgstr "Дистрибутив"
+
+#: modules/computer.c:468
+msgid "Current Session"
+msgstr "Текущая сессия"
+
+#: modules/computer.c:469
+msgid "Computer Name"
+msgstr "Имя компьютера"
+
+#: modules/computer.c:471
+msgid "Language"
+msgstr ""
+
+#: modules/computer.c:472
+msgid "Home Directory"
+msgstr "Домашний каталог"
+
+#: modules/computer.c:473
+msgid "Desktop Environment"
+msgstr "Домашний каталог"
+
+#: modules/computer.c:474
+msgid "Misc"
+msgstr "Разное"
+
+#: modules/computer.c:482
+#, c-format
+msgid ""
+"[Loaded Modules]\n"
+"%s[$ShellParam$]\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Name\n"
+"ColumnTitle$Value=Description\n"
+"ShowColumnHeaders=true\n"
+msgstr ""
+"[Loaded Modules]\n"
+"%s[$ShellParam$]\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Имя\n"
+"ColumnTitle$Value=Описание\n"
+"ShowColumnHeaders=true\n"
+
+#: modules/computer.c:493
+#, c-format
+msgid ""
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=Date & Time\n"
+"ColumnTitle$Value=Kernel Version\n"
+"ShowColumnHeaders=true\n"
+"\n"
+"%s"
+msgstr ""
+"[$ShellParam$]\n"
+"ColumnTitle$TextValue=Дата и время\n"
+"ColumnTitle$Value=Версия ядра\n"
+"ShowColumnHeaders=true\n"
+"\n"
+"%s"
+
+#: modules/computer.c:503
+#, c-format
+msgid ""
+"[$ShellParam$]\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Language Code\n"
+"ColumnTitle$Value=Name\n"
+"ShowColumnHeaders=true\n"
+"[Available Languages]\n"
+"%s"
+msgstr ""
+"[$ShellParam$]\n"
+"ViewType=1\n"
+"ColumnTitle$TextValue=Код языка\n"
+"ColumnTitle$Value=Название\n"
+"ShowColumnHeaders=true\n"
+"[Available Languages]\n"
+"%s"
+
+#: modules/computer.c:514
+#, c-format
+msgid ""
+"[$ShellParam$]\n"
+"ViewType=4\n"
+"ReloadInterval=5000\n"
+"Zebra=1\n"
+"NormalizePercentage=false\n"
+"ColumnTitle$Extra1=Mount Point\n"
+"ColumnTitle$Progress=Usage\n"
+"ColumnTitle$TextValue=Device\n"
+"ShowColumnHeaders=true\n"
+"[Mounted File Systems]\n"
+"%s\n"
+msgstr ""
+"[$ShellParam$]\n"
+"ViewType=4\n"
+"ReloadInterval=5000\n"
+"Zebra=1\n"
+"NormalizePercentage=false\n"
+"ColumnTitle$Extra1=Точка монтирования\n"
+"ColumnTitle$Progress=Использование\n"
+"ColumnTitle$TextValue=Устройство\n"
+"ShowColumnHeaders=true\n"
+"[Mounted File Systems]\n"
+"%s\n"
+
+#: modules/computer.c:528
+#, c-format
+msgid ""
+"[Display]\n"
+"Resolution=%dx%d pixels\n"
+"Vendor=%s\n"
+"Version=%s\n"
+"[Monitors]\n"
+"%s[Extensions]\n"
+"%s[OpenGL]\n"
+"Vendor=%s\n"
+"Renderer=%s\n"
+"Version=%s\n"
+"Direct Rendering=%s\n"
+msgstr ""
+"[Дисплей]\n"
+"Разрешение=%dx%d пикселей\n"
+"Поставщик=%s\n"
+"Версия=%s\n"
+"[Монитор]\n"
+"%s[Расширения]\n"
+"%s[OpenGL]\n"
+"Поставщик=%s\n"
+"Рендер=%s\n"
+"Версия=%s\n"
+"Графическое ускорение=%s\n"
+
+#: modules/computer.c:550
+msgid "Y_es"
+msgstr "Есть"
+
+#: modules/computer.c:564
+#, c-format
+msgid ""
+"[$ShellParam$]\n"
+"ReloadInterval=10000\n"
+"ColumnTitle$TextValue=Name\n"
+"ColumnTitle$Value=Group ID\n"
+"ShowColumnHeaders=true\n"
+"[Groups]\n"
+"%s\n"
+msgstr ""
+"[$ShellParam$]\n"
+"ReloadInterval=10000\n"
+"ColumnTitle$TextValue=Имя\n"
+"ColumnTitle$Value=ID группы\n"
+"ShowColumnHeaders=true\n"
+"[Groups]\n"
+"%s\n"
+
+#: modules/computer.c:686 modules/devices/sparc/processor.c:67
+msgid "CPU"
+msgstr ""
+
+#: modules/computer.c:686
+msgid "RAM"
+msgstr ""
+
+#: modules/computer.c:686
+msgid "Motherboard"
+msgstr ""
+
+#: modules/computer.c:686
+msgid "Graphics"
+msgstr ""
+
+#: modules/computer.c:687 modules/devices.c:99
+msgid "Storage"
+msgstr "Устройства хранения"
+
+#: modules/computer.c:687 modules/devices.c:95
+msgid "Printers"
+msgstr "Принтеры"
+
+#: modules/computer.c:687
+msgid "Audio"
+msgstr ""
+
+#: modules/computer.c:742
+msgid "Gathers high-level computer information"
+msgstr "Собирает высокоуровневую информацию о компьютере"
+
+#: modules/computer/display.c:122
+#, c-format
+msgid "Monitor %d=%dx%d pixels\n"
+msgstr "Монитор %d=%dx%d пикселей\n"
+
+#: modules/computer/environment.c:32
+msgid "[Environment Variables]\n"
+msgstr "[Переменные среды]\n"
+
 #: modules/computer/loadavg.c:64
 msgid "Couldn't obtain load average"
 msgstr "Не удается установить среднюю загрузку"
+
+#: modules/computer/os.c:34 modules/computer/os.c:35
+msgid "GNU C Library"
+msgstr ""
+
+#: modules/computer/os.c:36
+msgid "uClibc or uClibc-ng"
+msgstr ""
+
+#: modules/computer/os.c:37
+msgid "diet libc"
+msgstr ""
+
+#: modules/computer/os.c:75 modules/computer/os.c:152 modules/devices.c:171
+#: modules/devices.c:323 modules/devices/printers.c:99
+#: modules/devices/printers.c:106 modules/devices/printers.c:116
+#: modules/devices/printers.c:131 modules/devices/printers.c:140
+#: modules/devices/printers.c:243
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: modules/computer/os.c:94
+#, c-format
+msgid "Version: %s"
+msgstr "Версия: %s"
+
+#: modules/computer/os.c:128
+msgid "Terminal"
+msgstr "Терминал"
+
+#: modules/computer/os.c:148
+#, c-format
+msgid "Unknown (Window Manager: %s)"
+msgstr "Неизвестно (Оконный менеджер: %s)"
+
+#. /bits of entropy for rng (0)
+#: modules/computer/os.c:162
+msgid "(None or not available)"
+msgstr "(Нет или недоступно)"
+
+#. /bits of entropy for rng (low/poor value)
+#: modules/computer/os.c:163
+#, c-format
+msgid "%d bits (low)"
+msgstr "%d бит (низкая)"
+
+#. /bits of entropy for rng (medium value)
+#: modules/computer/os.c:164
+#, c-format
+msgid "%d bits (medium)"
+msgstr "%d бит (средняя)"
+
+#. /bits of entropy for rng (high/good value)
+#: modules/computer/os.c:165
+#, c-format
+msgid "%d bits (healthy)"
+msgstr "%d бит (огромная)"
+
+#: modules/computer/os.c:200
+msgid "(Unknown)"
+msgstr ""
+
+#: modules/computer/os.c:235
+msgid "Unknown distribution"
+msgstr "Неизвестный дистрибутив"
+
+#: modules/computer/users.c:47
+msgid "User Information"
+msgstr ""
+
+#: modules/computer/users.c:48
+msgid "User ID"
+msgstr ""
+
+#: modules/computer/users.c:49
+msgid "Group ID"
+msgstr ""
+
+#: modules/computer/users.c:50
+msgid "Home directory"
+msgstr ""
+
+#: modules/computer/users.c:51
+msgid "Default shell"
+msgstr ""
+
+#: modules/devices/alpha/processor.c:80 modules/devices/ia64/processor.c:157
+#: modules/devices/m68k/processor.c:76 modules/devices/mips/processor.c:67
+#: modules/devices/parisc/processor.c:147 modules/devices/ppc/processor.c:150
+#: modules/devices/riscv/processor.c:174 modules/devices/s390/processor.c:124
+msgid "Model"
+msgstr "Модель"
+
+#: modules/devices/alpha/processor.c:81
+msgid "Platform String"
+msgstr "Строка платформы"
+
+#: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
+#: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:79
+#: modules/devices/mips/processor.c:69 modules/devices/parisc/processor.c:150
+#: modules/devices/ppc/processor.c:152 modules/devices/riscv/processor.c:178
+#: modules/devices/sh/processor.c:79 modules/devices/x86/processor.c:755
+msgid "Frequency"
+msgstr "Частота"
+
+#: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
+#: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:79
+#: modules/devices/mips/processor.c:69 modules/devices/parisc/processor.c:150
+#: modules/devices/ppc/processor.c:152 modules/devices/riscv/processor.c:178
+#: modules/devices/sh/processor.c:79 modules/devices/sh/processor.c:80
+#: modules/devices/sh/processor.c:81 modules/devices/x86/processor.c:755
+msgid "MHz"
+msgstr "МГц"
+
+#: modules/devices/alpha/processor.c:83 modules/devices/arm/processor.c:240
+#: modules/devices/ia64/processor.c:160 modules/devices/m68k/processor.c:80
+#: modules/devices/mips/processor.c:70 modules/devices/parisc/processor.c:151
+#: modules/devices/ppc/processor.c:153 modules/devices/s390/processor.c:126
+#: modules/devices/sh/processor.c:82 modules/devices/x86/processor.c:756
+msgid "BogoMips"
+msgstr ""
+
+#: modules/devices/alpha/processor.c:84 modules/devices/arm/processor.c:241
+#: modules/devices/ia64/processor.c:161 modules/devices/m68k/processor.c:81
+#: modules/devices/mips/processor.c:71 modules/devices/parisc/processor.c:152
+#: modules/devices/ppc/processor.c:154 modules/devices/riscv/processor.c:179
+#: modules/devices/s390/processor.c:127 modules/devices/sh/processor.c:83
+#: modules/devices/sparc/processor.c:69 modules/devices/x86/processor.c:757
+msgid "Byte Order"
+msgstr "Порядок байтов"
+
+#. /hw_cap
+#. /flag:swp
+#: modules/devices/arm/arm_data.c:42
+msgctxt "arm-flag"
+msgid "SWP instruction (atomic read-modify-write)"
+msgstr "Инструкция SWP (атомарное чтение-изменение-запись)"
+
+#. /flag:half
+#: modules/devices/arm/arm_data.c:43
+msgctxt "arm-flag"
+msgid "Half-word loads and stores"
+msgstr "Загрузка и хранение полуслова"
+
+#. /flag:thumb
+#: modules/devices/arm/arm_data.c:44
+msgctxt "arm-flag"
+msgid "Thumb (16-bit instruction set)"
+msgstr "Thumb (набор 16-битных инструкций)"
+
+#. /flag:26bit
+#: modules/devices/arm/arm_data.c:45
+msgctxt "arm-flag"
+msgid "26-Bit Model (Processor status register folded into program counter)"
+msgstr ""
+"26-битная модель (регистр статуса процессора вложен в счетчик программы)"
+
+#. /flag:fastmult
+#: modules/devices/arm/arm_data.c:46
+msgctxt "arm-flag"
+msgid "32x32->64-bit multiplication"
+msgstr "32x32->64-битное умножение"
+
+#. /flag:fpa
+#: modules/devices/arm/arm_data.c:47
+msgctxt "arm-flag"
+msgid "Floating point accelerator"
+msgstr "Ускоритель плавающей точки"
+
+#. /flag:vfp
+#: modules/devices/arm/arm_data.c:48
+msgctxt "arm-flag"
+msgid "VFP (early SIMD vector floating point instructions)"
+msgstr "VFP (ранний вектор SIMD инструкций плавающей точки)"
+
+#. /flag:edsp
+#: modules/devices/arm/arm_data.c:49
+msgctxt "arm-flag"
+msgid "DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)"
+msgstr "расширения DSP (вариант 'e' процессоров ARM9 и выше)"
+
+#. /flag:java
+#: modules/devices/arm/arm_data.c:50
+msgctxt "arm-flag"
+msgid "Jazelle (Java bytecode accelerator)"
+msgstr "Jazelle (ускоритель байт-кода Java)"
+
+#. /flag:iwmmxt
+#: modules/devices/arm/arm_data.c:51
+msgctxt "arm-flag"
+msgid "SIMD instructions similar to Intel MMX"
+msgstr "Инструкции SIMD, схожие с Intel MMX"
+
+#. /flag:crunch
+#: modules/devices/arm/arm_data.c:52
+msgctxt "arm-flag"
+msgid "MaverickCrunch coprocessor (if kernel support enabled)"
+msgstr "Сопроцессор MaverickCrunch (при наличии поддержки в ядре)"
+
+#. /flag:thumbee
+#: modules/devices/arm/arm_data.c:53
+msgctxt "arm-flag"
+msgid "ThumbEE"
+msgstr ""
+
+#. /flag:neon
+#: modules/devices/arm/arm_data.c:54
+msgctxt "arm-flag"
+msgid "Advanced SIMD/NEON on AArch32"
+msgstr "Дополнительный SIMD/NEON на AArch32"
+
+#. /flag:evtstrm
+#: modules/devices/arm/arm_data.c:55
+msgctxt "arm-flag"
+msgid "Kernel event stream using generic architected timer"
+msgstr ""
+
+#. /flag:vfpv3
+#: modules/devices/arm/arm_data.c:56
+msgctxt "arm-flag"
+msgid "VFP version 3"
+msgstr "VFP версии 3"
+
+#. /flag:vfpv3d16
+#: modules/devices/arm/arm_data.c:57
+msgctxt "arm-flag"
+msgid "VFP version 3 with 16 D-registers"
+msgstr "VFP версии 3 с 16 D-регистрами"
+
+#. /flag:vfpv4
+#: modules/devices/arm/arm_data.c:58
+msgctxt "arm-flag"
+msgid "VFP version 4 with fast context switching"
+msgstr "VFP версии 4 с быстрым контекстным переключением"
+
+#. /flag:vfpd32
+#: modules/devices/arm/arm_data.c:59
+msgctxt "arm-flag"
+msgid "VFP with 32 D-registers"
+msgstr "VFP с 32 D-регистрами"
+
+#. /flag:tls
+#: modules/devices/arm/arm_data.c:60
+msgctxt "arm-flag"
+msgid "TLS register"
+msgstr "Регистр TLS"
+
+#. /flag:idiva
+#: modules/devices/arm/arm_data.c:61
+msgctxt "arm-flag"
+msgid "SDIV and UDIV hardware division in ARM mode"
+msgstr "Аппаратное разделение SDIV и UDIV в режиме ARM"
+
+#. /flag:idivt
+#: modules/devices/arm/arm_data.c:62
+msgctxt "arm-flag"
+msgid "SDIV and UDIV hardware division in Thumb mode"
+msgstr "Аппаратное разделение SDIV и UDIV в режиме Thumb"
+
+#. /flag:lpae
+#: modules/devices/arm/arm_data.c:63
+msgctxt "arm-flag"
+msgid "40-bit Large Physical Address Extension"
+msgstr "40-битное большое физическое адресное расширение"
+
+#. /hw_cap2
+#. /flag:pmull
+#: modules/devices/arm/arm_data.c:65
+msgctxt "arm-flag"
+msgid "64x64->128-bit F2m multiplication (arch>8)"
+msgstr "64x64->128-битное умножение F2m (arch>8)"
+
+#. /flag:aes
+#: modules/devices/arm/arm_data.c:66
+msgctxt "arm-flag"
+msgid "Crypto:AES (arch>8)"
+msgstr "Крипто:AES (arch>8)"
+
+#. /flag:sha1
+#: modules/devices/arm/arm_data.c:67
+msgctxt "arm-flag"
+msgid "Crypto:SHA1 (arch>8)"
+msgstr "Крипто:SHA1 (arch>8)"
+
+#. /flag:sha2
+#: modules/devices/arm/arm_data.c:68
+msgctxt "arm-flag"
+msgid "Crypto:SHA2 (arch>8)"
+msgstr "Крипто:SHA2 (arch>8)"
+
+#. /flag:crc32
+#: modules/devices/arm/arm_data.c:69
+msgctxt "arm-flag"
+msgid "CRC32 checksum instructions (arch>8)"
+msgstr "инструкции контрольной суммы CRC32 (arch>8)"
+
+#. /flag:asimd
+#: modules/devices/arm/arm_data.c:72
+msgctxt "arm-flag"
+msgid "Advanced SIMD/NEON on AArch64 (arch>8)"
+msgstr "Дополнительный SIMD/NEON на AArch64 (arch>8)"
+
+#: modules/devices/arm/processor.c:141
+msgid "ARM Processor"
+msgstr "Процессор ARM"
+
+#: modules/devices/arm/processor.c:199 modules/devices/riscv/processor.c:147
+#: modules/devices/x86/processor.c:708
+msgid "Empty List"
+msgstr "Пустой список"
+
+#: modules/devices/arm/processor.c:236
+msgid "Linux Name"
+msgstr "Имя Linux"
+
+#: modules/devices/arm/processor.c:237
+msgid "Decoded Name"
+msgstr "Декодированное имя"
+
+#: modules/devices/arm/processor.c:238
+msgid "Mode"
+msgstr "Режим"
+
+#: modules/devices/arm/processor.c:244
+msgid "ARM"
+msgstr ""
+
+#: modules/devices/arm/processor.c:245
+msgid "Implementer"
+msgstr "Исполнитель"
+
+#: modules/devices/arm/processor.c:246
+msgid "Part"
+msgstr "Часть"
+
+#: modules/devices/arm/processor.c:247 modules/devices/ia64/processor.c:154
+#: modules/devices/parisc/processor.c:148 modules/devices/riscv/processor.c:175
+msgid "Architecture"
+msgstr "Архитектура"
+
+#: modules/devices/arm/processor.c:248
+msgid "Variant"
+msgstr "Вариант"
+
+#: modules/devices/arm/processor.c:249 modules/devices/ia64/processor.c:158
+#: modules/devices/ppc/processor.c:151
+msgid "Revision"
+msgstr "Ревизия"
+
+#: modules/devices/arm/processor.c:250 modules/devices/riscv/processor.c:182
+#: modules/devices/sparc/processor.c:70 modules/devices/x86/processor.c:763
+msgid "Capabilities"
+msgstr "Возможности"
+
+#: modules/devices/arm/processor.c:271 modules/devices/ia64/processor.c:185
+#: modules/devices/parisc/processor.c:180 modules/devices/ppc/processor.c:176
+#: modules/devices/riscv/processor.c:203 modules/devices/s390/processor.c:149
+#: modules/devices/x86/processor.c:786
+#, c-format
+msgid "%s$CPU%d$%s=%.2fMHz\n"
+msgstr "%s$CPU%d$%s=%.2fМГц\n"
+
+#: modules/devices/battery.c:181
+#, c-format
+msgid ""
+"\n"
+"[Battery: %s]\n"
+"State=%s (load: %s)\n"
+"Capacity=%s / %s (%.2f%%)\n"
+"Battery Technology=%s (%s)\n"
+"Manufacturer=%s\n"
+"Model Number=%s\n"
+"Serial Number=%s\n"
+msgstr ""
+"\n"
+"[Батарея: %s]\n"
+"Состояние=%s (нагрузка: %s)\n"
+"Емкость=%s / %s (%.2f%%)\n"
+"Технология батареи=%s (%s)\n"
+"Изготовитель=%s\n"
+"Номер модели=%s\n"
+"Серийный номер=%s\n"
+
+#: modules/devices/battery.c:258
+#, c-format
+msgid ""
+"\n"
+"[Battery: %s]\n"
+"State=%s\n"
+"Capacity=%s / %s\n"
+"Battery Technology=%s\n"
+"Manufacturer=%s\n"
+"Model Number=%s\n"
+"Serial Number=%s\n"
+msgstr ""
+"\n"
+"[Батарея: %s]\n"
+"Состояние=%s\n"
+"Емкость=%s / %s\n"
+"Технология батареи=%s\n"
+"Производитель=%s\n"
+"Номер модели=%s\n"
+"Серийный номер=%s\n"
+
+#: modules/devices/battery.c:346
+#, c-format
+msgid ""
+"\n"
+"[Battery (APM)]\n"
+"Charge=%d%%\n"
+"Remaining Charge=%s of %s\n"
+"Using=%s\n"
+"APM driver version=%s\n"
+"APM BIOS version=%s\n"
+msgstr ""
+"\n"
+"[Батарея (APM)]\n"
+"Заряд=%d%%\n"
+"Оставшийся заряд=%s из %s\n"
+"Используется=%s\n"
+"APM драйвер версии=%s\n"
+"APM BIOS версии=%s\n"
+
+#: modules/devices/battery.c:358
+#, c-format
+msgid ""
+"\n"
+"[Battery (APM)]\n"
+"Charge=%d%%\n"
+"Using=%s\n"
+"APM driver version=%s\n"
+"APM BIOS version=%s\n"
+msgstr ""
+"\n"
+"[Батарея (APM)]\n"
+"Заряд=%d%%\n"
+"Используется=%s\n"
+"APM драйвер версии=%s\n"
+"APM BIOS версии=%s\n"
+
+#: modules/devices/battery.c:385
+msgid ""
+"[No batteries]\n"
+"No batteries found on this system=\n"
+msgstr ""
+"[No batteries]\n"
+"Батареи не найдены на этой системе=\n"
 
 #: modules/devices.c:93
 msgid "PCI Devices"
@@ -1092,10 +1687,6 @@ msgstr "Устройства PCI"
 msgid "USB Devices"
 msgstr "Устройства USB"
 
-#: modules/devices.c:95
-msgid "Printers"
-msgstr "Принтеры"
-
 #: modules/devices.c:96
 msgid "Battery"
 msgstr "Батарея"
@@ -1103,10 +1694,6 @@ msgstr "Батарея"
 #: modules/devices.c:97
 msgid "Sensors"
 msgstr "Сенсоры"
-
-#: modules/devices.c:99
-msgid "Storage"
-msgstr "Устройства хранения"
 
 #: modules/devices.c:101
 msgid "DMI"
@@ -1167,6 +1754,1964 @@ msgstr "Собирает информацию об устройствах"
 #: modules/devices.c:627
 msgid "Resource information requires superuser privileges"
 msgstr "Для вывода информации о ресурсах нужны права администратора"
+
+#: modules/devices/cpu_util.c:26
+msgid "Little Endian"
+msgstr ""
+
+#: modules/devices/cpu_util.c:28
+msgid "Big Endian"
+msgstr ""
+
+#: modules/devices/cpu_util.c:137 modules/devices/cpu_util.c:148
+msgid "Frequency Scaling"
+msgstr "Масштабирование частоты"
+
+#: modules/devices/cpu_util.c:138
+msgid "Minimum"
+msgstr "Минимальная"
+
+#: modules/devices/cpu_util.c:138 modules/devices/cpu_util.c:139
+#: modules/devices/cpu_util.c:140
+msgid "kHz"
+msgstr "кГц"
+
+#: modules/devices/cpu_util.c:139
+msgid "Maximum"
+msgstr "Максимальная"
+
+#: modules/devices/cpu_util.c:140
+msgid "Current"
+msgstr "Текущая"
+
+#: modules/devices/cpu_util.c:141
+msgid "Transition Latency"
+msgstr "Задержка перехода"
+
+#: modules/devices/cpu_util.c:141
+msgid "ns"
+msgstr "нс"
+
+#: modules/devices/cpu_util.c:142
+msgid "Governor"
+msgstr "Регулятор"
+
+#: modules/devices/cpu_util.c:143 modules/devices/cpu_util.c:149
+msgid "Driver"
+msgstr "Драйвер"
+
+#: modules/devices/cpu_util.c:155
+msgid "(Not Available)"
+msgstr "(Недоступно)"
+
+#: modules/devices/cpu_util.c:163 modules/devices/cpu_util.c:165
+msgid "Socket"
+msgstr "Сокет"
+
+#: modules/devices/cpu_util.c:168 modules/devices/cpu_util.c:170
+msgid "Core"
+msgstr "Ядро"
+
+#: modules/devices/cpu_util.c:173
+msgid "Book"
+msgstr "Книга"
+
+#: modules/devices/cpu_util.c:175
+msgid "Drawer"
+msgstr "Трассировщик"
+
+#: modules/devices/cpu_util.c:181
+msgid "Topology"
+msgstr "Топология"
+
+#: modules/devices/cpu_util.c:182
+msgid "ID"
+msgstr ""
+
+#: modules/devices/devmemory.c:93
+msgid "Total Memory"
+msgstr "Общая память"
+
+#: modules/devices/devmemory.c:94
+msgid "Free Memory"
+msgstr "Свободная память"
+
+#: modules/devices/devmemory.c:95
+msgid "Cached Swap"
+msgstr "Кэш подкачки"
+
+#: modules/devices/devmemory.c:96
+msgid "High Memory"
+msgstr "Высокая память"
+
+#: modules/devices/devmemory.c:97
+msgid "Free High Memory"
+msgstr "Свободная высокая память"
+
+#: modules/devices/devmemory.c:98
+msgid "Low Memory"
+msgstr "Низкая память"
+
+#: modules/devices/devmemory.c:99
+msgid "Free Low Memory"
+msgstr "Свободная низкая память"
+
+#: modules/devices/devmemory.c:100
+msgid "Virtual Memory"
+msgstr "Виртуальная память"
+
+#: modules/devices/devmemory.c:101
+msgid "Free Virtual Memory"
+msgstr "Свободная виртуальная память"
+
+#: modules/devices/ia64/processor.c:108
+msgid "IA64 Processor"
+msgstr "Процессор IA64"
+
+#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:752
+msgid "Vendor"
+msgstr "Производитель"
+
+#: modules/devices/ia64/processor.c:155
+msgid "Architecture Revision"
+msgstr "Ревизия архитектуры"
+
+#: modules/devices/ia64/processor.c:156 modules/devices/sh/processor.c:78
+msgid "Family"
+msgstr "Семейство"
+
+#: modules/devices/ia64/processor.c:162
+msgid "CPU regs"
+msgstr "Регистры"
+
+#: modules/devices/ia64/processor.c:163
+msgid "Features"
+msgstr "Возможности"
+
+#: modules/devices/m68k/processor.c:77 modules/devices/riscv/processor.c:177
+msgid "MMU"
+msgstr ""
+
+#: modules/devices/m68k/processor.c:78 modules/devices/sparc/processor.c:68
+msgid "FPU"
+msgstr ""
+
+#: modules/devices/m68k/processor.c:82
+msgid "Calibration"
+msgstr "Калибровка"
+
+#: modules/devices/mips/processor.c:68
+msgid "System Type"
+msgstr "Тип системы"
+
+#: modules/devices/parisc/processor.c:107
+msgid "PA-RISC Processor"
+msgstr "Процессор PA-RISC"
+
+#: modules/devices/parisc/processor.c:149
+msgid "System"
+msgstr "Система"
+
+#: modules/devices/parisc/processor.c:153
+msgid "HVersion"
+msgstr ""
+
+#: modules/devices/parisc/processor.c:154
+msgid "SVersion"
+msgstr ""
+
+#: modules/devices/parisc/processor.c:155 modules/devices/x86/processor.c:760
+msgid "Cache"
+msgstr "Кэш"
+
+#: modules/devices/ppc/processor.c:117
+msgid "POWER Processor"
+msgstr "Процессор POWER"
+
+#: modules/devices/printers.c:81
+msgid "⚬ Can do black and white printing=\n"
+msgstr "⚬ Может печатать черно-белым=\n"
+
+#: modules/devices/printers.c:83
+msgid "⚬ Can do color printing=\n"
+msgstr "⚬ Может печатать цветным=\n"
+
+#: modules/devices/printers.c:85
+#, fuzzy
+msgid "⚬ Can do duplexing=\n"
+msgstr "Не исправлять:"
+
+#: modules/devices/printers.c:87
+#, fuzzy
+msgid "⚬ Can do staple output=\n"
+msgstr "Выходной файл не может быть переименован."
+
+#: modules/devices/printers.c:89
+msgid "⚬ Can do copies=\n"
+msgstr "⚬ Можно делать копии=\n"
+
+#: modules/devices/printers.c:91
+msgid "⚬ Can collate copies=\n"
+msgstr "⚬ Можно сравнивать копии=\n"
+
+#: modules/devices/printers.c:93
+msgid "⚬ Printer is rejecting jobs=\n"
+msgstr "⚬ Принтер отклоняет задачи=\n"
+
+#: modules/devices/printers.c:95
+msgid "⚬ Printer was automatically discovered and added=\n"
+msgstr "⚬ Принтер был автоматически найден и добавлен=\n"
+
+#: modules/devices/printers.c:110
+msgid "Idle"
+msgstr "Неактивен"
+
+#: modules/devices/printers.c:112
+msgid "Printing a Job"
+msgstr "Печатается задача"
+
+#: modules/devices/printers.c:114
+msgid "Stopped"
+msgstr "Остановлен"
+
+#: modules/devices/printers.c:190
+msgid ""
+"[Printers]\n"
+"No suitable CUPS library found="
+msgstr ""
+"[Принтеры]\n"
+"Подходящей библиотеки CUPS не найдено="
+
+#: modules/devices/printers.c:200
+msgid "[Printers (CUPS)]\n"
+msgstr "[Принтеры (CUPS)]\n"
+
+#: modules/devices/printers.c:263
+msgid ""
+"[Printers]\n"
+"No printers found=\n"
+msgstr ""
+"[Принтеры]\n"
+"Принтеры не найдены=\n"
+
+#: modules/devices/riscv/processor.c:107
+msgid "RISC-V Processor"
+msgstr "Процессор RISC-V"
+
+#: modules/devices/riscv/processor.c:176
+msgid "uarch"
+msgstr ""
+
+#. /ext:RV32
+#: modules/devices/riscv/riscv_data.c:37
+msgctxt "rv-ext"
+msgid "RISC-V 32-bit"
+msgstr "32-битная RISC-V"
+
+#. /ext:RV64
+#: modules/devices/riscv/riscv_data.c:38
+msgctxt "rv-ext"
+msgid "RISC-V 64-bit"
+msgstr "64-битная RISC-V"
+
+#. /ext:RV128
+#: modules/devices/riscv/riscv_data.c:39
+msgctxt "rv-ext"
+msgid "RISC-V 128-bit"
+msgstr "128-битная RISC-V"
+
+#. /ext:E
+#: modules/devices/riscv/riscv_data.c:40
+msgctxt "rv-ext"
+msgid "Base embedded integer instructions (15 registers)"
+msgstr "Базовые встроенные целочисленные инструкции (15 регистров)"
+
+#. /ext:I
+#: modules/devices/riscv/riscv_data.c:41
+msgctxt "rv-ext"
+msgid "Base integer instructions (31 registers)"
+msgstr "Базовые целочисленные инструкции (31 регистр)"
+
+#. /ext:M
+#: modules/devices/riscv/riscv_data.c:42
+msgctxt "rv-ext"
+msgid "Hardware integer multiply and divide"
+msgstr "Аппаратное умножение и деление целых чисел"
+
+#. /ext:A
+#: modules/devices/riscv/riscv_data.c:43
+msgctxt "rv-ext"
+msgid "Atomic memory operations"
+msgstr "Атомные операции с памятью"
+
+#. /ext:C
+#: modules/devices/riscv/riscv_data.c:44
+msgctxt "rv-ext"
+msgid "Compressed 16-bit instructions"
+msgstr "Сжатые 16-битные инструкции"
+
+#. /ext:F
+#: modules/devices/riscv/riscv_data.c:45
+msgctxt "rv-ext"
+msgid "Floating-point instructions, single-precision"
+msgstr "Инструкции с плавающей запятой, одинарной точности"
+
+#. /ext:D
+#: modules/devices/riscv/riscv_data.c:46
+msgctxt "rv-ext"
+msgid "Floating-point instructions, double-precision"
+msgstr "Инструкции с плавающей запятой, двойной точности"
+
+#. /ext:Q
+#: modules/devices/riscv/riscv_data.c:47
+msgctxt "rv-ext"
+msgid "Floating-point instructions, quad-precision"
+msgstr "Инструкции с плавающей запятой, четверной точности"
+
+#. /ext:B
+#: modules/devices/riscv/riscv_data.c:48
+msgctxt "rv-ext"
+msgid "Bit manipulation instructions"
+msgstr "Инструкции манипуляции битами"
+
+#. /ext:V
+#: modules/devices/riscv/riscv_data.c:49
+msgctxt "rv-ext"
+msgid "Vector operations"
+msgstr "Векторные операции"
+
+#. /ext:T
+#: modules/devices/riscv/riscv_data.c:50
+msgctxt "rv-ext"
+msgid "Transactional memory"
+msgstr "Переходная память"
+
+#. /ext:P
+#: modules/devices/riscv/riscv_data.c:51
+msgctxt "rv-ext"
+msgid "Packed SIMD instructions"
+msgstr "Сжатые инструкции SIMD"
+
+#. /ext:L
+#: modules/devices/riscv/riscv_data.c:52
+msgctxt "rv-ext"
+msgid "Decimal floating-point instructions"
+msgstr "Десятичные инструкции с плавающей запятой"
+
+#. /ext:J
+#: modules/devices/riscv/riscv_data.c:53
+msgctxt "rv-ext"
+msgid "Dynamically translated languages"
+msgstr "Языки с динамической трансляцией"
+
+#. /ext:N
+#: modules/devices/riscv/riscv_data.c:54
+msgctxt "rv-ext"
+msgid "User-level interrupts"
+msgstr "Прерывания пользовательского уровня"
+
+#: modules/devices/s390/processor.c:92
+msgid "S390 Processor"
+msgstr "Процессор S390"
+
+#: modules/devices/s390/processor.c:125
+msgid "ID String"
+msgstr "Строка ID"
+
+#: modules/devices/sh/processor.c:55
+msgid "SuperH Processor"
+msgstr "Процессор SuperH"
+
+#: modules/devices/sh/processor.c:77
+msgid "Machine"
+msgstr "Машина"
+
+#: modules/devices/sh/processor.c:80
+msgid "Bus Frequency"
+msgstr "Частота шины"
+
+#: modules/devices/sh/processor.c:81
+msgid "Module Frequency"
+msgstr "Частота модуля"
+
+#: modules/devices/spd-decode.c:1475
+msgid ""
+"[SPD]\n"
+"Please load the eeprom module to obtain information about memory SPD=\n"
+"[$ShellParam$]\n"
+"ReloadInterval=500\n"
+msgstr ""
+"[SPD]\n"
+"Пожалуйста, загрузите модуль eeprom для получения информации о памяти SPD=\n"
+"[$ShellParam$]\n"
+"ReloadInterval=500\n"
+
+#: modules/devices/spd-decode.c:1480
+msgid ""
+"[SPD]\n"
+"Reading memory SPD not supported on this system=\n"
+msgstr ""
+"[SPD]\n"
+"Чтение памяти SPD не поддерживается на данной системе=\n"
+
+#: modules/devices/storage.c:46
+msgid ""
+"\n"
+"[SCSI Disks]\n"
+msgstr ""
+"\n"
+"[SCSI диски]\n"
+
+#: modules/devices/storage.c:110 modules/devices/storage.c:313
+#, c-format
+msgid ""
+"[Device Information]\n"
+"Model=%s\n"
+msgstr ""
+"[Информация об устройстве]\n"
+"Модель=%s\n"
+
+#: modules/devices/storage.c:115 modules/devices/storage.c:319
+#, c-format
+msgid "Vendor=%s (%s)\n"
+msgstr "Изготовитель=%s (%s)\n"
+
+#: modules/devices/storage.c:120 modules/devices/storage.c:321
+#, c-format
+msgid "Vendor=%s\n"
+msgstr "Изготовитель=%s\n"
+
+#: modules/devices/storage.c:125
+#, c-format
+msgid ""
+"Type=%s\n"
+"Revision=%s\n"
+"[SCSI Controller]\n"
+"Controller=scsi%d\n"
+"Channel=%d\n"
+"ID=%d\n"
+"LUN=%d\n"
+msgstr ""
+"Тип=%s\n"
+"Ревизия=%s\n"
+"[SCSI контроллер]\n"
+"Контроллер=scsi%d\n"
+"Канал=%d\n"
+"ID=%d\n"
+"LUN=%d\n"
+
+#: modules/devices/storage.c:167
+msgid ""
+"\n"
+"[IDE Disks]\n"
+msgstr ""
+"\n"
+"[IDE диски]\n"
+
+#: modules/devices/storage.c:250
+#, c-format
+msgid "Driver=%s\n"
+msgstr "Драйвер=%s\n"
+
+#: modules/devices/storage.c:324
+#, c-format
+msgid ""
+"Device Name=hd%c\n"
+"Media=%s\n"
+"Cache=%dkb\n"
+msgstr ""
+"Имя устройства=hd%c\n"
+"Медиа=%s\n"
+"Кэш=%dkb\n"
+
+#: modules/devices/storage.c:334
+#, c-format
+msgid ""
+"[Geometry]\n"
+"Physical=%s\n"
+"Logical=%s\n"
+msgstr ""
+"[Геометрия]\n"
+"Физическая=%s\n"
+"Логическая=%s\n"
+
+#: modules/devices/storage.c:344
+#, c-format
+msgid ""
+"[Capabilities]\n"
+"%s"
+msgstr ""
+"[Возможности]\n"
+"%s"
+
+#: modules/devices/storage.c:351
+#, c-format
+msgid ""
+"[Speeds]\n"
+"%s"
+msgstr ""
+"[Скорости]\n"
+"%s"
+
+#: modules/devices/x86/processor.c:146
+msgid "Cache information not available=\n"
+msgstr "Информация о кэше недоступна=\n"
+
+#: modules/devices/x86/processor.c:152
+#, c-format
+msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
+msgstr ""
+"Уровень %d (%s)=%d-канальный множественно-ассоциативный, %d множеств, размер "
+"%d кБ\n"
+
+#. /cache type, as appears in: Level 1 (Data)
+#: modules/devices/x86/processor.c:167
+msgctxt "cache-type"
+msgid "Data"
+msgstr ""
+
+#. /cache type, as appears in: Level 1 (Instruction)
+#: modules/devices/x86/processor.c:168
+msgctxt "cache-type"
+msgid "Instruction"
+msgstr ""
+
+#. /cache type, as appears in: Level 2 (Unified)
+#: modules/devices/x86/processor.c:169
+msgctxt "cache-type"
+msgid "Unified"
+msgstr ""
+
+#. /flag:fpu
+#: modules/devices/x86/processor.c:347
+msgctxt "x86-flag"
+msgid "Onboard FPU (floating point support)"
+msgstr "Встроенный FPU (поддержка плавающей запятой)"
+
+#. /flag:vme
+#: modules/devices/x86/processor.c:348
+msgctxt "x86-flag"
+msgid "Virtual 8086 mode enhancements"
+msgstr "Улучшения виртуального режима 8086"
+
+#. /flag:de
+#: modules/devices/x86/processor.c:349
+msgctxt "x86-flag"
+msgid "Debugging Extensions (CR4.DE)"
+msgstr "Расширения отладки (CR4.DE)"
+
+#. /flag:pse
+#: modules/devices/x86/processor.c:350
+msgctxt "x86-flag"
+msgid "Page Size Extensions (4MB memory pages)"
+msgstr "Расширения размера страницы (страницы памяти 4 Мб)"
+
+#. /flag:tsc
+#: modules/devices/x86/processor.c:351
+msgctxt "x86-flag"
+msgid "Time Stamp Counter (RDTSC)"
+msgstr "Счетчик временной метки (RDTSC)"
+
+#. /flag:msr
+#: modules/devices/x86/processor.c:352
+msgctxt "x86-flag"
+msgid "Model-Specific Registers (RDMSR, WRMSR)"
+msgstr "Регистры конкретной модели (RDMSR, WRMSR)"
+
+#. /flag:pae
+#: modules/devices/x86/processor.c:353
+msgctxt "x86-flag"
+msgid "Physical Address Extensions (support for more than 4GB of RAM)"
+msgstr "Расширения физического адреса (поддержка более 4 Гб ОЗУ)"
+
+#. /flag:mce
+#: modules/devices/x86/processor.c:354
+msgctxt "x86-flag"
+msgid "Machine Check Exception"
+msgstr "Исключение машинного контроля"
+
+#. /flag:cx8
+#: modules/devices/x86/processor.c:355
+msgctxt "x86-flag"
+msgid "CMPXCHG8 instruction (64-bit compare-and-swap)"
+msgstr "Инструкция CMPXCHG8 (64-битное сравнение-и-подкачка)"
+
+#. /flag:apic
+#: modules/devices/x86/processor.c:356
+msgctxt "x86-flag"
+msgid "Onboard APIC"
+msgstr "Встроенный APIC"
+
+#. /flag:sep
+#: modules/devices/x86/processor.c:357
+msgctxt "x86-flag"
+msgid "SYSENTER/SYSEXIT"
+msgstr ""
+
+#. /flag:mtrr
+#: modules/devices/x86/processor.c:358
+msgctxt "x86-flag"
+msgid "Memory Type Range Registers"
+msgstr "Регистры диапазона типа памяти"
+
+#. /flag:pge
+#: modules/devices/x86/processor.c:359
+msgctxt "x86-flag"
+msgid "Page Global Enable (global bit in PDEs and PTEs)"
+msgstr "Включение глобальной страницы (глобальный бит в PDE и PTE)"
+
+#. /flag:mca
+#: modules/devices/x86/processor.c:360
+msgctxt "x86-flag"
+msgid "Machine Check Architecture"
+msgstr "Архитектура машинного контроля"
+
+#. /flag:cmov
+#: modules/devices/x86/processor.c:361
+msgctxt "x86-flag"
+msgid "CMOV instructions (conditional move) (also FCMOV)"
+msgstr "Инструкции CMOV (условная пересылка данных) (также FCMOV)"
+
+#. /flag:pat
+#: modules/devices/x86/processor.c:362
+msgctxt "x86-flag"
+msgid "Page Attribute Table"
+msgstr "Таблица атрибутов страницы"
+
+#. /flag:pse36
+#: modules/devices/x86/processor.c:363
+msgctxt "x86-flag"
+msgid "36-bit PSEs (huge pages)"
+msgstr "36-битные PSE (огромные страницы)"
+
+#. /flag:pn
+#: modules/devices/x86/processor.c:364
+msgctxt "x86-flag"
+msgid "Processor serial number"
+msgstr "Серийный номер процессора"
+
+#. /flag:clflush
+#: modules/devices/x86/processor.c:365
+msgctxt "x86-flag"
+msgid "Cache Line Flush instruction"
+msgstr "Инструкция Cache Line Flush"
+
+#. /flag:dts
+#: modules/devices/x86/processor.c:366
+msgctxt "x86-flag"
+msgid ""
+"Debug Store (buffer for debugging and profiling instructions), or "
+"alternately: digital thermal sensor"
+msgstr ""
+
+#. /flag:acpi
+#: modules/devices/x86/processor.c:367
+msgctxt "x86-flag"
+msgid "ACPI via MSR (temperature monitoring and clock speed modulation)"
+msgstr "ACPI через MSR (мониторинг температуры и модуляции тактовой частоты)"
+
+#. /flag:mmx
+#: modules/devices/x86/processor.c:368
+msgctxt "x86-flag"
+msgid "Multimedia Extensions"
+msgstr "Расширения мультимедиа"
+
+#. /flag:fxsr
+#: modules/devices/x86/processor.c:369
+msgctxt "x86-flag"
+msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
+msgstr ""
+
+#. /flag:sse
+#: modules/devices/x86/processor.c:370
+msgctxt "x86-flag"
+msgid "Intel SSE vector instructions"
+msgstr "Векторные инструкции Intel SSE"
+
+#. /flag:sse2
+#: modules/devices/x86/processor.c:371
+msgctxt "x86-flag"
+msgid "SSE2"
+msgstr ""
+
+#. /flag:ss
+#: modules/devices/x86/processor.c:372
+msgctxt "x86-flag"
+msgid "CPU self snoop"
+msgstr "Проверка процессора"
+
+#. /flag:ht
+#: modules/devices/x86/processor.c:373
+msgctxt "x86-flag"
+msgid "Hyper-Threading"
+msgstr "Многопоточность (Hyper-Threading)"
+
+#. /flag:tm
+#: modules/devices/x86/processor.c:374
+msgctxt "x86-flag"
+msgid "Automatic clock control (Thermal Monitor)"
+msgstr "Автоматический контроль частоты (монитор температуры)"
+
+#. /flag:ia64
+#: modules/devices/x86/processor.c:375
+msgctxt "x86-flag"
+msgid ""
+"Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
+"x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
+msgstr ""
+"64-битная архитектура Intel Itanium (не путать с 64-битной архитектурой x86 "
+"от Intel с флагом x86-64 или \"AMD64\"-битной с флагом bit)"
+
+#. /flag:pbe
+#: modules/devices/x86/processor.c:376
+msgctxt "x86-flag"
+msgid "Pending Break Enable (PBE# pin) wakeup support"
+msgstr "Поддержка пробуждения Pending Break Enable (PBE# pin)"
+
+#. /flag:syscall
+#: modules/devices/x86/processor.c:379
+msgctxt "x86-flag"
+msgid "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
+msgstr ""
+"SYSCALL (Быстрый вызов системы) и SYSRET (Возврат после быстрого вызова "
+"системы)"
+
+#. /flag:mp
+#: modules/devices/x86/processor.c:380
+msgctxt "x86-flag"
+msgid "Multiprocessing Capable."
+msgstr "Возможна работа в многопроцессном режиме."
+
+#. /flag:nx
+#: modules/devices/x86/processor.c:381
+msgctxt "x86-flag"
+msgid "Execute Disable"
+msgstr "Выполнение отключено"
+
+#. /flag:mmxext
+#: modules/devices/x86/processor.c:382
+msgctxt "x86-flag"
+msgid "AMD MMX extensions"
+msgstr "Расширения AMD MMX"
+
+#. /flag:fxsr_opt
+#: modules/devices/x86/processor.c:383
+msgctxt "x86-flag"
+msgid "FXSAVE/FXRSTOR optimizations"
+msgstr "Оптимизации FXSAVE/FXRSTOR"
+
+#. /flag:pdpe1gb
+#: modules/devices/x86/processor.c:384
+msgctxt "x86-flag"
+msgid "One GB pages (allows hugepagesz=1G)"
+msgstr "Страница размером 1 Гб (разрешает hugepagesz=1G)"
+
+#. /flag:rdtscp
+#: modules/devices/x86/processor.c:385
+msgctxt "x86-flag"
+msgid "Read Time-Stamp Counter and Processor ID"
+msgstr "Чтение счетчика временной метки и ID процессора"
+
+#. /flag:lm
+#: modules/devices/x86/processor.c:386
+msgctxt "x86-flag"
+msgid "Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)"
+msgstr ""
+"Длинный режим (x86-64: amd64, также известен как Intel 64, т.е. совместимый "
+"с 64-бит)"
+
+#. /flag:3dnow
+#: modules/devices/x86/processor.c:387
+msgctxt "x86-flag"
+msgid "3DNow! (AMD vector instructions, competing with Intel's SSE1)"
+msgstr "3DNow! (векторные инструкции AMD, конкурируют с SSE1 от Intel)"
+
+#. /flag:3dnowext
+#: modules/devices/x86/processor.c:388
+msgctxt "x86-flag"
+msgid "AMD 3DNow! extensions"
+msgstr "Расширения AMD 3DNow!"
+
+#. /flag:recovery
+#: modules/devices/x86/processor.c:390
+msgctxt "x86-flag"
+msgid "CPU in recovery mode"
+msgstr "Процессор в режиме восстановления"
+
+#. /flag:longrun
+#: modules/devices/x86/processor.c:391
+msgctxt "x86-flag"
+msgid "Longrun power control"
+msgstr "Управление питанием LongRun"
+
+#. /flag:lrti
+#: modules/devices/x86/processor.c:392
+msgctxt "x86-flag"
+msgid "LongRun table interface"
+msgstr "Интерфейс таблицы LongRun"
+
+#. /flag:cxmmx
+#: modules/devices/x86/processor.c:394
+msgctxt "x86-flag"
+msgid "Cyrix MMX extensions"
+msgstr "Расширения Cyrix MMX"
+
+#. /flag:k6_mtrr
+#: modules/devices/x86/processor.c:395
+msgctxt "x86-flag"
+msgid "AMD K6 nonstandard MTRRs"
+msgstr "Нестандартные диапазонные регистры типа памяти (MTRR) AMD K6"
+
+#. /flag:cyrix_arr
+#: modules/devices/x86/processor.c:396
+msgctxt "x86-flag"
+msgid "Cyrix ARRs (= MTRRs)"
+msgstr ""
+"Регистры адресного диапазона (ARR) Cyrix (= диапазонные регистры типа памяти "
+"(MTRR))"
+
+#. /flag:centaur_mcr
+#: modules/devices/x86/processor.c:397
+msgctxt "x86-flag"
+msgid "Centaur MCRs (= MTRRs)"
+msgstr ""
+"Сбросы мастер-контроля (MCR) Centaur (= диапазонные регистры типа памяти "
+"(MTRR))"
+
+#. /flag:constant_tsc
+#: modules/devices/x86/processor.c:398
+msgctxt "x86-flag"
+msgid "TSC ticks at a constant rate"
+msgstr "Счетчик метки времени (TSC) работает на постоянной частоте"
+
+#. /flag:up
+#: modules/devices/x86/processor.c:399
+msgctxt "x86-flag"
+msgid "SMP kernel running on UP"
+msgstr "Ядро SMP запущено на UP"
+
+#. /flag:art
+#: modules/devices/x86/processor.c:400
+msgctxt "x86-flag"
+msgid "Always-Running Timer"
+msgstr "Постоянный таймер"
+
+#. /flag:arch_perfmon
+#: modules/devices/x86/processor.c:401
+msgctxt "x86-flag"
+msgid "Intel Architectural PerfMon"
+msgstr "Архитектурный монитор призводительности Intel"
+
+#. /flag:pebs
+#: modules/devices/x86/processor.c:402
+msgctxt "x86-flag"
+msgid "Precise-Event Based Sampling"
+msgstr "Сэмплинг, основанный на точных событиях"
+
+#. /flag:bts
+#: modules/devices/x86/processor.c:403
+msgctxt "x86-flag"
+msgid "Branch Trace Store"
+msgstr "Хранилище отслеживания ветви"
+
+#. /flag:rep_good
+#: modules/devices/x86/processor.c:404
+msgctxt "x86-flag"
+msgid "rep microcode works well"
+msgstr "микрокод rep работает нормально"
+
+#. /flag:acc_power
+#: modules/devices/x86/processor.c:405
+msgctxt "x86-flag"
+msgid "AMD accumulated power mechanism"
+msgstr "Механизм накопления питания AMD"
+
+#. /flag:nopl
+#: modules/devices/x86/processor.c:406
+msgctxt "x86-flag"
+msgid "The NOPL (0F 1F) instructions"
+msgstr "Инструкции NOPL (0F 1F)"
+
+#. /flag:xtopology
+#: modules/devices/x86/processor.c:407
+msgctxt "x86-flag"
+msgid "cpu topology enum extensions"
+msgstr "расширения cpu топологии enum"
+
+#. /flag:tsc_reliable
+#: modules/devices/x86/processor.c:408
+msgctxt "x86-flag"
+msgid "TSC is known to be reliable"
+msgstr "Счетчик метки времени (TSC) считается надежным"
+
+#. /flag:nonstop_tsc
+#: modules/devices/x86/processor.c:409
+msgctxt "x86-flag"
+msgid "TSC does not stop in C states"
+msgstr "Счетчик метки времени (TSC) не останавливается в состояниях C"
+
+#. /flag:extd_apicid
+#: modules/devices/x86/processor.c:410
+msgctxt "x86-flag"
+msgid "has extended APICID (8 bits)"
+msgstr "имеются расширенные APICID (8 бит)"
+
+#. /flag:amd_dcm
+#: modules/devices/x86/processor.c:411
+msgctxt "x86-flag"
+msgid "multi-node processor"
+msgstr "многоузловой процессор"
+
+#. /flag:aperfmperf
+#: modules/devices/x86/processor.c:412
+msgctxt "x86-flag"
+msgid "APERFMPERF"
+msgstr ""
+
+#. /flag:eagerfpu
+#: modules/devices/x86/processor.c:413
+msgctxt "x86-flag"
+msgid "Non lazy FPU restore"
+msgstr "Неленивое восстановление FPU"
+
+#. /flag:nonstop_tsc_s3
+#: modules/devices/x86/processor.c:414
+msgctxt "x86-flag"
+msgid "TSC doesn't stop in S3 state"
+msgstr "Счетчик метки времени (TSC) не останавливается в состоянии S3"
+
+#. /flag:mce_recovery
+#: modules/devices/x86/processor.c:415
+msgctxt "x86-flag"
+msgid "CPU has recoverable machine checks"
+msgstr "У процессора есть возможность восстановить машинный контроль"
+
+#. /flag:pni
+#: modules/devices/x86/processor.c:418
+msgctxt "x86-flag"
+msgid "SSE-3 (\"Prescott New Instructions\")"
+msgstr ""
+
+#. /flag:pclmulqdq
+#: modules/devices/x86/processor.c:419
+msgctxt "x86-flag"
+msgid ""
+"Perform a Carry-Less Multiplication of Quadword instruction - accelerator "
+"for GCM)"
+msgstr ""
+
+#. /flag:dtes64
+#: modules/devices/x86/processor.c:420
+msgctxt "x86-flag"
+msgid "64-bit Debug Store"
+msgstr "Хранилище 64-битной отладки"
+
+#. /flag:monitor
+#: modules/devices/x86/processor.c:421
+msgctxt "x86-flag"
+msgid "Monitor/Mwait support (Intel SSE3 supplements)"
+msgstr "Поддержка Monitor/Mwait (дополняет Intel SSE3)"
+
+#. /flag:ds_cpl
+#: modules/devices/x86/processor.c:422
+msgctxt "x86-flag"
+msgid "CPL Qual. Debug Store"
+msgstr "Хранилище отладки CPL Qual."
+
+#. /flag:vmx
+#: modules/devices/x86/processor.c:423
+msgctxt "x86-flag"
+msgid "Hardware virtualization, Intel VMX"
+msgstr "Аппаратная виртуализация, Intel VMX"
+
+#. /flag:smx
+#: modules/devices/x86/processor.c:424
+msgctxt "x86-flag"
+msgid "Safer mode TXT (TPM support)"
+msgstr "Безопасный режим TXT (поддержка TPM)"
+
+#. /flag:est
+#: modules/devices/x86/processor.c:425
+msgctxt "x86-flag"
+msgid "Enhanced SpeedStep"
+msgstr "Технология энергосбережения Enhanced SpeedStep"
+
+#. /flag:tm2
+#: modules/devices/x86/processor.c:426
+msgctxt "x86-flag"
+msgid "Thermal Monitor 2"
+msgstr "Монитор температуры 2"
+
+#. /flag:ssse3
+#: modules/devices/x86/processor.c:427
+msgctxt "x86-flag"
+msgid "Supplemental SSE-3"
+msgstr "Дополнительный SSE-3"
+
+#. /flag:cid
+#: modules/devices/x86/processor.c:428
+msgctxt "x86-flag"
+msgid "Context ID"
+msgstr "ID контекста"
+
+#. /flag:sdbg
+#: modules/devices/x86/processor.c:429
+msgctxt "x86-flag"
+msgid "silicon debug"
+msgstr "отладка кремния"
+
+#. /flag:fma
+#: modules/devices/x86/processor.c:430
+msgctxt "x86-flag"
+msgid "Fused multiply-add"
+msgstr "Умножение-сложение с однократным округлением"
+
+#. /flag:cx16
+#: modules/devices/x86/processor.c:431
+msgctxt "x86-flag"
+msgid "CMPXCHG16B"
+msgstr ""
+
+#. /flag:xtpr
+#: modules/devices/x86/processor.c:432
+msgctxt "x86-flag"
+msgid "Send Task Priority Messages"
+msgstr "Отправлять сообщения о приоритете задач"
+
+#. /flag:pdcm
+#: modules/devices/x86/processor.c:433
+msgctxt "x86-flag"
+msgid "Performance Capabilities"
+msgstr "Возможности производительности"
+
+#. /flag:pcid
+#: modules/devices/x86/processor.c:434
+msgctxt "x86-flag"
+msgid "Process Context Identifiers"
+msgstr "Идентификаторы контекста процесса"
+
+#. /flag:dca
+#: modules/devices/x86/processor.c:435
+msgctxt "x86-flag"
+msgid "Direct Cache Access"
+msgstr "Прямой доступ к кэшу"
+
+#. /flag:sse4_1
+#: modules/devices/x86/processor.c:436
+msgctxt "x86-flag"
+msgid "SSE-4.1"
+msgstr ""
+
+#. /flag:sse4_2
+#: modules/devices/x86/processor.c:437
+msgctxt "x86-flag"
+msgid "SSE-4.2"
+msgstr ""
+
+#. /flag:x2apic
+#: modules/devices/x86/processor.c:438
+msgctxt "x86-flag"
+msgid "x2APIC"
+msgstr ""
+
+#. /flag:movbe
+#: modules/devices/x86/processor.c:439
+msgctxt "x86-flag"
+msgid "Move Data After Swapping Bytes instruction"
+msgstr "Инструкция переноса данных после подкачки байт"
+
+#. /flag:popcnt
+#: modules/devices/x86/processor.c:440
+msgctxt "x86-flag"
+msgid ""
+"Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i."
+"e. bit count)"
+msgstr ""
+"Возвращение набора счетчика бит в 1 инструкцию (вес Хэмминга, т.е. счетчик "
+"бит)"
+
+#. /flag:tsc_deadline_timer
+#: modules/devices/x86/processor.c:441
+msgctxt "x86-flag"
+msgid "Tsc deadline timer"
+msgstr "Таймер окончания счетчика метки времени (TSC)"
+
+#. /flag:aes/aes-ni
+#: modules/devices/x86/processor.c:442
+msgctxt "x86-flag"
+msgid "Advanced Encryption Standard (New Instructions)"
+msgstr "Стандарт дополнительного шифрования (новые инструкции)"
+
+#. /flag:xsave
+#: modules/devices/x86/processor.c:443
+msgctxt "x86-flag"
+msgid "Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY"
+msgstr ""
+"Сохранение расширенных состояний процессора: также добавляет XGETBY,XRSTOR,"
+"XSETBY"
+
+#. /flag:avx
+#: modules/devices/x86/processor.c:444
+msgctxt "x86-flag"
+msgid "Advanced Vector Extensions"
+msgstr "Дополнительные векторные расширения"
+
+#. /flag:f16c
+#: modules/devices/x86/processor.c:445
+msgctxt "x86-flag"
+msgid "16-bit fp conversions (CVT16)"
+msgstr "16-битные конверсии fp (CVT16)"
+
+#. /flag:rdrand
+#: modules/devices/x86/processor.c:446
+msgctxt "x86-flag"
+msgid "Read Random Number from hardware random number generator instruction"
+msgstr "Инструкция считывания случайного числа из аппаратного генератора"
+
+#. /flag:hypervisor
+#: modules/devices/x86/processor.c:447
+msgctxt "x86-flag"
+msgid "Running on a hypervisor"
+msgstr "Запущено в гипервизоре"
+
+#. /Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001
+#. /flag:rng
+#: modules/devices/x86/processor.c:449
+msgctxt "x86-flag"
+msgid "Random Number Generator present (xstore)"
+msgstr "Наличие генератора случайных чисел (xstore)"
+
+#. /flag:rng_en
+#: modules/devices/x86/processor.c:450
+msgctxt "x86-flag"
+msgid "Random Number Generator enabled"
+msgstr "Генератор случайных чисел включен"
+
+#. /flag:ace
+#: modules/devices/x86/processor.c:451
+msgctxt "x86-flag"
+msgid "on-CPU crypto (xcrypt)"
+msgstr "шифрование на процессоре (xcrypt)"
+
+#. /flag:ace_en
+#: modules/devices/x86/processor.c:452
+msgctxt "x86-flag"
+msgid "on-CPU crypto enabled"
+msgstr "шифрование на процессоре включено"
+
+#. /flag:ace2
+#: modules/devices/x86/processor.c:453
+msgctxt "x86-flag"
+msgid "Advanced Cryptography Engine v2"
+msgstr ""
+
+#. /flag:ace2_en
+#: modules/devices/x86/processor.c:454
+msgctxt "x86-flag"
+msgid "ACE v2 enabled"
+msgstr "ACE v2 включен"
+
+#. /flag:phe
+#: modules/devices/x86/processor.c:455
+msgctxt "x86-flag"
+msgid "PadLock Hash Engine"
+msgstr "Движок контрольных сумм PadLock"
+
+#. /flag:phe_en
+#: modules/devices/x86/processor.c:456
+msgctxt "x86-flag"
+msgid "PHE enabled"
+msgstr "PHE включен"
+
+#. /flag:pmm
+#: modules/devices/x86/processor.c:457
+msgctxt "x86-flag"
+msgid "PadLock Montgomery Multiplier"
+msgstr "Множитель PadLock Montgomery"
+
+#. /flag:pmm_en
+#: modules/devices/x86/processor.c:458
+msgctxt "x86-flag"
+msgid "PMM enabled"
+msgstr "PMM включен"
+
+#. /flag:lahf_lm
+#: modules/devices/x86/processor.c:460
+msgctxt "x86-flag"
+msgid "Load AH from Flags (LAHF) and Store AH into Flags (SAHF) in long mode"
+msgstr ""
+"Загрузка AH из флагов (LAHF) и хранение AH в флагах (SAHF) в длинном режиме"
+
+#. /flag:cmp_legacy
+#: modules/devices/x86/processor.c:461
+msgctxt "x86-flag"
+msgid "If yes HyperThreading not valid"
+msgstr "Если да, многопоточность не работает"
+
+#. /flag:svm
+#: modules/devices/x86/processor.c:462
+msgctxt "x86-flag"
+msgid "\"Secure virtual machine\": AMD-V"
+msgstr "\"Безопасная виртуальная машина\": AMD-V"
+
+#. /flag:extapic
+#: modules/devices/x86/processor.c:463
+msgctxt "x86-flag"
+msgid "Extended APIC space"
+msgstr "Расширенное пространство APIC"
+
+#. /flag:cr8_legacy
+#: modules/devices/x86/processor.c:464
+msgctxt "x86-flag"
+msgid "CR8 in 32-bit mode"
+msgstr "CR8 в 32-битном режиме"
+
+#. /flag:abm
+#: modules/devices/x86/processor.c:465
+msgctxt "x86-flag"
+msgid "Advanced Bit Manipulation"
+msgstr "Дополнительное управление битами"
+
+#. /flag:sse4a
+#: modules/devices/x86/processor.c:466
+msgctxt "x86-flag"
+msgid "SSE-4A"
+msgstr ""
+
+#. /flag:misalignsse
+#: modules/devices/x86/processor.c:467
+msgctxt "x86-flag"
+msgid ""
+"indicates if a general-protection exception (#GP) is generated when some "
+"legacy SSE instructions operate on unaligned data. Also depends on CR0 and "
+"Alignment Checking bit"
+msgstr ""
+"показывает, если исключение из общей защиты (#GP) создано при использовании "
+"неверных данных некоторыми устаревшими инструкциями SSE. Также зависит от "
+"CR0 и бита проверки выравнивания"
+
+#. /flag:3dnowprefetch
+#: modules/devices/x86/processor.c:468
+msgctxt "x86-flag"
+msgid "3DNow prefetch instructions"
+msgstr "инструкции 3DNow prefetch"
+
+#. /flag:osvw
+#: modules/devices/x86/processor.c:469
+msgctxt "x86-flag"
+msgid ""
+"indicates OS Visible Workaround, which allows the OS to work around "
+"processor errata."
+msgstr ""
+"отображает OS Visible Workaround, позволяющий ОС работать в обход опечаток "
+"процессора."
+
+#. /flag:ibs
+#: modules/devices/x86/processor.c:470
+msgctxt "x86-flag"
+msgid "Instruction Based Sampling"
+msgstr "Сэмплинг, основанный на инструкциях"
+
+#. /flag:xop
+#: modules/devices/x86/processor.c:471
+msgctxt "x86-flag"
+msgid "extended AVX instructions"
+msgstr "расширенные инструкции AVX"
+
+#. /flag:skinit
+#: modules/devices/x86/processor.c:472
+msgctxt "x86-flag"
+msgid "SKINIT/STGI instructions"
+msgstr "инструкции SKINIT/STGI"
+
+#. /flag:wdt
+#: modules/devices/x86/processor.c:473
+msgctxt "x86-flag"
+msgid "Watchdog timer"
+msgstr "Сторожевой таймер"
+
+#. /flag:lwp
+#: modules/devices/x86/processor.c:474
+msgctxt "x86-flag"
+msgid "Light Weight Profiling"
+msgstr "Легковесное профилирование"
+
+#. /flag:fma4
+#: modules/devices/x86/processor.c:475
+msgctxt "x86-flag"
+msgid "4 operands MAC instructions"
+msgstr "Инструкции MAC 4 операндов"
+
+#. /flag:tce
+#: modules/devices/x86/processor.c:476
+msgctxt "x86-flag"
+msgid "translation cache extension"
+msgstr "расширение переноса кэша"
+
+#. /flag:nodeid_msr
+#: modules/devices/x86/processor.c:477
+msgctxt "x86-flag"
+msgid "NodeId MSR"
+msgstr ""
+
+#. /flag:tbm
+#: modules/devices/x86/processor.c:478
+msgctxt "x86-flag"
+msgid "Trailing Bit Manipulation"
+msgstr "Скользящее манипулирование битами"
+
+#. /flag:topoext
+#: modules/devices/x86/processor.c:479
+msgctxt "x86-flag"
+msgid "Topology Extensions CPUID leafs"
+msgstr "Расширения топологии потоков CPUID"
+
+#. /flag:perfctr_core
+#: modules/devices/x86/processor.c:480
+msgctxt "x86-flag"
+msgid "Core Performance Counter Extensions"
+msgstr "Расширения счетчика производительности ядра"
+
+#. /flag:perfctr_nb
+#: modules/devices/x86/processor.c:481
+msgctxt "x86-flag"
+msgid "NB Performance Counter Extensions"
+msgstr "Расширения счетчика производительности NB"
+
+#. /flag:bpext
+#: modules/devices/x86/processor.c:482
+msgctxt "x86-flag"
+msgid "data breakpoint extension"
+msgstr "расширение точки прерывания данных"
+
+#. /flag:ptsc
+#: modules/devices/x86/processor.c:483
+msgctxt "x86-flag"
+msgid "performance time-stamp counter"
+msgstr "счетчик временной метки производительности"
+
+#. /flag:perfctr_l2
+#: modules/devices/x86/processor.c:484
+msgctxt "x86-flag"
+msgid "L2 Performance Counter Extensions"
+msgstr "Расширения счетчика производительности L2"
+
+#. /flag:mwaitx
+#: modules/devices/x86/processor.c:485
+msgctxt "x86-flag"
+msgid "MWAIT extension (MONITORX/MWAITX)"
+msgstr "Расширение MWAIT (MONITORX/MWAITX)"
+
+#. /flag:cpb
+#: modules/devices/x86/processor.c:487
+msgctxt "x86-flag"
+msgid "AMD Core Performance Boost"
+msgstr "Увеличение производительности ядра AMD"
+
+#. /flag:epb
+#: modules/devices/x86/processor.c:488
+msgctxt "x86-flag"
+msgid "IA32_ENERGY_PERF_BIAS support"
+msgstr "Поддержка IA32_ENERGY_PERF_BIAS"
+
+#. /flag:hw_pstate
+#: modules/devices/x86/processor.c:489
+msgctxt "x86-flag"
+msgid "AMD HW-PState"
+msgstr ""
+
+#. /flag:proc_feedback
+#: modules/devices/x86/processor.c:490
+msgctxt "x86-flag"
+msgid "AMD ProcFeedbackInterface"
+msgstr ""
+
+#. /flag:intel_pt
+#: modules/devices/x86/processor.c:491
+msgctxt "x86-flag"
+msgid "Intel Processor Tracing"
+msgstr "Отслеживание процессора Intel"
+
+#. /flag:tpr_shadow
+#: modules/devices/x86/processor.c:493
+msgctxt "x86-flag"
+msgid "Intel TPR Shadow"
+msgstr ""
+
+#. /flag:vnmi
+#: modules/devices/x86/processor.c:494
+msgctxt "x86-flag"
+msgid "Intel Virtual NMI"
+msgstr ""
+
+#. /flag:flexpriority
+#: modules/devices/x86/processor.c:495
+msgctxt "x86-flag"
+msgid "Intel FlexPriority"
+msgstr ""
+
+#. /flag:ept
+#: modules/devices/x86/processor.c:496
+msgctxt "x86-flag"
+msgid "Intel Extended Page Table"
+msgstr ""
+
+#. /flag:vpid
+#: modules/devices/x86/processor.c:497
+msgctxt "x86-flag"
+msgid "Intel Virtual Processor ID"
+msgstr ""
+
+#. /flag:vmmcall
+#: modules/devices/x86/processor.c:498
+msgctxt "x86-flag"
+msgid "prefer VMMCALL to VMCALL"
+msgstr "предпочитать VMMCALL, а не VMCALL"
+
+#. /flag:fsgsbase
+#: modules/devices/x86/processor.c:500
+msgctxt "x86-flag"
+msgid "{RD/WR}{FS/GS}BASE instructions"
+msgstr "Инструкции {RD/WR}{FS/GS}BASE"
+
+#. /flag:tsc_adjust
+#: modules/devices/x86/processor.c:501
+msgctxt "x86-flag"
+msgid "TSC adjustment MSR"
+msgstr "TSC выраснивание MSR"
+
+#. /flag:bmi1
+#: modules/devices/x86/processor.c:502
+msgctxt "x86-flag"
+msgid "1st group bit manipulation extensions"
+msgstr "Расширения управления битами 1-й группы"
+
+#. /flag:hle
+#: modules/devices/x86/processor.c:503
+msgctxt "x86-flag"
+msgid "Hardware Lock Elision"
+msgstr "Аппаратная блокировка Elision"
+
+#. /flag:avx2
+#: modules/devices/x86/processor.c:504
+msgctxt "x86-flag"
+msgid "AVX2 instructions"
+msgstr "Инструкции AVX2"
+
+#. /flag:smep
+#: modules/devices/x86/processor.c:505
+msgctxt "x86-flag"
+msgid "Supervisor Mode Execution Protection"
+msgstr "Защита выполнения режима супервизора"
+
+#. /flag:bmi2
+#: modules/devices/x86/processor.c:506
+msgctxt "x86-flag"
+msgid "2nd group bit manipulation extensions"
+msgstr "Расширения управления битами 2-й группы"
+
+#. /flag:erms
+#: modules/devices/x86/processor.c:507
+msgctxt "x86-flag"
+msgid "Enhanced REP MOVSB/STOSB"
+msgstr "Расширенный REP MOVSB/STOSB"
+
+#. /flag:invpcid
+#: modules/devices/x86/processor.c:508
+msgctxt "x86-flag"
+msgid "Invalidate Processor Context ID"
+msgstr "Аннулировать ID контекста процессора"
+
+#. /flag:rtm
+#: modules/devices/x86/processor.c:509
+msgctxt "x86-flag"
+msgid "Restricted Transactional Memory"
+msgstr "Ограниченная память переносов"
+
+#. /flag:cqm
+#: modules/devices/x86/processor.c:510
+msgctxt "x86-flag"
+msgid "Cache QoS Monitoring"
+msgstr "Мониторинг кэша QoS"
+
+#. /flag:mpx
+#: modules/devices/x86/processor.c:511
+msgctxt "x86-flag"
+msgid "Memory Protection Extension"
+msgstr "Расширение защиты памяти"
+
+#. /flag:avx512f
+#: modules/devices/x86/processor.c:512
+msgctxt "x86-flag"
+msgid "AVX-512 foundation"
+msgstr "Основа AVX-512"
+
+#. /flag:avx512dq
+#: modules/devices/x86/processor.c:513
+msgctxt "x86-flag"
+msgid "AVX-512 Double/Quad instructions"
+msgstr "Инструкции AVX-512 Double/Quad"
+
+#. /flag:rdseed
+#: modules/devices/x86/processor.c:514
+msgctxt "x86-flag"
+msgid "The RDSEED instruction"
+msgstr "Инструкция RDSEED"
+
+#. /flag:adx
+#: modules/devices/x86/processor.c:515
+msgctxt "x86-flag"
+msgid "The ADCX and ADOX instructions"
+msgstr "Инструкции ADCX и ADOX"
+
+#. /flag:smap
+#: modules/devices/x86/processor.c:516
+msgctxt "x86-flag"
+msgid "Supervisor Mode Access Prevention"
+msgstr "Предотвращение доступа к режиму супервизора"
+
+#. /flag:clflushopt
+#: modules/devices/x86/processor.c:517
+msgctxt "x86-flag"
+msgid "CLFLUSHOPT instruction"
+msgstr "Инструкция CLFLUSHOPT"
+
+#. /flag:clwb
+#: modules/devices/x86/processor.c:518
+msgctxt "x86-flag"
+msgid "CLWB instruction"
+msgstr "Инструкция CLWB"
+
+#. /flag:avx512pf
+#: modules/devices/x86/processor.c:519
+msgctxt "x86-flag"
+msgid "AVX-512 Prefetch"
+msgstr ""
+
+#. /flag:avx512er
+#: modules/devices/x86/processor.c:520
+msgctxt "x86-flag"
+msgid "AVX-512 Exponential and Reciprocal"
+msgstr ""
+
+#. /flag:avx512cd
+#: modules/devices/x86/processor.c:521
+msgctxt "x86-flag"
+msgid "AVX-512 Conflict Detection"
+msgstr "Обнаружения конфликтов AVX-512"
+
+#. /flag:sha_ni
+#: modules/devices/x86/processor.c:522
+msgctxt "x86-flag"
+msgid "SHA1/SHA256 Instruction Extensions"
+msgstr "Расширения инструкций SHA1/SHA256"
+
+#. /flag:avx512bw
+#: modules/devices/x86/processor.c:523
+msgctxt "x86-flag"
+msgid "AVX-512 Byte/Word instructions"
+msgstr "Инструкции AVX-512 Byte/Word"
+
+#. /flag:avx512vl
+#: modules/devices/x86/processor.c:524
+msgctxt "x86-flag"
+msgid "AVX-512 128/256 Vector Length extensions"
+msgstr "Расширения длины вектора AVX-512 128/256"
+
+#. /flag:xsaveopt
+#: modules/devices/x86/processor.c:526
+msgctxt "x86-flag"
+msgid "Optimized XSAVE"
+msgstr "Оптимизированный XSAVE"
+
+#. /flag:xsavec
+#: modules/devices/x86/processor.c:527
+msgctxt "x86-flag"
+msgid "XSAVEC"
+msgstr ""
+
+#. /flag:xgetbv1
+#: modules/devices/x86/processor.c:528
+msgctxt "x86-flag"
+msgid "XGETBV with ECX = 1"
+msgstr "XGETBV с ECX = 1"
+
+#. /flag:xsaves
+#: modules/devices/x86/processor.c:529
+msgctxt "x86-flag"
+msgid "XSAVES/XRSTORS"
+msgstr ""
+
+#. /flag:cqm_llc
+#: modules/devices/x86/processor.c:531
+msgctxt "x86-flag"
+msgid "LLC QoS"
+msgstr ""
+
+#. /flag:cqm_occup_llc
+#: modules/devices/x86/processor.c:533
+msgctxt "x86-flag"
+msgid "LLC occupancy monitoring"
+msgstr "Мониторинг занятости LLC"
+
+#. /flag:cqm_mbm_total
+#: modules/devices/x86/processor.c:534
+msgctxt "x86-flag"
+msgid "LLC total MBM monitoring"
+msgstr "Полный MBM-мониторинг LLC"
+
+#. /flag:cqm_mbm_local
+#: modules/devices/x86/processor.c:535
+msgctxt "x86-flag"
+msgid "LLC local MBM monitoring"
+msgstr "Локальный MBM-мониторинг LLC"
+
+#. /flag:clzero
+#: modules/devices/x86/processor.c:537
+msgctxt "x86-flag"
+msgid "CLZERO instruction"
+msgstr "Инструкция CLZERO"
+
+#. /flag:irperf
+#: modules/devices/x86/processor.c:538
+msgctxt "x86-flag"
+msgid "instructions retired performance counter"
+msgstr "инструкции счетчика отложенной производительности"
+
+#. /flag:dtherm
+#: modules/devices/x86/processor.c:540
+msgctxt "x86-flag"
+msgid "digital thermal sensor"
+msgstr "цифровой сенсор температуры"
+
+#. /flag:ida
+#: modules/devices/x86/processor.c:541
+msgctxt "x86-flag"
+msgid "Intel Dynamic Acceleration"
+msgstr "Динамическое ускорение Intel"
+
+#. /flag:arat
+#: modules/devices/x86/processor.c:542
+msgctxt "x86-flag"
+msgid "Always Running APIC Timer"
+msgstr "Таймер APIC всегда запущен"
+
+#. /flag:pln
+#: modules/devices/x86/processor.c:543
+msgctxt "x86-flag"
+msgid "Intel Power Limit Notification"
+msgstr "Уведомление о лимите энергии Intel"
+
+#. /flag:pts
+#: modules/devices/x86/processor.c:544
+msgctxt "x86-flag"
+msgid "Intel Package Thermal Status"
+msgstr "Статус температуры Intel"
+
+#. /flag:hwp
+#: modules/devices/x86/processor.c:545
+msgctxt "x86-flag"
+msgid "Intel Hardware P-states"
+msgstr "Аппаратные P-states Intel"
+
+#. /flag:hwp_notify
+#: modules/devices/x86/processor.c:546
+msgctxt "x86-flag"
+msgid "HWP notification"
+msgstr "Уведомление HWP"
+
+#. /flag:hwp_act_window
+#: modules/devices/x86/processor.c:547
+msgctxt "x86-flag"
+msgid "HWP Activity Window"
+msgstr "Окно активности HWP"
+
+#. /flag:hwp_epp
+#: modules/devices/x86/processor.c:548
+msgctxt "x86-flag"
+msgid "HWP Energy Performance Preference"
+msgstr "Настройка производительности энергии HWP"
+
+#. /flag:hwp_pkg_req
+#: modules/devices/x86/processor.c:549
+msgctxt "x86-flag"
+msgid "HWP package-level request"
+msgstr "Запрос уровня пакета HWP"
+
+#. /flag:npt
+#: modules/devices/x86/processor.c:551
+msgctxt "x86-flag"
+msgid "AMD Nested Page Table support"
+msgstr "Поддержка таблиц вложенной страницы AMD"
+
+#. /flag:lbrv
+#: modules/devices/x86/processor.c:552
+msgctxt "x86-flag"
+msgid "AMD LBR Virtualization support"
+msgstr "Поддержка виртуализации AMD LBR"
+
+#. /flag:svm_lock
+#: modules/devices/x86/processor.c:553
+msgctxt "x86-flag"
+msgid "AMD SVM locking MSR"
+msgstr "Блокировка MSR AMD SVM"
+
+#. /flag:nrip_save
+#: modules/devices/x86/processor.c:554
+msgctxt "x86-flag"
+msgid "AMD SVM next_rip save"
+msgstr "Сохранение next_rip AMD SVM"
+
+#. /flag:tsc_scale
+#: modules/devices/x86/processor.c:555
+msgctxt "x86-flag"
+msgid "AMD TSC scaling support"
+msgstr "Поддержка масштабирования AMD TSC"
+
+#. /flag:vmcb_clean
+#: modules/devices/x86/processor.c:556
+msgctxt "x86-flag"
+msgid "AMD VMCB clean bits support"
+msgstr "Поддержка чистых бит AMD VMCB"
+
+#. /flag:flushbyasid
+#: modules/devices/x86/processor.c:557
+msgctxt "x86-flag"
+msgid "AMD flush-by-ASID support"
+msgstr "Поддержка AMD flush-by-ASID"
+
+#. /flag:decodeassists
+#: modules/devices/x86/processor.c:558
+msgctxt "x86-flag"
+msgid "AMD Decode Assists support"
+msgstr "Поддержка помощи декодирования"
+
+#. /flag:pausefilter
+#: modules/devices/x86/processor.c:559
+msgctxt "x86-flag"
+msgid "AMD filtered pause intercept"
+msgstr "Перехват фильтрованной паузы AMD"
+
+#. /flag:pfthreshold
+#: modules/devices/x86/processor.c:560
+msgctxt "x86-flag"
+msgid "AMD pause filter threshold"
+msgstr "Порог фильтра паузы AMD"
+
+#. /flag:avic
+#: modules/devices/x86/processor.c:561
+msgctxt "x86-flag"
+msgid "Virtual Interrupt Controller"
+msgstr "Контроллер виртуального прерывания"
+
+#. /flag:pku
+#: modules/devices/x86/processor.c:563
+msgctxt "x86-flag"
+msgid "Protection Keys for Userspace"
+msgstr "Ключи защиты для пространства пользователя"
+
+#. /flag:ospke
+#: modules/devices/x86/processor.c:564
+msgctxt "x86-flag"
+msgid "OS Protection Keys Enable"
+msgstr "Включение защиты ключей ОС"
+
+#. /flag:overflow_recov
+#: modules/devices/x86/processor.c:566
+msgctxt "x86-flag"
+msgid "MCA overflow recovery support"
+msgstr "Поддержка восстановления после переполнения MCA"
+
+#. /flag:succor
+#: modules/devices/x86/processor.c:567
+msgctxt "x86-flag"
+msgid "uncorrectable error containment and recovery"
+msgstr "неисправимое содержание ошибки и восстановление"
+
+#. /flag:smca
+#: modules/devices/x86/processor.c:568
+msgctxt "x86-flag"
+msgid "Scalable MCA"
+msgstr "Масштабируемый MCA"
+
+#. /bug:f00f
+#: modules/devices/x86/processor.c:575
+msgctxt "x86-flag"
+msgid "Intel F00F bug"
+msgstr "Ошибка Intel F00F"
+
+#. /bug:fdiv
+#: modules/devices/x86/processor.c:576
+msgctxt "x86-flag"
+msgid "FPU FDIV"
+msgstr ""
+
+#. /bug:coma
+#: modules/devices/x86/processor.c:577
+msgctxt "x86-flag"
+msgid "Cyrix 6x86 coma"
+msgstr ""
+
+#. /bug:tlb_mmatch
+#: modules/devices/x86/processor.c:578
+msgctxt "x86-flag"
+msgid "AMD Erratum 383"
+msgstr ""
+
+#. /bug:apic_c1e
+#. /bug:amd_e400
+#: modules/devices/x86/processor.c:579 modules/devices/x86/processor.c:588
+msgctxt "x86-flag"
+msgid "AMD Erratum 400"
+msgstr ""
+
+#. /bug:11ap
+#: modules/devices/x86/processor.c:580
+msgctxt "x86-flag"
+msgid "Bad local APIC aka 11AP"
+msgstr "Неверный локальный APIC или 11AP"
+
+#. /bug:fxsave_leak
+#: modules/devices/x86/processor.c:581
+msgctxt "x86-flag"
+msgid "FXSAVE leaks FOP/FIP/FOP"
+msgstr "FXSAVE утекает FOP/FIP/FOP"
+
+#. /bug:clflush_monitor
+#: modules/devices/x86/processor.c:582
+msgctxt "x86-flag"
+msgid "AAI65, CLFLUSH required before MONITOR"
+msgstr "AAI65, CLFLUSH требуются до MONITOR"
+
+#. /bug:sysret_ss_attrs
+#: modules/devices/x86/processor.c:583
+msgctxt "x86-flag"
+msgid "SYSRET doesn't fix up SS attrs"
+msgstr "SYSRET не исправляет атрибуты SS"
+
+#. /bug:espfix
+#: modules/devices/x86/processor.c:584
+msgctxt "x86-flag"
+msgid "IRET to 16-bit SS corrupts ESP/RSP high bits"
+msgstr "IRET на 16-битные SS прерывает высшие биты ESP/RSP"
+
+#. /bug:null_seg
+#: modules/devices/x86/processor.c:585
+msgctxt "x86-flag"
+msgid "Nulling a selector preserves the base"
+msgstr "Обнуление селектора продпочитается основному"
+
+#. /bug:swapgs_fence
+#: modules/devices/x86/processor.c:586
+msgctxt "x86-flag"
+msgid "SWAPGS without input dep on GS"
+msgstr "SWAPGS без ввода зависит от GS"
+
+#. /bug:monitor
+#: modules/devices/x86/processor.c:587
+msgctxt "x86-flag"
+msgid "IPI required to wake up remote CPU"
+msgstr "требуется IPI для удаленного пробуждения процессора"
+
+#. /flag:pm:ts
+#: modules/devices/x86/processor.c:596
+msgctxt "x86-flag"
+msgid "temperature sensor"
+msgstr "сенсор температуры"
+
+#. /flag:pm:fid
+#: modules/devices/x86/processor.c:597
+msgctxt "x86-flag"
+msgid "frequency id control"
+msgstr "контроль частоты id"
+
+#. /flag:pm:vid
+#: modules/devices/x86/processor.c:598
+msgctxt "x86-flag"
+msgid "voltage id control"
+msgstr "контроль вольтажа id"
+
+#. /flag:pm:ttp
+#: modules/devices/x86/processor.c:599
+msgctxt "x86-flag"
+msgid "thermal trip"
+msgstr "изменение температуры"
+
+#. /flag:pm:tm
+#: modules/devices/x86/processor.c:600
+msgctxt "x86-flag"
+msgid "hardware thermal control"
+msgstr "аппаратный контроль температуры"
+
+#. /flag:pm:stc
+#: modules/devices/x86/processor.c:601
+msgctxt "x86-flag"
+msgid "software thermal control"
+msgstr "программный контроль температуры"
+
+#. /flag:pm:100mhzsteps
+#: modules/devices/x86/processor.c:602
+msgctxt "x86-flag"
+msgid "100 MHz multiplier control"
+msgstr "контроль множителя 100 МГц"
+
+#. /flag:pm:hwpstate
+#: modules/devices/x86/processor.c:603
+msgctxt "x86-flag"
+msgid "hardware P-state control"
+msgstr "аппаратное управление P-state"
+
+#. /flag:pm:cpb
+#: modules/devices/x86/processor.c:604
+msgctxt "x86-flag"
+msgid "core performance boost"
+msgstr "повышение производительности ядра"
+
+#. /flag:pm:eff_freq_ro
+#: modules/devices/x86/processor.c:605
+msgctxt "x86-flag"
+msgid "Readonly aperf/mperf"
+msgstr "aperf/mperf только для чтения"
+
+#. /flag:pm:proc_feedback
+#: modules/devices/x86/processor.c:606
+msgctxt "x86-flag"
+msgid "processor feedback interface"
+msgstr "интерфейс отзыва процессора"
+
+#. /flag:pm:acc_power
+#: modules/devices/x86/processor.c:607
+msgctxt "x86-flag"
+msgid "accumulated power mechanism"
+msgstr "механизм накопления питания"
+
+#: modules/devices/x86/processor.c:746
+msgid "Model Name"
+msgstr "Название"
+
+#: modules/devices/x86/processor.c:747
+msgid "Family, model, stepping"
+msgstr "Семейство, модель, степпинг"
+
+#: modules/devices/x86/processor.c:753
+msgid "Configuration"
+msgstr "Конфигурация"
+
+#: modules/devices/x86/processor.c:754
+msgid "Cache Size"
+msgstr "Размер кэша"
+
+#: modules/devices/x86/processor.c:754
+msgid "kb"
+msgstr "кб"
+
+#: modules/devices/x86/processor.c:761
+msgid "Power Management"
+msgstr "Управление питанием"
+
+#: modules/devices/x86/processor.c:762
+msgid "Bug Workarounds"
+msgstr "Обход багов"
 
 #: modules/network.c:59
 msgid "Interfaces"
@@ -1315,2240 +3860,80 @@ msgstr "Сеть"
 msgid "Gathers information about this computer's network connection"
 msgstr "Собирает информацию о сетевых подключениях"
 
-#: modules/devices/alpha/processor.c:80 modules/devices/s390/processor.c:124
-#: modules/devices/m68k/processor.c:76 modules/devices/parisc/processor.c:147
-#: modules/devices/ia64/processor.c:157 modules/devices/ppc/processor.c:150
-#: modules/devices/mips/processor.c:67 modules/devices/riscv/processor.c:174
-msgid "Model"
-msgstr "Модель"
-
-#: modules/devices/alpha/processor.c:81
-msgid "Platform String"
-msgstr "Строка платформы"
-
-#: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
-#: modules/devices/m68k/processor.c:79 modules/devices/sh/processor.c:79
-#: modules/devices/parisc/processor.c:150 modules/devices/ia64/processor.c:159
-#: modules/devices/ppc/processor.c:152 modules/devices/mips/processor.c:69
-#: modules/devices/riscv/processor.c:178 modules/devices/x86/processor.c:748
-msgid "Frequency"
-msgstr "Частота"
-
-#: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
-#: modules/devices/m68k/processor.c:79 modules/devices/sh/processor.c:79
-#: modules/devices/sh/processor.c:80 modules/devices/sh/processor.c:81
-#: modules/devices/parisc/processor.c:150 modules/devices/ia64/processor.c:159
-#: modules/devices/ppc/processor.c:152 modules/devices/mips/processor.c:69
-#: modules/devices/riscv/processor.c:178 modules/devices/x86/processor.c:748
-msgid "MHz"
-msgstr "МГц"
-
-#: modules/devices/alpha/processor.c:83 modules/devices/arm/processor.c:240
-#: modules/devices/s390/processor.c:126 modules/devices/m68k/processor.c:80
-#: modules/devices/sh/processor.c:82 modules/devices/parisc/processor.c:151
-#: modules/devices/ia64/processor.c:160 modules/devices/ppc/processor.c:153
-#: modules/devices/mips/processor.c:70 modules/devices/x86/processor.c:749
-msgid "BogoMips"
-msgstr ""
-
-#: modules/devices/alpha/processor.c:84 modules/devices/arm/processor.c:241
-#: modules/devices/s390/processor.c:127 modules/devices/m68k/processor.c:81
-#: modules/devices/sh/processor.c:83 modules/devices/parisc/processor.c:152
-#: modules/devices/ia64/processor.c:161 modules/devices/ppc/processor.c:154
-#: modules/devices/mips/processor.c:71 modules/devices/riscv/processor.c:179
-#: modules/devices/x86/processor.c:750 modules/devices/sparc/processor.c:69
-msgid "Byte Order"
-msgstr "Порядок байтов"
-
-#: modules/devices/devmemory.c:93
-msgid "Total Memory"
-msgstr "Общая память"
-
-#: modules/devices/devmemory.c:94
-msgid "Free Memory"
-msgstr "Свободная память"
-
-#: modules/devices/devmemory.c:95
-msgid "Cached Swap"
-msgstr "Кэш подкачки"
-
-#: modules/devices/devmemory.c:96
-msgid "High Memory"
-msgstr "Высокая память"
-
-#: modules/devices/devmemory.c:97
-msgid "Free High Memory"
-msgstr "Свободная высокая память"
-
-#: modules/devices/devmemory.c:98
-msgid "Low Memory"
-msgstr "Низкая память"
-
-#: modules/devices/devmemory.c:99
-msgid "Free Low Memory"
-msgstr "Свободная низкая память"
-
-#: modules/devices/devmemory.c:100
-msgid "Virtual Memory"
-msgstr "Виртуальная память"
-
-#: modules/devices/devmemory.c:101
-msgid "Free Virtual Memory"
-msgstr "Свободная виртуальная память"
-
-#: modules/devices/battery.c:181
-#, c-format
-msgid ""
-"\n"
-"[Battery: %s]\n"
-"State=%s (load: %s)\n"
-"Capacity=%s / %s (%.2f%%)\n"
-"Battery Technology=%s (%s)\n"
-"Manufacturer=%s\n"
-"Model Number=%s\n"
-"Serial Number=%s\n"
-msgstr ""
-"\n"
-"[Батарея: %s]\n"
-"Состояние=%s (нагрузка: %s)\n"
-"Емкость=%s / %s (%.2f%%)\n"
-"Технология батареи=%s (%s)\n"
-"Изготовитель=%s\n"
-"Номер модели=%s\n"
-"Серийный номер=%s\n"
-
-#: modules/devices/battery.c:258
-#, c-format
-msgid ""
-"\n"
-"[Battery: %s]\n"
-"State=%s\n"
-"Capacity=%s / %s\n"
-"Battery Technology=%s\n"
-"Manufacturer=%s\n"
-"Model Number=%s\n"
-"Serial Number=%s\n"
-msgstr ""
-"\n"
-"[Батарея: %s]\n"
-"Состояние=%s\n"
-"Емкость=%s / %s\n"
-"Технология батареи=%s\n"
-"Производитель=%s\n"
-"Номер модели=%s\n"
-"Серийный номер=%s\n"
-
-#: modules/devices/battery.c:346
-#, c-format
-msgid ""
-"\n"
-"[Battery (APM)]\n"
-"Charge=%d%%\n"
-"Remaining Charge=%s of %s\n"
-"Using=%s\n"
-"APM driver version=%s\n"
-"APM BIOS version=%s\n"
-msgstr ""
-"\n"
-"[Батарея (APM)]\n"
-"Заряд=%d%%\n"
-"Оставшийся заряд=%s из %s\n"
-"Используется=%s\n"
-"APM драйвер версии=%s\n"
-"APM BIOS версии=%s\n"
-
-#: modules/devices/battery.c:358
-#, c-format
-msgid ""
-"\n"
-"[Battery (APM)]\n"
-"Charge=%d%%\n"
-"Using=%s\n"
-"APM driver version=%s\n"
-"APM BIOS version=%s\n"
-msgstr ""
-"\n"
-"[Батарея (APM)]\n"
-"Заряд=%d%%\n"
-"Используется=%s\n"
-"APM драйвер версии=%s\n"
-"APM BIOS версии=%s\n"
-
-#: modules/devices/battery.c:385
-msgid ""
-"[No batteries]\n"
-"No batteries found on this system=\n"
-msgstr ""
-"[No batteries]\n"
-"Батареи не найдены на этой системе=\n"
-
-#. /hw_cap
-#: modules/devices/arm/arm_data.c:42
-msgctxt "arm-flag"
-msgid "SWP instruction (atomic read-modify-write)"
-msgstr "Инструкция SWP (атомарное чтение-изменение-запись)"
-
-#: modules/devices/arm/arm_data.c:43
-msgctxt "arm-flag"
-msgid "Half-word loads and stores"
-msgstr "Загрузка и хранение полуслова"
-
-#: modules/devices/arm/arm_data.c:44
-msgctxt "arm-flag"
-msgid "Thumb (16-bit instruction set)"
-msgstr "Thumb (набор 16-битных инструкций)"
-
-#: modules/devices/arm/arm_data.c:45
-msgctxt "arm-flag"
-msgid "26-Bit Model (Processor status register folded into program counter)"
-msgstr "26-битная модель (регистр статуса процессора вложен в счетчик программы)"
-
-#: modules/devices/arm/arm_data.c:46
-msgctxt "arm-flag"
-msgid "32x32->64-bit multiplication"
-msgstr "32x32->64-битное умножение"
-
-#: modules/devices/arm/arm_data.c:47
-msgctxt "arm-flag"
-msgid "Floating point accelerator"
-msgstr "Ускоритель плавающей точки"
-
-#: modules/devices/arm/arm_data.c:48
-msgctxt "arm-flag"
-msgid "VFP (early SIMD vector floating point instructions)"
-msgstr "VFP (ранний вектор SIMD инструкций плавающей точки)"
-
-#: modules/devices/arm/arm_data.c:49
-msgctxt "arm-flag"
-msgid "DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)"
-msgstr "расширения DSP (вариант 'e' процессоров ARM9 и выше)"
-
-#: modules/devices/arm/arm_data.c:50
-msgctxt "arm-flag"
-msgid "Jazelle (Java bytecode accelerator)"
-msgstr "Jazelle (ускоритель байт-кода Java)"
-
-#: modules/devices/arm/arm_data.c:51
-msgctxt "arm-flag"
-msgid "SIMD instructions similar to Intel MMX"
-msgstr "Инструкции SIMD, схожие с Intel MMX"
-
-#: modules/devices/arm/arm_data.c:52
-msgctxt "arm-flag"
-msgid "MaverickCrunch coprocessor (if kernel support enabled)"
-msgstr "Сопроцессор MaverickCrunch (при наличии поддержки в ядре)"
-
-#: modules/devices/arm/arm_data.c:53
-msgctxt "arm-flag"
-msgid "ThumbEE"
-msgstr ""
-
-#: modules/devices/arm/arm_data.c:54
-msgctxt "arm-flag"
-msgid "Advanced SIMD/NEON on AArch32"
-msgstr "Дополнительный SIMD/NEON на AArch32"
-
-#: modules/devices/arm/arm_data.c:55
-msgctxt "arm-flag"
-msgid "kernel event stream using generic architected timer"
-msgstr "поток событий ядра с использованием общего архитектурного таймера"
-
-#: modules/devices/arm/arm_data.c:56
-msgctxt "arm-flag"
-msgid "VFP version 3"
-msgstr "VFP версии 3"
-
-#: modules/devices/arm/arm_data.c:57
-msgctxt "arm-flag"
-msgid "VFP version 3 with 16 D-registers"
-msgstr "VFP версии 3 с 16 D-регистрами"
-
-#: modules/devices/arm/arm_data.c:58
-msgctxt "arm-flag"
-msgid "VFP version 4 with fast context switching"
-msgstr "VFP версии 4 с быстрым контекстным переключением"
-
-#: modules/devices/arm/arm_data.c:59
-msgctxt "arm-flag"
-msgid "VFP with 32 D-registers"
-msgstr "VFP с 32 D-регистрами"
-
-#: modules/devices/arm/arm_data.c:60
-msgctxt "arm-flag"
-msgid "TLS register"
-msgstr "Регистр TLS"
-
-#: modules/devices/arm/arm_data.c:61
-msgctxt "arm-flag"
-msgid "SDIV and UDIV hardware division in ARM mode"
-msgstr "Аппаратное разделение SDIV и UDIV в режиме ARM"
-
-#: modules/devices/arm/arm_data.c:62
-msgctxt "arm-flag"
-msgid "SDIV and UDIV hardware division in Thumb mode"
-msgstr "Аппаратное разделение SDIV и UDIV в режиме Thumb"
-
-#: modules/devices/arm/arm_data.c:63
-msgctxt "arm-flag"
-msgid "40-bit Large Physical Address Extension"
-msgstr "40-битное большое физическое адресное расширение"
-
-#. /hw_cap2
-#: modules/devices/arm/arm_data.c:65
-msgctxt "arm-flag"
-msgid "64x64->128-bit F2m multiplication (arch>8)"
-msgstr "64x64->128-битное умножение F2m (arch>8)"
-
-#: modules/devices/arm/arm_data.c:66
-msgctxt "arm-flag"
-msgid "Crypto:AES (arch>8)"
-msgstr "Крипто:AES (arch>8)"
-
-#: modules/devices/arm/arm_data.c:67
-msgctxt "arm-flag"
-msgid "Crypto:SHA1 (arch>8)"
-msgstr "Крипто:SHA1 (arch>8)"
-
-#: modules/devices/arm/arm_data.c:68
-msgctxt "arm-flag"
-msgid "Crypto:SHA2 (arch>8)"
-msgstr "Крипто:SHA2 (arch>8)"
-
-#: modules/devices/arm/arm_data.c:69
-msgctxt "arm-flag"
-msgid "CRC32 checksum instructions (arch>8)"
-msgstr "инструкции контрольной суммы CRC32 (arch>8)"
-
-#: modules/devices/arm/arm_data.c:72
-msgctxt "arm-flag"
-msgid "Advanced SIMD/NEON on AArch64 (arch>8)"
-msgstr "Дополнительный SIMD/NEON на AArch64 (arch>8)"
-
-#: modules/devices/arm/processor.c:141
-msgid "ARM Processor"
-msgstr "Процессор ARM"
-
-#: modules/devices/arm/processor.c:199 modules/devices/riscv/processor.c:147
-#: modules/devices/x86/processor.c:701
-msgid "Empty List"
-msgstr "Пустой список"
-
-#: modules/devices/arm/processor.c:236
-msgid "Linux Name"
-msgstr "Имя Linux"
-
-#: modules/devices/arm/processor.c:237
-msgid "Decoded Name"
-msgstr "Декодированное имя"
-
-#: modules/devices/arm/processor.c:238
-msgid "Mode"
-msgstr "Режим"
-
-#: modules/devices/arm/processor.c:244
-msgid "ARM"
-msgstr ""
-
-#: modules/devices/arm/processor.c:245
-msgid "Implementer"
-msgstr "Исполнитель"
-
-#: modules/devices/arm/processor.c:246
-msgid "Part"
-msgstr "Часть"
-
-#: modules/devices/arm/processor.c:247 modules/devices/parisc/processor.c:148
-#: modules/devices/ia64/processor.c:154 modules/devices/riscv/processor.c:175
-msgid "Architecture"
-msgstr "Архитектура"
-
-#: modules/devices/arm/processor.c:248
-msgid "Variant"
-msgstr "Вариант"
-
-#: modules/devices/arm/processor.c:249 modules/devices/ia64/processor.c:158
-#: modules/devices/ppc/processor.c:151
-msgid "Revision"
-msgstr "Ревизия"
-
-#: modules/devices/arm/processor.c:250 modules/devices/riscv/processor.c:182
-#: modules/devices/x86/processor.c:756 modules/devices/sparc/processor.c:70
-msgid "Capabilities"
-msgstr "Возможности"
-
-#: modules/devices/arm/processor.c:271 modules/devices/s390/processor.c:149
-#: modules/devices/parisc/processor.c:180 modules/devices/ia64/processor.c:185
-#: modules/devices/ppc/processor.c:176 modules/devices/riscv/processor.c:203
-#: modules/devices/x86/processor.c:779
-#, c-format
-msgid "%s$CPU%d$%s=%.2fMHz\n"
-msgstr "%s$CPU%d$%s=%.2fМГц\n"
-
-#: modules/devices/s390/processor.c:92
-msgid "S390 Processor"
-msgstr "Процессор S390"
-
-#: modules/devices/s390/processor.c:125
-msgid "ID String"
-msgstr "Строка ID"
-
-#: modules/devices/m68k/processor.c:77 modules/devices/riscv/processor.c:177
-msgid "MMU"
-msgstr ""
-
-#: modules/devices/m68k/processor.c:78 modules/devices/sparc/processor.c:68
-msgid "FPU"
-msgstr ""
-
-#: modules/devices/m68k/processor.c:82
-msgid "Calibration"
-msgstr "Калибровка"
-
-#: modules/devices/storage.c:46
-msgid ""
-"\n"
-"[SCSI Disks]\n"
-msgstr ""
-"\n"
-"[SCSI диски]\n"
-
-#: modules/devices/storage.c:110 modules/devices/storage.c:313
-#, c-format
-msgid ""
-"[Device Information]\n"
-"Model=%s\n"
-msgstr ""
-"[Информация об устройстве]\n"
-"Модель=%s\n"
-
-#: modules/devices/storage.c:115 modules/devices/storage.c:319
-#, c-format
-msgid "Vendor=%s (%s)\n"
-msgstr "Изготовитель=%s (%s)\n"
-
-#: modules/devices/storage.c:120 modules/devices/storage.c:321
-#, c-format
-msgid "Vendor=%s\n"
-msgstr "Изготовитель=%s\n"
-
-#: modules/devices/storage.c:125
-#, c-format
-msgid ""
-"Type=%s\n"
-"Revision=%s\n"
-"[SCSI Controller]\n"
-"Controller=scsi%d\n"
-"Channel=%d\n"
-"ID=%d\n"
-"LUN=%d\n"
-msgstr ""
-"Тип=%s\n"
-"Ревизия=%s\n"
-"[SCSI контроллер]\n"
-"Контроллер=scsi%d\n"
-"Канал=%d\n"
-"ID=%d\n"
-"LUN=%d\n"
-
-#: modules/devices/storage.c:167
-msgid ""
-"\n"
-"[IDE Disks]\n"
-msgstr ""
-"\n"
-"[IDE диски]\n"
-
-#: modules/devices/storage.c:250
-#, c-format
-msgid "Driver=%s\n"
-msgstr "Драйвер=%s\n"
-
-#: modules/devices/storage.c:324
-#, c-format
-msgid ""
-"Device Name=hd%c\n"
-"Media=%s\n"
-"Cache=%dkb\n"
-msgstr ""
-"Имя устройства=hd%c\n"
-"Медиа=%s\n"
-"Кэш=%dkb\n"
-
-#: modules/devices/storage.c:334
-#, c-format
-msgid ""
-"[Geometry]\n"
-"Physical=%s\n"
-"Logical=%s\n"
-msgstr ""
-"[Геометрия]\n"
-"Физическая=%s\n"
-"Логическая=%s\n"
-
-#: modules/devices/storage.c:344
-#, c-format
-msgid ""
-"[Capabilities]\n"
-"%s"
-msgstr ""
-"[Возможности]\n"
-"%s"
-
-#: modules/devices/storage.c:351
-#, c-format
-msgid ""
-"[Speeds]\n"
-"%s"
-msgstr ""
-"[Скорости]\n"
-"%s"
-
-#: modules/devices/cpu_util.c:26
-msgid "Little Endian"
-msgstr ""
-
-#: modules/devices/cpu_util.c:28
-msgid "Big Endian"
-msgstr ""
-
-#: modules/devices/cpu_util.c:137 modules/devices/cpu_util.c:148
-msgid "Frequency Scaling"
-msgstr "Масштабирование частоты"
-
-#: modules/devices/cpu_util.c:138
-msgid "Minimum"
-msgstr "Минимальная"
-
-#: modules/devices/cpu_util.c:138 modules/devices/cpu_util.c:139
-#: modules/devices/cpu_util.c:140
-msgid "kHz"
-msgstr "кГц"
-
-#: modules/devices/cpu_util.c:139
-msgid "Maximum"
-msgstr "Максимальная"
-
-#: modules/devices/cpu_util.c:140
-msgid "Current"
-msgstr "Текущая"
-
-#: modules/devices/cpu_util.c:141
-msgid "Transition Latency"
-msgstr "Задержка перехода"
-
-#: modules/devices/cpu_util.c:141
-msgid "ns"
-msgstr "нс"
-
-#: modules/devices/cpu_util.c:142
-msgid "Governor"
-msgstr "Регулятор"
-
-#: modules/devices/cpu_util.c:143 modules/devices/cpu_util.c:149
-msgid "Driver"
-msgstr "Драйвер"
-
-#: modules/devices/cpu_util.c:155
-msgid "(Not Available)"
-msgstr "(Недоступно)"
-
-#: modules/devices/cpu_util.c:163 modules/devices/cpu_util.c:165
-msgid "Socket"
-msgstr "Сокет"
-
-#: modules/devices/cpu_util.c:168 modules/devices/cpu_util.c:170
-msgid "Core"
-msgstr "Ядро"
-
-#: modules/devices/cpu_util.c:173
-msgid "Book"
-msgstr "Книга"
-
-#: modules/devices/cpu_util.c:175
-msgid "Drawer"
-msgstr "Трассировщик"
-
-#: modules/devices/cpu_util.c:181
-msgid "Topology"
-msgstr "Топология"
-
-#: modules/devices/cpu_util.c:182
-msgid "ID"
-msgstr ""
-
-#: modules/devices/sh/processor.c:55
-msgid "SuperH Processor"
-msgstr "Процессор SuperH"
-
-#: modules/devices/sh/processor.c:76 modules/devices/ia64/processor.c:152
-#: hardinfo/hardinfo.c:76
-msgid "Name"
-msgstr "Имя"
-
-#: modules/devices/sh/processor.c:77
-msgid "Machine"
-msgstr "Машина"
-
-#: modules/devices/sh/processor.c:78 modules/devices/ia64/processor.c:156
-msgid "Family"
-msgstr "Семейство"
-
-#: modules/devices/sh/processor.c:80
-msgid "Bus Frequency"
-msgstr "Частота шины"
-
-#: modules/devices/sh/processor.c:81
-msgid "Module Frequency"
-msgstr "Частота модуля"
-
-#: modules/devices/parisc/processor.c:107
-msgid "PA-RISC Processor"
-msgstr "Процессор PA-RISC"
-
-#: modules/devices/parisc/processor.c:149
-msgid "System"
-msgstr "Система"
-
-#: modules/devices/parisc/processor.c:153
-msgid "HVersion"
-msgstr ""
-
-#: modules/devices/parisc/processor.c:154
-msgid "SVersion"
-msgstr ""
-
-#: modules/devices/parisc/processor.c:155 modules/devices/x86/processor.c:753
-msgid "Cache"
-msgstr "Кэш"
-
-#: modules/devices/ia64/processor.c:108
-msgid "IA64 Processor"
-msgstr "Процессор IA64"
-
-#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:745
-msgid "Vendor"
-msgstr "Производитель"
-
-#: modules/devices/ia64/processor.c:155
-msgid "Architecture Revision"
-msgstr "Ревизия архитектуры"
-
-#: modules/devices/ia64/processor.c:162
-msgid "CPU regs"
-msgstr "Регистры"
-
-#: modules/devices/ia64/processor.c:163
-msgid "Features"
-msgstr "Возможности"
-
-#: modules/devices/spd-decode.c:1475
-msgid ""
-"[SPD]\n"
-"Please load the eeprom module to obtain information about memory SPD=\n"
-"[$ShellParam$]\n"
-"ReloadInterval=500\n"
-msgstr ""
-"[SPD]\n"
-"Пожалуйста, загрузите модуль eeprom для получения информации о памяти SPD=\n"
-"[$ShellParam$]\n"
-"ReloadInterval=500\n"
-
-#: modules/devices/spd-decode.c:1480
-msgid ""
-"[SPD]\n"
-"Reading memory SPD not supported on this system=\n"
-msgstr ""
-"[SPD]\n"
-"Чтение памяти SPD не поддерживается на данной системе=\n"
-
-#: modules/devices/ppc/processor.c:117
-msgid "POWER Processor"
-msgstr "Процессор POWER"
-
-#: modules/devices/mips/processor.c:68
-msgid "System Type"
-msgstr "Тип системы"
-
-#: modules/devices/riscv/processor.c:107
-msgid "RISC-V Processor"
-msgstr "Процессор RISC-V"
-
-#: modules/devices/riscv/processor.c:176
-msgid "uarch"
-msgstr ""
-
-#: modules/devices/riscv/riscv_data.c:37
-msgctxt "rv-ext"
-msgid "RISC-V 32-bit"
-msgstr "32-битная RISC-V"
-
-#: modules/devices/riscv/riscv_data.c:38
-msgctxt "rv-ext"
-msgid "RISC-V 64-bit"
-msgstr "64-битная RISC-V"
-
-#: modules/devices/riscv/riscv_data.c:39
-msgctxt "rv-ext"
-msgid "RISC-V 128-bit"
-msgstr "128-битная RISC-V"
-
-#: modules/devices/riscv/riscv_data.c:40
-msgctxt "rv-ext"
-msgid "Base embedded integer instructions (15 registers)"
-msgstr "Базовые встроенные целочисленные инструкции (15 регистров)"
-
-#: modules/devices/riscv/riscv_data.c:41
-msgctxt "rv-ext"
-msgid "Base integer instructions (31 registers)"
-msgstr "Базовые целочисленные инструкции (31 регистр)"
-
-#: modules/devices/riscv/riscv_data.c:42
-msgctxt "rv-ext"
-msgid "Hardware integer multiply and divide"
-msgstr "Аппаратное умножение и деление целых чисел"
-
-#: modules/devices/riscv/riscv_data.c:43
-msgctxt "rv-ext"
-msgid "Atomic memory operations"
-msgstr "Атомные операции с памятью"
-
-#: modules/devices/riscv/riscv_data.c:44
-msgctxt "rv-ext"
-msgid "Compressed 16-bit instructions"
-msgstr "Сжатые 16-битные инструкции"
-
-#: modules/devices/riscv/riscv_data.c:45
-msgctxt "rv-ext"
-msgid "Floating-point instructions, single-precision"
-msgstr "Инструкции с плавающей запятой, одинарной точности"
-
-#: modules/devices/riscv/riscv_data.c:46
-msgctxt "rv-ext"
-msgid "Floating-point instructions, double-precision"
-msgstr "Инструкции с плавающей запятой, двойной точности"
-
-#: modules/devices/riscv/riscv_data.c:47
-msgctxt "rv-ext"
-msgid "Floating-point instructions, quad-precision"
-msgstr "Инструкции с плавающей запятой, четверной точности"
-
-#: modules/devices/riscv/riscv_data.c:48
-msgctxt "rv-ext"
-msgid "Bit manipulation instructions"
-msgstr "Инструкции манипуляции битами"
-
-#: modules/devices/riscv/riscv_data.c:49
-msgctxt "rv-ext"
-msgid "Vector operations"
-msgstr "Векторные операции"
-
-#: modules/devices/riscv/riscv_data.c:50
-msgctxt "rv-ext"
-msgid "Transactional memory"
-msgstr "Переходная память"
-
-#: modules/devices/riscv/riscv_data.c:51
-msgctxt "rv-ext"
-msgid "Packed SIMD instructions"
-msgstr "Сжатые инструкции SIMD"
-
-#: modules/devices/riscv/riscv_data.c:52
-msgctxt "rv-ext"
-msgid "Decimal floating-point instructions"
-msgstr "Десятичные инструкции с плавающей запятой"
-
-#: modules/devices/riscv/riscv_data.c:53
-msgctxt "rv-ext"
-msgid "Dynamically translated languages"
-msgstr "Языки с динамической трансляцией"
-
-#: modules/devices/riscv/riscv_data.c:54
-msgctxt "rv-ext"
-msgid "User-level interrupts"
-msgstr "Прерывания пользовательского уровня"
-
-#: modules/devices/x86/processor.c:146
-msgid "Cache information not available=\n"
-msgstr "Информация о кэше недоступна=\n"
-
-#: modules/devices/x86/processor.c:152
-#, c-format
-msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
-msgstr "Уровень %d (%s)=%d-канальный множественно-ассоциативный, %d множеств, размер %d кБ\n"
-
-#: modules/devices/x86/processor.c:339
-msgctxt "x86-flag"
-msgid "Onboard FPU (floating point support)"
-msgstr "Встроенный FPU (поддержка плавающей запятой)"
-
-#: modules/devices/x86/processor.c:340
-msgctxt "x86-flag"
-msgid "Virtual 8086 mode enhancements"
-msgstr "Улучшения виртуального режима 8086"
-
-#: modules/devices/x86/processor.c:341
-msgctxt "x86-flag"
-msgid "Debugging Extensions (CR4.DE)"
-msgstr "Расширения отладки (CR4.DE)"
-
-#: modules/devices/x86/processor.c:342
-msgctxt "x86-flag"
-msgid "Page Size Extensions (4MB memory pages)"
-msgstr "Расширения размера страницы (страницы памяти 4 Мб)"
-
-#: modules/devices/x86/processor.c:343
-msgctxt "x86-flag"
-msgid "Time Stamp Counter (RDTSC)"
-msgstr "Счетчик временной метки (RDTSC)"
-
-#: modules/devices/x86/processor.c:344
-msgctxt "x86-flag"
-msgid "Model-Specific Registers (RDMSR, WRMSR)"
-msgstr "Регистры конкретной модели (RDMSR, WRMSR)"
-
-#: modules/devices/x86/processor.c:345
-msgctxt "x86-flag"
-msgid "Physical Address Extensions (support for more than 4GB of RAM)"
-msgstr "Расширения физического адреса (поддержка более 4 Гб ОЗУ)"
-
-#: modules/devices/x86/processor.c:346
-msgctxt "x86-flag"
-msgid "Machine Check Exception"
-msgstr "Исключение машинного контроля"
-
-#: modules/devices/x86/processor.c:347
-msgctxt "x86-flag"
-msgid "CMPXCHG8 instruction (64-bit compare-and-swap)"
-msgstr "Инструкция CMPXCHG8 (64-битное сравнение-и-подкачка)"
-
-#: modules/devices/x86/processor.c:348
-msgctxt "x86-flag"
-msgid "Onboard APIC"
-msgstr "Встроенный APIC"
-
-#: modules/devices/x86/processor.c:349
-msgctxt "x86-flag"
-msgid "SYSENTER/SYSEXIT"
-msgstr ""
-
-#: modules/devices/x86/processor.c:350
-msgctxt "x86-flag"
-msgid "Memory Type Range Registers"
-msgstr "Регистры диапазона типа памяти"
-
-#: modules/devices/x86/processor.c:351
-msgctxt "x86-flag"
-msgid "Page Global Enable (global bit in PDEs and PTEs)"
-msgstr "Включение глобальной страницы (глобальный бит в PDE и PTE)"
-
-#: modules/devices/x86/processor.c:352
-msgctxt "x86-flag"
-msgid "Machine Check Architecture"
-msgstr "Архитектура машинного контроля"
-
-#: modules/devices/x86/processor.c:353
-msgctxt "x86-flag"
-msgid "CMOV instructions (conditional move) (also FCMOV)"
-msgstr "Инструкции CMOV (условная пересылка данных) (также FCMOV)"
-
-#: modules/devices/x86/processor.c:354
-msgctxt "x86-flag"
-msgid "Page Attribute Table"
-msgstr "Таблица атрибутов страницы"
-
-#: modules/devices/x86/processor.c:355
-msgctxt "x86-flag"
-msgid "36-bit PSEs (huge pages)"
-msgstr "36-битные PSE (огромные страницы)"
-
-#: modules/devices/x86/processor.c:356
-msgctxt "x86-flag"
-msgid "Processor serial number"
-msgstr "Серийный номер процессора"
-
-#: modules/devices/x86/processor.c:357
-msgctxt "x86-flag"
-msgid "Cache Line Flush instruction"
-msgstr "Инструкция Cache Line Flush"
-
-#: modules/devices/x86/processor.c:358
-msgctxt "x86-flag"
-msgid ""
-"Debug Store (buffer for debugging and profiling instructions), or "
-"alternately: digital thermal sensor"
-msgstr ""
-
-#: modules/devices/x86/processor.c:359
-msgctxt "x86-flag"
-msgid "ACPI via MSR (temperature monitoring and clock speed modulation)"
-msgstr "ACPI через MSR (мониторинг температуры и модуляции тактовой частоты)"
-
-#: modules/devices/x86/processor.c:360
-msgctxt "x86-flag"
-msgid "Multimedia Extensions"
-msgstr "Расширения мультимедиа"
-
-#: modules/devices/x86/processor.c:361
-msgctxt "x86-flag"
-msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
-msgstr ""
-
-#: modules/devices/x86/processor.c:362
-msgctxt "x86-flag"
-msgid "Intel SSE vector instructions"
-msgstr "Векторные инструкции Intel SSE"
-
-#: modules/devices/x86/processor.c:363
-msgctxt "x86-flag"
-msgid "SSE2"
-msgstr ""
-
-#: modules/devices/x86/processor.c:364
-msgctxt "x86-flag"
-msgid "CPU self snoop"
-msgstr "Проверка процессора"
-
-#: modules/devices/x86/processor.c:365
-msgctxt "x86-flag"
-msgid "Hyper-Threading"
-msgstr "Многопоточность (Hyper-Threading)"
-
-#: modules/devices/x86/processor.c:366
-msgctxt "x86-flag"
-msgid "Automatic clock control (Thermal Monitor)"
-msgstr "Автоматический контроль частоты (монитор температуры)"
-
-#: modules/devices/x86/processor.c:367
-msgctxt "x86-flag"
-msgid ""
-"Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
-"x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
-msgstr ""
-"64-битная архитектура Intel Itanium (не путать с 64-битной архитектурой "
-"x86 от Intel с флагом x86-64 или \"AMD64\"-битной с флагом bit)"
-
-#: modules/devices/x86/processor.c:368
-msgctxt "x86-flag"
-msgid "Pending Break Enable (PBE# pin) wakeup support"
-msgstr "Поддержка пробуждения Pending Break Enable (PBE# pin)"
-
-#: modules/devices/x86/processor.c:371
-msgctxt "x86-flag"
-msgid "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
-msgstr "SYSCALL (Быстрый вызов системы) и SYSRET (Возврат после быстрого вызова системы)"
-
-#: modules/devices/x86/processor.c:372
-msgctxt "x86-flag"
-msgid "Multiprocessing Capable."
-msgstr "Возможна работа в многопроцессном режиме."
-
-#: modules/devices/x86/processor.c:373
-msgctxt "x86-flag"
-msgid "Execute Disable"
-msgstr "Выполнение отключено"
-
-#: modules/devices/x86/processor.c:374
-msgctxt "x86-flag"
-msgid "AMD MMX extensions"
-msgstr "Расширения AMD MMX"
-
-#: modules/devices/x86/processor.c:375
-msgctxt "x86-flag"
-msgid "FXSAVE/FXRSTOR optimizations"
-msgstr "Оптимизации FXSAVE/FXRSTOR"
-
-#: modules/devices/x86/processor.c:376
-msgctxt "x86-flag"
-msgid "One GB pages (allows hugepagesz=1G)"
-msgstr "Страница размером 1 Гб (разрешает hugepagesz=1G)"
-
-#: modules/devices/x86/processor.c:377
-msgctxt "x86-flag"
-msgid "Read Time-Stamp Counter and Processor ID"
-msgstr "Чтение счетчика временной метки и ID процессора"
-
-#: modules/devices/x86/processor.c:378
-msgctxt "x86-flag"
-msgid "Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)"
-msgstr "Длинный режим (x86-64: amd64, также известен как Intel 64, т.е. совместимый с 64-бит)"
-
-#: modules/devices/x86/processor.c:379
-msgctxt "x86-flag"
-msgid "3DNow! (AMD vector instructions, competing with Intel's SSE1)"
-msgstr "3DNow! (векторные инструкции AMD, конкурируют с SSE1 от Intel)"
-
-#: modules/devices/x86/processor.c:380
-msgctxt "x86-flag"
-msgid "AMD 3DNow! extensions"
-msgstr "Расширения AMD 3DNow!"
-
-#: modules/devices/x86/processor.c:382
-msgctxt "x86-flag"
-msgid "CPU in recovery mode"
-msgstr "Процессор в режиме восстановления"
-
-#: modules/devices/x86/processor.c:383
-msgctxt "x86-flag"
-msgid "Longrun power control"
-msgstr "Управление питанием LongRun"
-
-#: modules/devices/x86/processor.c:384
-msgctxt "x86-flag"
-msgid "LongRun table interface"
-msgstr "Интерфейс таблицы LongRun"
-
-#: modules/devices/x86/processor.c:386
-msgctxt "x86-flag"
-msgid "Cyrix MMX extensions"
-msgstr "Расширения Cyrix MMX"
-
-#: modules/devices/x86/processor.c:387
-msgctxt "x86-flag"
-msgid "AMD K6 nonstandard MTRRs"
-msgstr "Нестандартные диапазонные регистры типа памяти (MTRR) AMD K6"
-
-#: modules/devices/x86/processor.c:388
-msgctxt "x86-flag"
-msgid "Cyrix ARRs (= MTRRs)"
-msgstr "Регистры адресного диапазона (ARR) Cyrix (= диапазонные регистры типа памяти (MTRR))"
-
-#: modules/devices/x86/processor.c:389
-msgctxt "x86-flag"
-msgid "Centaur MCRs (= MTRRs)"
-msgstr "Сбросы мастер-контроля (MCR) Centaur (= диапазонные регистры типа памяти (MTRR))"
-
-#: modules/devices/x86/processor.c:390
-msgctxt "x86-flag"
-msgid "TSC ticks at a constant rate"
-msgstr "Счетчик метки времени (TSC) работает на постоянной частоте"
-
-#: modules/devices/x86/processor.c:391
-msgctxt "x86-flag"
-msgid "SMP kernel running on UP"
-msgstr "Ядро SMP запущено на UP"
-
-#: modules/devices/x86/processor.c:392
-msgctxt "x86-flag"
-msgid "Always-Running Timer"
-msgstr "Постоянный таймер"
-
-#: modules/devices/x86/processor.c:393
-msgctxt "x86-flag"
-msgid "Intel Architectural PerfMon"
-msgstr "Архитектурный монитор призводительности Intel"
-
-#: modules/devices/x86/processor.c:394
-msgctxt "x86-flag"
-msgid "Precise-Event Based Sampling"
-msgstr "Сэмплинг, основанный на точных событиях"
-
-#: modules/devices/x86/processor.c:395
-msgctxt "x86-flag"
-msgid "Branch Trace Store"
-msgstr "Хранилище отслеживания ветви"
-
-#: modules/devices/x86/processor.c:396
-msgctxt "x86-flag"
-msgid "rep microcode works well"
-msgstr "микрокод rep работает нормально"
-
-#: modules/devices/x86/processor.c:397
-msgctxt "x86-flag"
-msgid "AMD accumulated power mechanism"
-msgstr "Механизм накопления питания AMD"
-
-#: modules/devices/x86/processor.c:398
-msgctxt "x86-flag"
-msgid "The NOPL (0F 1F) instructions"
-msgstr "Инструкции NOPL (0F 1F)"
-
-#: modules/devices/x86/processor.c:399
-msgctxt "x86-flag"
-msgid "cpu topology enum extensions"
-msgstr "расширения cpu топологии enum"
-
-#: modules/devices/x86/processor.c:400
-msgctxt "x86-flag"
-msgid "TSC is known to be reliable"
-msgstr "Счетчик метки времени (TSC) считается надежным"
-
-#: modules/devices/x86/processor.c:401
-msgctxt "x86-flag"
-msgid "TSC does not stop in C states"
-msgstr "Счетчик метки времени (TSC) не останавливается в состояниях C"
-
-#: modules/devices/x86/processor.c:402
-msgctxt "x86-flag"
-msgid "has extended APICID (8 bits)"
-msgstr "имеются расширенные APICID (8 бит)"
-
-#: modules/devices/x86/processor.c:403
-msgctxt "x86-flag"
-msgid "multi-node processor"
-msgstr "многоузловой процессор"
-
-#: modules/devices/x86/processor.c:404
-msgctxt "x86-flag"
-msgid "APERFMPERF"
-msgstr ""
-
-#: modules/devices/x86/processor.c:405
-msgctxt "x86-flag"
-msgid "Non lazy FPU restore"
-msgstr "Неленивое восстановление FPU"
-
-#: modules/devices/x86/processor.c:406
-msgctxt "x86-flag"
-msgid "TSC doesn't stop in S3 state"
-msgstr "Счетчик метки времени (TSC) не останавливается в состоянии S3"
-
-#: modules/devices/x86/processor.c:407
-msgctxt "x86-flag"
-msgid "CPU has recoverable machine checks"
-msgstr "У процессора есть возможность восстановить машинный контроль"
-
-#: modules/devices/x86/processor.c:410
-msgctxt "x86-flag"
-msgid "SSE-3 (“Prescott New Instructions”)"
-msgstr "SSE-3 (“Новые инструкции Prescott”)"
-
-#: modules/devices/x86/processor.c:411
-msgctxt "x86-flag"
-msgid ""
-"Perform a Carry-Less Multiplication of Quadword instruction — accelerator "
-"for GCM)"
-msgstr ""
-"Выполнение менее ресурсоемкого умножения инструкции учетверенного слова"
-" — ускоряет GCM)"
-
-#: modules/devices/x86/processor.c:412
-msgctxt "x86-flag"
-msgid "64-bit Debug Store"
-msgstr "Хранилище 64-битной отладки"
-
-#: modules/devices/x86/processor.c:413
-msgctxt "x86-flag"
-msgid "Monitor/Mwait support (Intel SSE3 supplements)"
-msgstr "Поддержка Monitor/Mwait (дополняет Intel SSE3)"
-
-#: modules/devices/x86/processor.c:414
-msgctxt "x86-flag"
-msgid "CPL Qual. Debug Store"
-msgstr "Хранилище отладки CPL Qual."
-
-#: modules/devices/x86/processor.c:415
-msgctxt "x86-flag"
-msgid "Hardware virtualization, Intel VMX"
-msgstr "Аппаратная виртуализация, Intel VMX"
-
-#: modules/devices/x86/processor.c:416
-msgctxt "x86-flag"
-msgid "Safer mode TXT (TPM support)"
-msgstr "Безопасный режим TXT (поддержка TPM)"
-
-#: modules/devices/x86/processor.c:417
-msgctxt "x86-flag"
-msgid "Enhanced SpeedStep"
-msgstr "Технология энергосбережения Enhanced SpeedStep"
-
-#: modules/devices/x86/processor.c:418
-msgctxt "x86-flag"
-msgid "Thermal Monitor 2"
-msgstr "Монитор температуры 2"
-
-#: modules/devices/x86/processor.c:419
-msgctxt "x86-flag"
-msgid "Supplemental SSE-3"
-msgstr "Дополнительный SSE-3"
-
-#: modules/devices/x86/processor.c:420
-msgctxt "x86-flag"
-msgid "Context ID"
-msgstr "ID контекста"
-
-#: modules/devices/x86/processor.c:421
-msgctxt "x86-flag"
-msgid "silicon debug"
-msgstr "отладка кремния"
-
-#: modules/devices/x86/processor.c:422
-msgctxt "x86-flag"
-msgid "Fused multiply-add"
-msgstr "Умножение-сложение с однократным округлением"
-
-#: modules/devices/x86/processor.c:423
-msgctxt "x86-flag"
-msgid "CMPXCHG16B"
-msgstr ""
-
-#: modules/devices/x86/processor.c:424
-msgctxt "x86-flag"
-msgid "Send Task Priority Messages"
-msgstr "Отправлять сообщения о приоритете задач"
-
-#: modules/devices/x86/processor.c:425
-msgctxt "x86-flag"
-msgid "Performance Capabilities"
-msgstr "Возможности производительности"
-
-#: modules/devices/x86/processor.c:426
-msgctxt "x86-flag"
-msgid "Process Context Identifiers"
-msgstr "Идентификаторы контекста процесса"
-
-#: modules/devices/x86/processor.c:427
-msgctxt "x86-flag"
-msgid "Direct Cache Access"
-msgstr "Прямой доступ к кэшу"
-
-#: modules/devices/x86/processor.c:428
-msgctxt "x86-flag"
-msgid "SSE-4.1"
-msgstr ""
-
-#: modules/devices/x86/processor.c:429
-msgctxt "x86-flag"
-msgid "SSE-4.2"
-msgstr ""
-
-#: modules/devices/x86/processor.c:430
-msgctxt "x86-flag"
-msgid "x2APIC"
-msgstr ""
-
-#: modules/devices/x86/processor.c:431
-msgctxt "x86-flag"
-msgid "Move Data After Swapping Bytes instruction"
-msgstr "Инструкция переноса данных после подкачки байт"
-
-#: modules/devices/x86/processor.c:432
-msgctxt "x86-flag"
-msgid ""
-"Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i."
-"e. bit count)"
-msgstr ""
-"Возвращение набора счетчика бит в 1 инструкцию (вес Хэмминга, т."
-"е. счетчик бит)"
-
-#: modules/devices/x86/processor.c:433
-msgctxt "x86-flag"
-msgid "Tsc deadline timer"
-msgstr "Таймер окончания счетчика метки времени (TSC)"
-
-#: modules/devices/x86/processor.c:434
-msgctxt "x86-flag"
-msgid "Advanced Encryption Standard (New Instructions)"
-msgstr "Стандарт дополнительного шифрования (новые инструкции)"
-
-#: modules/devices/x86/processor.c:435
-msgctxt "x86-flag"
-msgid "Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY"
-msgstr "Сохранение расширенных состояний процессора: также добавляет XGETBY,XRSTOR,XSETBY"
-
-#: modules/devices/x86/processor.c:436
-msgctxt "x86-flag"
-msgid "Advanced Vector Extensions"
-msgstr "Дополнительные векторные расширения"
-
-#: modules/devices/x86/processor.c:437
-msgctxt "x86-flag"
-msgid "16-bit fp conversions (CVT16)"
-msgstr "16-битные конверсии fp (CVT16)"
-
-#: modules/devices/x86/processor.c:438
-msgctxt "x86-flag"
-msgid "Read Random Number from hardware random number generator instruction"
-msgstr "Инструкция считывания случайного числа из аппаратного генератора"
-
-#: modules/devices/x86/processor.c:439
-msgctxt "x86-flag"
-msgid "Running on a hypervisor"
-msgstr "Запущено в гипервизоре"
-
-#. /Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001
-#: modules/devices/x86/processor.c:441
-msgctxt "x86-flag"
-msgid "Random Number Generator present (xstore)"
-msgstr "Наличие генератора случайных чисел (xstore)"
-
-#: modules/devices/x86/processor.c:442
-msgctxt "x86-flag"
-msgid "Random Number Generator enabled"
-msgstr "Генератор случайных чисел включен"
-
-#: modules/devices/x86/processor.c:443
-msgctxt "x86-flag"
-msgid "on-CPU crypto (xcrypt)"
-msgstr "шифрование на процессоре (xcrypt)"
-
-#: modules/devices/x86/processor.c:444
-msgctxt "x86-flag"
-msgid "on-CPU crypto enabled"
-msgstr "шифрование на процессоре включено"
-
-#: modules/devices/x86/processor.c:445
-msgctxt "x86-flag"
-msgid "Advanced Cryptography Engine v2"
-msgstr ""
-
-#: modules/devices/x86/processor.c:446
-msgctxt "x86-flag"
-msgid "ACE v2 enabled"
-msgstr "ACE v2 включен"
-
-#: modules/devices/x86/processor.c:447
-msgctxt "x86-flag"
-msgid "PadLock Hash Engine"
-msgstr "Движок контрольных сумм PadLock"
-
-#: modules/devices/x86/processor.c:448
-msgctxt "x86-flag"
-msgid "PHE enabled"
-msgstr "PHE включен"
-
-#: modules/devices/x86/processor.c:449
-msgctxt "x86-flag"
-msgid "PadLock Montgomery Multiplier"
-msgstr "Множитель PadLock Montgomery"
-
-#: modules/devices/x86/processor.c:450
-msgctxt "x86-flag"
-msgid "PMM enabled"
-msgstr "PMM включен"
-
-#: modules/devices/x86/processor.c:452
-msgctxt "x86-flag"
-msgid "Load AH from Flags (LAHF) and Store AH into Flags (SAHF) in long mode"
-msgstr "Загрузка AH из флагов (LAHF) и хранение AH в флагах (SAHF) в длинном режиме"
-
-#: modules/devices/x86/processor.c:453
-msgctxt "x86-flag"
-msgid "If yes HyperThreading not valid"
-msgstr "Если да, многопоточность не работает"
-
-#: modules/devices/x86/processor.c:454
-msgctxt "x86-flag"
-msgid "\"Secure virtual machine\": AMD-V"
-msgstr "\"Безопасная виртуальная машина\": AMD-V"
-
-#: modules/devices/x86/processor.c:455
-msgctxt "x86-flag"
-msgid "Extended APIC space"
-msgstr "Расширенное пространство APIC"
-
-#: modules/devices/x86/processor.c:456
-msgctxt "x86-flag"
-msgid "CR8 in 32-bit mode"
-msgstr "CR8 в 32-битном режиме"
-
-#: modules/devices/x86/processor.c:457
-msgctxt "x86-flag"
-msgid "Advanced Bit Manipulation"
-msgstr "Дополнительное управление битами"
-
-#: modules/devices/x86/processor.c:458
-msgctxt "x86-flag"
-msgid "SSE-4A"
-msgstr ""
-
-#: modules/devices/x86/processor.c:459
-msgctxt "x86-flag"
-msgid ""
-"indicates if a general-protection exception (#GP) is generated when some "
-"legacy SSE instructions operate on unaligned data. Also depends on CR0 and "
-"Alignment Checking bit"
-msgstr ""
-"показывает, если исключение из общей защиты (#GP) создано при использовании "
-"неверных данных некоторыми устаревшими инструкциями SSE. Также зависит от CR0 и "
-"бита проверки выравнивания"
-
-#: modules/devices/x86/processor.c:460
-msgctxt "x86-flag"
-msgid "3DNow prefetch instructions"
-msgstr "инструкции 3DNow prefetch"
-
-#: modules/devices/x86/processor.c:461
-msgctxt "x86-flag"
-msgid ""
-"indicates OS Visible Workaround, which allows the OS to work around "
-"processor errata."
-msgstr ""
-"отображает OS Visible Workaround, позволяющий ОС работать в обход опечаток "
-"процессора."
-
-#: modules/devices/x86/processor.c:462
-msgctxt "x86-flag"
-msgid "Instruction Based Sampling"
-msgstr "Сэмплинг, основанный на инструкциях"
-
-#: modules/devices/x86/processor.c:463
-msgctxt "x86-flag"
-msgid "extended AVX instructions"
-msgstr "расширенные инструкции AVX"
-
-#: modules/devices/x86/processor.c:464
-msgctxt "x86-flag"
-msgid "SKINIT/STGI instructions"
-msgstr "инструкции SKINIT/STGI"
-
-#: modules/devices/x86/processor.c:465
-msgctxt "x86-flag"
-msgid "Watchdog timer"
-msgstr "Сторожевой таймер"
-
-#: modules/devices/x86/processor.c:466
-msgctxt "x86-flag"
-msgid "Light Weight Profiling"
-msgstr "Легковесное профилирование"
-
-#: modules/devices/x86/processor.c:467
-msgctxt "x86-flag"
-msgid "4 operands MAC instructions"
-msgstr "Инструкции MAC 4 операндов"
-
-#: modules/devices/x86/processor.c:468
-msgctxt "x86-flag"
-msgid "translation cache extension"
-msgstr "расширение переноса кэша"
-
-#: modules/devices/x86/processor.c:469
-msgctxt "x86-flag"
-msgid "NodeId MSR"
-msgstr ""
-
-#: modules/devices/x86/processor.c:470
-msgctxt "x86-flag"
-msgid "Trailing Bit Manipulation"
-msgstr "Скользящее манипулирование битами"
-
-#: modules/devices/x86/processor.c:471
-msgctxt "x86-flag"
-msgid "Topology Extensions CPUID leafs"
-msgstr "Расширения топологии потоков CPUID"
-
-#: modules/devices/x86/processor.c:472
-msgctxt "x86-flag"
-msgid "Core Performance Counter Extensions"
-msgstr "Расширения счетчика производительности ядра"
-
-#: modules/devices/x86/processor.c:473
-msgctxt "x86-flag"
-msgid "NB Performance Counter Extensions"
-msgstr "Расширения счетчика производительности NB"
-
-#: modules/devices/x86/processor.c:474
-msgctxt "x86-flag"
-msgid "data breakpoint extension"
-msgstr "расширение точки прерывания данных"
-
-#: modules/devices/x86/processor.c:475
-msgctxt "x86-flag"
-msgid "performance time-stamp counter"
-msgstr "счетчик временной метки производительности"
-
-#: modules/devices/x86/processor.c:476
-msgctxt "x86-flag"
-msgid "L2 Performance Counter Extensions"
-msgstr "Расширения счетчика производительности L2"
-
-#: modules/devices/x86/processor.c:477
-msgctxt "x86-flag"
-msgid "MWAIT extension (MONITORX/MWAITX)"
-msgstr "Расширение MWAIT (MONITORX/MWAITX)"
-
-#: modules/devices/x86/processor.c:479
-msgctxt "x86-flag"
-msgid "AMD Core Performance Boost"
-msgstr "Увеличение производительности ядра AMD"
-
-#: modules/devices/x86/processor.c:480
-msgctxt "x86-flag"
-msgid "IA32_ENERGY_PERF_BIAS support"
-msgstr "Поддержка IA32_ENERGY_PERF_BIAS"
-
-#: modules/devices/x86/processor.c:481
-msgctxt "x86-flag"
-msgid "AMD HW-PState"
-msgstr ""
-
-#: modules/devices/x86/processor.c:482
-msgctxt "x86-flag"
-msgid "AMD ProcFeedbackInterface"
-msgstr ""
-
-#: modules/devices/x86/processor.c:483
-msgctxt "x86-flag"
-msgid "Intel Processor Tracing"
-msgstr "Отслеживание процессора Intel"
-
-#: modules/devices/x86/processor.c:485
-msgctxt "x86-flag"
-msgid "Intel TPR Shadow"
-msgstr ""
-
-#: modules/devices/x86/processor.c:486
-msgctxt "x86-flag"
-msgid "Intel Virtual NMI"
-msgstr ""
-
-#: modules/devices/x86/processor.c:487
-msgctxt "x86-flag"
-msgid "Intel FlexPriority"
-msgstr ""
-
-#: modules/devices/x86/processor.c:488
-msgctxt "x86-flag"
-msgid "Intel Extended Page Table"
-msgstr ""
-
-#: modules/devices/x86/processor.c:489
-msgctxt "x86-flag"
-msgid "Intel Virtual Processor ID"
-msgstr ""
-
-#: modules/devices/x86/processor.c:490
-msgctxt "x86-flag"
-msgid "prefer VMMCALL to VMCALL"
-msgstr "предпочитать VMMCALL, а не VMCALL"
-
-#: modules/devices/x86/processor.c:492
-msgctxt "x86-flag"
-msgid "{RD/WR}{FS/GS}BASE instructions"
-msgstr "Инструкции {RD/WR}{FS/GS}BASE"
-
-#: modules/devices/x86/processor.c:493
-msgctxt "x86-flag"
-msgid "TSC adjustment MSR"
-msgstr "TSC выраснивание MSR"
-
-#: modules/devices/x86/processor.c:494
-msgctxt "x86-flag"
-msgid "1st group bit manipulation extensions"
-msgstr "Расширения управления битами 1-й группы"
-
-#: modules/devices/x86/processor.c:495
-msgctxt "x86-flag"
-msgid "Hardware Lock Elision"
-msgstr "Аппаратная блокировка Elision"
-
-#: modules/devices/x86/processor.c:496
-msgctxt "x86-flag"
-msgid "AVX2 instructions"
-msgstr "Инструкции AVX2"
-
-#: modules/devices/x86/processor.c:497
-msgctxt "x86-flag"
-msgid "Supervisor Mode Execution Protection"
-msgstr "Защита выполнения режима супервизора"
-
-#: modules/devices/x86/processor.c:498
-msgctxt "x86-flag"
-msgid "2nd group bit manipulation extensions"
-msgstr "Расширения управления битами 2-й группы"
-
-#: modules/devices/x86/processor.c:499
-msgctxt "x86-flag"
-msgid "Enhanced REP MOVSB/STOSB"
-msgstr "Расширенный REP MOVSB/STOSB"
-
-#: modules/devices/x86/processor.c:500
-msgctxt "x86-flag"
-msgid "Invalidate Processor Context ID"
-msgstr "Аннулировать ID контекста процессора"
-
-#: modules/devices/x86/processor.c:501
-msgctxt "x86-flag"
-msgid "Restricted Transactional Memory"
-msgstr "Ограниченная память переносов"
-
-#: modules/devices/x86/processor.c:502
-msgctxt "x86-flag"
-msgid "Cache QoS Monitoring"
-msgstr "Мониторинг кэша QoS"
-
-#: modules/devices/x86/processor.c:503
-msgctxt "x86-flag"
-msgid "Memory Protection Extension"
-msgstr "Расширение защиты памяти"
-
-#: modules/devices/x86/processor.c:504
-msgctxt "x86-flag"
-msgid "AVX-512 foundation"
-msgstr "Основа AVX-512"
-
-#: modules/devices/x86/processor.c:505
-msgctxt "x86-flag"
-msgid "AVX-512 Double/Quad instructions"
-msgstr "Инструкции AVX-512 Double/Quad"
-
-#: modules/devices/x86/processor.c:506
-msgctxt "x86-flag"
-msgid "The RDSEED instruction"
-msgstr "Инструкция RDSEED"
-
-#: modules/devices/x86/processor.c:507
-msgctxt "x86-flag"
-msgid "The ADCX and ADOX instructions"
-msgstr "Инструкции ADCX и ADOX"
-
-#: modules/devices/x86/processor.c:508
-msgctxt "x86-flag"
-msgid "Supervisor Mode Access Prevention"
-msgstr "Предотвращение доступа к режиму супервизора"
-
-#: modules/devices/x86/processor.c:509
-msgctxt "x86-flag"
-msgid "CLFLUSHOPT instruction"
-msgstr "Инструкция CLFLUSHOPT"
-
-#: modules/devices/x86/processor.c:510
-msgctxt "x86-flag"
-msgid "CLWB instruction"
-msgstr "Инструкция CLWB"
-
-#: modules/devices/x86/processor.c:511
-msgctxt "x86-flag"
-msgid "AVX-512 Prefetch"
-msgstr ""
-
-#: modules/devices/x86/processor.c:512
-msgctxt "x86-flag"
-msgid "AVX-512 Exponential and Reciprocal"
-msgstr ""
-
-#: modules/devices/x86/processor.c:513
-msgctxt "x86-flag"
-msgid "AVX-512 Conflict Detection"
-msgstr "Обнаружения конфликтов AVX-512"
-
-#: modules/devices/x86/processor.c:514
-msgctxt "x86-flag"
-msgid "SHA1/SHA256 Instruction Extensions"
-msgstr "Расширения инструкций SHA1/SHA256"
-
-#: modules/devices/x86/processor.c:515
-msgctxt "x86-flag"
-msgid "AVX-512 Byte/Word instructions"
-msgstr "Инструкции AVX-512 Byte/Word"
-
-#: modules/devices/x86/processor.c:516
-msgctxt "x86-flag"
-msgid "AVX-512 128/256 Vector Length extensions"
-msgstr "Расширения длины вектора AVX-512 128/256"
-
-#: modules/devices/x86/processor.c:518
-msgctxt "x86-flag"
-msgid "Optimized XSAVE"
-msgstr "Оптимизированный XSAVE"
-
-#: modules/devices/x86/processor.c:519
-msgctxt "x86-flag"
-msgid "XSAVEC"
-msgstr ""
-
-#: modules/devices/x86/processor.c:520
-msgctxt "x86-flag"
-msgid "XGETBV with ECX = 1"
-msgstr "XGETBV с ECX = 1"
-
-#: modules/devices/x86/processor.c:521
-msgctxt "x86-flag"
-msgid "XSAVES/XRSTORS"
-msgstr ""
-
-#: modules/devices/x86/processor.c:523
-msgctxt "x86-flag"
-msgid "LLC QoS"
-msgstr ""
-
-#: modules/devices/x86/processor.c:525
-msgctxt "x86-flag"
-msgid "LLC occupancy monitoring"
-msgstr "Мониторинг занятости LLC"
-
-#: modules/devices/x86/processor.c:526
-msgctxt "x86-flag"
-msgid "LLC total MBM monitoring"
-msgstr "Полный MBM-мониторинг LLC"
-
-#: modules/devices/x86/processor.c:527
-msgctxt "x86-flag"
-msgid "LLC local MBM monitoring"
-msgstr "Локальный MBM-мониторинг LLC"
-
-#: modules/devices/x86/processor.c:529
-msgctxt "x86-flag"
-msgid "CLZERO instruction"
-msgstr "Инструкция CLZERO"
-
-#: modules/devices/x86/processor.c:530
-msgctxt "x86-flag"
-msgid "instructions retired performance counter"
-msgstr "инструкции счетчика отложенной производительности"
-
-#: modules/devices/x86/processor.c:532
-msgctxt "x86-flag"
-msgid "digital thermal sensor"
-msgstr "цифровой сенсор температуры"
-
-#: modules/devices/x86/processor.c:533
-msgctxt "x86-flag"
-msgid "Intel Dynamic Acceleration"
-msgstr "Динамическое ускорение Intel"
-
-#: modules/devices/x86/processor.c:534
-msgctxt "x86-flag"
-msgid "Always Running APIC Timer"
-msgstr "Таймер APIC всегда запущен"
-
-#: modules/devices/x86/processor.c:535
-msgctxt "x86-flag"
-msgid "Intel Power Limit Notification"
-msgstr "Уведомление о лимите энергии Intel"
-
-#: modules/devices/x86/processor.c:536
-msgctxt "x86-flag"
-msgid "Intel Package Thermal Status"
-msgstr "Статус температуры Intel"
-
-#: modules/devices/x86/processor.c:537
-msgctxt "x86-flag"
-msgid "Intel Hardware P-states"
-msgstr "Аппаратные P-states Intel"
-
-#: modules/devices/x86/processor.c:538
-msgctxt "x86-flag"
-msgid "HWP notification"
-msgstr "Уведомление HWP"
-
-#: modules/devices/x86/processor.c:539
-msgctxt "x86-flag"
-msgid "HWP Activity Window"
-msgstr "Окно активности HWP"
-
-#: modules/devices/x86/processor.c:540
-msgctxt "x86-flag"
-msgid "HWP Energy Performance Preference"
-msgstr "Настройка производительности энергии HWP"
-
-#: modules/devices/x86/processor.c:541
-msgctxt "x86-flag"
-msgid "HWP package-level request"
-msgstr "Запрос уровня пакета HWP"
-
-#: modules/devices/x86/processor.c:543
-msgctxt "x86-flag"
-msgid "AMD Nested Page Table support"
-msgstr "Поддержка таблиц вложенной страницы AMD"
-
-#: modules/devices/x86/processor.c:544
-msgctxt "x86-flag"
-msgid "AMD LBR Virtualization support"
-msgstr "Поддержка виртуализации AMD LBR"
-
-#: modules/devices/x86/processor.c:545
-msgctxt "x86-flag"
-msgid "AMD SVM locking MSR"
-msgstr "Блокировка MSR AMD SVM"
-
-#: modules/devices/x86/processor.c:546
-msgctxt "x86-flag"
-msgid "AMD SVM next_rip save"
-msgstr "Сохранение next_rip AMD SVM"
-
-#: modules/devices/x86/processor.c:547
-msgctxt "x86-flag"
-msgid "AMD TSC scaling support"
-msgstr "Поддержка масштабирования AMD TSC"
-
-#: modules/devices/x86/processor.c:548
-msgctxt "x86-flag"
-msgid "AMD VMCB clean bits support"
-msgstr "Поддержка чистых бит AMD VMCB"
-
-#: modules/devices/x86/processor.c:549
-msgctxt "x86-flag"
-msgid "AMD flush-by-ASID support"
-msgstr "Поддержка AMD flush-by-ASID"
-
-#: modules/devices/x86/processor.c:550
-msgctxt "x86-flag"
-msgid "AMD Decode Assists support"
-msgstr "Поддержка помощи декодирования"
-
-#: modules/devices/x86/processor.c:551
-msgctxt "x86-flag"
-msgid "AMD filtered pause intercept"
-msgstr "Перехват фильтрованной паузы AMD"
-
-#: modules/devices/x86/processor.c:552
-msgctxt "x86-flag"
-msgid "AMD pause filter threshold"
-msgstr "Порог фильтра паузы AMD"
-
-#: modules/devices/x86/processor.c:553
-msgctxt "x86-flag"
-msgid "Virtual Interrupt Controller"
-msgstr "Контроллер виртуального прерывания"
-
-#: modules/devices/x86/processor.c:555
-msgctxt "x86-flag"
-msgid "Protection Keys for Userspace"
-msgstr "Ключи защиты для пространства пользователя"
-
-#: modules/devices/x86/processor.c:556
-msgctxt "x86-flag"
-msgid "OS Protection Keys Enable"
-msgstr "Включение защиты ключей ОС"
-
-#: modules/devices/x86/processor.c:558
-msgctxt "x86-flag"
-msgid "MCA overflow recovery support"
-msgstr "Поддержка восстановления после переполнения MCA"
-
-#: modules/devices/x86/processor.c:559
-msgctxt "x86-flag"
-msgid "uncorrectable error containment and recovery"
-msgstr "неисправимое содержание ошибки и восстановление"
-
-#: modules/devices/x86/processor.c:560
-msgctxt "x86-flag"
-msgid "Scalable MCA"
-msgstr "Масштабируемый MCA"
-
-#: modules/devices/x86/processor.c:567
-msgctxt "x86-flag"
-msgid "Intel F00F bug"
-msgstr "Ошибка Intel F00F"
-
-#: modules/devices/x86/processor.c:568
-msgctxt "x86-flag"
-msgid "FPU FDIV"
-msgstr ""
-
-#: modules/devices/x86/processor.c:569
-msgctxt "x86-flag"
-msgid "Cyrix 6x86 coma"
-msgstr ""
-
-#: modules/devices/x86/processor.c:570
-msgctxt "x86-flag"
-msgid "AMD Erratum 383"
-msgstr ""
-
-#: modules/devices/x86/processor.c:571 modules/devices/x86/processor.c:580
-msgid "AMD Erratum 400"
-msgstr ""
-
-#: modules/devices/x86/processor.c:572
-msgctxt "x86-flag"
-msgid "Bad local APIC aka 11AP"
-msgstr "Неверный локальный APIC или 11AP"
-
-#: modules/devices/x86/processor.c:573
-msgctxt "x86-flag"
-msgid "FXSAVE leaks FOP/FIP/FOP"
-msgstr "FXSAVE утекает FOP/FIP/FOP"
-
-#: modules/devices/x86/processor.c:574
-msgctxt "x86-flag"
-msgid "AAI65, CLFLUSH required before MONITOR"
-msgstr "AAI65, CLFLUSH требуются до MONITOR"
-
-#: modules/devices/x86/processor.c:575
-msgctxt "x86-flag"
-msgid "SYSRET doesn't fix up SS attrs"
-msgstr "SYSRET не исправляет атрибуты SS"
-
-#: modules/devices/x86/processor.c:576
-msgctxt "x86-flag"
-msgid "IRET to 16-bit SS corrupts ESP/RSP high bits"
-msgstr "IRET на 16-битные SS прерывает высшие биты ESP/RSP"
-
-#: modules/devices/x86/processor.c:577
-msgctxt "x86-flag"
-msgid "Nulling a selector preserves the base"
-msgstr "Обнуление селектора продпочитается основному"
-
-#: modules/devices/x86/processor.c:578
-msgctxt "x86-flag"
-msgid "SWAPGS without input dep on GS"
-msgstr "SWAPGS без ввода зависит от GS"
-
-#: modules/devices/x86/processor.c:579
-msgctxt "x86-flag"
-msgid "IPI required to wake up remote CPU"
-msgstr "требуется IPI для удаленного пробуждения процессора"
-
-#: modules/devices/x86/processor.c:588
-msgctxt "x86-flag"
-msgid "temperature sensor"
-msgstr "сенсор температуры"
-
-#: modules/devices/x86/processor.c:589
-msgctxt "x86-flag"
-msgid "frequency id control"
-msgstr "контроль частоты id"
-
-#: modules/devices/x86/processor.c:590
-msgctxt "x86-flag"
-msgid "voltage id control"
-msgstr "контроль вольтажа id"
-
-#: modules/devices/x86/processor.c:591
-msgctxt "x86-flag"
-msgid "thermal trip"
-msgstr "изменение температуры"
-
-#: modules/devices/x86/processor.c:592
-msgctxt "x86-flag"
-msgid "hardware thermal control"
-msgstr "аппаратный контроль температуры"
-
-#: modules/devices/x86/processor.c:593
-msgctxt "x86-flag"
-msgid "software thermal control"
-msgstr "программный контроль температуры"
-
-#: modules/devices/x86/processor.c:594
-msgctxt "x86-flag"
-msgid "100 MHz multiplier control"
-msgstr "контроль множителя 100 МГц"
-
-#: modules/devices/x86/processor.c:595
-msgctxt "x86-flag"
-msgid "hardware P-state control"
-msgstr "аппаратное управление P-state"
-
-#: modules/devices/x86/processor.c:597
-msgctxt "x86-flag"
-msgid "core performance boost"
-msgstr "повышение производительности ядра"
-
-#: modules/devices/x86/processor.c:598
-msgctxt "x86-flag"
-msgid "Readonly aperf/mperf"
-msgstr "aperf/mperf только для чтения"
-
-#: modules/devices/x86/processor.c:599
-msgctxt "x86-flag"
-msgid "processor feedback interface"
-msgstr "интерфейс отзыва процессора"
-
-#: modules/devices/x86/processor.c:600
-msgctxt "x86-flag"
-msgid "accumulated power mechanism"
-msgstr "механизм накопления питания"
-
-#: modules/devices/x86/processor.c:739
-msgid "Model Name"
-msgstr "Название"
-
-#: modules/devices/x86/processor.c:740
-msgid "Family, model, stepping"
-msgstr "Семейство, модель, степпинг"
-
-#: modules/devices/x86/processor.c:746
-msgid "Configuration"
-msgstr "Конфигурация"
-
-#: modules/devices/x86/processor.c:747
-msgid "Cache Size"
-msgstr "Размер кэша"
-
-#: modules/devices/x86/processor.c:747
-msgid "kb"
-msgstr "кб"
-
-#: modules/devices/x86/processor.c:754
-msgid "Power Management"
-msgstr "Управление питанием"
-
-#: modules/devices/x86/processor.c:755
-msgid "Bug Workarounds"
-msgstr "Обход багов"
-
-#: modules/devices/printers.c:81
-msgid "⚬ Can do black and white printing=\n"
-msgstr "⚬ Может печатать черно-белым=\n"
-
-#: modules/devices/printers.c:83
-msgid "⚬ Can do color printing=\n"
-msgstr "⚬ Может печатать цветным=\n"
-
-#: modules/devices/printers.c:85
-#, fuzzy
-msgid "⚬ Can do duplexing=\n"
-msgstr "Не исправлять:"
-
-#: modules/devices/printers.c:87
-#, fuzzy
-msgid "⚬ Can do staple output=\n"
-msgstr "Выходной файл не может быть переименован."
-
-#: modules/devices/printers.c:89
-msgid "⚬ Can do copies=\n"
-msgstr "⚬ Можно делать копии=\n"
-
-#: modules/devices/printers.c:91
-msgid "⚬ Can collate copies=\n"
-msgstr "⚬ Можно сравнивать копии=\n"
-
-#: modules/devices/printers.c:93
-msgid "⚬ Printer is rejecting jobs=\n"
-msgstr "⚬ Принтер отклоняет задачи=\n"
-
-#: modules/devices/printers.c:95
-msgid "⚬ Printer was automatically discovered and added=\n"
-msgstr "⚬ Принтер был автоматически найден и добавлен=\n"
-
-#: modules/devices/printers.c:110
-msgid "Idle"
-msgstr "Неактивен"
-
-#: modules/devices/printers.c:112
-msgid "Printing a Job"
-msgstr "Печатается задача"
-
-#: modules/devices/printers.c:114
-msgid "Stopped"
-msgstr "Остановлен"
-
-#: modules/devices/printers.c:138 hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57
-msgid "Yes"
-msgstr "Да"
-
-#: modules/devices/printers.c:190
-msgid ""
-"[Printers]\n"
-"No suitable CUPS library found="
-msgstr ""
-"[Принтеры]\n"
-"Подходящей библиотеки CUPS не найдено="
-
-#: modules/devices/printers.c:200
-msgid "[Printers (CUPS)]\n"
-msgstr "[Принтеры (CUPS)]\n"
-
-#: modules/devices/printers.c:263
-msgid ""
-"[Printers]\n"
-"No printers found=\n"
-msgstr ""
-"[Принтеры]\n"
-"Принтеры не найдены=\n"
-
-#: modules/devices/sparc/processor.c:67
-msgid "CPU"
-msgstr ""
-
-#: hardinfo/util.c:105
-#, c-format
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] "%d день"
-msgstr[1] "%d дня"
-msgstr[2] "%d дней"
-
-#: hardinfo/util.c:106
-#, c-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d час"
-msgstr[1] "%d часа"
-msgstr[2] "%d часов"
-
-#: hardinfo/util.c:107 hardinfo/util.c:110
-#, c-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d минута"
-msgstr[1] "%d минуты"
-msgstr[2] "%d минут"
-
-#: hardinfo/util.c:119
-#, c-format
-msgid "%.1f B"
-msgstr "%.1f Б"
-
-#: hardinfo/util.c:121
-#, fuzzy, c-format
-msgid "%.1f KiB"
-msgstr "%.1f КиБ"
-
-#: hardinfo/util.c:123
-#, fuzzy, c-format
-msgid "%.1f MiB"
-msgstr "%.1f МиБ"
-
-#: hardinfo/util.c:125
-#, fuzzy, c-format
-msgid "%.1f GiB"
-msgstr "%.1f ГиБ"
-
-#: hardinfo/util.c:127
-#, c-format
-msgid "%.1f TiB"
-msgstr "%.1f ТиБ"
-
-#: hardinfo/util.c:129
-#, c-format
-msgid "%.1f PiB"
-msgstr "%.1f ПиБ"
-
-#: hardinfo/util.c:343
-msgid "Error"
-msgstr "Ошибка"
-
-#: hardinfo/util.c:343 hardinfo/util.c:359
-msgid "Warning"
-msgstr "Предупреждение"
-
-#: hardinfo/util.c:358
-msgid "Fatal Error"
-msgstr "Фатальная ошибка"
-
-#: hardinfo/util.c:383
-msgid "creates a report and prints to standard output"
-msgstr "создаёт отчёт и выводит на стандартный вывод"
-
-#: hardinfo/util.c:389
-msgid "chooses a report format (text, html)"
-msgstr "выбирает формат отчёта (text, html)"
-
-#: hardinfo/util.c:395
-msgid "run benchmark; requires benchmark.so to be loaded"
-msgstr "запуск теста; требует, чтобы benchmark.so был загружен"
-
-#: hardinfo/util.c:401
-msgid "lists modules"
-msgstr "список модулей"
-
-#: hardinfo/util.c:407
-msgid "specify module to load"
-msgstr "укажите модуль для загрузки"
-
-#: hardinfo/util.c:413
-msgid "automatically load module dependencies"
-msgstr "автоматически загружает зависимости модулей"
-
-#: hardinfo/util.c:420
-msgid "run in XML-RPC server mode"
-msgstr "запуск в режиме сервера XML-RPC"
-
-#: hardinfo/util.c:427
-msgid "shows program version and quit"
-msgstr "показывает версию программы и выходит"
-
-#: hardinfo/util.c:432
-msgid "- System Profiler and Benchmark tool"
-msgstr "- Инструмент для тестирования и проверки свойств системы"
-
-#: hardinfo/util.c:442
-#, c-format
-msgid ""
-"Unrecognized arguments.\n"
-"Try ``%s --help'' for more information.\n"
-msgstr ""
-"Неизвестные аргументы.\n"
-"Используйте `%s --help' для справки.\n"
-
-#: hardinfo/util.c:508
-#, c-format
-msgid "Couldn't find a Web browser to open URL %s."
-msgstr "Не удаётся найти веб-браузер для открытия URL %s."
-
-#: hardinfo/util.c:855
-#, c-format
-msgid "Module \"%s\" depends on module \"%s\", load it?"
-msgstr "Модуль \"%s\" зависит от модуля \"%s\", загрузить его?"
-
-#: hardinfo/util.c:878
-#, c-format
-msgid "Module \"%s\" depends on module \"%s\"."
-msgstr "Модуль \"%s\" зависит от модуля \"%s\"."
-
-#: hardinfo/util.c:923
-#, c-format
-msgid "No module could be loaded. Check permissions on \"%s\" and try again."
-msgstr ""
-"Модули не могут быть загружены. Проверьте разрешения на \"%s\" и попробуйте "
-"снова."
-
-#: hardinfo/util.c:927
-msgid ""
-"No module could be loaded. Please use hardinfo -l to list all available "
-"modules and try again with a valid module list."
-msgstr ""
-"Не удается загрузить модули. Пожалуйста, используйте hardinfo -l для "
-"получения списка доступных модулей и попробуйте снова с правильным списком "
-"модулей."
-
-#: hardinfo/util.c:1103
-#, c-format
-msgid "Scanning: %s..."
-msgstr "Сканирование: %s..."
-
-#: hardinfo/hardinfo.c:48
-msgid ""
-"Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n"
-"\n"
-msgstr ""
-"Copyright (C) 2003-2009 Leandro A. F. Pereira. Смотрите файл COPYING "
-"для более подробной информации.\n"
-"\n"
-
-#: hardinfo/hardinfo.c:50
-#, c-format
-msgid ""
-"Compile-time options:\n"
-"  Release version:   %s (%s)\n"
-"  BinReloc enabled:  %s\n"
-"  Data prefix:       %s\n"
-"  Library prefix:    %s\n"
-"  Compiled on:       %s %s (%s)\n"
-msgstr ""
-"Настройки компиляции:\n"
-"  Release version:    %s (%s)\n"
-"  BinReloc включен:   %s\n"
-"  Префикс данных:     %s\n"
-"  Префикс библиотеки: %s\n"
-"  Скомпилировано на:  %s %s (%s)\n"
-
-#: hardinfo/hardinfo.c:68
-#, c-format
-msgid ""
-"Failed to find runtime data.\n"
-"\n"
-"• Is HardInfo correctly installed?\n"
-"• See if %s and %s exists and you have read permission."
-msgstr ""
-"Не удалось найти данные среды выполнения.\n"
-"\n"
-"• Правильно ли установлен HardInfo?\n"
-"• Проверьте, существуют ли %s и %s и есть ли у вас право на чтение."
-
-#: hardinfo/hardinfo.c:75
-#, c-format
-msgid ""
-"Modules:\n"
-"%-20s%-15s%-12s\n"
-msgstr ""
-"Модули:\n"
-"%-20s%-15s%-12s\n"
-
-#: hardinfo/hardinfo.c:76
-msgid "File Name"
-msgstr "Имя файла"
-
-#: hardinfo/hardinfo.c:123
-#, c-format
-msgid "Unknown benchmark ``%s'' or libbenchmark.so not loaded"
-msgstr "Тест ``%s'' неизвестен или библиотека libbenchmark.so не загружена"
-
-#: hardinfo/hardinfo.c:151
-msgid "Don't know what to do. Exiting."
-msgstr "Неизвестно, что делать. Выход."
+# Memory и Date/Time не переводить — не будут обновляться!
+#~ msgid ""
+#~ "[$ShellParam$]\n"
+#~ "UpdateInterval$Memory=1000\n"
+#~ "UpdateInterval$Date/Time=1000\n"
+#~ "#ReloadInterval=5000\n"
+#~ "[Computer]\n"
+#~ "Processor=%s\n"
+#~ "Memory=...\n"
+#~ "Machine Type=%s\n"
+#~ "Operating System=%s\n"
+#~ "User Name=%s\n"
+#~ "Date/Time=...\n"
+#~ "[Display]\n"
+#~ "Resolution=%dx%d pixels\n"
+#~ "OpenGL Renderer=%s\n"
+#~ "X11 Vendor=%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "[Input Devices]\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ msgstr ""
+#~ "[$ShellParam$]\n"
+#~ "UpdateInterval$Память=1000\n"
+#~ "UpdateInterval$Date/Time=1000\n"
+#~ "#ReloadInterval=5000\n"
+#~ "[Компьютер]\n"
+#~ "Процессор=%s\n"
+#~ "Память=...\n"
+#~ "Тип машины=%s\n"
+#~ "Операционная система=%s\n"
+#~ "Пользователь=%s\n"
+#~ "Date/Time=...\n"
+#~ "[Дисплей]\n"
+#~ "Разрешение=%dx%d пикселей\n"
+#~ "Рендер OpenGL=%s\n"
+#~ "Поставщик X11=%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "[Устройства ввода]\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+#~ "\n"
+#~ "%s\n"
+
+#~ msgid "#Language"
+#~ msgstr "#Язык"
+
+#~ msgid "GNU C Library version %s (%sstable)"
+#~ msgstr "Библиотека GNU C версии %s (%s стабильна)"
+
+#~ msgid "un"
+#~ msgstr "не"
+
+#~ msgctxt "arm-flag"
+#~ msgid "kernel event stream using generic architected timer"
+#~ msgstr "поток событий ядра с использованием общего архитектурного таймера"
+
+#~ msgctxt "x86-flag"
+#~ msgid "SSE-3 (“Prescott New Instructions”)"
+#~ msgstr "SSE-3 (“Новые инструкции Prescott”)"
+
+#~ msgctxt "x86-flag"
+#~ msgid ""
+#~ "Perform a Carry-Less Multiplication of Quadword instruction — accelerator "
+#~ "for GCM)"
+#~ msgstr ""
+#~ "Выполнение менее ресурсоемкого умножения инструкции учетверенного слова — "
+#~ "ускоряет GCM)"
 
 # Uptime, Load Average и Available entropy in /dev/random не переводить — не будут обновляться!
 #~ msgid ""
