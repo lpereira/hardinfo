@@ -102,6 +102,8 @@ static int rpi_find_board(const char *r_code) {
 
 /* ------------------------- */
 
+#include "cpu_util.h" /* for PROC_CPUINFO */
+
 static gchar *rpi_board_details(void) {
     int i = 0;
     gchar *ret = NULL;
