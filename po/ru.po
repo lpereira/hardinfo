@@ -750,7 +750,7 @@ msgstr "Домашний каталог"
 
 #: modules/computer.c:509
 msgid "Desktop Environment"
-msgstr "Домашний каталог"
+msgstr "Настольная среда"
 
 #: modules/computer.c:510
 msgid "Misc"
