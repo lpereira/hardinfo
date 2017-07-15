@@ -152,7 +152,7 @@ static gchar *__cache_get_info_as_string(Processor *processor)
         result = h_strdup_cprintf(_("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"),
                                   result,
                                   cache->level,
-                                  cache->type,
+                                  C_("cache-type", cache->type),
                                   cache->ways_of_associativity,
                                   cache->number_of_sets,
                                   cache->size);
@@ -160,6 +160,14 @@ static gchar *__cache_get_info_as_string(Processor *processor)
 
     return result;
 }
+
+/* This is not used directly, but creates translatable strings for
+ * the type string returned from /sys/.../cache */
+static const char* cache_types[] = {
+    NC_("cache-type", /*/cache type, as appears in: Level 1 (Data)*/ "Data"),
+    NC_("cache-type", /*/cache type, as appears in: Level 1 (Instruction)*/ "Instruction"),
+    NC_("cache-type", /*/cache type, as appears in: Level 2 (Unified)*/ "Unified")
+};
 
 static void __cache_obtain_info(Processor *processor)
 {
