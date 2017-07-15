@@ -45,7 +45,8 @@ gchar *
 computer_get_formatted_uptime()
 {
     UptimeInfo *ui;
-    gchar *days_fmt, *hours_fmt, *minutes_fmt, *full_fmt, *ret;
+    const gchar *days_fmt, *hours_fmt, *minutes_fmt;
+    gchar *full_fmt, *ret;
 
     ui = computer_get_uptime();
 
@@ -64,7 +65,7 @@ computer_get_formatted_uptime()
         full_fmt = g_strdup_printf("%s %s %s", days_fmt, hours_fmt, minutes_fmt);
         ret = g_strdup_printf(full_fmt, ui->days, ui->hours, ui->minutes);
     }
-
+    g_free(full_fmt);
     g_free(ui);
     return ret;
 }
