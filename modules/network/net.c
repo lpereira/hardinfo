@@ -288,6 +288,30 @@ remove_net_devices(gpointer key, gpointer value, gpointer data)
     return g_str_has_prefix(key, "NET");
 }
 
+#ifdef HAS_LINUX_WE
+const char *wifi_bars(int signal, int noise)
+{
+    float quality;
+
+    if (signal <= -100)
+        quality = 0.0;
+    else if (signal >= -50)
+        quality = 1.0;
+    else
+        quality = (2.0 * (signal + 100.0)) / 100.0;
+
+    if (quality < 0.20)
+        return "▰▱▱▱▱";
+    if (quality < 0.40)
+        return "▰▰▱▱▱";
+    if (quality < 0.60)
+        return "▰▰▰▱▱";
+    if (quality < 0.80)
+        return "▰▰▰▰▱";
+    return "▰▰▰▰▰";
+}
+#endif
+
 static void scan_net_interfaces_24(void)
 {
     FILE *proc_net;
@@ -407,7 +431,7 @@ static void scan_net_interfaces_24(void)
                                           "Mode=%s\n"
                                           "Status=%d\n"
                                           "Link Quality=%d\n"
-                                          "Signal / Noise=%d dBm / %d dBm\n",
+                                          "Signal / Noise=%d dBm / %d dBm (%s)\n",
                                           detailed,
                                           ni.wi_essid,
                                           ni.wi_rate / 1000000,
@@ -416,7 +440,8 @@ static void scan_net_interfaces_24(void)
                                           ni.wi_status,
                                           ni.wi_quality_level,
                                           ni.wi_signal_level,
-                                          ni.wi_noise_level);
+                                          ni.wi_noise_level,
+                                          wifi_bars(ni.wi_signal_level, ni.wi_noise_level));
 
               g_free(txpower);
             }
