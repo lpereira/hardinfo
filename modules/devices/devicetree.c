@@ -20,6 +20,7 @@
  */
 #include <unistd.h>
 #include <sys/types.h>
+#include <endian.h>
 #include "devices.h"
 
 enum {
@@ -29,6 +30,8 @@ enum {
 enum {
     DTP_UNK,
     DTP_STR,
+    DTP_INT,
+    DTP_HEX,
 };
 
 typedef struct {
@@ -48,6 +51,9 @@ static struct {
     { "reg", DTP_UNK },
     { "#address-cells", DTP_UNK },
     { "#size-cells", DTP_UNK },
+    { "regulator-min-microvolt", DTP_INT },
+    { "regulator-max-microvolt", DTP_INT },
+    { "clock-frequency", DTP_INT },
     { NULL, 0 },
 };
 
@@ -74,12 +80,15 @@ static int dt_guess_type(dt_raw *prop) {
         if ( isprint(*tmp) || *tmp == 0 )
             continue;
         might_be_str = 0;
-        return DTP_UNK;
+        break;
     }
     if (might_be_str &&
         ( anc >= prop->length - 2 /* all alpha-nums but ^/ and \0$ */
           || anc >= 5 ) /*arbitrary*/)
         return DTP_STR;
+
+    if (prop->length == 4) /* maybe an int */
+        return DTP_INT;
 
     return DTP_UNK;
 }
@@ -112,6 +121,8 @@ static char* dt_str(dt_raw *prop) {
                 tl += l + 1; next_str += l + 1;
                 if (tl >= prop->length) break;
             }
+        } else if (i == DTP_INT && prop->length == 4) {
+            ret = g_strdup_printf("%d", be32toh(*(int*)prop->data) );
         } else {
             ret = g_strdup_printf("{data} (%d bytes)", prop->length);
         }
