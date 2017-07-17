@@ -57,6 +57,28 @@ static struct {
     { NULL, 0 },
 };
 
+/* Hardinfo labels that have # are truncated and/or hidden.
+ * Labels can't have $ because that is the delimiter in
+ * moreinfo. */
+gchar *hardinfo_clean_label(const gchar *v, int replacing) {
+    gchar *clean, *p;
+
+    p = clean = g_strdup(v);
+    while (*p != 0) {
+        switch(*p) {
+            case '#': case '$': case '&':
+                *p = '_';
+                break;
+            default:
+                break;
+        }
+        p++;
+    }
+    if (replacing)
+        g_free((gpointer)v);
+    return clean;
+}
+
 static int dt_guess_type(dt_raw *prop) {
     char *tmp, *slash;
     int i = 0, anc = 0, might_be_str = 1;
@@ -181,7 +203,7 @@ gchar *dtree_info = NULL;
 
 gchar *get_node(char *np) {
     gchar *nodes = NULL, *props = NULL, *ret = NULL;
-    gchar *tmp = NULL, *pstr = NULL;
+    gchar *tmp = NULL, *pstr = NULL, *lstr = NULL;
     gchar *dir_path = g_strdup_printf("/proc/device-tree/%s", np);
     gchar *node_path;
     const gchar *fn;
@@ -197,19 +219,21 @@ gchar *get_node(char *np) {
             node_path = g_strdup_printf("%s/%s", np, fn);
             prop = get_dt_raw(node_path);
             pstr = dt_str(prop);
+            lstr = hardinfo_clean_label(fn, 0);
             if (prop->type == DT_NODE) {
                 tmp = g_strdup_printf("%s%s=%s\n",
-                    nodes, fn, pstr);
+                    nodes, lstr, pstr);
                 g_free(nodes);
                 nodes = tmp;
             } else if (prop->type == DT_PROPERTY) {
                 tmp = g_strdup_printf("%s%s=%s\n",
-                    props, fn, pstr);
+                    props, lstr, pstr);
                 g_free(props);
                 props = tmp;
             }
             dt_raw_free(prop);
             g_free(pstr);
+            g_free(lstr);
             g_free(node_path);
         }
     }
@@ -258,12 +282,15 @@ gchar *get_summary() {
 }
 
 void mi_add(const char *key, const char *value) {
-    gchar *rkey;
-    rkey = g_strdup_printf("%s:%s", "DTREE", key);
+    gchar *ckey, *rkey;
 
-    dtree_info = g_strdup_printf("%s$%s$%s=\n", dtree_info, rkey, key);
+    ckey = hardinfo_clean_label(key, 0);
+    rkey = g_strdup_printf("%s:%s", "DTREE", ckey);
+
+    dtree_info = g_strdup_printf("%s$%s$%s=\n", dtree_info, rkey, ckey);
     moreinfo_add_with_prefix("DEV", rkey, g_strdup(value));
 
+    g_free(ckey);
     g_free(rkey);
 }
 
