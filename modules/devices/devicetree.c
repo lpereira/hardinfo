@@ -79,6 +79,17 @@ gchar *hardinfo_clean_label(const gchar *v, int replacing) {
     return clean;
 }
 
+gchar *hardinfo_clean_value(const gchar *v, int replacing) {
+    gchar *clean;
+    if (v == NULL) return NULL;
+    gchar **vl = g_strsplit(v, "&", -1);
+    clean = g_strjoinv("&amp;", vl);
+    g_strfreev(vl);
+    if (replacing)
+        g_free((gpointer)v);
+    return clean;
+}
+
 static int dt_guess_type(dt_raw *prop) {
     char *tmp, *slash;
     int i = 0, anc = 0, might_be_str = 1;
@@ -116,7 +127,7 @@ static int dt_guess_type(dt_raw *prop) {
 }
 
 static char* dt_str(dt_raw *prop) {
-    char *tmp, *next_str, *ret = NULL;
+    char *tmp, *esc, *next_str, *ret = NULL;
     int i, l, tl;
 
     if (prop == NULL) return NULL;
@@ -136,9 +147,11 @@ static char* dt_str(dt_raw *prop) {
             next_str = prop->data;
             while(next_str != NULL) {
                 l = strlen(next_str);
+                esc = g_strescape(next_str, NULL);
                 tmp = g_strdup_printf("%s%s\"%s\"",
-                        ret, strlen(ret) ? ", " : "", next_str);
+                        ret, strlen(ret) ? ", " : "", esc);
                 g_free(ret);
+                g_free(esc);
                 ret = tmp;
                 tl += l + 1; next_str += l + 1;
                 if (tl >= prop->length) break;
@@ -218,7 +231,7 @@ gchar *get_node(char *np) {
         while((fn = g_dir_read_name(dir)) != NULL) {
             node_path = g_strdup_printf("%s/%s", np, fn);
             prop = get_dt_raw(node_path);
-            pstr = dt_str(prop);
+            pstr = hardinfo_clean_value(dt_str(prop), 1);
             lstr = hardinfo_clean_label(fn, 0);
             if (prop->type == DT_NODE) {
                 tmp = g_strdup_printf("%s%s=%s\n",
