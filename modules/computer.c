@@ -99,22 +99,22 @@ gchar *hi_get_field(gchar * field)
     gchar *tmp;
 
     if (g_str_equal(field, _("Memory"))) {
-	MemoryInfo *mi = computer_get_memory();
-	tmp = g_strdup_printf(_("%dMB (%dMB used)"), mi->total, mi->used);
-	g_free(mi);
+        MemoryInfo *mi = computer_get_memory();
+        tmp = g_strdup_printf(_("%dMB (%dMB used)"), mi->total, mi->used);
+        g_free(mi);
     } else if (g_str_equal(field, _("Uptime"))) {
-	tmp = computer_get_formatted_uptime();
+        tmp = computer_get_formatted_uptime();
     } else if (g_str_equal(field, _("Date/Time"))) {
-	time_t t = time(NULL);
+        time_t t = time(NULL);
 
-	tmp = g_new0(gchar, 64);
-	strftime(tmp, 64, "%c", localtime(&t));
+        tmp = g_new0(gchar, 64);
+        strftime(tmp, 64, "%c", localtime(&t));
     } else if (g_str_equal(field, _("Load Average"))) {
-	tmp = computer_get_formatted_loadavg();
+        tmp = computer_get_formatted_loadavg();
     } else if (g_str_equal(field, _("Available entropy in /dev/random"))) {
-	tmp = computer_get_entropy_avail();
+        tmp = computer_get_entropy_avail();
     } else {
-	tmp = g_strdup_printf("Unknown field: %s", field);
+        tmp = g_strdup_printf("Unknown field: %s", field);
     }
     return tmp;
 }
