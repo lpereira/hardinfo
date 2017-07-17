@@ -230,13 +230,13 @@ static struct {
     char *label;
     char *icon;
 } netdev2type[] = {
+    /* Classic */
     { "eth", "Ethernet", "network-interface" },
     { "lo", "Loopback", "network" },
     { "ppp", "Point-to-Point", "modem" },
     { "ath", "Wireless", "wireless" },
     { "wlan", "Wireless", "wireless" },
     { "ra", "Wireless", "wireless" },
-    { "wl", "Wireless", "wireless" },
     { "wmaster", "Wireless", "wireless" },
     { "tun", "Virtual Point-to-Point (TUN)", "network" },
     { "tap", "Ethernet (TAP)", "network" },
@@ -257,6 +257,13 @@ static struct {
     { "msh", "Mesh Network", "wireless" },
     { "wmaster", "Wireless Master Interface", "wireless" },
     { "vboxnet", "VirtualBox Virtual Network Interface", "network" },
+
+    /* Predictable network interface device names (systemd) */
+    { "en", "Ethernet", "network-interface" },
+    { "sl", "Serial Line Internet Protocol", "network" },
+    { "wl", "Wireless", "wireless" },
+    { "ww", "Wireless (WAN)", "wireless" },
+
     { NULL, "Unknown", "network" },
 };
 
