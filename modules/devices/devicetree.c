@@ -157,14 +157,17 @@ void dt_raw_free(dt_raw *s) {
     free(s);
 }
 
-static char *get_dt_string(char *p) {
+static char *get_dt_string(char *p, int decode) {
     dt_raw *prop;
     char *ret, *rep;
     prop = get_dt_raw(p);
     if (prop != NULL) {
-        ret = g_strdup(prop->data);
-        if (ret) {
-            while((rep = strchr(ret, '\n'))) *rep = ' ';
+        if (decode)
+            ret = dt_str(prop);
+        else {
+            ret = g_strdup(prop->data);
+            if (ret)
+                while((rep = strchr(ret, '\n'))) *rep = ' ';
         }
         dt_raw_free(prop);
         return ret;
@@ -223,9 +226,10 @@ gchar *get_node(char *np) {
 }
 
 gchar *get_summary() {
-    char *model = NULL, *serial = NULL, *ret = NULL;
-    model = get_dt_string("model");
-    serial = get_dt_string("serial-number");
+    char *model = NULL, *serial = NULL, *compat = NULL, *ret = NULL;
+    model = get_dt_string("model", 0);
+    serial = get_dt_string("serial-number", 0);
+    compat = get_dt_string("compatible", 1);
 
     /* Expand on the DT information from known machines, like RPi.
      * RPi stores a revision value in /proc/cpuinfo that can be used
@@ -235,14 +239,18 @@ gchar *get_summary() {
      * machine identifiers in /proc/cpuinfo. */
     if ( strstr(model, "Raspberry Pi") != NULL )
         ret = rpi_board_details();
-    else
+
+    if (ret == NULL) {
         ret = g_strdup_printf(
                 "[%s]\n"
+                "%s=%s\n"
                 "%s=%s\n"
                 "%s=%s\n",
                 _("Board"),
                 _("Model"), model,
-                _("Serial Number"), serial);
+                _("Serial Number"), serial,
+                _("Compatible"), compat);
+    }
 
     free(model);
     free(serial);
@@ -273,7 +281,7 @@ void add_keys(char *np) {
             if ( g_file_test(ftmp, G_FILE_TEST_IS_DIR) ) {
                 ntmp = g_strdup_printf("%s/%s", np, fn);
                 ptmp = g_strdup_printf("%s/name", ntmp, fn);
-                n_name = get_dt_string(ptmp);
+                n_name = get_dt_string(ptmp, 0);
                 n_info = get_node(ntmp);
                 mi_add(ntmp, n_info);
                 g_free(n_name);
