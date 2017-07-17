@@ -20,6 +20,7 @@
  */
 #include <unistd.h>
 #include <sys/types.h>
+#include <stdint.h>
 #include <endian.h>
 #include "devices.h"
 
@@ -29,9 +30,10 @@ enum {
 };
 enum {
     DTP_UNK,
-    DTP_STR,
+    DTP_STR, /* null-delimited list of strings */
     DTP_INT,
-    DTP_HEX,
+    DTP_UINT,
+    DTP_HEX, /* list of 32-bit values displayed in hex */
 };
 
 typedef struct {
@@ -47,13 +49,12 @@ static struct {
     { "name", DTP_STR },
     { "compatible", DTP_STR },
     { "model", DTP_STR },
-    { "phandle", DTP_UNK },
-    { "reg", DTP_UNK },
-    { "#address-cells", DTP_UNK },
-    { "#size-cells", DTP_UNK },
-    { "regulator-min-microvolt", DTP_INT },
-    { "regulator-max-microvolt", DTP_INT },
-    { "clock-frequency", DTP_INT },
+    { "reg", DTP_HEX },
+    { "phandle", DTP_HEX },
+    { "interrupts", DTP_HEX },
+    { "regulator-min-microvolt", DTP_UINT },
+    { "regulator-max-microvolt", DTP_UINT },
+    { "clock-frequency", DTP_UINT },
     { NULL, 0 },
 };
 
@@ -91,16 +92,27 @@ gchar *hardinfo_clean_value(const gchar *v, int replacing) {
 }
 
 static int dt_guess_type(dt_raw *prop) {
-    char *tmp, *slash;
+    char *tmp, *slash, *dash;
     int i = 0, anc = 0, might_be_str = 1;
+
+    /* find name after last slash, or start */
+    slash = strrchr(prop->path, '/');
+    if (slash != NULL)
+        slash++;
+    else
+        slash = prop->path;
+
+    /* special #(.*)-cells names are UINT */
+    if (*slash == '#') {
+        dash = strrchr(slash, '-');
+        if (dash != NULL) {
+            if (strcmp(dash, "-cells") == 0)
+                return DTP_UINT;
+        }
+    }
 
     /* lookup known type */
     while (prop_types[i].name != NULL) {
-        slash = strrchr(prop->path, '/');
-        if (slash != NULL)
-            slash++;
-        else
-            slash = prop->path;
         if (strcmp(slash, prop_types[i].name) == 0)
             return prop_types[i].type;
         i++;
@@ -120,10 +132,26 @@ static int dt_guess_type(dt_raw *prop) {
           || anc >= 5 ) /*arbitrary*/)
         return DTP_STR;
 
-    if (prop->length == 4) /* maybe an int */
-        return DTP_INT;
+    if (!(prop->length % 4)) /* multiple of 4 bytes, try list of hex values */
+        return DTP_HEX;
 
     return DTP_UNK;
+}
+
+static char* dt_hex_list(uint32_t *list, int count) {
+    char *ret, *dest, buff[11] = "";
+    int i, l;
+    l = count * 11 + 1;
+    ret = malloc(l);
+    memset(ret, 0, l);
+    dest = ret;
+    for (i = 0; i < count; i++) {
+        sprintf(buff, "0x%x ", be32toh(list[i]));
+        l = strlen(buff);
+        strncpy(dest, buff, l);
+        dest += l;
+    }
+    return ret;
 }
 
 static char* dt_str(dt_raw *prop) {
@@ -157,7 +185,13 @@ static char* dt_str(dt_raw *prop) {
                 if (tl >= prop->length) break;
             }
         } else if (i == DTP_INT && prop->length == 4) {
-            ret = g_strdup_printf("%d", be32toh(*(int*)prop->data) );
+            /* still use uint32_t for the byte-order conversion */
+            ret = g_strdup_printf("%d", be32toh(*(uint32_t*)prop->data) );
+        } else if (i == DTP_UINT && prop->length == 4) {
+            ret = g_strdup_printf("%u", be32toh(*(uint32_t*)prop->data) );
+        } else if (i == DTP_HEX && !(prop->length % 4)) {
+            l = prop->length / 4;
+            ret = dt_hex_list((uint32_t*)prop->data, l);
         } else {
             ret = g_strdup_printf("{data} (%lu bytes)", prop->length);
         }
