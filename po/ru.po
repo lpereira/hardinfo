@@ -680,6 +680,10 @@ msgstr "Пользователь"
 msgid "Resolution"
 msgstr "Разрешение"
 
+#: modules/computer.c:433
+msgid "pixels"
+msgstr "пикселей"
+
 #: modules/computer.c:434
 msgid "OpenGL Renderer"
 msgstr "Рендер OpenGL"
@@ -750,7 +754,7 @@ msgstr "Домашний каталог"
 
 #: modules/computer.c:509
 msgid "Desktop Environment"
-msgstr "Настольная среда"
+msgstr "Среда рабочего стола"
 
 #: modules/computer.c:510
 msgid "Misc"
@@ -1654,7 +1658,7 @@ msgstr "Возможности"
 #: modules/devices/x86/processor.c:779
 #, c-format
 msgid "%s$CPU%d$%s=%.2fMHz\n"
-msgstr "%s$CPU%d$%s=%.2fМГц\n"
+msgstr "%s$CPU%d$%s=%.2f МГц\n"
 
 #: modules/devices/s390/processor.c:92
 msgid "S390 Processor"
@@ -1855,7 +1859,7 @@ msgstr "Процессор SuperH"
 #: modules/devices/sh/processor.c:76 modules/devices/ia64/processor.c:152
 #: hardinfo/hardinfo.c:76
 msgid "Name"
-msgstr "Имя"
+msgstr "Название"
 
 #: modules/devices/sh/processor.c:77
 msgid "Machine"
@@ -3068,6 +3072,10 @@ msgstr ""
 #: modules/devices/sparc/processor.c:67
 msgid "CPU"
 msgstr ""
+
+#: hardinfo/dmi.c:36
+msgid "Date"
+msgstr "Дата"
 
 #: hardinfo/util.c:105
 #, c-format
