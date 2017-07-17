@@ -46,7 +46,7 @@ computer_get_formatted_uptime()
 {
     UptimeInfo *ui;
     const gchar *days_fmt, *hours_fmt, *minutes_fmt;
-    gchar *full_fmt, *ret;
+    gchar *full_fmt = NULL, *ret = NULL;
 
     ui = computer_get_uptime();
 
