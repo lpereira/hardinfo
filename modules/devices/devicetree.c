@@ -81,12 +81,28 @@ gchar *hardinfo_clean_label(const gchar *v, int replacing) {
     return clean;
 }
 
+/* hardinfo uses the values as {ht,x}ml, apparently */
 gchar *hardinfo_clean_value(const gchar *v, int replacing) {
-    gchar *clean;
+    gchar *clean, *tmp;
+    gchar **vl;
     if (v == NULL) return NULL;
-    gchar **vl = g_strsplit(v, "&", -1);
+
+    vl = g_strsplit(v, "&", -1);
     clean = g_strjoinv("&amp;", vl);
     g_strfreev(vl);
+
+    vl = g_strsplit(clean, "<", -1);
+    tmp = g_strjoinv("&lt;", vl);
+    g_strfreev(vl);
+    g_free(clean);
+    clean = tmp;
+
+    vl = g_strsplit(clean, ">", -1);
+    tmp = g_strjoinv("&gt;", vl);
+    g_strfreev(vl);
+    g_free(clean);
+    clean = tmp;
+
     if (replacing)
         g_free((gpointer)v);
     return clean;
