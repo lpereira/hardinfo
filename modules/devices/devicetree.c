@@ -17,6 +17,7 @@
  */
 /*
  * Device Tree support by Burt P. <pburt0@gmail.com>
+ * Sources: http://elinux.org/Device_Tree_Mysteries
  */
 #include <unistd.h>
 #include <sys/types.h>
