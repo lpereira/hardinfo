@@ -124,7 +124,7 @@ static char* dt_str(dt_raw *prop) {
         } else if (i == DTP_INT && prop->length == 4) {
             ret = g_strdup_printf("%d", be32toh(*(int*)prop->data) );
         } else {
-            ret = g_strdup_printf("{data} (%d bytes)", prop->length);
+            ret = g_strdup_printf("{data} (%u bytes)", prop->length);
         }
     }
     return ret;
@@ -280,7 +280,7 @@ void add_keys(char *np) {
             ftmp = g_strdup_printf("%s/%s", dir_path, fn);
             if ( g_file_test(ftmp, G_FILE_TEST_IS_DIR) ) {
                 ntmp = g_strdup_printf("%s/%s", np, fn);
-                ptmp = g_strdup_printf("%s/name", ntmp, fn);
+                ptmp = g_strdup_printf("%s/name", ntmp);
                 n_name = get_dt_string(ptmp, 0);
                 n_info = get_node(ntmp);
                 mi_add(ntmp, n_info);
