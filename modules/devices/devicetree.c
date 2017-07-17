@@ -124,7 +124,7 @@ static char* dt_str(dt_raw *prop) {
         } else if (i == DTP_INT && prop->length == 4) {
             ret = g_strdup_printf("%d", be32toh(*(int*)prop->data) );
         } else {
-            ret = g_strdup_printf("{data} (%u bytes)", prop->length);
+            ret = g_strdup_printf("{data} (%lu bytes)", prop->length);
         }
     }
     return ret;

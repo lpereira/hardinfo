@@ -143,6 +143,7 @@ static gchar *rpi_board_details(void) {
                 "%s=%s\n"
                 "%s=%s\n"
                 "%s=%s\n"
+                "%s=%s\n"
                 "%s=%s\n",
                 _("Raspberry Pi"),
                 _("Board Name"), _("Raspberry Pi"), rpi_boardinfo[i].model,
