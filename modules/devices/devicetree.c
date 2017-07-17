@@ -88,26 +88,34 @@ gchar *hardinfo_clean_value(const gchar *v, int replacing) {
     if (v == NULL) return NULL;
 
     vl = g_strsplit(v, "&", -1);
-    clean = g_strjoinv("&amp;", vl);
+    if (g_strv_length(vl) > 1)
+        clean = g_strjoinv("&amp;", vl);
+    else
+        clean = g_strdup(v);
     g_strfreev(vl);
 
     vl = g_strsplit(clean, "<", -1);
-    tmp = g_strjoinv("&lt;", vl);
+    if (g_strv_length(vl) > 1) {
+        tmp = g_strjoinv("&lt;", vl);
+        g_free(clean);
+        clean = tmp;
+    }
     g_strfreev(vl);
-    g_free(clean);
-    clean = tmp;
 
     vl = g_strsplit(clean, ">", -1);
-    tmp = g_strjoinv("&gt;", vl);
+    if (g_strv_length(vl) > 1) {
+        tmp = g_strjoinv("&gt;", vl);
+        g_free(clean);
+        clean = tmp;
+    }
     g_strfreev(vl);
-    g_free(clean);
-    clean = tmp;
 
     if (replacing)
         g_free((gpointer)v);
     return clean;
 }
 
+/*cstd*/
 static int dt_guess_type(dt_raw *prop) {
     char *tmp, *slash, *dash;
     int i = 0, anc = 0, might_be_str = 1;
@@ -155,6 +163,7 @@ static int dt_guess_type(dt_raw *prop) {
     return DTP_UNK;
 }
 
+/*cstd*/
 static char* dt_hex_list(uint32_t *list, int count) {
     char *ret, *dest, buff[11] = "";
     int i, l;
@@ -171,51 +180,56 @@ static char* dt_hex_list(uint32_t *list, int count) {
     return ret;
 }
 
+/*cstd, except for g_strescape()*/
 static char* dt_str(dt_raw *prop) {
-    char *tmp, *esc, *next_str, *ret = NULL;
+    char *tmp, *esc, *next_str;
+    char ret[1024] = "";
     int i, l, tl;
 
     if (prop == NULL) return NULL;
 
     if (prop->type == DT_NODE)
-        ret = strdup("{node}");
+        strcpy(ret, "{node}");
     else if (prop->data == NULL)
-        ret = strdup("{null}");
+        strcpy(ret, "{null}");
     else if (prop->length == 0)
-        ret = strdup("{empty}");
+        strcpy(ret, "{empty}");
     else {
         i = dt_guess_type(prop);
         if (i == DTP_STR) {
             /* treat as null-separated string list */
             tl = 0;
-            ret = g_strdup("");
+            strcpy(ret, "");
+            tmp = ret;
             next_str = prop->data;
             while(next_str != NULL) {
                 l = strlen(next_str);
                 esc = g_strescape(next_str, NULL);
-                tmp = g_strdup_printf("%s%s\"%s\"",
-                        ret, strlen(ret) ? ", " : "", esc);
-                g_free(ret);
-                g_free(esc);
-                ret = tmp;
+                sprintf(tmp, "%s\"%s\"",
+                        strlen(ret) ? ", " : "", esc);
+                free(esc);
+                tmp += strlen(tmp);
                 tl += l + 1; next_str += l + 1;
                 if (tl >= prop->length) break;
             }
         } else if (i == DTP_INT && prop->length == 4) {
             /* still use uint32_t for the byte-order conversion */
-            ret = g_strdup_printf("%d", be32toh(*(uint32_t*)prop->data) );
+            sprintf(ret, "%d", be32toh(*(uint32_t*)prop->data) );
         } else if (i == DTP_UINT && prop->length == 4) {
-            ret = g_strdup_printf("%u", be32toh(*(uint32_t*)prop->data) );
+            sprintf(ret, "%u", be32toh(*(uint32_t*)prop->data) );
         } else if (i == DTP_HEX && !(prop->length % 4)) {
             l = prop->length / 4;
-            ret = dt_hex_list((uint32_t*)prop->data, l);
+            tmp = dt_hex_list((uint32_t*)prop->data, l);
+            strcpy(ret, tmp);
+            free(tmp);
         } else {
-            ret = g_strdup_printf("{data} (%lu bytes)", prop->length);
+            sprintf(ret, "{data} (%lu bytes)", prop->length);
         }
     }
-    return ret;
+    return strdup(ret);
 }
 
+/*glib, but dt_raw *prop uses malloc() and std types */
 static dt_raw *get_dt_raw(char *p) {
     gchar *full_path;
     dt_raw *prop;
@@ -223,7 +237,7 @@ static dt_raw *get_dt_raw(char *p) {
     if (prop != NULL) {
         memset(prop, 0, sizeof(dt_raw));
         full_path = g_strdup_printf("/proc/device-tree/%s", p);
-        prop->path = g_strdup(p);
+        prop->path = strdup(p);
         if ( g_file_test(full_path, G_FILE_TEST_IS_DIR) ) {
             prop->type = DT_NODE;
         } else {
@@ -235,6 +249,7 @@ static dt_raw *get_dt_raw(char *p) {
     return NULL;
 }
 
+/*cstd*/
 void dt_raw_free(dt_raw *s) {
     if (s != NULL) {
         free(s->path);
@@ -243,6 +258,7 @@ void dt_raw_free(dt_raw *s) {
     free(s);
 }
 
+/*cstd*/
 static char *get_dt_string(char *p, int decode) {
     dt_raw *prop;
     char *ret, *rep;
@@ -251,7 +267,7 @@ static char *get_dt_string(char *p, int decode) {
         if (decode)
             ret = dt_str(prop);
         else {
-            ret = g_strdup(prop->data);
+            ret = strdup(prop->data);
             if (ret)
                 while((rep = strchr(ret, '\n'))) *rep = ' ';
         }
