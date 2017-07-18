@@ -275,6 +275,7 @@ GSList *processor_scan(void)
             get_str("hlt_bug", processor->bug_hlt);
             get_str("f00f_bug", processor->bug_f00f);
             get_str("coma_bug", processor->bug_coma);
+            /* sep_bug? */
 
             get_int("model", processor->model);
             get_int("cpu family", processor->family);
@@ -294,6 +295,12 @@ GSList *processor_scan(void)
 
         get_processor_strfamily(processor);
         __cache_obtain_info(processor);
+
+#define NULLIFNOTYES(f) if (processor->f) if (strcmp(processor->f, "yes") != 0) { g_free(processor->f); processor->f = NULL; }
+        NULLIFNOTYES(bug_fdiv);
+        NULLIFNOTYES(bug_hlt);
+        NULLIFNOTYES(bug_f00f);
+        NULLIFNOTYES(bug_coma);
 
         if (processor->bugs == NULL || g_strcmp0(processor->bugs, "") == 0) {
             g_free(processor->bugs);
