@@ -13,6 +13,8 @@ do_test() {
 
 #do_test x86 data/x86_pent_cpuinfo
 #do_test x86 data/x86_amdr7_cpuinfo
+#do_test x86 data/x86_pentf00f_cpuinfo
+#do_test x86 data/x86_cyrix6x86coma_cpuinfo
 #do_test ppc data/ppc_g5_cpuinfo
 #do_test ppc data/power8_cpuinfo
 #do_test arm data/arm_rpi3_aarch64_cpuinfo
