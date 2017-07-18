@@ -165,16 +165,16 @@ static int dt_guess_type(dt_raw *prop) {
 }
 
 /*cstd*/
-static char* dt_hex_list(uint32_t *list, int count, int tup_len) {
+static char* dt_hex_list(uint32_t *list, unsigned long count, unsigned long tup_len) {
     char *ret, *dest;
     char buff[15] = "";  /* max element: ">, <0x00000000\0" */
-    int i, l, tc;
+    unsigned long i, l, tc;
     l = count * 15 + 1;
     dest = ret = malloc(l);
     memset(ret, 0, l);
     if (tup_len) {
         strcpy(dest, "<");
-        dest = ret + 1;
+        dest++;
     }
     tc = 0;
     for (i = 0; i < count; i++) {
@@ -197,9 +197,31 @@ static char* dt_hex_list(uint32_t *list, int count, int tup_len) {
     return ret;
 }
 
+/*cstd*/
+static char* dt_byte_list(uint8_t *bytes, unsigned long count) {
+    char *ret, *dest;
+    char buff[4] = "";  /* max element: " 00\0" */
+    uint32_t v;
+    unsigned long i, l;
+    l = count * 4 + 1;
+    ret = malloc(l);
+    memset(ret, 0, l);
+    strcpy(ret, "[");
+    dest = ret + 1;
+    for (i = 0; i < count; i++) {
+        v = bytes[i];
+        sprintf(buff, "%s%02x", (i) ? " " : "", v);
+        l = strlen(buff);
+        strncpy(dest, buff, l);
+        dest += l;
+    }
+    strcpy(dest, "]");
+    return ret;
+}
+
 /* find an inherited property by climbing the path */
 /*cstd*/
-static int dt_inh_find(dt_raw *prop, char *inh_prop) {
+static uint32_t dt_inh_find(dt_raw *prop, char *inh_prop) {
     char *slash, *tmp, *parent;
     char buff[1024] = "";
     dt_raw *tprop;
@@ -226,7 +248,7 @@ static int dt_inh_find(dt_raw *prop, char *inh_prop) {
 
 /*cstd*/
 static int dt_tup_len(dt_raw *prop) {
-    int address_cells, size_cells,
+    uint32_t address_cells, size_cells,
         clock_cells, gpio_cells;
 
     if (prop == NULL)
@@ -256,7 +278,7 @@ static int dt_tup_len(dt_raw *prop) {
 static char* dt_str(dt_raw *prop) {
     char *tmp, *esc, *next_str;
     char ret[1024] = "";
-    int i, l, tl;
+    unsigned long i, l, tl;
 
     if (prop == NULL) return NULL;
 
@@ -295,7 +317,13 @@ static char* dt_str(dt_raw *prop) {
             strcpy(ret, tmp);
             free(tmp);
         } else {
-            sprintf(ret, "{data} (%lu bytes)", prop->length);
+            if (prop->length > 64) { /* maybe should use #define at the top */
+                sprintf(ret, "{data} (%lu bytes)", prop->length);
+            } else {
+                tmp = dt_byte_list((uint8_t*)prop->data, prop->length);
+                strcpy(ret, tmp);
+                free(tmp);
+            }
         }
     }
     return strdup(ret);
