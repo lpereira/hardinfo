@@ -39,6 +39,7 @@ enum {
 
 typedef struct {
     char *path;
+    char *name;
     int type;
     unsigned long length;
     void *data;
@@ -51,6 +52,8 @@ static struct {
     { "compatible", DTP_STR },
     { "model", DTP_STR },
     { "reg", DTP_HEX },
+    { "clocks", DTP_HEX },
+    { "gpios", DTP_HEX },
     { "phandle", DTP_HEX },
     { "interrupts", DTP_HEX },
     { "regulator-min-microvolt", DTP_UINT },
@@ -58,6 +61,9 @@ static struct {
     { "clock-frequency", DTP_UINT },
     { NULL, 0 },
 };
+
+static dt_raw *get_dt_raw(char *);
+static void dt_raw_free(dt_raw *);
 
 /* Hardinfo labels that have # are truncated and/or hidden.
  * Labels can't have $ because that is the delimiter in
@@ -115,21 +121,16 @@ gchar *hardinfo_clean_value(const gchar *v, int replacing) {
     return clean;
 }
 
+#define DT_CHECK_NAME(prop, nm) (strcmp(prop->name, nm) == 0)
+
 /*cstd*/
 static int dt_guess_type(dt_raw *prop) {
-    char *tmp, *slash, *dash;
+    char *tmp, *dash;
     int i = 0, anc = 0, might_be_str = 1;
 
-    /* find name after last slash, or start */
-    slash = strrchr(prop->path, '/');
-    if (slash != NULL)
-        slash++;
-    else
-        slash = prop->path;
-
     /* special #(.*)-cells names are UINT */
-    if (*slash == '#') {
-        dash = strrchr(slash, '-');
+    if (*prop->name == '#') {
+        dash = strrchr(prop->name, '-');
         if (dash != NULL) {
             if (strcmp(dash, "-cells") == 0)
                 return DTP_UINT;
@@ -138,7 +139,7 @@ static int dt_guess_type(dt_raw *prop) {
 
     /* lookup known type */
     while (prop_types[i].name != NULL) {
-        if (strcmp(slash, prop_types[i].name) == 0)
+        if (strcmp(prop->name, prop_types[i].name) == 0)
             return prop_types[i].type;
         i++;
     }
@@ -164,20 +165,91 @@ static int dt_guess_type(dt_raw *prop) {
 }
 
 /*cstd*/
-static char* dt_hex_list(uint32_t *list, int count) {
-    char *ret, *dest, buff[11] = "";
-    int i, l;
-    l = count * 11 + 1;
-    ret = malloc(l);
+static char* dt_hex_list(uint32_t *list, int count, int tup_len) {
+    char *ret, *dest;
+    char buff[15] = "";  /* max element: ">, <0x00000000\0" */
+    int i, l, tc;
+    l = count * 15 + 1;
+    dest = ret = malloc(l);
     memset(ret, 0, l);
-    dest = ret;
+    if (tup_len) {
+        strcpy(dest, "<");
+        dest = ret + 1;
+    }
+    tc = 0;
     for (i = 0; i < count; i++) {
-        sprintf(buff, "0x%x ", be32toh(list[i]));
+        if (tup_len) {
+            if (tc == tup_len) {
+                sprintf(buff, ">, <0x%x", be32toh(list[i]));
+                tc = 1;
+            } else {
+                sprintf(buff, "%s0x%x", (i) ? " " : "", be32toh(list[i]));
+                tc++;
+            }
+        } else
+            sprintf(buff, "%s0x%x", (i) ? " " : "", be32toh(list[i]));
         l = strlen(buff);
         strncpy(dest, buff, l);
         dest += l;
     }
+    if (tup_len)
+        strcpy(dest, ">");
     return ret;
+}
+
+/* find an inherited property by climbing the path */
+/*cstd*/
+static int dt_inh_find(dt_raw *prop, char *inh_prop) {
+    char *slash, *tmp, *parent;
+    char buff[1024] = "";
+    dt_raw *tprop;
+    uint32_t ret = 0;
+
+    if (prop == NULL)
+        return 0;
+
+    parent = strdup(prop->path);
+    while ( slash = strrchr(parent, '/') ) {
+        *slash = 0;
+        sprintf(buff, "%s/%s", parent, inh_prop);
+        tprop = get_dt_raw(buff);
+        if (tprop != NULL) {
+            ret = be32toh(*(uint32_t*)tprop->data);
+            dt_raw_free(tprop);
+            break;
+        }
+    }
+
+    free(parent);
+    return ret;
+}
+
+/*cstd*/
+static int dt_tup_len(dt_raw *prop) {
+    int address_cells, size_cells,
+        clock_cells, gpio_cells;
+
+    if (prop == NULL)
+        return 0;
+
+    if DT_CHECK_NAME(prop, "reg") {
+        address_cells = dt_inh_find(prop, "#address-cells");
+        size_cells = dt_inh_find(prop, "#size-cells");
+        return address_cells + size_cells;
+    }
+
+    if DT_CHECK_NAME(prop, "gpios") {
+        gpio_cells = dt_inh_find(prop, "#gpio-cells");
+        if (gpio_cells == 0) gpio_cells = 1;
+        return gpio_cells;
+    }
+
+    if DT_CHECK_NAME(prop, "clocks") {
+        clock_cells = dt_inh_find(prop, "#clock-cells");
+        return 1 + clock_cells;
+    }
+
+    return 0;
 }
 
 /*cstd, except for g_strescape()*/
@@ -219,7 +291,7 @@ static char* dt_str(dt_raw *prop) {
             sprintf(ret, "%u", be32toh(*(uint32_t*)prop->data) );
         } else if (i == DTP_HEX && !(prop->length % 4)) {
             l = prop->length / 4;
-            tmp = dt_hex_list((uint32_t*)prop->data, l);
+            tmp = dt_hex_list((uint32_t*)prop->data, l, dt_tup_len(prop));
             strcpy(ret, tmp);
             free(tmp);
         } else {
@@ -242,8 +314,19 @@ static dt_raw *get_dt_raw(char *p) {
             prop->type = DT_NODE;
         } else {
             prop->type = DT_PROPERTY;
-            g_file_get_contents(full_path, (gchar**)&prop->data, (gsize*)&prop->length, NULL);
+            if (!g_file_get_contents(full_path, (gchar**)&prop->data, (gsize*)&prop->length, NULL)) {
+                dt_raw_free(prop);
+                return NULL;
+            }
         }
+
+        /* find name after last slash, or start */
+        char *slash = strrchr(prop->path, '/');
+        if (slash != NULL)
+            prop->name = strdup(slash + 1);
+        else
+            prop->name = strdup(prop->path);
+
         return prop;
     }
     return NULL;
@@ -253,6 +336,7 @@ static dt_raw *get_dt_raw(char *p) {
 void dt_raw_free(dt_raw *s) {
     if (s != NULL) {
         free(s->path);
+        free(s->name);
         free(s->data);
     }
     free(s);
