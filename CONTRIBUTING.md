@@ -6,11 +6,11 @@ Index:
 
 # Coding guidelines
 
-Pleae coordinate effors in github pull and issues, 
+Please coordinate effors in github pull and issues, 
 but take in consideration that time of each coder/contributor are limited to review/see your issue or pull.
 
-All the colaboration work must be using https://github.com/lpereira/hardinfo issues and pull request.
-Please clone the repository with git and use branch, before make pull request.
+All the collaboration work must be using https://github.com/lpereira/hardinfo issues and pull request.
+so then clone the repository with git and use branches, before make pull request.
 
 ## Pull request
 
