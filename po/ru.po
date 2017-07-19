@@ -1045,7 +1045,7 @@ msgstr "Имя компьютера"
 
 #: modules/computer.c:471
 msgid "Language"
-msgstr ""
+msgstr "Язык"
 
 #: modules/computer.c:472 modules/computer/users.c:50
 msgid "Home Directory"
@@ -1477,7 +1477,7 @@ msgstr "Дополнительный SIMD/NEON на AArch32"
 #: modules/devices/arm/arm_data.c:55
 msgctxt "arm-flag"
 msgid "Kernel event stream using generic architected timer"
-msgstr ""
+msgstr "поток событий ядра с использованием общего архитектурного таймера"
 
 #. /flag:vfpv3
 #: modules/devices/arm/arm_data.c:56
@@ -2853,7 +2853,7 @@ msgstr "У процессора есть возможность восстано
 #: modules/devices/x86/x86_data.c:114
 msgctxt "x86-flag"
 msgid "SSE-3 (\"Prescott New Instructions\")"
-msgstr ""
+msgstr "SSE-3 (\"Новые инструкции Prescott\")"
 
 #. /flag:pclmulqdq
 #: modules/devices/x86/x86_data.c:115
@@ -2862,6 +2862,8 @@ msgid ""
 "Perform a Carry-Less Multiplication of Quadword instruction - accelerator "
 "for GCM)"
 msgstr ""
+"Выполнение менее ресурсоемкого умножения инструкции учетверенного слова - "
+"ускоряет GCM)"
 
 #. /flag:dtes64
 #: modules/devices/x86/x86_data.c:116
