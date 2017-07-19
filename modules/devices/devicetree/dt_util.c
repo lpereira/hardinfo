@@ -530,6 +530,43 @@ char *dtr_list_str0(const char *data, uint32_t length) {
     return strdup(ret);
 }
 
+uint32_t dtr_get_phref_prop(dtr *s, uint32_t phandle, char *prop) {
+    const char *ph_path;
+    char *tmp;
+    uint32_t ret;
+    ph_path = dtr_phandle_lookup(s, phandle);
+    tmp = g_strdup_printf("%s/%s", ph_path, prop);
+    ret = dtr_get_prop_u32(s, NULL, tmp);
+    free(tmp);
+    return ret;
+}
+
+char *dtr_list_phref(dtr_obj *obj, char *ext_cell_prop) {
+    /* <phref, #XXX-cells> */
+    int count = obj->length / 4;
+    int i = 0, ext_cells = 0;
+    char *ph_path;
+    char *ph, *ext, *tmp, *ret;
+    ret = g_strdup("");
+    while (i < count) {
+        if (ext_cell_prop == NULL)
+            ext_cells = 0;
+        else
+            ext_cells = dtr_get_phref_prop(obj->dt, be32toh(obj->data_int[i]), ext_cell_prop);
+        ph = dtr_elem_phref(obj->dt, obj->data_int[i], 0); i++;
+        if (ext_cells > count - i) ext_cells = count - i;
+        ext = dtr_list_hex((obj->data_int + i), ext_cells); i+=ext_cells;
+        tmp = g_strdup_printf("%s%s<%s%s%s>",
+            ret, strlen(ret) ? ", " : "",
+            ph, (ext_cells) ? " " : "", ext);
+        g_free(ret);
+        g_free(ph);
+        g_free(ext);
+        ret = tmp;
+    }
+    return ret;
+}
+
 char* dtr_str(dtr_obj *obj) {
     char *ret;
     int type;
@@ -552,10 +589,21 @@ char* dtr_str(dtr_obj *obj) {
         case DTP_STR:
             ret = dtr_list_str0(obj->data_str, obj->length);
             break;
-        case DTP_PH:
-        case DTP_REG:
         case DTP_CLOCKS:
+            /* <phref, #clock-cells"> */
+            if (DTEX_MTUP) {
+                ret = dtr_list_phref(obj, "#clock-cells");
+                break;
+            }
         case DTP_GPIOS:
+            /* <phref, #gpio-cells"> */
+            if (DTEX_MTUP) {
+                ret = dtr_list_phref(obj, "#gpio-cells");
+                break;
+            }
+        case DTP_REG:
+            /* <#address-cells #size-cells> */
+        case DTP_PH:
         case DTP_HEX:
             if (obj->length % 4)
                 ret = dtr_list_byte((uint8_t*)obj->data, obj->length);
