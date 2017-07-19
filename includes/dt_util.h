@@ -66,4 +66,6 @@ char *dtr_elem_uint(dt_uint e);
 char *dtr_list_byte(uint8_t *bytes, unsigned long count);
 char *dtr_list_hex(dt_uint *list, unsigned long count);
 
+char *dtr_maps_info(dtr *); /* returns hardinfo shell section */
+
 #endif
