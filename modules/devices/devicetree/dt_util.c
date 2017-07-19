@@ -55,6 +55,7 @@ typedef struct _dtr_map dtr_map;
 
 struct _dtr {
     dtr_map *aliases;
+    dtr_map *symbols;
     dtr_map *phandles;
     char *base_path;
 };
@@ -70,6 +71,7 @@ struct _dtr_obj {
     uint32_t length;
     int type;
     const char *alias; /* null until first dtr_obj_alias(). do not free */
+    const char *symbol; /* null until first dtr_obj_symbol(). do not free */
     dtr *dt;
 };
 
@@ -135,7 +137,18 @@ const char *dtr_alias_lookup_by_path(dtr *s, const char* path) {
     return NULL;
 }
 
+const char *dtr_symbol_lookup_by_path(dtr *s, const char* path) {
+    dtr_map *ali = s->symbols;
+    while(ali != NULL) {
+        if (strcmp(ali->path, path) == 0)
+            return ali->label;
+        ali = ali->next;
+    }
+    return NULL;
+}
+
 void _dtr_read_aliases(dtr *);
+void _dtr_read_symbols(dtr *);
 void _dtr_map_phandles(dtr *, char *np);
 
 dtr *dtr_new_x(char *base_path, int fast) {
@@ -149,9 +162,11 @@ dtr *dtr_new_x(char *base_path, int fast) {
 
         /* build alias and phandle lists */
         dt->aliases = NULL;
+        dt->symbols = NULL;
         dt->phandles = NULL;
         if (!fast) {
             _dtr_read_aliases(dt);
+            _dtr_read_symbols(dt);
             _dtr_map_phandles(dt, "");
         }
     }
@@ -165,6 +180,7 @@ dtr *dtr_new(char *base_path) {
 void dtr_free(dtr *s) {
     if (s != NULL) {
         dtr_map_free(s->aliases);
+        dtr_map_free(s->symbols);
         dtr_map_free(s->phandles);
         free(s->base_path);
         free(s);
@@ -248,11 +264,18 @@ int dtr_obj_type(dtr_obj *s) {
 
 char *dtr_obj_alias(dtr_obj *s) {
     if (s) {
-        if (s->alias != NULL)
-            return (char*)s->alias;
-
-        s->alias = dtr_alias_lookup_by_path(s->dt, s->path);
+        if (s->alias == NULL)
+            s->alias = dtr_alias_lookup_by_path(s->dt, s->path);
         return (char*)s->alias;
+    }
+    return NULL;
+}
+
+char *dtr_obj_symbol(dtr_obj *s) {
+    if (s) {
+        if (s->symbol == NULL)
+            s->symbol = dtr_symbol_lookup_by_path(s->dt, s->path);
+        return (char*)s->symbol;
     }
     return NULL;
 }
@@ -515,9 +538,39 @@ void _dtr_read_aliases(dtr *s) {
         while((fn = g_dir_read_name(dir)) != NULL) {
             prop = dtr_get_prop_obj(s, anode, fn);
             if (prop->type == DTP_STR) {
-                al = dtr_map_add(s->aliases, 0, prop->name, prop->data_str);
-                if (s->aliases == NULL)
-                    s->aliases = al;
+                if (*prop->data_str == '/') {
+                    al = dtr_map_add(s->aliases, 0, prop->name, prop->data_str);
+                    if (s->aliases == NULL)
+                        s->aliases = al;
+                }
+            }
+            dtr_obj_free(prop);
+        }
+    }
+    g_dir_close(dir);
+    g_free(dir_path);
+    dtr_obj_free(anode);
+}
+
+void _dtr_read_symbols(dtr *s) {
+    gchar *dir_path;
+    GDir *dir;
+    const gchar *fn;
+    dtr_obj *anode, *prop;
+    dtr_map *al;
+    anode = dtr_obj_read(s, "/__symbols__");
+
+    dir_path = g_strdup_printf("%s/__symbols__", s->base_path);
+    dir = g_dir_open(dir_path, 0 , NULL);
+    if (dir) {
+        while((fn = g_dir_read_name(dir)) != NULL) {
+            prop = dtr_get_prop_obj(s, anode, fn);
+            if (prop->type == DTP_STR) {
+                if (*prop->data_str == '/') {
+                    al = dtr_map_add(s->symbols, 0, prop->name, prop->data_str);
+                    if (s->symbols == NULL)
+                        s->symbols = al;
+                }
             }
             dtr_obj_free(prop);
         }
