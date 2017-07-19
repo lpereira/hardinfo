@@ -6,6 +6,7 @@ set(HARDINFO_VERSION "0.6-alpha")
 option(HARDINFO_NOSYNC "Disable database sync via libsoup" 1)
 set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
 set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
+set(OVRDTRROOT "" CACHE STRING "Specify a different path for /proc/device-tree")
 SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
 
@@ -57,6 +58,10 @@ endif()
 if (OVRCPUINFO)
 	add_definitions(-DPROC_CPUINFO=${OVRCPUINFO})
 	message(STATUS "/proc/cpuinfo override: ${OVRCPUINFO}")
+endif()
+if (OVRDTRROOT)
+	add_definitions(-DDTR_ROOT=${OVRDTRROOT})
+	message(STATUS "/proc/device-tree override: ${OVRDTRROOT}")
 endif()
 
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_PREFIX}/share/locale")
@@ -125,6 +130,7 @@ set(MODULE_devices_SOURCES
 	modules/devices/devmemory.c
 	modules/devices/dmi.c
 	modules/devices/devicetree.c
+	modules/devices/devicetree/dt_util.c
 	modules/devices/inputdevices.c
 	modules/devices/pci.c
 	modules/devices/printers.c
