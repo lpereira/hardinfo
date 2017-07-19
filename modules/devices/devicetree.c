@@ -17,13 +17,20 @@
  */
 /*
  * Device Tree support by Burt P. <pburt0@gmail.com>
- * Sources: http://elinux.org/Device_Tree_Mysteries
+ * Sources:
+ *   http://elinux.org/Device_Tree_Usage
+ *   http://elinux.org/Device_Tree_Mysteries
  */
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdint.h>
 #include <endian.h>
 #include "devices.h"
+
+/* some not-quite-working stuff that can be disabled */
+#define DTEX_INH_PROPS 0
+#define DTEX_PHREFS 0
+#define DTEX_GROUP_TUPS 0
 
 enum {
     DT_NODE,
@@ -35,6 +42,8 @@ enum {
     DTP_INT,
     DTP_UINT,
     DTP_HEX, /* list of 32-bit values displayed in hex */
+    DTP_PH,  /* phandle */
+    DTP_PH_REF,  /* reference to phandle */
 };
 
 typedef struct {
@@ -54,8 +63,9 @@ static struct {
     { "reg", DTP_HEX },
     { "clocks", DTP_HEX },
     { "gpios", DTP_HEX },
-    { "phandle", DTP_HEX },
+    { "phandle", DTP_PH },
     { "interrupts", DTP_HEX },
+    { "interrupt-parent", DTP_PH_REF },
     { "regulator-min-microvolt", DTP_UINT },
     { "regulator-max-microvolt", DTP_UINT },
     { "clock-frequency", DTP_UINT },
@@ -74,7 +84,7 @@ gchar *hardinfo_clean_label(const gchar *v, int replacing) {
     p = clean = g_strdup(v);
     while (*p != 0) {
         switch(*p) {
-            case '#': case '$': case '&':
+            case '#': case '$':
                 *p = '_';
                 break;
             default:
@@ -119,6 +129,166 @@ gchar *hardinfo_clean_value(const gchar *v, int replacing) {
     if (replacing)
         g_free((gpointer)v);
     return clean;
+}
+
+struct _dt_phandle {
+    uint32_t v;
+    char *path;
+    struct _dt_phandle *next;
+};
+typedef struct _dt_phandle dt_phandle;
+
+dt_phandle *phandles = NULL;
+
+dt_phandle *dt_phandle_add(uint32_t v, const char *path) {
+    dt_phandle *phi = phandles;
+    dt_phandle *ph = malloc(sizeof(dt_phandle));
+    memset(ph, 0, sizeof(dt_phandle));
+    ph->v = v; ph->path = strdup(path);
+    if (phi == NULL) {
+        phandles = ph;
+    } else {
+        while(phi->next != NULL) phi = phi->next;
+        phi->next = ph;
+    }
+    return ph;
+}
+
+void dt_phandle_free(dt_phandle *ph) {
+    if (ph) {
+        free(ph->path);
+    }
+    free(ph);
+}
+
+void dt_phandles_free() {
+    dt_phandle *phi;
+    while(phandles != NULL) {
+        phi = phandles->next;
+        dt_phandle_free(phandles);
+        phandles = phi;
+    }
+    phandles = NULL;
+}
+
+char *dt_phandle_lookup(uint32_t v) {
+    dt_phandle *phi = phandles;
+    while(phi != NULL) {
+        if (phi->v == v)
+            return phi->path;
+        phi = phi->next;
+    }
+    return NULL;
+}
+
+struct _dt_alias {
+    char *label;
+    char *path;
+    struct _dt_alias *next;
+};
+typedef struct _dt_alias dt_alias;
+
+dt_alias *aliases;
+
+dt_alias *dt_alias_add(const char *label, const char *path) {
+    dt_alias *ali = aliases;
+    dt_alias *al = malloc(sizeof(dt_alias));
+    memset(al, 0, sizeof(dt_alias));
+    al->label = strdup(label); al->path = strdup(path);
+    if (ali == NULL) {
+        aliases = al;
+    } else {
+        while(ali->next != NULL) ali = ali->next;
+        ali->next = al;
+    }
+    return al;
+}
+
+void dt_alias_free(dt_alias *al) {
+    if (al) {
+        free(al->label);
+        free(al->path);
+    }
+    free(al);
+}
+void dt_aliases_free() {
+    dt_alias *ali;
+    while(aliases != NULL) {
+        ali = aliases->next;
+        dt_alias_free(aliases);
+        aliases = ali;
+    }
+    aliases = NULL;
+}
+
+char *dt_alias_lookup_by_path(const char* path) {
+    dt_alias *ali = aliases;
+    while(ali != NULL) {
+        if (strcmp(ali->path, path) == 0)
+            return ali->label;
+        ali = ali->next;
+    }
+    return NULL;
+}
+
+void dt_map_phandles(char *np) {
+    gchar *dir_path;
+    gchar *ftmp, *ntmp, *ptmp;
+    const gchar *fn;
+    GDir *dir;
+    dt_raw *prop, *ph_prop;
+    uint32_t phandle;
+
+    if (np == NULL) np = "";
+    dir_path = g_strdup_printf("/proc/device-tree/%s", np);
+
+    prop = get_dt_raw(np);
+    dir = g_dir_open(dir_path, 0 , NULL);
+    if (dir) {
+        while((fn = g_dir_read_name(dir)) != NULL) {
+            ftmp = g_strdup_printf("%s/%s", dir_path, fn);
+            if ( g_file_test(ftmp, G_FILE_TEST_IS_DIR) ) {
+                ntmp = g_strdup_printf("%s/%s", np, fn);
+                ptmp = g_strdup_printf("%s/phandle", ntmp);
+                ph_prop = get_dt_raw(ptmp);
+                if (ph_prop != NULL) {
+                    phandle = be32toh(*(uint32_t*)ph_prop->data);
+                    dt_phandle_add(phandle, ntmp);
+                }
+                dt_map_phandles(ntmp);
+                g_free(ptmp);
+                g_free(ntmp);
+                dt_raw_free(ph_prop);
+            }
+            g_free(ftmp);
+        }
+    }
+    g_dir_close(dir);
+    dt_raw_free(prop);
+}
+
+void dt_read_aliases() {
+    gchar *dir_path = g_strdup_printf("/proc/device-tree/aliases");
+    gchar *ftmp, *ntmp, *ptmp;
+    const gchar *fn;
+    GDir *dir;
+    dt_raw *prop;
+
+    dir = g_dir_open(dir_path, 0 , NULL);
+    if (dir) {
+        while((fn = g_dir_read_name(dir)) != NULL) {
+            ftmp = g_strdup_printf("%s/%s", dir_path, fn);
+            if ( g_file_test(ftmp, G_FILE_TEST_IS_DIR) )
+                continue;
+
+            ntmp = g_strdup_printf("aliases/%s", fn);
+            prop = get_dt_raw(ntmp);
+            dt_alias_add(prop->name, (char*)prop->data);
+            g_free(ntmp);
+            g_free(ftmp);
+        }
+    }
+    g_dir_close(dir);
 }
 
 #define DT_CHECK_NAME(prop, nm) (strcmp(prop->name, nm) == 0)
@@ -219,13 +389,29 @@ static char* dt_byte_list(uint8_t *bytes, unsigned long count) {
     return ret;
 }
 
+struct {
+    const char *name;
+    uint32_t def_value;
+} inherited_props[] = {
+    { "#address-cells", 1 },
+    { "#size-cells",    0 },
+    { "#clock-cells",   1 },
+    { "#gpio-cells",    1 },
+    { NULL, 0 },
+};
+#define INHERITED_PROPS_N 5  /* including term null */
+/* requires an un-used int i */
+#define INHERITED_PROPS_I(pnm) \
+    { i = 0; while (inherited_props[i].name != NULL) { if (strcmp(inherited_props[i].name, pnm) == 0) break; i++; } }
+
 /* find an inherited property by climbing the path */
 /*cstd*/
-static uint32_t dt_inh_find(dt_raw *prop, char *inh_prop) {
+static uint32_t dt_inh_find(dt_raw *prop, const char *inh_prop) {
     char *slash, *tmp, *parent;
     char buff[1024] = "";
     dt_raw *tprop;
     uint32_t ret = 0;
+    int found = 0, i;
 
     if (prop == NULL)
         return 0;
@@ -238,8 +424,14 @@ static uint32_t dt_inh_find(dt_raw *prop, char *inh_prop) {
         if (tprop != NULL) {
             ret = be32toh(*(uint32_t*)tprop->data);
             dt_raw_free(tprop);
+            found = 1;
             break;
         }
+    }
+
+    if (!found) {
+        INHERITED_PROPS_I(inh_prop); /* sets i */
+        ret = inherited_props[i].def_value;
     }
 
     free(parent);
@@ -250,6 +442,10 @@ static uint32_t dt_inh_find(dt_raw *prop, char *inh_prop) {
 static int dt_tup_len(dt_raw *prop) {
     uint32_t address_cells, size_cells,
         clock_cells, gpio_cells;
+
+#if !(DTEX_GROUP_TUPS)
+    return 0;
+#endif
 
     if (prop == NULL)
         return 0;
@@ -279,6 +475,8 @@ static char* dt_str(dt_raw *prop) {
     char *tmp, *esc, *next_str;
     char ret[1024] = "";
     unsigned long i, l, tl;
+    uint32_t phandle;
+    char *ph_path, *al_label;
 
     if (prop == NULL) return NULL;
 
@@ -290,6 +488,11 @@ static char* dt_str(dt_raw *prop) {
         strcpy(ret, "{empty}");
     else {
         i = dt_guess_type(prop);
+
+#if !(DTEX_PHREFS)
+        if (i == DTP_PH_REF) i = DTP_HEX;
+#endif
+
         if (i == DTP_STR) {
             /* treat as null-separated string list */
             tl = 0;
@@ -316,6 +519,25 @@ static char* dt_str(dt_raw *prop) {
             tmp = dt_hex_list((uint32_t*)prop->data, l, dt_tup_len(prop));
             strcpy(ret, tmp);
             free(tmp);
+        } else if (i == DTP_PH && prop->length == 4) {
+            phandle = be32toh(*(uint32_t*)prop->data);
+            ph_path = dt_phandle_lookup(phandle);
+            al_label = dt_alias_lookup_by_path(ph_path);
+            if (al_label != NULL)
+                sprintf(ret, "0x%x (&%s)", phandle, al_label);
+            else
+                sprintf(ret, "0x%x", phandle);
+        } else if (i == DTP_PH_REF && prop->length == 4) {
+            phandle = be32toh(*(uint32_t*)prop->data);
+            ph_path = dt_phandle_lookup(phandle);
+            if (ph_path != NULL) {
+                al_label = dt_alias_lookup_by_path(ph_path);
+                if (al_label != NULL)
+                    sprintf(ret, "&%s (%s)", al_label, ph_path);
+                else
+                    sprintf(ret, "0x%x (%s)", phandle, ph_path);
+            } else
+                sprintf(ret, "<0x%x>", phandle);
         } else {
             if (prop->length > 64) { /* maybe should use #define at the top */
                 sprintf(ret, "{data} (%lu bytes)", prop->length);
@@ -337,7 +559,7 @@ static dt_raw *get_dt_raw(char *p) {
     if (prop != NULL) {
         memset(prop, 0, sizeof(dt_raw));
         full_path = g_strdup_printf("/proc/device-tree/%s", p);
-        prop->path = strdup(p);
+        prop->path = strdup( p != NULL && strcmp(p, "") ? p : "/" );
         if ( g_file_test(full_path, G_FILE_TEST_IS_DIR) ) {
             prop->type = DT_NODE;
         } else {
@@ -394,15 +616,20 @@ static char *get_dt_string(char *p, int decode) {
 gchar *dtree_info = NULL;
 
 gchar *get_node(char *np) {
-    gchar *nodes = NULL, *props = NULL, *ret = NULL;
+    gchar *nodes = NULL, *props = NULL, *inh_props = NULL, *ret = NULL;
     gchar *tmp = NULL, *pstr = NULL, *lstr = NULL;
     gchar *dir_path = g_strdup_printf("/proc/device-tree/%s", np);
     gchar *node_path;
     const gchar *fn;
     GDir *dir;
     dt_raw *prop;
+    int inh[INHERITED_PROPS_N];
+    memset(inh, 0, sizeof(int) * INHERITED_PROPS_N);
+    int i;
+    uint32_t v;
 
     props = g_strdup_printf("[%s]\n", _("Properties") );
+    inh_props = g_strdup_printf("[%s]\n", _("Inherited Properties") );
     nodes = g_strdup_printf("[%s]\n", _("Children") );
 
     dir = g_dir_open(dir_path, 0 , NULL);
@@ -412,6 +639,7 @@ gchar *get_node(char *np) {
             prop = get_dt_raw(node_path);
             pstr = hardinfo_clean_value(dt_str(prop), 1);
             lstr = hardinfo_clean_label(fn, 0);
+            INHERITED_PROPS_I(prop->name); inh[i] = 1;
             if (prop->type == DT_NODE) {
                 tmp = g_strdup_printf("%s%s=%s\n",
                     nodes, lstr, pstr);
@@ -431,12 +659,38 @@ gchar *get_node(char *np) {
     }
     g_dir_close(dir);
     g_free(dir_path);
-    ret = g_strdup_printf("[Node]\n"
+
+    prop = get_dt_raw(np);
+    for (i = 0; i < INHERITED_PROPS_N - 1; i++)
+        if (!inh[i]) {
+            v = dt_inh_find(prop, inherited_props[i].name);
+            pstr = g_strdup_printf("%u", v);
+            lstr = hardinfo_clean_label(inherited_props[i].name, 0);
+            tmp = g_strdup_printf("%s%s=%s\n",
+                inh_props, lstr, pstr);
+            g_free(inh_props);
+            inh_props = tmp;
+            g_free(pstr);
+            g_free(lstr);
+        }
+
+#if !(DTEX_INH_PROPS)
+    g_free(inh_props); inh_props = g_strdup("");
+#endif
+
+    lstr = dt_alias_lookup_by_path(prop->path);
+    ret = g_strdup_printf("[%s]\n"
                     "%s=%s\n"
-                    "%s%s",
-                    _("Node Path"), strcmp(np, "") ? np : "/",
-                    props, nodes);
+                    "%s=%s\n"
+                    "%s%s%s",
+                    _("Node"),
+                    _("Node Path"), prop->path,
+                    _("Alias"), (lstr != NULL) ? lstr : _("(None)"),
+                    props, inh_props, nodes);
+
+    dt_raw_free(prop);
     g_free(props);
+    g_free(inh_props);
     g_free(nodes);
     return ret;
 }
@@ -521,6 +775,9 @@ void __scan_dtree()
     gchar *summary = get_summary();
     gchar *root_node = get_node("");
 
+    dt_read_aliases();
+    dt_map_phandles(NULL);
+
     dtree_info = g_strdup("[Device Tree]\n");
     mi_add("Summary", summary);
 
@@ -528,4 +785,6 @@ void __scan_dtree()
     add_keys("");
 
     //printf("%s\n", dtree_info);
+    dt_aliases_free();
+    dt_phandles_free();
 }
