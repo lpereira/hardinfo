@@ -9,7 +9,7 @@
 #define DTEX_MTUP 0
 
 #ifndef DTR_ROOT
-#define DTR_ROOT "/proc/device-tree"
+#define DTR_ROOT dtr_find_device_tree_root()
 #endif
 
 enum {
@@ -69,5 +69,7 @@ char *dtr_list_byte(uint8_t *bytes, unsigned long count);
 char *dtr_list_hex(dt_uint *list, unsigned long count);
 
 char *dtr_maps_info(dtr *); /* returns hardinfo shell section */
+
+const char *dtr_find_device_tree_root(void);
 
 #endif

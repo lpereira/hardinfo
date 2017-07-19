@@ -192,6 +192,22 @@ void _dtr_read_aliases(dtr *);
 void _dtr_read_symbols(dtr *);
 void _dtr_map_phandles(dtr *, char *np);
 
+const char *dtr_find_device_tree_root() {
+    char *candidates[] = {
+        "/proc/device-tree",
+        "/sys/firmware/devicetree/base",
+        /* others? */
+        NULL
+    };
+    int i = 0;
+    while (candidates[i] != NULL) {
+        if(access(candidates[i], F_OK) != -1)
+            return candidates[i];
+        i++;
+    }
+    return "/did/not/find/device-tree";
+}
+
 dtr *dtr_new_x(char *base_path, int fast) {
     dtr *dt = malloc(sizeof(dtr));
     if (dt != NULL) {
