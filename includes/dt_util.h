@@ -42,6 +42,7 @@ dtr_obj *dtr_obj_read(dtr *, const char *dtp);
 void dtr_obj_free(dtr_obj *);
 int dtr_obj_type(dtr_obj *);
 char *dtr_obj_alias(dtr_obj *);
+char *dtr_obj_symbol(dtr_obj *);
 char *dtr_obj_path(dtr_obj *);        /* device tree path */
 char *dtr_obj_full_path(dtr_obj *);   /* system path */
 

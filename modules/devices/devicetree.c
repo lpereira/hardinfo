@@ -128,13 +128,16 @@ gchar *get_node(char *np) {
     g_free(dir_path);
 
     lstr = dtr_obj_alias(node);
+    pstr = dtr_obj_symbol(node);
     ret = g_strdup_printf("[%s]\n"
+                    "%s=%s\n"
                     "%s=%s\n"
                     "%s=%s\n"
                     "%s%s",
                     _("Node"),
                     _("Node Path"), dtr_obj_path(node),
                     _("Alias"), (lstr != NULL) ? lstr : _("(None)"),
+                    _("Symbol"), (pstr != NULL) ? pstr : _("(None)"),
                     props, nodes);
 
     dtr_obj_free(node);
