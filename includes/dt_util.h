@@ -22,6 +22,7 @@ enum {
     DTP_HEX,     /* list of 32-bit values displayed in hex */
     DTP_UINT,
  /* DTP_INT, */
+    DTP_OVR,     /* all in /__overrides__ */
     DTP_PH,      /* phandle */
     DTP_PH_REF,  /* reference to phandle */
     DTP_REG,     /* <#address-cells, #size-cells> */
