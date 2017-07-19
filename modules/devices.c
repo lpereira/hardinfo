@@ -37,6 +37,7 @@
 #include <socket.h>
 
 #include "devices.h"
+#include "dt_util.h"
 
 gchar *callback_processors();
 gchar *callback_memory();
@@ -218,12 +219,12 @@ gchar *get_motherboard(void)
        return g_strconcat(board_name, _(" (vendor unknown)"), NULL);
     else if (board_vendor && *board_vendor)
        return g_strconcat(board_vendor, _(" (model unknown)"), NULL);
-#else
-    /* use device tree "model" */
-    if (g_file_get_contents("/proc/device-tree/model", &board_vendor, NULL, NULL)) {
-        return board_vendor;
-    }
 #endif
+
+    /* use device tree "model" */
+    board_vendor = dtr_get_string("/model");
+    if (board_vendor != NULL)
+        return board_vendor;
 
     return g_strdup(_("Unknown"));
 }
