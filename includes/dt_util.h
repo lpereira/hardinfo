@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 /* some not-quite-complete stuff that can be disabled */
-#define DTEX_PHREFS 0
+#define DTEX_PHREFS 1
 
 #ifndef DTR_ROOT
 #define DTR_ROOT "/proc/device-tree"
@@ -23,6 +23,9 @@ enum {
  /* DTP_INT, */
     DTP_PH,      /* phandle */
     DTP_PH_REF,  /* reference to phandle */
+    DTP_REG,     /* <#address-cells, #size-cells> */
+    DTP_CLOCKS,  /* <phref, #clock-cells> */
+    DTP_GPIOS,   /* <phref, #gpio-cells> */
 };
 
 /* simplest, no aliases.
@@ -56,7 +59,7 @@ uint32_t dtr_get_prop_u32(dtr *, dtr_obj *node, const char *name);
 char* dtr_str(dtr_obj *obj);
 
 int dtr_guess_type(dtr_obj *obj);
-char *dtr_elem_phref(dtr *, dt_uint e);
+char *dtr_elem_phref(dtr *, dt_uint e, int show_path);
 char *dtr_elem_hex(dt_uint e);
 char *dtr_elem_byte(uint8_t e);
 char *dtr_elem_uint(dt_uint e);

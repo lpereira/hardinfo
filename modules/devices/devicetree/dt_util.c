@@ -33,9 +33,9 @@ static struct {
     { "name", DTP_STR },
     { "compatible", DTP_STR },
     { "model", DTP_STR },
-    { "reg", DTP_HEX },
-    { "clocks", DTP_HEX },
-    { "gpios", DTP_HEX },
+    { "reg", DTP_REG },
+    { "clocks", DTP_CLOCKS },
+    { "gpios", DTP_GPIOS },
     { "phandle", DTP_PH },
     { "interrupts", DTP_HEX },
     { "interrupt-parent", DTP_PH_REF },
@@ -109,6 +109,10 @@ void dtr_map_free(dtr_map *map) {
 
 const char *dtr_phandle_lookup(dtr *s, uint32_t v) {
     dtr_map *phi = s->phandles;
+    /* 0 and 0xffffffff are invalid phandle values */
+    /* TODO: perhaps "INVALID" or something */
+    if (v == 0 || v == 0xffffffff)
+        return NULL;
     while(phi != NULL) {
         if (phi->v == v)
             return phi->path;
@@ -359,6 +363,12 @@ int dtr_guess_type(dtr_obj *obj) {
         }
     }
 
+    /* /aliases/* and /__symbols/* are always strings */
+    if (strncmp(obj->path, "/aliases/", strlen("/aliases/") ) == 0)
+        return DTP_STR;
+    if (strncmp(obj->path, "/__symbols__/", strlen("/__symbols__/") ) == 0)
+        return DTP_STR;
+
     /* lookup known type */
     while (prop_types[i].name != NULL) {
         if (strcmp(obj->name, prop_types[i].name) == 0)
@@ -387,17 +397,23 @@ int dtr_guess_type(dtr_obj *obj) {
     return DTP_UNK;
 }
 
-char *dtr_elem_phref(dtr *s, dt_uint e) {
-    char *ph_path, *al_label, *ret = NULL;
-    ph_path = (char*)dtr_phandle_lookup(s, be32toh(e));
+char *dtr_elem_phref(dtr *s, dt_uint e, int show_path) {
+    const char *ph_path, *al_label;
+    char *ret = NULL;
+    ph_path = dtr_phandle_lookup(s, be32toh(e));
     if (ph_path != NULL) {
-        al_label = (char*)dtr_alias_lookup_by_path(s, ph_path);
+        /* TODO: alias or symbol? */
+        al_label = dtr_symbol_lookup_by_path(s, ph_path);
         if (al_label != NULL) {
-            ret = g_strdup_printf("&%s", al_label);
+            if (show_path)
+                ret = g_strdup_printf("&%s (%s)", al_label, ph_path);
+            else
+                ret = g_strdup_printf("&%s", al_label);
+        } else {
+            if (show_path)
+                ret = g_strdup_printf("0x%x (%s)", be32toh(e), ph_path);
         }
     }
-    free(ph_path);
-    free(al_label);
     if (ret == NULL)
         ret = dtr_elem_hex(e);
     return ret;
@@ -500,6 +516,9 @@ char* dtr_str(dtr_obj *obj) {
             ret = dtr_list_str0(obj->data_str, obj->length);
             break;
         case DTP_PH:
+        case DTP_REG:
+        case DTP_CLOCKS:
+        case DTP_GPIOS:
         case DTP_HEX:
             if (obj->length % 4)
                 ret = dtr_list_byte((uint8_t*)obj->data, obj->length);
@@ -507,7 +526,7 @@ char* dtr_str(dtr_obj *obj) {
                 ret = dtr_list_hex(obj->data, obj->length / 4);
             break;
         case DTP_PH_REF:
-            ret = dtr_elem_phref(obj->dt, *obj->data_int);
+            ret = dtr_elem_phref(obj->dt, *obj->data_int, 1);
             break;
         case DTP_UINT:
             ret = dtr_elem_uint(*obj->data_int);
