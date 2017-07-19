@@ -398,11 +398,16 @@ int dtr_guess_type(dtr_obj *obj) {
         }
     }
 
-    /* /aliases/* and /__symbols/* are always strings */
+    /* /aliases/* and /__symbols__/* are always strings */
     if (strncmp(obj->path, "/aliases/", strlen("/aliases/") ) == 0)
         return DTP_STR;
     if (strncmp(obj->path, "/__symbols__/", strlen("/__symbols__/") ) == 0)
         return DTP_STR;
+
+    /* /__overrides__/* */
+    if (strncmp(obj->path, "/__overrides__/", strlen("/__overrides__/") ) == 0)
+        if (strcmp(obj->name, "name") != 0)
+            return DTP_OVR;
 
     /* lookup known type */
     while (prop_types[i].name != NULL) {
@@ -413,7 +418,7 @@ int dtr_guess_type(dtr_obj *obj) {
 
     /* maybe a string? */
     for (i = 0; i < obj->length; i++) {
-        tmp = (char*)obj->data + i;
+        tmp = obj->data_str + i;
         if ( isalnum(*tmp) ) anc++; /* count the alpha-nums */
         if ( isprint(*tmp) || *tmp == 0 )
             continue;
@@ -528,6 +533,40 @@ char *dtr_list_str0(const char *data, uint32_t length) {
     return strdup(ret);
 }
 
+char *dtr_list_override(dtr_obj *obj) {
+    /* <phref, string "property:value"> ... */
+    char *tmp, *ret;
+    char *ph, *str;
+    char *src;
+    int l, consumed = 0;
+    ret = strdup("");
+    src = obj->data_str;
+    while (consumed + 5 <= obj->length) {
+        ph = dtr_elem_phref(obj->dt, *(dt_uint*)src, 1);
+        src += 4; consumed += 4;
+        l = strlen(src) + 1; /* consume the null */
+        str = dtr_list_str0(src, l);
+        tmp = g_strdup_printf("%s%s<%s -> %s>",
+            ret, strlen(ret) ? " " : "",
+            ph, str);
+        src += l; consumed += l;
+        free(ph);
+        free(str);
+        free(ret);
+        ret = tmp;
+    }
+    if (consumed < obj->length) {
+        str = dtr_list_byte(src, obj->length - consumed);
+        tmp = g_strdup_printf("%s%s%s",
+            ret, strlen(ret) ? " " : "",
+            str);
+        free(str);
+        free(ret);
+        ret = tmp;
+    }
+    return ret;
+}
+
 uint32_t dtr_get_phref_prop(dtr *s, uint32_t phandle, char *prop) {
     const char *ph_path;
     char *tmp;
@@ -586,6 +625,9 @@ char* dtr_str(dtr_obj *obj) {
             break;
         case DTP_STR:
             ret = dtr_list_str0(obj->data_str, obj->length);
+            break;
+        case DTP_OVR:
+            ret = dtr_list_override(obj);
             break;
         case DTP_CLOCKS:
             /* <phref, #clock-cells"> */
