@@ -42,15 +42,19 @@ dtr_obj *dtr_obj_read(dtr *, const char *dtp);
 void dtr_obj_free(dtr_obj *);
 int dtr_obj_type(dtr_obj *);
 char *dtr_obj_alias(dtr_obj *);
-char *dtr_obj_path(dtr_obj *);
-char *dtr_obj_full_path(dtr_obj *);
+char *dtr_obj_path(dtr_obj *);        /* device tree path */
+char *dtr_obj_full_path(dtr_obj *);   /* system path */
 
-char* dtr_str(dtr *, dtr_obj *obj);
+/* find property/node 'name' relative to node
+ * if node is NULL, then from root */
 dtr_obj *dtr_get_prop_obj(dtr *, dtr_obj *node, const char *name);
 char *dtr_get_prop_str(dtr *, dtr_obj *node, const char *name);
 uint32_t dtr_get_prop_u32(dtr *, dtr_obj *node, const char *name);
 
-static int dtr_guess_type(dtr_obj *obj);
+/* attempts to render the object as a string */
+char* dtr_str(dtr_obj *obj);
+
+int dtr_guess_type(dtr_obj *obj);
 char *dtr_elem_phref(dtr *, dt_uint e);
 char *dtr_elem_hex(dt_uint e);
 char *dtr_elem_byte(uint8_t e);

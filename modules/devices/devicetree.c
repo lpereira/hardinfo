@@ -106,7 +106,7 @@ gchar *get_node(char *np) {
     if (dir) {
         while((fn = g_dir_read_name(dir)) != NULL) {
             child = dtr_get_prop_obj(dt, node, fn);
-            pstr = hardinfo_clean_value(dtr_str(dt, child), 1);
+            pstr = hardinfo_clean_value(dtr_str(child), 1);
             lstr = hardinfo_clean_label(fn, 0);
             if (dtr_obj_type(child) == DT_NODE) {
                 tmp = g_strdup_printf("%s%s=%s\n",
@@ -148,7 +148,7 @@ char *get_dt_string(char *path, int decode) {
     char *ret = NULL;
     if (decode) {
         obj = dtr_get_prop_obj(dt, NULL, path);
-        ret = dtr_str(dt, obj);
+        ret = dtr_str(obj);
         dtr_obj_free(obj);
     } else
         ret = dtr_get_prop_str(dt, NULL, path);
