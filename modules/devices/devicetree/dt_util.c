@@ -107,6 +107,43 @@ void dtr_map_free(dtr_map *map) {
     }
 }
 
+/* simple sort for maps
+ * sv: 1 = sort by v, 0 = sort by label */
+void dtr_map_sort(dtr_map *map, int sv)
+{
+    int done = 0, cmp;
+    dtr_map *this, *next, *top, *next_top;
+    uint32_t tmp_v;
+    char *tmp_l, *tmp_p;
+    if (map == NULL) return;
+    do {
+        this = map;
+        next_top = NULL;
+        while(this != NULL) {
+            next = this->next;
+            if (this == top)
+                break;
+            if (next == NULL)
+                break;
+            if (sv)
+                cmp = (this->v > next->v) ? 1 : 0;
+            else
+                cmp = strcmp(this->label, next->label);
+            if (cmp > 0) {
+                tmp_v = this->v; this->v = next->v; next->v = tmp_v;
+                tmp_l = this->label; this->label = next->label; next->label = tmp_l;
+                tmp_p = this->path; this->path = next->path; next->path = tmp_p;
+                next_top = this;
+            }
+            this = next;
+        }
+        if (next_top == NULL)
+            done = 1;
+        else
+            top = next_top;
+    } while (!done);
+}
+
 const char *dtr_phandle_lookup(dtr *s, uint32_t v) {
     dtr_map *phi = s->phandles;
     /* 0 and 0xffffffff are invalid phandle values */
@@ -569,6 +606,7 @@ void _dtr_read_aliases(dtr *s) {
     g_dir_close(dir);
     g_free(dir_path);
     dtr_obj_free(anode);
+    dtr_map_sort(s->aliases, 0);
 }
 
 void _dtr_read_symbols(dtr *s) {
@@ -597,6 +635,7 @@ void _dtr_read_symbols(dtr *s) {
     g_dir_close(dir);
     g_free(dir_path);
     dtr_obj_free(anode);
+    dtr_map_sort(s->symbols, 0);
 }
 
 /* TODO: rewrite */
@@ -636,6 +675,50 @@ void _dtr_map_phandles(dtr *s, char *np) {
     }
     g_dir_close(dir);
     dtr_obj_free(prop);
+    dtr_map_sort(s->phandles, 1);
 }
 
+/*
+ * Maybe these should move to devicetree.c, but would have to expose
+ * struct internals.
+ */
+
+/* kvl: 0 = key is label, 1 = key is v */
+char *dtr_map_info_section(dtr *s, dtr_map *map, char *title, int kvl) {
+    gchar *tmp, *ret;
+    const gchar *sym;
+    ret = g_strdup_printf("[%s]\n", _(title));
+    dtr_map *it = map;
+    while(it != NULL) {
+        if (kvl) {
+            sym = dtr_symbol_lookup_by_path(s, it->path);
+            if (sym != NULL)
+                tmp = g_strdup_printf("%s0x%x (%s)=%s\n", ret,
+                    it->v, sym, it->path);
+            else
+                tmp = g_strdup_printf("%s0x%x=%s\n", ret,
+                    it->v, it->path);
+        } else
+            tmp = g_strdup_printf("%s%s=%s\n", ret,
+                it->label, it->path);
+        g_free(ret);
+        ret = tmp;
+        it = it->next;
+    }
+
+    return ret;
+}
+
+char *dtr_maps_info(dtr *s) {
+    gchar *ph_map, *al_map, *sy_map, *ret;
+
+    ph_map = dtr_map_info_section(s, s->phandles, _("phandle Map"), 1);
+    al_map = dtr_map_info_section(s, s->aliases, _("Alias Map"), 0);
+    sy_map = dtr_map_info_section(s, s->symbols, _("Symbol Map"), 0);
+    ret = g_strdup_printf("%s%s%s", ph_map, sy_map, al_map);
+    g_free(ph_map);
+    g_free(al_map);
+    g_free(sy_map);
+    return ret;
+}
 

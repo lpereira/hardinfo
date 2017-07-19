@@ -241,12 +241,16 @@ void __scan_dtree()
 {
     dt = dtr_new(NULL);
     gchar *summary = get_summary();
+    gchar *maps = dtr_maps_info(dt);
 
     dtree_info = g_strdup("[Device Tree]\n");
     mi_add("Summary", summary);
+    mi_add("Maps", maps);
 
     add_keys("/");
 
     //printf("%s\n", dtree_info);
+    g_free(summary);
+    g_free(maps);
     dtr_free(dt);
 }
