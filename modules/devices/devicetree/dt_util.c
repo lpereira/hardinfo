@@ -246,32 +246,19 @@ dtr_obj *dtr_obj_read(dtr *s, const char *dtp) {
     obj = malloc(sizeof(dtr_obj));
     if (obj != NULL) {
         memset(obj, 0, sizeof(dtr_obj));
+
         obj->dt = s;
         if (*dtp != '/') {
+            /* doesn't start with slash, use alias */
             obj->path = (char*)dtr_alias_lookup(s, dtp);
             if (obj->path != NULL)
                 obj->path = strdup(obj->path);
             else {
-                // obj->path = strdup( (dtp != NULL && strcmp(dtp, "")) ? dtp : "/" );
                 dtr_obj_free(obj);
                 return NULL;
             }
         } else
             obj->path = strdup(dtp);
-
-        full_path = g_strdup_printf("%s%s", s->base_path, obj->path);
-
-        if ( g_file_test(full_path, G_FILE_TEST_IS_DIR) ) {
-            obj->type = DT_NODE;
-        } else {
-            obj->type = DTP_UNK;
-            if (!g_file_get_contents(full_path, (gchar**)&obj->data, (gsize*)&obj->length, NULL)) {
-                dtr_obj_free(obj);
-                g_free(full_path);
-                return NULL;
-            }
-        }
-        g_free(full_path);
 
         /* find name after last slash, or start */
         slash = strrchr(obj->path, '/');
@@ -280,8 +267,19 @@ dtr_obj *dtr_obj_read(dtr *s, const char *dtp) {
         else
             obj->name = strdup(obj->path);
 
-        if (obj->type == DTP_UNK)
+        /* read data */
+        full_path = g_strdup_printf("%s%s", s->base_path, obj->path);
+        if ( g_file_test(full_path, G_FILE_TEST_IS_DIR) ) {
+            obj->type = DT_NODE;
+        } else {
+            if (!g_file_get_contents(full_path, (gchar**)&obj->data, (gsize*)&obj->length, NULL)) {
+                dtr_obj_free(obj);
+                g_free(full_path);
+                return NULL;
+            }
             obj->type = dtr_guess_type(obj);
+        }
+        g_free(full_path);
 
         return obj;
     }
