@@ -2,11 +2,15 @@ Index:
 
 * [Coding guidelines] (#coding-guidelines)
 * [Develop info] (#develop-info)
+* [Tranlations] (#translations)
 
 # Coding guidelines
 
 Pleae coordinate effors in github pull and issues, 
 but take in consideration that time of each coder/contributor are limited to review/see your issue or pull.
+
+All the colaboration work must be using https://github.com/lpereira/hardinfo issues and pull request.
+Please clone the repository with git and use branch, before make pull request.
 
 ## Pull request
 
@@ -57,3 +61,13 @@ There are just two function, **one to get server data/info** and **other to uplo
 The one to upload/retrieve data is used by many other functions; grep for calls to `sync_manager_add_entry()`. 
 Some things have their own format (like pci.ids file for lspci), but most (including vendor list, CPU flag list, 
 benchmark data) are in the GLib GKeyFile format, which is essentially a format inspired by Guindows .ini files.
+
+# Translations
+
+We using po files, its recomended before begining, 
+try to run `bash updatepo.sh` in the po/ directory to sync files.
+
+This will regenerate hardinfo.pot and update all the .po files. Dont worry, 
+NOTHING IS LOST if this isn't done, but it prevents wasting time translating
+strings that have changed, or are no longer used.
+
