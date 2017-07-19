@@ -454,7 +454,7 @@ char *dtr_list_str0(const char *data, uint32_t length) {
     return strdup(ret);
 }
 
-char* dtr_str(dtr *s, dtr_obj *obj) {
+char* dtr_str(dtr_obj *obj) {
     char *ret;
     int type;
 
@@ -484,7 +484,7 @@ char* dtr_str(dtr *s, dtr_obj *obj) {
                 ret = dtr_list_hex(obj->data, obj->length / 4);
             break;
         case DTP_PH_REF:
-            ret = dtr_elem_phref(s, *obj->data_int);
+            ret = dtr_elem_phref(obj->dt, *obj->data_int);
             break;
         case DTP_UINT:
             ret = dtr_elem_uint(*obj->data_int);
