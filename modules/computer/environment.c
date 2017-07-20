@@ -23,19 +23,19 @@ static gchar *_env = NULL;
 void scan_env_var(gboolean reload)
 {
     SCAN_START();
-    
+
     gchar **envlist;
     gint i;
-    
+
     g_free(_env);
-    
-    _env = g_strdup(_("[Environment Variables]\n"));
+
+    _env = g_strdup_printf("[%s]\n", _("Environment Variables") );
     for (i = 0, envlist = g_listenv(); envlist[i]; i++) {
       _env = h_strdup_cprintf("%s=%s\n", _env,
                               envlist[i], g_getenv(envlist[i]));
     }
     g_strfreev(envlist);
-    
+
     SCAN_END();
 }
 
