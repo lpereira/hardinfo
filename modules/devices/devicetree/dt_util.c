@@ -36,12 +36,21 @@ static struct {
     { "reg", DTP_REG },
     { "clocks", DTP_CLOCKS },
     { "gpios", DTP_GPIOS },
+    { "cs-gpios", DTP_GPIOS },
     { "phandle", DTP_PH },
     { "interrupts", DTP_HEX },
     { "interrupt-parent", DTP_PH_REF },
     { "regulator-min-microvolt", DTP_UINT },
     { "regulator-max-microvolt", DTP_UINT },
     { "clock-frequency", DTP_UINT },
+    { NULL, 0 },
+};
+
+static struct {
+    char *name; uint32_t v;
+} default_values[] = {
+    { "#address-cells", 2 },
+    { "#size-cells", 1 },
     { NULL, 0 },
 };
 
@@ -82,8 +91,6 @@ dtr_map *dtr_map_add(dtr_map *map, uint32_t v, const char *label, const char *pa
     dtr_map *nmap = malloc(sizeof(dtr_map));
     memset(nmap, 0, sizeof(dtr_map));
     nmap->v = v;
-
-    //printf("dtr_map_add: 0x%x: %x - %s - %s\n", map, v, label, path);
 
     if (label != NULL) nmap->label = strdup(label);
     if (path != NULL) nmap->path = strdup(path);
@@ -623,6 +630,40 @@ char *dtr_list_phref(dtr_obj *obj, char *ext_cell_prop) {
     return ret;
 }
 
+char *dtr_list_reg(dtr_obj *obj) {
+    char *tup_str, *ret = NULL;
+    uint32_t acells, scells, tup_len;
+    uint32_t tups, extra, consumed; /* extra and consumed are bytes */
+    uint32_t *next;
+
+    acells = dtr_cellv_find(obj, "#address-cells", 2);
+    scells = dtr_cellv_find(obj, "#size-cells", 2);
+    tup_len = acells + scells;
+    tups = obj->length / (tup_len * 4);
+    extra = obj->length % (tup_len * 4);
+    consumed = 0; /* bytes */
+
+    //printf("list reg: %s\n ... acells: %u, scells: %u, extra: %u\n", obj->path, acells, scells, extra);
+
+    if (extra) {
+        /* error: length is not a multiple of tuples */
+        return dtr_list_hex(obj->data, obj->length / 4);
+    }
+
+    next = obj->data_int;
+    consumed = 0;
+    while (consumed + (tup_len * 4) <= obj->length) {
+        tup_str = dtr_list_hex(next, tup_len);
+        ret = appf(ret, "<%s>", tup_str);
+        free(tup_str);
+        consumed += (tup_len * 4);
+        next += tup_len;
+    }
+
+    //printf(" ... %s\n", ret);
+    return ret;
+}
+
 char* dtr_str(dtr_obj *obj) {
     char *ret;
     int type;
@@ -662,6 +703,8 @@ char* dtr_str(dtr_obj *obj) {
             }
         case DTP_REG:
             /* <#address-cells #size-cells> */
+            ret = dtr_list_reg(obj);
+            break;
         case DTP_PH:
         case DTP_HEX:
             if (obj->length % 4)
@@ -682,6 +725,67 @@ char* dtr_str(dtr_obj *obj) {
             else
                 ret = dtr_list_byte((uint8_t*)obj->data, obj->length);
             break;
+    }
+
+    return ret;
+}
+
+dtr_obj *dtr_get_parent_obj(dtr_obj *obj) {
+    char *slash, *parent;
+    dtr_obj *ret = NULL;
+
+    if (obj == NULL)
+        return NULL;
+
+    parent = strdup(obj->path);
+    slash = strrchr(parent, '/');
+    if (slash != NULL) {
+        *slash = 0;
+        if (strlen(parent) > 0)
+            ret = dtr_obj_read(obj->dt, parent);
+    } else if (strlen(parent) > 1) {
+        ret = dtr_obj_read(obj->dt, "/");
+    }
+
+    free(parent);
+    return ret;
+}
+
+/* find the value of a path-inherited property by climbing the path */
+int dtr_cellv_find(dtr_obj *obj, char *qprop, int limit) {
+    dtr_obj *tobj, *pobj, *qobj;
+    uint32_t ret = 0;
+    int i, found = 0;
+
+    if (!limit) limit = 1000;
+
+    tobj = obj;
+    while (tobj != NULL) {
+        pobj = dtr_get_parent_obj(tobj);
+        if (tobj != obj)
+            dtr_obj_free(tobj);
+        if (!limit || pobj == NULL) break;
+        qobj = dtr_get_prop_obj(obj->dt, pobj, qprop);
+        if (qobj != NULL) {
+            ret = be32toh(*qobj->data_int);
+            found = 1;
+            dtr_obj_free(qobj);
+            break;
+        }
+        tobj = pobj;
+        limit--;
+    }
+    dtr_obj_free(pobj);
+
+    if (!found) {
+        i = 0;
+        while(default_values[i].name != NULL) {
+            if (strcmp(default_values[i].name, qprop) == 0) {
+                ret = default_values[i].v;
+                break;
+            }
+            i++;
+        }
     }
 
     return ret;
