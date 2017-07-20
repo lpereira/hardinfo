@@ -551,34 +551,25 @@ char *dtr_list_str0(const char *data, uint32_t length) {
 
 char *dtr_list_override(dtr_obj *obj) {
     /* <phref, string "property:value"> ... */
-    char *tmp, *ret;
+    char *ret = NULL;
     char *ph, *str;
     char *src;
     int l, consumed = 0;
-    ret = strdup("");
     src = obj->data_str;
     while (consumed + 5 <= obj->length) {
         ph = dtr_elem_phref(obj->dt, *(dt_uint*)src, 1);
         src += 4; consumed += 4;
         l = strlen(src) + 1; /* consume the null */
         str = dtr_list_str0(src, l);
-        tmp = g_strdup_printf("%s%s<%s -> %s>",
-            ret, strlen(ret) ? " " : "",
-            ph, str);
+        ret = appf(ret, "<%s -> %s>", ph, str);
         src += l; consumed += l;
         free(ph);
         free(str);
-        free(ret);
-        ret = tmp;
     }
     if (consumed < obj->length) {
         str = dtr_list_byte(src, obj->length - consumed);
-        tmp = g_strdup_printf("%s%s%s",
-            ret, strlen(ret) ? " " : "",
-            str);
+        ret = appf(ret, "%s", str);
         free(str);
-        free(ret);
-        ret = tmp;
     }
     return ret;
 }
@@ -599,8 +590,7 @@ char *dtr_list_phref(dtr_obj *obj, char *ext_cell_prop) {
     int count = obj->length / 4;
     int i = 0, ext_cells = 0;
     char *ph_path;
-    char *ph, *ext, *tmp, *ret;
-    ret = g_strdup("");
+    char *ph, *ext, *ret = NULL;
     while (i < count) {
         if (ext_cell_prop == NULL)
             ext_cells = 0;
@@ -609,13 +599,10 @@ char *dtr_list_phref(dtr_obj *obj, char *ext_cell_prop) {
         ph = dtr_elem_phref(obj->dt, obj->data_int[i], 0); i++;
         if (ext_cells > count - i) ext_cells = count - i;
         ext = dtr_list_hex((obj->data_int + i), ext_cells); i+=ext_cells;
-        tmp = g_strdup_printf("%s%s<%s%s%s>",
-            ret, strlen(ret) ? ", " : "",
+        ret = appf(ret, "<%s%s%s>",
             ph, (ext_cells) ? " " : "", ext);
-        g_free(ret);
         g_free(ph);
         g_free(ext);
-        ret = tmp;
     }
     return ret;
 }
@@ -823,6 +810,24 @@ char *dtr_maps_info(dtr *s) {
     g_free(ph_map);
     g_free(al_map);
     g_free(sy_map);
+    return ret;
+}
+
+char *appf(char *src, char *fmt, ...) {
+    gchar *buf, *ret;
+    va_list args;
+
+    va_start(args, fmt);
+    buf = g_strdup_vprintf(fmt, args);
+    va_end(args);
+
+    if (src != NULL) {
+        ret = g_strdup_printf("%s%s%s", src, sp_sep(src), buf);
+        g_free(buf);
+        g_free(src);
+    } else
+        ret = buf;
+
     return ret;
 }
 
