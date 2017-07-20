@@ -544,7 +544,7 @@ const gchar *hi_note_func(gint entry)
 {
     if (entry == ENTRY_RESOURCES) {
         if (root_required_for_resources()) {
-            return g_strdup_printf(_("Resource information requires superuser privileges"));
+            return g_strdup(_("Resource information requires superuser privileges"));
         }
     }
     return NULL;
