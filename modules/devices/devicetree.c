@@ -159,10 +159,11 @@ char *get_dt_string(char *path, int decode) {
 }
 
 gchar *get_summary() {
-    char *model = NULL, *serial = NULL, *compat = NULL, *ret = NULL;
+    char *model = NULL, *compat = NULL;
+    char *tmp[10];
+    char *ret = NULL;
 
     model = get_dt_string("/model", 0);
-    serial = get_dt_string("/serial-number", 0);
     compat = get_dt_string("/compatible", 1);
 
     /* Expand on the DT information from known machines, like RPi.
@@ -171,10 +172,33 @@ gchar *get_summary() {
      * together for DT machines, with a nice fallback.
      * PPC Macs could be handled this way too. They store
      * machine identifiers in /proc/cpuinfo. */
-    if ( strstr(model, "Raspberry Pi") != NULL )
-        ret = rpi_board_details();
+    if ( strstr(model, "Raspberry Pi") != NULL
+        || strstr(compat, "raspberrypi") != NULL ) {
+        tmp[0] = get_dt_string("/serial-number", 0);
+        tmp[1] = get_dt_string("/soc/gpu/compatible", 1);
+        tmp[9] = rpi_board_details();
+        tmp[8] = g_strdup_printf(
+                "[%s]\n" "%s=%s\n" "%s=%s\n",
+                _("Platform"),
+                _("Compatible"), compat,
+                _("GPU-compatible"), tmp[1] );
+        if (tmp[9] != NULL) {
+            ret = g_strdup_printf("%s%s", tmp[9], tmp[8]);
+        } else {
+            ret = g_strdup_printf(
+                "[%s]\n" "%s=%s\n" "%s=%s\n" "%s=%s\n" "%s",
+                _("Raspberry Pi or Compatible"),
+                _("Model"), model,
+                _("Serial Number"), tmp[0],
+                _("RCode"), _("No revision code available; unable to lookup model details."),
+                tmp[8]);
+        }
+        free(tmp[0]); free(tmp[1]);
+        free(tmp[9]); free(tmp[8]);
+    }
 
     if (ret == NULL) {
+        tmp[0] = get_dt_string("/serial-number", 0);
         ret = g_strdup_printf(
                 "[%s]\n"
                 "%s=%s\n"
@@ -182,12 +206,11 @@ gchar *get_summary() {
                 "%s=%s\n",
                 _("Board"),
                 _("Model"), model,
-                _("Serial Number"), serial,
+                _("Serial Number"), tmp[0],
                 _("Compatible"), compat);
+        free(tmp[0]);
     }
-
     free(model);
-    free(serial);
     return ret;
 }
 
