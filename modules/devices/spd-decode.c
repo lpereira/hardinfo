@@ -11,12 +11,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -1497,13 +1497,16 @@ void scan_spd_do(void)
     g_slist_free(dimm_list);
 
     g_free(spd_info);
-    spd_info = g_strdup_printf("[SPD]\n"
-			       "%s\n"
-			       "[$ShellParam$]\n"
-			       "ViewType=1\n"
-			       "ColumnTitle$TextValue=Bank\n"
-			       "ColumnTitle$Extra1=Size\n"
-			       "ColumnTitle$Extra2=Manufacturer\n"
-			       "ColumnTitle$Value=Model\n" "ShowColumnHeaders=true\n", list);
+    spd_info = g_strdup_printf("[%s]\n"
+                   "%s\n"
+                   "[$ShellParam$]\n"
+                   "ViewType=1\n"
+                   "ColumnTitle$TextValue=%s\n" /* Bank */
+                   "ColumnTitle$Extra1=%s\n" /* Size */
+                   "ColumnTitle$Extra2=%s\n" /* Manufacturer */
+                   "ColumnTitle$Value=%s\n" /* Model */
+                   "ShowColumnHeaders=true\n",
+                   _("SPD"), list,
+                   _("Bank"), _("Size"), _("Manufacturer"), _("Model") );
     g_free(list);
 }
