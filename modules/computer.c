@@ -89,7 +89,7 @@ gchar *hi_more_info(gchar * entry)
     gchar *info = moreinfo_lookup_with_prefix("COMP", entry);
 
     if (info)
-	return g_strdup(info);
+        return g_strdup(info);
 
     return g_strdup_printf("[%s]", entry);
 }
@@ -282,11 +282,14 @@ void scan_dev(gboolean reload)
 
 gchar *callback_dev()
 {
-    return g_strdup_printf(_("[$ShellParam$]\n"
-			   "ColumnTitle$TextValue=Program\n"
-			   "ColumnTitle$Value=Version\n"
-			   "ShowColumnHeaders=true\n"
-                           "%s"), dev_list);
+    return g_strdup_printf(
+                "[$ShellParam$]\n"
+                "ColumnTitle$TextValue=%s\n" /* Program */
+                "ColumnTitle$Value=%s\n" /* Version */
+                "ShowColumnHeaders=true\n"
+                "%s",
+                _("Program"), _("Version"),
+                dev_list);
 }
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
@@ -479,95 +482,109 @@ gchar *callback_os()
 
 gchar *callback_modules()
 {
-    return g_strdup_printf(_("[Loaded Modules]\n"
-			   "%s"
-			   "[$ShellParam$]\n"
-			   "ViewType=1\n"
-			   "ColumnTitle$TextValue=Name\n"
-			   "ColumnTitle$Value=Description\n"
-			   "ShowColumnHeaders=true\n"), module_list);
+    return g_strdup_printf("[%s]\n"
+               "%s"
+               "[$ShellParam$]\n"
+               "ViewType=1\n"
+               "ColumnTitle$TextValue=%s\n" /* Name */
+               "ColumnTitle$Value=%s\n" /* Description */
+               "ShowColumnHeaders=true\n",
+               _("Loaded Modules"), module_list,
+               _("Name"), _("Description") );
 }
 
 gchar *callback_boots()
 {
-    return g_strdup_printf(_("[$ShellParam$]\n"
-			   "ColumnTitle$TextValue=Date & Time\n"
-			   "ColumnTitle$Value=Kernel Version\n"
-			   "ShowColumnHeaders=true\n"
-			   "\n"
-			   "%s"), computer->os->boots);
+    return g_strdup_printf("[$ShellParam$]\n"
+               "ColumnTitle$TextValue=%s\n" /* Date & Time */
+               "ColumnTitle$Value=%s\n" /* Kernel Version */
+               "ShowColumnHeaders=true\n"
+               "\n%s",
+               _("Date & Time"), _("Kernel Version"),
+               computer->os->boots);
 }
 
 gchar *callback_locales()
 {
-    return g_strdup_printf(_("[$ShellParam$]\n"
-			   "ViewType=1\n"
-			   "ColumnTitle$TextValue=Language Code\n"
-			   "ColumnTitle$Value=Name\n"
-			   "ShowColumnHeaders=true\n"
-			   "[Available Languages]\n"
-			   "%s"), computer->os->languages);
+    return g_strdup_printf("[$ShellParam$]\n"
+               "ViewType=1\n"
+               "ColumnTitle$TextValue=%s\n" /* Language Code */
+               "ColumnTitle$Value=%s\n" /* Name */
+               "ShowColumnHeaders=true\n"
+               "[%s]\n%s",
+               _("Language Code"), _("Name"),
+               _("Available Languages"), computer->os->languages );
 }
 
 gchar *callback_fs()
 {
-    return g_strdup_printf(_("[$ShellParam$]\n"
-			   "ViewType=4\n"
-			   "ReloadInterval=5000\n"
-			   "Zebra=1\n"
-			   "NormalizePercentage=false\n"
-			   "ColumnTitle$Extra1=Mount Point\n"
-			   "ColumnTitle$Progress=Usage\n"
-			   "ColumnTitle$TextValue=Device\n"
-			   "ShowColumnHeaders=true\n"
-			   "[Mounted File Systems]\n%s\n"), fs_list);
+    return g_strdup_printf("[$ShellParam$]\n"
+               "ViewType=4\n"
+               "ReloadInterval=5000\n"
+               "Zebra=1\n"
+               "NormalizePercentage=false\n"
+               "ColumnTitle$Extra1=%s\n" /* Mount Point */
+               "ColumnTitle$Progress=%s\n" /* Usage */
+               "ColumnTitle$TextValue=%s\n" /* Device */
+               "ShowColumnHeaders=true\n"
+               "[%s]\n%s\n",
+               _("Mount Point"), _("Usage"), _("Device"),
+               _("Mounted File Systems"), fs_list );
 }
 
 gchar *callback_display()
 {
-    return g_strdup_printf(_("[Display]\n"
-			   "Resolution=%dx%d pixels\n"
-			   "Vendor=%s\n"
-			   "Version=%s\n"
-			   "[Monitors]\n"
-			   "%s"
-			   "[Extensions]\n"
-			   "%s"
-			   "[OpenGL]\n"
-			   "Vendor=%s\n"
-			   "Renderer=%s\n"
-			   "Version=%s\n"
-			   "Direct Rendering=%s\n"),
-			   computer->display->width,
-			   computer->display->height,
-			   computer->display->vendor,
-			   computer->display->version,
-			   computer->display->monitors,
-			   computer->display->extensions,
-			   computer->display->ogl_vendor,
-			   computer->display->ogl_renderer,
-			   computer->display->ogl_version,
-			   computer->display->dri ? _("Y_es") : _("No"));
+    return g_strdup_printf("[%s]\n"
+               "%s=%dx%d %s\n"
+               "%s=%s\n"
+               "%s=%s\n"
+               "[%s]\n"
+               "%s"
+               "[%s]\n"
+               "%s"
+               "[%s]\n"
+               "%s=%s\n"
+               "%s=%s\n"
+               "%s=%s\n"
+               "%s=%s\n",
+               _("Display"),
+               _("Resolution"),
+                   computer->display->width,
+                   computer->display->height,
+                   _(/*/ Resolution WxH unit */ "pixels"),
+               _("Vendor"), computer->display->vendor,
+               _("Version"), computer->display->version,
+               _("Monitors"),
+               computer->display->monitors,
+               _("Extensions"),
+               computer->display->extensions,
+               _("OpenGL"),
+               _("Vendor"), computer->display->ogl_vendor,
+               _("Renderer"), computer->display->ogl_renderer,
+               _("Version"), computer->display->ogl_version,
+               _("Direct Rendering"), computer->display->dri ? _("Yes") : _("No")
+               );
 }
 
 gchar *callback_users()
 {
     return g_strdup_printf("[$ShellParam$]\n"
-			   "ReloadInterval=10000\n"
-			   "ViewType=1\n"
-			   "[Users]\n"
-			   "%s\n", users);
+               "ReloadInterval=10000\n"
+               "ViewType=1\n"
+               "[%s]\n"
+               "%s\n", _("Users"), users);
 }
 
 gchar *callback_groups()
 {
-    return g_strdup_printf(_("[$ShellParam$]\n"
-			   "ReloadInterval=10000\n"
-			   "ColumnTitle$TextValue=Name\n"
-			   "ColumnTitle$Value=Group ID\n"
-			   "ShowColumnHeaders=true\n"
-			   "[Groups]\n"
-			   "%s\n"), groups);
+    return g_strdup_printf("[$ShellParam$]\n"
+               "ReloadInterval=10000\n"
+               "ColumnTitle$TextValue=%s\n" /* Name */
+               "ColumnTitle$Value=%s\n" /* Group ID */
+               "ShowColumnHeaders=true\n"
+               "[%s]\n%s\n",
+               _("Name"), _("Group ID"),
+               _("Groups"), groups);
 }
 
 gchar *get_os_kernel(void)
@@ -623,12 +640,12 @@ gchar *get_audio_cards(void)
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
-	{"getOSKernel", get_os_kernel},
-	{"getOS", get_os},
-	{"getDisplaySummary", get_display_summary},
-	{"getAudioCards", get_audio_cards},
-	{"getKernelModuleDescription", get_kernel_module_description},
-	{NULL}
+        {"getOSKernel", get_os_kernel},
+        {"getOS", get_os},
+        {"getDisplaySummary", get_display_summary},
+        {"getAudioCards", get_audio_cards},
+        {"getKernelModuleDescription", get_kernel_module_description},
+        {NULL}
     };
 
     return m;
@@ -737,11 +754,11 @@ void hi_module_init(void)
 ModuleAbout *hi_module_get_about(void)
 {
     static ModuleAbout ma[] = {
-	{
-	 .author = "Leandro A. F. Pereira",
-	 .description = N_("Gathers high-level computer information"),
-	 .version = VERSION,
-	 .license = "GNU GPL version 2"}
+    {
+     .author = "Leandro A. F. Pereira",
+     .description = N_("Gathers high-level computer information"),
+     .version = VERSION,
+     .license = "GNU GPL version 2"}
     };
 
     return ma;
