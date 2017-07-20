@@ -70,7 +70,9 @@ struct _dtr_obj {
     char *name;
     uint32_t length;
     int type;
-    const char *alias; /* null until first dtr_obj_alias(). do not free */
+    char *prefix;        /* if the name has a manufacturer's prefix or null */
+    char *np_name;       /* the name without any prefix. points into .prefix or .name, do not free */
+    const char *alias;  /* null until first dtr_obj_alias(). do not free */
     const char *symbol; /* null until first dtr_obj_symbol(). do not free */
     dtr *dt;
 };
@@ -253,7 +255,7 @@ const char *dtr_base_path(dtr *s) {
 /*glib, but _dt_obj *prop uses malloc() and std types */
 dtr_obj *dtr_obj_read(dtr *s, const char *dtp) {
     char *full_path;
-    char *slash;
+    char *slash, *coma;
     dtr_obj *obj;
 
     if (dtp == NULL)
@@ -283,6 +285,19 @@ dtr_obj *dtr_obj_read(dtr *s, const char *dtp) {
         else
             obj->name = strdup(obj->path);
 
+        /* find manufacturer prefix */
+        obj->prefix = strdup(obj->name);
+        coma = strchr(obj->prefix, ',');
+        if (coma != NULL) {
+            /* coma -> null; .np_name starts after */
+            *coma = 0;
+            obj->np_name = coma + 1;
+        } else {
+            obj->np_name = obj->name;
+            free(obj->prefix);
+            obj->prefix = NULL;
+        }
+
         /* read data */
         full_path = g_strdup_printf("%s%s", s->base_path, obj->path);
         if ( g_file_test(full_path, G_FILE_TEST_IS_DIR) ) {
@@ -306,6 +321,7 @@ void dtr_obj_free(dtr_obj *s) {
     if (s != NULL) {
         free(s->path);
         free(s->name);
+        free(s->prefix);
         free(s->data);
         free(s);
     }
