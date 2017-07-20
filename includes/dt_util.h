@@ -68,6 +68,8 @@ char *dtr_elem_uint(dt_uint e);
 char *dtr_list_byte(uint8_t *bytes, unsigned long count);
 char *dtr_list_hex(dt_uint *list, unsigned long count);
 
+int dtr_cellv_find(dtr_obj *obj, char *qprop, int limit);
+
 char *dtr_maps_info(dtr *); /* returns hardinfo shell section */
 
 const char *dtr_find_device_tree_root(void);
