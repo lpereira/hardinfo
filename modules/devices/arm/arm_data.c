@@ -114,9 +114,11 @@ static struct {
     /*d */ { 0xd01,	"Cortex-A32" },
     /*dt*/ { 0xd03,	"Cortex-A53" },
     /*d */ { 0xd04,	"Cortex-A35" },
+    /*d */ { 0xd05,	"Cortex-A55" },
     /*d */ { 0xd07,	"Cortex-A57 MPCore" },
     /*d */ { 0xd08,	"Cortex-A72" },
     /*d */ { 0xd09,	"Cortex-A73" },
+    /*d */ { 0xd0a,	"Cortex-A75" },
            { 0, NULL},
 };
 
