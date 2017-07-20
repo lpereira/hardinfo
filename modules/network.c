@@ -297,47 +297,53 @@ void scan_connections(gboolean reload)
 
 gchar *callback_arp()
 {
-    return g_strdup_printf(_("[ARP Table]\n"
+    return g_strdup_printf("[%s]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ReloadInterval=3000\n"
-                           "ColumnTitle$TextValue=IP Address\n"
-                           "ColumnTitle$Value=Interface\n"
-                           "ColumnTitle$Extra1=MAC Address\n"
-                           "ShowColumnHeaders=true\n"),
-                           __arp_table);
+                           "ColumnTitle$TextValue=%s\n" /* IP Address */
+                           "ColumnTitle$Value=%s\n" /* Interface */
+                           "ColumnTitle$Extra1=%s\n" /* MAC Address */
+                           "ShowColumnHeaders=true\n",
+                           _("ARP Table"), __arp_table,
+                           _("IP Address"), _("Interface"), _("MAC Address") );
 }
 
 gchar *callback_shares()
 {
-    return g_strdup_printf("[SAMBA]\n"
-			   "%s\n"
-			   "[NFS]\n"
-			   "%s", smb_shares_list, nfs_shares_list);
+    return g_strdup_printf("[%s]\n"
+                "%s\n"
+                "[%s]\n"
+                "%s",
+                _("SAMBA"), smb_shares_list,
+                _("NFS"), nfs_shares_list);
 }
 
 gchar *callback_dns()
 {
-    return g_strdup_printf(_("[Name servers]\n"
+    return g_strdup_printf("[%s]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
-                           "ColumnTitle$TextValue=IP Address\n"
-                           "ColumnTitle$Value=Name\n"
-                           "ShowColumnHeaders=true\n"), __nameservers);
+                           "ColumnTitle$TextValue=%s\n" /* IP Address */
+                           "ColumnTitle$Value=%s\n" /* Name */
+                           "ShowColumnHeaders=true\n",
+                           _("Name Servers"), __nameservers,
+                           _("IP Address"), _("Name") );
 }
 
 gchar *callback_connections()
 {
-    return g_strdup_printf(_("[Connections]\n"
+    return g_strdup_printf("[%s]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ReloadInterval=3000\n"
-                           "ColumnTitle$TextValue=Local Address\n"
-                           "ColumnTitle$Value=Protocol\n"
-                           "ColumnTitle$Extra1=Foreign Address\n"
-                           "ColumnTitle$Extra2=State\n"
-                           "ShowColumnHeaders=true\n"),
-                           __connections);
+                           "ColumnTitle$TextValue=%s\n" /* Local Address */
+                           "ColumnTitle$Value=%s\n" /* Protocol */
+                           "ColumnTitle$Extra1=%s\n" /* Foreign Address */
+                           "ColumnTitle$Extra2=%s\n" /* State */
+                           "ShowColumnHeaders=true\n",
+                           _("Connections"), __connections,
+                           _("Local Address"), _("Protocol"), _("Foreign Address"), _("State") );
 }
 
 gchar *callback_network()
@@ -353,26 +359,24 @@ gchar *callback_network()
                "ShowColumnHeaders=true\n"
                "%s",
                network_interfaces,
-               _("Interface"),
-               _("IP Address"),
-               _("Sent"),
-               _("Received"),
+               _("Interface"), _("IP Address"), _("Sent"), _("Received"),
                network_icons);
 }
 
 gchar *callback_route()
 {
-    return g_strdup_printf(_("[IP routing table]\n"
+    return g_strdup_printf("[%s]\n"
                            "%s\n"
                            "[$ShellParam$]\n"
                            "ViewType=0\n"
                            "ReloadInterval=3000\n"
-                           "ColumnTitle$TextValue=Destination / Gateway\n"
-                           "ColumnTitle$Value=Interface\n"
-                           "ColumnTitle$Extra1=Flags\n"
-                           "ColumnTitle$Extra2=Mask\n"
-                           "ShowColumnHeaders=true\n"),
-                           __routing_table);
+                           "ColumnTitle$TextValue=%s\n" /* Destination / Gateway */
+                           "ColumnTitle$Value=%s\n" /* Interface */
+                           "ColumnTitle$Extra1=%s\n" /* Flags */
+                           "ColumnTitle$Extra2=%s\n" /* Mask */
+                           "ShowColumnHeaders=true\n",
+                           _("IP routing table"), __routing_table,
+                           _("Destination/Gateway"), _("Interface"), _("Flags"), _("Mask") );
 }
 
 gchar *callback_statistics()
