@@ -15,7 +15,8 @@ this to avoid conflicts, and must avoid massive commits corrections.. large pull
 
 ## Coding
 
-Currently the code use a mixture  of TAB and SPACES but with priority to use 4 SPACES!
+Most ancient code use a mixture  of TAB and SPACES, but newer must 
+prefered and priority its to use 4 SPACES!
 
 # Translations
 
