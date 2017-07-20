@@ -197,23 +197,23 @@ static gchar *__benchmark_include_results(gdouble result,
 
     path = g_build_filename(g_get_home_dir(), ".hardinfo", "benchmark.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-	DEBUG("local benchmark.conf not found, trying system-wide");
-	g_free(path);
-	path = g_build_filename(params.path_data, "benchmark.conf", NULL);
+        DEBUG("local benchmark.conf not found, trying system-wide");
+        g_free(path);
+        path = g_build_filename(params.path_data, "benchmark.conf", NULL);
     }
 
     g_key_file_load_from_file(conf, path, 0, NULL);
 
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
-	gchar *value, *cleaned_machine;
+        gchar *value, *cleaned_machine;
 
-	value   = g_key_file_get_value(conf, benchmark, machines[i], NULL);
-	cleaned_machine = clean_cpuname(machines[i]);
-	results = h_strconcat(results, cleaned_machine, "=", value, "\n", NULL);
+        value   = g_key_file_get_value(conf, benchmark, machines[i], NULL);
+        cleaned_machine = clean_cpuname(machines[i]);
+        results = h_strconcat(results, cleaned_machine, "=", value, "\n", NULL);
 
-	g_free(value);
-	g_free(cleaned_machine);
+        g_free(value);
+        g_free(cleaned_machine);
     }
 
     g_strfreev(machines);
@@ -222,29 +222,34 @@ static gchar *__benchmark_include_results(gdouble result,
 
     if (result > 0.0f) {
         processor_frequency = module_call_method("devices::getProcessorFrequency");
-        return_value = g_strdup_printf(_("[$ShellParam$]\n"
-			       	   "Zebra=1\n"
-			       	   "OrderType=%d\n"
-	       			   "ViewType=3\n"
-	       			   "ColumnTitle$Extra1=CPU Clock\n"
-			       	   "ColumnTitle$Progress=Results\n"
-			       	   "ColumnTitle$TextValue=CPU\n"
-			       	   "ShowColumnHeaders=true\n"
-	       			   "[%s]\n"
-		       		   "<big><b>This Machine</b></big>=%.3f|%s MHz\n"
-			       	   "%s"), order_type, benchmark, result, processor_frequency, results);
+        return_value = g_strdup_printf("[$ShellParam$]\n"
+                       "Zebra=1\n"
+                       "OrderType=%d\n"
+                       "ViewType=3\n"
+                       "ColumnTitle$Extra1=%s\n" /* CPU Clock */
+                       "ColumnTitle$Progress=%s\n" /* Results */
+                       "ColumnTitle$TextValue=%s\n" /* CPU */
+                       "ShowColumnHeaders=true\n"
+                       "[%s]\n"
+                       "<big><b>This Machine</b></big>=%.3f|%s MHz\n"
+                       "%s", order_type,
+                       _("CPU Clock"), _("Results"), _("CPU"),
+                       benchmark,
+                       result, processor_frequency, results);
         g_free(processor_frequency);
     } else {
-        return_value = g_strdup_printf(_("[$ShellParam$]\n"
-			       	   "Zebra=1\n"
-			       	   "OrderType=%d\n"
-	       			   "ViewType=3\n"
-	       			   "ColumnTitle$Extra1=CPU Clock\n"
-			       	   "ColumnTitle$Progress=Results\n"
-			       	   "ColumnTitle$TextValue=CPU\n"
-			       	   "ShowColumnHeaders=true\n"
-	       			   "[%s]\n"
-			       	   "%s"), order_type, benchmark, results);
+        return_value = g_strdup_printf("[$ShellParam$]\n"
+                       "Zebra=1\n"
+                       "OrderType=%d\n"
+                       "ViewType=3\n"
+                       "ColumnTitle$Extra1=%s\n" /* CPU Clock */
+                       "ColumnTitle$Progress=%s\n" /* Results */
+                       "ColumnTitle$TextValue=%s\n" /* CPU */
+                       "ShowColumnHeaders=true\n"
+                       "[%s]\n%s",
+                       order_type,
+                       _("CPU Clock"), _("Results"), _("CPU"),
+                       benchmark, results);
     }
     return return_value;
 }
@@ -357,7 +362,7 @@ static gboolean do_benchmark_handler(GIOChannel *source,
 static void do_benchmark(void (*benchmark_function)(void), int entry)
 {
     int old_priority = 0;
-    
+
     if (params.gui_running && !sending_benchmark_results) {
        gchar *argv[] = { params.argv0, "-b", entries[entry].name,
                          "-m", "benchmark.so", "-a", NULL };
@@ -373,7 +378,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 
        shell_view_set_enabled(FALSE);
        shell_status_update(bench_status);
-       
+
        g_free(bench_status);
 
        bench_image = icon_cache_get_image("benchmark.png");
@@ -397,7 +402,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        benchmark_dialog = g_new0(BenchmarkDialog, 1);
        benchmark_dialog->dialog = bench_dialog;
        benchmark_dialog->result = -1.0f;
-       
+
        if (!g_path_is_absolute(params.argv0)) {
           spawn_flags |= G_SPAWN_SEARCH_PATH;
        }
@@ -441,7 +446,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 
           return;
        }
-       
+
        gtk_widget_destroy(bench_dialog);
        g_free(benchmark_dialog);
        shell_status_set_enabled(TRUE);
@@ -612,7 +617,7 @@ static gchar *get_benchmark_results()
     g_free(machineram);
 
     sending_benchmark_results = FALSE;
-    
+
     return result;
 }
 
