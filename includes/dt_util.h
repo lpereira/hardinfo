@@ -72,4 +72,10 @@ char *dtr_maps_info(dtr *); /* returns hardinfo shell section */
 
 const char *dtr_find_device_tree_root(void);
 
+#define sp_sep(STR) (strlen(STR) ? " " : "")
+/* appends an element to a string, adding a space if
+ * the string is not empty.
+ * ex: ret = appf(ret, "%s=%s\n", name, value); */
+char *appf(char *src, char *fmt, ...);
+
 #endif
