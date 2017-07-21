@@ -25,17 +25,19 @@ static gchar *
 get_libc_version(void)
 {
     static const struct {
-	const char *test_cmd;
-	const char *match_str;
-	const char *lib_name;
-	gboolean try_ver_str;
-	gboolean use_stderr;
+        const char *test_cmd;
+        const char *match_str;
+        const char *lib_name;
+        gboolean try_ver_str;
+        gboolean use_stderr;
     } libs[] = {
-	{ "ldconfig -V", "GLIBC", N_("GNU C Library"), TRUE, FALSE},
-	{ "ldconfig -V", "GNU libc", N_("GNU C Library"), TRUE, FALSE},
-	{ "ldconfig -v", "uClibc", N_("uClibc or uClibc-ng"), FALSE, FALSE},
-	{ "diet", "diet version", N_("diet libc"), TRUE, TRUE},
-	{ }
+        { "ldd --version", "GLIBC", N_("GNU C Library"), TRUE, FALSE},
+        { "ldd --version", "GNU libc", N_("GNU C Library"), TRUE, FALSE},
+        { "ldconfig -V", "GLIBC", N_("GNU C Library"), TRUE, FALSE},
+        { "ldconfig -V", "GNU libc", N_("GNU C Library"), TRUE, FALSE},
+        { "ldconfig -v", "uClibc", N_("uClibc or uClibc-ng"), FALSE, FALSE},
+        { "diet", "diet version", N_("diet libc"), TRUE, TRUE},
+        { NULL }
     };
     int i;
 
