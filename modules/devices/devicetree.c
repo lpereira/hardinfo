@@ -260,20 +260,44 @@ void add_keys(char *np) {
     g_dir_close(dir);
 }
 
+char *msg_section(int dump) {
+    gchar *aslbl = NULL;
+    gchar *messages = dtr_messages(dt);
+    gchar *ret = g_strdup_printf("[%s]\n", _("Messages"));
+    gchar **lines = g_strsplit(messages, "\n", 0);
+    int i = 0;
+    while(lines[i] != NULL) {
+        aslbl = hardinfo_clean_label(lines[i], 0);
+        ret = appf(ret, "%s=\n", aslbl);
+        g_free(aslbl);
+        i++;
+    }
+    g_strfreev(lines);
+    if (dump)
+        printf(messages);
+    g_free(messages);
+    return ret;
+}
+
 void __scan_dtree()
 {
     dt = dtr_new(NULL);
     gchar *summary = get_summary();
     gchar *maps = dtr_maps_info(dt);
+    gchar *messages = NULL;
 
     dtree_info = g_strdup("[Device Tree]\n");
     mi_add("Summary", summary);
     mi_add("Maps", maps);
 
     add_keys("/");
+    messages = msg_section(0);
+    mi_add("Messages", messages);
 
     //printf("%s\n", dtree_info);
+
     g_free(summary);
     g_free(maps);
+    g_free(messages);
     dtr_free(dt);
 }

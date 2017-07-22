@@ -20,8 +20,8 @@ enum {
     DTP_EMPTY,   /* empty property */
     DTP_STR,     /* null-delimited list of strings */
     DTP_HEX,     /* list of 32-bit values displayed in hex */
-    DTP_UINT,
- /* DTP_INT, */
+    DTP_UINT,    /* unsigned int list */
+    DTP_INTRUPT, /* interrupt-specifier list */
     DTP_OVR,     /* all in /__overrides__ */
     DTP_PH,      /* phandle */
     DTP_PH_REF,  /* reference to phandle */
@@ -42,6 +42,7 @@ typedef struct _dtr_obj dtr_obj;
 dtr *dtr_new(char *base_path); /* NULL for DTR_ROOT */
 void dtr_free(dtr *);
 const char *dtr_base_path(dtr *);
+char *dtr_messages(dtr *); /* returns a message log */
 
 dtr_obj *dtr_obj_read(dtr *, const char *dtp);
 void dtr_obj_free(dtr_obj *);

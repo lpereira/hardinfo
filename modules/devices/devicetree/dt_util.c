@@ -38,8 +38,9 @@ static struct {
     { "gpios", DTP_GPIOS },
     { "cs-gpios", DTP_GPIOS },
     { "phandle", DTP_PH },
-    { "interrupts", DTP_HEX },
+    { "interrupts", DTP_INTRUPT },
     { "interrupt-parent", DTP_PH_REF },
+    { "interrupt-controller", DTP_EMPTY },
     { "regulator-min-microvolt", DTP_UINT },
     { "regulator-max-microvolt", DTP_UINT },
     { "clock-frequency", DTP_UINT },
@@ -67,6 +68,7 @@ struct _dtr {
     dtr_map *symbols;
     dtr_map *phandles;
     char *base_path;
+    char *log;
 };
 
 struct _dtr_obj {
@@ -226,6 +228,8 @@ dtr *dtr_new_x(char *base_path, int fast) {
         else
             dt->base_path = strdup(DTR_ROOT);
 
+        dt->log = strdup("");
+
         /* build alias and phandle lists */
         dt->aliases = NULL;
         dt->symbols = NULL;
@@ -249,8 +253,29 @@ void dtr_free(dtr *s) {
         dtr_map_free(s->symbols);
         dtr_map_free(s->phandles);
         free(s->base_path);
+        free(s->log);
         free(s);
     }
+}
+
+void dtr_msg(dtr *s, char *fmt, ...) {
+    gchar *buf, *tmp;
+    va_list args;
+
+    va_start(args, fmt);
+    buf = g_strdup_vprintf(fmt, args);
+    va_end(args);
+
+    tmp = g_strdup_printf("%s%s", s->log, buf);
+    g_free(s->log);
+    s->log = tmp;
+}
+
+char *dtr_messages(dtr *s) {
+    if (s != NULL)
+        return strdup(s->log);
+    else
+        return NULL;
 }
 
 const char *dtr_base_path(dtr *s) {
@@ -630,14 +655,43 @@ char *dtr_list_phref(dtr_obj *obj, char *ext_cell_prop) {
     return ret;
 }
 
+char *dtr_list_interrupts(dtr_obj *obj) {
+    char *ext, *ret = NULL;
+    uint32_t iparent, icells;
+    int count, i = 0;
+
+    iparent = dtr_inh_find(obj, "interrupt-parent", 0);
+    if (!iparent) {
+        dtr_msg(obj->dt, "Did not find an interrupt-parent for %s", obj->path);
+        goto intr_err;
+    }
+    icells = dtr_get_phref_prop(obj->dt, iparent, "#interrupt-cells");
+    if (!icells) {
+        dtr_msg(obj->dt, "Invalid #interrupt-cells value %d for %s", icells, obj->path);
+        goto intr_err;
+    }
+
+    count = obj->length / 4;
+    while (i < count) {
+        icells = MIN(icells, count - i);
+        ext = dtr_list_hex((obj->data_int + i), icells); i+=icells;
+        ret = appf(ret, "<%s>", ext);
+    }
+    return ret;
+
+intr_err:
+    return dtr_list_hex(obj->data_int, obj->length);
+
+}
+
 char *dtr_list_reg(dtr_obj *obj) {
     char *tup_str, *ret = NULL;
     uint32_t acells, scells, tup_len;
     uint32_t tups, extra, consumed; /* extra and consumed are bytes */
     uint32_t *next;
 
-    acells = dtr_cellv_find(obj, "#address-cells", 2);
-    scells = dtr_cellv_find(obj, "#size-cells", 2);
+    acells = dtr_inh_find(obj, "#address-cells", 2);
+    scells = dtr_inh_find(obj, "#size-cells", 2);
     tup_len = acells + scells;
     tups = obj->length / (tup_len * 4);
     extra = obj->length % (tup_len * 4);
@@ -647,6 +701,8 @@ char *dtr_list_reg(dtr_obj *obj) {
 
     if (extra) {
         /* error: length is not a multiple of tuples */
+        dtr_msg(obj->dt, "Data length (%u) is not a multiple of (#address-cells:%u + #size-cells:%u) for %s\n",
+            obj->length, acells, scells, obj->path);
         return dtr_list_hex(obj->data, obj->length / 4);
     }
 
@@ -705,6 +761,9 @@ char* dtr_str(dtr_obj *obj) {
             /* <#address-cells #size-cells> */
             ret = dtr_list_reg(obj);
             break;
+        case DTP_INTRUPT:
+            ret = dtr_list_interrupts(obj);
+            break;
         case DTP_PH:
         case DTP_HEX:
             if (obj->length % 4)
@@ -751,7 +810,7 @@ dtr_obj *dtr_get_parent_obj(dtr_obj *obj) {
 }
 
 /* find the value of a path-inherited property by climbing the path */
-int dtr_cellv_find(dtr_obj *obj, char *qprop, int limit) {
+int dtr_inh_find(dtr_obj *obj, char *qprop, int limit) {
     dtr_obj *tobj, *pobj, *qobj;
     uint32_t ret = 0;
     int i, found = 0;
@@ -781,6 +840,7 @@ int dtr_cellv_find(dtr_obj *obj, char *qprop, int limit) {
         while(default_values[i].name != NULL) {
             if (strcmp(default_values[i].name, qprop) == 0) {
                 ret = default_values[i].v;
+                dtr_msg(obj->dt, "Using default value %d for %s in %s\n", ret, qprop, obj->path);
                 break;
             }
             i++;
