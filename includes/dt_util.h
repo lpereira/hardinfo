@@ -6,7 +6,6 @@
 
 /* some not-quite-complete stuff that can be disabled */
 #define DTEX_PHREFS 1
-#define DTEX_MTUP 1
 
 #ifndef DTR_ROOT
 #define DTR_ROOT dtr_find_device_tree_root()
@@ -22,12 +21,14 @@ enum {
     DTP_HEX,     /* list of 32-bit values displayed in hex */
     DTP_UINT,    /* unsigned int list */
     DTP_INTRUPT, /* interrupt-specifier list */
+    DTP_INTRUPT_EX, /* extended interrupt-specifier list */
     DTP_OVR,     /* all in /__overrides__ */
     DTP_PH,      /* phandle */
     DTP_PH_REF,  /* reference to phandle */
     DTP_REG,     /* <#address-cells, #size-cells> */
     DTP_CLOCKS,  /* <phref, #clock-cells> */
     DTP_GPIOS,   /* <phref, #gpio-cells> */
+    DTP_DMAS,    /* dma-specifier list */
 };
 
 /* simplest, no aliases.
