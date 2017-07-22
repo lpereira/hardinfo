@@ -743,10 +743,9 @@ dtr_obj *dtr_get_parent_obj(dtr_obj *obj) {
         *slash = 0;
         if (strlen(parent) > 0)
             ret = dtr_obj_read(obj->dt, parent);
-    } else if (strlen(parent) > 1) {
-        ret = dtr_obj_read(obj->dt, "/");
+        else
+            ret = dtr_obj_read(obj->dt, "/");
     }
-
     free(parent);
     return ret;
 }

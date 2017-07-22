@@ -6,7 +6,7 @@
 
 /* some not-quite-complete stuff that can be disabled */
 #define DTEX_PHREFS 1
-#define DTEX_MTUP 0
+#define DTEX_MTUP 1
 
 #ifndef DTR_ROOT
 #define DTR_ROOT dtr_find_device_tree_root()
