@@ -898,9 +898,14 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     shell->normalize_percentage = TRUE;
     shell->view_type = viewtype;
 
-    /* reset to the default model */
+    /* use an unsorted tree model */
+    GtkTreeSortable *sortable = GTK_TREE_SORTABLE(shell->info->model);
+
+    gtk_tree_sortable_set_sort_column_id(sortable,
+        GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
+        GTK_SORT_ASCENDING);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view),
-			    shell->info->model);
+        GTK_TREE_MODEL(sortable));
 
     /* reset to the default view columns */
     if (!reload) {
