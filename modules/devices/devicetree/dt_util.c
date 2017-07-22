@@ -39,11 +39,15 @@ static struct {
     { "cs-gpios", DTP_GPIOS },
     { "phandle", DTP_PH },
     { "interrupts", DTP_INTRUPT },
+    { "interrupts-extended", DTP_INTRUPT_EX },
     { "interrupt-parent", DTP_PH_REF },
     { "interrupt-controller", DTP_EMPTY },
     { "regulator-min-microvolt", DTP_UINT },
     { "regulator-max-microvolt", DTP_UINT },
     { "clock-frequency", DTP_UINT },
+    { "dmas", DTP_DMAS },
+    { "dma-channels", DTP_UINT },
+    { "dma-requests", DTP_UINT },
     { NULL, 0 },
 };
 
@@ -52,6 +56,7 @@ static struct {
 } default_values[] = {
     { "#address-cells", 2 },
     { "#size-cells", 1 },
+    { "#dma-cells", 1 },
     { NULL, 0 },
 };
 
@@ -745,24 +750,28 @@ char* dtr_str(dtr_obj *obj) {
         case DTP_OVR:
             ret = dtr_list_override(obj);
             break;
-        case DTP_CLOCKS:
-            /* <phref, #clock-cells"> */
-            if (DTEX_MTUP) {
-                ret = dtr_list_phref(obj, "#clock-cells");
-                break;
-            }
-        case DTP_GPIOS:
-            /* <phref, #gpio-cells"> */
-            if (DTEX_MTUP) {
-                ret = dtr_list_phref(obj, "#gpio-cells");
-                break;
-            }
         case DTP_REG:
             /* <#address-cells #size-cells> */
             ret = dtr_list_reg(obj);
             break;
         case DTP_INTRUPT:
             ret = dtr_list_interrupts(obj);
+            break;
+        case DTP_INTRUPT_EX:
+            /* <phref, #interrupt-cells"> */
+            ret = dtr_list_phref(obj, "#interrupt-cells");
+            break;
+        case DTP_CLOCKS:
+            /* <phref, #clock-cells"> */
+            ret = dtr_list_phref(obj, "#clock-cells");
+            break;
+        case DTP_GPIOS:
+            /* <phref, #gpio-cells"> */
+            ret = dtr_list_phref(obj, "#gpio-cells");
+            break;
+        case DTP_DMAS:
+            /* <phref, #dma-cells"> */
+            ret = dtr_list_phref(obj, "#dma-cells");
             break;
         case DTP_PH:
         case DTP_HEX:
