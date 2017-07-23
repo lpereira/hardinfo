@@ -199,7 +199,7 @@ gchar *get_summary() {
     }
 
     /* Power Macintosh */
-    if ( 1 || strstr(compat, "PowerBook") != NULL
+    if (strstr(compat, "PowerBook") != NULL
          || strstr(compat, "MacRISC") != NULL
          || strstr(compat, "Power Macintosh") != NULL) {
         tmp[9] =  ppc_mac_details();
