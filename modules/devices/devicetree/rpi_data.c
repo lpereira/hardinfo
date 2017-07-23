@@ -119,6 +119,10 @@ static gchar *rpi_board_details(void) {
         return NULL;
     while (fgets(buffer, 128, cpuinfo)) {
         gchar **tmp = g_strsplit(buffer, ":", 2);
+        if (tmp[1] == NULL) {
+            g_strfreev(tmp);
+            continue;
+        }
         tmp[0] = g_strstrip(tmp[0]);
         tmp[1] = g_strstrip(tmp[1]);
         get_str("Revision", revision);
