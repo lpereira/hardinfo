@@ -897,6 +897,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 
     shell->normalize_percentage = TRUE;
     shell->view_type = viewtype;
+    shell->_order_type = 0;
 
     /* use an unsorted tree model */
     GtkTreeSortable *sortable = GTK_TREE_SORTABLE(shell->info->model);
