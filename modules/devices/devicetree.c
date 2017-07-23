@@ -84,6 +84,7 @@ gchar *hardinfo_clean_value(const gchar *v, int replacing) {
 }
 
 #include "devicetree/rpi_data.c"
+#include "devicetree/pmac_data.c"
 
 dtr *dt;
 gchar *dtree_info = NULL;
@@ -174,7 +175,7 @@ gchar *get_summary() {
      * machine identifiers in /proc/cpuinfo. */
     if ( strstr(model, "Raspberry Pi") != NULL
         || strstr(compat, "raspberrypi") != NULL ) {
-        tmp[0] = get_dt_string("/serial-number", 0);
+        tmp[0] = get_dt_string("/serial-number", 1);
         tmp[1] = get_dt_string("/soc/gpu/compatible", 1);
         tmp[9] = rpi_board_details();
         tmp[8] = g_strdup_printf(
@@ -197,8 +198,25 @@ gchar *get_summary() {
         free(tmp[9]); free(tmp[8]);
     }
 
+    /* Power Macintosh */
+    if ( 1 || strstr(compat, "PowerBook") != NULL
+         || strstr(compat, "MacRISC") != NULL
+         || strstr(compat, "Power Macintosh") != NULL) {
+        tmp[9] =  ppc_mac_details();
+        if (tmp[9] != NULL) {
+            tmp[0] = get_dt_string("/serial-number", 1);
+            ret = g_strdup_printf(
+                "%s[%s]\n" "%s=%s\n", tmp[9],
+                _("More"),
+                _("Serial Number"), tmp[0] );
+            free(tmp[0]);
+        }
+        free(tmp[9]);
+    }
+
+    /* fallback */
     if (ret == NULL) {
-        tmp[0] = get_dt_string("/serial-number", 0);
+        tmp[0] = get_dt_string("/serial-number", 1);
         ret = g_strdup_printf(
                 "[%s]\n"
                 "%s=%s\n"
