@@ -292,7 +292,7 @@ char *msg_section(int dump) {
     }
     g_strfreev(lines);
     if (dump)
-        printf(messages);
+        printf("%s", messages);
     g_free(messages);
     return ret;
 }
