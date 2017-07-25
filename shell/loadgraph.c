@@ -133,8 +133,7 @@ static gboolean _expose(GtkWidget * widget, GdkEventExpose * event, gpointer use
 {
     LoadGraph *lg = (LoadGraph *) user_data;
 #if GTK_CHECK_VERSION(3, 0, 0)
-    cairo_t *cr;
-    gdk_cairo_set_source_window(cr, lg->area, 0, 0);
+    /* TODO:GTK3 copy from lg->buf or lg->area? to widget? */
 #else
     GdkDrawable *draw = GDK_DRAWABLE(lg->buf);
     gdk_draw_drawable(lg->area->window,
@@ -199,9 +198,15 @@ void load_graph_configure_expose(LoadGraph * lg)
                    GDK_CAP_BUTT, GDK_JOIN_BEVEL);
 #endif
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    /* configures the draw event */
+    g_signal_connect(G_OBJECT(lg->area), "draw",
+        (GCallback) _expose, lg);
+#else
     /* configures the expose event */
     g_signal_connect(G_OBJECT(lg->area), "expose-event",
         (GCallback) _expose, lg);
+#endif
 }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
