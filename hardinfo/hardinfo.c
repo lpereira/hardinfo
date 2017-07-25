@@ -52,10 +52,10 @@ int main(int argc, char **argv)
 		"  BinReloc enabled:  %s\n"
 		"  Data prefix:       %s\n"
 		"  Library prefix:    %s\n"
-		"  Compiled on:       %s %s (%s)\n"),
+		"  Compiled for:      %s\n"),
 		RELEASE ? _("Yes") : "No (" VERSION ")", ARCH,
 		ENABLE_BINRELOC ? _("Yes") : _("No"),
-		PREFIX, LIBPREFIX, PLATFORM, KERNEL, HOSTNAME);
+		PREFIX, LIBPREFIX, PLATFORM);
 
 	DEBUG("  Debugging is enabled.");
 

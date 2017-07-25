@@ -63,7 +63,6 @@ if (OVRDTRROOT)
 	add_definitions(-DDTR_ROOT=${OVRDTRROOT})
 	message(STATUS "/proc/device-tree override: ${OVRDTRROOT}")
 endif()
-
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_PREFIX}/share/locale")
 message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/share/locale")
 

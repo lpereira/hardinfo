@@ -6,7 +6,7 @@
 #define ARCH			"ARCH_@HARDINFO_ARCH@"
 #define OS			"@HARDINFO_OS@"
 #define PLATFORM		OS "-" ARCH
-#define KERNEL			"@CMAKE_SYSTEM_VERSION@"
+#define KERNEL			""
 #define HOSTNAME		""
 #define ARCH_@HARDINFO_ARCH@
 
