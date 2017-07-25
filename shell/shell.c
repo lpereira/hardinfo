@@ -33,6 +33,10 @@
 
 #include "callbacks.h"
 
+#ifndef gtk_notebook_set_page
+#define gtk_notebook_set_page(P, N) gtk_notebook_set_current_page(P, N)
+#endif
+
 /*
  * Internal Prototypes ********************************************************
  */
@@ -844,6 +848,9 @@ static gboolean update_field(gpointer data)
 static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *) data;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->window));
+#endif
 
     /* if the entry is still selected, update it */
     if (entry->selected) {
@@ -852,14 +859,18 @@ static gboolean reload_section(gpointer data)
 	double pos_info_scroll, pos_more_scroll;
 
 	/* save current position */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    /* TODO:GTK3 */
+#else
 #if GTK_CHECK_VERSION(2, 0, 0)
 	pos_info_scroll = RANGE_GET_VALUE(info, vscrollbar);
 	pos_more_scroll = RANGE_GET_VALUE(moreinfo, vscrollbar);
 #endif
+#endif
 
 	/* avoid drawing the window while we reload */
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gdk_window_freeze_updates(shell->window/*->window*/);
+    gdk_window_freeze_updates(gdk_window);
 #else
 	gdk_window_freeze_updates(shell->window->window);
 #endif
@@ -883,13 +894,17 @@ static gboolean reload_section(gpointer data)
 	    gtk_tree_path_free(path);
         } else {
             /* restore position */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    /* TODO:GTK3 */
+#else
             RANGE_SET_VALUE(info, vscrollbar, pos_info_scroll);
             RANGE_SET_VALUE(moreinfo, vscrollbar, pos_more_scroll);
+#endif
         }
 
 	/* make the window drawable again */
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gdk_window_thaw_updates(shell->window/*->window*/);
+    gdk_window_thaw_updates(gdk_window);
 #else
 	gdk_window_thaw_updates(shell->window->window);
 #endif
@@ -944,6 +959,10 @@ info_tree_compare_val_func(GtkTreeModel * model,
 
 static void set_view_type(ShellViewType viewtype, gboolean reload)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GtkAllocation* alloc;
+#endif
+
     if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
 	viewtype = SHELL_VIEW_NORMAL;
 
@@ -989,27 +1008,31 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     case SHELL_VIEW_DUAL:
         gtk_widget_show(shell->info->scroll);
         gtk_widget_show(shell->moreinfo->scroll);
-	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
-	gtk_widget_show(shell->notebook);
+        gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
+        gtk_widget_show(shell->notebook);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gtk_paned_set_position(GTK_PANED(shell->vpaned),
-			       shell->hpaned/*->allocation.height / 2*/);
+        alloc = g_new(GtkAllocation, 1);
+        gtk_widget_get_allocation(shell->hpaned, alloc);
+        gtk_paned_set_position(GTK_PANED(shell->vpaned), alloc->height / 2);
+        g_free(alloc);
 #else
     gtk_paned_set_position(GTK_PANED(shell->vpaned),
-			       shell->hpaned->allocation.height / 2);
+                    shell->hpaned->allocation.height / 2);
 #endif
-	break;
+        break;
     case SHELL_VIEW_LOAD_GRAPH:
         gtk_widget_show(shell->info->scroll);
-	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 1);
-	gtk_widget_show(shell->notebook);
-	load_graph_clear(shell->loadgraph);
+        gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 1);
+        gtk_widget_show(shell->notebook);
+        load_graph_clear(shell->loadgraph);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gtk_paned_set_position(GTK_PANED(shell->vpaned),
-			       shell->hpaned/*->allocation.height*/ -
-			       shell->loadgraph->height - 16);
+        alloc = g_new(GtkAllocation, 1);
+        gtk_widget_get_allocation(shell->hpaned, alloc);
+        gtk_paned_set_position(GTK_PANED(shell->vpaned),
+                alloc->height - shell->loadgraph->height - 16);
+        g_free(alloc);
 #else
     gtk_paned_set_position(GTK_PANED(shell->vpaned),
 			       shell->hpaned->allocation.height -
@@ -1389,13 +1412,16 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gboolean has_shell_param = FALSE;
     gint i;
     gsize ngroups;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info->view));
+#endif
 
     module_entry_scan(entry);
     key_data = module_entry_function(entry);
 
     /* */
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gdk_window_freeze_updates(shell->info->view/*->window*/);
+	gdk_window_freeze_updates(gdk_window);
 #else
     gdk_window_freeze_updates(shell->info->view->window);
 #endif
@@ -1450,7 +1476,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gdk_window_thaw_updates(shell->info->view/*->window*/);
+	gdk_window_thaw_updates(gdk_window);
 #else
     gdk_window_thaw_updates(shell->info->view->window);
 #endif
@@ -1601,29 +1627,14 @@ static void shell_summary_add_item(ShellSummary *summary,
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_image, FALSE, FALSE, 0);
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_label, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-     gtk_widget_set_halign(alignment, GTK_ALIGN_CENTER);
-     gtk_widget_set_valign(alignment, GTK_ALIGN_CENTER);
-#else
+     /* TODO:GTK3 gtk_alignment_new(), etc is deprecated from 3.14 */
      alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-#endif
+     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 48, 0);
      gtk_widget_show(alignment);
      gtk_container_add(GTK_CONTAINER(frame), alignment);
-#if GTK_CHECK_VERSION(3, 0, 0)
-     gtk_widget_set_margin_top(alignment, 0);
-     gtk_widget_set_margin_bottom(alignment, 0);
-     gtk_widget_set_margin_start(alignment, 48);
-     gtk_widget_set_margin_end(alignment, 0);
-#else
-     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 48, 0);
-#endif
 
      content = gtk_label_new(temp);
-#if GTK_CHECK_VERSION(3, 0, 0)
-     gtk_widget_set_valign(GTK_MISC(content), GTK_ALIGN_CENTER);
-#else
      gtk_misc_set_alignment(GTK_MISC(content), 0.0, 0.5);
-#endif
      gtk_container_add(GTK_CONTAINER(alignment), content);
 
      gtk_widget_show_all(frame);
@@ -1780,10 +1791,7 @@ static void module_selected(gpointer data)
 
 	/* urgh. why don't GTK do this when the model is cleared? */
 #if GTK_CHECK_VERSION(3, 0, 0)
-        RANGE_SET_VALUE(info, vscrollbar, 0.0);
-        RANGE_SET_VALUE(info, hscrollbar, 0.0);
-        RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
-        RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
+    /* TODO:GTK3 */
 #else
         RANGE_SET_VALUE(info, vscrollbar, 0.0);
         RANGE_SET_VALUE(info, hscrollbar, 0.0);
