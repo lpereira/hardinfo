@@ -221,19 +221,24 @@ const char *dtr_find_device_tree_root() {
             return candidates[i];
         i++;
     }
-    return "/did/not/find/device-tree";
+    return NULL;
 }
 
 dtr *dtr_new_x(char *base_path, int fast) {
     dtr *dt = malloc(sizeof(dtr));
     if (dt != NULL) {
         memset(dt, 0, sizeof(dtr));
+        dt->log = strdup("");
+
+        if (base_path == NULL)
+            base_path = DTR_ROOT;
+
         if (base_path != NULL)
             dt->base_path = strdup(base_path);
-        else
-            dt->base_path = strdup(DTR_ROOT);
-
-        dt->log = strdup("");
+        else {
+            dtr_msg(dt, "%s", "Device Tree not found.");
+            return dt;
+        }
 
         /* build alias and phandle lists */
         dt->aliases = NULL;
@@ -261,6 +266,14 @@ void dtr_free(dtr *s) {
         free(s->log);
         free(s);
     }
+}
+
+int dtr_was_found(dtr *s) {
+    if (s != NULL) {
+        if (s->base_path != NULL)
+            return 1;
+    }
+    return 0;
 }
 
 void dtr_msg(dtr *s, char *fmt, ...) {

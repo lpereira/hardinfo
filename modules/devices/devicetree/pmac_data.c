@@ -58,14 +58,13 @@ static gchar *ppc_mac_details(void) {
     if (machine == NULL)
         goto pmd_exit;
 
-#define _UNKIFNULL(STR) if (STR == NULL) { STR = strdup(_("(Unknown)")); }
-    _UNKIFNULL(platform);
-    _UNKIFNULL(model);
-    _UNKIFNULL(motherboard);
-    _UNKIFNULL(detected_as);
-    _UNKIFNULL(pmac_flags);
-    _UNKIFNULL(l2_cache);
-    _UNKIFNULL(pmac_gen);
+    UNKIFNULL(platform);
+    UNKIFNULL(model);
+    UNKIFNULL(motherboard);
+    UNKIFNULL(detected_as);
+    UNKIFNULL(pmac_flags);
+    UNKIFNULL(l2_cache);
+    UNKIFNULL(pmac_gen);
 
     ret = g_strdup_printf("[%s]\n"
                 "%s=%s\n"

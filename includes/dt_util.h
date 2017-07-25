@@ -42,6 +42,7 @@ typedef struct _dtr_obj dtr_obj;
 
 dtr *dtr_new(char *base_path); /* NULL for DTR_ROOT */
 void dtr_free(dtr *);
+int dtr_was_found(dtr *);
 const char *dtr_base_path(dtr *);
 char *dtr_messages(dtr *); /* returns a message log */
 
