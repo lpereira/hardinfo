@@ -40,7 +40,7 @@ typedef uint32_t dt_uint; /* big-endian */
 typedef struct _dtr dtr;
 typedef struct _dtr_obj dtr_obj;
 
-dtr *dtr_new(char *base_path); /* NULL for DTR_ROOT */
+dtr *dtr_new(const char *base_path); /* NULL for DTR_ROOT */
 void dtr_free(dtr *);
 int dtr_was_found(dtr *);
 const char *dtr_base_path(dtr *);
@@ -76,6 +76,9 @@ int dtr_cellv_find(dtr_obj *obj, char *qprop, int limit);
 char *dtr_maps_info(dtr *); /* returns hardinfo shell section */
 
 const char *dtr_find_device_tree_root(void);
+
+/* write to the message log */
+void dtr_msg(dtr *s, char *fmt, ...);
 
 #define sp_sep(STR) (strlen(STR) ? " " : "")
 /* appends an element to a string, adding a space if

@@ -224,7 +224,7 @@ const char *dtr_find_device_tree_root() {
     return NULL;
 }
 
-dtr *dtr_new_x(char *base_path, int fast) {
+dtr *dtr_new_x(const char *base_path, int fast) {
     dtr *dt = malloc(sizeof(dtr));
     if (dt != NULL) {
         memset(dt, 0, sizeof(dtr));
@@ -253,7 +253,7 @@ dtr *dtr_new_x(char *base_path, int fast) {
     return dt;
 }
 
-dtr *dtr_new(char *base_path) {
+dtr *dtr_new(const char *base_path) {
     return dtr_new_x(base_path, 0);
 }
 
