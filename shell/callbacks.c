@@ -159,7 +159,11 @@ void cb_about_module(GtkAction * action)
 	    about = gtk_about_dialog_new();
 
 	    text = g_strdup_printf(_("%s Module"), sm->name);
+#if GTK_CHECK_VERSION(2, 12, 0)
+	    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), text);
+#else
 	    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), text);
+#endif
 	    g_free(text);
 
 	    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about),
@@ -221,7 +225,12 @@ void cb_about()
     };
 
     about = gtk_about_dialog_new();
+#if GTK_CHECK_VERSION(2, 12, 0)
+    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), "HardInfo");
+#else
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
+#endif
+
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
 				   "Copyright \302\251 2003-2016 "
@@ -270,6 +279,6 @@ void cb_quit(void)
     do {
 	gtk_main_quit();
     } while (gtk_main_level() > 1);
-    
+
     exit(0);
 }
