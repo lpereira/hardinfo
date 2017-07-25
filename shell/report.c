@@ -67,7 +67,7 @@ void report_key_value(ReportContext * ctx, gchar * key, gchar * value)
 gint report_get_visible_columns(ReportContext *ctx)
 {
     gint columns;
-    
+
     /* Column count starts at two, since we always have at least
        two columns visible. */
     columns = 2;
@@ -77,10 +77,10 @@ gint report_get_visible_columns(ReportContext *ctx)
 
     if (ctx->columns & REPORT_COL_EXTRA1)
       columns++;
-    
+
     if (ctx->columns & REPORT_COL_EXTRA2)
       columns++;
-    
+
     return columns;
 }
 
@@ -88,7 +88,7 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 {
     gchar **keys;
     const gchar *group = "$ShellParam$";
-    
+
     /* FIXME: sometime in the future we'll save images in the report. this
        flag will be set if we should support that.
 
@@ -100,19 +100,19 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 						    "ViewType",
 						    NULL) == SHELL_VIEW_PROGRESS);
 
-    
+
     keys = g_key_file_get_keys(keyfile, group, NULL, NULL);
     if (keys) {
       gint i = 0;
-      
+
       for (; keys[i]; i++) {
         gchar *key = keys[i];
-        
+
         if (g_str_equal(key, "ShowColumnHeaders")) {
           ctx->show_column_headers = g_key_file_get_boolean(keyfile, group, key, NULL);
         } else if (g_str_has_prefix(key, "ColumnTitle")) {
           gchar *value, *title = strchr(key, '$');
-          
+
           if (!title) {
                   DEBUG("couldn't find column title");
                   break;
@@ -135,20 +135,20 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
           } else if (g_str_equal(title, "Progress")) {
                   ctx->columns |= REPORT_COL_PROGRESS;
           }
-          
+
           g_hash_table_replace(ctx->column_titles,
                                g_strdup(title), g_strdup(value));
         } else if (g_str_equal(key, "ViewType")) {
           if (g_key_file_get_integer(keyfile, group, "ViewType", NULL) == SHELL_VIEW_PROGRESS) {
             ctx->columns &= ~REPORT_COL_VALUE;
             ctx->columns |= REPORT_COL_PROGRESS;
-          }     
+          }
         }
       }
 
-      g_strfreev(keys);    
+      g_strfreev(keys);
     }
-    
+
 }
 
 void report_table(ReportContext * ctx, gchar * text)
@@ -164,7 +164,7 @@ void report_table(ReportContext * ctx, gchar * text)
     /**/
     g_key_file_load_from_data(key_file, text, strlen(text), 0, NULL);
     groups = g_key_file_get_groups(key_file, NULL);
-    
+
     for (i = 0; groups[i]; i++) {
 	if (groups[i][0] == '$') {
 	    report_context_configure(ctx, key_file);
@@ -209,7 +209,7 @@ void report_table(ReportContext * ctx, gchar * text)
 			    value = g_strdup("...");
 			}
 		    }
-		    
+
 		    if (*key == '$') {
 			report_key_value(ctx, strchr(key + 1, '$') + 1,
 					 value);
@@ -301,7 +301,7 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
     gint i;
-    
+
     if (columns == 2) {
       ctx->output = h_strdup_cprintf("<tr><td class=\"field\">%s</td>"
                                     "<td class=\"value\">%s</td></tr>\n",
@@ -309,9 +309,9 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
                                     key, value);
     } else {
       values = g_strsplit(value, "|", columns);
-      
+
       ctx->output = h_strdup_cprintf("\n<tr>\n<td class=\"field\">%s</td>", ctx->output, key);
-      
+
       for (i = columns - 2; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
                                        ctx->output,
@@ -319,7 +319,7 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
       }
 
       ctx->output = h_strdup_cprintf("</tr>\n", ctx->output);
-      
+
       g_strfreev(values);
     }
 }
@@ -372,7 +372,7 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
     gint i;
-    
+
     if (columns == 2) {
       if (strlen(value))
           ctx->output = h_strdup_cprintf("%s\t\t: %s\n", ctx->output, key, value);
@@ -380,9 +380,9 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
           ctx->output = h_strdup_cprintf("%s\n", ctx->output, key);
     } else {
       values = g_strsplit(value, "|", columns);
-      
+
       ctx->output = h_strdup_cprintf("%s\t", ctx->output, key);
-      
+
       for (i = columns - 2; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("%s\t",
                                        ctx->output,
@@ -390,7 +390,7 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
       }
 
       ctx->output = h_strdup_cprintf("\n", ctx->output);
-      
+
       g_strfreev(values);
     }
 }
@@ -490,6 +490,15 @@ static gchar *report_get_filename(void)
     GtkWidget *dialog;
     gchar *filename = NULL;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    dialog = gtk_file_chooser_dialog_new(_("Save File"),
+					 NULL,
+					 GTK_FILE_CHOOSER_ACTION_SAVE,
+					 "_Cancel",
+					 GTK_RESPONSE_CANCEL,
+					 "_Save",
+					 GTK_RESPONSE_ACCEPT, NULL);
+#else
     dialog = gtk_file_chooser_dialog_new(_("Save File"),
 					 NULL,
 					 GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -497,6 +506,7 @@ static gchar *report_get_filename(void)
 					 GTK_RESPONSE_CANCEL,
 					 GTK_STOCK_SAVE,
 					 GTK_RESPONSE_ACCEPT, NULL);
+#endif
 
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
 				      "hardinfo_report");
@@ -548,7 +558,7 @@ ReportContext *report_context_text_new()
 
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_TEXT;
-    
+
     ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                g_free, g_free);
     ctx->first_table = TRUE;
@@ -636,15 +646,21 @@ static gboolean report_generate(ReportDialog * rd)
 					GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_NONE,
 					_("Open the report with your web browser?"));
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+			       "_No", GTK_RESPONSE_REJECT,
+			       "_Open", GTK_RESPONSE_ACCEPT, NULL);
+#else
 	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 			       GTK_STOCK_NO, GTK_RESPONSE_REJECT,
 			       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+#endif
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
 	    gchar *temp;
-	    
+
 	    temp = g_strdup_printf("file://%s", file);
 	    open_url(temp);
-	    
+
 	    g_free(temp);
         }
 
@@ -744,7 +760,7 @@ report_dialog_sel_toggle(GtkCellRendererToggle * cellrenderertoggle,
 
     if (active) {
         GtkTreeIter parent;
-        
+
         if (gtk_tree_model_iter_parent(model, &parent, &iter)) {
             gtk_tree_store_set(GTK_TREE_STORE(model), &parent,
                                TREE_COL_SEL, active, -1);
@@ -786,12 +802,20 @@ static ReportDialog
     gtk_window_set_type_hint(GTK_WINDOW(dialog),
 			     GDK_WINDOW_TYPE_HINT_DIALOG);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    dialog1_vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+#else
     dialog1_vbox = GTK_DIALOG(dialog)->vbox;
+#endif
     gtk_box_set_spacing(GTK_BOX(dialog1_vbox), 5);
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+#else
     hbox = gtk_hbox_new(FALSE, 5);
+#endif
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, FALSE, FALSE, 0);
 
     label = gtk_label_new(_("<big><b>Generate Report</b></big>\n"
@@ -799,15 +823,23 @@ static ReportDialog
 			  "to view in your report:"));
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+#else
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+#endif
 
     gtk_box_pack_start(GTK_BOX(hbox),
 		       icon_cache_get_image("report-large.png"),
 		       FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_widget_show_all(hbox);
-    
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+#else
     hbox = gtk_hbox_new(FALSE, 5);
+#endif
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, TRUE, TRUE, 0);
     gtk_widget_show(hbox);
 
@@ -847,7 +879,11 @@ static ReportDialog
     gtk_tree_view_column_add_attribute(column, cr_text, "markup",
 				       TREE_COL_NAME);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    vbuttonbox3 = gtk_button_box_new(GTK_ORIENTATION_VERTICAL);
+#else
     vbuttonbox3 = gtk_vbutton_box_new();
+#endif
     gtk_widget_show(vbuttonbox3);
     gtk_box_pack_start(GTK_BOX(hbox), vbuttonbox3, FALSE, TRUE, 0);
     gtk_box_set_spacing(GTK_BOX(vbuttonbox3), 5);
@@ -857,33 +893,62 @@ static ReportDialog
     button3 = gtk_button_new_with_mnemonic(_("Select _None"));
     gtk_widget_show(button3);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button3);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_can_default(button3, TRUE);
+#else
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
+#endif
     g_signal_connect(button3, "clicked",
 		     G_CALLBACK(report_dialog_sel_none), rd);
 
     button6 = gtk_button_new_with_mnemonic(_("Select _All"));
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_can_default(button6, TRUE);
+#else
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
+#endif
     g_signal_connect(button6, "clicked", G_CALLBACK(report_dialog_sel_all),
 		     rd);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+/* TODO:GTK3
+ * [https://developer.gnome.org/gtk3/stable/GtkDialog.html#gtk-dialog-get-action-area]
+ * gtk_dialog_get_action_area has been deprecated since version 3.12 and should not be used in newly-written code.
+ * Direct access to the action area is discouraged; use gtk_dialog_add_button(), etc.
+ */
+    dialog1_action_area = gtk_dialog_get_action_area(GTK_DIALOG(dialog));
+#else
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
+#endif
     gtk_widget_show(dialog1_action_area);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    button8 = gtk_button_new_with_mnemonic(_("_Cancel"));
+#else
     button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+#endif
     gtk_widget_show(button8);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
 				 GTK_RESPONSE_CANCEL);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_can_default(button8, TRUE);
+#else
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
+#endif
 
     button7 = gtk_button_new_with_mnemonic(_("_Generate"));
     gtk_widget_show(button7);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_can_default(button7, TRUE);
+#else
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
+#endif
 
     rd->dialog = dialog;
     rd->btn_cancel = button8;

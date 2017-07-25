@@ -4,6 +4,7 @@ cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
 option(HARDINFO_NOSYNC "Disable database sync via libsoup" 1)
+option(HARDINFO_GTK3 "Attempt to build for GTK3 (0/off for GTK2)" 0)
 set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
 set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
 set(OVRDTRROOT "" CACHE STRING "Specify a different path for /proc/device-tree")
@@ -73,7 +74,15 @@ add_definitions("-std=gnu89")
 add_subdirectory(po)
 
 include(FindPkgConfig)
-pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+if (HARDINFO_GTK3)
+	message(STATUS "Building for GTK3 (experimental!)")
+	pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.0 cairo>=1.0 cairo-png>=1.0 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+	add_definitions(-DGTK_DISABLE_SINGLE_INCLUDES)
+else()
+	message(STATUS "Building for GTK2")
+	pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+endif()
+
 if(NOT HARDINFO_NOSYNC)
 	pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
 endif()
@@ -145,7 +154,7 @@ set(MODULE_network_SOURCES
 	modules/network/nfs.c
 	modules/network/samba.c
 )
-set(MODULE_benchmark_SOURCES
+set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark.c
 	modules/benchmark/blowfish.c
 	modules/benchmark/cryptohash.c
@@ -154,13 +163,20 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/fftbench.c
 	modules/benchmark/fft.c
 	modules/benchmark/fib.c
-	modules/benchmark/guibench.c
 	modules/benchmark/md5.c
 	modules/benchmark/nqueens.c
 	modules/benchmark/raytrace.c
 	modules/benchmark/sha1.c
 	modules/benchmark/zlib.c
 )
+set(MODULE_benchmark_SOURCES_GTK2
+	modules/benchmark/guibench.c
+)
+if (HARDINFO_GTK3)
+	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY})
+else()
+	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY} ${MODULE_network_SOURCES_GTK2})
+endif()
 
 set_source_files_properties(
 	modules/benchmark/blowfish.c
@@ -176,16 +192,6 @@ foreach (_module ${HARDINFO_MODULES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
 endforeach()
 
-add_library(hardinfo-shell STATIC
-        shell/callbacks.c
-        shell/iconcache.c
-        shell/loadgraph.c
-        shell/menu.c
-        shell/report.c
-        shell/shell.c
-        shell/stock.c
-	shell/syncmanager.c
-)
 add_executable(hardinfo
 	hardinfo/binreloc.c
 	hardinfo/expr.c
@@ -193,11 +199,19 @@ add_executable(hardinfo
 	hardinfo/socket.c
 	hardinfo/util.c
 	hardinfo/vendor.c
+	shell/callbacks.c
+	shell/iconcache.c
+	shell/loadgraph.c
+	shell/menu.c
+	shell/report.c
+	shell/shell.c
+	shell/stock.c
+	shell/syncmanager.c
 )
+
 target_link_libraries(hardinfo
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
-	hardinfo-shell
 	m
 	${ZLIB_LIBRARIES}
 )
