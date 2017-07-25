@@ -169,15 +169,30 @@ void remove_linefeed(gchar * str)
 void widget_set_cursor(GtkWidget * widget, GdkCursorType cursor_type)
 {
     GdkCursor *cursor;
+    GdkDisplay *display;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkWindow *gdk_window;
+#endif
 
+    display = gtk_widget_get_display(widget);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gdk_window = gtk_widget_get_window(widget);
+    if ((cursor = gdk_cursor_new_for_display(display, cursor_type))) {
+        gdk_window_set_cursor(gdk_window, cursor);
+        gdk_display_flush(display);
+        g_object_unref(cursor);
+    }
+#else
     if ((cursor = gdk_cursor_new(cursor_type))) {
         gdk_window_set_cursor(GDK_WINDOW(widget->window), cursor);
-        gdk_display_flush(gtk_widget_get_display(widget));
+        gdk_display_flush(display);
         gdk_cursor_unref(cursor);
     }
+#endif
 
     while (gtk_events_pending())
-	gtk_main_iteration();
+        gtk_main_iteration();
 }
 
 static gboolean __nonblock_cb(gpointer data)
@@ -979,6 +994,9 @@ gint tree_view_get_visible_height(GtkTreeView * tv)
 
 void tree_view_save_image(gchar * filename)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    /* TODO:GTK3 needs conversion for gtk3 */
+#else
     /* this is ridiculously complicated :/ why in the hell gtk+ makes this kind of
        thing so difficult?  */
 
@@ -1074,6 +1092,7 @@ void tree_view_save_image(gchar * filename)
     g_free(tmp);
 
     gtk_widget_set_sensitive(widget, tv_enabled);
+#endif
 }
 
 static gboolean __idle_free_do(gpointer ptr)
