@@ -1627,29 +1627,13 @@ static void shell_summary_add_item(ShellSummary *summary,
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_image, FALSE, FALSE, 0);
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_label, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-     gtk_widget_set_halign(alignment, GTK_ALIGN_CENTER);
-     gtk_widget_set_valign(alignment, GTK_ALIGN_CENTER);
-#else
      alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-#endif
+     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 48, 0);
      gtk_widget_show(alignment);
      gtk_container_add(GTK_CONTAINER(frame), alignment);
-#if GTK_CHECK_VERSION(3, 0, 0)
-     gtk_widget_set_margin_top(alignment, 0);
-     gtk_widget_set_margin_bottom(alignment, 0);
-     gtk_widget_set_margin_start(alignment, 48);
-     gtk_widget_set_margin_end(alignment, 0);
-#else
-     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 48, 0);
-#endif
 
      content = gtk_label_new(temp);
-#if GTK_CHECK_VERSION(3, 0, 0)
-     gtk_widget_set_valign(GTK_MISC(content), GTK_ALIGN_CENTER);
-#else
      gtk_misc_set_alignment(GTK_MISC(content), 0.0, 0.5);
-#endif
      gtk_container_add(GTK_CONTAINER(alignment), content);
 
      gtk_widget_show_all(frame);
