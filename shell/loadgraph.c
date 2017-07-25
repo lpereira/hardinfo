@@ -148,7 +148,8 @@ void load_graph_configure_expose(LoadGraph * lg)
     gtk_widget_realize(lg->area);
 #if GTK_CHECK_VERSION(3, 0, 0)
     cairo_content_t content;
-    lg->buf = gdk_window_create_similar_surface(lg->area, CAIRO_CONTENT_COLOR, lg->width, lg->height);
+    GdkWindow *gdk_window = gtk_widget_get_window(lg->area);
+    lg->buf = gdk_window_create_similar_surface(gdk_window, CAIRO_CONTENT_COLOR, lg->width, lg->height);
     lg->grid = cairo_create(lg->buf);
     lg->trace = cairo_create(lg->buf);
     lg->fill = cairo_create(lg->buf);

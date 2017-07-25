@@ -848,6 +848,9 @@ static gboolean update_field(gpointer data)
 static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *) data;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->window));
+#endif
 
     /* if the entry is still selected, update it */
     if (entry->selected) {
@@ -867,7 +870,7 @@ static gboolean reload_section(gpointer data)
 
 	/* avoid drawing the window while we reload */
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gdk_window_freeze_updates(shell->window/*->window*/);
+    gdk_window_freeze_updates(gdk_window);
 #else
 	gdk_window_freeze_updates(shell->window->window);
 #endif
@@ -901,7 +904,7 @@ static gboolean reload_section(gpointer data)
 
 	/* make the window drawable again */
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gdk_window_thaw_updates(shell->window/*->window*/);
+    gdk_window_thaw_updates(gdk_window);
 #else
 	gdk_window_thaw_updates(shell->window->window);
 #endif
@@ -1409,13 +1412,16 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gboolean has_shell_param = FALSE;
     gint i;
     gsize ngroups;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info->view));
+#endif
 
     module_entry_scan(entry);
     key_data = module_entry_function(entry);
 
     /* */
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gdk_window_freeze_updates(shell->info->view/*->window*/);
+	gdk_window_freeze_updates(gdk_window);
 #else
     gdk_window_freeze_updates(shell->info->view->window);
 #endif
@@ -1470,7 +1476,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gdk_window_thaw_updates(shell->info->view/*->window*/);
+	gdk_window_thaw_updates(gdk_window);
 #else
     gdk_window_thaw_updates(shell->info->view->window);
 #endif

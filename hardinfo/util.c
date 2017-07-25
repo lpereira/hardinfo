@@ -170,12 +170,16 @@ void widget_set_cursor(GtkWidget * widget, GdkCursorType cursor_type)
 {
     GdkCursor *cursor;
     GdkDisplay *display;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkWindow *gdk_window;
+#endif
 
     display = gtk_widget_get_display(widget);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
+    gdk_window = gtk_widget_get_window(widget);
     if ((cursor = gdk_cursor_new_for_display(display, cursor_type))) {
-        gdk_window_set_cursor(GDK_WINDOW(widget), cursor);
+        gdk_window_set_cursor(gdk_window, cursor);
         gdk_display_flush(display);
         g_object_unref(cursor);
     }
@@ -188,7 +192,7 @@ void widget_set_cursor(GtkWidget * widget, GdkCursorType cursor_type)
 #endif
 
     while (gtk_events_pending())
-	gtk_main_iteration();
+        gtk_main_iteration();
 }
 
 static gboolean __nonblock_cb(gpointer data)
