@@ -956,6 +956,10 @@ info_tree_compare_val_func(GtkTreeModel * model,
 
 static void set_view_type(ShellViewType viewtype, gboolean reload)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GtkAllocation* alloc;
+#endif
+
     if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
 	viewtype = SHELL_VIEW_NORMAL;
 
@@ -1001,27 +1005,31 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     case SHELL_VIEW_DUAL:
         gtk_widget_show(shell->info->scroll);
         gtk_widget_show(shell->moreinfo->scroll);
-	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
-	gtk_widget_show(shell->notebook);
+        gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
+        gtk_widget_show(shell->notebook);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gtk_paned_set_position(GTK_PANED(shell->vpaned),
-			       shell->hpaned/*->allocation.height / 2*/);
+        alloc = g_new(GtkAllocation, 1);
+        gtk_widget_get_allocation(shell->hpaned, alloc);
+        gtk_paned_set_position(GTK_PANED(shell->vpaned), alloc->height / 2);
+        g_free(alloc);
 #else
     gtk_paned_set_position(GTK_PANED(shell->vpaned),
-			       shell->hpaned->allocation.height / 2);
+                    shell->hpaned->allocation.height / 2);
 #endif
-	break;
+        break;
     case SHELL_VIEW_LOAD_GRAPH:
         gtk_widget_show(shell->info->scroll);
-	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 1);
-	gtk_widget_show(shell->notebook);
-	load_graph_clear(shell->loadgraph);
+        gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 1);
+        gtk_widget_show(shell->notebook);
+        load_graph_clear(shell->loadgraph);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gtk_paned_set_position(GTK_PANED(shell->vpaned),
-			       shell->hpaned/*->allocation.height*/ -
-			       shell->loadgraph->height - 16);
+        alloc = g_new(GtkAllocation, 1);
+        gtk_widget_get_allocation(shell->hpaned, alloc);
+        gtk_paned_set_position(GTK_PANED(shell->vpaned),
+                alloc->height - shell->loadgraph->height - 16);
+        g_free(alloc);
 #else
     gtk_paned_set_position(GTK_PANED(shell->vpaned),
 			       shell->hpaned->allocation.height -
