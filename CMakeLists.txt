@@ -76,7 +76,8 @@ add_subdirectory(po)
 include(FindPkgConfig)
 if (HARDINFO_GTK3)
 	message(STATUS "Building for GTK3 (experimental!)")
-	pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.10 cairo>=1.0 cairo-png>=1.0 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+	pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.0 cairo>=1.0 cairo-png>=1.0 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+	add_definitions(-DGTK_DISABLE_SINGLE_INCLUDES)
 else()
 	message(STATUS "Building for GTK2")
 	pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
@@ -184,16 +185,6 @@ foreach (_module ${HARDINFO_MODULES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
 endforeach()
 
-add_library(hardinfo-shell STATIC
-        shell/callbacks.c
-        shell/iconcache.c
-        shell/loadgraph.c
-        shell/menu.c
-        shell/report.c
-        shell/shell.c
-        shell/stock.c
-	shell/syncmanager.c
-)
 add_executable(hardinfo
 	hardinfo/binreloc.c
 	hardinfo/expr.c
@@ -201,11 +192,19 @@ add_executable(hardinfo
 	hardinfo/socket.c
 	hardinfo/util.c
 	hardinfo/vendor.c
+	shell/callbacks.c
+	shell/iconcache.c
+	shell/loadgraph.c
+	shell/menu.c
+	shell/report.c
+	shell/shell.c
+	shell/stock.c
+	shell/syncmanager.c
 )
+
 target_link_libraries(hardinfo
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
-	hardinfo-shell
 	m
 	${ZLIB_LIBRARIES}
 )
