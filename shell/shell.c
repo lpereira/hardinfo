@@ -369,8 +369,7 @@ static ShellNote *note_new(void)
     gtk_widget_show(border_box);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_widget_override_background_color(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
-    gtk_widget_override_background_color(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
+    /* TODO:GTK3 css-based style */
 #else
     gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
     gtk_widget_modify_bg(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
