@@ -267,9 +267,12 @@ static void _draw(LoadGraph * lg)
     points[0].y = points[i].y = lg->height;
     points[i].x = points[i - 1].x = lg->width;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
     /* TODO:GTK3 draw using loop and _draw_line() */
-    //gdk_draw_polygon(draw, lg->fill, TRUE, points, lg->size + 1);
-    //gdk_draw_polygon(draw, lg->trace, FALSE, points, lg->size + 1);
+#else
+    gdk_draw_polygon(draw, lg->fill, TRUE, points, lg->size + 1);
+    gdk_draw_polygon(draw, lg->trace, FALSE, points, lg->size + 1);
+#endif
 
     g_free(points);
 
