@@ -44,6 +44,15 @@ void cb_save_graphic()
     gchar *filename;
 
     /* save the pixbuf to a png file */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    dialog = gtk_file_chooser_dialog_new(_("Save Image"),
+					 NULL,
+					 GTK_FILE_CHOOSER_ACTION_SAVE,
+					 "_Cancel",
+					 GTK_RESPONSE_CANCEL,
+					 "_Save",
+					 GTK_RESPONSE_ACCEPT, NULL);
+#else
     dialog = gtk_file_chooser_dialog_new(_("Save Image"),
 					 NULL,
 					 GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -51,6 +60,7 @@ void cb_save_graphic()
 					 GTK_RESPONSE_CANCEL,
 					 GTK_STOCK_SAVE,
 					 GTK_RESPONSE_ACCEPT, NULL);
+#endif
 
     filename = g_strconcat(shell->selected->name, ".png", NULL);
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
