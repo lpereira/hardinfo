@@ -122,11 +122,19 @@ static gboolean _expose(GtkWidget * widget, GdkEventExpose * event,
 			gpointer user_data)
 {
     LoadGraph *lg = (LoadGraph *) user_data;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_t *draw = GDK_WINDOW(lg->buf);
+#else
     GdkDrawable *draw = GDK_DRAWABLE(lg->buf);
-
+#endif
+    cairo_t *cr;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gdk_cairo_set_source_window(cr, lg->area, 0, 0);
+#else
     gdk_draw_drawable(lg->area->window,
 		      lg->area->style->black_gc,
 		      draw, 0, 0, 0, 0, lg->width, lg->height);
+#endif
     return FALSE;
 }
 
@@ -134,7 +142,12 @@ void load_graph_configure_expose(LoadGraph * lg)
 {
     /* creates the backing store pixmap */
     gtk_widget_realize(lg->area);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_content_t content;
+    lg->buf = gdk_window_create_similar_surface(lg->area, CAIRO_CONTENT_COLOR, lg->width, lg->height);
+#else
     lg->buf = gdk_pixmap_new(lg->area->window, lg->width, lg->height, -1);
+#endif
 
     /* create the graphic contexts */
     lg->grid = gdk_gc_new(GDK_DRAWABLE(lg->buf));
@@ -145,18 +158,31 @@ void load_graph_configure_expose(LoadGraph * lg)
     load_graph_set_color(lg, LG_COLOR_GREEN);
 
     /* init graphic contexts */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_set_line_width(lg->grid, 1);
+    cairo_set_line_cap(lg->grid, CAIRO_LINE_CAP_BUTT);
+    cairo_set_line_join(lg->grid, CAIRO_LINE_JOIN_MITER);
+    cairo_set_dash(lg->grid, 0, (gint8*)"\2\2", 2);
+#else
     gdk_gc_set_line_attributes(lg->grid,
 			       1, GDK_LINE_ON_OFF_DASH,
 			       GDK_CAP_NOT_LAST, GDK_JOIN_ROUND);
     gdk_gc_set_dashes(lg->grid, 0, (gint8*)"\2\2", 2);
+#endif
     
 #if 0				/* old-style grid */
     gdk_rgb_gc_set_foreground(lg->grid, 0x707070);
 #endif
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_set_line_width(lg->trace, 1);
+    cairo_set_line_cap(lg->trace, CAIRO_LINE_CAP_BUTT);
+    cairo_set_line_join(lg->trace, CAIRO_LINE_JOIN_MITER);
+#else
     gdk_gc_set_line_attributes(lg->trace,
 			       1, GDK_LINE_SOLID,
 			       GDK_CAP_PROJECTING, GDK_JOIN_ROUND);
+#endif
 
 #if 0				/* old-style fill */
     gdk_gc_set_line_attributes(lg->fill,
@@ -186,22 +212,36 @@ static void _draw_label_and_line(LoadGraph * lg, gint position, gint value)
 			lg->suffix);
 
     pango_layout_set_markup(lg->layout, tmp, -1);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    pango_layout_set_width(lg->layout,
+			   lg->width * PANGO_SCALE);
+    gtk_widget_create_pango_layout(GDK_WINDOW(lg->buf), NULL);
+#else
     pango_layout_set_width(lg->layout,
 			   lg->area->allocation.width * PANGO_SCALE);
     gdk_draw_layout(GDK_DRAWABLE(lg->buf), lg->trace, 2, position,
 		    lg->layout);
+#endif
 
     g_free(tmp);
 }
 
 static void _draw(LoadGraph * lg)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_t *draw = GDK_WINDOW(lg->buf);
+#else
     GdkDrawable *draw = GDK_DRAWABLE(lg->buf);
+#endif
     gint i, d;
 
     /* clears the drawing area */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_rectangle(draw, 0, 0, lg->width, lg->height);
+#else
     gdk_draw_rectangle(draw, lg->area->style->black_gc,
 		       TRUE, 0, 0, lg->width, lg->height);
+#endif
 
 
     /* the graph */
