@@ -149,6 +149,9 @@ void load_graph_configure_expose(LoadGraph * lg)
 #if GTK_CHECK_VERSION(3, 0, 0)
     cairo_content_t content;
     lg->buf = gdk_window_create_similar_surface(lg->area, CAIRO_CONTENT_COLOR, lg->width, lg->height);
+    lg->grid = cairo_create(lg->buf);
+    lg->trace = cairo_create(lg->buf);
+    lg->fill = cairo_create(lg->buf);
 #else
     lg->buf = gdk_pixmap_new(lg->area->window, lg->width, lg->height, -1);
     /* create the graphic contexts */
