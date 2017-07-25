@@ -154,7 +154,7 @@ set(MODULE_network_SOURCES
 	modules/network/nfs.c
 	modules/network/samba.c
 )
-set(MODULE_benchmark_SOURCES
+set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark.c
 	modules/benchmark/blowfish.c
 	modules/benchmark/cryptohash.c
@@ -163,13 +163,20 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/fftbench.c
 	modules/benchmark/fft.c
 	modules/benchmark/fib.c
-	modules/benchmark/guibench.c
 	modules/benchmark/md5.c
 	modules/benchmark/nqueens.c
 	modules/benchmark/raytrace.c
 	modules/benchmark/sha1.c
 	modules/benchmark/zlib.c
 )
+set(MODULE_benchmark_SOURCES_GTK2
+	modules/benchmark/guibench.c
+)
+if (HARDINFO_GTK3)
+	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY})
+else()
+	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY} ${MODULE_network_SOURCES_GTK2})
+endif()
 
 set_source_files_properties(
 	modules/benchmark/blowfish.c
