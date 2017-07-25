@@ -927,7 +927,7 @@ static ReportDialog
 			      GTK_BUTTONBOX_END);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-    button8 = gtk_button_new_with_label("_Cancel");
+    button8 = gtk_button_new_with_mnemonic(_("_Cancel"));
 #else
     button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 #endif
