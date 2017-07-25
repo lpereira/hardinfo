@@ -852,9 +852,13 @@ static gboolean reload_section(gpointer data)
 	double pos_info_scroll, pos_more_scroll;
 
 	/* save current position */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    /* TODO:GTK3 */
+#else
 #if GTK_CHECK_VERSION(2, 0, 0)
 	pos_info_scroll = RANGE_GET_VALUE(info, vscrollbar);
 	pos_more_scroll = RANGE_GET_VALUE(moreinfo, vscrollbar);
+#endif
 #endif
 
 	/* avoid drawing the window while we reload */
@@ -883,8 +887,12 @@ static gboolean reload_section(gpointer data)
 	    gtk_tree_path_free(path);
         } else {
             /* restore position */
+#if GTK_CHECK_VERSION(3, 0, 0)
+    /* TODO:GTK3 */
+#else
             RANGE_SET_VALUE(info, vscrollbar, pos_info_scroll);
             RANGE_SET_VALUE(moreinfo, vscrollbar, pos_more_scroll);
+#endif
         }
 
 	/* make the window drawable again */
@@ -1780,10 +1788,7 @@ static void module_selected(gpointer data)
 
 	/* urgh. why don't GTK do this when the model is cleared? */
 #if GTK_CHECK_VERSION(3, 0, 0)
-        RANGE_SET_VALUE(info, vscrollbar, 0.0);
-        RANGE_SET_VALUE(info, hscrollbar, 0.0);
-        RANGE_SET_VALUE(moreinfo, vscrollbar, 0.0);
-        RANGE_SET_VALUE(moreinfo, hscrollbar, 0.0);
+    /* TODO:GTK3 */
 #else
         RANGE_SET_VALUE(info, vscrollbar, 0.0);
         RANGE_SET_VALUE(info, hscrollbar, 0.0);
