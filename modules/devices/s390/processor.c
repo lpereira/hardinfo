@@ -89,8 +89,8 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-        STRIFNULL(model_name, _("S390 Processor") );
-        UNKIFNULL(proc_str);
+        STRIFNULL(processor->model_name, _("S390 Processor") );
+        UNKIFNULL(processor->proc_str);
 
         /* topo & freq */
         processor->cpufreq = cpufreq_new(processor->id);

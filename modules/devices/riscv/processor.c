@@ -104,10 +104,10 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-        STRIFNULL(model_name, _("RISC-V Processor") );
-        UNKIFNULL(mmu);
-        UNKIFNULL(isa);
-        UNKIFNULL(uarch);
+        STRIFNULL(processor->model_name, _("RISC-V Processor") );
+        UNKIFNULL(processor->mmu);
+        UNKIFNULL(processor->isa);
+        UNKIFNULL(processor->uarch);
 
         processor->flags = riscv_isa_to_flags(processor->isa);
 

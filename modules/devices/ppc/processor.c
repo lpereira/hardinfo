@@ -114,8 +114,8 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-        STRIFNULL(model_name, _("POWER Processor") );
-        UNKIFNULL(revision);
+        STRIFNULL(processor->model_name, _("POWER Processor") );
+        UNKIFNULL(processor->revision);
 
         /* topo & freq */
         processor->cpufreq = cpufreq_new(processor->id);

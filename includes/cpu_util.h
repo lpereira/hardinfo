@@ -7,8 +7,7 @@
 #define PROC_CPUINFO "/proc/cpuinfo"
 #endif
 
-/* needs a local Processor *processor */
-#define STRIFNULL(f,cs) if (processor->f == NULL) processor->f = g_strdup(cs);
+#define STRIFNULL(f,cs) if (f == NULL) f = g_strdup(cs);
 #define UNKIFNULL(f) STRIFNULL(f, _("(Unknown)") )
 #define EMPIFNULL(f) STRIFNULL(f, "")
 

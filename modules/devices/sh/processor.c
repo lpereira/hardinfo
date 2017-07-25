@@ -52,8 +52,8 @@ processor_scan(void)
 
     fclose(cpuinfo);
 
-    STRIFNULL(model_name, _("SuperH Processor"));
-    UNKIFNULL(vendor_id);
+    STRIFNULL(processor->model_name, _("SuperH Processor"));
+    UNKIFNULL(processor->vendor_id);
 
     return g_slist_append(NULL, processor);
 }

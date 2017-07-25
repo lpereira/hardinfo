@@ -138,19 +138,19 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-        STRIFNULL(model_name, _("ARM Processor") );
-        EMPIFNULL(flags);
-        UNKIFNULL(cpu_implementer);
-        UNKIFNULL(cpu_architecture);
-        UNKIFNULL(cpu_variant);
-        UNKIFNULL(cpu_part);
-        UNKIFNULL(cpu_revision);
+        STRIFNULL(processor->model_name, _("ARM Processor") );
+        EMPIFNULL(processor->flags);
+        UNKIFNULL(processor->cpu_implementer);
+        UNKIFNULL(processor->cpu_architecture);
+        UNKIFNULL(processor->cpu_variant);
+        UNKIFNULL(processor->cpu_part);
+        UNKIFNULL(processor->cpu_revision);
 
         processor->decoded_name = arm_decoded_name(
             processor->cpu_implementer, processor->cpu_part,
             processor->cpu_variant, processor->cpu_revision,
             processor->cpu_architecture, processor->model_name);
-        UNKIFNULL(decoded_name);
+        UNKIFNULL(processor->decoded_name);
 
         /* topo & freq */
         processor->cpufreq = cpufreq_new(processor->id);

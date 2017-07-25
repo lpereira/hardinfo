@@ -105,12 +105,12 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-        STRIFNULL(model_name, _("IA64 Processor") );
-        UNKIFNULL(vendor_id);
-        STRIFNULL(arch, "IA-64");
-        STRIFNULL(archrev, "0");
-        UNKIFNULL(family);
-        UNKIFNULL(features);
+        STRIFNULL(processor->model_name, _("IA64 Processor") );
+        UNKIFNULL(processor->vendor_id);
+        STRIFNULL(processor->arch, "IA-64");
+        STRIFNULL(processor->archrev, "0");
+        UNKIFNULL(processor->family);
+        UNKIFNULL(processor->features);
 
         /* topo & freq */
         processor->cpufreq = cpufreq_new(processor->id);

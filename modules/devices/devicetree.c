@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <stdint.h>
 #include "devices.h"
+#include "cpu_util.h"
 #include "dt_util.h"
 
 /* Hardinfo labels that have # are truncated and/or hidden.
@@ -166,6 +167,8 @@ gchar *get_summary() {
 
     model = get_dt_string("/model", 0);
     compat = get_dt_string("/compatible", 1);
+    UNKIFNULL(model);
+    EMPIFNULL(compat);
 
     /* Expand on the DT information from known machines, like RPi.
      * RPi stores a revision value in /proc/cpuinfo that can be used
@@ -217,6 +220,7 @@ gchar *get_summary() {
     /* fallback */
     if (ret == NULL) {
         tmp[0] = get_dt_string("/serial-number", 1);
+        EMPIFNULL(tmp[0]);
         ret = g_strdup_printf(
                 "[%s]\n"
                 "%s=%s\n"
@@ -308,7 +312,8 @@ void __scan_dtree()
     mi_add("Summary", summary);
     mi_add("Maps", maps);
 
-    add_keys("/");
+    if(dtr_was_found(dt))
+        add_keys("/");
     messages = msg_section(0);
     mi_add("Messages", messages);
 
