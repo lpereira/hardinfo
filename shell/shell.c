@@ -33,6 +33,10 @@
 
 #include "callbacks.h"
 
+#ifndef gtk_notebook_set_page
+#define gtk_notebook_set_page(P, N) gtk_notebook_set_current_page(P, N)
+#endif
+
 /*
  * Internal Prototypes ********************************************************
  */
