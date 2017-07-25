@@ -102,7 +102,10 @@ void load_graph_set_color(LoadGraph * lg, LoadGraphColor color)
 {
     lg->color = color;
 #if GTK_CHECK_VERSION(3, 0, 0)
-    /* TODO:GTK3 cairo version */
+#define UNPACK_COLOR(C) (((C)>>16) & 0xff), (((C)>>8) & 0xff), ((C) & 0xff)
+    cairo_set_source_rgb(lg->trace, UNPACK_COLOR(lg->color) );
+    cairo_set_source_rgb(lg->fill, UNPACK_COLOR(lg->color - 0x303030) );
+    cairo_set_source_rgb(lg->grid, UNPACK_COLOR(lg->color - 0xcdcdcd) );
 #else
     gdk_rgb_gc_set_foreground(lg->trace, lg->color);
     gdk_rgb_gc_set_foreground(lg->fill, lg->color - 0x303030);
@@ -131,7 +134,6 @@ static gboolean _expose(GtkWidget * widget, GdkEventExpose * event, gpointer use
     LoadGraph *lg = (LoadGraph *) user_data;
 #if GTK_CHECK_VERSION(3, 0, 0)
     cairo_t *cr;
-    cairo_t *draw = GDK_WINDOW(lg->buf);
     gdk_cairo_set_source_window(cr, lg->area, 0, 0);
 #else
     GdkDrawable *draw = GDK_DRAWABLE(lg->buf);
@@ -230,7 +232,7 @@ static void _draw_label_and_line(LoadGraph * lg, gint position, gint value)
 #if GTK_CHECK_VERSION(3, 0, 0)
     pango_layout_set_width(lg->layout,
                 lg->width * PANGO_SCALE);
-    gtk_widget_create_pango_layout(GDK_WINDOW(lg->buf), NULL);
+    gtk_widget_create_pango_layout(lg->area, NULL);
 #else
     pango_layout_set_width(lg->layout,
                 lg->area->allocation.width * PANGO_SCALE);
@@ -244,7 +246,7 @@ static void _draw_label_and_line(LoadGraph * lg, gint position, gint value)
 static void _draw(LoadGraph * lg)
 {
 #if GTK_CHECK_VERSION(3, 0, 0)
-    cairo_t *draw = GDK_WINDOW(lg->buf);
+    void *draw = NULL; /* not used by cairo */
 #else
     GdkDrawable *draw = GDK_DRAWABLE(lg->buf);
 #endif
@@ -252,7 +254,8 @@ static void _draw(LoadGraph * lg)
 
     /* clears the drawing area */
 #if GTK_CHECK_VERSION(3, 0, 0)
-    cairo_rectangle(draw, 0, 0, lg->width, lg->height);
+    cairo_rectangle(lg->fill, 0, 0, lg->width, lg->height);
+    cairo_fill (lg->fill);
 #else
     gdk_draw_rectangle(draw, lg->area->style->black_gc,
                 TRUE, 0, 0, lg->width, lg->height);
