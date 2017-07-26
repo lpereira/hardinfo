@@ -12,3 +12,4 @@ Terminal=false
 Type=Application
 StartupNotify=true
 Categories=System;
+Keywords=linux;kernel;system;hardware;cpu;processor;capabilities;frequency;memory;ram;board;resources;sensors;devices;usb;pci;display;network;benchmark;test;
