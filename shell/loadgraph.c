@@ -25,6 +25,33 @@
 
 #include "loadgraph.h"
 
+struct _LoadGraph {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_surface_t *buf;
+    cairo_t       *grid;
+    cairo_t       *trace;
+    cairo_t       *fill;
+#else
+    GdkPixmap     *buf;
+    GdkGC         *grid;
+    GdkGC         *trace;
+    GdkGC         *fill;
+#endif
+    GtkWidget     *area;
+
+    gint          *data;
+    gfloat         scale;
+
+    gint       size;
+    gint       width, height;
+    LoadGraphColor color;
+
+    gint       max_value, remax_count;
+
+    PangoLayout   *layout;
+    gchar     *suffix;
+};
+
 static void _draw(LoadGraph * lg);
 
 LoadGraph *load_graph_new(gint size)
@@ -325,9 +352,10 @@ static void _draw(LoadGraph * lg)
     gtk_widget_queue_draw(lg->area);
 }
 
-void load_graph_update(LoadGraph * lg, gint value)
+void load_graph_update(LoadGraph * lg, gdouble v)
 {
     gint i;
+    gint value = (gint)v;
 
     if (value < 0)
         return;
@@ -364,6 +392,13 @@ void load_graph_update(LoadGraph * lg, gint value)
     /* redraw */
     _draw(lg);
 }
+
+gint load_graph_get_height(LoadGraph *lg) {
+    if (lg != NULL)
+        return lg->height;
+    return 0;
+}
+
 
 #ifdef LOADGRAPH_UNIT_TEST
 gboolean lg_update(gpointer d)
