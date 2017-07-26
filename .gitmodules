@@ -1,0 +1,3 @@
+[submodule "deps/uber-graph"]
+	path = deps/uber-graph
+	url = https://github.com/chergert/uber-graph.git
