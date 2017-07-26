@@ -1030,12 +1030,12 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         alloc = g_new(GtkAllocation, 1);
         gtk_widget_get_allocation(shell->hpaned, alloc);
         gtk_paned_set_position(GTK_PANED(shell->vpaned),
-                alloc->height - shell->loadgraph->height - 16);
+                alloc->height - load_graph_get_height(shell->loadgraph) - 16);
         g_free(alloc);
 #else
     gtk_paned_set_position(GTK_PANED(shell->vpaned),
 			       shell->hpaned->allocation.height -
-			       shell->loadgraph->height - 16);
+			       load_graph_get_height(shell->loadgraph) - 16);
 #endif
 
 	break;
