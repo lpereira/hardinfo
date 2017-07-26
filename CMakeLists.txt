@@ -76,7 +76,7 @@ add_subdirectory(po)
 include(FindPkgConfig)
 if (HARDINFO_GTK3)
 	message(STATUS "Building for GTK3 (experimental!)")
-	pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.0 cairo>=1.0 cairo-png>=1.0 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+	pkg_check_modules(GTK REQUIRED pangocairo>=1.0 gtk+-3.0>=3.0 cairo>=1.0 cairo-png>=1.0 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
 	add_definitions(-DGTK_DISABLE_SINGLE_INCLUDES)
 else()
 	message(STATUS "Building for GTK2")
@@ -93,6 +93,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/includes
 	${CMAKE_SOURCE_DIR}/includes/${HARDINFO_ARCH}
+	${CMAKE_SOURCE_DIR}/deps/uber-graph/uber
 	${CMAKE_BINARY_DIR}
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
@@ -192,6 +193,23 @@ foreach (_module ${HARDINFO_MODULES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
 endforeach()
 
+if (HARDINFO_GTK3)
+add_library(uber-graph STATIC
+	deps/uber-graph/uber/g-ring.c
+	deps/uber-graph/uber/uber-frame-source.c
+	deps/uber-graph/uber/uber-graph.c
+	deps/uber-graph/uber/uber-heat-map.c
+	deps/uber-graph/uber/uber-label.c
+	deps/uber-graph/uber/uber-line-graph.c
+	deps/uber-graph/uber/uber-range.c
+	deps/uber-graph/uber/uber-scale.c
+	deps/uber-graph/uber/uber-scatter.c
+	deps/uber-graph/uber/uber-timeout-interval.c
+	deps/uber-graph/uber/uber-window.c
+)
+endif()
+
+if (HARDINFO_GTK3)
 add_executable(hardinfo
 	hardinfo/binreloc.c
 	hardinfo/expr.c
@@ -201,20 +219,44 @@ add_executable(hardinfo
 	hardinfo/vendor.c
 	shell/callbacks.c
 	shell/iconcache.c
-	shell/loadgraph.c
 	shell/menu.c
 	shell/report.c
 	shell/shell.c
 	shell/stock.c
 	shell/syncmanager.c
+	shell/loadgraph-uber.c
 )
-
+target_link_libraries(hardinfo
+	uber-graph
+	${GTK_LIBRARIES}
+	${LIBSOUP_LIBRARIES}
+	m
+	${ZLIB_LIBRARIES}
+)
+else()
+add_executable(hardinfo
+	hardinfo/binreloc.c
+	hardinfo/expr.c
+        hardinfo/hardinfo.c
+	hardinfo/socket.c
+	hardinfo/util.c
+	hardinfo/vendor.c
+	shell/callbacks.c
+	shell/iconcache.c
+	shell/menu.c
+	shell/report.c
+	shell/shell.c
+	shell/stock.c
+	shell/syncmanager.c
+	shell/loadgraph.c
+)
 target_link_libraries(hardinfo
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
 	m
 	${ZLIB_LIBRARIES}
 )
+endif()
 
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
 configure_file(hardinfo.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo.desktop @ONLY)
