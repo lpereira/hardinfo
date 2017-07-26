@@ -806,7 +806,7 @@ static gboolean update_field(gpointer data)
 	if (shell->view_type == SHELL_VIEW_LOAD_GRAPH &&
 	    gtk_tree_selection_iter_is_selected(shell->info->selection,
 						iter)) {
-	    load_graph_update(shell->loadgraph, atoi(value));
+	    load_graph_update(shell->loadgraph, atof(value));
 	}
 
 	gtk_tree_store_set(store, iter, INFO_TREE_COL_VALUE, value, -1);
