@@ -39,6 +39,8 @@ void         load_graph_configure_expose(LoadGraph *lg);
 GtkWidget   *load_graph_get_framed(LoadGraph *lg);
 
 void         load_graph_update(LoadGraph *lg, gdouble value);
+void         load_graph_update_ex(LoadGraph *lg, guint line, gdouble value);
+
 void         load_graph_set_color(LoadGraph *lg, LoadGraphColor color);
 void         load_graph_clear(LoadGraph *lg);
 

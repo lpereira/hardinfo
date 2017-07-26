@@ -352,7 +352,14 @@ static void _draw(LoadGraph * lg)
     gtk_widget_queue_draw(lg->area);
 }
 
-void load_graph_update(LoadGraph * lg, gdouble v)
+void load_graph_update_ex(LoadGraph *lg, guint line, gdouble value)
+{
+    /* not implemented */
+    if (line == 0)
+        load_graph_update(lg, value);
+}
+
+void load_graph_update(LoadGraph *lg, gdouble v)
 {
     gint i;
     gint value = (gint)v;
