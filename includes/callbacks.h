@@ -24,7 +24,6 @@
 void cb_about();
 void cb_about_module(GtkAction *action);
 void cb_generate_report();
-void cb_save_graphic();
 void cb_quit();
 void cb_refresh();
 void cb_copy_to_clipboard();

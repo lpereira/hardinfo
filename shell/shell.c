@@ -284,9 +284,7 @@ void shell_view_set_enabled(gboolean setting)
     shell_action_set_enabled("CopyAction", setting);
     shell_action_set_enabled("ReportAction", setting);
     shell_action_set_enabled("SyncManagerAction", setting && sync_manager_count_entries() > 0);
-    shell_action_set_enabled("SaveGraphAction",
-			     setting ? shell->view_type ==
-			     SHELL_VIEW_PROGRESS : FALSE);
+
 }
 
 void shell_status_set_enabled(gboolean setting)
@@ -764,7 +762,6 @@ void shell_init(GSList * modules)
 
     shell_action_set_enabled("RefreshAction", FALSE);
     shell_action_set_enabled("CopyAction", FALSE);
-    shell_action_set_enabled("SaveGraphAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
 
@@ -985,9 +982,6 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     /* turn off the rules hint */
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
 
-    /* turn off the save graphic action */
-    shell_action_set_enabled("SaveGraphAction", FALSE);
-
     close_note(NULL, NULL);
 
     switch (viewtype) {
@@ -1043,7 +1037,6 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 	/* fallthrough */
     case SHELL_VIEW_PROGRESS:
         gtk_widget_show(shell->info->scroll);
-	shell_action_set_enabled("SaveGraphAction", TRUE);
 
 	if (!reload) {
   	  gtk_tree_view_column_set_visible(shell->info->col_progress, TRUE);
