@@ -37,52 +37,6 @@ void cb_sync_manager()
     sync_manager_show(shell->window);
 }
 
-void cb_save_graphic()
-{
-    Shell *shell = shell_get_main_shell();
-    GtkWidget *dialog;
-    gchar *filename;
-
-    /* save the pixbuf to a png file */
-#if GTK_CHECK_VERSION(3, 0, 0)
-    dialog = gtk_file_chooser_dialog_new(_("Save Image"),
-					 NULL,
-					 GTK_FILE_CHOOSER_ACTION_SAVE,
-					 "_Cancel",
-					 GTK_RESPONSE_CANCEL,
-					 "_Save",
-					 GTK_RESPONSE_ACCEPT, NULL);
-#else
-    dialog = gtk_file_chooser_dialog_new(_("Save Image"),
-					 NULL,
-					 GTK_FILE_CHOOSER_ACTION_SAVE,
-					 GTK_STOCK_CANCEL,
-					 GTK_RESPONSE_CANCEL,
-					 GTK_STOCK_SAVE,
-					 GTK_RESPONSE_ACCEPT, NULL);
-#endif
-
-    filename = g_strconcat(shell->selected->name, ".png", NULL);
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
-    g_free(filename);
-
-    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	gtk_widget_destroy(dialog);
-
-	shell_status_update(_("Saving image..."));
-
-	tree_view_save_image(filename);
-
-	shell_status_update(_("Done."));
-	g_free(filename);
-
-	return;
-    }
-
-    gtk_widget_destroy(dialog);
-}
-
 void cb_open_web_page()
 {
     open_url("http://www.hardinfo.org");

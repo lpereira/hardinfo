@@ -53,16 +53,11 @@ static GtkActionEntry entries[] = {
      N_("_Open..."), NULL,
      NULL,
      G_CALLBACK(cb_sync_manager)},
-     
+
     {"CopyAction", GTK_STOCK_COPY,
      N_("_Copy to Clipboard"), "<control>C",
      N_("Copy to clipboard"),
      G_CALLBACK(cb_copy_to_clipboard)},
-
-    {"SaveGraphAction", GTK_STOCK_SAVE_AS,
-     N_("_Save image as..."), "<control>S",
-     NULL,
-     G_CALLBACK(cb_save_graphic)},
 
     {"RefreshAction", GTK_STOCK_REFRESH,
      N_("_Refresh"), "F5",
@@ -130,15 +125,15 @@ void menu_init(Shell * shell)
     /* Pack up our objects:
      * menu_box -> window
      * actions -> action_group
-     * action_group -> menu_manager */  
-    gtk_action_group_set_translation_domain( action_group, "hardinfo" );//gettext 
+     * action_group -> menu_manager */
+    gtk_action_group_set_translation_domain( action_group, "hardinfo" );//gettext
     gtk_action_group_add_actions(action_group, entries,
 				 G_N_ELEMENTS(entries), NULL);
     gtk_action_group_add_toggle_actions(action_group, toggle_entries,
 					G_N_ELEMENTS(toggle_entries),
 					NULL);
     gtk_ui_manager_insert_action_group(menu_manager, action_group, 0);
-    
+
 
     /* Read in the UI from our XML file */
     error = NULL;

@@ -91,7 +91,6 @@ gchar       *strreplace(gchar *string, gchar *replace, gchar *replacement);
 /* Widget utility functions */
 void widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
 gint tree_view_get_visible_height(GtkTreeView *tv);
-void tree_view_save_image(gchar *filename);
 
 /* File Chooser utility functions */
 void      file_chooser_open_expander(GtkWidget *chooser);

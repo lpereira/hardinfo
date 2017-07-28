@@ -1,5 +1,5 @@
 #ifndef __UIDEFS_H__
-#define __UIDEFS_H__ 
+#define __UIDEFS_H__
 
 #include "config.h"
 
@@ -12,7 +12,7 @@
 
 #ifdef HAS_LIBSOUP
 #define SYNC_MANAGER_ITEMS "		<separator/>" \
-"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />" 
+"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />"
 
 #else		/* !HAS_LIBSOUP */
 #define SYNC_MANAGER_ITEMS
@@ -24,10 +24,6 @@ char *uidefs_str = "<ui>" \
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \
 SYNC_MANAGER_ITEMS
-/*
- * Save Image is not ready for prime time. Yet.
- * "<menuitem name=\"SaveGraph\" action=\"SaveGraphAction\" />" \
- */
 "		<separator/>" \
 "		<menuitem name=\"Quit\" action=\"QuitAction\" />" \
 "	</menu>" \

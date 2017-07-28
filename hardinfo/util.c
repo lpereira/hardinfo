@@ -170,26 +170,20 @@ void widget_set_cursor(GtkWidget * widget, GdkCursorType cursor_type)
 {
     GdkCursor *cursor;
     GdkDisplay *display;
-#if GTK_CHECK_VERSION(3, 0, 0)
     GdkWindow *gdk_window;
-#endif
 
     display = gtk_widget_get_display(widget);
-
-#if GTK_CHECK_VERSION(3, 0, 0)
+    cursor = gdk_cursor_new_for_display(display, cursor_type);
     gdk_window = gtk_widget_get_window(widget);
-    if ((cursor = gdk_cursor_new_for_display(display, cursor_type))) {
+    if (cursor) {
         gdk_window_set_cursor(gdk_window, cursor);
         gdk_display_flush(display);
+#if GTK_CHECK_VERSION(3, 0, 0)
         g_object_unref(cursor);
-    }
 #else
-    if ((cursor = gdk_cursor_new(cursor_type))) {
-        gdk_window_set_cursor(GDK_WINDOW(widget->window), cursor);
-        gdk_display_flush(display);
         gdk_cursor_unref(cursor);
-    }
 #endif
+    }
 
     while (gtk_events_pending())
         gtk_main_iteration();
@@ -990,109 +984,6 @@ gint tree_view_get_visible_height(GtkTreeView * tv)
     gtk_tree_path_free(path);
 
     return nrows * rect.height;
-}
-
-void tree_view_save_image(gchar * filename)
-{
-#if GTK_CHECK_VERSION(3, 0, 0)
-    /* TODO:GTK3 needs conversion for gtk3 */
-#else
-    /* this is ridiculously complicated :/ why in the hell gtk+ makes this kind of
-       thing so difficult?  */
-
-    /* FIXME: this does not work if the window (or part of it) isn't visible. does
-       anyone know how to fix this? :/ */
-    Shell *shell = shell_get_main_shell();
-    GtkWidget *widget = shell->info->view;
-
-    PangoLayout *layout;
-    PangoContext *context;
-    PangoRectangle rect;
-
-    GdkPixmap *pm;
-    GdkPixbuf *pb;
-    GdkGC *gc;
-    GdkColor black = { 0, 0, 0, 0 };
-    GdkColor white = { 0, 65535, 65535, 65535 };
-
-    gint w, h, visible_height;
-    gchar *tmp;
-
-    gboolean tv_enabled;
-
-    /* present the window */
-    gtk_window_present(GTK_WINDOW(shell->window));
-
-    /* if the treeview is disabled, we need to enable it so we get the
-       correct colors when saving. we make it insensitive later on if it
-       was this way before entering this function */
-    tv_enabled = GTK_WIDGET_IS_SENSITIVE(widget);
-    gtk_widget_set_sensitive(widget, TRUE);
-
-    gtk_widget_queue_draw(widget);
-
-    /* unselect things in the information treeview */
-    gtk_range_set_value(GTK_RANGE
-			(GTK_SCROLLED_WINDOW(shell->info->scroll)->
-			 vscrollbar), 0.0);
-    gtk_tree_selection_unselect_all(gtk_tree_view_get_selection
-				    (GTK_TREE_VIEW(widget)));
-    while (gtk_events_pending())
-	gtk_main_iteration();
-
-    /* initialize stuff */
-    gc = gdk_gc_new(widget->window);
-    gdk_gc_set_background(gc, &black);
-    gdk_gc_set_foreground(gc, &white);
-
-    context = gtk_widget_get_pango_context(widget);
-    layout = pango_layout_new(context);
-
-    visible_height = tree_view_get_visible_height(GTK_TREE_VIEW(widget));
-
-    /* draw the title */
-    tmp = g_strdup_printf("<b><big>%s</big></b>\n<small>%s</small>",
-			  shell->selected->name,
-			  shell->selected->notefunc(shell->selected->
-						    number));
-    pango_layout_set_markup(layout, tmp, -1);
-    pango_layout_set_width(layout, widget->allocation.width * PANGO_SCALE);
-    pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
-    pango_layout_get_pixel_extents(layout, NULL, &rect);
-
-    w = widget->allocation.width;
-    h = visible_height + rect.height;
-
-    pm = gdk_pixmap_new(widget->window, w, rect.height, -1);
-    gdk_draw_rectangle(GDK_DRAWABLE(pm), gc, TRUE, 0, 0, w, rect.height);
-    gdk_draw_layout_with_colors(GDK_DRAWABLE(pm), gc, 0, 0, layout,
-				&white, &black);
-
-    /* copy the pixmap from the treeview and from the title */
-    pb = gdk_pixbuf_get_from_drawable(NULL,
-				      widget->window,
-				      NULL, 0, 0, 0, 0, w, h);
-    pb = gdk_pixbuf_get_from_drawable(pb,
-				      pm,
-				      NULL,
-				      0, 0,
-				      0, visible_height, w, rect.height);
-
-    /* save the pixbuf to a png file */
-    gdk_pixbuf_save(pb, filename, "png", NULL,
-		    "compression", "9",
-		    "tEXt::hardinfo::version", VERSION,
-		    "tEXt::hardinfo::arch", ARCH, NULL);
-
-    /* unref */
-    g_object_unref(pb);
-    g_object_unref(layout);
-    g_object_unref(pm);
-    g_object_unref(gc);
-    g_free(tmp);
-
-    gtk_widget_set_sensitive(widget, tv_enabled);
-#endif
 }
 
 static gboolean __idle_free_do(gpointer ptr)
