@@ -78,7 +78,6 @@ get_libc_version(void)
     return g_strdup(_("Unknown"));
 }
 
-
 static gchar *detect_kde_version(void)
 {
     const gchar *cmd;
@@ -173,34 +172,42 @@ desktop_with_session_type(const gchar *desktop_env)
 }
 
 static gchar *
+detect_xdg_environment(const gchar *env_var)
+{
+    const gchar *tmp;
+
+    tmp = g_getenv(env_var);
+    if (!tmp)
+        return NULL;
+
+    if (g_str_equal(tmp, "GNOME") || g_str_equal(tmp, "gnome")) {
+        gchar *maybe_gnome = detect_gnome_version();
+
+        if (maybe_gnome)
+            return maybe_gnome;
+    }
+    if (g_str_equal(tmp, "KDE") || g_str_equal(tmp, "kde")) {
+        gchar *maybe_kde = detect_kde_version();
+
+        if (maybe_kde)
+            return maybe_kde;
+    }
+
+    return g_strdup(tmp);
+}
+
+static gchar *
 detect_desktop_environment(void)
 {
     const gchar *tmp;
     gchar *windowman;
 
-    tmp = g_getenv("XDG_CURRENT_DESKTOP");
-    if (tmp) {
-        if (g_str_equal(tmp, "GNOME")) {
-            gchar *maybe_gnome = detect_gnome_version();
-
-            if (maybe_gnome)
-                return maybe_gnome;
-        }
-
-        return g_strdup(tmp);
-    }
-
-    tmp = g_getenv("XDG_SESSION_DESKTOP");
-    if (tmp) {
-        if (g_str_equal(tmp, "gnome")) {
-            gchar *maybe_gnome = detect_gnome_version();
-
-            if (maybe_gnome)
-                return maybe_gnome;
-        }
-
-        return g_strdup(tmp);
-    }
+    windowman = detect_xdg_environment("XDG_CURRENT_DESKTOP");
+    if (windowman)
+        return windowman;
+    windowman = detect_xdg_environment("XDG_SESSION_DESKTOP");
+    if (windowman)
+        return windowman;
 
     tmp = g_getenv("KDE_FULL_SESSION");
     if (tmp) {
@@ -209,7 +216,6 @@ detect_desktop_environment(void)
         if (maybe_kde)
             return maybe_kde;
     }
-
     tmp = g_getenv("GNOME_DESKTOP_SESSION_ID");
     if (tmp) {
         gchar *maybe_gnome = detect_gnome_version();
