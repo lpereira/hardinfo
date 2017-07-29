@@ -16,6 +16,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <gdk/gdkx.h>
 #include <string.h>
 #include <sys/utsname.h>
 #include "hardinfo.h"
@@ -77,84 +78,137 @@ get_libc_version(void)
     return g_strdup(_("Unknown"));
 }
 
-#include <gdk/gdkx.h>
 
-void
-detect_desktop_environment(OperatingSystem * os)
+static gchar *detect_kde_version(void)
 {
-    const gchar *tmp = g_getenv("GNOME_DESKTOP_SESSION_ID");
-    FILE *version;
-    char vers[16];
+    const gchar *cmd;
+    const gchar *tmp = g_getenv("KDE_SESSION_VERSION");
+    gchar *out;
+    gboolean spawned;
 
-    if (tmp) {
-	/* FIXME: this might not be true, as the gnome-panel in path
-	   may not be the one that's running.
-	   see where the user's running panel is and run *that* to
-	   obtain the version. */
-	version = popen("gnome-about --gnome-version", "r");
-	if (version) {
-	    (void)fscanf(version, _("Version: %s"), vers);
-	    if (pclose(version))
-	        goto unknown;
-	} else {
-	    goto unknown;
-	}
-
-	os->desktop = g_strdup_printf("GNOME %s", vers);
-    } else if (g_getenv("KDE_FULL_SESSION")) {
-
-	if (g_getenv("KDE_SESSION_VERSION") && strstr(g_getenv("KDE_SESSION_VERSION"),(gchar *)"4")) {
-	    version = popen("kwin --version", "r");
-	} else {
-	    version = popen("kcontrol --version", "r");
-	}
-
-	if (version) {
-	    char buf[32];
-
-	    (void)fgets(buf, 32, version);
-
-	    (void)fscanf(version, "KDE: %s", vers);
-	    if (pclose(version))
-	        goto unknown;
-	} else {
-	    goto unknown;
-	}
-
-	os->desktop = g_strdup_printf("KDE %s", vers);
+    if (tmp && tmp[0] == '4') {
+        cmd = "kwin --version";
     } else {
-      unknown:
-        os->desktop = NULL;
-
-	if (!g_getenv("DISPLAY")) {
-	    os->desktop = g_strdup(_("Terminal"));
-	} else {
-            GdkScreen *screen = gdk_screen_get_default();
-
-            if (screen && GDK_IS_SCREEN(screen)) {
-              const gchar *windowman;
-
-              windowman = gdk_x11_screen_get_window_manager_name(screen);
-              if (g_str_equal(windowman, "Xfwm4")) {
-                  /* FIXME: check if xprop -root | grep XFCE_DESKTOP_WINDOW is defined */
-                  os->desktop = g_strdup("XFCE 4");
-              } else if ((tmp = g_getenv("XDG_CURRENT_DESKTOP"))) {
-                  os->desktop = g_strdup(tmp);
-                  if ((tmp = g_getenv("DESKTOP_SESSION")) && !g_str_equal(os->desktop, tmp)) {
-                      g_free(os->desktop);
-                      os->desktop = g_strdup(tmp);
-                  }
-              }
-
-              if (!os->desktop) {
-                  os->desktop = g_strdup_printf(_("Unknown (Window Manager: %s)"),
-                                                windowman);
-              }
-            } else {
-                  os->desktop = g_strdup(_("Unknown"));
-            }
-	}
+        cmd = "kcontrol --version";
     }
+
+    spawned = g_spawn_command_line_sync(cmd, &out, NULL, NULL, NULL);
+    if (!spawned)
+        return NULL;
+
+    tmp = strstr(idle_free(out), "KDE: ");
+    return tmp ? g_strdup(tmp + strlen("KDE: ")) : NULL;
+}
+
+static gchar *
+detect_gnome_version(void)
+{
+    gchar *tmp;
+    gchar *out;
+    gboolean spawned;
+
+    spawned = g_spawn_command_line_sync(
+        "gnome-shell --version", &out, NULL, NULL, NULL);
+    if (spawned) {
+        tmp = strstr(idle_free(out), _("GNOME Shell "));
+
+        if (tmp) {
+            tmp += strlen(_("GNOME Shell "));
+            return g_strdup_printf("GNOME %s", strend(tmp, '\n'));
+        }
+    }
+
+    spawned = g_spawn_command_line_sync(
+        "gnome-about --gnome-version", &out, NULL, NULL, NULL);
+    if (spawned) {
+        tmp = strstr(idle_free(out), _("Version: "));
+
+        if (tmp) {
+            tmp += strlen(_("Version: "));
+            return g_strdup_printf("GNOME %s", strend(tmp, '\n'));
+        }
+    }
+
+    return NULL;
+}
+
+static gchar *
+detect_window_manager(void)
+{
+    GdkScreen *screen = gdk_screen_get_default();
+    const gchar *windowman;
+    const gchar *curdesktop;
+
+    if (!screen || !GDK_IS_SCREEN(screen))
+        return NULL;
+
+    windowman = gdk_x11_screen_get_window_manager_name(screen);
+
+    if (g_str_equal(windowman, "Xfwm4"))
+        return g_strdup("XFCE 4");
+
+    curdesktop = g_getenv("XDG_CURRENT_DESKTOP");
+    if (curdesktop) {
+        const gchar *desksession = g_getenv("DESKTOP_SESSION");
+
+        if (desksession && !g_str_equal(curdesktop, desksession))
+            return g_strdup(desksession);
+    }
+
+    return g_strdup_printf(_("Unknown (Window Manager: %s)"), windowman);
+}
+
+static gchar *
+detect_desktop_environment(void)
+{
+    const char *tmp;
+
+    tmp = g_getenv("XDG_CURRENT_DESKTOP");
+    if (tmp) {
+        if (g_str_equal(tmp, "GNOME")) {
+            const gchar *maybe_gnome = detect_gnome_version();
+
+            if (maybe_gnome)
+                tmp = maybe_gnome;
+        }
+
+        return g_strdup(tmp);
+    }
+
+    tmp = g_getenv("XDG_SESSION_DESKTOP");
+    if (tmp) {
+        if (g_str_equal(tmp, "gnome")) {
+            const gchar *maybe_gnome = detect_gnome_version();
+
+            if (maybe_gnome)
+                tmp = maybe_gnome;
+        }
+
+        return g_strdup(tmp);
+    }
+
+    tmp = g_getenv("KDE_FULL_SESSION");
+    if (tmp) {
+        tmp = detect_kde_version();
+        if (tmp)
+            return g_strdup(tmp);
+    }
+
+    tmp = g_getenv("GNOME_DESKTOP_SESSION_ID");
+    if (tmp) {
+        tmp = detect_gnome_version();
+        if (tmp)
+            return g_strdup(tmp);
+    }
+
+    tmp = detect_window_manager();
+    if (tmp)
+        return g_strdup(tmp);
+
+    if (!g_getenv("DISPLAY"))
+        return g_strdup("Terminal");
+
+    return g_strdup("Unknown");
 }
 
 gchar *
@@ -302,7 +356,7 @@ computer_get_os(void)
 				   g_get_user_name(), g_get_real_name());
     os->libc = get_libc_version();
     scan_languages(os);
-    detect_desktop_environment(os);
+    os->desktop = detect_desktop_environment();
 
     os->entropy_avail = computer_get_entropy_avail();
 
