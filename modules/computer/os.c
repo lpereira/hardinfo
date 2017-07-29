@@ -281,6 +281,89 @@ computer_get_language(void)
     return ret;
 }
 
+static gchar *
+detect_distro(void)
+{
+    static const struct {
+        const gchar *file;
+        const gchar *codename;
+        const gchar *override;
+    } distro_db[] = {
+#define DB_PREFIX "/etc/"
+        { DB_PREFIX "arch-release", "arch", "Arch Linux" },
+        { DB_PREFIX "fatdog-version", "fatdog" },
+        { DB_PREFIX "debian_version", "deb" },
+        { DB_PREFIX "slackware-version", "slk" },
+        { DB_PREFIX "mandrake-release", "mdk" },
+        { DB_PREFIX "mandriva-release", "mdv" },
+        { DB_PREFIX "fedora-release", "fdra" },
+        { DB_PREFIX "coas", "coas" },
+        { DB_PREFIX "environment.corel", "corel"},
+        { DB_PREFIX "gentoo-release", "gnt" },
+        { DB_PREFIX "conectiva-release", "cnc" },
+        { DB_PREFIX "versão-conectiva", "cnc" },
+        { DB_PREFIX "turbolinux-release", "tl" },
+        { DB_PREFIX "yellowdog-release", "yd" },
+        { DB_PREFIX "sabayon-release", "sbn" },
+        { DB_PREFIX "arch-release", "arch" },
+        { DB_PREFIX "enlisy-release", "enlsy" },
+        { DB_PREFIX "SuSE-release", "suse" },
+        { DB_PREFIX "sun-release", "sun" },
+        { DB_PREFIX "zenwalk-version", "zen" },
+        { DB_PREFIX "DISTRO_SPECS", "ppy", "Puppy Linux" },
+        { DB_PREFIX "puppyversion", "ppy", "Puppy Linux" },
+        { DB_PREFIX "distro-release", "fl" },
+        { DB_PREFIX "vine-release", "vine" },
+        { DB_PREFIX "PartedMagic-version", "pmag" },
+         /*
+         * RedHat must be the *last* one to be checked, since
+         * some distros (like Mandrake) includes a redhat-relase
+         * file too.
+         */
+        { DB_PREFIX "redhat-release", "rh" },
+#undef DB_PREFIX
+        { NULL, NULL }
+    };
+    gchar *contents;
+    int i;
+
+    if (g_spawn_command_line_sync("lsb_release -d", &contents, NULL, NULL, NULL)) {
+        gchar *tmp = strstr(contents, "Description:\t");
+
+        if (tmp) {
+            idle_free(contents);
+            return g_strdup(tmp + strlen("Description:\t"));
+        }
+    }
+
+    for (i = 0; distro_db[i].file; i++) {
+        if (!g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS))
+            continue;
+
+        if (!g_file_get_contents(distro_db[i].file, &contents, NULL, NULL))
+            continue;
+
+        if (distro_db[i].override) {
+            g_free(contents);
+            return g_strdup(distro_db[i].override);
+        }
+
+        if (g_str_equal(distro_db[i].codename, "deb")) {
+            /* HACK: Some Debian systems doesn't include the distribuition
+             * name in /etc/debian_release, so add them here. */
+            if (isdigit(contents[0]) || contents[0] != 'D')
+                return g_strdup_printf("Debian GNU/Linux %s", idle_free(contents));
+        }
+
+        if (g_str_equal(distro_db[i].codename, "fatdog"))
+            return g_strdup_printf("Fatdog64 [%.10s]", idle_free(contents));
+
+        return contents;
+    }
+
+    return g_strdup(_("Unknown"));
+}
+
 OperatingSystem *
 computer_get_os(void)
 {
@@ -290,82 +373,7 @@ computer_get_os(void)
 
     os = g_new0(OperatingSystem, 1);
 
-    /* Attempt to get the Distribution name; try using /etc/lsb-release first,
-       then doing the legacy method (checking for /etc/$DISTRO-release files) */
-    if (g_file_test("/etc/lsb-release", G_FILE_TEST_EXISTS)) {
-	FILE *release;
-	gchar buffer[128];
-
-	release = popen("lsb_release -d", "r");
-	if (release) {
-            (void)fgets(buffer, 128, release);
-            pclose(release);
-
-            os->distro = buffer;
-            os->distro = g_strdup(os->distro + strlen("Description:\t"));
-        }
-    } else if (g_file_test("/etc/arch-release", G_FILE_TEST_EXISTS)) {
-        os->distrocode = g_strdup("arch");
-        os->distro = g_strdup("Arch Linux");
-    } else {
-        for (i = 0;; i++) {
-            if (distro_db[i].file == NULL) {
-                os->distrocode = g_strdup("unk");
-                os->distro = g_strdup(_("Unknown distribution"));
-                break;
-            }
-
-            if (g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS)) {
-                FILE *distro_ver;
-                char buf[128];
-
-                distro_ver = fopen(distro_db[i].file, "r");
-                if (distro_ver) {
-                    (void)fgets(buf, 128, distro_ver);
-                    fclose(distro_ver);
-                } else {
-                    continue;
-                }
-
-                buf[strlen(buf) - 1] = 0;
-
-                if (!os->distro) {
-                    /*
-                     * HACK: Some Debian systems doesn't include
-                     * the distribuition name in /etc/debian_release,
-                     * so add them here.
-                     */
-                    if (!strncmp(distro_db[i].codename, "deb", 3) &&
-                        ((buf[0] >= '0' && buf[0] <= '9') || buf[0] != 'D')) {
-                        os->distro = g_strdup_printf
-                            ("Debian GNU/Linux %s", buf);
-                    } else {
-                        os->distro = g_strdup(buf);
-                    }
-                }
-
-                if (g_str_equal(distro_db[i].codename, "ppy")) {
-                  gchar *tmp;
-                    tmp = g_strdup_printf("Puppy Linux");
-                  g_free(os->distro);
-                  os->distro = tmp;
-                }
-
-                if (g_str_equal(distro_db[i].codename, "fatdog")) {
-                  gchar *tmp;
-                    tmp = g_strdup_printf("Fatdog64 [%.10s]", os->distro);
-                  g_free(os->distro);
-                  os->distro = tmp;
-                }
-
-                os->distrocode = g_strdup(distro_db[i].codename);
-
-                break;
-            }
-        }
-    }
-
-    os->distro = g_strstrip(os->distro);
+    os->distro = g_strstrip(detect_distro());
 
     /* Kernel and hostname info */
     uname(&utsbuf);
