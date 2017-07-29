@@ -229,9 +229,9 @@ detect_desktop_environment(void)
         return windowman;
 
     if (!g_getenv("DISPLAY"))
-        return g_strdup("Terminal");
+        return g_strdup(_("Terminal"));
 
-    return g_strdup("Unknown");
+    return g_strdup(_("Unknown"));
 }
 
 gchar *
