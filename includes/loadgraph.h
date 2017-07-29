@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with the Simple Load Graph; if not, write to the Free
  * Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA. 
+ * 02111-1307 USA.
  */
 
 
@@ -24,12 +24,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <math.h>
-/*#include <libintl.h>
-#include <locale.h>
-#define _(STRING)    gettext(STRING)
-#define N_(STRING) (STRING)*/
-
-
 
 typedef struct _LoadGraph LoadGraph;
 
@@ -39,37 +33,20 @@ typedef enum {
     LG_COLOR_RED   = 0xB04F4F
 } LoadGraphColor;
 
-struct _LoadGraph {
-    GdkPixmap     *buf;
-    GtkWidget     *area;
+LoadGraph   *load_graph_new(gint size);
+void         load_graph_destroy(LoadGraph *lg);
+void         load_graph_configure_expose(LoadGraph *lg);
+GtkWidget   *load_graph_get_framed(LoadGraph *lg);
 
-    GdkGC         *grid;
-    GdkGC         *trace;
-    GdkGC	  *fill;
+void         load_graph_update(LoadGraph *lg, gdouble value);
+void         load_graph_update_ex(LoadGraph *lg, guint line, gdouble value);
 
-    gint     	  *data;
-    gfloat         scale;
+void         load_graph_set_color(LoadGraph *lg, LoadGraphColor color);
+void         load_graph_clear(LoadGraph *lg);
 
-    gint	   size;
-    gint	   width, height;
-    LoadGraphColor color;    
-    
-    gint	   max_value, remax_count;
-    
-    PangoLayout   *layout;
-    gchar	  *suffix;
-};
+void         load_graph_set_data_suffix(LoadGraph *lg, gchar *suffix);
+gchar       *load_graph_get_data_suffix(LoadGraph *lg);
 
-LoadGraph 	*load_graph_new(gint size);
-void 		 load_graph_destroy(LoadGraph *lg);
-void		 load_graph_configure_expose(LoadGraph *lg);
-GtkWidget 	*load_graph_get_framed(LoadGraph *lg);
+gint         load_graph_get_height(LoadGraph *lg);
 
-void		 load_graph_update(LoadGraph *lg, gint value);
-void		 load_graph_set_color(LoadGraph *lg, LoadGraphColor color);
-void		 load_graph_clear(LoadGraph *lg);
-
-void		 load_graph_set_data_suffix(LoadGraph *lg, gchar *suffix);
-gchar 		*load_graph_get_data_suffix(LoadGraph *lg);
-
-#endif	/* __LOADGRAPH_H__ */
+#endif  /* __LOADGRAPH_H__ */
