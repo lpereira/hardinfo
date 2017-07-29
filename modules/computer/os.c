@@ -159,17 +159,32 @@ detect_window_manager(void)
 }
 
 static gchar *
-detect_desktop_environment(void)
+desktop_with_session_type(const gchar *desktop_env)
 {
     const char *tmp;
+
+    tmp = g_getenv("XDG_SESSION_TYPE");
+    if (tmp) {
+        if (!g_str_equal(tmp, "unspecified"))
+            return g_strdup_printf(_("%s on %s"), desktop_env, tmp);
+    }
+
+    return g_strdup(desktop_env);
+}
+
+static gchar *
+detect_desktop_environment(void)
+{
+    const gchar *tmp;
+    gchar *windowman;
 
     tmp = g_getenv("XDG_CURRENT_DESKTOP");
     if (tmp) {
         if (g_str_equal(tmp, "GNOME")) {
-            const gchar *maybe_gnome = detect_gnome_version();
+            gchar *maybe_gnome = detect_gnome_version();
 
             if (maybe_gnome)
-                tmp = maybe_gnome;
+                return maybe_gnome;
         }
 
         return g_strdup(tmp);
@@ -178,10 +193,10 @@ detect_desktop_environment(void)
     tmp = g_getenv("XDG_SESSION_DESKTOP");
     if (tmp) {
         if (g_str_equal(tmp, "gnome")) {
-            const gchar *maybe_gnome = detect_gnome_version();
+            gchar *maybe_gnome = detect_gnome_version();
 
             if (maybe_gnome)
-                tmp = maybe_gnome;
+                return maybe_gnome;
         }
 
         return g_strdup(tmp);
@@ -189,21 +204,23 @@ detect_desktop_environment(void)
 
     tmp = g_getenv("KDE_FULL_SESSION");
     if (tmp) {
-        tmp = detect_kde_version();
-        if (tmp)
-            return g_strdup(tmp);
+        gchar *maybe_kde = detect_kde_version();
+
+        if (maybe_kde)
+            return maybe_kde;
     }
 
     tmp = g_getenv("GNOME_DESKTOP_SESSION_ID");
     if (tmp) {
-        tmp = detect_gnome_version();
-        if (tmp)
-            return g_strdup(tmp);
+        gchar *maybe_gnome = detect_gnome_version();
+
+        if (maybe_gnome)
+            return maybe_gnome;
     }
 
-    tmp = detect_window_manager();
-    if (tmp)
-        return g_strdup(tmp);
+    windowman = detect_window_manager();
+    if (windowman)
+        return windowman;
 
     if (!g_getenv("DISPLAY"))
         return g_strdup("Terminal");
@@ -356,7 +373,10 @@ computer_get_os(void)
 				   g_get_user_name(), g_get_real_name());
     os->libc = get_libc_version();
     scan_languages(os);
+
     os->desktop = detect_desktop_environment();
+    if (os->desktop)
+        os->desktop = desktop_with_session_type(idle_free(os->desktop));
 
     os->entropy_avail = computer_get_entropy_avail();
 
