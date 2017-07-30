@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-30 03:38-0500\n"
+"POT-Creation-Date: 2017-07-30 04:23-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -709,11 +709,11 @@ msgstr "Принять результаты тестирования"
 
 #: modules/computer/alsa.c:26
 msgid "Audio Devices"
-msgstr ""
+msgstr "Аудио устройства"
 
 #: modules/computer/alsa.c:34
 msgid "Audio Adapter"
-msgstr ""
+msgstr "Звуковая карта"
 
 #: modules/computer/boots.c:33 modules/computer.c:71
 msgid "Boots"
@@ -1048,11 +1048,11 @@ msgstr "Производитель"
 
 #: modules/computer.c:557
 msgid "Monitors"
-msgstr ""
+msgstr "Монитор"
 
 #: modules/computer.c:559
 msgid "Extensions"
-msgstr ""
+msgstr "Расширения"
 
 #: modules/computer.c:561
 msgid "OpenGL"
@@ -1060,11 +1060,11 @@ msgstr ""
 
 #: modules/computer.c:563
 msgid "Renderer"
-msgstr ""
+msgstr "Рендер"
 
 #: modules/computer.c:565
 msgid "Direct Rendering"
-msgstr ""
+msgstr "Графическое ускорение"
 
 #: modules/computer.c:586 modules/computer/users.c:49
 msgid "Group ID"

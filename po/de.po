@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-30 03:38-0500\n"
+"POT-Creation-Date: 2017-07-30 04:23-0500\n"
 "PO-Revision-Date: 2016-06-10 12:11+0200\n"
 "Last-Translator: Alexander Münch <git@thehacker.biz>\n"
 "Language-Team: German\n"
@@ -666,7 +666,7 @@ msgstr "Lade Benchmark-Ergebnisse"
 
 #: modules/computer/alsa.c:26
 msgid "Audio Devices"
-msgstr ""
+msgstr "Audio-Geräte"
 
 #: modules/computer/alsa.c:34
 msgid "Audio Adapter"
@@ -922,7 +922,7 @@ msgstr ""
 
 #: modules/computer.c:469
 msgid "C Library"
-msgstr ""
+msgstr "C-Library"
 
 #: modules/computer.c:470
 msgid "Distribution"
@@ -930,31 +930,31 @@ msgstr ""
 
 #: modules/computer.c:471
 msgid "Current Session"
-msgstr ""
+msgstr "Aktuelle Sitzung"
 
 #: modules/computer.c:472
 msgid "Computer Name"
-msgstr ""
+msgstr "Computername"
 
 #: modules/computer.c:474
 msgid "Language"
-msgstr ""
+msgstr "Sprache"
 
 #: modules/computer.c:475 modules/computer/users.c:50
 msgid "Home Directory"
-msgstr ""
+msgstr "Stammverzeichnis"
 
 #: modules/computer.c:476
 msgid "Desktop Environment"
-msgstr ""
+msgstr "Desktop-Umgebung"
 
 #: modules/computer.c:477
 msgid "Misc"
-msgstr ""
+msgstr "Verschiedenes"
 
 #: modules/computer.c:492
 msgid "Loaded Modules"
-msgstr ""
+msgstr "Geladene Module"
 
 #: modules/computer.c:493 modules/devices.c:398
 msgid "Description"
@@ -999,11 +999,11 @@ msgstr "Hersteller"
 
 #: modules/computer.c:557
 msgid "Monitors"
-msgstr ""
+msgstr "Bildschirme"
 
 #: modules/computer.c:559
 msgid "Extensions"
-msgstr ""
+msgstr "Erweiterungen"
 
 #: modules/computer.c:561
 msgid "OpenGL"
@@ -1015,7 +1015,7 @@ msgstr ""
 
 #: modules/computer.c:565
 msgid "Direct Rendering"
-msgstr ""
+msgstr "Direct-Rendering"
 
 #: modules/computer.c:586 modules/computer/users.c:49
 msgid "Group ID"
@@ -1882,7 +1882,7 @@ msgstr ""
 
 #: modules/devices/ia64/processor.c:163
 msgid "Features"
-msgstr ""
+msgstr "Funktionen"
 
 #: modules/devices/m68k/processor.c:77 modules/devices/riscv/processor.c:177
 msgid "MMU"
@@ -2272,7 +2272,7 @@ msgstr "Familie, Modell, Stufung"
 
 #: modules/devices/x86/processor.c:413
 msgid "Configuration"
-msgstr ""
+msgstr "Konfiguration"
 
 #: modules/devices/x86/processor.c:414
 msgid "Cache Size"
@@ -3725,7 +3725,7 @@ msgstr ""
 
 #: modules/network.c:330
 msgid "Name Servers"
-msgstr ""
+msgstr "DNS-Server"
 
 #: modules/network.c:345
 msgid "Connections"
