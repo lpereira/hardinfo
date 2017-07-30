@@ -16,6 +16,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <gdk/gdkx.h>
 #include <string.h>
 #include <sys/utsname.h>
 #include "hardinfo.h"
@@ -77,84 +78,160 @@ get_libc_version(void)
     return g_strdup(_("Unknown"));
 }
 
-#include <gdk/gdkx.h>
-
-void
-detect_desktop_environment(OperatingSystem * os)
+static gchar *detect_kde_version(void)
 {
-    const gchar *tmp = g_getenv("GNOME_DESKTOP_SESSION_ID");
-    FILE *version;
-    char vers[16];
+    const gchar *cmd;
+    const gchar *tmp = g_getenv("KDE_SESSION_VERSION");
+    gchar *out;
+    gboolean spawned;
 
-    if (tmp) {
-	/* FIXME: this might not be true, as the gnome-panel in path
-	   may not be the one that's running.
-	   see where the user's running panel is and run *that* to
-	   obtain the version. */
-	version = popen("gnome-about --gnome-version", "r");
-	if (version) {
-	    (void)fscanf(version, _("Version: %s"), vers);
-	    if (pclose(version))
-	        goto unknown;
-	} else {
-	    goto unknown;
-	}
-
-	os->desktop = g_strdup_printf("GNOME %s", vers);
-    } else if (g_getenv("KDE_FULL_SESSION")) {
-
-	if (g_getenv("KDE_SESSION_VERSION") && strstr(g_getenv("KDE_SESSION_VERSION"),(gchar *)"4")) {
-	    version = popen("kwin --version", "r");
-	} else {
-	    version = popen("kcontrol --version", "r");
-	}
-
-	if (version) {
-	    char buf[32];
-
-	    (void)fgets(buf, 32, version);
-
-	    (void)fscanf(version, "KDE: %s", vers);
-	    if (pclose(version))
-	        goto unknown;
-	} else {
-	    goto unknown;
-	}
-
-	os->desktop = g_strdup_printf("KDE %s", vers);
+    if (tmp && tmp[0] == '4') {
+        cmd = "kwin --version";
     } else {
-      unknown:
-        os->desktop = NULL;
-
-	if (!g_getenv("DISPLAY")) {
-	    os->desktop = g_strdup(_("Terminal"));
-	} else {
-            GdkScreen *screen = gdk_screen_get_default();
-
-            if (screen && GDK_IS_SCREEN(screen)) {
-              const gchar *windowman;
-
-              windowman = gdk_x11_screen_get_window_manager_name(screen);
-              if (g_str_equal(windowman, "Xfwm4")) {
-                  /* FIXME: check if xprop -root | grep XFCE_DESKTOP_WINDOW is defined */
-                  os->desktop = g_strdup("XFCE 4");
-              } else if ((tmp = g_getenv("XDG_CURRENT_DESKTOP"))) {
-                  os->desktop = g_strdup(tmp);
-                  if ((tmp = g_getenv("DESKTOP_SESSION")) && !g_str_equal(os->desktop, tmp)) {
-                      g_free(os->desktop);
-                      os->desktop = g_strdup(tmp);
-                  }
-              }
-
-              if (!os->desktop) {
-                  os->desktop = g_strdup_printf(_("Unknown (Window Manager: %s)"),
-                                                windowman);
-              }
-            } else {
-                  os->desktop = g_strdup(_("Unknown"));
-            }
-	}
+        cmd = "kcontrol --version";
     }
+
+    spawned = g_spawn_command_line_sync(cmd, &out, NULL, NULL, NULL);
+    if (!spawned)
+        return NULL;
+
+    tmp = strstr(idle_free(out), "KDE: ");
+    return tmp ? g_strdup(tmp + strlen("KDE: ")) : NULL;
+}
+
+static gchar *
+detect_gnome_version(void)
+{
+    gchar *tmp;
+    gchar *out;
+    gboolean spawned;
+
+    spawned = g_spawn_command_line_sync(
+        "gnome-shell --version", &out, NULL, NULL, NULL);
+    if (spawned) {
+        tmp = strstr(idle_free(out), _("GNOME Shell "));
+
+        if (tmp) {
+            tmp += strlen(_("GNOME Shell "));
+            return g_strdup_printf("GNOME %s", strend(tmp, '\n'));
+        }
+    }
+
+    spawned = g_spawn_command_line_sync(
+        "gnome-about --gnome-version", &out, NULL, NULL, NULL);
+    if (spawned) {
+        tmp = strstr(idle_free(out), _("Version: "));
+
+        if (tmp) {
+            tmp += strlen(_("Version: "));
+            return g_strdup_printf("GNOME %s", strend(tmp, '\n'));
+        }
+    }
+
+    return NULL;
+}
+
+static gchar *
+detect_window_manager(void)
+{
+    GdkScreen *screen = gdk_screen_get_default();
+    const gchar *windowman;
+    const gchar *curdesktop;
+
+    if (!screen || !GDK_IS_SCREEN(screen))
+        return NULL;
+
+    windowman = gdk_x11_screen_get_window_manager_name(screen);
+
+    if (g_str_equal(windowman, "Xfwm4"))
+        return g_strdup("XFCE 4");
+
+    curdesktop = g_getenv("XDG_CURRENT_DESKTOP");
+    if (curdesktop) {
+        const gchar *desksession = g_getenv("DESKTOP_SESSION");
+
+        if (desksession && !g_str_equal(curdesktop, desksession))
+            return g_strdup(desksession);
+    }
+
+    return g_strdup_printf(_("Unknown (Window Manager: %s)"), windowman);
+}
+
+static gchar *
+desktop_with_session_type(const gchar *desktop_env)
+{
+    const char *tmp;
+
+    tmp = g_getenv("XDG_SESSION_TYPE");
+    if (tmp) {
+        if (!g_str_equal(tmp, "unspecified"))
+            return g_strdup_printf(_("%s on %s"), desktop_env, tmp);
+    }
+
+    return g_strdup(desktop_env);
+}
+
+static gchar *
+detect_xdg_environment(const gchar *env_var)
+{
+    const gchar *tmp;
+
+    tmp = g_getenv(env_var);
+    if (!tmp)
+        return NULL;
+
+    if (g_str_equal(tmp, "GNOME") || g_str_equal(tmp, "gnome")) {
+        gchar *maybe_gnome = detect_gnome_version();
+
+        if (maybe_gnome)
+            return maybe_gnome;
+    }
+    if (g_str_equal(tmp, "KDE") || g_str_equal(tmp, "kde")) {
+        gchar *maybe_kde = detect_kde_version();
+
+        if (maybe_kde)
+            return maybe_kde;
+    }
+
+    return g_strdup(tmp);
+}
+
+static gchar *
+detect_desktop_environment(void)
+{
+    const gchar *tmp;
+    gchar *windowman;
+
+    windowman = detect_xdg_environment("XDG_CURRENT_DESKTOP");
+    if (windowman)
+        return windowman;
+    windowman = detect_xdg_environment("XDG_SESSION_DESKTOP");
+    if (windowman)
+        return windowman;
+
+    tmp = g_getenv("KDE_FULL_SESSION");
+    if (tmp) {
+        gchar *maybe_kde = detect_kde_version();
+
+        if (maybe_kde)
+            return maybe_kde;
+    }
+    tmp = g_getenv("GNOME_DESKTOP_SESSION_ID");
+    if (tmp) {
+        gchar *maybe_gnome = detect_gnome_version();
+
+        if (maybe_gnome)
+            return maybe_gnome;
+    }
+
+    windowman = detect_window_manager();
+    if (windowman)
+        return windowman;
+
+    if (!g_getenv("DISPLAY"))
+        return g_strdup(_("Terminal"));
+
+    return g_strdup(_("Unknown"));
 }
 
 gchar *
@@ -204,6 +281,89 @@ computer_get_language(void)
     return ret;
 }
 
+static gchar *
+detect_distro(void)
+{
+    static const struct {
+        const gchar *file;
+        const gchar *codename;
+        const gchar *override;
+    } distro_db[] = {
+#define DB_PREFIX "/etc/"
+        { DB_PREFIX "arch-release", "arch", "Arch Linux" },
+        { DB_PREFIX "fatdog-version", "fatdog" },
+        { DB_PREFIX "debian_version", "deb" },
+        { DB_PREFIX "slackware-version", "slk" },
+        { DB_PREFIX "mandrake-release", "mdk" },
+        { DB_PREFIX "mandriva-release", "mdv" },
+        { DB_PREFIX "fedora-release", "fdra" },
+        { DB_PREFIX "coas", "coas" },
+        { DB_PREFIX "environment.corel", "corel"},
+        { DB_PREFIX "gentoo-release", "gnt" },
+        { DB_PREFIX "conectiva-release", "cnc" },
+        { DB_PREFIX "versão-conectiva", "cnc" },
+        { DB_PREFIX "turbolinux-release", "tl" },
+        { DB_PREFIX "yellowdog-release", "yd" },
+        { DB_PREFIX "sabayon-release", "sbn" },
+        { DB_PREFIX "arch-release", "arch" },
+        { DB_PREFIX "enlisy-release", "enlsy" },
+        { DB_PREFIX "SuSE-release", "suse" },
+        { DB_PREFIX "sun-release", "sun" },
+        { DB_PREFIX "zenwalk-version", "zen" },
+        { DB_PREFIX "DISTRO_SPECS", "ppy", "Puppy Linux" },
+        { DB_PREFIX "puppyversion", "ppy", "Puppy Linux" },
+        { DB_PREFIX "distro-release", "fl" },
+        { DB_PREFIX "vine-release", "vine" },
+        { DB_PREFIX "PartedMagic-version", "pmag" },
+         /*
+         * RedHat must be the *last* one to be checked, since
+         * some distros (like Mandrake) includes a redhat-relase
+         * file too.
+         */
+        { DB_PREFIX "redhat-release", "rh" },
+#undef DB_PREFIX
+        { NULL, NULL }
+    };
+    gchar *contents;
+    int i;
+
+    if (g_spawn_command_line_sync("lsb_release -d", &contents, NULL, NULL, NULL)) {
+        gchar *tmp = strstr(contents, "Description:\t");
+
+        if (tmp) {
+            idle_free(contents);
+            return g_strdup(tmp + strlen("Description:\t"));
+        }
+    }
+
+    for (i = 0; distro_db[i].file; i++) {
+        if (!g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS))
+            continue;
+
+        if (!g_file_get_contents(distro_db[i].file, &contents, NULL, NULL))
+            continue;
+
+        if (distro_db[i].override) {
+            g_free(contents);
+            return g_strdup(distro_db[i].override);
+        }
+
+        if (g_str_equal(distro_db[i].codename, "deb")) {
+            /* HACK: Some Debian systems doesn't include the distribuition
+             * name in /etc/debian_release, so add them here. */
+            if (isdigit(contents[0]) || contents[0] != 'D')
+                return g_strdup_printf("Debian GNU/Linux %s", idle_free(contents));
+        }
+
+        if (g_str_equal(distro_db[i].codename, "fatdog"))
+            return g_strdup_printf("Fatdog64 [%.10s]", idle_free(contents));
+
+        return contents;
+    }
+
+    return g_strdup(_("Unknown"));
+}
+
 OperatingSystem *
 computer_get_os(void)
 {
@@ -213,82 +373,7 @@ computer_get_os(void)
 
     os = g_new0(OperatingSystem, 1);
 
-    /* Attempt to get the Distribution name; try using /etc/lsb-release first,
-       then doing the legacy method (checking for /etc/$DISTRO-release files) */
-    if (g_file_test("/etc/lsb-release", G_FILE_TEST_EXISTS)) {
-	FILE *release;
-	gchar buffer[128];
-
-	release = popen("lsb_release -d", "r");
-	if (release) {
-            (void)fgets(buffer, 128, release);
-            pclose(release);
-
-            os->distro = buffer;
-            os->distro = g_strdup(os->distro + strlen("Description:\t"));
-        }
-    } else if (g_file_test("/etc/arch-release", G_FILE_TEST_EXISTS)) {
-        os->distrocode = g_strdup("arch");
-        os->distro = g_strdup("Arch Linux");
-    } else {
-        for (i = 0;; i++) {
-            if (distro_db[i].file == NULL) {
-                os->distrocode = g_strdup("unk");
-                os->distro = g_strdup(_("Unknown distribution"));
-                break;
-            }
-
-            if (g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS)) {
-                FILE *distro_ver;
-                char buf[128];
-
-                distro_ver = fopen(distro_db[i].file, "r");
-                if (distro_ver) {
-                    (void)fgets(buf, 128, distro_ver);
-                    fclose(distro_ver);
-                } else {
-                    continue;
-                }
-
-                buf[strlen(buf) - 1] = 0;
-
-                if (!os->distro) {
-                    /*
-                     * HACK: Some Debian systems doesn't include
-                     * the distribuition name in /etc/debian_release,
-                     * so add them here.
-                     */
-                    if (!strncmp(distro_db[i].codename, "deb", 3) &&
-                        ((buf[0] >= '0' && buf[0] <= '9') || buf[0] != 'D')) {
-                        os->distro = g_strdup_printf
-                            ("Debian GNU/Linux %s", buf);
-                    } else {
-                        os->distro = g_strdup(buf);
-                    }
-                }
-
-                if (g_str_equal(distro_db[i].codename, "ppy")) {
-                  gchar *tmp;
-                    tmp = g_strdup_printf("Puppy Linux");
-                  g_free(os->distro);
-                  os->distro = tmp;
-                }
-
-                if (g_str_equal(distro_db[i].codename, "fatdog")) {
-                  gchar *tmp;
-                    tmp = g_strdup_printf("Fatdog64 [%.10s]", os->distro);
-                  g_free(os->distro);
-                  os->distro = tmp;
-                }
-
-                os->distrocode = g_strdup(distro_db[i].codename);
-
-                break;
-            }
-        }
-    }
-
-    os->distro = g_strstrip(os->distro);
+    os->distro = g_strstrip(detect_distro());
 
     /* Kernel and hostname info */
     uname(&utsbuf);
@@ -302,7 +387,10 @@ computer_get_os(void)
 				   g_get_user_name(), g_get_real_name());
     os->libc = get_libc_version();
     scan_languages(os);
-    detect_desktop_environment(os);
+
+    os->desktop = detect_desktop_environment();
+    if (os->desktop)
+        os->desktop = desktop_with_session_type(idle_free(os->desktop));
 
     os->entropy_avail = computer_get_entropy_avail();
 

@@ -20,44 +20,6 @@
 
 #include "hardinfo.h"
 
-#define DB_PREFIX "/etc/"
-
-static struct {
-    gchar *file, *codename;
-} distro_db[] = {
-    { DB_PREFIX "fatdog-version",	"fatdog"  },
-    { DB_PREFIX "debian_version",	"deb"  },
-    { DB_PREFIX "slackware-version",	"slk"  },
-    { DB_PREFIX "mandrake-release",	"mdk"  },
-    { DB_PREFIX "mandriva-release",     "mdv"  },
-    { DB_PREFIX "fedora-release",       "fdra" },
-    { DB_PREFIX "coas",                 "coas" },
-    { DB_PREFIX "environment.corel",    "corel"},
-    { DB_PREFIX "gentoo-release",	"gnt"  },
-    { DB_PREFIX "conectiva-release",	"cnc"  },
-    { DB_PREFIX "versão-conectiva",	"cnc"  },
-    { DB_PREFIX "turbolinux-release",	"tl"   },
-    { DB_PREFIX "yellowdog-release",	"yd"   },
-    { DB_PREFIX "sabayon-release",      "sbn"  },
-    { DB_PREFIX "arch-release",         "arch" },
-    { DB_PREFIX "enlisy-release",       "enlsy"},
-    { DB_PREFIX "SuSE-release",		"suse" },
-    { DB_PREFIX "sun-release",		"sun"  },
-    { DB_PREFIX "zenwalk-version",	"zen"  },
-    { DB_PREFIX "DISTRO_SPECS",		"ppy"  },
-    { DB_PREFIX "puppyversion",		"ppy"  },
-    { DB_PREFIX "distro-release",	"fl"   },
-    { DB_PREFIX "vine-release",         "vine" },
-    { DB_PREFIX "PartedMagic-version",	"pmag" },
-     /*
-     * RedHat must be the *last* one to be checked, since
-     * some distros (like Mandrake) includes a redhat-relase
-     * file too.
-     */
-    { DB_PREFIX "redhat-release",	"rh"   },
-    { NULL,				NULL   }
-};
-
 typedef struct _Computer	Computer;
 typedef struct _OperatingSystem	OperatingSystem;
 typedef struct _MemoryInfo	MemoryInfo;

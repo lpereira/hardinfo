@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-19 14:05-0500\n"
+"POT-Creation-Date: 2017-07-30 05:41-0500\n"
 "PO-Revision-Date: 2013-02-18 17:11-0300\n"
 "Last-Translator: Fernando López <flopez@linti.unlp.edu.ar>\n"
 "Language-Team: Fernando López <soportelihuen@linti.unlp.edu.ar>\n"
@@ -34,22 +34,15 @@ msgid ""
 "  BinReloc enabled:  %s\n"
 "  Data prefix:       %s\n"
 "  Library prefix:    %s\n"
-"  Compiled on:       %s %s (%s)\n"
+"  Compiled for:      %s\n"
 msgstr ""
-"Opciones de compilado:\n"
-"  Versión:                %s (%s)\n"
-"  BinReloc habilitado:    %s\n"
-"  Prefijo de datos:       %s\n"
-"  Prefijo de bibliotecas: %s\n"
-"  Compilado en:           %s %s (%s)\n"
 
-#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57
+#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57 modules/computer.c:565
 #: modules/devices/printers.c:138
 msgid "Yes"
 msgstr "Sí"
 
-#: hardinfo/hardinfo.c:57 modules/computer.c:550
-#: modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:57 modules/computer.c:565 modules/devices/printers.c:138
 msgid "No"
 msgstr "_No"
 
@@ -79,12 +72,14 @@ msgstr ""
 msgid "File Name"
 msgstr "Nombre de archivo"
 
-#: hardinfo/hardinfo.c:76 modules/devices/ia64/processor.c:152
-#: modules/devices/sh/processor.c:76
+#: hardinfo/hardinfo.c:76 modules/computer.c:493 modules/computer.c:515
+#: modules/computer.c:586 modules/devices/ia64/processor.c:152
+#: modules/devices/sh/processor.c:76 modules/network.c:331
 msgid "Name"
 msgstr "Nombre"
 
-#: hardinfo/hardinfo.c:76 modules/computer.c:463 modules/computer.c:465
+#: hardinfo/hardinfo.c:76 modules/computer.c:291 modules/computer.c:466
+#: modules/computer.c:468 modules/computer.c:556 modules/computer.c:564
 msgid "Version"
 msgstr "Versión"
 
@@ -249,8 +244,8 @@ msgid "Scanning: %s..."
 msgstr "Escaneando: %s..."
 
 #: hardinfo/util.c:1124 shell/callbacks.c:67 shell/shell.c:303
-#: shell/shell.c:721 shell/shell.c:1695 modules/benchmark.c:440
-#: modules/benchmark.c:448
+#: shell/shell.c:721 shell/shell.c:1701 modules/benchmark.c:445
+#: modules/benchmark.c:453
 msgid "Done."
 msgstr "Hecho."
 
@@ -262,12 +257,12 @@ msgstr "Guardar imagen"
 msgid "Saving image..."
 msgstr "Guardando imagen"
 
-#: shell/callbacks.c:151
+#: shell/callbacks.c:153
 #, c-format
 msgid "%s Module"
 msgstr "%s módulo"
 
-#: shell/callbacks.c:158
+#: shell/callbacks.c:160
 #, c-format
 msgid ""
 "Written by %s\n"
@@ -276,82 +271,82 @@ msgstr ""
 "Escrito por %s\n"
 "Licencia %s"
 
-#: shell/callbacks.c:172
+#: shell/callbacks.c:174
 #, c-format
 msgid "No about information is associated with the %s module."
 msgstr "No hay información \"acerca de\" asociada al módulo %s."
 
-#: shell/callbacks.c:186
+#: shell/callbacks.c:189
 msgid "Author:"
 msgstr "Autor:"
 
-#: shell/callbacks.c:189
+#: shell/callbacks.c:192
 msgid "Contributors:"
 msgstr "Contribuyentes:"
 
-#: shell/callbacks.c:193
+#: shell/callbacks.c:196
 msgid "Based on work by:"
 msgstr "Basado en el trabajo de:"
 
-#: shell/callbacks.c:194
+#: shell/callbacks.c:197
 msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
 msgstr "Implementación de MD5 por Colin Plumb (ver md5.c para detalles)"
 
-#: shell/callbacks.c:195
+#: shell/callbacks.c:198
 msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
 msgstr "Implementación de SHA1 por Steve Reid (ver sha1.c para detalles)"
 
-#: shell/callbacks.c:196
+#: shell/callbacks.c:199
 msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
 msgstr ""
 "Implementación de Blowfish por Paul Kocher (ver blowfich.c para detalles)"
 
-#: shell/callbacks.c:197
+#: shell/callbacks.c:200
 msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
 msgstr ""
 "Benchmark de trazado de rayos por John Walker (ver fbench.c para detalles)"
 
-#: shell/callbacks.c:198
+#: shell/callbacks.c:201
 msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
 msgstr "Benchmark  de FFT por Scott Robert Ladd (ver fftbench.c para detalles)"
 
-#: shell/callbacks.c:199
+#: shell/callbacks.c:202
 msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
 msgstr "Parte del código parcialmente basado en x86cpucaps por Osamu Kayasono"
 
-#: shell/callbacks.c:200
+#: shell/callbacks.c:203
 msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
 msgstr "Lista de proveedores basada en GtkSysInfo por Pissens Sebastien"
 
-#: shell/callbacks.c:201
+#: shell/callbacks.c:204
 msgid "DMI support based on code by Stewart Adam"
 msgstr "Soporte DMI basado en código de Stewart Adam"
 
-#: shell/callbacks.c:202
+#: shell/callbacks.c:205
 msgid "SCSI support based on code by Pascal F. Martin"
 msgstr "Soporte SCSI basado en código de Pascal F. Martin"
 
-#: shell/callbacks.c:206
+#: shell/callbacks.c:209
 msgid "Jakub Szypulka"
 msgstr ""
 
-#: shell/callbacks.c:207
+#: shell/callbacks.c:210
 msgid "Tango Project"
 msgstr "Proyecto Tango"
 
-#: shell/callbacks.c:208
+#: shell/callbacks.c:211
 msgid "The GNOME Project"
 msgstr "El proyecto GNOME"
 
-#: shell/callbacks.c:209
+#: shell/callbacks.c:212
 msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
 msgstr "VMWare, Inc. (icono USB de VMWare Workstation 6)"
 
-#: shell/callbacks.c:220
+#: shell/callbacks.c:224
 msgid "System information and benchmark tool"
 msgstr "Herramienta de información del sistema y benchmark"
 
-#: shell/callbacks.c:225
+#: shell/callbacks.c:229
 msgid ""
 "HardInfo is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
@@ -508,12 +503,12 @@ msgstr "Información del sistema"
 msgid "Loading modules..."
 msgstr "Cargando módulos..."
 
-#: shell/shell.c:1565
+#: shell/shell.c:1571
 #, c-format
 msgid "<b>%s → Summary</b>"
 msgstr "<b>%s → Resumen</b>"
 
-#: shell/shell.c:1673
+#: shell/shell.c:1679
 msgid "Updating..."
 msgstr "Actualizando..."
 
@@ -640,127 +635,83 @@ msgstr "FPU trazado de rayos"
 msgid "GPU Drawing"
 msgstr "GPU dibujo"
 
-#: modules/benchmark.c:225
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=CPU Clock\n"
-"ColumnTitle$Progress=Results\n"
-"ColumnTitle$TextValue=CPU\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"<big><b>This Machine</b></big>=%.3f|%s MHz\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=Reloj de la CPU\n"
-"ColumnTitle$Progress=Resultados\n"
-"ColumnTitle$TextValue=CPU\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"<big><b>Este equipo</b></big>=%.3f|%s MHz\n"
-"%s"
+#: modules/benchmark.c:236 modules/benchmark.c:251
+msgid "CPU Clock"
+msgstr "Reloj de la CPU"
 
-#: modules/benchmark.c:238
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=CPU Clock\n"
-"ColumnTitle$Progress=Results\n"
-"ColumnTitle$TextValue=CPU\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"Zebra=1\n"
-"OrderType=%d\n"
-"ViewType=3\n"
-"ColumnTitle$Extra1=Reloj del equipo CPU\n"
-"ColumnTitle$Progress=Resultados\n"
-"ColumnTitle$TextValue=CPU\n"
-"ShowColumnHeaders=true\n"
-"[%s]\n"
-"%s"
+#: modules/benchmark.c:236 modules/benchmark.c:251
+msgid "Results"
+msgstr "Resultados"
 
-#: modules/benchmark.c:372
+#: modules/benchmark.c:236 modules/benchmark.c:251 modules/computer.c:703
+#: modules/devices/sparc/processor.c:67
+msgid "CPU"
+msgstr ""
+
+#: modules/benchmark.c:377
 #, c-format
 msgid "Benchmarking: <b>%s</b>."
 msgstr "Ejecutando benchmark: <b>%s</b>."
 
-#: modules/benchmark.c:386
+#: modules/benchmark.c:391
 msgid "Benchmarking. Please do not move your mouse or press any keys."
 msgstr "Ejecutando benchmarks. Por favor no mueva el mouse ni use el teclado."
 
-#: modules/benchmark.c:390
+#: modules/benchmark.c:395
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: modules/benchmark.c:527
+#: modules/benchmark.c:532
 msgid "Results in MiB/second. Higher is better."
 msgstr "Resultados en MiB/segundo. Más alto es mejor."
 
-#: modules/benchmark.c:531
+#: modules/benchmark.c:536
 msgid "Results in HIMarks. Higher is better."
 msgstr "Resultados en HIMarks. Más alto es mejor."
 
-#: modules/benchmark.c:538
+#: modules/benchmark.c:543
 msgid "Results in seconds. Lower is better."
 msgstr "Resultados en segundos. Más bajo es mejor."
 
-#: modules/benchmark.c:546
+#: modules/benchmark.c:551
 msgid "Benchmarks"
 msgstr "Benchmarks"
 
-#: modules/benchmark.c:564
+#: modules/benchmark.c:569
 msgid "Perform tasks and compare with other systems"
 msgstr "Realizar tareas y comparar con otros sistemas"
 
-#: modules/benchmark.c:654
+#: modules/benchmark.c:659
 msgid "Send benchmark results"
 msgstr "Enviar resultados de los benchmark"
 
-#: modules/benchmark.c:659
+#: modules/benchmark.c:664
 msgid "Receive benchmark results"
 msgstr "Recibir resultados de los benchmark"
 
 #: modules/computer/alsa.c:26
-msgid "[Audio Devices]\n"
-msgstr "[Dispositivos de audio]\n"
+msgid "Audio Devices"
+msgstr "Dispositivos de audio"
 
-#: modules/computer/alsa.c:33
-#, c-format
-msgid "Audio Adapter#%d=%s\n"
-msgstr "Adaptador de audio#%d=%s\n"
+#: modules/computer/alsa.c:34
+msgid "Audio Adapter"
+msgstr "Adaptador de audio"
 
-#: modules/computer/boots.c:33
-msgid "[Boots]\n"
-msgstr "[Arranques]\n"
+#: modules/computer/boots.c:33 modules/computer.c:71
+msgid "Boots"
+msgstr "Arranques"
 
 #: modules/computer.c:68
 msgid "Summary"
 msgstr "Resumen"
 
-#: modules/computer.c:69 modules/computer.c:412 modules/computer.c:685
+#: modules/computer.c:69 modules/computer.c:415 modules/computer.c:702
 msgid "Operating System"
 msgstr "Sistema operativo"
 
 #: modules/computer.c:70
 msgid "Kernel Modules"
 msgstr "Módulos del kernel"
-
-#: modules/computer.c:71
-msgid "Boots"
-msgstr "Arranques"
 
 #: modules/computer.c:72
 msgid "Languages"
@@ -770,11 +721,11 @@ msgstr "Idiomas"
 msgid "Filesystems"
 msgstr "Sistemas de archivos"
 
-#: modules/computer.c:74 modules/computer.c:415
+#: modules/computer.c:74 modules/computer.c:418 modules/computer.c:550
 msgid "Display"
 msgstr "Pantalla"
 
-#: modules/computer.c:75
+#: modules/computer.c:75 modules/computer/environment.c:32
 msgid "Environment Variables"
 msgstr "Variables de entorno"
 
@@ -782,15 +733,15 @@ msgstr "Variables de entorno"
 msgid "Development"
 msgstr "Desarrollo"
 
-#: modules/computer.c:79
+#: modules/computer.c:79 modules/computer.c:575
 msgid "Users"
 msgstr "Usuarios"
 
-#: modules/computer.c:80
+#: modules/computer.c:80 modules/computer.c:587
 msgid "Groups"
 msgstr "Grupos"
 
-#: modules/computer.c:101 modules/computer.c:405 modules/computer.c:410
+#: modules/computer.c:101 modules/computer.c:408 modules/computer.c:413
 #: modules/devices.c:96
 msgid "Memory"
 msgstr "Memoria"
@@ -800,19 +751,19 @@ msgstr "Memoria"
 msgid "%dMB (%dMB used)"
 msgstr "%dMB (%dMB usados)"
 
-#: modules/computer.c:105 modules/computer.c:459 modules/computer.c:475
+#: modules/computer.c:105 modules/computer.c:462 modules/computer.c:478
 msgid "Uptime"
 msgstr ""
 
-#: modules/computer.c:107 modules/computer.c:406 modules/computer.c:414
+#: modules/computer.c:107 modules/computer.c:409 modules/computer.c:417
 msgid "Date/Time"
-msgstr ""
+msgstr "Fecha/Hora"
 
-#: modules/computer.c:112 modules/computer.c:461 modules/computer.c:476
+#: modules/computer.c:112 modules/computer.c:464 modules/computer.c:479
 msgid "Load Average"
 msgstr ""
 
-#: modules/computer.c:114 modules/computer.c:460 modules/computer.c:477
+#: modules/computer.c:114 modules/computer.c:463 modules/computer.c:480
 msgid "Available entropy in /dev/random"
 msgstr ""
 
@@ -938,30 +889,19 @@ msgstr "%s=No encontrado\n"
 msgid "Detecting version: %s"
 msgstr "Detectando versión: %s"
 
-#: modules/computer.c:285
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Program\n"
-"ColumnTitle$Value=Version\n"
-"ShowColumnHeaders=true\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Programa\n"
-"ColumnTitle$Value=Versión\n"
-"ShowColumnHeaders=true\n"
-"%s"
+#: modules/computer.c:291
+msgid "Program"
+msgstr "Programa"
 
-#: modules/computer.c:367
+#: modules/computer.c:370
 msgid "Physical machine"
 msgstr "Equipo físico"
 
-#: modules/computer.c:408 modules/computer.c:644
+#: modules/computer.c:411 modules/computer.c:661
 msgid "Computer"
 msgstr "Equipo"
 
-#: modules/computer.c:409 modules/devices/alpha/processor.c:79
+#: modules/computer.c:412 modules/devices/alpha/processor.c:79
 #: modules/devices/arm/processor.c:235 modules/devices.c:95
 #: modules/devices/ia64/processor.c:151 modules/devices/m68k/processor.c:75
 #: modules/devices/mips/processor.c:66 modules/devices/parisc/processor.c:146
@@ -971,230 +911,166 @@ msgstr "Equipo"
 msgid "Processor"
 msgstr "Procesador"
 
-#: modules/computer.c:411
+#: modules/computer.c:414
 msgid "Machine Type"
-msgstr ""
+msgstr "Tipo de equipo"
 
-#: modules/computer.c:413 modules/computer.c:470
+#: modules/computer.c:416 modules/computer.c:473
 msgid "User Name"
-msgstr ""
+msgstr "Nombre de usuario"
 
-#: modules/computer.c:416
+#: modules/computer.c:419 modules/computer.c:551
 msgid "Resolution"
-msgstr ""
+msgstr "Resolución"
 
 #. /label for resolution
-#: modules/computer.c:418
+#. / Resolution WxH unit
+#: modules/computer.c:421 modules/computer.c:554
 msgid "pixels"
 msgstr ""
 
-#: modules/computer.c:419
+#: modules/computer.c:422
 msgid "OpenGL Renderer"
 msgstr ""
 
-#: modules/computer.c:420
+#: modules/computer.c:423
 msgid "X11 Vendor"
-msgstr ""
+msgstr "Proveedor X11"
 
-#: modules/computer.c:422 modules/devices.c:102
+#: modules/computer.c:425 modules/devices.c:102
 msgid "Input Devices"
 msgstr "Dispositivos de entrada"
 
-#: modules/computer.c:464
-msgid "Kernel"
-msgstr ""
-
-#: modules/computer.c:466
-msgid "C Library"
-msgstr ""
-
 #: modules/computer.c:467
-msgid "Distribution"
-msgstr ""
-
-#: modules/computer.c:468
-msgid "Current Session"
-msgstr ""
+msgid "Kernel"
+msgstr "Núcleo"
 
 #: modules/computer.c:469
-msgid "Computer Name"
-msgstr ""
+msgid "C Library"
+msgstr "Biblioteca C"
+
+#: modules/computer.c:470
+msgid "Distribution"
+msgstr "Distribución"
 
 #: modules/computer.c:471
-msgid "Language"
-msgstr ""
+msgid "Current Session"
+msgstr "Sesión actual"
 
-#: modules/computer.c:472 modules/computer/users.c:50
-msgid "Home Directory"
-msgstr ""
-
-#: modules/computer.c:473
-msgid "Desktop Environment"
-msgstr ""
+#: modules/computer.c:472
+msgid "Computer Name"
+msgstr "Nombre del equipo"
 
 #: modules/computer.c:474
+msgid "Language"
+msgstr "Idioma"
+
+#: modules/computer.c:475 modules/computer/users.c:50
+msgid "Home Directory"
+msgstr "Directorio personal"
+
+#: modules/computer.c:476
+msgid "Desktop Environment"
+msgstr "Entorno de escritorio"
+
+#: modules/computer.c:477
 msgid "Misc"
 msgstr ""
 
-#: modules/computer.c:482
-#, c-format
-msgid ""
-"[Loaded Modules]\n"
-"%s[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Name\n"
-"ColumnTitle$Value=Description\n"
-"ShowColumnHeaders=true\n"
-msgstr ""
-"[Módulos cargados]\n"
-"%s[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Nombre\n"
-"ColumnTitle$Value=Descripción\n"
-"ShowColumnHeaders=true\n"
+#: modules/computer.c:492
+msgid "Loaded Modules"
+msgstr "Módulos cargados"
 
-#: modules/computer.c:493
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Date & Time\n"
-"ColumnTitle$Value=Kernel Version\n"
-"ShowColumnHeaders=true\n"
-"\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=Fecha y hora\n"
-"ColumnTitle$Value=Versión del núcleo\n"
-"ShowColumnHeaders=true\n"
-"\n"
-"%s"
+#: modules/computer.c:493 modules/devices.c:398
+msgid "Description"
+msgstr "Descripción"
 
 #: modules/computer.c:503
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Language Code\n"
-"ColumnTitle$Value=Name\n"
-"ShowColumnHeaders=true\n"
-"[Available Languages]\n"
-"%s"
-msgstr ""
-"[$ShellParam$]\n"
-"ViewType=1\n"
-"ColumnTitle$TextValue=Código del idioma\n"
-"ColumnTitle$Value=Nombre\n"
-"ShowColumnHeaders=true\n"
-"[Idiomas disponibles]\n"
-"%s"
+msgid "Date & Time"
+msgstr "Fecha y hora"
 
-#: modules/computer.c:514
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ViewType=4\n"
-"ReloadInterval=5000\n"
-"Zebra=1\n"
-"NormalizePercentage=false\n"
-"ColumnTitle$Extra1=Mount Point\n"
-"ColumnTitle$Progress=Usage\n"
-"ColumnTitle$TextValue=Device\n"
-"ShowColumnHeaders=true\n"
-"[Mounted File Systems]\n"
-"%s\n"
-msgstr ""
-"[$ShellParam$]\n"
-"ViewType=4\n"
-"ReloadInterval=5000\n"
-"Zebra=1\n"
-"NormalizePercentage=false\n"
-"ColumnTitle$Extra1=Punto de montaje\n"
-"ColumnTitle$Progress=Uso\n"
-"ColumnTitle$TextValue=Dispositivo\n"
-"ShowColumnHeaders=true\n"
-"[Sistemas de archivos montados]\n"
-"%s\n"
+#: modules/computer.c:503
+msgid "Kernel Version"
+msgstr "Versión del núcleo"
 
-#: modules/computer.c:528
-#, c-format
-msgid ""
-"[Display]\n"
-"Resolution=%dx%d pixels\n"
-"Vendor=%s\n"
-"Version=%s\n"
-"[Monitors]\n"
-"%s[Extensions]\n"
-"%s[OpenGL]\n"
-"Vendor=%s\n"
-"Renderer=%s\n"
-"Version=%s\n"
-"Direct Rendering=%s\n"
-msgstr ""
-"[Pantalla]\n"
-"Resolución=%dx%d pixels\n"
-"Proveedor=%s\n"
-"Versión=%s\n"
-"[Monitores]\n"
-"%s[Extensiones]\n"
-"%s[OpenGL]\n"
-"Proveedor=%s\n"
-"Renderer=%s\n"
-"Versión=%s\n"
-"Direct Rendering=%s\n"
+#: modules/computer.c:515
+msgid "Language Code"
+msgstr "Código del idioma"
 
-#: modules/computer.c:550
-msgid "Y_es"
-msgstr "_Sí"
+#: modules/computer.c:516
+msgid "Available Languages"
+msgstr "Idiomas disponibles"
 
-#: modules/computer.c:564
-#, c-format
-msgid ""
-"[$ShellParam$]\n"
-"ReloadInterval=10000\n"
-"ColumnTitle$TextValue=Name\n"
-"ColumnTitle$Value=Group ID\n"
-"ShowColumnHeaders=true\n"
-"[Groups]\n"
-"%s\n"
-msgstr ""
-"[$ShellParam$]\n"
-"ReloadInterval=10000\n"
-"ColumnTitle$TextValue=Nombre\n"
-"ColumnTitle$Value=ID del grupo\n"
-"ShowColumnHeaders=true\n"
-"[Grupos]\n"
-"%s\n"
+#: modules/computer.c:531 modules/computer/filesystem.c:85
+msgid "Mount Point"
+msgstr "Punto de montaje"
 
-#: modules/computer.c:686 modules/devices/sparc/processor.c:67
-msgid "CPU"
+#: modules/computer.c:531
+msgid "Usage"
+msgstr "Uso"
+
+#: modules/computer.c:531
+msgid "Device"
+msgstr "Dispositivo"
+
+#: modules/computer.c:532
+msgid "Mounted File Systems"
+msgstr "Sistemas de archivos montados"
+
+#: modules/computer.c:555 modules/computer.c:562
+#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:412
+msgid "Vendor"
+msgstr "Proveedor"
+
+#: modules/computer.c:557
+msgid "Monitors"
+msgstr "Monitores"
+
+#: modules/computer.c:559
+msgid "Extensions"
+msgstr "Extensiones"
+
+#: modules/computer.c:561
+msgid "OpenGL"
 msgstr ""
 
-#: modules/computer.c:686
+#: modules/computer.c:563
+msgid "Renderer"
+msgstr ""
+
+#: modules/computer.c:565
+msgid "Direct Rendering"
+msgstr ""
+
+#: modules/computer.c:586 modules/computer/users.c:49
+msgid "Group ID"
+msgstr "ID del grupo"
+
+#: modules/computer.c:703
 msgid "RAM"
 msgstr ""
 
-#: modules/computer.c:686
+#: modules/computer.c:703 modules/devices/devicetree/pmac_data.c:82
 msgid "Motherboard"
 msgstr ""
 
-#: modules/computer.c:686
+#: modules/computer.c:703
 msgid "Graphics"
 msgstr ""
 
-#: modules/computer.c:687 modules/devices.c:103
+#: modules/computer.c:704 modules/devices.c:103
 msgid "Storage"
 msgstr "Almacenamiento"
 
-#: modules/computer.c:687 modules/devices.c:99
+#: modules/computer.c:704 modules/devices.c:99
 msgid "Printers"
 msgstr "Impresoras"
 
-#: modules/computer.c:687
+#: modules/computer.c:704
 msgid "Audio"
 msgstr ""
 
-#: modules/computer.c:742
+#: modules/computer.c:759
 msgid "Gathers high-level computer information"
 msgstr "Obtiene información del equipo de alto nivel"
 
@@ -1202,10 +1078,6 @@ msgstr "Obtiene información del equipo de alto nivel"
 #, c-format
 msgid "Monitor %d=%dx%d pixels\n"
 msgstr "Monitor %d=%dx%d pixels\n"
-
-#: modules/computer/environment.c:32
-msgid "[Environment Variables]\n"
-msgstr "[Variables de entorno]\n"
 
 #: modules/computer/filesystem.c:83
 msgid "Filesystem"
@@ -1223,11 +1095,7 @@ msgstr ""
 msgid "Read-Only"
 msgstr ""
 
-#: modules/computer/filesystem.c:85
-msgid "Mount Point"
-msgstr ""
-
-#: modules/computer/filesystem.c:86
+#: modules/computer/filesystem.c:86 modules/devices/spd-decode.c:1510
 msgid "Size"
 msgstr ""
 
@@ -1243,70 +1111,75 @@ msgstr ""
 msgid "Couldn't obtain load average"
 msgstr ""
 
-#: modules/computer/os.c:34 modules/computer/os.c:35
+#: modules/computer/os.c:35 modules/computer/os.c:36 modules/computer/os.c:37
+#: modules/computer/os.c:38
 msgid "GNU C Library"
 msgstr ""
 
-#: modules/computer/os.c:36
+#: modules/computer/os.c:39
 msgid "uClibc or uClibc-ng"
 msgstr ""
 
-#: modules/computer/os.c:37
+#: modules/computer/os.c:40
 msgid "diet libc"
 msgstr ""
 
-#: modules/computer/os.c:75 modules/computer/os.c:152 modules/devices.c:180
-#: modules/devices.c:229 modules/devices/printers.c:99
+#: modules/computer/os.c:78 modules/computer/os.c:234 modules/computer/os.c:364
+#: modules/devices.c:180 modules/devices.c:229 modules/devices/printers.c:99
 #: modules/devices/printers.c:106 modules/devices/printers.c:116
 #: modules/devices/printers.c:131 modules/devices/printers.c:140
 #: modules/devices/printers.c:243
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: modules/computer/os.c:94
-#, c-format
-msgid "Version: %s"
-msgstr "Versión: %s"
+#: modules/computer/os.c:112 modules/computer/os.c:115
+msgid "GNOME Shell "
+msgstr ""
 
-#: modules/computer/os.c:128
-msgid "Terminal"
-msgstr "Terminal"
+#: modules/computer/os.c:123 modules/computer/os.c:126
+msgid "Version: "
+msgstr ""
 
-#: modules/computer/os.c:148
+#: modules/computer/os.c:157
 #, c-format
 msgid "Unknown (Window Manager: %s)"
 msgstr "Desconocido (Gestor de ventanas: %s)"
 
+#: modules/computer/os.c:168
+#, c-format
+msgid "%s on %s"
+msgstr ""
+
+#: modules/computer/os.c:232
+msgid "Terminal"
+msgstr "Terminal"
+
 #. /bits of entropy for rng (0)
-#: modules/computer/os.c:162
+#: modules/computer/os.c:241
 msgid "(None or not available)"
 msgstr ""
 
 #. /bits of entropy for rng (low/poor value)
-#: modules/computer/os.c:163
+#: modules/computer/os.c:242
 #, c-format
 msgid "%d bits (low)"
 msgstr ""
 
 #. /bits of entropy for rng (medium value)
-#: modules/computer/os.c:164
+#: modules/computer/os.c:243
 #, c-format
 msgid "%d bits (medium)"
 msgstr ""
 
 #. /bits of entropy for rng (high/good value)
-#: modules/computer/os.c:165
+#: modules/computer/os.c:244
 #, c-format
 msgid "%d bits (healthy)"
 msgstr ""
 
-#: modules/computer/os.c:200 modules/network/net.c:442
+#: modules/computer/os.c:279 modules/network/net.c:442 includes/cpu_util.h:11
 msgid "(Unknown)"
 msgstr ""
-
-#: modules/computer/os.c:235
-msgid "Unknown distribution"
-msgstr "Distribución desconocida"
 
 #: modules/computer/users.c:47
 msgid "User Information"
@@ -1316,19 +1189,16 @@ msgstr ""
 msgid "User ID"
 msgstr ""
 
-#: modules/computer/users.c:49
-msgid "Group ID"
-msgstr ""
-
 #: modules/computer/users.c:51
 msgid "Default Shell"
 msgstr ""
 
-#: modules/devices/alpha/processor.c:80 modules/devices/devicetree.c:184
+#: modules/devices/alpha/processor.c:80 modules/devices/devicetree.c:195
+#: modules/devices/devicetree.c:230 modules/devices/devicetree/pmac_data.c:80
 #: modules/devices/ia64/processor.c:157 modules/devices/m68k/processor.c:76
 #: modules/devices/mips/processor.c:67 modules/devices/parisc/processor.c:147
 #: modules/devices/ppc/processor.c:150 modules/devices/riscv/processor.c:174
-#: modules/devices/s390/processor.c:124
+#: modules/devices/s390/processor.c:124 modules/devices/spd-decode.c:1510
 msgid "Model"
 msgstr ""
 
@@ -1574,8 +1444,7 @@ msgid "Part"
 msgstr ""
 
 #: modules/devices/arm/processor.c:247 modules/devices/ia64/processor.c:154
-#: modules/devices/parisc/processor.c:148
-#: modules/devices/riscv/processor.c:175
+#: modules/devices/parisc/processor.c:148 modules/devices/riscv/processor.c:175
 msgid "Architecture"
 msgstr ""
 
@@ -1723,10 +1592,6 @@ msgstr " (modelo desconocido)"
 msgid "Field"
 msgstr ""
 
-#: modules/devices.c:398
-msgid "Description"
-msgstr ""
-
 #: modules/devices.c:398 modules/devices.c:430
 msgid "Value"
 msgstr ""
@@ -1832,101 +1697,150 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: modules/devices/devicetree.c:100
+#: modules/devices/devicetree.c:102
 msgid "Properties"
 msgstr ""
 
-#: modules/devices/devicetree.c:101
+#: modules/devices/devicetree.c:103
 msgid "Children"
 msgstr ""
 
-#: modules/devices/devicetree.c:137
+#: modules/devices/devicetree.c:139
 msgid "Node"
 msgstr ""
 
-#: modules/devices/devicetree.c:138
+#: modules/devices/devicetree.c:140
 msgid "Node Path"
 msgstr ""
 
-#: modules/devices/devicetree.c:139
+#: modules/devices/devicetree.c:141
 msgid "Alias"
 msgstr ""
 
-#: modules/devices/devicetree.c:139 modules/devices/devicetree.c:140
+#: modules/devices/devicetree.c:141 modules/devices/devicetree.c:142
 msgid "(None)"
 msgstr ""
 
-#: modules/devices/devicetree.c:140
+#: modules/devices/devicetree.c:142
 msgid "Symbol"
 msgstr ""
 
-#: modules/devices/devicetree.c:183
-msgid "Board"
+#: modules/devices/devicetree.c:186 modules/devices/devicetree/pmac_data.c:79
+msgid "Platform"
 msgstr ""
 
-#: modules/devices/devicetree.c:185 modules/devices/devicetree/rpi_data.c:156
-msgid "Serial Number"
-msgstr ""
-
-#: modules/devices/devicetree.c:186
+#: modules/devices/devicetree.c:187 modules/devices/devicetree.c:232
 msgid "Compatible"
 msgstr ""
 
-#: modules/devices/devicetree/dt_util.c:715
-msgid "phandle Map"
+#: modules/devices/devicetree.c:188
+msgid "GPU-compatible"
 msgstr ""
 
-#: modules/devices/devicetree/dt_util.c:716
-msgid "Alias Map"
+#: modules/devices/devicetree.c:194
+msgid "Raspberry Pi or Compatible"
 msgstr ""
 
-#: modules/devices/devicetree/dt_util.c:717
-msgid "Symbol Map"
+#: modules/devices/devicetree.c:196 modules/devices/devicetree.c:214
+#: modules/devices/devicetree.c:231 modules/devices/devicetree/rpi_data.c:160
+msgid "Serial Number"
 msgstr ""
 
-#: modules/devices/devicetree/rpi_data.c:148
-#: modules/devices/devicetree/rpi_data.c:149
-msgid "Raspberry Pi"
-msgstr ""
-
-#: modules/devices/devicetree/rpi_data.c:149
-msgid "Board Name"
-msgstr ""
-
-#: modules/devices/devicetree/rpi_data.c:150
-msgid "PCB Revision"
-msgstr ""
-
-#: modules/devices/devicetree/rpi_data.c:151
-msgid "Introduction"
-msgstr ""
-
-#: modules/devices/devicetree/rpi_data.c:152
-msgid "Manufacturer"
-msgstr ""
-
-#: modules/devices/devicetree/rpi_data.c:153
+#: modules/devices/devicetree.c:197 modules/devices/devicetree/rpi_data.c:157
 msgid "RCode"
 msgstr ""
 
+#: modules/devices/devicetree.c:197
+msgid "No revision code available; unable to lookup model details."
+msgstr ""
+
+#: modules/devices/devicetree.c:213
+msgid "More"
+msgstr ""
+
+#: modules/devices/devicetree.c:229
+msgid "Board"
+msgstr ""
+
+#: modules/devices/devicetree.c:288
+msgid "Messages"
+msgstr ""
+
+#: modules/devices/devicetree/dt_util.c:1007
+msgid "phandle Map"
+msgstr ""
+
+#: modules/devices/devicetree/dt_util.c:1008
+msgid "Alias Map"
+msgstr ""
+
+#: modules/devices/devicetree/dt_util.c:1009
+msgid "Symbol Map"
+msgstr ""
+
+#: modules/devices/devicetree/pmac_data.c:78
+msgid "Apple Power Macintosh"
+msgstr ""
+
+#: modules/devices/devicetree/pmac_data.c:81 modules/devices/sh/processor.c:77
+msgid "Machine"
+msgstr ""
+
+#: modules/devices/devicetree/pmac_data.c:83
+msgid "Detected as"
+msgstr ""
+
+#: modules/devices/devicetree/pmac_data.c:84
+msgid "PMAC Flags"
+msgstr ""
+
+#: modules/devices/devicetree/pmac_data.c:85
+msgid "L2 Cache"
+msgstr ""
+
+#: modules/devices/devicetree/pmac_data.c:86
+msgid "PMAC Generation"
+msgstr ""
+
+#: modules/devices/devicetree/rpi_data.c:152
+#: modules/devices/devicetree/rpi_data.c:153
+msgid "Raspberry Pi"
+msgstr ""
+
+#: modules/devices/devicetree/rpi_data.c:153
+msgid "Board Name"
+msgstr ""
+
 #: modules/devices/devicetree/rpi_data.c:154
-msgid "SOC (spec)"
+msgid "PCB Revision"
 msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:155
+msgid "Introduction"
+msgstr ""
+
+#: modules/devices/devicetree/rpi_data.c:156 modules/devices/spd-decode.c:1510
+msgid "Manufacturer"
+msgstr ""
+
+#: modules/devices/devicetree/rpi_data.c:158
+msgid "SOC (spec)"
+msgstr ""
+
+#: modules/devices/devicetree/rpi_data.c:159
 msgid "Memory (spec)"
 msgstr ""
 
-#: modules/devices/devicetree/rpi_data.c:157
+#: modules/devices/devicetree/rpi_data.c:161
 msgid "Permanent overvolt bit"
 msgstr ""
 
-#: modules/devices/devicetree/rpi_data.c:157
+#: modules/devices/devicetree/rpi_data.c:161
 msgctxt "rpi-ov-bit"
 msgid "Set"
 msgstr ""
 
-#: modules/devices/devicetree/rpi_data.c:157
+#: modules/devices/devicetree/rpi_data.c:161
 msgctxt "rpi-ov-bit"
 msgid "Not set"
 msgstr ""
@@ -1969,10 +1883,6 @@ msgstr ""
 
 #: modules/devices/ia64/processor.c:108
 msgid "IA64 Processor"
-msgstr ""
-
-#: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:412
-msgid "Vendor"
 msgstr ""
 
 #: modules/devices/ia64/processor.c:155
@@ -2223,10 +2133,6 @@ msgstr ""
 msgid "SuperH Processor"
 msgstr ""
 
-#: modules/devices/sh/processor.c:77
-msgid "Machine"
-msgstr ""
-
 #: modules/devices/sh/processor.c:80
 msgid "Bus Frequency"
 msgstr ""
@@ -2247,6 +2153,14 @@ msgstr ""
 msgid ""
 "[SPD]\n"
 "Reading memory SPD not supported on this system=\n"
+msgstr ""
+
+#: modules/devices/spd-decode.c:1509
+msgid "SPD"
+msgstr ""
+
+#: modules/devices/spd-decode.c:1510
+msgid "Bank"
 msgstr ""
 
 #: modules/devices/storage.c:46
@@ -3799,7 +3713,7 @@ msgstr "Conexiones IP"
 msgid "Routing Table"
 msgstr "Tabla de ruteo"
 
-#: modules/network.c:62
+#: modules/network.c:62 modules/network.c:308
 msgid "ARP Table"
 msgstr "Tabla ARP"
 
@@ -3815,113 +3729,80 @@ msgstr "Estadísticas"
 msgid "Shared Directories"
 msgstr "Directorios compartidos"
 
-#: modules/network.c:300
-#, c-format
-msgid ""
-"[ARP Table]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=IP Address\n"
-"ColumnTitle$Value=Interface\n"
-"ColumnTitle$Extra1=MAC Address\n"
-"ShowColumnHeaders=true\n"
-msgstr ""
-"[Tabla ARP]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Dirección IP\n"
-"ColumnTitle$Value=Interfaz\n"
-"ColumnTitle$Extra1=Dirección MAC\n"
-"ShowColumnHeaders=true\n"
-
-#: modules/network.c:321
-#, c-format
-msgid ""
-"[Name servers]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=IP Address\n"
-"ColumnTitle$Value=Name\n"
-"ShowColumnHeaders=true\n"
-msgstr ""
-"[Servidores de nombres]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ColumnTitle$TextValue=IP Address\n"
-"ColumnTitle$Value=Name\n"
-"ShowColumnHeaders=true\n"
-
-#: modules/network.c:331
-#, c-format
-msgid ""
-"[Connections]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Local Address\n"
-"ColumnTitle$Value=Protocol\n"
-"ColumnTitle$Extra1=Foreign Address\n"
-"ColumnTitle$Extra2=State\n"
-"ShowColumnHeaders=true\n"
-msgstr ""
-"[Conexiones]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Local Address\n"
-"ColumnTitle$Value=Protocol\n"
-"ColumnTitle$Extra1=Foreign Address\n"
-"ColumnTitle$Extra2=State\n"
-"ShowColumnHeaders=true\n"
-
-#: modules/network.c:356
-msgid "Interface"
-msgstr ""
-
-#: modules/network.c:357 modules/network/net.c:477
+#: modules/network.c:309 modules/network.c:331 modules/network.c:362
+#: modules/network/net.c:477
 msgid "IP Address"
+msgstr "Dirección IP"
+
+#: modules/network.c:309 modules/network.c:362 modules/network.c:379
+msgid "Interface"
+msgstr "Interfaz"
+
+#: modules/network.c:309
+msgid "MAC Address"
+msgstr "Dirección MAC"
+
+#: modules/network.c:318
+msgid "SAMBA"
 msgstr ""
 
-#: modules/network.c:358
+#: modules/network.c:319
+msgid "NFS"
+msgstr ""
+
+#: modules/network.c:330
+msgid "Name Servers"
+msgstr "Servidores de nombres"
+
+#: modules/network.c:345
+msgid "Connections"
+msgstr "Conexiones"
+
+#: modules/network.c:346
+msgid "Local Address"
+msgstr ""
+
+#: modules/network.c:346
+msgid "Protocol"
+msgstr ""
+
+#: modules/network.c:346
+msgid "Foreign Address"
+msgstr ""
+
+#: modules/network.c:346
+msgid "State"
+msgstr ""
+
+#: modules/network.c:362
 msgid "Sent"
-msgstr ""
+msgstr "Enviado"
 
-#: modules/network.c:359
+#: modules/network.c:362
 msgid "Received"
+msgstr "Recibido"
+
+#: modules/network.c:378
+msgid "IP routing table"
+msgstr "Tabla de ruteo IP"
+
+#: modules/network.c:379
+msgid "Destination/Gateway"
+msgstr "Destino/Puerta de enlace"
+
+#: modules/network.c:379
+msgid "Flags"
 msgstr ""
 
-#: modules/network.c:365
-#, c-format
-msgid ""
-"[IP routing table]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ViewType=0\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Destination / Gateway\n"
-"ColumnTitle$Value=Interface\n"
-"ColumnTitle$Extra1=Flags\n"
-"ColumnTitle$Extra2=Mask\n"
-"ShowColumnHeaders=true\n"
-msgstr ""
-"[Tabla de ruteo IP]\n"
-"%s\n"
-"[$ShellParam$]\n"
-"ViewType=0\n"
-"ReloadInterval=3000\n"
-"ColumnTitle$TextValue=Destino / Puerta de enlace\n"
-"ColumnTitle$Value=Interfaz\n"
-"ColumnTitle$Extra1=Flags\n"
-"ColumnTitle$Extra2=Máscara\n"
-"ShowColumnHeaders=true\n"
+#: modules/network.c:379 modules/network/net.c:478
+msgid "Mask"
+msgstr "Máscara"
 
-#: modules/network.c:403
+#: modules/network.c:407
 msgid "Network"
 msgstr "Red"
 
-#: modules/network.c:436
+#: modules/network.c:440
 msgid "Gathers information about this computer's network connection"
 msgstr "Obtiene información sobre la conexión de red de esta computadora"
 
@@ -4174,91 +4055,33 @@ msgstr ""
 msgid "(Not set)"
 msgstr ""
 
-#: modules/network/net.c:478
-msgid "Mask"
-msgstr ""
-
 #: modules/network/net.c:479
 msgid "Broadcast Address"
 msgstr ""
 
 #~ msgid ""
-#~ "[$ShellParam$]\n"
-#~ "UpdateInterval$Memory=1000\n"
-#~ "UpdateInterval$Date/Time=1000\n"
-#~ "#ReloadInterval=5000\n"
-#~ "[Computer]\n"
-#~ "Processor=%s\n"
-#~ "Memory=...\n"
-#~ "Machine Type=%s\n"
-#~ "Operating System=%s\n"
-#~ "User Name=%s\n"
-#~ "Date/Time=...\n"
-#~ "[Display]\n"
-#~ "Resolution=%dx%d pixels\n"
-#~ "OpenGL Renderer=%s\n"
-#~ "X11 Vendor=%s\n"
-#~ "\n"
-#~ "%s\n"
-#~ "[Input Devices]\n"
-#~ "%s\n"
-#~ "\n"
-#~ "%s\n"
-#~ "\n"
-#~ "%s\n"
+#~ "Compile-time options:\n"
+#~ "  Release version:   %s (%s)\n"
+#~ "  BinReloc enabled:  %s\n"
+#~ "  Data prefix:       %s\n"
+#~ "  Library prefix:    %s\n"
+#~ "  Compiled on:       %s %s (%s)\n"
 #~ msgstr ""
-#~ "[$ShellParam$]\n"
-#~ "UpdateInterval$Memoria=1000\n"
-#~ "UpdateInterval$Fecha/Hora=1000\n"
-#~ "#ReloadInterval=5000\n"
-#~ "[Equipo]\n"
-#~ "Procesador=%s\n"
-#~ "Memoria=...\n"
-#~ "Tipo de equipo=%s\n"
-#~ "Sistema operativo=%s\n"
-#~ "Nombre de usuario=%s\n"
-#~ "Fecha/Hora=...\n"
-#~ "[Pantalla]\n"
-#~ "Resolución=%dx%d pixels\n"
-#~ "OpenGL Renderer=%s\n"
-#~ "Proveedor X11=%s\n"
-#~ "\n"
-#~ "%s\n"
-#~ "[Dispositivos de entrada]\n"
-#~ "%s\n"
-#~ "\n"
-#~ "%s\n"
-#~ "\n"
-#~ "%s\n"
+#~ "Opciones de compilado:\n"
+#~ "  Versión:                %s (%s)\n"
+#~ "  BinReloc habilitado:    %s\n"
+#~ "  Prefijo de datos:       %s\n"
+#~ "  Prefijo de bibliotecas: %s\n"
+#~ "  Compilado en:           %s %s (%s)\n"
 
-#~ msgid "GNU C Library version %s (%sstable)"
-#~ msgstr "Versión de la biblioteca GNU C %s (%sestable)"
+#~ msgid "Y_es"
+#~ msgstr "_Sí"
 
-#~ msgid "un"
-#~ msgstr "in"
+#~ msgid "Version: %s"
+#~ msgstr "Versión: %s"
 
-#~ msgid ""
-#~ "%s\n"
-#~ "[$ShellParam$]\n"
-#~ "ReloadInterval=3000\n"
-#~ "ViewType=1\n"
-#~ "ColumnTitle$TextValue=Interface\n"
-#~ "ColumnTitle$Value=IP Address\n"
-#~ "ColumnTitle$Extra1=Sent\n"
-#~ "ColumnTitle$Extra2=Received\n"
-#~ "ShowColumnHeaders=true\n"
-#~ "%s"
-#~ msgstr ""
-#~ "%s\n"
-#~ "[$ShellParam$]\n"
-#~ "ReloadInterval=3000\n"
-#~ "ViewType=1\n"
-#~ "ColumnTitle$TextValue=Interfaz\n"
-#~ "ColumnTitle$Value=Dirección IP\n"
-#~ "ColumnTitle$Extra1=Enviado\n"
-#~ "ColumnTitle$Extra2=Recibido\n"
-#~ "ShowColumnHeaders=true\n"
-#~ "%s"
+#~ msgid "Unknown distribution"
+#~ msgstr "Distribución desconocida"
 
 #~ msgid "%d day, "
 #~ msgid_plural "%d days, "
@@ -4305,43 +4128,6 @@ msgstr ""
 
 #~ msgid "No context help available."
 #~ msgstr "No hay ayuda contextual disponible"
-
-#~ msgid ""
-#~ "[$ShellParam$]\n"
-#~ "UpdateInterval$Uptime=10000\n"
-#~ "UpdateInterval$Load Average=1000\n"
-#~ "[Version]\n"
-#~ "Kernel=%s\n"
-#~ "Version=%s\n"
-#~ "C Library=%s\n"
-#~ "Distribution=%s\n"
-#~ "[Current Session]\n"
-#~ "Computer Name=%s\n"
-#~ "User Name=%s\n"
-#~ "#Language=%s\n"
-#~ "Home Directory=%s\n"
-#~ "Desktop Environment=%s\n"
-#~ "[Misc]\n"
-#~ "Uptime=...\n"
-#~ "Load Average=..."
-#~ msgstr ""
-#~ "[$ShellParam$]\n"
-#~ "UpdateInterval$Uptime=10000\n"
-#~ "UpdateInterval$Load Average=1000\n"
-#~ "[Versión]\n"
-#~ "Núcleo=%s\n"
-#~ "Versión=%s\n"
-#~ "Biblioteca C=%s\n"
-#~ "Distribución=%s\n"
-#~ "[Sesión actual]\n"
-#~ "Nombre del equipo=%s\n"
-#~ "Nombre de usuario=%s\n"
-#~ "#Idioma=%s\n"
-#~ "Directorio personal=%s\n"
-#~ "Entorno de escritorio=%s\n"
-#~ "[Misc]\n"
-#~ "Uptime=...\n"
-#~ "Load Average=..."
 
 #~ msgid "vendor string"
 #~ msgstr "cadena del proveedor"

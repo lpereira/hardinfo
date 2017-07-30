@@ -23,16 +23,16 @@ gchar *
 computer_get_alsacards(Computer * computer)
 {
     GSList *p;
-    gchar *tmp = g_strdup(_("[Audio Devices]\n"));
+    gchar *tmp = g_strdup_printf("[%s]\n", _("Audio Devices"));
     gint n = 0;
 
     if (computer->alsa) {
-	for (p = computer->alsa->cards; p; p = p->next) {
-	    AlsaCard *ac = (AlsaCard *) p->data;
+        for (p = computer->alsa->cards; p; p = p->next) {
+            AlsaCard *ac = (AlsaCard *) p->data;
 
-	    tmp = h_strdup_cprintf(_("Audio Adapter#%d=%s\n"),
-	                           tmp, ++n, ac->friendly_name);
-	}
+            tmp = h_strdup_cprintf("%s#%d=%s\n", tmp,
+                        _("Audio Adapter"), ++n, ac->friendly_name);
+        }
     }
 
     return tmp;
@@ -48,22 +48,22 @@ computer_get_alsainfo(void)
 
     cards = fopen("/proc/asound/cards", "r");
     if (!cards)
-	return NULL;
+        return NULL;
 
     ai = g_new0(AlsaInfo, 1);
 
     while (fgets(buffer, 128, cards)) {
-	gchar **tmp;
+        gchar **tmp;
 
-	ac = g_new0(AlsaCard, 1);
+        ac = g_new0(AlsaCard, 1);
 
-	tmp = g_strsplit(buffer, ":", 0);
+        tmp = g_strsplit(buffer, ":", 0);
 
-	ac->friendly_name = g_strdup(tmp[1]);
-	ai->cards = g_slist_append(ai->cards, ac);
+        ac->friendly_name = g_strdup(tmp[1]);
+        ai->cards = g_slist_append(ai->cards, ac);
 
-	g_strfreev(tmp);
-	(void)fgets(buffer, 128, cards);	/* skip next line */
+        g_strfreev(tmp);
+        (void)fgets(buffer, 128, cards);  /* skip next line */
     }
     fclose(cards);
 

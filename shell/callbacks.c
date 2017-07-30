@@ -148,6 +148,8 @@ void cb_about_module(GtkAction * action)
 
 	    about = gtk_about_dialog_new();
 
+	    gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(shell->window));
+
 	    text = g_strdup_printf(_("%s Module"), sm->name);
 	    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), text);
 	    g_free(text);
@@ -181,6 +183,7 @@ void cb_about_module(GtkAction * action)
 
 void cb_about()
 {
+    Shell *shell = shell_get_main_shell();
     GtkWidget *about;
     const gchar *authors[] = {
 	_("Author:"),
@@ -211,6 +214,7 @@ void cb_about()
     };
 
     about = gtk_about_dialog_new();
+    gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(shell->window));
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
