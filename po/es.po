@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-30 03:38-0500\n"
+"POT-Creation-Date: 2017-07-30 04:23-0500\n"
 "PO-Revision-Date: 2013-02-18 17:11-0300\n"
 "Last-Translator: Fernando López <flopez@linti.unlp.edu.ar>\n"
 "Language-Team: Fernando López <soportelihuen@linti.unlp.edu.ar>\n"
@@ -692,11 +692,11 @@ msgstr "Recibir resultados de los benchmark"
 
 #: modules/computer/alsa.c:26
 msgid "Audio Devices"
-msgstr ""
+msgstr "Dispositivos de audio"
 
 #: modules/computer/alsa.c:34
 msgid "Audio Adapter"
-msgstr ""
+msgstr "Adaptador de audio"
 
 #: modules/computer/boots.c:33 modules/computer.c:71
 msgid "Boots"
@@ -758,7 +758,7 @@ msgstr ""
 
 #: modules/computer.c:107 modules/computer.c:409 modules/computer.c:417
 msgid "Date/Time"
-msgstr ""
+msgstr "Fecha/Hora"
 
 #: modules/computer.c:112 modules/computer.c:464 modules/computer.c:479
 msgid "Load Average"
@@ -914,15 +914,15 @@ msgstr "Procesador"
 
 #: modules/computer.c:414
 msgid "Machine Type"
-msgstr ""
+msgstr "Tipo de equipo"
 
 #: modules/computer.c:416 modules/computer.c:473
 msgid "User Name"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: modules/computer.c:419 modules/computer.c:551
 msgid "Resolution"
-msgstr ""
+msgstr "Resolución"
 
 #. /label for resolution
 #. / Resolution WxH unit
@@ -936,7 +936,7 @@ msgstr ""
 
 #: modules/computer.c:423
 msgid "X11 Vendor"
-msgstr ""
+msgstr "Proveedor X11"
 
 #: modules/computer.c:425 modules/devices.c:102
 msgid "Input Devices"
@@ -944,35 +944,35 @@ msgstr "Dispositivos de entrada"
 
 #: modules/computer.c:467
 msgid "Kernel"
-msgstr ""
+msgstr "Núcleo"
 
 #: modules/computer.c:469
 msgid "C Library"
-msgstr ""
+msgstr "Biblioteca C"
 
 #: modules/computer.c:470
 msgid "Distribution"
-msgstr ""
+msgstr "Distribución"
 
 #: modules/computer.c:471
 msgid "Current Session"
-msgstr ""
+msgstr "Sesión actual"
 
 #: modules/computer.c:472
 msgid "Computer Name"
-msgstr ""
+msgstr "Nombre del equipo"
 
 #: modules/computer.c:474
 msgid "Language"
-msgstr ""
+msgstr "Idioma"
 
 #: modules/computer.c:475 modules/computer/users.c:50
 msgid "Home Directory"
-msgstr ""
+msgstr "Directorio personal"
 
 #: modules/computer.c:476
 msgid "Desktop Environment"
-msgstr ""
+msgstr "Entorno de escritorio"
 
 #: modules/computer.c:477
 msgid "Misc"
@@ -980,7 +980,7 @@ msgstr ""
 
 #: modules/computer.c:492
 msgid "Loaded Modules"
-msgstr ""
+msgstr "Módulos cargados"
 
 #: modules/computer.c:493 modules/devices.c:398
 msgid "Description"
@@ -1000,7 +1000,7 @@ msgstr ""
 
 #: modules/computer.c:516
 msgid "Available Languages"
-msgstr ""
+msgstr "Idiomas disponibles"
 
 #: modules/computer.c:531 modules/computer/filesystem.c:85
 msgid "Mount Point"
@@ -1016,20 +1016,20 @@ msgstr ""
 
 #: modules/computer.c:532
 msgid "Mounted File Systems"
-msgstr ""
+msgstr "Sistemas de archivos montados"
 
 #: modules/computer.c:555 modules/computer.c:562
 #: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:412
 msgid "Vendor"
-msgstr ""
+msgstr "Proveedor"
 
 #: modules/computer.c:557
 msgid "Monitors"
-msgstr ""
+msgstr "Monitores"
 
 #: modules/computer.c:559
 msgid "Extensions"
-msgstr ""
+msgstr "Extensiones"
 
 #: modules/computer.c:561
 msgid "OpenGL"
@@ -3753,11 +3753,11 @@ msgstr ""
 
 #: modules/network.c:330
 msgid "Name Servers"
-msgstr ""
+msgstr "Servidores de nombres"
 
 #: modules/network.c:345
 msgid "Connections"
-msgstr ""
+msgstr "Conexiones"
 
 #: modules/network.c:346
 msgid "Local Address"
@@ -3785,7 +3785,7 @@ msgstr ""
 
 #: modules/network.c:378
 msgid "IP routing table"
-msgstr ""
+msgstr "Tabla de ruteo IP"
 
 #: modules/network.c:379
 msgid "Destination/Gateway"
