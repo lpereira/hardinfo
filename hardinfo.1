@@ -2,23 +2,38 @@
 .\" https://github.com/lpereira/hardinfo/.
 .TH HARDINFO "1" "July 2017" "0.6" "User Commands"
 .SH NAME
-Hardinfo \- System profiler and benchmark for Linux systems.
+\fBHardInfo\fR \- System profiler and benchmark for Linux systems.
 .SH USAGE
-hardinfo [OPTION...]
+\fBhardinfo\fR [OPTION...]
 .SH DESCRIPTION
-HardInfo is a system profiler and benchmark for Linux systems.
+Is a system profiler and benchmark for Linux systems, that gathers information about the 
+hardware and operating system, performs benchmarks, and generates reports.  
+The information gathered is presented on an simple and intuitive GUI.
 
-HardInfo can gather information about your operating system 
-and detected hardware by them, perform benchmarks, and then 
-generate printable reports either in HTML or in plain text formats.
+Information is grouped in \fIfour main groups\fR: \fBComputer\fR, \fBDevices\fR, \fBNetwork\fR, and \fBBenchmarks\fR.
 
+The \fBComputer group\fR contains mostly information about basic software.  This includes but
+is not limited to information about the operating system (kernel version, C library,
+distribution, etc.), kernel modules, locale information, filesystem usage, users/groups, and
+development tools.
 
-Features include:
- *\  System information, like kernel, version, desktop, users, network
- *\  Hardware information about overall detected devices
- *\  Report generation (in either HTML or plain text)
- *\  Benchmark tests to see machine capabilities
- *\  Benchmarks guides to compared machine featured capabilites
+The \fBDevices group\fR contains information about the hardware, as detected by the operating
+system.  \fBHardinfo\fR is incapable of detecting hardware by itself, it merely lists what the
+operating system was able to find.  This includes, but does not limit to, information about the
+processor (including cache layout, known bugs, and feature flags with their explanation),
+devices (such as USB, PCI, and Input devices), among other things.
+
+The \fBNetwork group\fR lists information about network interfaces, routing table, DNS servers,
+and other networking-related topics.
+
+The \fBBenchmarks group\fR allow performing simple benchmarks to test CPU and FPU capabilities,
+as well as some of the graphical user interface capabilities as well.  In previous versions, it
+was possible to send the benchmark results to a central server, so it was possible to compare
+the benchmarks with other \fBHardinfo\fR users; this service has been deactivated in the mean time.
+
+\fIReports\fR can be generated either by invoking \fBHardinfo\fR with special command-line parameters
+(see below), or by clicking the "Generate Report" button in the GUI.  Reports can be customized
+in the GUI and saved in either HTML or plain text formats.
 
 .SH OPTIONS
 .TP
@@ -46,13 +61,9 @@ automatically load module dependencies
 \fB\-v\fR, \fB\-\-version\fR
 shows program version and quit
 .SH AUTHORS/CONTRIBUTORS
-HardInfo is currently maintained by \fBLeandro A. F. Pereira\fR \fI<leandro@hardinfo.org>\fR with contributions 
-from \fBBurt P.\fR \fI<pburt0@gmail.com>\fR, \fBAlexander Münch\fR \fI<theHacker@github.com>\fR and 
-\fBTotalCaesar659\fR \fI<TotalCaesar659@github.com>\fR. 
-
-For current maintainers committing, see \fIhttps://github.com/lpereira/hardinfo/graphs/contributors\fR . 
+For current maintainers committing, see AUTHORS.md file and more info are at \fIhttps://github.com/lpereira/hardinfo/graphs/contributors\fR . 
 More contributions are in each files source headers.
 .SH COPYRIGHT
-Hardinfo its Copyright \(co 2003, 2009\-2017 Leandro A. F. Pereira \fI<leandro@hardinfo.org>\fR.
+\fBHardInfo\fR its Copyright \(co 2003, 2009\-2017 Leandro A. F. Pereira \fI<leandro@hardinfo.org>\fR.
 This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 This manpage was created by PICCORO Lenz McKAY \fI<mckaygerhard@gmail.com>\fR for the hardinfo project.
