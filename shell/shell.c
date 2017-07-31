@@ -33,10 +33,6 @@
 
 #include "callbacks.h"
 
-#ifndef gtk_notebook_set_page
-#define gtk_notebook_set_page(P, N) gtk_notebook_set_current_page(P, N)
-#endif
-
 /*
  * Internal Prototypes ********************************************************
  */
@@ -1007,7 +1003,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     case SHELL_VIEW_DUAL:
         gtk_widget_show(shell->info->scroll);
         gtk_widget_show(shell->moreinfo->scroll);
-        gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
+        gtk_notebook_set_current_page(GTK_NOTEBOOK(shell->notebook), 0);
         gtk_widget_show(shell->notebook);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -1022,7 +1018,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         break;
     case SHELL_VIEW_LOAD_GRAPH:
         gtk_widget_show(shell->info->scroll);
-        gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 1);
+        gtk_notebook_set_current_page(GTK_NOTEBOOK(shell->notebook), 1);
         gtk_widget_show(shell->notebook);
         load_graph_clear(shell->loadgraph);
 
@@ -1043,7 +1039,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 	gtk_widget_show(shell->notebook);
         gtk_widget_show(shell->moreinfo->scroll);
 
-	gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 0);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(shell->notebook), 0);
 	/* fallthrough */
     case SHELL_VIEW_PROGRESS:
         gtk_widget_show(shell->info->scroll);
@@ -1058,7 +1054,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 		gtk_widget_hide(shell->notebook);
 	break;
     case SHELL_VIEW_SUMMARY:
-        gtk_notebook_set_page(GTK_NOTEBOOK(shell->notebook), 2);
+        gtk_notebook_set_current_page(GTK_NOTEBOOK(shell->notebook), 2);
 
         gtk_widget_show(shell->notebook);
         gtk_widget_hide(shell->info->scroll);
