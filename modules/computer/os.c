@@ -165,7 +165,7 @@ desktop_with_session_type(const gchar *desktop_env)
     tmp = g_getenv("XDG_SESSION_TYPE");
     if (tmp) {
         if (!g_str_equal(tmp, "unspecified"))
-            return g_strdup_printf(_("%s on %s"), desktop_env, tmp);
+            return g_strdup_printf(_(/*/{desktop environment} on {session type}*/ "%s on %s"), desktop_env, tmp);
     }
 
     return g_strdup(desktop_env);
@@ -352,11 +352,11 @@ detect_distro(void)
             /* HACK: Some Debian systems doesn't include the distribuition
              * name in /etc/debian_release, so add them here. */
             if (isdigit(contents[0]) || contents[0] != 'D')
-                return g_strdup_printf("Debian GNU/Linux %s", idle_free(contents));
+                return g_strdup_printf("Debian GNU/Linux %s", (char*)idle_free(contents));
         }
 
         if (g_str_equal(distro_db[i].codename, "fatdog"))
-            return g_strdup_printf("Fatdog64 [%.10s]", idle_free(contents));
+            return g_strdup_printf("Fatdog64 [%.10s]", (char*)idle_free(contents));
 
         return contents;
     }
