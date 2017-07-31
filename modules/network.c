@@ -80,6 +80,7 @@ void scan_statistics(gboolean reload)
     FILE *netstat;
     gchar buffer[256];
     gchar *netstat_path;
+    int line = 0;
 
     SCAN_START();
 
@@ -99,22 +100,16 @@ void scan_statistics(gboolean reload)
             __statistics = h_strdup_cprintf("[%s]\n",
                                             __statistics,
                                             tmp);
-
             g_free(tmp);
-          } else if (isdigit(buffer[4])) {
-            gchar *tmp1 = buffer + 4,
-                  *tmp2 = tmp1;
 
-            while (*tmp2 && !isspace(*tmp2)) tmp2++;
-            *tmp2 = 0;
-            tmp2++;
+          } else {
+            gchar *tmp = buffer;
 
-            *tmp2 = toupper(*tmp2);
+            while (*tmp && isspace(*tmp)) tmp++;
 
-            __statistics = h_strdup_cprintf("%s=%s\n",
+            __statistics = h_strdup_cprintf("<b> </b>#%d=%s\n",
                                             __statistics,
-                                            g_strstrip(tmp1),
-                                            g_strstrip(tmp2));
+                                            line++, tmp);
           }
         }
 
