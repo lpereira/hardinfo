@@ -843,7 +843,7 @@ static gboolean update_field(gpointer data)
 static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *) data;
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
     GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->window));
 #endif
 
@@ -864,7 +864,7 @@ static gboolean reload_section(gpointer data)
 #endif
 
 	/* avoid drawing the window while we reload */
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
     gdk_window_freeze_updates(gdk_window);
 #else
 	gdk_window_freeze_updates(shell->window->window);
@@ -898,7 +898,7 @@ static gboolean reload_section(gpointer data)
         }
 
 	/* make the window drawable again */
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
     gdk_window_thaw_updates(gdk_window);
 #else
 	gdk_window_thaw_updates(shell->window->window);
@@ -954,7 +954,7 @@ info_tree_compare_val_func(GtkTreeModel * model,
 
 static void set_view_type(ShellViewType viewtype, gboolean reload)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 18, 0)
     GtkAllocation* alloc;
 #endif
 
@@ -1006,7 +1006,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         gtk_notebook_set_current_page(GTK_NOTEBOOK(shell->notebook), 0);
         gtk_widget_show(shell->notebook);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 18, 0)
         alloc = g_new(GtkAllocation, 1);
         gtk_widget_get_allocation(shell->hpaned, alloc);
         gtk_paned_set_position(GTK_PANED(shell->vpaned), alloc->height / 2);
@@ -1022,7 +1022,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         gtk_widget_show(shell->notebook);
         load_graph_clear(shell->loadgraph);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 18, 0)
         alloc = g_new(GtkAllocation, 1);
         gtk_widget_get_allocation(shell->hpaned, alloc);
         gtk_paned_set_position(GTK_PANED(shell->vpaned),
@@ -1407,7 +1407,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gboolean has_shell_param = FALSE;
     gint i;
     gsize ngroups;
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
     GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info->view));
 #endif
 
@@ -1415,7 +1415,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     key_data = module_entry_function(entry);
 
     /* */
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 	gdk_window_freeze_updates(gdk_window);
 #else
     gdk_window_freeze_updates(shell->info->view->window);
@@ -1470,7 +1470,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), shell->info->model);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info->view));
 
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 	gdk_window_thaw_updates(gdk_window);
 #else
     gdk_window_thaw_updates(shell->info->view->window);
