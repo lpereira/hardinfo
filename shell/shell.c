@@ -854,10 +854,8 @@ static gboolean reload_section(gpointer data)
 #if GTK_CHECK_VERSION(3, 0, 0)
     /* TODO:GTK3 */
 #else
-#if GTK_CHECK_VERSION(2, 0, 0)
 	pos_info_scroll = RANGE_GET_VALUE(info, vscrollbar);
 	pos_more_scroll = RANGE_GET_VALUE(moreinfo, vscrollbar);
-#endif
 #endif
 
 	/* avoid drawing the window while we reload */

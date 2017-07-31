@@ -212,9 +212,7 @@ void cb_about()
 				 "You should have received a copy of the GNU General Public License "
 				 "along with this program; if not, write to the Free Software "
 				 "Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"));
-#if GTK_CHECK_VERSION(2,8,0)
     gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(about), TRUE);
-#endif
 
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about), authors);
     gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
