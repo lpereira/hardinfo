@@ -328,12 +328,10 @@ detect_distro(void)
     int i;
 
     if (g_spawn_command_line_sync("lsb_release -d", &contents, NULL, NULL, NULL)) {
-        gchar *tmp = strstr(contents, "Description:\t");
+        gchar *tmp = strstr(idle_free(contents), "Description:\t");
 
-        if (tmp) {
-            idle_free(contents);
+        if (tmp)
             return g_strdup(tmp + strlen("Description:\t"));
-        }
     }
 
     for (i = 0; distro_db[i].file; i++) {
