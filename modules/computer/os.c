@@ -335,9 +335,6 @@ detect_distro(void)
     }
 
     for (i = 0; distro_db[i].file; i++) {
-        if (!g_file_test(distro_db[i].file, G_FILE_TEST_EXISTS))
-            continue;
-
         if (!g_file_get_contents(distro_db[i].file, &contents, NULL, NULL))
             continue;
 
