@@ -25,6 +25,8 @@
 #include "vendor.h"
 #include "gettext.h"
 
+#define HARDINFO_COPYRIGHT_LATEST_YEAR 2017
+
 #ifndef LOCALEDIR
 #define LOCALEDIR "/usr/share/locale"
 #endif
