@@ -2,11 +2,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-30 05:41-0500\n"
+"POT-Creation-Date: 2017-08-01 01:16-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
 "Language: ru_UA\n"
+"X-Poedit-Basepath: ../\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,16 +17,18 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
-#: hardinfo/hardinfo.c:48
+#. / %d will be latest year of copyright
+#: hardinfo/hardinfo.c:49
+#, c-format
 msgid ""
-"Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n"
+"Copyright (C) 2003-%d Leandro A. F. Pereira. See COPYING for details.\n"
 "\n"
 msgstr ""
-"Copyright (C) 2003-2009 Leandro A. F. Pereira. Смотрите файл COPYING для "
-"более подробной информации.\n"
+"Copyright (C) 2003-%d Leandro A. F. Pereira. Смотрите файл COPYING для более "
+"подробной информации.\n"
 "\n"
 
-#: hardinfo/hardinfo.c:50
+#: hardinfo/hardinfo.c:51
 #, c-format
 msgid ""
 "Compile-time options:\n"
@@ -35,17 +38,23 @@ msgid ""
 "  Library prefix:    %s\n"
 "  Compiled for:      %s\n"
 msgstr ""
+"Настройки компиляции:\n"
+"  Release version:    %s (%s)\n"
+"  BinReloc включен:   %s\n"
+"  Префикс данных:     %s\n"
+"  Префикс библиотеки: %s\n"
+"  Скомпилировано на:  %s\n"
 
-#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57 modules/computer.c:565
+#: hardinfo/hardinfo.c:57 hardinfo/hardinfo.c:58 modules/computer.c:565
 #: modules/devices/printers.c:138
 msgid "Yes"
 msgstr "Да"
 
-#: hardinfo/hardinfo.c:57 modules/computer.c:565 modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:58 modules/computer.c:565 modules/devices/printers.c:138
 msgid "No"
 msgstr "Нет"
 
-#: hardinfo/hardinfo.c:68
+#: hardinfo/hardinfo.c:69
 #, c-format
 msgid ""
 "Failed to find runtime data.\n"
@@ -58,36 +67,36 @@ msgstr ""
 "• Правильно ли установлен HardInfo?\n"
 "• Проверьте, существуют ли %s и %s и есть ли у вас право на чтение."
 
-#: hardinfo/hardinfo.c:75
+#: hardinfo/hardinfo.c:76
 #, c-format
 msgid ""
 "Modules:\n"
-"%-20s%-15s%-12s\n"
+"%-20s %-15s %-12s\n"
 msgstr ""
 "Модули:\n"
-"%-20s%-15s%-12s\n"
+"%-20s %-15s %-12s\n"
 
-#: hardinfo/hardinfo.c:76
+#: hardinfo/hardinfo.c:77
 msgid "File Name"
 msgstr "Имя файла"
 
-#: hardinfo/hardinfo.c:76 modules/computer.c:493 modules/computer.c:515
+#: hardinfo/hardinfo.c:77 modules/computer.c:493 modules/computer.c:515
 #: modules/computer.c:586 modules/devices/ia64/processor.c:152
 #: modules/devices/sh/processor.c:76 modules/network.c:331
 msgid "Name"
 msgstr "Название"
 
-#: hardinfo/hardinfo.c:76 modules/computer.c:291 modules/computer.c:466
+#: hardinfo/hardinfo.c:77 modules/computer.c:291 modules/computer.c:466
 #: modules/computer.c:468 modules/computer.c:556 modules/computer.c:564
 msgid "Version"
 msgstr "Версия"
 
-#: hardinfo/hardinfo.c:123
+#: hardinfo/hardinfo.c:124
 #, c-format
 msgid "Unknown benchmark ``%s'' or libbenchmark.so not loaded"
 msgstr "Тест ``%s'' неизвестен или библиотека libbenchmark.so не загружена"
 
-#: hardinfo/hardinfo.c:151
+#: hardinfo/hardinfo.c:152
 msgid "Don't know what to do. Exiting."
 msgstr "Неизвестно, что делать. Выход."
 
@@ -129,17 +138,17 @@ msgid "%.1f B"
 msgstr "%.1f Б"
 
 #: hardinfo/util.c:130
-#, fuzzy, c-format
+#, c-format
 msgid "%.1f KiB"
 msgstr "%.1f КиБ"
 
 #: hardinfo/util.c:132
-#, fuzzy, c-format
+#, c-format
 msgid "%.1f MiB"
 msgstr "%.1f МиБ"
 
 #: hardinfo/util.c:134
-#, fuzzy, c-format
+#, c-format
 msgid "%.1f GiB"
 msgstr "%.1f ГиБ"
 
@@ -153,55 +162,55 @@ msgstr "%.1f ТиБ"
 msgid "%.1f PiB"
 msgstr "%.1f ПиБ"
 
-#: hardinfo/util.c:352
+#: hardinfo/util.c:367
 msgid "Error"
 msgstr "Ошибка"
 
-#: hardinfo/util.c:352 hardinfo/util.c:368
+#: hardinfo/util.c:367 hardinfo/util.c:383
 msgid "Warning"
 msgstr "Предупреждение"
 
-#: hardinfo/util.c:367
+#: hardinfo/util.c:382
 msgid "Fatal Error"
 msgstr "Фатальная ошибка"
 
-#: hardinfo/util.c:392
+#: hardinfo/util.c:407
 msgid "creates a report and prints to standard output"
 msgstr "создаёт отчёт и выводит на стандартный вывод"
 
-#: hardinfo/util.c:398
+#: hardinfo/util.c:413
 msgid "chooses a report format (text, html)"
 msgstr "выбирает формат отчёта (text, html)"
 
-#: hardinfo/util.c:404
+#: hardinfo/util.c:419
 msgid "run benchmark; requires benchmark.so to be loaded"
 msgstr "запуск теста; требует, чтобы benchmark.so был загружен"
 
-#: hardinfo/util.c:410
+#: hardinfo/util.c:425
 msgid "lists modules"
 msgstr "список модулей"
 
-#: hardinfo/util.c:416
+#: hardinfo/util.c:431
 msgid "specify module to load"
 msgstr "укажите модуль для загрузки"
 
-#: hardinfo/util.c:422
+#: hardinfo/util.c:437
 msgid "automatically load module dependencies"
 msgstr "автоматически загружает зависимости модулей"
 
-#: hardinfo/util.c:429
+#: hardinfo/util.c:444
 msgid "run in XML-RPC server mode"
 msgstr "запуск в режиме сервера XML-RPC"
 
-#: hardinfo/util.c:436
+#: hardinfo/util.c:451
 msgid "shows program version and quit"
 msgstr "показывает версию программы и выходит"
 
-#: hardinfo/util.c:441
+#: hardinfo/util.c:456
 msgid "- System Profiler and Benchmark tool"
 msgstr "- Инструмент для тестирования и проверки свойств системы"
 
-#: hardinfo/util.c:451
+#: hardinfo/util.c:466
 #, c-format
 msgid ""
 "Unrecognized arguments.\n"
@@ -210,29 +219,29 @@ msgstr ""
 "Неизвестные аргументы.\n"
 "Используйте `%s --help' для справки.\n"
 
-#: hardinfo/util.c:517
+#: hardinfo/util.c:532
 #, c-format
 msgid "Couldn't find a Web browser to open URL %s."
 msgstr "Не удаётся найти веб-браузер для открытия URL %s."
 
-#: hardinfo/util.c:866
+#: hardinfo/util.c:881
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\", load it?"
 msgstr "Модуль \"%s\" зависит от модуля \"%s\", загрузить его?"
 
-#: hardinfo/util.c:889
+#: hardinfo/util.c:904
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\"."
 msgstr "Модуль \"%s\" зависит от модуля \"%s\"."
 
-#: hardinfo/util.c:934
+#: hardinfo/util.c:949
 #, c-format
 msgid "No module could be loaded. Check permissions on \"%s\" and try again."
 msgstr ""
 "Модули не могут быть загружены. Проверьте разрешения на \"%s\" и попробуйте "
 "снова."
 
-#: hardinfo/util.c:938
+#: hardinfo/util.c:953
 msgid ""
 "No module could be loaded. Please use hardinfo -l to list all available "
 "modules and try again with a valid module list."
@@ -241,31 +250,31 @@ msgstr ""
 "получения списка доступных модулей и попробуйте снова с правильным списком "
 "модулей."
 
-#: hardinfo/util.c:1114
+#: hardinfo/util.c:1133
 #, c-format
 msgid "Scanning: %s..."
 msgstr "Сканирование: %s..."
 
-#: hardinfo/util.c:1124 shell/callbacks.c:67 shell/shell.c:303
-#: shell/shell.c:721 shell/shell.c:1701 modules/benchmark.c:445
+#: hardinfo/util.c:1143 shell/callbacks.c:77 shell/shell.c:307
+#: shell/shell.c:766 shell/shell.c:1808 modules/benchmark.c:445
 #: modules/benchmark.c:453
 msgid "Done."
 msgstr "Выполнено."
 
-#: shell/callbacks.c:47
+#: shell/callbacks.c:48 shell/callbacks.c:56
 msgid "Save Image"
 msgstr "Сохранить изображение"
 
-#: shell/callbacks.c:63
+#: shell/callbacks.c:73
 msgid "Saving image..."
 msgstr "Сохранение изображения..."
 
-#: shell/callbacks.c:153
+#: shell/callbacks.c:163
 #, c-format
 msgid "%s Module"
 msgstr "%s модуль"
 
-#: shell/callbacks.c:160
+#: shell/callbacks.c:174
 #, c-format
 msgid ""
 "Written by %s\n"
@@ -274,81 +283,80 @@ msgstr ""
 "Автор программы %s\n"
 "Лицензия %s"
 
-#: shell/callbacks.c:174
+#: shell/callbacks.c:188
 #, c-format
 msgid "No about information is associated with the %s module."
 msgstr "Нет информации о модуле %s."
 
-#: shell/callbacks.c:189
+#: shell/callbacks.c:203
 msgid "Author:"
 msgstr "Автор:"
 
-#: shell/callbacks.c:192
+#: shell/callbacks.c:206
 msgid "Contributors:"
 msgstr "Участники:"
 
-#: shell/callbacks.c:196
+#: shell/callbacks.c:210
 msgid "Based on work by:"
 msgstr "Основан на работах:"
 
-#: shell/callbacks.c:197
+#: shell/callbacks.c:211
 msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
 msgstr "Реализация MD5 от Colin Plumb (см. подробности в md5.c)"
 
-#: shell/callbacks.c:198
+#: shell/callbacks.c:212
 msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
 msgstr "Реализация SHA1 от Steve Reid (см. подробности в sha1.c) "
 
-#: shell/callbacks.c:199
+#: shell/callbacks.c:213
 msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
 msgstr "Реализация Blowfish от Paul Kocher (см. подробности в blowfich.c)"
 
-#: shell/callbacks.c:200
+#: shell/callbacks.c:214
 msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
 msgstr "Тест Raytracing от John Walker (см. подробности в fbench.c)"
 
-#: shell/callbacks.c:201
+#: shell/callbacks.c:215
 msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
 msgstr "Тест FFT Скотта от Robert Ladd (см. подробности в fbench.c)"
 
-#: shell/callbacks.c:202
+#: shell/callbacks.c:216
 msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
 msgstr "Часть кода основана на x86cpucaps от Osamu Kayasono"
 
-#: shell/callbacks.c:203
+#: shell/callbacks.c:217
 msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
 msgstr "Список поставщиков основан на GtkSysInfo от Pissens Sebastien"
 
-#: shell/callbacks.c:204
+#: shell/callbacks.c:218
 msgid "DMI support based on code by Stewart Adam"
 msgstr "Поддержка DMI основана на коде от Stewart Adam"
 
-#: shell/callbacks.c:205
+#: shell/callbacks.c:219
 msgid "SCSI support based on code by Pascal F. Martin"
 msgstr "Поддержка SCSI основана на коде от Pascal F. Martin"
 
-#: shell/callbacks.c:209
-#, fuzzy
+#: shell/callbacks.c:223
 msgid "Jakub Szypulka"
-msgstr "Jakub Szypulka"
+msgstr ""
 
-#: shell/callbacks.c:210
+#: shell/callbacks.c:224
 msgid "Tango Project"
 msgstr "Проект Tango"
 
-#: shell/callbacks.c:211
+#: shell/callbacks.c:225
 msgid "The GNOME Project"
 msgstr "Проект GNOME"
 
-#: shell/callbacks.c:212
+#: shell/callbacks.c:226
 msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
 msgstr "VMWare, Inc. (значок USB из VMWare Workstation 6)"
 
-#: shell/callbacks.c:224
+#: shell/callbacks.c:244
 msgid "System information and benchmark tool"
 msgstr "Информация о системе и тестирование"
 
-#: shell/callbacks.c:229
+#: shell/callbacks.c:249
 msgid ""
 "HardInfo is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
@@ -455,35 +463,35 @@ msgstr "Управляет боковой панелью"
 msgid "_Toolbar"
 msgstr "_Панель инструментов"
 
-#: shell/report.c:493
+#: shell/report.c:494 shell/report.c:502
 msgid "Save File"
 msgstr "Сохранить файл"
 
-#: shell/report.c:619
+#: shell/report.c:629
 msgid "Cannot create ReportContext. Programming bug?"
 msgstr "Не могу создать ReportContext. Ошибка программирования?"
 
-#: shell/report.c:638
+#: shell/report.c:648
 msgid "Open the report with your web browser?"
 msgstr "Открыть отчёт в веб-браузере?"
 
-#: shell/report.c:666
+#: shell/report.c:682
 msgid "Generating report..."
 msgstr "Создаётся отчёт..."
 
-#: shell/report.c:676
+#: shell/report.c:692
 msgid "Report saved."
 msgstr "Отчёт сохранён."
 
-#: shell/report.c:678
+#: shell/report.c:694
 msgid "Error while creating the report."
 msgstr "Ошибка во время создания отчёта."
 
-#: shell/report.c:780
+#: shell/report.c:796
 msgid "Generate Report"
 msgstr "Создать отчёт"
 
-#: shell/report.c:797
+#: shell/report.c:821
 msgid ""
 "<big><b>Generate Report</b></big>\n"
 "Please choose the information that you wish to view in your report:"
@@ -491,37 +499,41 @@ msgstr ""
 "<big><b>Создать отчёт</b></big>\n"
 "Пожалуйста выберите информацию для отображения в отчёте:"
 
-#: shell/report.c:857
+#: shell/report.c:893
 msgid "Select _None"
 msgstr "Выбор: нет"
 
-#: shell/report.c:864
+#: shell/report.c:904
 msgid "Select _All"
 msgstr "Выбор: все"
 
-#: shell/report.c:882
+#: shell/report.c:930
+msgid "_Cancel"
+msgstr ""
+
+#: shell/report.c:943
 msgid "_Generate"
 msgstr "_Сгенерировать"
 
-#: shell/shell.c:396
+#: shell/shell.c:408
 #, c-format
 msgid "%s - System Information"
 msgstr "%s - Информация о системе"
 
-#: shell/shell.c:401
+#: shell/shell.c:413
 msgid "System Information"
 msgstr "Информация о системе"
 
-#: shell/shell.c:708
+#: shell/shell.c:753
 msgid "Loading modules..."
 msgstr "Загрузка модулей..."
 
-#: shell/shell.c:1571
+#: shell/shell.c:1673
 #, c-format
 msgid "<b>%s → Summary</b>"
 msgstr "<b>%s → </b>"
 
-#: shell/shell.c:1679
+#: shell/shell.c:1782
 msgid "Updating..."
 msgstr "Обновление..."
 
@@ -802,9 +814,8 @@ msgid "Python3"
 msgstr ""
 
 #: modules/computer.c:204
-#, fuzzy
 msgid "Perl"
-msgstr "Perl"
+msgstr ""
 
 #: modules/computer.c:205
 msgid "Perl6 (VM)"
@@ -4122,21 +4133,6 @@ msgstr ""
 #: modules/network/net.c:479
 msgid "Broadcast Address"
 msgstr ""
-
-#~ msgid ""
-#~ "Compile-time options:\n"
-#~ "  Release version:   %s (%s)\n"
-#~ "  BinReloc enabled:  %s\n"
-#~ "  Data prefix:       %s\n"
-#~ "  Library prefix:    %s\n"
-#~ "  Compiled on:       %s %s (%s)\n"
-#~ msgstr ""
-#~ "Настройки компиляции:\n"
-#~ "  Release version:    %s (%s)\n"
-#~ "  BinReloc включен:   %s\n"
-#~ "  Префикс данных:     %s\n"
-#~ "  Префикс библиотеки: %s\n"
-#~ "  Скомпилировано на:  %s %s (%s)\n"
 
 #~ msgid "Y_es"
 #~ msgstr "Есть"

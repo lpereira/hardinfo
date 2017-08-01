@@ -7,26 +7,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-30 05:41-0500\n"
+"POT-Creation-Date: 2017-08-01 01:16-0500\n"
 "PO-Revision-Date: 2013-02-18 17:11-0300\n"
 "Last-Translator: Fernando López <flopez@linti.unlp.edu.ar>\n"
 "Language-Team: Fernando López <soportelihuen@linti.unlp.edu.ar>\n"
 "Language: es\n"
+"X-Poedit-Basepath: ../\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Spanish\n"
 
-#: hardinfo/hardinfo.c:48
+#. / %d will be latest year of copyright
+#: hardinfo/hardinfo.c:49
+#, c-format
 msgid ""
-"Copyright (C) 2003-2009 Leandro A. F. Pereira. See COPYING for details.\n"
+"Copyright (C) 2003-%d Leandro A. F. Pereira. See COPYING for details.\n"
 "\n"
 msgstr ""
-"Copyright (C) 2003-2009 Leandro A. F. Pereira. Vea COPYING para más "
-"detalles.\n"
+"Copyright (C) 2003-%d Leandro A. F. Pereira. Vea COPYING para más detalles.\n"
 "\n"
 
-#: hardinfo/hardinfo.c:50
+#: hardinfo/hardinfo.c:51
 #, c-format
 msgid ""
 "Compile-time options:\n"
@@ -36,17 +38,23 @@ msgid ""
 "  Library prefix:    %s\n"
 "  Compiled for:      %s\n"
 msgstr ""
+"Opciones de compilado:\n"
+"  \"Release\" versión:      %s (%s)\n"
+"  BinReloc habilitado:    %s\n"
+"  Prefijo de datos:       %s\n"
+"  Prefijo de bibliotecas: %s\n"
+"  Compilado en:           %s\n"
 
-#: hardinfo/hardinfo.c:56 hardinfo/hardinfo.c:57 modules/computer.c:565
+#: hardinfo/hardinfo.c:57 hardinfo/hardinfo.c:58 modules/computer.c:565
 #: modules/devices/printers.c:138
 msgid "Yes"
 msgstr "Sí"
 
-#: hardinfo/hardinfo.c:57 modules/computer.c:565 modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:58 modules/computer.c:565 modules/devices/printers.c:138
 msgid "No"
 msgstr "_No"
 
-#: hardinfo/hardinfo.c:68
+#: hardinfo/hardinfo.c:69
 #, c-format
 msgid ""
 "Failed to find runtime data.\n"
@@ -59,36 +67,36 @@ msgstr ""
 "• ¿HardInfo está correctamente instalado?\n"
 "• Vea si %s y %s existen y usted tiene permisos de lectura."
 
-#: hardinfo/hardinfo.c:75
+#: hardinfo/hardinfo.c:76
 #, c-format
 msgid ""
 "Modules:\n"
-"%-20s%-15s%-12s\n"
+"%-20s %-15s %-12s\n"
 msgstr ""
 "Módulos:\n"
-"%-20s%-15s%-12s\n"
+"%-20s %-15s %-12s\n"
 
-#: hardinfo/hardinfo.c:76
+#: hardinfo/hardinfo.c:77
 msgid "File Name"
 msgstr "Nombre de archivo"
 
-#: hardinfo/hardinfo.c:76 modules/computer.c:493 modules/computer.c:515
+#: hardinfo/hardinfo.c:77 modules/computer.c:493 modules/computer.c:515
 #: modules/computer.c:586 modules/devices/ia64/processor.c:152
 #: modules/devices/sh/processor.c:76 modules/network.c:331
 msgid "Name"
 msgstr "Nombre"
 
-#: hardinfo/hardinfo.c:76 modules/computer.c:291 modules/computer.c:466
+#: hardinfo/hardinfo.c:77 modules/computer.c:291 modules/computer.c:466
 #: modules/computer.c:468 modules/computer.c:556 modules/computer.c:564
 msgid "Version"
 msgstr "Versión"
 
-#: hardinfo/hardinfo.c:123
+#: hardinfo/hardinfo.c:124
 #, c-format
 msgid "Unknown benchmark ``%s'' or libbenchmark.so not loaded"
 msgstr "Benchmark desconocido ``%s'' o no se cargó libbenchmark.so"
 
-#: hardinfo/hardinfo.c:151
+#: hardinfo/hardinfo.c:152
 msgid "Don't know what to do. Exiting."
 msgstr "No se puede determinar que hacer. Saliendo."
 
@@ -150,55 +158,55 @@ msgstr ""
 msgid "%.1f PiB"
 msgstr ""
 
-#: hardinfo/util.c:352
+#: hardinfo/util.c:367
 msgid "Error"
 msgstr "Error"
 
-#: hardinfo/util.c:352 hardinfo/util.c:368
+#: hardinfo/util.c:367 hardinfo/util.c:383
 msgid "Warning"
 msgstr "Advertencia"
 
-#: hardinfo/util.c:367
+#: hardinfo/util.c:382
 msgid "Fatal Error"
 msgstr "Error fatal"
 
-#: hardinfo/util.c:392
+#: hardinfo/util.c:407
 msgid "creates a report and prints to standard output"
 msgstr "crea un reporte y lo imprime en la salida estándar"
 
-#: hardinfo/util.c:398
+#: hardinfo/util.c:413
 msgid "chooses a report format (text, html)"
 msgstr "elige un formato para el reporte (texto, html)"
 
-#: hardinfo/util.c:404
+#: hardinfo/util.c:419
 msgid "run benchmark; requires benchmark.so to be loaded"
 msgstr "correr benchmark; requiere benchmark.so para ser cargado"
 
-#: hardinfo/util.c:410
+#: hardinfo/util.c:425
 msgid "lists modules"
 msgstr "lista los módulos"
 
-#: hardinfo/util.c:416
+#: hardinfo/util.c:431
 msgid "specify module to load"
 msgstr "especificar módulo a cargar"
 
-#: hardinfo/util.c:422
+#: hardinfo/util.c:437
 msgid "automatically load module dependencies"
 msgstr "cargar automáticamente las dependencias de los módulos"
 
-#: hardinfo/util.c:429
+#: hardinfo/util.c:444
 msgid "run in XML-RPC server mode"
 msgstr "correr en modo servidor XML-RPC"
 
-#: hardinfo/util.c:436
+#: hardinfo/util.c:451
 msgid "shows program version and quit"
 msgstr "muestra la versión del programa y sale"
 
-#: hardinfo/util.c:441
+#: hardinfo/util.c:456
 msgid "- System Profiler and Benchmark tool"
 msgstr "- Analizador de sistema y herramienta de benchmark"
 
-#: hardinfo/util.c:451
+#: hardinfo/util.c:466
 #, c-format
 msgid ""
 "Unrecognized arguments.\n"
@@ -207,29 +215,29 @@ msgstr ""
 "Argumentos no reconocidos.\n"
 "Intente ``%s --help'' para más información.\n"
 
-#: hardinfo/util.c:517
+#: hardinfo/util.c:532
 #, c-format
 msgid "Couldn't find a Web browser to open URL %s."
 msgstr "No se pudo encontrar un navegador Web para abrir la URL %s."
 
-#: hardinfo/util.c:866
+#: hardinfo/util.c:881
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\", load it?"
 msgstr "El módulo \"%s\" depende del módulo \"%s\", ¿desea cargarlo?"
 
-#: hardinfo/util.c:889
+#: hardinfo/util.c:904
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\"."
 msgstr "El módulo \"%s\" depende del módulo \"%s\"."
 
-#: hardinfo/util.c:934
+#: hardinfo/util.c:949
 #, c-format
 msgid "No module could be loaded. Check permissions on \"%s\" and try again."
 msgstr ""
 "No se puede cargar ningún módulo. Verifique los permisos en \"%s\" y pruebe "
 "de nuevo."
 
-#: hardinfo/util.c:938
+#: hardinfo/util.c:953
 msgid ""
 "No module could be loaded. Please use hardinfo -l to list all available "
 "modules and try again with a valid module list."
@@ -238,31 +246,31 @@ msgstr ""
 "todoslos módulos disponibles e intente de nuevo con una lista válida de "
 "módulos."
 
-#: hardinfo/util.c:1114
+#: hardinfo/util.c:1133
 #, c-format
 msgid "Scanning: %s..."
 msgstr "Escaneando: %s..."
 
-#: hardinfo/util.c:1124 shell/callbacks.c:67 shell/shell.c:303
-#: shell/shell.c:721 shell/shell.c:1701 modules/benchmark.c:445
+#: hardinfo/util.c:1143 shell/callbacks.c:77 shell/shell.c:307
+#: shell/shell.c:766 shell/shell.c:1808 modules/benchmark.c:445
 #: modules/benchmark.c:453
 msgid "Done."
 msgstr "Hecho."
 
-#: shell/callbacks.c:47
+#: shell/callbacks.c:48 shell/callbacks.c:56
 msgid "Save Image"
 msgstr "Guardar imagen"
 
-#: shell/callbacks.c:63
+#: shell/callbacks.c:73
 msgid "Saving image..."
 msgstr "Guardando imagen"
 
-#: shell/callbacks.c:153
+#: shell/callbacks.c:163
 #, c-format
 msgid "%s Module"
 msgstr "%s módulo"
 
-#: shell/callbacks.c:160
+#: shell/callbacks.c:174
 #, c-format
 msgid ""
 "Written by %s\n"
@@ -271,82 +279,82 @@ msgstr ""
 "Escrito por %s\n"
 "Licencia %s"
 
-#: shell/callbacks.c:174
+#: shell/callbacks.c:188
 #, c-format
 msgid "No about information is associated with the %s module."
 msgstr "No hay información \"acerca de\" asociada al módulo %s."
 
-#: shell/callbacks.c:189
+#: shell/callbacks.c:203
 msgid "Author:"
 msgstr "Autor:"
 
-#: shell/callbacks.c:192
+#: shell/callbacks.c:206
 msgid "Contributors:"
 msgstr "Contribuyentes:"
 
-#: shell/callbacks.c:196
+#: shell/callbacks.c:210
 msgid "Based on work by:"
 msgstr "Basado en el trabajo de:"
 
-#: shell/callbacks.c:197
+#: shell/callbacks.c:211
 msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
 msgstr "Implementación de MD5 por Colin Plumb (ver md5.c para detalles)"
 
-#: shell/callbacks.c:198
+#: shell/callbacks.c:212
 msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
 msgstr "Implementación de SHA1 por Steve Reid (ver sha1.c para detalles)"
 
-#: shell/callbacks.c:199
+#: shell/callbacks.c:213
 msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
 msgstr ""
 "Implementación de Blowfish por Paul Kocher (ver blowfich.c para detalles)"
 
-#: shell/callbacks.c:200
+#: shell/callbacks.c:214
 msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
 msgstr ""
 "Benchmark de trazado de rayos por John Walker (ver fbench.c para detalles)"
 
-#: shell/callbacks.c:201
+#: shell/callbacks.c:215
 msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
 msgstr "Benchmark  de FFT por Scott Robert Ladd (ver fftbench.c para detalles)"
 
-#: shell/callbacks.c:202
+#: shell/callbacks.c:216
 msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
 msgstr "Parte del código parcialmente basado en x86cpucaps por Osamu Kayasono"
 
-#: shell/callbacks.c:203
+#: shell/callbacks.c:217
 msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
 msgstr "Lista de proveedores basada en GtkSysInfo por Pissens Sebastien"
 
-#: shell/callbacks.c:204
+#: shell/callbacks.c:218
 msgid "DMI support based on code by Stewart Adam"
 msgstr "Soporte DMI basado en código de Stewart Adam"
 
-#: shell/callbacks.c:205
+#: shell/callbacks.c:219
 msgid "SCSI support based on code by Pascal F. Martin"
 msgstr "Soporte SCSI basado en código de Pascal F. Martin"
 
-#: shell/callbacks.c:209
+#: shell/callbacks.c:223
 msgid "Jakub Szypulka"
 msgstr ""
 
-#: shell/callbacks.c:210
+#: shell/callbacks.c:224
 msgid "Tango Project"
 msgstr "Proyecto Tango"
 
-#: shell/callbacks.c:211
+#: shell/callbacks.c:225
 msgid "The GNOME Project"
 msgstr "El proyecto GNOME"
 
-#: shell/callbacks.c:212
+#: shell/callbacks.c:226
 msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
 msgstr "VMWare, Inc. (icono USB de VMWare Workstation 6)"
 
-#: shell/callbacks.c:224
+#: shell/callbacks.c:244
 msgid "System information and benchmark tool"
 msgstr "Herramienta de información del sistema y benchmark"
 
-#: shell/callbacks.c:229
+#: shell/callbacks.c:249
 msgid ""
 "HardInfo is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
@@ -442,35 +450,35 @@ msgstr "Cambia la visibilidad del panel lateral"
 msgid "_Toolbar"
 msgstr "_Barra de herramientas"
 
-#: shell/report.c:493
+#: shell/report.c:494 shell/report.c:502
 msgid "Save File"
 msgstr "Guardar archivo"
 
-#: shell/report.c:619
+#: shell/report.c:629
 msgid "Cannot create ReportContext. Programming bug?"
 msgstr "No se puede crear ReportContext. ¿Error del programa?"
 
-#: shell/report.c:638
+#: shell/report.c:648
 msgid "Open the report with your web browser?"
 msgstr "¿Abrir el reporte en el navegador web?"
 
-#: shell/report.c:666
+#: shell/report.c:682
 msgid "Generating report..."
 msgstr "Generando reporte..."
 
-#: shell/report.c:676
+#: shell/report.c:692
 msgid "Report saved."
 msgstr "Reporte guardado."
 
-#: shell/report.c:678
+#: shell/report.c:694
 msgid "Error while creating the report."
 msgstr "Error creando el reporte."
 
-#: shell/report.c:780
+#: shell/report.c:796
 msgid "Generate Report"
 msgstr "Generar reporte"
 
-#: shell/report.c:797
+#: shell/report.c:821
 msgid ""
 "<big><b>Generate Report</b></big>\n"
 "Please choose the information that you wish to view in your report:"
@@ -478,37 +486,41 @@ msgstr ""
 "<big><b>Generar reporte</b></big>\n"
 "Por favor elija la información que desea ver en el reporte:"
 
-#: shell/report.c:857
+#: shell/report.c:893
 msgid "Select _None"
 msgstr "_Deseleccionar todo"
 
-#: shell/report.c:864
+#: shell/report.c:904
 msgid "Select _All"
 msgstr "_Seleccionar todo"
 
-#: shell/report.c:882
+#: shell/report.c:930
+msgid "_Cancel"
+msgstr ""
+
+#: shell/report.c:943
 msgid "_Generate"
 msgstr "_Generar"
 
-#: shell/shell.c:396
+#: shell/shell.c:408
 #, c-format
 msgid "%s - System Information"
 msgstr "%s - Información del sistema"
 
-#: shell/shell.c:401
+#: shell/shell.c:413
 msgid "System Information"
 msgstr "Información del sistema"
 
-#: shell/shell.c:708
+#: shell/shell.c:753
 msgid "Loading modules..."
 msgstr "Cargando módulos..."
 
-#: shell/shell.c:1571
+#: shell/shell.c:1673
 #, c-format
 msgid "<b>%s → Summary</b>"
 msgstr "<b>%s → Resumen</b>"
 
-#: shell/shell.c:1679
+#: shell/shell.c:1782
 msgid "Updating..."
 msgstr "Actualizando..."
 
@@ -4060,19 +4072,11 @@ msgid "Broadcast Address"
 msgstr ""
 
 #~ msgid ""
-#~ "Compile-time options:\n"
-#~ "  Release version:   %s (%s)\n"
-#~ "  BinReloc enabled:  %s\n"
-#~ "  Data prefix:       %s\n"
-#~ "  Library prefix:    %s\n"
-#~ "  Compiled on:       %s %s (%s)\n"
+#~ "Modules:\n"
+#~ "%-20s%-15s%-12s\n"
 #~ msgstr ""
-#~ "Opciones de compilado:\n"
-#~ "  Versión:                %s (%s)\n"
-#~ "  BinReloc habilitado:    %s\n"
-#~ "  Prefijo de datos:       %s\n"
-#~ "  Prefijo de bibliotecas: %s\n"
-#~ "  Compilado en:           %s %s (%s)\n"
+#~ "Módulos:\n"
+#~ "%-20s%-15s%-12s\n"
 
 #~ msgid "Y_es"
 #~ msgstr "_Sí"
