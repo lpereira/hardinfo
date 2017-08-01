@@ -199,32 +199,34 @@ void cb_about()
 {
     Shell *shell = shell_get_main_shell();
     GtkWidget *about;
+    gchar *copyright = NULL;
     const gchar *authors[] = {
-	_("Author:"),
-	"Leandro A. F. Pereira",
-	"",
-	_("Contributors:"),
-	"Agney Lopes Roth Ferraz",
-	"Andrey Esin",
-	"",
-	_("Based on work by:"),
-	_("MD5 implementation by Colin Plumb (see md5.c for details)"),
-	_("SHA1 implementation by Steve Reid (see sha1.c for details)"),
-	_("Blowfish implementation by Paul Kocher (see blowfich.c for details)"),
-	_("Raytracing benchmark by John Walker (see fbench.c for details)"),
-	_("FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"),
-	_("Some code partly based on x86cpucaps by Osamu Kayasono"),
-	_("Vendor list based on GtkSysInfo by Pissens Sebastien"),
-	_("DMI support based on code by Stewart Adam"),
-	_("SCSI support based on code by Pascal F. Martin"),
-	NULL
+        _("Author:"),
+        "Leandro A. F. Pereira",
+        "",
+        _("Contributors:"),
+        "Agney Lopes Roth Ferraz",
+        "Andrey Esin",
+        "Burt P.",
+        "",
+        _("Based on work by:"),
+        _("MD5 implementation by Colin Plumb (see md5.c for details)"),
+        _("SHA1 implementation by Steve Reid (see sha1.c for details)"),
+        _("Blowfish implementation by Paul Kocher (see blowfich.c for details)"),
+        _("Raytracing benchmark by John Walker (see fbench.c for details)"),
+        _("FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"),
+        _("Some code partly based on x86cpucaps by Osamu Kayasono"),
+        _("Vendor list based on GtkSysInfo by Pissens Sebastien"),
+        _("DMI support based on code by Stewart Adam"),
+        _("SCSI support based on code by Pascal F. Martin"),
+        NULL
     };
     const gchar *artists[] = {
-	_("Jakub Szypulka"),
-	_("Tango Project"),
-	_("The GNOME Project"),
-	_("VMWare, Inc. (USB icon from VMWare Workstation 6)"),
-	NULL
+        "Jakub Szypulka",
+        _("Tango Project"),
+        _("The GNOME Project"),
+        _("VMWare, Inc. (USB icon from VMWare Workstation 6)"),
+        NULL
     };
 
     about = gtk_about_dialog_new();
@@ -236,10 +238,10 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
 #endif
 
+    copyright = g_strdup_printf("Copyright \302\251 2003-%d Leandro A. F. Pereira", HARDINFO_COPYRIGHT_LATEST_YEAR);
+
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
-    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about),
-				   "Copyright \302\251 2003-2016 "
-				   "Leandro A. F. Pereira");
+    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				  _("System information and benchmark tool"));
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
@@ -265,6 +267,8 @@ void cb_about()
 
     gtk_dialog_run(GTK_DIALOG(about));
     gtk_widget_destroy(about);
+
+    g_free(copyright);
 }
 
 void cb_generate_report()

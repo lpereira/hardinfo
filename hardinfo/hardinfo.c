@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     if (params.show_version) {
         g_print("HardInfo version " VERSION "\n");
         g_print
-            (_(/*/ %d will be latest year of copyright*/ "Copyright (C) 2003-%d Leandro A. F. Pereira. See COPYING for details.\n\n"), 2017);
+            (_(/*/ %d will be latest year of copyright*/ "Copyright (C) 2003-%d Leandro A. F. Pereira. See COPYING for details.\n\n"), HARDINFO_COPYRIGHT_LATEST_YEAR );
 
 	g_print(_("Compile-time options:\n"
 		"  Release version:   %s (%s)\n"
