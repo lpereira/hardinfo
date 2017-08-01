@@ -33,6 +33,7 @@ int main(int argc, char **argv)
 {
     GSList *modules;
 
+    setlocale(LC_ALL, "");
     bindtextdomain("hardinfo", LOCALEDIR);
     textdomain("hardinfo");
 
