@@ -92,15 +92,15 @@ msgstr ""
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Tag"
+msgstr[1] "%d Tage"
 
 #: hardinfo/util.c:105 modules/computer/uptime.c:54
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Stunde"
+msgstr[1] "%d Stunden"
 
 #: hardinfo/util.c:106 modules/computer/uptime.c:55
 #, c-format
@@ -113,8 +113,8 @@ msgstr[1] "%d Minuten"
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Sekunde"
+msgstr[1] "%d Sekunden"
 
 #: hardinfo/util.c:128
 #, c-format
@@ -4040,21 +4040,6 @@ msgstr ""
 
 #~ msgid "Y_es"
 #~ msgstr "_Ja"
-
-#~ msgid "%d day, "
-#~ msgid_plural "%d days, "
-#~ msgstr[0] "%d Tag, "
-#~ msgstr[1] "%d Tage, "
-
-#~ msgid "%d hour, "
-#~ msgid_plural "%d hours, "
-#~ msgstr[0] "%d Stunde, "
-#~ msgstr[1] "%d Stunden, "
-
-#~ msgid "%d hour and "
-#~ msgid_plural "%d hours and "
-#~ msgstr[0] "%d Stunde und "
-#~ msgstr[1] "%d Stunden und "
 
 #~ msgid "Contents"
 #~ msgstr "Inhalt"

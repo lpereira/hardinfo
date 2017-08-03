@@ -102,15 +102,15 @@ msgstr "Que faire. Sortie."
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d jour"
+msgstr[1] "%d jours"
 
 #: hardinfo/util.c:105 modules/computer/uptime.c:54
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d heure"
+msgstr[1] "%d heures"
 
 #: hardinfo/util.c:106 modules/computer/uptime.c:55
 #, c-format
@@ -123,8 +123,8 @@ msgstr[1] "%d minutes"
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d seconde"
+msgstr[1] "%d secondes"
 
 #: hardinfo/util.c:128
 #, c-format
@@ -4077,16 +4077,6 @@ msgstr ""
 #~ msgid "Y_es"
 #~ msgstr "O_ui"
 
-#~ msgid "%d day, "
-#~ msgid_plural "%d days, "
-#~ msgstr[0] "%d jour, "
-#~ msgstr[1] "%d jours, "
-
-#~ msgid "%d hour, "
-#~ msgid_plural "%d hours, "
-#~ msgstr[0] "%d heure, "
-#~ msgstr[1] "%d heures, "
-
 #~ msgid "Remote: <b>%s</b>"
 #~ msgstr "Accès: <b>%s</b>"
 
@@ -4158,8 +4148,3 @@ msgstr ""
 
 #~ msgid "XFree86 version"
 #~ msgstr "version de XFree86 "
-
-#~ msgid "%d hour and "
-#~ msgid_plural "%d hours and "
-#~ msgstr[0] "%d  heure et "
-#~ msgstr[1] "%d  heures et "
