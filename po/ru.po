@@ -128,9 +128,9 @@ msgstr[2] "%d минут"
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "секунда"
+msgstr[1] "секунды"
+msgstr[2] "секунд"
 
 #: hardinfo/util.c:128
 #, c-format
@@ -4187,12 +4187,6 @@ msgstr ""
 
 #~ msgid "XFree86 version"
 #~ msgstr "Версия XFree86"
-
-#~ msgid "%d hour and "
-#~ msgid_plural "%d hours and "
-#~ msgstr[0] "%d час и"
-#~ msgstr[1] "%d часа и"
-#~ msgstr[2] "%d часов и"
 
 #~ msgid "HardInfo cannot run without loading the additional module."
 #~ msgstr "HardInfo не может быть запущен без дополнительного модуля."

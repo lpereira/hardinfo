@@ -104,15 +104,15 @@ msgstr "No se puede determinar que hacer. Saliendo."
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d día"
+msgstr[1] "%d días"
 
 #: hardinfo/util.c:105 modules/computer/uptime.c:54
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d hora"
+msgstr[1] "%d horas"
 
 #: hardinfo/util.c:106 modules/computer/uptime.c:55
 #, c-format
@@ -125,8 +125,8 @@ msgstr[1] "%d minutos"
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d segundo"
+msgstr[1] "%d segundos"
 
 #: hardinfo/util.c:128
 #, c-format
@@ -4071,13 +4071,6 @@ msgstr ""
 msgid "Broadcast Address"
 msgstr ""
 
-#~ msgid ""
-#~ "Modules:\n"
-#~ "%-20s%-15s%-12s\n"
-#~ msgstr ""
-#~ "Módulos:\n"
-#~ "%-20s%-15s%-12s\n"
-
 #~ msgid "Y_es"
 #~ msgstr "_Sí"
 
@@ -4086,16 +4079,6 @@ msgstr ""
 
 #~ msgid "Unknown distribution"
 #~ msgstr "Distribución desconocida"
-
-#~ msgid "%d day, "
-#~ msgid_plural "%d days, "
-#~ msgstr[0] "%d día, "
-#~ msgstr[1] "%d días, "
-
-#~ msgid "%d hour, "
-#~ msgid_plural "%d hours, "
-#~ msgstr[0] "%d hora, "
-#~ msgstr[1] "%d horas, "
 
 #~ msgid "_Connect to..."
 #~ msgstr "_Conectar a..."
@@ -4141,8 +4124,3 @@ msgstr ""
 
 #~ msgid "XFree86 version"
 #~ msgstr "Versión de XFree86"
-
-#~ msgid "%d hour and "
-#~ msgid_plural "%d hours and "
-#~ msgstr[0] "%d hora y "
-#~ msgstr[1] "%d horas y "
