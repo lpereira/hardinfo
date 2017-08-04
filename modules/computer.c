@@ -293,9 +293,62 @@ gchar *callback_dev()
 }
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
+static gchar *detect_machine_type(void)
+{
+    gchar *chassis;
+
+    if (g_file_get_contents("/sys/devices/virtual/dmi/id/chassis_type", &chassis, NULL, NULL)) {
+        static const char *types[] = {
+            N_("Invalid chassis type (0)"),
+            N_("Unknown chassis type"), /* 1 is "Other", but not helpful in HardInfo */
+            N_("Unknown chassis type"),
+            N_("Desktop"),
+            N_("Low Profile Desktpo"),
+            N_("Pizza Box"),
+            N_("Mini Tower"),
+            N_("Tower"),
+            N_("Portable"),
+            N_("Laptop"),
+            N_("Notebook"),
+            N_("Handheld"),
+            N_("Docking Statoin"),
+            N_("All in One"),
+            N_("Sub Notebook"),
+            N_("Space-saving"),
+            N_("Lunch Box"),
+            N_("Main Server Chassis"),
+            N_("Expansion Chassis"),
+            N_("Sub Chassis"),
+            N_("Bus Expansion Chassis"),
+            N_("Peripheral Chassis"),
+            N_("RAID Chassis"),
+            N_("Rack Mount Chassis"),
+            N_("Sealed-case PC"),
+        };
+        int chassis_type = atoi(idle_free(chassis));
+
+        if (chassis_type >= 0 && chassis_type <= G_N_ELEMENTS(types))
+            return g_strdup(_(types[chassis_type]));
+    }
+
+    if (g_file_test("/proc/pmu/info", G_FILE_TEST_EXISTS))
+        return g_strdup(_("Laptop"));
+
+    /* FIXME: check if files in /sys/class/power_supply/${*)/type contains
+     * "Battery", or .../scope does not contain Device. */
+
+    /* FIXME: check if there's more than one directory in /proc/acpi/battery */
+
+    /* FIXME: check if batteries are found using /proc/apm */
+
+    /* FIXME: use dmidecode if available to get chassis type */
+
+    return g_strdup(_("Unknown physical machine type"));
+}
+
 /* Table based off imvirt by Thomas Liske <liske@ibh.de>
    Copyright (c) 2008 IBH IT-Service GmbH under GPLv2. */
-gchar *computer_get_virtualization()
+gchar *computer_get_virtualization(void)
 {
     gboolean found = FALSE;
     gint i, j;
@@ -367,7 +420,7 @@ gchar *computer_get_virtualization()
 
     DEBUG("no virtual machine detected; assuming physical machine");
 
-    return g_strdup(_("Physical machine"));
+    return detect_machine_type();
 }
 
 gchar *callback_summary()
