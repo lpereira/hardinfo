@@ -220,7 +220,7 @@ void scan_dev(gboolean reload)
        { N_("Go"), "go version", "\\d+\\.\\d+\\.?\\d* ", TRUE },
        { N_("Tools"), NULL, FALSE },
        { N_("make"), "make --version", "\\d+\\.\\d+", TRUE },
-       { N_("GDB"), "gdb --version", "\\d+\\.\\S+", TRUE },
+       { N_("GDB"), "gdb --version", "(?<=^GNU gdb ).*", TRUE },
        { N_("strace"), "strace -V", "\\d+\\.\\d+\\.?\\d*", TRUE },
        { N_("valgrind"), "valgrind --version", "\\d+\\.\\d+\\.\\S+", TRUE },
        { N_("QMake"), "qmake --version", "\\d+\\.\\S+", TRUE},
@@ -264,12 +264,11 @@ void scan_dev(gboolean reload)
            g_free(output);
        }
 
-       if (version) {
-           dev_list = h_strdup_cprintf("%s=%s\n", dev_list, detect_lang[i].compiler_name, version);
-           g_free(version);
-       } else {
-           dev_list = h_strdup_cprintf(_("%s=Not found\n"), dev_list, detect_lang[i].compiler_name);
-       }
+       if (version == NULL)
+           version = strdup(_("Not found"));
+
+       dev_list = h_strdup_cprintf("%s=%s\n", dev_list, detect_lang[i].compiler_name, version);
+       g_free(version);
 
        temp = g_strdup_printf(_("Detecting version: %s"),
                               detect_lang[i].compiler_name);
