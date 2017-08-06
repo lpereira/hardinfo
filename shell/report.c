@@ -802,7 +802,7 @@ static ReportDialog
     gtk_window_set_type_hint(GTK_WINDOW(dialog),
 			     GDK_WINDOW_TYPE_HINT_DIALOG);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
     dialog1_vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 #else
     dialog1_vbox = GTK_DIALOG(dialog)->vbox;
@@ -893,7 +893,7 @@ static ReportDialog
     button3 = gtk_button_new_with_mnemonic(_("Select _None"));
     gtk_widget_show(button3);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button3);
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_set_can_default(button3, TRUE);
 #else
     GTK_WIDGET_SET_FLAGS(button3, GTK_CAN_DEFAULT);
@@ -904,7 +904,7 @@ static ReportDialog
     button6 = gtk_button_new_with_mnemonic(_("Select _All"));
     gtk_widget_show(button6);
     gtk_container_add(GTK_CONTAINER(vbuttonbox3), button6);
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_set_can_default(button6, TRUE);
 #else
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
@@ -912,7 +912,7 @@ static ReportDialog
     g_signal_connect(button6, "clicked", G_CALLBACK(report_dialog_sel_all),
 		     rd);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 /* TODO:GTK3
  * [https://developer.gnome.org/gtk3/stable/GtkDialog.html#gtk-dialog-get-action-area]
  * gtk_dialog_get_action_area has been deprecated since version 3.12 and should not be used in newly-written code.
@@ -926,15 +926,11 @@ static ReportDialog
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     button8 = gtk_button_new_with_mnemonic(_("_Cancel"));
-#else
-    button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-#endif
     gtk_widget_show(button8);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
 				 GTK_RESPONSE_CANCEL);
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_set_can_default(button8, TRUE);
 #else
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
@@ -944,7 +940,7 @@ static ReportDialog
     gtk_widget_show(button7);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_set_can_default(button7, TRUE);
 #else
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);

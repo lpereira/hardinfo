@@ -117,7 +117,7 @@ void sync_manager_clear_entries(void)
 {
 #ifdef HAS_LIBSOUP
     DEBUG("clearing syncmanager entries");
-    
+
     g_slist_free(entries);
     entries = NULL;
 #else
@@ -470,7 +470,7 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 
 	gtk_label_set_use_markup(GTK_LABEL(labels[i]), TRUE);
 	gtk_label_set_use_markup(GTK_LABEL(status_labels[i]), TRUE);
-	
+
 	gtk_misc_set_alignment(GTK_MISC(labels[i]), 0.0, 0.5);
 	gtk_misc_set_alignment(GTK_MISC(status_labels[i]), 1.0, 0.5);
 
@@ -489,8 +489,8 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 
 	if (sd->flag_cancel) {
 	    markup =
-		g_strdup_printf(_("<s>%s</s> <i>(canceled)</i>"),
-				sna[i].name);
+		g_strdup_printf("<s>%s</s> <i>%s</i>",
+				sna[i].name, _("(canceled)"));
 	    gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
 	    g_free(markup);
 
@@ -506,8 +506,8 @@ static void sync_dialog_netarea_start_actions(SyncDialog * sd,
 
 	if (sna[i].do_action && !sna[i].do_action(sd, &sna[i])) {
 	    markup =
-		g_strdup_printf(_("<b><s>%s</s></b> <i>(failed)</i>"),
-				sna[i].name);
+		g_strdup_printf("<b><s>%s</s></b> <i>%s</i>",
+				sna[i].name, _("(failed)"));
 	    gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
 	    g_free(markup);
 
@@ -667,18 +667,29 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
+#if GTK_CHECK_VERSION(2, 14, 0)
+    dialog1_vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+#else
     dialog1_vbox = GTK_DIALOG(dialog)->vbox;
+#endif
     gtk_box_set_spacing(GTK_BOX(dialog1_vbox), 5);
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
-
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+#else
     hbox = gtk_hbox_new(FALSE, 5);
+#endif
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), hbox, FALSE, FALSE, 0);
 
     label = gtk_label_new(LABEL_SYNC_DEFAULT);
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+#else
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+#endif
 
     gtk_box_pack_start(GTK_BOX(hbox),
 		       icon_cache_get_image("syncmanager.png"),
@@ -725,29 +736,43 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 
     populate_store(store);
 
+#if GTK_CHECK_VERSION(2, 14, 0)
+    dialog1_action_area = gtk_dialog_get_action_area(GTK_DIALOG(dialog));
+#else
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
+#endif
     gtk_widget_show(dialog1_action_area);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
 
-    button8 = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+    button8 = gtk_button_new_with_mnemonic(_("_Cancel"));
     gtk_widget_show(button8);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
 				 GTK_RESPONSE_CANCEL);
+#if GTK_CHECK_VERSION(2, 18, 0)
+    gtk_widget_set_can_default(button8, TRUE);
+#else
     GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
-
+#endif
     button7 = gtk_button_new_with_mnemonic(_("_Synchronize"));
     gtk_widget_show(button7);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);
+#if GTK_CHECK_VERSION(2, 18, 0)
+    gtk_widget_set_can_default(button7, TRUE);
+#else
     GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
-
+#endif
     button6 = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
     g_signal_connect(G_OBJECT(button6), "clicked",
 		     (GCallback) close_clicked, NULL);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button6,
 				 GTK_RESPONSE_ACCEPT);
+#if GTK_CHECK_VERSION(2, 18, 0)
+    gtk_widget_set_can_default(button6, TRUE);
+#else
     GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
+#endif
 
     sd->dialog = dialog;
     sd->button_sync = button7;
