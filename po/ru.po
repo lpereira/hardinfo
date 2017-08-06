@@ -896,10 +896,10 @@ msgstr ""
 msgid "CMake"
 msgstr ""
 
-#: modules/computer.c:271
+#: modules/computer.c:268
 #, c-format
-msgid "%s=Not found\n"
-msgstr "%s=Не найдено\n"
+msgid "Not found"
+msgstr "Не найдено"
 
 #: modules/computer.c:274
 #, c-format
@@ -1166,15 +1166,15 @@ msgstr "ID группы"
 
 #: modules/computer.c:756
 msgid "RAM"
-msgstr ""
+msgstr "Оперативная память"
 
 #: modules/computer.c:756 modules/devices/devicetree/pmac_data.c:82
 msgid "Motherboard"
-msgstr ""
+msgstr "Материнская плата"
 
 #: modules/computer.c:756
 msgid "Graphics"
-msgstr ""
+msgstr "Графика"
 
 #: modules/computer.c:757 modules/devices.c:103
 msgid "Storage"
@@ -1186,7 +1186,7 @@ msgstr "Принтеры"
 
 #: modules/computer.c:757
 msgid "Audio"
-msgstr ""
+msgstr "Аудио"
 
 #: modules/computer.c:812
 msgid "Gathers high-level computer information"
@@ -1199,31 +1199,31 @@ msgstr "Монитор %d=%dx%d пикселей\n"
 
 #: modules/computer/filesystem.c:83
 msgid "Filesystem"
-msgstr ""
+msgstr "Файловая система"
 
 #: modules/computer/filesystem.c:84
 msgid "Mounted As"
-msgstr ""
+msgstr "Смонтировано"
 
 #: modules/computer/filesystem.c:84
 msgid "Read-Write"
-msgstr ""
+msgstr "Для чтения и записи"
 
 #: modules/computer/filesystem.c:84
 msgid "Read-Only"
-msgstr ""
+msgstr "Только для чтения"
 
 #: modules/computer/filesystem.c:86 modules/devices/spd-decode.c:1510
 msgid "Size"
-msgstr ""
+msgstr "Размер"
 
 #: modules/computer/filesystem.c:87
 msgid "Used"
-msgstr ""
+msgstr "Занято"
 
 #: modules/computer/filesystem.c:88
 msgid "Available"
-msgstr ""
+msgstr "Свободно"
 
 #: modules/computer/loadavg.c:64
 msgid "Couldn't obtain load average"
@@ -1267,7 +1267,7 @@ msgstr "Неизвестно (Оконный менеджер: %s)"
 #: modules/computer/os.c:168
 #, c-format
 msgid "%s on %s"
-msgstr ""
+msgstr "%s на %s"
 
 #: modules/computer/os.c:232
 msgid "Terminal"
@@ -1302,15 +1302,15 @@ msgstr ""
 
 #: modules/computer/users.c:47
 msgid "User Information"
-msgstr ""
+msgstr "Информация о пользователе"
 
 #: modules/computer/users.c:48
 msgid "User ID"
-msgstr ""
+msgstr "ID пользователя"
 
 #: modules/computer/users.c:51
 msgid "Default Shell"
-msgstr ""
+msgstr "Оболочка по умолчанию"
 
 #: modules/devices/alpha/processor.c:80 modules/devices/devicetree.c:195
 #: modules/devices/devicetree.c:230 modules/devices/devicetree/pmac_data.c:80
@@ -2008,6 +2008,10 @@ msgstr "Виртуальная память"
 #: modules/devices/devmemory.c:101
 msgid "Free Virtual Memory"
 msgstr "Свободная виртуальная память"
+
+#: modules/devices/dmi.c:36
+msgid "Date"
+msgstr "Дата"
 
 #: modules/devices/ia64/processor.c:108
 msgid "IA64 Processor"
@@ -4135,19 +4139,19 @@ msgstr ""
 #: modules/network/net.c:400 modules/network/net.c:422
 #: modules/network/net.c:423
 msgid "MiB"
-msgstr ""
+msgstr " Миб"
 
 #: modules/network/net.c:414
 msgid "Network Adapter Properties"
-msgstr ""
+msgstr "Свойства сетевого адаптера"
 
 #: modules/network/net.c:415
 msgid "Interface Type"
-msgstr ""
+msgstr "Тип интерфейса"
 
 #: modules/network/net.c:416
 msgid "Hardware Address (MAC)"
-msgstr ""
+msgstr "Аппаратный адрес (MAC)"
 
 #: modules/network/net.c:420
 msgid "MTU"
@@ -4155,15 +4159,15 @@ msgstr ""
 
 #: modules/network/net.c:421
 msgid "Transfer Details"
-msgstr ""
+msgstr "Информация о передаче данных"
 
 #: modules/network/net.c:422
 msgid "Bytes Received"
-msgstr ""
+msgstr "Получено байт"
 
 #: modules/network/net.c:423
 msgid "Bytes Sent"
-msgstr ""
+msgstr "Отправлено байт"
 
 #: modules/network/net.c:440 modules/network/net.c:462
 #: modules/network/net.c:463
@@ -4217,7 +4221,7 @@ msgstr ""
 
 #: modules/network/net.c:479
 msgid "Broadcast Address"
-msgstr ""
+msgstr "Широковещательный адрес"
 
 #~ msgid "Save Image"
 #~ msgstr "Сохранить изображение"
