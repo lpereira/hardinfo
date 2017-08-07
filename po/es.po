@@ -65,7 +65,7 @@ msgstr ""
 "Falló en encontrar datos del programa.\n"
 "\n"
 "• ¿HardInfo está correctamente instalado?\n"
-"• Vea si %s y %s existen y usted tiene permisos de lectura."
+"• Vea si %s y %s existen y tenga accesos para lectura."
 
 #: hardinfo/hardinfo.c:76
 #, c-format
@@ -339,7 +339,7 @@ msgstr "VMWare, Inc. (icono USB de VMWare Workstation 6)"
 
 #: shell/callbacks.c:200
 msgid "System information and benchmark tool"
-msgstr "Herramienta de información del sistema y benchmark"
+msgstr "Herramienta de Informacion y Pruebas del Sistema"
 
 #: shell/callbacks.c:205
 msgid ""
@@ -628,7 +628,7 @@ msgstr "FPU trazado de rayos"
 
 #: modules/benchmark.c:60
 msgid "GPU Drawing"
-msgstr "GPU dibujo"
+msgstr "GPU dibujado"
 
 #: modules/benchmark.c:238 modules/benchmark.c:253
 msgid "CPU Clock"
@@ -748,7 +748,7 @@ msgstr "%dMB (%dMB usados)"
 
 #: modules/computer.c:105 modules/computer.c:515 modules/computer.c:531
 msgid "Uptime"
-msgstr ""
+msgstr "Activo"
 
 #: modules/computer.c:107 modules/computer.c:462 modules/computer.c:470
 msgid "Date/Time"
@@ -756,11 +756,11 @@ msgstr "Fecha/Hora"
 
 #: modules/computer.c:112 modules/computer.c:517 modules/computer.c:532
 msgid "Load Average"
-msgstr ""
+msgstr "Promedio de carga"
 
 #: modules/computer.c:114 modules/computer.c:516 modules/computer.c:533
 msgid "Available entropy in /dev/random"
-msgstr ""
+msgstr "Entropía disponible en /dev/random"
 
 #: modules/computer.c:200
 msgid "Scripting Languages"
@@ -890,59 +890,59 @@ msgstr "Programa"
 
 #: modules/computer.c:302
 msgid "Invalid chassis type (0)"
-msgstr ""
+msgstr "Clasificación maquina invalida (0)"
 
 #: modules/computer.c:303 modules/computer.c:304
 msgid "Unknown chassis type"
-msgstr ""
+msgstr "Clasificación mauqina desconocida"
 
 #: modules/computer.c:305
 msgid "Desktop"
-msgstr ""
+msgstr "PC Escritorio"
 
 #: modules/computer.c:306
 msgid "Low-profile Desktop"
-msgstr ""
+msgstr "PC economico"
 
 #: modules/computer.c:307
 msgid "Pizza Box"
-msgstr ""
+msgstr "PC Box pizza"
 
 #: modules/computer.c:308
 msgid "Mini Tower"
-msgstr ""
+msgstr "Torre mediana"
 
 #: modules/computer.c:309
 msgid "Tower"
-msgstr ""
+msgstr "Torreta"
 
 #: modules/computer.c:310
 msgid "Portable"
-msgstr ""
+msgstr "Portable"
 
 #: modules/computer.c:311 modules/computer.c:335
 msgid "Laptop"
-msgstr ""
+msgstr "Portatil"
 
 #: modules/computer.c:312
 msgid "Notebook"
-msgstr ""
+msgstr "Mini portatil"
 
 #: modules/computer.c:313
 msgid "Handheld"
-msgstr ""
+msgstr "Mini bolsillo"
 
 #: modules/computer.c:314
 msgid "Docking Station"
-msgstr ""
+msgstr "Estacion fija"
 
 #: modules/computer.c:315
 msgid "All-in-one"
-msgstr ""
+msgstr "All in one"
 
 #: modules/computer.c:316
 msgid "Subnotebook"
-msgstr ""
+msgstr "Subportátil"
 
 #: modules/computer.c:317
 msgid "Space-saving"
@@ -954,35 +954,35 @@ msgstr ""
 
 #: modules/computer.c:319
 msgid "Main Server Chassis"
-msgstr ""
+msgstr "Servidor principal"
 
 #: modules/computer.c:320
 msgid "Expansion Chassis"
-msgstr ""
+msgstr "Servidor expansion"
 
 #: modules/computer.c:321
 msgid "Sub Chassis"
-msgstr ""
+msgstr "Sub servidor"
 
 #: modules/computer.c:322
 msgid "Bus Expansion Chassis"
-msgstr ""
+msgstr "Expansion de bus acoplable"
 
 #: modules/computer.c:323
 msgid "Peripheral Chassis"
-msgstr ""
+msgstr "Periferico acoplable"
 
 #: modules/computer.c:324
 msgid "RAID Chassis"
-msgstr ""
+msgstr "RAID acoplable"
 
 #: modules/computer.c:325
 msgid "Rack Mount Chassis"
-msgstr ""
+msgstr "Rack de montaje acoplable"
 
 #: modules/computer.c:326
 msgid "Sealed-case PC"
-msgstr ""
+msgstr "PC sellada"
 
 #. /sys/class/power_supply/${*)/type contains
 #. * "Battery", or .../scope does not contain Device.
@@ -991,7 +991,7 @@ msgstr ""
 #. FIXME: use dmidecode if available to get chassis type
 #: modules/computer.c:346
 msgid "Unknown physical machine type"
-msgstr ""
+msgstr "Equipo fisico no catalogado"
 
 #: modules/computer.c:464 modules/computer.c:714
 msgid "Computer"
@@ -1023,11 +1023,11 @@ msgstr "Resolución"
 #. / Resolution WxH unit
 #: modules/computer.c:474 modules/computer.c:607
 msgid "pixels"
-msgstr ""
+msgstr "pixeles"
 
 #: modules/computer.c:475
 msgid "OpenGL Renderer"
-msgstr ""
+msgstr "Renderizador OpenGL"
 
 #: modules/computer.c:476
 msgid "X11 Vendor"
@@ -1071,7 +1071,7 @@ msgstr "Entorno de escritorio"
 
 #: modules/computer.c:530
 msgid "Misc"
-msgstr ""
+msgstr "Otras"
 
 #: modules/computer.c:545
 msgid "Loaded Modules"
@@ -1132,11 +1132,11 @@ msgstr ""
 
 #: modules/computer.c:616
 msgid "Renderer"
-msgstr ""
+msgstr "Renderizador"
 
 #: modules/computer.c:618
 msgid "Direct Rendering"
-msgstr ""
+msgstr "Renderizado Directo"
 
 #: modules/computer.c:639 modules/computer/users.c:49
 msgid "Group ID"
@@ -1148,11 +1148,11 @@ msgstr ""
 
 #: modules/computer.c:756 modules/devices/devicetree/pmac_data.c:82
 msgid "Motherboard"
-msgstr ""
+msgstr "Tarjeta madre"
 
 #: modules/computer.c:756
 msgid "Graphics"
-msgstr ""
+msgstr "Graficos"
 
 #: modules/computer.c:757 modules/devices.c:103
 msgid "Storage"
@@ -1164,7 +1164,7 @@ msgstr "Impresoras"
 
 #: modules/computer.c:757
 msgid "Audio"
-msgstr ""
+msgstr "Audio"
 
 #: modules/computer.c:812
 msgid "Gathers high-level computer information"
@@ -1177,48 +1177,48 @@ msgstr "Monitor %d=%dx%d pixels\n"
 
 #: modules/computer/filesystem.c:83
 msgid "Filesystem"
-msgstr ""
+msgstr "Sistemas de ficheros"
 
 #: modules/computer/filesystem.c:84
 msgid "Mounted As"
-msgstr ""
+msgstr "Montado como"
 
 #: modules/computer/filesystem.c:84
 msgid "Read-Write"
-msgstr ""
+msgstr "Lectura-escritura"
 
 #: modules/computer/filesystem.c:84
 msgid "Read-Only"
-msgstr ""
+msgstr "Solo-lectura"
 
 #: modules/computer/filesystem.c:86 modules/devices/spd-decode.c:1510
 msgid "Size"
-msgstr ""
+msgstr "Tamaño"
 
 #: modules/computer/filesystem.c:87
 msgid "Used"
-msgstr ""
+msgstr "Usado"
 
 #: modules/computer/filesystem.c:88
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: modules/computer/loadavg.c:64
 msgid "Couldn't obtain load average"
-msgstr ""
+msgstr "No se pudo obtener estadisticas"
 
 #: modules/computer/os.c:35 modules/computer/os.c:36 modules/computer/os.c:37
 #: modules/computer/os.c:38
 msgid "GNU C Library"
-msgstr ""
+msgstr "Libreria C GNU"
 
 #: modules/computer/os.c:39
 msgid "uClibc or uClibc-ng"
-msgstr ""
+msgstr "Libreria uClibc/uClibc-ng"
 
 #: modules/computer/os.c:40
 msgid "diet libc"
-msgstr ""
+msgstr "Libreria diet libc"
 
 #: modules/computer/os.c:78 modules/computer/os.c:234 modules/computer/os.c:359
 #: modules/devices.c:180 modules/devices.c:229 modules/devices/printers.c:99
@@ -1254,41 +1254,41 @@ msgstr "Terminal"
 #. /bits of entropy for rng (0)
 #: modules/computer/os.c:241
 msgid "(None or not available)"
-msgstr ""
+msgstr "(Ninguno o no disponible)"
 
 #. /bits of entropy for rng (low/poor value)
 #: modules/computer/os.c:242
 #, c-format
 msgid "%d bits (low)"
-msgstr ""
+msgstr "%d bits (bajo)"
 
 #. /bits of entropy for rng (medium value)
 #: modules/computer/os.c:243
 #, c-format
 msgid "%d bits (medium)"
-msgstr ""
+msgstr "%d bits (promedio)"
 
 #. /bits of entropy for rng (high/good value)
 #: modules/computer/os.c:244
 #, c-format
 msgid "%d bits (healthy)"
-msgstr ""
+msgstr "%d bits (saludable)"
 
 #: modules/computer/os.c:279 modules/network/net.c:442 includes/cpu_util.h:11
 msgid "(Unknown)"
-msgstr ""
+msgstr "(desconocido)"
 
 #: modules/computer/users.c:47
 msgid "User Information"
-msgstr ""
+msgstr "Informacion de usuario"
 
 #: modules/computer/users.c:48
 msgid "User ID"
-msgstr ""
+msgstr "ID usuario"
 
 #: modules/computer/users.c:51
 msgid "Default Shell"
-msgstr ""
+msgstr "Shell principal"
 
 #: modules/devices/alpha/processor.c:80 modules/devices/devicetree.c:195
 #: modules/devices/devicetree.c:230 modules/devices/devicetree/pmac_data.c:80
@@ -1297,11 +1297,11 @@ msgstr ""
 #: modules/devices/ppc/processor.c:150 modules/devices/riscv/processor.c:174
 #: modules/devices/s390/processor.c:124 modules/devices/spd-decode.c:1510
 msgid "Model"
-msgstr ""
+msgstr "Modelo"
 
 #: modules/devices/alpha/processor.c:81
 msgid "Platform String"
-msgstr ""
+msgstr "Plataforma"
 
 #: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
 #: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:79
@@ -1309,7 +1309,7 @@ msgstr ""
 #: modules/devices/ppc/processor.c:152 modules/devices/riscv/processor.c:178
 #: modules/devices/sh/processor.c:79 modules/devices/x86/processor.c:415
 msgid "Frequency"
-msgstr ""
+msgstr "Frecuencia"
 
 #: modules/devices/alpha/processor.c:82 modules/devices/arm/processor.c:239
 #: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:79
