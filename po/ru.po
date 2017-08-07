@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-04 12:30-0500\n"
+"POT-Creation-Date: 2017-08-07 04:01-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -45,12 +45,12 @@ msgstr ""
 "  Префикс библиотеки: %s\n"
 "  Скомпилировано на:  %s\n"
 
-#: hardinfo/hardinfo.c:57 hardinfo/hardinfo.c:58 modules/computer.c:618
+#: hardinfo/hardinfo.c:57 hardinfo/hardinfo.c:58 modules/computer.c:617
 #: modules/devices/printers.c:138
 msgid "Yes"
 msgstr "Да"
 
-#: hardinfo/hardinfo.c:58 modules/computer.c:618 modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:58 modules/computer.c:617 modules/devices/printers.c:138
 msgid "No"
 msgstr "Нет"
 
@@ -80,14 +80,14 @@ msgstr ""
 msgid "File Name"
 msgstr "Имя файла"
 
-#: hardinfo/hardinfo.c:77 modules/computer.c:546 modules/computer.c:568
-#: modules/computer.c:639 modules/devices/ia64/processor.c:152
+#: hardinfo/hardinfo.c:77 modules/computer.c:545 modules/computer.c:567
+#: modules/computer.c:638 modules/devices/ia64/processor.c:152
 #: modules/devices/sh/processor.c:76 modules/network.c:326
 msgid "Name"
 msgstr "Название"
 
-#: hardinfo/hardinfo.c:77 modules/computer.c:291 modules/computer.c:519
-#: modules/computer.c:521 modules/computer.c:609 modules/computer.c:617
+#: hardinfo/hardinfo.c:77 modules/computer.c:290 modules/computer.c:518
+#: modules/computer.c:520 modules/computer.c:608 modules/computer.c:616
 msgid "Version"
 msgstr "Версия"
 
@@ -490,11 +490,11 @@ msgstr "Выбор: нет"
 msgid "Select _All"
 msgstr "Выбор: все"
 
-#: shell/report.c:930
+#: shell/report.c:929 shell/syncmanager.c:748
 msgid "_Cancel"
 msgstr ""
 
-#: shell/report.c:943
+#: shell/report.c:939
 msgid "_Generate"
 msgstr "_Сгенерировать"
 
@@ -571,15 +571,13 @@ msgstr "Подключение к центральной базе данных H
 msgid "Cleaning up"
 msgstr "Очистка"
 
-#: shell/syncmanager.c:492
-#, c-format
-msgid "<s>%s</s> <i>(canceled)</i>"
-msgstr "<s>%s</s> <i>(отменен)</i>"
+#: shell/syncmanager.c:493
+msgid "(canceled)"
+msgstr "(отменен)"
 
-#: shell/syncmanager.c:509
-#, c-format
-msgid "<b><s>%s</s></b> <i>(failed)</i>"
-msgstr "<b><s>%s</s></b> <i>(ошибка)</i>"
+#: shell/syncmanager.c:510
+msgid "(failed)"
+msgstr "(ошибка)"
 
 #: shell/syncmanager.c:521
 #, c-format
@@ -607,7 +605,7 @@ msgstr ""
 msgid "Network Updater"
 msgstr "Сетевое обновление"
 
-#: shell/syncmanager.c:739
+#: shell/syncmanager.c:757
 msgid "_Synchronize"
 msgstr "_Синхронизировать"
 
@@ -655,7 +653,7 @@ msgstr "Частота процессора"
 msgid "Results"
 msgstr "Результаты"
 
-#: modules/benchmark.c:238 modules/benchmark.c:253 modules/computer.c:756
+#: modules/benchmark.c:238 modules/benchmark.c:253 modules/computer.c:755
 #: modules/devices/sparc/processor.c:67
 msgid "CPU"
 msgstr "Процессор"
@@ -717,7 +715,7 @@ msgstr "Загрузки"
 msgid "Summary"
 msgstr "Общая информация"
 
-#: modules/computer.c:69 modules/computer.c:468 modules/computer.c:755
+#: modules/computer.c:69 modules/computer.c:467 modules/computer.c:754
 msgid "Operating System"
 msgstr "Операционная система"
 
@@ -733,7 +731,7 @@ msgstr "Языки"
 msgid "Filesystems"
 msgstr "Файловые системы"
 
-#: modules/computer.c:74 modules/computer.c:471 modules/computer.c:603
+#: modules/computer.c:74 modules/computer.c:470 modules/computer.c:602
 msgid "Display"
 msgstr "Дисплей"
 
@@ -745,15 +743,15 @@ msgstr "Переменные среды"
 msgid "Development"
 msgstr "Разработка"
 
-#: modules/computer.c:79 modules/computer.c:628
+#: modules/computer.c:79 modules/computer.c:627
 msgid "Users"
 msgstr "Пользователи"
 
-#: modules/computer.c:80 modules/computer.c:640
+#: modules/computer.c:80 modules/computer.c:639
 msgid "Groups"
 msgstr "Группы"
 
-#: modules/computer.c:101 modules/computer.c:461 modules/computer.c:466
+#: modules/computer.c:101 modules/computer.c:460 modules/computer.c:465
 #: modules/devices.c:96
 msgid "Memory"
 msgstr "Память"
@@ -763,20 +761,20 @@ msgstr "Память"
 msgid "%dMB (%dMB used)"
 msgstr "%dМб (%dМб занято)"
 
-#: modules/computer.c:105 modules/computer.c:515 modules/computer.c:531
+#: modules/computer.c:105 modules/computer.c:514 modules/computer.c:530
 msgid "Uptime"
 msgstr "Время работы"
 
-#: modules/computer.c:107 modules/computer.c:462 modules/computer.c:470
+#: modules/computer.c:107 modules/computer.c:461 modules/computer.c:469
 msgid "Date/Time"
 msgstr "Дата/время"
 
 # Должно совпадать с таким-же полем в строке 430 computer.c
-#: modules/computer.c:112 modules/computer.c:517 modules/computer.c:532
+#: modules/computer.c:112 modules/computer.c:516 modules/computer.c:531
 msgid "Load Average"
 msgstr "Средняя нагрузка"
 
-#: modules/computer.c:114 modules/computer.c:516 modules/computer.c:533
+#: modules/computer.c:114 modules/computer.c:515 modules/computer.c:532
 msgid "Available entropy in /dev/random"
 msgstr "Доступная энтропия в /dev/random"
 
@@ -897,112 +895,111 @@ msgid "CMake"
 msgstr ""
 
 #: modules/computer.c:268
-#, c-format
 msgid "Not found"
 msgstr "Не найдено"
 
-#: modules/computer.c:274
+#: modules/computer.c:273
 #, c-format
 msgid "Detecting version: %s"
 msgstr "Определена версия: %s"
 
-#: modules/computer.c:291
+#: modules/computer.c:290
 msgid "Program"
 msgstr "Программа"
 
-#: modules/computer.c:302
+#: modules/computer.c:301
 msgid "Invalid chassis type (0)"
 msgstr ""
 
-#: modules/computer.c:303 modules/computer.c:304
+#: modules/computer.c:302 modules/computer.c:303
 msgid "Unknown chassis type"
 msgstr ""
 
-#: modules/computer.c:305
+#: modules/computer.c:304
 msgid "Desktop"
 msgstr ""
 
-#: modules/computer.c:306
+#: modules/computer.c:305
 msgid "Low-profile Desktop"
 msgstr ""
 
-#: modules/computer.c:307
+#: modules/computer.c:306
 msgid "Pizza Box"
 msgstr ""
 
-#: modules/computer.c:308
+#: modules/computer.c:307
 msgid "Mini Tower"
 msgstr ""
 
-#: modules/computer.c:309
+#: modules/computer.c:308
 msgid "Tower"
 msgstr ""
 
-#: modules/computer.c:310
+#: modules/computer.c:309
 msgid "Portable"
 msgstr ""
 
-#: modules/computer.c:311 modules/computer.c:335
+#: modules/computer.c:310 modules/computer.c:334
 msgid "Laptop"
 msgstr ""
 
-#: modules/computer.c:312
+#: modules/computer.c:311
 msgid "Notebook"
 msgstr ""
 
-#: modules/computer.c:313
+#: modules/computer.c:312
 msgid "Handheld"
 msgstr ""
 
-#: modules/computer.c:314
+#: modules/computer.c:313
 msgid "Docking Station"
 msgstr ""
 
-#: modules/computer.c:315
+#: modules/computer.c:314
 msgid "All-in-one"
 msgstr ""
 
-#: modules/computer.c:316
+#: modules/computer.c:315
 msgid "Subnotebook"
 msgstr ""
 
-#: modules/computer.c:317
+#: modules/computer.c:316
 msgid "Space-saving"
 msgstr ""
 
-#: modules/computer.c:318
+#: modules/computer.c:317
 msgid "Lunch Box"
 msgstr ""
 
-#: modules/computer.c:319
+#: modules/computer.c:318
 msgid "Main Server Chassis"
 msgstr ""
 
-#: modules/computer.c:320
+#: modules/computer.c:319
 msgid "Expansion Chassis"
 msgstr ""
 
-#: modules/computer.c:321
+#: modules/computer.c:320
 msgid "Sub Chassis"
 msgstr ""
 
-#: modules/computer.c:322
+#: modules/computer.c:321
 msgid "Bus Expansion Chassis"
 msgstr ""
 
-#: modules/computer.c:323
+#: modules/computer.c:322
 msgid "Peripheral Chassis"
 msgstr ""
 
-#: modules/computer.c:324
+#: modules/computer.c:323
 msgid "RAID Chassis"
 msgstr ""
 
-#: modules/computer.c:325
+#: modules/computer.c:324
 msgid "Rack Mount Chassis"
 msgstr ""
 
-#: modules/computer.c:326
+#: modules/computer.c:325
 msgid "Sealed-case PC"
 msgstr ""
 
@@ -1011,15 +1008,15 @@ msgstr ""
 #. FIXME: check if there's more than one directory in /proc/acpi/battery
 #. FIXME: check if batteries are found using /proc/apm
 #. FIXME: use dmidecode if available to get chassis type
-#: modules/computer.c:346
+#: modules/computer.c:345
 msgid "Unknown physical machine type"
 msgstr ""
 
-#: modules/computer.c:464 modules/computer.c:714
+#: modules/computer.c:463 modules/computer.c:713
 msgid "Computer"
 msgstr "Компьютер"
 
-#: modules/computer.c:465 modules/devices/alpha/processor.c:79
+#: modules/computer.c:464 modules/devices/alpha/processor.c:79
 #: modules/devices/arm/processor.c:235 modules/devices.c:95
 #: modules/devices/ia64/processor.c:151 modules/devices/m68k/processor.c:75
 #: modules/devices/mips/processor.c:66 modules/devices/parisc/processor.c:146
@@ -1029,166 +1026,166 @@ msgstr "Компьютер"
 msgid "Processor"
 msgstr "Процессор"
 
-#: modules/computer.c:467
+#: modules/computer.c:466
 msgid "Machine Type"
 msgstr "Тип машины"
 
-#: modules/computer.c:469 modules/computer.c:526
+#: modules/computer.c:468 modules/computer.c:525
 msgid "User Name"
 msgstr "Пользователь"
 
-#: modules/computer.c:472 modules/computer.c:604
+#: modules/computer.c:471 modules/computer.c:603
 msgid "Resolution"
 msgstr "Разрешение"
 
 #. /label for resolution
 #. / Resolution WxH unit
-#: modules/computer.c:474 modules/computer.c:607
+#: modules/computer.c:473 modules/computer.c:606
 msgid "pixels"
 msgstr "пикселей"
 
-#: modules/computer.c:475
+#: modules/computer.c:474
 msgid "OpenGL Renderer"
 msgstr "Рендер OpenGL"
 
-#: modules/computer.c:476
+#: modules/computer.c:475
 msgid "X11 Vendor"
 msgstr "Поставщик X11"
 
-#: modules/computer.c:478 modules/devices.c:102
+#: modules/computer.c:477 modules/devices.c:102
 msgid "Input Devices"
 msgstr "Устройства ввода"
 
-#: modules/computer.c:520
+#: modules/computer.c:519
 msgid "Kernel"
 msgstr "Ядро"
 
-#: modules/computer.c:522
+#: modules/computer.c:521
 msgid "C Library"
 msgstr "Библиотека C"
 
-#: modules/computer.c:523
+#: modules/computer.c:522
 msgid "Distribution"
 msgstr "Дистрибутив"
 
-#: modules/computer.c:524
+#: modules/computer.c:523
 msgid "Current Session"
 msgstr "Текущая сессия"
 
-#: modules/computer.c:525
+#: modules/computer.c:524
 msgid "Computer Name"
 msgstr "Имя компьютера"
 
-#: modules/computer.c:527
+#: modules/computer.c:526
 msgid "Language"
 msgstr "Язык"
 
-#: modules/computer.c:528 modules/computer/users.c:50
+#: modules/computer.c:527 modules/computer/users.c:50
 msgid "Home Directory"
 msgstr "Домашний каталог"
 
-#: modules/computer.c:529
+#: modules/computer.c:528
 msgid "Desktop Environment"
 msgstr "Среда рабочего стола"
 
-#: modules/computer.c:530
+#: modules/computer.c:529
 msgid "Misc"
 msgstr "Разное"
 
-#: modules/computer.c:545
+#: modules/computer.c:544
 msgid "Loaded Modules"
 msgstr ""
 
-#: modules/computer.c:546 modules/devices.c:398
+#: modules/computer.c:545 modules/devices.c:398
 msgid "Description"
 msgstr "Описание"
 
-#: modules/computer.c:556
+#: modules/computer.c:555
 msgid "Date & Time"
 msgstr "Дата и время"
 
-#: modules/computer.c:556
+#: modules/computer.c:555
 msgid "Kernel Version"
 msgstr "Версия ядра"
 
-#: modules/computer.c:568
+#: modules/computer.c:567
 msgid "Language Code"
 msgstr "Код языка"
 
-#: modules/computer.c:569
+#: modules/computer.c:568
 msgid "Available Languages"
 msgstr ""
 
-#: modules/computer.c:584 modules/computer/filesystem.c:85
+#: modules/computer.c:583 modules/computer/filesystem.c:85
 msgid "Mount Point"
 msgstr "Точка монтирования"
 
-#: modules/computer.c:584
+#: modules/computer.c:583
 msgid "Usage"
 msgstr "Использование"
 
-#: modules/computer.c:584
+#: modules/computer.c:583
 msgid "Device"
 msgstr "Устройство"
 
-#: modules/computer.c:585
+#: modules/computer.c:584
 msgid "Mounted File Systems"
 msgstr ""
 
-#: modules/computer.c:608 modules/computer.c:615
+#: modules/computer.c:607 modules/computer.c:614
 #: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:412
 msgid "Vendor"
 msgstr "Производитель"
 
-#: modules/computer.c:610
+#: modules/computer.c:609
 msgid "Monitors"
 msgstr "Монитор"
 
-#: modules/computer.c:612
+#: modules/computer.c:611
 msgid "Extensions"
 msgstr "Расширения"
 
-#: modules/computer.c:614
+#: modules/computer.c:613
 msgid "OpenGL"
 msgstr ""
 
-#: modules/computer.c:616
+#: modules/computer.c:615
 msgid "Renderer"
 msgstr "Рендер"
 
-#: modules/computer.c:618
+#: modules/computer.c:617
 msgid "Direct Rendering"
 msgstr "Графическое ускорение"
 
-#: modules/computer.c:639 modules/computer/users.c:49
+#: modules/computer.c:638 modules/computer/users.c:49
 msgid "Group ID"
 msgstr "ID группы"
 
-#: modules/computer.c:756
+#: modules/computer.c:755
 msgid "RAM"
 msgstr "Оперативная память"
 
-#: modules/computer.c:756 modules/devices/devicetree/pmac_data.c:82
+#: modules/computer.c:755 modules/devices/devicetree/pmac_data.c:82
 msgid "Motherboard"
 msgstr "Материнская плата"
 
-#: modules/computer.c:756
+#: modules/computer.c:755
 msgid "Graphics"
 msgstr "Графика"
 
-#: modules/computer.c:757 modules/devices.c:103
+#: modules/computer.c:756 modules/devices.c:103
 msgid "Storage"
 msgstr "Устройства хранения"
 
-#: modules/computer.c:757 modules/devices.c:99
+#: modules/computer.c:756 modules/devices.c:99
 msgid "Printers"
 msgstr "Принтеры"
 
-#: modules/computer.c:757
+#: modules/computer.c:756
 msgid "Audio"
 msgstr "Аудио"
 
-#: modules/computer.c:812
+#: modules/computer.c:811
 msgid "Gathers high-level computer information"
 msgstr "Собирает высокоуровневую информацию о компьютере"
 
@@ -2008,10 +2005,6 @@ msgstr "Виртуальная память"
 #: modules/devices/devmemory.c:101
 msgid "Free Virtual Memory"
 msgstr "Свободная виртуальная память"
-
-#: modules/devices/dmi.c:36
-msgid "Date"
-msgstr "Дата"
 
 #: modules/devices/ia64/processor.c:108
 msgid "IA64 Processor"
@@ -4222,76 +4215,3 @@ msgstr ""
 #: modules/network/net.c:479
 msgid "Broadcast Address"
 msgstr "Широковещательный адрес"
-
-#~ msgid "Save Image"
-#~ msgstr "Сохранить изображение"
-
-#~ msgid "Saving image..."
-#~ msgstr "Сохранение изображения..."
-
-#~ msgid "_Save image as..."
-#~ msgstr "_Сохранить изображение как..."
-
-#~ msgid "Physical machine"
-#~ msgstr "Физическая машина"
-
-#~ msgid "Y_es"
-#~ msgstr "Есть"
-
-#~ msgid "Version: %s"
-#~ msgstr "Версия: %s"
-
-#~ msgid "Unknown distribution"
-#~ msgstr "Неизвестный дистрибутив"
-
-#~ msgid "Remote: <b>%s</b>"
-#~ msgstr "Удалённо: <b>%s</b>"
-
-#~ msgid "Disconnecting..."
-#~ msgstr "Отключение..."
-
-#~ msgid "Unloading modules..."
-#~ msgstr "Выгрузка модулей..."
-
-#~ msgid "Loading local modules..."
-#~ msgstr "Загрузка локальных модулей..."
-
-#~ msgid "No context help available."
-#~ msgstr "Контекстная справка недоступна"
-
-#~ msgid "_Connect to..."
-#~ msgstr "_Подключиться к..."
-
-#~ msgid "_Manage hosts..."
-#~ msgstr "_Управление хостами..."
-
-#~ msgid "_Local computer"
-#~ msgstr "_Локальный компьютер"
-
-#~ msgid "Contents"
-#~ msgstr "Содержание"
-
-#~ msgid "Context help"
-#~ msgstr "Контекстная справка"
-
-#~ msgid "_Donate to the project"
-#~ msgstr "_Поддержать проект"
-
-#~ msgid "_Accept connections"
-#~ msgstr "_Принимать подключения"
-
-#~ msgid "vendor string"
-#~ msgstr "строка поставщика"
-
-#~ msgid "X.Org version"
-#~ msgstr "Версия X.Org"
-
-#~ msgid "XFree86 version"
-#~ msgstr "Версия XFree86"
-
-#~ msgid "HardInfo cannot run without loading the additional module."
-#~ msgstr "HardInfo не может быть запущен без дополнительного модуля."
-
-#, fuzzy
-#~ msgid "AboutModule%s"
-#~ msgstr "О _модулях"
