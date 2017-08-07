@@ -2497,49 +2497,49 @@ msgstr "SYSENTER/SYSEXIT"
 #: modules/devices/x86/x86_data.c:54
 msgctxt "x86-flag"
 msgid "Memory Type Range Registers"
-msgstr "Registros de rago de tipo de Memoria"
+msgstr "Registros de rango de tipo de Memoria"
 
 #. /flag:pge
 #: modules/devices/x86/x86_data.c:55
 msgctxt "x86-flag"
 msgid "Page Global Enable (global bit in PDEs and PTEs)"
-msgstr ""
+msgstr "Habilitador de pagina global (global bit in PDEs and PTEs)"
 
 #. /flag:mca
 #: modules/devices/x86/x86_data.c:56
 msgctxt "x86-flag"
 msgid "Machine Check Architecture"
-msgstr ""
+msgstr "Revisor de arquitectura de maquina"
 
 #. /flag:cmov
 #: modules/devices/x86/x86_data.c:57
 msgctxt "x86-flag"
 msgid "CMOV instructions (conditional move) (also FCMOV)"
-msgstr ""
+msgstr "Instrucciones CMOV (mover condicionalmente) (tambien FCMOV)"
 
 #. /flag:pat
 #: modules/devices/x86/x86_data.c:58
 msgctxt "x86-flag"
 msgid "Page Attribute Table"
-msgstr ""
+msgstr "Tabla de atributos de pagina"
 
 #. /flag:pse36
 #: modules/devices/x86/x86_data.c:59
 msgctxt "x86-flag"
 msgid "36-bit PSEs (huge pages)"
-msgstr ""
+msgstr "36-bit PSEs (huge pages)"
 
 #. /flag:pn
 #: modules/devices/x86/x86_data.c:60
 msgctxt "x86-flag"
 msgid "Processor serial number"
-msgstr ""
+msgstr "Numero serial de prosesador"
 
 #. /flag:clflush
 #: modules/devices/x86/x86_data.c:61
 msgctxt "x86-flag"
 msgid "Cache Line Flush instruction"
-msgstr ""
+msgstr "Cache Line Flush instruction"
 
 #. /flag:dts
 #: modules/devices/x86/x86_data.c:62
@@ -2548,54 +2548,56 @@ msgid ""
 "Debug Store (buffer for debugging and profiling instructions), or "
 "alternately: digital thermal sensor"
 msgstr ""
+"Guardado de depurado (buffer para depurado y pruebas de instrucciones), o "
+"alternativamente: sensor de temperatura digital"
 
 #. /flag:acpi
 #: modules/devices/x86/x86_data.c:63
 msgctxt "x86-flag"
 msgid "ACPI via MSR (temperature monitoring and clock speed modulation)"
-msgstr ""
+msgstr "ACPI via MSR (monitor de temperatura y reloj de modulacion de velocidad)"
 
 #. /flag:mmx
 #: modules/devices/x86/x86_data.c:64
 msgctxt "x86-flag"
 msgid "Multimedia Extensions"
-msgstr ""
+msgstr "Extensiones multimedia"
 
 #. /flag:fxsr
 #: modules/devices/x86/x86_data.c:65
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
-msgstr ""
+msgstr "FXSAVE/FXRSTOR, CR4.OSFXSR"
 
 #. /flag:sse
 #: modules/devices/x86/x86_data.c:66
 msgctxt "x86-flag"
 msgid "Intel SSE vector instructions"
-msgstr ""
+msgstr "Intel SSE instrucciones de vectorizado"
 
 #. /flag:sse2
 #: modules/devices/x86/x86_data.c:67
 msgctxt "x86-flag"
 msgid "SSE2"
-msgstr ""
+msgstr "SSE2"
 
 #. /flag:ss
 #: modules/devices/x86/x86_data.c:68
 msgctxt "x86-flag"
 msgid "CPU self snoop"
-msgstr ""
+msgstr "CPU self snoop"
 
 #. /flag:ht
 #: modules/devices/x86/x86_data.c:69
 msgctxt "x86-flag"
 msgid "Hyper-Threading"
-msgstr ""
+msgstr "Hyper-Threading"
 
 #. /flag:tm
 #: modules/devices/x86/x86_data.c:70
 msgctxt "x86-flag"
 msgid "Automatic clock control (Thermal Monitor)"
-msgstr ""
+msgstr "control automatico de reloj (Monitor de temperatura)"
 
 #. /flag:ia64
 #: modules/devices/x86/x86_data.c:71
@@ -2604,78 +2606,80 @@ msgid ""
 "Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
 "x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
 msgstr ""
+"Intel Itanium Arquitectura 64-bit (no confundir con el 64-bit Intel de "
+"architecture x86 con el flag x86-64 o bit \"AMD64\" indicado por flag lm)"
 
 #. /flag:pbe
 #: modules/devices/x86/x86_data.c:72
 msgctxt "x86-flag"
 msgid "Pending Break Enable (PBE# pin) wakeup support"
-msgstr ""
+msgstr "Pending Break Enable (PBE# pin) despertado"
 
 #. /flag:syscall
 #: modules/devices/x86/x86_data.c:75
 msgctxt "x86-flag"
 msgid "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
-msgstr ""
+msgstr "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
 
 #. /flag:mp
 #: modules/devices/x86/x86_data.c:76
 msgctxt "x86-flag"
 msgid "Multiprocessing Capable."
-msgstr ""
+msgstr "Capacidades multiprocesos"
 
 #. /flag:nx
 #: modules/devices/x86/x86_data.c:77
 msgctxt "x86-flag"
 msgid "Execute Disable"
-msgstr ""
+msgstr "Execute Disable"
 
 #. /flag:mmxext
 #: modules/devices/x86/x86_data.c:78
 msgctxt "x86-flag"
 msgid "AMD MMX extensions"
-msgstr ""
+msgstr "Extensiones AMD MMX"
 
 #. /flag:fxsr_opt
 #: modules/devices/x86/x86_data.c:79
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR optimizations"
-msgstr ""
+msgstr "Optimizaciones FXSAVE/FXRSTOR"
 
 #. /flag:pdpe1gb
 #: modules/devices/x86/x86_data.c:80
 msgctxt "x86-flag"
 msgid "One GB pages (allows hugepagesz=1G)"
-msgstr ""
+msgstr "Paginas One GB (permite hugepagesz=1G)"
 
 #. /flag:rdtscp
 #: modules/devices/x86/x86_data.c:81
 msgctxt "x86-flag"
 msgid "Read Time-Stamp Counter and Processor ID"
-msgstr ""
+msgstr "Read Time-Stamp Counter and Processor ID"
 
 #. /flag:lm
 #: modules/devices/x86/x86_data.c:82
 msgctxt "x86-flag"
 msgid "Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)"
-msgstr ""
+msgstr "Modo Largo (x86-64: amd64, conocido como Intel 64, ejem. compatible 64-bit)"
 
 #. /flag:3dnow
 #: modules/devices/x86/x86_data.c:83
 msgctxt "x86-flag"
 msgid "3DNow! (AMD vector instructions, competing with Intel's SSE1)"
-msgstr ""
+msgstr "3DNow! (AMD instrucciones de vectorizado, competidor de las Intel SSE1)"
 
 #. /flag:3dnowext
 #: modules/devices/x86/x86_data.c:84
 msgctxt "x86-flag"
 msgid "AMD 3DNow! extensions"
-msgstr ""
+msgstr "AMD 3DNow! extensions"
 
 #. /flag:recovery
 #: modules/devices/x86/x86_data.c:86
 msgctxt "x86-flag"
 msgid "CPU in recovery mode"
-msgstr ""
+msgstr "CPU en modo recuperacion"
 
 #. /flag:longrun
 #: modules/devices/x86/x86_data.c:87
@@ -2693,13 +2697,13 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:90
 msgctxt "x86-flag"
 msgid "Cyrix MMX extensions"
-msgstr ""
+msgstr "Cyrix MMX extensions"
 
 #. /flag:k6_mtrr
 #: modules/devices/x86/x86_data.c:91
 msgctxt "x86-flag"
 msgid "AMD K6 nonstandard MTRRs"
-msgstr ""
+msgstr "AMD K6 nonstandard MTRRs"
 
 #. /flag:cyrix_arr
 #: modules/devices/x86/x86_data.c:92
@@ -2723,7 +2727,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:95
 msgctxt "x86-flag"
 msgid "SMP kernel running on UP"
-msgstr ""
+msgstr "Kernel SMP ejecutandose"
 
 #. /flag:art
 #: modules/devices/x86/x86_data.c:96
@@ -2753,7 +2757,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:100
 msgctxt "x86-flag"
 msgid "rep microcode works well"
-msgstr ""
+msgstr "rep microcode trabaja bien"
 
 #. /flag:acc_power
 #: modules/devices/x86/x86_data.c:101
@@ -2789,13 +2793,13 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:106
 msgctxt "x86-flag"
 msgid "has extended APICID (8 bits)"
-msgstr ""
+msgstr "tiene extenciones APICID (8 bits)"
 
 #. /flag:amd_dcm
 #: modules/devices/x86/x86_data.c:107
 msgctxt "x86-flag"
 msgid "multi-node processor"
-msgstr ""
+msgstr "procesador muti-nodo"
 
 #. /flag:aperfmperf
 #: modules/devices/x86/x86_data.c:108
@@ -2813,13 +2817,13 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:110
 msgctxt "x86-flag"
 msgid "TSC doesn't stop in S3 state"
-msgstr ""
+msgstr "TSC no se detiene en estado S3"
 
 #. /flag:mce_recovery
 #: modules/devices/x86/x86_data.c:111
 msgctxt "x86-flag"
 msgid "CPU has recoverable machine checks"
-msgstr ""
+msgstr "CPU tiene corroborador de maquina recuperable"
 
 #. /flag:pni
 #: modules/devices/x86/x86_data.c:114
@@ -3003,7 +3007,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:143
 msgctxt "x86-flag"
 msgid "Running on a hypervisor"
-msgstr ""
+msgstr "Corriendo en un hipervisor"
 
 #. /Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001
 #. /flag:rng
