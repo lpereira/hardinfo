@@ -10,8 +10,13 @@ So generally, clone the repository with git, and use branches, before make a pul
 
 ## Pull requests
 
-Please maintain **each pull request must be in behavior/functionality specific**, 
-this to avoid conflicts, and must avoid massive commits corrections.. large pulls will take more time from owner to review and commit!
+Please **each and all the pull request must made in related scope**, 
+this to avoid conflicts, and must avoid massive commits corrections.. 
+large pulls will take more time from owner to review and commit!
+
+Pease **each pull request must have descriptive related titles** and 
+clarelly description in the pull request, about changes in each commits, 
+and must mantain those amount of commits in blocks and not to be massive.
 
 ## Coding
 
