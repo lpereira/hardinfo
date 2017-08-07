@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-04 12:30-0500\n"
+"POT-Creation-Date: 2017-08-07 04:01-0500\n"
 "PO-Revision-Date: 2016-06-10 12:11+0200\n"
 "Last-Translator: Alexander Münch <git@thehacker.biz>\n"
 "Language-Team: German\n"
@@ -39,12 +39,12 @@ msgid ""
 "  Compiled for:      %s\n"
 msgstr ""
 
-#: hardinfo/hardinfo.c:57 hardinfo/hardinfo.c:58 modules/computer.c:618
+#: hardinfo/hardinfo.c:57 hardinfo/hardinfo.c:58 modules/computer.c:617
 #: modules/devices/printers.c:138
 msgid "Yes"
 msgstr "Ja"
 
-#: hardinfo/hardinfo.c:58 modules/computer.c:618 modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:58 modules/computer.c:617 modules/devices/printers.c:138
 msgid "No"
 msgstr "Nein"
 
@@ -68,14 +68,14 @@ msgstr ""
 msgid "File Name"
 msgstr ""
 
-#: hardinfo/hardinfo.c:77 modules/computer.c:546 modules/computer.c:568
-#: modules/computer.c:639 modules/devices/ia64/processor.c:152
+#: hardinfo/hardinfo.c:77 modules/computer.c:545 modules/computer.c:567
+#: modules/computer.c:638 modules/devices/ia64/processor.c:152
 #: modules/devices/sh/processor.c:76 modules/network.c:326
 msgid "Name"
 msgstr "Name"
 
-#: hardinfo/hardinfo.c:77 modules/computer.c:291 modules/computer.c:519
-#: modules/computer.c:521 modules/computer.c:609 modules/computer.c:617
+#: hardinfo/hardinfo.c:77 modules/computer.c:290 modules/computer.c:518
+#: modules/computer.c:520 modules/computer.c:608 modules/computer.c:616
 msgid "Version"
 msgstr ""
 
@@ -456,11 +456,11 @@ msgstr "_Nichts auswählen"
 msgid "Select _All"
 msgstr "_Alles auswählen"
 
-#: shell/report.c:930
+#: shell/report.c:929 shell/syncmanager.c:748
 msgid "_Cancel"
 msgstr ""
 
-#: shell/report.c:943
+#: shell/report.c:939
 msgid "_Generate"
 msgstr "_Generieren"
 
@@ -533,15 +533,13 @@ msgstr "Kontaktiere zentrale HardInfo-Datenbank"
 msgid "Cleaning up"
 msgstr "Aufräumen"
 
-#: shell/syncmanager.c:492
-#, c-format
-msgid "<s>%s</s> <i>(canceled)</i>"
-msgstr "<s>%s</s> <i>(abgebrochen)</i>"
+#: shell/syncmanager.c:493
+msgid "(canceled)"
+msgstr "(abgebrochen)"
 
-#: shell/syncmanager.c:509
-#, c-format
-msgid "<b><s>%s</s></b> <i>(failed)</i>"
-msgstr "<b><s>%s</s></b> <i>(gescheitert)</i>"
+#: shell/syncmanager.c:510
+msgid "(failed)"
+msgstr "(gescheitert)"
 
 #: shell/syncmanager.c:521
 #, c-format
@@ -563,7 +561,7 @@ msgstr ""
 msgid "Network Updater"
 msgstr "Netzwerk-Updater"
 
-#: shell/syncmanager.c:739
+#: shell/syncmanager.c:757
 msgid "_Synchronize"
 msgstr "_Synchronisieren"
 
@@ -607,7 +605,7 @@ msgstr "CPU-Takt"
 msgid "Results"
 msgstr "Ergebnisse"
 
-#: modules/benchmark.c:238 modules/benchmark.c:253 modules/computer.c:756
+#: modules/benchmark.c:238 modules/benchmark.c:253 modules/computer.c:755
 #: modules/devices/sparc/processor.c:67
 msgid "CPU"
 msgstr ""
@@ -669,7 +667,7 @@ msgstr "Systemstarts"
 msgid "Summary"
 msgstr "Zusammenfassung"
 
-#: modules/computer.c:69 modules/computer.c:468 modules/computer.c:755
+#: modules/computer.c:69 modules/computer.c:467 modules/computer.c:754
 msgid "Operating System"
 msgstr "Betriebssystem"
 
@@ -685,7 +683,7 @@ msgstr "Sprachen"
 msgid "Filesystems"
 msgstr "Dateisysteme"
 
-#: modules/computer.c:74 modules/computer.c:471 modules/computer.c:603
+#: modules/computer.c:74 modules/computer.c:470 modules/computer.c:602
 msgid "Display"
 msgstr "Anzeige"
 
@@ -697,15 +695,15 @@ msgstr "Umgebungsvariablen"
 msgid "Development"
 msgstr "Entwicklung"
 
-#: modules/computer.c:79 modules/computer.c:628
+#: modules/computer.c:79 modules/computer.c:627
 msgid "Users"
 msgstr "Benutzer"
 
-#: modules/computer.c:80 modules/computer.c:640
+#: modules/computer.c:80 modules/computer.c:639
 msgid "Groups"
 msgstr "Gruppen"
 
-#: modules/computer.c:101 modules/computer.c:461 modules/computer.c:466
+#: modules/computer.c:101 modules/computer.c:460 modules/computer.c:465
 #: modules/devices.c:96
 msgid "Memory"
 msgstr "Hauptspeicher"
@@ -715,19 +713,19 @@ msgstr "Hauptspeicher"
 msgid "%dMB (%dMB used)"
 msgstr ""
 
-#: modules/computer.c:105 modules/computer.c:515 modules/computer.c:531
+#: modules/computer.c:105 modules/computer.c:514 modules/computer.c:530
 msgid "Uptime"
 msgstr ""
 
-#: modules/computer.c:107 modules/computer.c:462 modules/computer.c:470
+#: modules/computer.c:107 modules/computer.c:461 modules/computer.c:469
 msgid "Date/Time"
 msgstr ""
 
-#: modules/computer.c:112 modules/computer.c:517 modules/computer.c:532
+#: modules/computer.c:112 modules/computer.c:516 modules/computer.c:531
 msgid "Load Average"
 msgstr ""
 
-#: modules/computer.c:114 modules/computer.c:516 modules/computer.c:533
+#: modules/computer.c:114 modules/computer.c:515 modules/computer.c:532
 msgid "Available entropy in /dev/random"
 msgstr ""
 
@@ -843,113 +841,112 @@ msgstr "QMake"
 msgid "CMake"
 msgstr ""
 
-#: modules/computer.c:271
-#, c-format
-msgid "%s=Not found\n"
-msgstr "%s=Nicht gefunden\n"
+#: modules/computer.c:268
+msgid "Not found"
+msgstr "Nicht gefunden"
 
-#: modules/computer.c:274
+#: modules/computer.c:273
 #, c-format
 msgid "Detecting version: %s"
 msgstr ""
 
-#: modules/computer.c:291
+#: modules/computer.c:290
 msgid "Program"
 msgstr "Programm"
 
-#: modules/computer.c:302
+#: modules/computer.c:301
 msgid "Invalid chassis type (0)"
 msgstr ""
 
-#: modules/computer.c:303 modules/computer.c:304
+#: modules/computer.c:302 modules/computer.c:303
 msgid "Unknown chassis type"
 msgstr ""
 
-#: modules/computer.c:305
+#: modules/computer.c:304
 msgid "Desktop"
 msgstr ""
 
-#: modules/computer.c:306
+#: modules/computer.c:305
 msgid "Low-profile Desktop"
 msgstr ""
 
-#: modules/computer.c:307
+#: modules/computer.c:306
 msgid "Pizza Box"
 msgstr ""
 
-#: modules/computer.c:308
+#: modules/computer.c:307
 msgid "Mini Tower"
 msgstr ""
 
-#: modules/computer.c:309
+#: modules/computer.c:308
 msgid "Tower"
 msgstr ""
 
-#: modules/computer.c:310
+#: modules/computer.c:309
 msgid "Portable"
 msgstr ""
 
-#: modules/computer.c:311 modules/computer.c:335
+#: modules/computer.c:310 modules/computer.c:334
 msgid "Laptop"
 msgstr ""
 
-#: modules/computer.c:312
+#: modules/computer.c:311
 msgid "Notebook"
 msgstr ""
 
-#: modules/computer.c:313
+#: modules/computer.c:312
 msgid "Handheld"
 msgstr ""
 
-#: modules/computer.c:314
+#: modules/computer.c:313
 msgid "Docking Station"
 msgstr ""
 
-#: modules/computer.c:315
+#: modules/computer.c:314
 msgid "All-in-one"
 msgstr ""
 
-#: modules/computer.c:316
+#: modules/computer.c:315
 msgid "Subnotebook"
 msgstr ""
 
-#: modules/computer.c:317
+#: modules/computer.c:316
 msgid "Space-saving"
 msgstr ""
 
-#: modules/computer.c:318
+#: modules/computer.c:317
 msgid "Lunch Box"
 msgstr ""
 
-#: modules/computer.c:319
+#: modules/computer.c:318
 msgid "Main Server Chassis"
 msgstr ""
 
-#: modules/computer.c:320
+#: modules/computer.c:319
 msgid "Expansion Chassis"
 msgstr ""
 
-#: modules/computer.c:321
+#: modules/computer.c:320
 msgid "Sub Chassis"
 msgstr ""
 
-#: modules/computer.c:322
+#: modules/computer.c:321
 msgid "Bus Expansion Chassis"
 msgstr ""
 
-#: modules/computer.c:323
+#: modules/computer.c:322
 msgid "Peripheral Chassis"
 msgstr ""
 
-#: modules/computer.c:324
+#: modules/computer.c:323
 msgid "RAID Chassis"
 msgstr ""
 
-#: modules/computer.c:325
+#: modules/computer.c:324
 msgid "Rack Mount Chassis"
 msgstr ""
 
-#: modules/computer.c:326
+#: modules/computer.c:325
 msgid "Sealed-case PC"
 msgstr ""
 
@@ -958,15 +955,15 @@ msgstr ""
 #. FIXME: check if there's more than one directory in /proc/acpi/battery
 #. FIXME: check if batteries are found using /proc/apm
 #. FIXME: use dmidecode if available to get chassis type
-#: modules/computer.c:346
+#: modules/computer.c:345
 msgid "Unknown physical machine type"
 msgstr ""
 
-#: modules/computer.c:464 modules/computer.c:714
+#: modules/computer.c:463 modules/computer.c:713
 msgid "Computer"
 msgstr "Computer"
 
-#: modules/computer.c:465 modules/devices/alpha/processor.c:79
+#: modules/computer.c:464 modules/devices/alpha/processor.c:79
 #: modules/devices/arm/processor.c:235 modules/devices.c:95
 #: modules/devices/ia64/processor.c:151 modules/devices/m68k/processor.c:75
 #: modules/devices/mips/processor.c:66 modules/devices/parisc/processor.c:146
@@ -976,166 +973,166 @@ msgstr "Computer"
 msgid "Processor"
 msgstr "Prozessor"
 
-#: modules/computer.c:467
+#: modules/computer.c:466
 msgid "Machine Type"
 msgstr "Maschinen-Typ"
 
-#: modules/computer.c:469 modules/computer.c:526
+#: modules/computer.c:468 modules/computer.c:525
 msgid "User Name"
 msgstr "Benutzername"
 
-#: modules/computer.c:472 modules/computer.c:604
+#: modules/computer.c:471 modules/computer.c:603
 msgid "Resolution"
 msgstr "Auflösung"
 
 #. /label for resolution
 #. / Resolution WxH unit
-#: modules/computer.c:474 modules/computer.c:607
+#: modules/computer.c:473 modules/computer.c:606
 msgid "pixels"
 msgstr ""
 
-#: modules/computer.c:475
+#: modules/computer.c:474
 msgid "OpenGL Renderer"
 msgstr "OpenGL-Renderer"
 
-#: modules/computer.c:476
+#: modules/computer.c:475
 msgid "X11 Vendor"
 msgstr "X11-Hersteller"
 
-#: modules/computer.c:478 modules/devices.c:102
+#: modules/computer.c:477 modules/devices.c:102
 msgid "Input Devices"
 msgstr "Eingabegeräte"
 
-#: modules/computer.c:520
+#: modules/computer.c:519
 msgid "Kernel"
 msgstr ""
 
-#: modules/computer.c:522
+#: modules/computer.c:521
 msgid "C Library"
 msgstr "C-Library"
 
-#: modules/computer.c:523
+#: modules/computer.c:522
 msgid "Distribution"
 msgstr ""
 
-#: modules/computer.c:524
+#: modules/computer.c:523
 msgid "Current Session"
 msgstr "Aktuelle Sitzung"
 
-#: modules/computer.c:525
+#: modules/computer.c:524
 msgid "Computer Name"
 msgstr "Computername"
 
-#: modules/computer.c:527
+#: modules/computer.c:526
 msgid "Language"
 msgstr "Sprache"
 
-#: modules/computer.c:528 modules/computer/users.c:50
+#: modules/computer.c:527 modules/computer/users.c:50
 msgid "Home Directory"
 msgstr "Stammverzeichnis"
 
-#: modules/computer.c:529
+#: modules/computer.c:528
 msgid "Desktop Environment"
 msgstr "Desktop-Umgebung"
 
-#: modules/computer.c:530
+#: modules/computer.c:529
 msgid "Misc"
 msgstr "Verschiedenes"
 
-#: modules/computer.c:545
+#: modules/computer.c:544
 msgid "Loaded Modules"
 msgstr "Geladene Module"
 
-#: modules/computer.c:546 modules/devices.c:398
+#: modules/computer.c:545 modules/devices.c:398
 msgid "Description"
 msgstr "Beschreibung"
 
-#: modules/computer.c:556
+#: modules/computer.c:555
 msgid "Date & Time"
 msgstr "Datum & Uhrzeit"
 
-#: modules/computer.c:556
+#: modules/computer.c:555
 msgid "Kernel Version"
 msgstr "Kernel-Version"
 
-#: modules/computer.c:568
+#: modules/computer.c:567
 msgid "Language Code"
 msgstr "Sprach-Code"
 
-#: modules/computer.c:569
+#: modules/computer.c:568
 msgid "Available Languages"
 msgstr ""
 
-#: modules/computer.c:584 modules/computer/filesystem.c:85
+#: modules/computer.c:583 modules/computer/filesystem.c:85
 msgid "Mount Point"
 msgstr "Mount-Punkt"
 
-#: modules/computer.c:584
+#: modules/computer.c:583
 msgid "Usage"
 msgstr "Verwendung"
 
-#: modules/computer.c:584
+#: modules/computer.c:583
 msgid "Device"
 msgstr "Gerät"
 
-#: modules/computer.c:585
+#: modules/computer.c:584
 msgid "Mounted File Systems"
 msgstr ""
 
-#: modules/computer.c:608 modules/computer.c:615
+#: modules/computer.c:607 modules/computer.c:614
 #: modules/devices/ia64/processor.c:153 modules/devices/x86/processor.c:412
 msgid "Vendor"
 msgstr "Hersteller"
 
-#: modules/computer.c:610
+#: modules/computer.c:609
 msgid "Monitors"
 msgstr "Bildschirme"
 
-#: modules/computer.c:612
+#: modules/computer.c:611
 msgid "Extensions"
 msgstr "Erweiterungen"
 
-#: modules/computer.c:614
+#: modules/computer.c:613
 msgid "OpenGL"
 msgstr ""
 
-#: modules/computer.c:616
+#: modules/computer.c:615
 msgid "Renderer"
 msgstr ""
 
-#: modules/computer.c:618
+#: modules/computer.c:617
 msgid "Direct Rendering"
 msgstr "Direct-Rendering"
 
-#: modules/computer.c:639 modules/computer/users.c:49
+#: modules/computer.c:638 modules/computer/users.c:49
 msgid "Group ID"
 msgstr "Gruppen-ID"
 
-#: modules/computer.c:756
+#: modules/computer.c:755
 msgid "RAM"
 msgstr ""
 
-#: modules/computer.c:756 modules/devices/devicetree/pmac_data.c:82
+#: modules/computer.c:755 modules/devices/devicetree/pmac_data.c:82
 msgid "Motherboard"
 msgstr ""
 
-#: modules/computer.c:756
+#: modules/computer.c:755
 msgid "Graphics"
 msgstr ""
 
-#: modules/computer.c:757 modules/devices.c:103
+#: modules/computer.c:756 modules/devices.c:103
 msgid "Storage"
 msgstr "Speicher"
 
-#: modules/computer.c:757 modules/devices.c:99
+#: modules/computer.c:756 modules/devices.c:99
 msgid "Printers"
 msgstr "Drucker"
 
-#: modules/computer.c:757
+#: modules/computer.c:756
 msgid "Audio"
 msgstr ""
 
-#: modules/computer.c:812
+#: modules/computer.c:811
 msgid "Gathers high-level computer information"
 msgstr "Sammelt high-level Computer-Informationen"
 
@@ -4122,21 +4119,3 @@ msgstr ""
 #: modules/network/net.c:479
 msgid "Broadcast Address"
 msgstr ""
-
-#~ msgid "Jakub Szypulka"
-#~ msgstr "Jakub Szypulka"
-
-#~ msgid "Physical machine"
-#~ msgstr "Physikalische Maschine"
-
-#~ msgid "Y_es"
-#~ msgstr "_Ja"
-
-#~ msgid "Contents"
-#~ msgstr "Inhalt"
-
-#~ msgid "Context help"
-#~ msgstr "Kontexthilfe"
-
-#~ msgid "_Donate to the project"
-#~ msgstr "_Spende zum Projekt"
