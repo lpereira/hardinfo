@@ -107,9 +107,9 @@ scan_pci_do(void)
 	    if (freq)
 		strdevice = h_strdup_cprintf("Frequency=%dMHz\n", strdevice, freq);
 	    if (latency)
-		strdevice = h_strdup_cprintf("Latency=%d\n", strdevice, latency);
+		strdevice = h_strdup_cprintf(_("Latency=%d\n"), strdevice, latency);
 
-	    strdevice = h_strdup_cprintf("Bus Master=%s\n", strdevice, bus_master ? "Yes" : "No");
+	    strdevice = h_strdup_cprintf(_("Bus Master=%s\n"), strdevice, bus_master ? "Yes" : "No");
 	} else if (!strncmp(buf, "Kernel modules", 14)) {
 	    WALK_UNTIL(' ');
 	    WALK_UNTIL(':');
@@ -121,7 +121,7 @@ scan_pci_do(void)
 	    buf++;
 	    const gchar *oem_vendor_url = vendor_get_url(buf);
             if (oem_vendor_url) 
-                strdevice = h_strdup_cprintf("OEM Vendor=%s (%s)\n",
+                strdevice = h_strdup_cprintf(_("OEM Vendor=%s (%s)\n"),
                                             strdevice,
                                             vendor_get_name(buf),
                                             oem_vendor_url);
@@ -204,17 +204,17 @@ scan_pci_do(void)
                                 name);
 
 	    strhash = g_strdup_printf("PCI%d", n);
-	    strdevice = g_strdup_printf("[Device Information]\n"
+	    strdevice = g_strdup_printf(_("[Device Information]\n"
 					"Name=%s\n"
 					"Class=%s\n"
 					"Domain=%d\n"
-					"Bus, device, function=%d, %d, %d\n",
+					"Bus, device, function=%d, %d, %d\n"),
 					name, category, domain, bus,
 					device, function);
             
             const gchar *url = vendor_get_url(name);
             if (url) {
-                strdevice = h_strdup_cprintf("Vendor=%s (%s)\n",
+                strdevice = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
                                             strdevice,
                                             vendor_get_name(name),
                                             url);
