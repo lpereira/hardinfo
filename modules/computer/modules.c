@@ -124,7 +124,7 @@ scan_modules_do(void)
 #define NONE_IF_NULL(var) (var) ? (var) : "N/A"
 
 	/* create the module information string */
-	strmodule = g_strdup_printf("[Module Information]\n"
+	strmodule = g_strdup_printf(_("[Module Information]\n"
 				    "Path=%s\n"
 				    "Used Memory=%.2fKiB\n"
 				    "[Description]\n"
@@ -133,7 +133,7 @@ scan_modules_do(void)
 				    "Version Magic=%s\n"
 				    "[Copyright]\n"
 				    "Author=%s\n"
-				    "License=%s\n",
+				    "License=%s\n"),
 				    NONE_IF_NULL(filename),
 				    memory / 1024.0,
 				    modname,
