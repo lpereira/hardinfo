@@ -126,19 +126,45 @@ gchar *lginterval = NULL;
 
 #include <vendor.h>
 
+gint proc_cmp (Processor *a, Processor *b) {
+    return g_strcmp0(a->model_name, b->model_name);
+}
+
+gchar *processor_describe(GSList * processors)
+{
+    gchar *ret = g_strdup("");
+    GSList *tmp, *l;
+    Processor *p;
+    gchar *cur_str = NULL;
+    gint cur_count = 0;
+
+    tmp = g_slist_copy(processors);
+    tmp = g_slist_sort(tmp, (GCompareFunc)proc_cmp);
+
+    for (l = tmp; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (cur_str == NULL) {
+            cur_str = p->model_name;
+            cur_count = 1;
+        } else {
+            if(g_strcmp0(cur_str, p->model_name)) {
+                ret = h_strdup_cprintf("%s%dx %s", ret, strlen(ret) ? " + " : "", cur_count, cur_str);
+                cur_str = p->model_name;
+                cur_count = 1;
+            } else {
+                cur_count++;
+            }
+        }
+    }
+    ret = h_strdup_cprintf("%s%dx %s", ret, strlen(ret) ? " + " : "", cur_count, cur_str);
+    g_slist_free(tmp);
+    return ret;
+}
+
 gchar *get_processor_name(void)
 {
     scan_processors(FALSE);
-
-    Processor *p = (Processor *) processors->data;
-
-    if (g_slist_length(processors) > 1) {
-	return idle_free(g_strdup_printf("%dx %s",
-					 g_slist_length(processors),
-					 p->model_name));
-    } else {
-	return p->model_name;
-    }
+    return processor_describe(processors);
 }
 
 gchar *get_storage_devices(void)
