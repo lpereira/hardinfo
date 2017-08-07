@@ -176,7 +176,7 @@ set(MODULE_benchmark_SOURCES_GTK2
 if (HARDINFO_GTK3)
 	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY})
 else()
-	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY} ${MODULE_network_SOURCES_GTK2})
+	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY} ${MODULE_benchmark_SOURCES_GTK2})
 endif()
 
 set_source_files_properties(
