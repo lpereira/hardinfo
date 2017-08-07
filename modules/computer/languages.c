@@ -72,7 +72,7 @@ scan_languages(OperatingSystem * os)
 	    retval = h_strdup_cprintf("$%s$%s=%s\n", retval, name, name, title);
 
 #define FIELD(f) f ? f : "(Unknown)"
-	    currlocale = g_strdup_printf("[Locale Information]\n"
+	    currlocale = g_strdup_printf(_("[Locale Information]\n"
 					 "Name=%s (%s)\n"
 					 "Source=%s\n"
 					 "Address=%s\n"
@@ -81,7 +81,7 @@ scan_languages(OperatingSystem * os)
 					 "Territory=%s\n"
 					 "Revision=%s\n"
 					 "Date=%s\n"
-					 "Codeset=%s\n",
+					 "Codeset=%s\n"),
 					 name, FIELD(title),
 					 FIELD(source), FIELD(address),
 					 FIELD(email), FIELD(language),
