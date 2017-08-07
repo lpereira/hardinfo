@@ -30,6 +30,8 @@
 
 #include "benchmark.h"
 
+#include "benchmark/bench_results.c"
+
 void scan_fft(gboolean reload);
 void scan_raytr(gboolean reload);
 void scan_bfsh(gboolean reload);
@@ -186,14 +188,62 @@ static gchar *clean_cpuname(gchar *cpuname)
     return tmp;
 }
 
+gchar *hi_more_info(gchar * entry)
+{
+    gchar *info = moreinfo_lookup_with_prefix("BENCH", entry);
+    if (info)
+        return g_strdup(info);
+    return g_strdup("?");
+}
+
+gchar *hi_get_field(gchar * field)
+{
+    gchar *info = moreinfo_lookup_with_prefix("BENCH", field);
+    if (info)
+        return g_strdup(info);
+    return g_strdup(field);
+}
+
+static void br_mi_add(char **results_list, bench_result *b) {
+    gchar *ckey, *rkey;
+
+    //ckey = hardinfo_clean_label(b->machine->cpu_name, 0);
+    ckey = strdup(b->machine->cpu_name);
+    rkey = strdup(b->machine->mid);
+
+    *results_list = h_strdup_cprintf("$%s$%s=%.2f|%s\n", *results_list, rkey, ckey,
+        b->result, b->machine->cpu_config);
+
+    moreinfo_add_with_prefix("BENCH", rkey, bench_result_more_info(b) );
+
+    g_free(ckey);
+    g_free(rkey);
+}
+
 static gchar *__benchmark_include_results(gdouble result,
 					  const gchar * benchmark,
 					  ShellOrderType order_type)
 {
+    bench_result *b = NULL;
     GKeyFile *conf;
-    gchar **machines;
+    gchar **machines, *temp = NULL;;
     gchar *path, *results = g_strdup(""), *return_value, *processor_frequency, *processor_name;
-    int i;
+    int i, n_threads;
+
+    moreinfo_del_with_prefix("BENCH");
+
+    if (result != 0.0) {
+        temp = module_call_method("devices::getProcessorCount");
+        n_threads = temp ? atoi(temp) : 1;
+        g_free(temp); temp = NULL;
+
+        b = bench_result_this_machine(benchmark, result, n_threads);
+        br_mi_add(&results, b);
+
+        temp = bench_result_benchmarkconf_line(b);
+        printf("[%s]\n%s", benchmark, temp);
+        g_free(temp); temp = NULL;
+    }
 
     conf = g_key_file_new();
 
@@ -205,56 +255,40 @@ static gchar *__benchmark_include_results(gdouble result,
     }
 
     g_key_file_load_from_file(conf, path, 0, NULL);
+    g_key_file_set_list_separator(conf, '|');
 
     machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
     for (i = 0; machines && machines[i]; i++) {
-        gchar *value, *cleaned_machine;
+        gchar **values;
+        bench_result *sbr;
 
-        value   = g_key_file_get_value(conf, benchmark, machines[i], NULL);
-        cleaned_machine = clean_cpuname(machines[i]);
-        results = h_strconcat(results, cleaned_machine, "=", value, "\n", NULL);
+        values = g_key_file_get_string_list(conf, benchmark, machines[i], NULL, NULL);
 
-        g_free(value);
-        g_free(cleaned_machine);
+        sbr = bench_result_benchmarkconf(benchmark, machines[i], values);
+        br_mi_add(&results, sbr);
+
+        bench_result_free(sbr);
+        g_strfreev(values);
     }
 
     g_strfreev(machines);
     g_free(path);
     g_key_file_free(conf);
 
-    if (result > 0.0f) {
-        processor_name = module_call_method("devices::getProcessorName");
-        processor_frequency = module_call_method("devices::getProcessorFrequencyDesc");
-        return_value = g_strdup_printf("[$ShellParam$]\n"
-                       "Zebra=1\n"
-                       "OrderType=%d\n"
-                       "ViewType=3\n"
-                       "ColumnTitle$Extra1=%s\n" /* CPU Clock */
-                       "ColumnTitle$Progress=%s\n" /* Results */
-                       "ColumnTitle$TextValue=%s\n" /* CPU */
-                       "ShowColumnHeaders=true\n"
-                       "[%s]\n"
-                       "<big><b>%s</b></big>=%.3f|%s\n"
-                       "%s", order_type,
-                       _("CPU Config"), _("Results"), _("CPU"),
-                       benchmark,
-                       processor_name, result, processor_frequency, results);
-        g_free(processor_frequency);
-        g_free(processor_name);
-    } else {
-        return_value = g_strdup_printf("[$ShellParam$]\n"
-                       "Zebra=1\n"
-                       "OrderType=%d\n"
-                       "ViewType=3\n"
-                       "ColumnTitle$Extra1=%s\n" /* CPU Clock */
-                       "ColumnTitle$Progress=%s\n" /* Results */
-                       "ColumnTitle$TextValue=%s\n" /* CPU */
-                       "ShowColumnHeaders=true\n"
-                       "[%s]\n%s",
-                       order_type,
-                       _("CPU Config"), _("Results"), _("CPU"),
-                       benchmark, results);
-    }
+    return_value = g_strdup_printf("[$ShellParam$]\n"
+                   "Zebra=1\n"
+                   "OrderType=%d\n"
+                   "ViewType=4\n"
+                   "ColumnTitle$Extra1=%s\n" /* CPU Clock */
+                   "ColumnTitle$Progress=%s\n" /* Results */
+                   "ColumnTitle$TextValue=%s\n" /* CPU */
+                   "ShowColumnHeaders=true\n"
+                   "[%s]\n%s",
+                   order_type,
+                   _("CPU Config"), _("Results"), _("CPU"),
+                   benchmark, results);
+
+    bench_result_free(b);
     return return_value;
 }
 
