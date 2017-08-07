@@ -23,7 +23,7 @@
 
 struct _Processor {
     gchar *model_name;
-    gchar *decoded_name;
+    gchar *linux_name;
     gchar *flags;
     gfloat bogomips;
 

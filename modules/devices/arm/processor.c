@@ -73,7 +73,7 @@ processor_scan(void)
             processor->id = atol(tmp[1]);
 
             if (rep_pname)
-                processor->model_name = g_strdup(rep_pname);
+                processor->linux_name = g_strdup(rep_pname);
 
             g_strfreev(tmp);
             continue;
@@ -89,11 +89,11 @@ processor_scan(void)
             processor->id = 0;
 
             if (rep_pname)
-                processor->model_name = g_strdup(rep_pname);
+                processor->linux_name = g_strdup(rep_pname);
         }
 
         if (processor) {
-            get_str("model name", processor->model_name);
+            get_str("model name", processor->linux_name);
             get_str("Features", processor->flags);
             get_float("BogoMIPS", processor->bogomips);
 
@@ -138,7 +138,7 @@ processor_scan(void)
         processor = (Processor *) pi->data;
 
         /* strings can't be null or segfault later */
-        STRIFNULL(processor->model_name, _("ARM Processor") );
+        STRIFNULL(processor->linux_name, _("ARM Processor") );
         EMPIFNULL(processor->flags);
         UNKIFNULL(processor->cpu_implementer);
         UNKIFNULL(processor->cpu_architecture);
@@ -146,11 +146,11 @@ processor_scan(void)
         UNKIFNULL(processor->cpu_part);
         UNKIFNULL(processor->cpu_revision);
 
-        processor->decoded_name = arm_decoded_name(
+        processor->model_name = arm_decoded_name(
             processor->cpu_implementer, processor->cpu_part,
             processor->cpu_variant, processor->cpu_revision,
-            processor->cpu_architecture, processor->model_name);
-        UNKIFNULL(processor->decoded_name);
+            processor->cpu_architecture, processor->linux_name);
+        UNKIFNULL(processor->model_name);
 
         /* topo & freq */
         processor->cpufreq = cpufreq_new(processor->id);
@@ -233,8 +233,8 @@ processor_get_detailed_info(Processor *processor)
                        "%s"
                        "%s",    /* empty */
                    _("Processor"),
-                   _("Linux Name"), processor->model_name,
-                   _("Decoded Name"), processor->decoded_name,
+                   _("Linux Name"), processor->linux_name,
+                   _("Decoded Name"), processor->model_name,
                    _("Mode"), arm_mode_str[processor->mode],
                    _("Frequency"), processor->cpu_mhz, _("MHz"),
                    _("BogoMips"), processor->bogomips,
