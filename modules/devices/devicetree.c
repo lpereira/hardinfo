@@ -148,6 +148,7 @@ gchar *get_node(char *np) {
     return ret;
 }
 
+/* different from  dtr_get_string() in that it re-uses the existing dt */
 char *get_dt_string(char *path, int decode) {
     dtr_obj *obj;
     char *ret = NULL;

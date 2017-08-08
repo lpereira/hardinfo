@@ -31,9 +31,9 @@ enum {
     DTP_DMAS,    /* dma-specifier list */
 };
 
-/* simplest, no aliases.
+/* simplest, no aliases, doesn't require an existing dt.
  * use dtr_get_prop_str() for complete. */
-char* dtr_get_string(const char *p);
+char* dtr_get_string(const char *p, int decode);
 
 typedef uint32_t dt_uint; /* big-endian */
 
