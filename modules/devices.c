@@ -248,7 +248,7 @@ gchar *get_motherboard(void)
 #endif
 
     /* use device tree "model" */
-    board_vendor = dtr_get_string("/model");
+    board_vendor = dtr_get_string("/model", 0);
     if (board_vendor != NULL)
         return board_vendor;
 

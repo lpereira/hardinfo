@@ -441,10 +441,16 @@ char *dtr_get_prop_str(dtr *s, dtr_obj *node, const char *name) {
     return ret;
 }
 
-char *dtr_get_string(const char *p) {
+char *dtr_get_string(const char *p, int decode) {
     dtr *dt = dtr_new_x(NULL, 1);
-    char *ret;
-    ret = dtr_get_prop_str(dt, NULL, p);
+    dtr_obj *obj;
+    char *ret = NULL;
+    if (decode) {
+        obj = dtr_get_prop_obj(dt, NULL, p);
+        ret = dtr_str(obj);
+        dtr_obj_free(obj);
+    } else
+        ret = dtr_get_prop_str(dt, NULL, p);
     dtr_free(dt);
     return ret;
 }

@@ -19,6 +19,7 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "cpu_util.h"
+#include "dt_util.h"
 
 #include "arm_data.h"
 #include "arm_data.c"
@@ -255,15 +256,93 @@ processor_get_detailed_info(Processor *processor)
     return ret;
 }
 
+gchar *get_soc_name(GSList *processors) {
+    /* compatible contains a list of compatible hardware, so be careful
+     * with matching order.
+     * ex: "ti,omap3-beagleboard-xm", "ti,omap3450", "ti,omap3";
+     * matches "omap3 family" first.
+     * ex: "brcm,bcm2837", "brcm,bcm2836";
+     * would match 2836 when it is a 2837.
+     */
+#define UNKSOC "(Unknown)"
+    const struct {
+        char *search_str;
+        char *vendor;
+        char *soc;
+    } dt_compat_searches[] = {
+        { "brcm,bcm2837", "Broadcom", "BCM2837" },
+        { "brcm,bcm2836", "Broadcom", "BCM2836" },
+        { "brcm,bcm2835", "Broadcom", "BCM2835" },
+        { "ti,omap5432", "Texas Instruments", "OMAP5432" },
+        { "ti,omap5430", "Texas Instruments", "OMAP5430" },
+        { "ti,omap4470", "Texas Instruments", "OMAP4470" },
+        { "ti,omap4460", "Texas Instruments", "OMAP4460" },
+        { "ti,omap4430", "Texas Instruments", "OMAP4430" },
+        { "ti,omap3620", "Texas Instruments", "OMAP3620" },
+        { "ti,omap3450", "Texas Instruments", "OMAP3450" },
+        { "ti,omap5", "Texas Instruments", "OMAP5-family" },
+        { "ti,omap4", "Texas Instruments", "OMAP4-family" },
+        { "ti,omap3", "Texas Instruments", "OMAP3-family" },
+        { "ti,omap2", "Texas Instruments", "OMAP2-family" },
+        { "ti,omap1", "Texas Instruments", "OMAP1-family" },
+        { "qcom,msm8939", "Qualcomm", "Snapdragon 615"},
+        { "qcom,msm", "Qualcomm", "Snapdragon-family"},
+        { "nvidia,tegra" "nVidia", "Tegra-family" },
+        { "bcm,", "Broadcom", UNKSOC },
+        { "nvidia," "nVidia", UNKSOC },
+        { "rockchip," "Rockchip", UNKSOC },
+        { "ti,", "Texas Instruments", UNKSOC },
+        { "qcom,", "Qualcom", UNKSOC },
+        { NULL, NULL }
+    };
+    gchar *ret = NULL;
+    gchar *compat = NULL;
+    int i;
+
+    compat = dtr_get_string("/compatible", 1);
+
+    if (compat != NULL) {
+        i = 0;
+        while(dt_compat_searches[i].search_str != NULL) {
+            if (strstr(compat, dt_compat_searches[i].search_str) != NULL) {
+                ret = g_strdup_printf("%s %s", dt_compat_searches[i].vendor, dt_compat_searches[i].soc);
+                break;
+            }
+            i++;
+        }
+    }
+    g_free(compat);
+    return ret;
+}
+
+gchar *processor_meta(GSList * processors) {
+    gchar *meta_soc = get_soc_name(processors);
+    gchar *meta_cpu_desc = processor_describe(processors);
+    gchar *ret = NULL;
+    UNKIFNULL(meta_soc);
+    UNKIFNULL(meta_cpu_desc);
+    ret = g_strdup_printf("[%s]\n"
+                            "%s=%s\n"
+                            "%s=%s\n",
+                            _("SOC/Package"),
+                            _("Name"), meta_soc,
+                            _("Description"), meta_cpu_desc);
+    g_free(meta_soc);
+    g_free(meta_cpu_desc);
+    return ret;
+}
+
 gchar *processor_get_info(GSList * processors)
 {
     Processor *processor;
-
-    if (g_slist_length(processors) > 1) {
     gchar *ret, *tmp, *hashkey;
+    gchar *meta; /* becomes owned by more_info? no need to free? */
     GSList *l;
 
-    tmp = g_strdup("");
+    tmp = g_strdup_printf("$CPU_META$%s=\n", _("SOC/Package Information") );
+
+    meta = processor_meta(processors);
+    moreinfo_add_with_prefix("DEV", "CPU_META", meta);
 
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
@@ -276,7 +355,7 @@ gchar *processor_get_info(GSList * processors)
         hashkey = g_strdup_printf("CPU%d", processor->id);
         moreinfo_add_with_prefix("DEV", hashkey,
                 processor_get_detailed_info(processor));
-           g_free(hashkey);
+        g_free(hashkey);
     }
 
     ret = g_strdup_printf("[$ShellParam$]\n"
@@ -286,8 +365,4 @@ gchar *processor_get_info(GSList * processors)
     g_free(tmp);
 
     return ret;
-    }
-
-    processor = (Processor *) processors->data;
-    return processor_get_detailed_info(processor);
 }
