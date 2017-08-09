@@ -294,6 +294,7 @@ gchar *callback_dev()
 
 static gchar *detect_machine_type(void)
 {
+    GDir *dir;
     gchar *chassis;
 
     if (g_file_get_contents("/sys/devices/virtual/dmi/id/chassis_type", &chassis, NULL, NULL)) {
@@ -333,10 +334,44 @@ static gchar *detect_machine_type(void)
     if (g_file_test("/proc/pmu/info", G_FILE_TEST_EXISTS))
         return g_strdup(_("Laptop"));
 
-    /* FIXME: check if files in /sys/class/power_supply/${*)/type contains
-     * "Battery", or .../scope does not contain Device. */
+    dir = g_dir_open("/proc/acpi/battery", 0, NULL);
+    if (dir) {
+        const gchar *name = g_dir_read_name(dir);
 
-    /* FIXME: check if there's more than one directory in /proc/acpi/battery */
+        g_dir_close(dir);
+
+        if (name)
+            return g_strdup(_("Laptop"));
+    }
+
+    dir = g_dir_open("/sys/class/power_supply", 0, NULL);
+    if (dir) {
+        const gchar *name;
+
+        while ((name = g_dir_read_name(dir))) {
+            gchar *contents;
+            gchar type[PATH_MAX];
+            int r;
+
+            r = snprintf(type, sizeof(type), "%s/%s/type",
+                         "/sys/class/power_supply", name);
+            if (r < 0 || r > PATH_MAX)
+                continue;
+
+            if (g_file_get_contents(type, &contents, NULL, NULL)) {
+                if (g_str_has_prefix(contents, "Battery")) {
+                    g_free(contents);
+                    g_dir_close(dir);
+
+                    return g_strdup(_("Laptop"));
+                }
+
+                g_free(contents);
+            }
+        }
+
+        g_dir_close(dir);
+    }
 
     /* FIXME: check if batteries are found using /proc/apm */
 
