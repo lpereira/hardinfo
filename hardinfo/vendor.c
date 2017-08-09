@@ -28,7 +28,8 @@
 
 static const Vendor vendors[] = {
     {"ATI", "ATI Technologies", "www.ati.com"},
-    {"nVidia", "NVIDIA", "www.nvidia.com"},
+    {"nVidia", "nVidia", "www.nvidia.com"},
+    {"NVidia", "nVidia", "www.nvidia.com"},
     {"3Com", "3Com", "www.3com.com"},
     {"Intel", "Intel", "www.intel.com"},
     {"Cirrus Logic", "Cirrus Logic", "www.cirrus.com"},
@@ -110,48 +111,48 @@ void vendor_init(void)
 
     DEBUG("initializing vendor list");
     sync_manager_add_entry(&se);
-    
+
     path = g_build_filename(g_get_home_dir(), ".hardinfo", "vendor.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
       DEBUG("local vendor.conf not found, trying system-wise");
       g_free(path);
       path = g_build_filename(params.path_data, "vendor.conf", NULL);
     }
-    
+
     if (g_file_test(path, G_FILE_TEST_EXISTS)) {
       GKeyFile *vendors;
       gchar *tmp;
       gint num_vendors;
-      
+
       DEBUG("loading %s", path);
-      
+
       vendors = g_key_file_new();
       if (g_key_file_load_from_file(vendors, path, 0, NULL)) {
         num_vendors = g_key_file_get_integer(vendors, "vendors", "number", NULL);
-        
+
         for (i = num_vendors - 1; i >= 0; i--) {
           Vendor *v = g_new0(Vendor, 1);
-          
+
           tmp = g_strdup_printf("vendor%d", i);
-          
+
           v->id   = g_key_file_get_string(vendors, tmp, "id", NULL);
           v->name = g_key_file_get_string(vendors, tmp, "name", NULL);
           v->url  = g_key_file_get_string(vendors, tmp, "url", NULL);
-          
+
           vendor_list = g_slist_prepend(vendor_list, v);
-          
+
           g_free(tmp);
         }
       }
-      
+
       g_key_file_free(vendors);
     } else {
       DEBUG("system-wise vendor.conf not found, using internal database");
-      
+
       for (i = G_N_ELEMENTS(vendors) - 1; i >= 0; i--) {
         vendor_list = g_slist_prepend(vendor_list, (gpointer) &vendors[i]);
       }
-    } 
+    }
 
     g_free(path);
 }
@@ -159,20 +160,20 @@ void vendor_init(void)
 const gchar *vendor_get_name(const gchar * id)
 {
     GSList *vendor;
-    
+
     if (!id) {
       return NULL;
     }
-    
+
     for (vendor = vendor_list; vendor; vendor = vendor->next) {
       Vendor *v = (Vendor *)vendor->data;
-      
+
       if (v && v->id && strstr(id, v->id)) {
-        return g_strdup(v->name);
+        return v->name;
       }
     }
 
-    return id;
+    return id; /* What about const? */
 }
 
 const gchar *vendor_get_url(const gchar * id)
@@ -182,12 +183,12 @@ const gchar *vendor_get_url(const gchar * id)
     if (!id) {
       return NULL;
     }
-    
+
     for (vendor = vendor_list; vendor; vendor = vendor->next) {
       Vendor *v = (Vendor *)vendor->data;
-      
+
       if (v && v->id && strstr(id, v->id)) {
-        return g_strdup(v->url);
+        return v->url;
       }
     }
 
