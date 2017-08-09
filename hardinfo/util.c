@@ -1323,3 +1323,59 @@ gboolean g_strv_contains(const gchar * const * strv, const gchar *str) {
     return 0;
 }
 #endif
+
+/* Hardinfo labels that have # are truncated and/or hidden.
+ * Labels can't have $ because that is the delimiter in
+ * moreinfo. */
+gchar *hardinfo_clean_label(const gchar *v, int replacing) {
+    gchar *clean, *p;
+
+    p = clean = g_strdup(v);
+    while (*p != 0) {
+        switch(*p) {
+            case '#': case '$':
+                *p = '_';
+                break;
+            default:
+                break;
+        }
+        p++;
+    }
+    if (replacing)
+        g_free((gpointer)v);
+    return clean;
+}
+
+/* hardinfo uses the values as {ht,x}ml, apparently */
+gchar *hardinfo_clean_value(const gchar *v, int replacing) {
+    gchar *clean, *tmp;
+    gchar **vl;
+    if (v == NULL) return NULL;
+
+    vl = g_strsplit(v, "&", -1);
+    if (g_strv_length(vl) > 1)
+        clean = g_strjoinv("&amp;", vl);
+    else
+        clean = g_strdup(v);
+    g_strfreev(vl);
+
+    vl = g_strsplit(clean, "<", -1);
+    if (g_strv_length(vl) > 1) {
+        tmp = g_strjoinv("&lt;", vl);
+        g_free(clean);
+        clean = tmp;
+    }
+    g_strfreev(vl);
+
+    vl = g_strsplit(clean, ">", -1);
+    if (g_strv_length(vl) > 1) {
+        tmp = g_strjoinv("&gt;", vl);
+        g_free(clean);
+        clean = tmp;
+    }
+    g_strfreev(vl);
+
+    if (replacing)
+        g_free((gpointer)v);
+    return clean;
+}

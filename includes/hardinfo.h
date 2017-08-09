@@ -169,4 +169,12 @@ gchar *moreinfo_lookup(gchar *key);
 gboolean g_strv_contains(const gchar * const * strv, const gchar *str);
 #endif
 
+/* Hardinfo labels that have # are truncated and/or hidden.
+ * Labels can't have $ because that is the delimiter in
+ * moreinfo.
+ * replacing = true will free v */
+gchar *hardinfo_clean_label(const gchar *v, int replacing);
+/* hardinfo uses the values as {ht,x}ml, apparently */
+gchar *hardinfo_clean_value(const gchar *v, int replacing);
+
 #endif				/* __HARDINFO_H__ */
