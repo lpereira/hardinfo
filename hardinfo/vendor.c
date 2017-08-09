@@ -94,6 +94,27 @@ static const Vendor vendors[] = {
     {"American Megatrends", "American Megatrends", "www.ami.com"},
     {"Award", "Award Software International", "www.award-bios.com"},
     {"Phoenix", "Phoenix Technologies", "www.phoenix.com"},
+    /* x86 vendor strings */
+    { "AMDisbetter!", "Advanced Micro Devices", "www.amd.com" },
+    { "AuthenticAMD", "Advanced Micro Devices", "www.amd.com" },
+    { "CentaurHauls", "VIA (formerly Centaur Technology)", "www.via.tw" },
+    { "CyrixInstead", "Cyrix", "" },
+    { "GenuineIntel", "Intel", "www.intel.com" },
+    { "TransmetaCPU", "Transmeta", "" },
+    { "GenuineTMx86", "Transmeta", "" },
+    { "Geode by NSC", "National Semiconductor", "" },
+    { "NexGenDriven", "NexGen", "" },
+    { "RiseRiseRise", "Rise Technology", "" },
+    { "SiS SiS SiS", "Silicon Integrated Systems", "" },
+    { "UMC UMC UMC", "United Microelectronics Corporation", "" },
+    { "VIA VIA VIA", "VIA", "www.via.tw" },
+    { "Vortex86 SoC", "DMP Electronics", "" },
+    /* x86 VM vendor strings */
+    { "KVMKVMKVM", "KVM", "" },
+    { "Microsoft Hv", "Microsoft Hyper-V", "www.microsoft.com" },
+    { "lrpepyh vr", "Parallels", "" },
+    { "VMwareVMware", "VMware", "" },
+    { "XenVMMXenVMM", "Xen HVM", "" },
 };
 
 static GSList *vendor_list = NULL;
