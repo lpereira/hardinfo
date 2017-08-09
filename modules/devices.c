@@ -126,7 +126,7 @@ gchar *lginterval = NULL;
 
 #include <vendor.h>
 
-gint proc_cmp (Processor *a, Processor *b) {
+static gint proc_cmp(Processor *a, Processor *b) {
     return g_strcmp0(a->model_name, b->model_name);
 }
 
