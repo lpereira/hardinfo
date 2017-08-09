@@ -216,6 +216,8 @@ void cb_about()
 
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about), authors);
     gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
+    gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about),
+        _("translator-credits"));
 
     gtk_dialog_run(GTK_DIALOG(about));
     gtk_widget_destroy(about);
