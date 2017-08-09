@@ -85,55 +85,55 @@ __scan_input_devices(void)
 	    if (name && strstr(name, "PC Speaker")) {
 	      d = 3;		// INPUT_PCSPKR
 	    }
-	
-	    tmp = g_strdup_printf("INP%d", ++n);
-	    input_list = h_strdup_cprintf("$%s$%s=\n",
-					 input_list,
-					 tmp, name);
-	    input_icons = h_strdup_cprintf("Icon$%s$%s=%s\n",
-				 	  input_icons,
-					  tmp, name,
-					  input_devices[d].icon);
-	    gchar *strhash = g_strdup_printf(_("[Device Information]\n"
-					     "Name=%s\n"
-					     "Type=%s\n"
-					     "Bus=0x%x\n"),
-					     name,
-					     input_devices[d].name,
-					     bus);
 
-	    const gchar *url = vendor_get_url(name);
-	    if (url) {
-	    	strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
-					  strhash,
-					  vendor_get_name(name),
-					  url);
-	    } else {
-	    	strhash = h_strdup_cprintf(_("Vendor=%x\n"),
-					  strhash,
-					  vendor);
-	    }
+        tmp = g_strdup_printf("INP%d", ++n);
+        input_list = h_strdup_cprintf("$%s$%s=\n",
+                     input_list,
+                     tmp, name);
+        input_icons = h_strdup_cprintf("Icon$%s$%s=%s\n",
+                      input_icons,
+                      tmp, name,
+                      input_devices[d].icon);
 
-	    strhash = h_strdup_cprintf(_("Product=0x%x\n"
-				      "Version=0x%x\n"),
-				      strhash, product, version);
-	    
-            if (phys && phys[1] != 0) {
-                 strhash = h_strdup_cprintf(_("Connected to=%s\n"),
-                                            strhash, phys);
-            }
+        const gchar *v_url = (gchar*)vendor_get_url(name);
+        const gchar *v_name = (gchar*)vendor_get_name(name);
+        gchar *v_str = NULL;
+        if (v_url != NULL)
+            v_str = g_strdup_printf("[0x%x] %s (%s)", vendor, v_name, v_url);
+        else
+            v_str = g_strdup_printf("0x%x", vendor);
+        v_str = hardinfo_clean_value(v_str, 1);
+        name = hardinfo_clean_value(name, 1);
 
-	    if (phys && strstr(phys, "ir")) {
-		 strhash = h_strdup_cprintf("InfraRed port=yes\n",
-				 	     strhash);
-	    }
-	    
-	    moreinfo_add_with_prefix("DEV", tmp, strhash);
-	    g_free(tmp);
+        gchar *strhash = g_strdup_printf("[%s]\n"
+                /* Name */   "%s=%s\n"
+                /* Type */   "%s=%s\n"
+                /* Bus */    "%s=0x%x\n"
+                /* Vendor */ "%s=%s\n"
+                /* Product */"%s=0x%x\n"
+                /* Version */"%s=0x%x\n",
+                        _("Device Information"),
+                        _("Name"), name,
+                        _("Type"), input_devices[d].name,
+                        _("Bus"), bus,
+                        _("Vendor"), v_str,
+                        _("Product"), product,
+                        _("Version"), version );
 
-	    g_free(phys);
-	    g_free(name);
-	}
+        if (phys && phys[1] != 0) {
+             strhash = h_strdup_cprintf("%s=%s\n", strhash, _("Connected to"), phys);
+        }
+
+        if (phys && strstr(phys, "ir")) {
+            strhash = h_strdup_cprintf("%s=%s\n", strhash, _("InfraRed port"), _("Yes") );
+        }
+
+        moreinfo_add_with_prefix("DEV", tmp, strhash);
+        g_free(tmp);
+        g_free(v_str);
+        g_free(phys);
+        g_free(name);
+    }
     }
 
     fclose(dev);
