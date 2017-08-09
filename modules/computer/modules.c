@@ -20,6 +20,7 @@
 
 #include "hardinfo.h"
 #include "computer.h"
+#include "cpu_util.h" /* for STRIFNULL() */
 
 #define GET_STR(field_name,ptr)      					\
   if (!ptr && strstr(tmp[0], field_name)) {				\
@@ -42,7 +43,7 @@ scan_modules_do(void)
     }
 
     g_free(module_list);
-    
+
     module_list = NULL;
     moreinfo_del_with_prefix("COMP:MOD");
 
@@ -51,7 +52,7 @@ scan_modules_do(void)
         return;
     lsmod = popen(lsmod_path, "r");
     if (!lsmod) {
-        g_free(lsmod_path); 
+        g_free(lsmod_path);
 	return;
     }
 
@@ -99,7 +100,7 @@ scan_modules_do(void)
 	   remove_quotes(license); */
 
 	/* old modutils displays <none> when there's no value for a
-	   given field; this is not desirable in the module name 
+	   given field; this is not desirable in the module name
 	   display, so change it to an empty string */
 	if (description && g_str_equal(description, "&lt;none&gt;")) {
 	    g_free(description);
@@ -121,38 +122,45 @@ scan_modules_do(void)
 				      modname,
 				      description ? description : "");
 
-#define NONE_IF_NULL(var) (var) ? (var) : "N/A"
+    STRIFNULL(filename, _("(Not available)") );
+    STRIFNULL(description, _("(Not available)") );
+    STRIFNULL(vermagic, _("(Not available)") );
+    STRIFNULL(author, _("(Not available)") );
+    STRIFNULL(license, _("(Not available)") );
 
-	/* create the module information string */
-	strmodule = g_strdup_printf(_("[Module Information]\n"
-				    "Path=%s\n"
-				    "Used Memory=%.2fKiB\n"
-				    "[Description]\n"
-				    "Name=%s\n"
-				    "Description=%s\n"
-				    "Version Magic=%s\n"
-				    "[Copyright]\n"
-				    "Author=%s\n"
-				    "License=%s\n"),
-				    NONE_IF_NULL(filename),
-				    memory / 1024.0,
-				    modname,
-				    NONE_IF_NULL(description),
-				    NONE_IF_NULL(vermagic),
-				    NONE_IF_NULL(author),
-				    NONE_IF_NULL(license));
+    /* create the module information string */
+    strmodule = g_strdup_printf("[%s]\n"
+                        "%s=%s\n"
+                        "%s=%.2f %s\n"
+                        "[%s]\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "[%s]\n"
+                        "%s=%s\n"
+                        "%s=%s\n",
+                        _("Module Information"),
+                        _("Path"), filename,
+                        _("Used Memory"), memory / 1024.0, _("KiB"),
+                        _("Description"),
+                        _("Name"), modname,
+                        _("Description"), description,
+                        _("Version Magic"), vermagic,
+                        _("Copyright"),
+                        _("Author"), author,
+                        _("License"), license );
 
-	/* if there are dependencies, append them to that string */
-	if (deps && strlen(deps)) {
-	    gchar **tmp = g_strsplit(deps, ",", 0);
+    /* if there are dependencies, append them to that string */
+    if (deps && strlen(deps)) {
+        gchar **tmp = g_strsplit(deps, ",", 0);
 
-	    strmodule = h_strconcat(strmodule,
-                                    "\n[Dependencies]\n",
-                                    g_strjoinv("=\n", tmp),
-                                    "=\n", NULL);
-	    g_strfreev(tmp);
-	    g_free(deps);
-	}
+        strmodule = h_strconcat(strmodule,
+                                "\n[", _("Dependencies"), "]\n",
+                                g_strjoinv("=\n", tmp),
+                                "=\n", NULL);
+        g_strfreev(tmp);
+        g_free(deps);
+    }
 
 	moreinfo_add_with_prefix("COMP", hashkey, strmodule);
 	g_free(hashkey);
@@ -164,6 +172,6 @@ scan_modules_do(void)
 	g_free(filename);
     }
     pclose(lsmod);
-    
+
     g_free(lsmod_path);
 }
