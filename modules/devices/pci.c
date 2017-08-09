@@ -40,13 +40,13 @@ scan_pci_do(void)
     gchar buffer[256], *buf, *strhash = NULL, *strdevice = NULL;
     gchar *category = NULL, *name = NULL, *icon, *lspci_path, *command_line = NULL;
     gint n = 0, x = 0;
-    
+
     if ((lspci_path = find_program("lspci")) == NULL) {
       goto pci_error;
     } else {
       command_line = g_strdup_printf("%s -v", lspci_path);
     }
-    
+
     if (!_pci_devices) {
       _pci_devices = g_hash_table_new(g_str_hash, g_str_equal);
     }
@@ -60,11 +60,11 @@ scan_pci_do(void)
       }
     } else {
       gchar *tmp;
-      
+
       tmp = g_strdup_printf("%s -i '%s'", command_line, buf);
       g_free(buf);
       buf = tmp;
-      
+
       DEBUG("using updated PCI IDs (from %s)", buf);
       if (!(lspci = popen(tmp, "r"))) {
         g_free(buf);
@@ -103,30 +103,31 @@ scan_pci_do(void)
 	    g_strfreev(list);
 
 	    if (irq)
-		strdevice = h_strdup_cprintf("IRQ=%d\n", strdevice, irq);
+		strdevice = h_strdup_cprintf("%s=%d\n", strdevice, _("IRQ"), irq);
 	    if (freq)
-		strdevice = h_strdup_cprintf("Frequency=%dMHz\n", strdevice, freq);
+		strdevice = h_strdup_cprintf("%s=%d %s\n", strdevice, _("Frequency"), freq, _("MHz") );
 	    if (latency)
-		strdevice = h_strdup_cprintf(_("Latency=%d\n"), strdevice, latency);
+		strdevice = h_strdup_cprintf("%s=%d\n", strdevice, _("Latency"), latency);
 
-	    strdevice = h_strdup_cprintf(_("Bus Master=%s\n"), strdevice, bus_master ? "Yes" : "No");
+	    strdevice = h_strdup_cprintf("%s=%s\n", strdevice, _("Bus Master"), bus_master ? _("Yes") : _("No") );
 	} else if (!strncmp(buf, "Kernel modules", 14)) {
 	    WALK_UNTIL(' ');
 	    WALK_UNTIL(':');
 	    buf++;
-	    
-	    strdevice = h_strdup_cprintf("Kernel modules=%s\n", strdevice, buf);
+
+	    strdevice = h_strdup_cprintf("%s=%s\n", strdevice, _("Kernel modules"), buf);
 	} else if (!strncmp(buf, "Subsystem", 9)) {
 	    WALK_UNTIL(' ');
 	    buf++;
 	    const gchar *oem_vendor_url = vendor_get_url(buf);
-            if (oem_vendor_url) 
-                strdevice = h_strdup_cprintf(_("OEM Vendor=%s (%s)\n"),
+            if (oem_vendor_url)
+                strdevice = h_strdup_cprintf(_("%s=%s (%s)\n"),
                                             strdevice,
+                                            _("OEM Vendor"),
                                             vendor_get_name(buf),
                                             oem_vendor_url);
 	} else if (!strncmp(buf, "Capabilities", 12)
-		   && !strstr(buf, "only to root") && 
+		   && !strstr(buf, "only to root") &&
 		      !strstr(buf, "access denied")) {
 	    WALK_UNTIL(' ');
 	    WALK_UNTIL(']');
@@ -144,13 +145,13 @@ scan_pci_do(void)
 	    WALK_UNTIL('[');
 	    sscanf(buf, "[size=%d%c", &mem, &unit);
 
-	    strdevice = h_strdup_cprintf("Memory#%d=%d%cB (%s%s)\n",
-					strdevice, ++x,
+	    strdevice = h_strdup_cprintf("%s#%d=%d%cB (%s%s)\n",
+					strdevice, _("Memory"), ++x,
 					mem,
 					(unit == ']') ? ' ' : unit,
 					_32bit ? "32-bit, " : "",
-					prefetch ? "prefetchable" :
-					"non-prefetchable");
+					prefetch ? _("prefetchable") :
+					_("non-prefetchable") );
 
 	} else if (!strncmp(buf, "I/O ports at", 12)) {
 	    guint io_addr, io_size;
@@ -158,8 +159,8 @@ scan_pci_do(void)
 	    sscanf(buf, "I/O ports at %x [size=%d]", &io_addr, &io_size);
 
 	    strdevice =
-		h_strdup_cprintf("I/O ports at#%d=0x%x - 0x%x\n",
-				strdevice, ++x, io_addr,
+		h_strdup_cprintf("%s#%d=0x%x - 0x%x\n",
+				strdevice, _("I/O ports at"), ++x, io_addr,
 				io_addr + io_size - 1);
 	} else if ((buf[0] >= '0' && buf[0] <= '9') && (buf[4] == ':' || buf[2] == ':')) {
 	    gint bus, device, function, domain;
@@ -197,51 +198,57 @@ scan_pci_do(void)
             else if (strstr(category, "Multimedia")) icon = "media";
             else if (strstr(category, "USB")) icon = "usb";
             else icon = "pci";
-            
+
 	    name = g_strdup(buf);
             g_hash_table_insert(_pci_devices,
                                 g_strdup_printf("0000:%02x:%02x.%x", bus, device, function),
                                 name);
 
-	    strhash = g_strdup_printf("PCI%d", n);
-	    strdevice = g_strdup_printf(_("[Device Information]\n"
-					"Name=%s\n"
-					"Class=%s\n"
-					"Domain=%d\n"
-					"Bus, device, function=%d, %d, %d\n"),
-					name, category, domain, bus,
-					device, function);
-            
+        strhash = g_strdup_printf("PCI%d", n);
+        strdevice = g_strdup_printf("[%s]\n"
+               /* Name */   "%s=%s\n"
+               /* Class */  "%s=%s\n"
+               /* Domain */ "%s=%d\n"
+               /* Bus, device, function */
+                            "%s=%d, %d, %d\n",
+                    _("Device Information"),
+                    _("Name"), name,
+                    _("Class"), category,
+                    _("Domain"), domain,
+                    _("Bus, device, function"),
+                    bus, device, function);
+
             const gchar *url = vendor_get_url(name);
             if (url) {
-                strdevice = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
+                strdevice = h_strdup_cprintf("%s=%s (%s)\n",
                                             strdevice,
+                                            _("Vendor"),
                                             vendor_get_name(name),
                                             url);
             }
-            
+
             g_hash_table_insert(_pci_devices,
                                 g_strdup_printf("0000:%02x:%02x.%x", bus, device, function),
                                 g_strdup(name));
-            
+
 	    pci_list = h_strdup_cprintf("$PCI%d$%s=%s\n", pci_list, n, category, name);
 
 	    n++;
 	}
     }
-    
+
     if (pclose(lspci)) {
 pci_error:
         /* error (no pci, perhaps?) */
-        pci_list = g_strconcat(pci_list, "No PCI devices found=\n", NULL);
+        pci_list = g_strconcat(pci_list, _("No PCI devices found"), "=\n", NULL);
     } else if (strhash) {
-	/* insert the last device */
+        /* insert the last device */
         moreinfo_add_with_prefix("DEV", strhash, strdevice);
         g_free(strhash);
         g_free(category);
         g_free(name);
     }
-    
+
     g_free(lspci_path);
     g_free(command_line);
 }
