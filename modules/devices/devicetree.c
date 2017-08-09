@@ -24,65 +24,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdint.h>
+#include "hardinfo.h"
 #include "devices.h"
 #include "cpu_util.h"
 #include "dt_util.h"
-
-/* Hardinfo labels that have # are truncated and/or hidden.
- * Labels can't have $ because that is the delimiter in
- * moreinfo. */
-gchar *hardinfo_clean_label(const gchar *v, int replacing) {
-    gchar *clean, *p;
-
-    p = clean = g_strdup(v);
-    while (*p != 0) {
-        switch(*p) {
-            case '#': case '$':
-                *p = '_';
-                break;
-            default:
-                break;
-        }
-        p++;
-    }
-    if (replacing)
-        g_free((gpointer)v);
-    return clean;
-}
-
-/* hardinfo uses the values as {ht,x}ml, apparently */
-gchar *hardinfo_clean_value(const gchar *v, int replacing) {
-    gchar *clean, *tmp;
-    gchar **vl;
-    if (v == NULL) return NULL;
-
-    vl = g_strsplit(v, "&", -1);
-    if (g_strv_length(vl) > 1)
-        clean = g_strjoinv("&amp;", vl);
-    else
-        clean = g_strdup(v);
-    g_strfreev(vl);
-
-    vl = g_strsplit(clean, "<", -1);
-    if (g_strv_length(vl) > 1) {
-        tmp = g_strjoinv("&lt;", vl);
-        g_free(clean);
-        clean = tmp;
-    }
-    g_strfreev(vl);
-
-    vl = g_strsplit(clean, ">", -1);
-    if (g_strv_length(vl) > 1) {
-        tmp = g_strjoinv("&gt;", vl);
-        g_free(clean);
-        clean = tmp;
-    }
-    g_strfreev(vl);
-
-    if (replacing)
-        g_free((gpointer)v);
-    return clean;
-}
 
 #include "devicetree/rpi_data.c"
 #include "devicetree/pmac_data.c"
