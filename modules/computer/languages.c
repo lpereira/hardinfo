@@ -20,6 +20,7 @@
 
 #include "hardinfo.h"
 #include "computer.h"
+#include "cpu_util.h" /* for UNKIFNULL() */
 
 void
 scan_languages(OperatingSystem * os)
@@ -67,43 +68,64 @@ scan_languages(OperatingSystem * os)
 
 	    g_strfreev(tmp);
 	} else {
-	    gchar *currlocale;
+        gchar *currlocale;
 
-	    retval = h_strdup_cprintf("$%s$%s=%s\n", retval, name, name, title);
+        retval = h_strdup_cprintf("$%s$%s=%s\n", retval, name, name, title);
 
-#define FIELD(f) f ? f : "(Unknown)"
-	    currlocale = g_strdup_printf(_("[Locale Information]\n"
-					 "Name=%s (%s)\n"
-					 "Source=%s\n"
-					 "Address=%s\n"
-					 "Email=%s\n"
-					 "Language=%s\n"
-					 "Territory=%s\n"
-					 "Revision=%s\n"
-					 "Date=%s\n"
-					 "Codeset=%s\n"),
-					 name, FIELD(title),
-					 FIELD(source), FIELD(address),
-					 FIELD(email), FIELD(language),
-					 FIELD(territory), FIELD(revision),
-					 FIELD(date), FIELD(codeset));
-#undef FIELD
+        UNKIFNULL(title);
+        UNKIFNULL(source);
+        UNKIFNULL(address);
+        UNKIFNULL(email);
+        UNKIFNULL(language);
+        UNKIFNULL(territory);
+        UNKIFNULL(revision);
+        UNKIFNULL(date);
+        UNKIFNULL(codeset);
 
-           moreinfo_add_with_prefix("COMP", name, currlocale);
+        /* values may have & */
+        title = hardinfo_clean_value(title, 1);
+        source = hardinfo_clean_value(source, 1);
+        address = hardinfo_clean_value(address, 1);
+        email = hardinfo_clean_value(email, 1);
+        language = hardinfo_clean_value(language, 1);
+        territory = hardinfo_clean_value(territory, 1);
 
-	    g_free(title);
-	    g_free(source);
-	    g_free(address);
-	    g_free(email);
-	    g_free(language);
-	    g_free(territory);
-	    g_free(revision);
-	    g_free(date);
-	    g_free(codeset);
-	    
-	    title = source = address = email = language = territory = \
-	        revision = date = codeset = NULL;
-	}
+        currlocale = g_strdup_printf("[%s]\n"
+        /* Name */     "%s=%s (%s)\n"
+        /* Source */   "%s=%s\n"
+        /* Address */  "%s=%s\n"
+        /* Email */    "%s=%s\n"
+        /* Language */ "%s=%s\n"
+        /* Territory */"%s=%s\n"
+        /* Revision */ "%s=%s\n"
+        /* Date */     "%s=%s\n"
+        /* Codeset */  "%s=%s\n",
+                     _("Locale Information"),
+                     _("Name"), name, title,
+                     _("Source"), source,
+                     _("Address"), address,
+                     _("E-mail"), email,
+                     _("Language"), language,
+                     _("Territory"), territory,
+                     _("Revision"), revision,
+                     _("Date"), date,
+                     _("Codeset"), codeset );
+
+        moreinfo_add_with_prefix("COMP", name, currlocale);
+
+        g_free(title);
+        g_free(source);
+        g_free(address);
+        g_free(email);
+        g_free(language);
+        g_free(territory);
+        g_free(revision);
+        g_free(date);
+        g_free(codeset);
+
+        title = source = address = email = language = territory = \
+            revision = date = codeset = NULL;
+    }
     }
 
     fclose(locale);
