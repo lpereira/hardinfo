@@ -326,7 +326,7 @@ static gchar *detect_machine_type(void)
         };
         int chassis_type = atoi(idle_free(chassis));
 
-        if (chassis_type >= 0 && chassis_type <= G_N_ELEMENTS(types))
+        if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types))
             return g_strdup(_(types[chassis_type]));
     }
 
