@@ -133,12 +133,23 @@ static gint proc_cmp(Processor *a, Processor *b) {
 gchar *processor_describe_default(GSList * processors)
 {
     int packs, cores, threads;
+    const gchar  *packs_fmt, *cores_fmt, *threads_fmt;
+    gchar *ret, *full_fmt;
+
     cpu_procs_cores_threads(&packs, &cores, &threads);
+
     /* if topology info was available, else fallback to old method */
-    if (cores > 0)
-        return g_strdup_printf("%d physical processor(s); %d core(s); %d thread(s)", packs, cores, threads);
-    else
+    if (cores > 0) {
+        packs_fmt = ngettext("%d physical processor", "%d physical processors", packs);
+        cores_fmt = ngettext("%d core", "%d cores", cores);
+        threads_fmt = ngettext("%d thread", "%d threads", threads);
+        full_fmt = g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"), packs_fmt, cores_fmt, threads_fmt);
+        ret = g_strdup_printf(full_fmt, packs, cores, threads);
+        g_free(full_fmt);
+        return ret;
+    } else {
         return processor_describe_by_counting_names(processors);
+    }
 }
 
 gchar *processor_name_default(GSList * processors)
