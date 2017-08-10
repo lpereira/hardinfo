@@ -130,7 +130,49 @@ static gint proc_cmp(Processor *a, Processor *b) {
     return g_strcmp0(a->model_name, b->model_name);
 }
 
-gchar *processor_describe(GSList * processors)
+gchar *processor_describe_default(GSList * processors)
+{
+    int packs, cores, threads;
+    cpu_procs_cores_threads(&packs, &cores, &threads);
+    /* if topology info was available, else fallback to old method */
+    if (cores > 0)
+        return g_strdup_printf("%d physical processor(s); %d core(s); %d thread(s)", packs, cores, threads);
+    else
+        return processor_describe_by_counting_names(processors);
+}
+
+gchar *processor_name_default(GSList * processors)
+{
+    gchar *ret = g_strdup("");
+    GSList *tmp, *l;
+    Processor *p;
+    gchar *cur_str = NULL;
+    gint cur_count = 0;
+
+    tmp = g_slist_copy(processors);
+    tmp = g_slist_sort(tmp, (GCompareFunc)proc_cmp);
+
+    for (l = tmp; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (cur_str == NULL) {
+            cur_str = p->model_name;
+            cur_count = 1;
+        } else {
+            if(g_strcmp0(cur_str, p->model_name)) {
+                ret = h_strdup_cprintf("%s%s", ret, strlen(ret) ? "; " : "", cur_str);
+                cur_str = p->model_name;
+                cur_count = 1;
+            } else {
+                cur_count++;
+            }
+        }
+    }
+    ret = h_strdup_cprintf("%s%s", ret, strlen(ret) ? "; " : "", cur_str);
+    g_slist_free(tmp);
+    return ret;
+}
+
+gchar *processor_describe_by_counting_names(GSList * processors)
 {
     gchar *ret = g_strdup("");
     GSList *tmp, *l;
@@ -164,8 +206,26 @@ gchar *processor_describe(GSList * processors)
 gchar *get_processor_name(void)
 {
     scan_processors(FALSE);
+    return processor_name(processors);
+}
+
+gchar *get_processor_desc(void)
+{
+    scan_processors(FALSE);
     return processor_describe(processors);
 }
+
+gchar *get_processor_name_and_desc(void)
+{
+    scan_processors(FALSE);
+    gchar* name = processor_name(processors);
+    gchar* desc = processor_describe(processors);
+    gchar* nd = g_strdup_printf("%s\n%s", name, desc);
+    g_free(name);
+    g_free(desc);
+    return nd;
+}
+
 
 gchar *get_storage_devices(void)
 {
@@ -260,6 +320,8 @@ ShellModuleMethod *hi_exported_methods(void)
     static ShellModuleMethod m[] = {
         {"getProcessorCount", get_processor_count},
 	{"getProcessorName", get_processor_name},
+	{"getProcessorDesc", get_processor_desc},
+	{"getProcessorNameAndDesc", get_processor_name_and_desc},
 	{"getProcessorFrequency", get_processor_frequency},
 	{"getMemoryTotal", get_memory_total},
 	{"getStorageDevices", get_storage_devices},

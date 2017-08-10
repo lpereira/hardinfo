@@ -59,6 +59,14 @@ processor_scan(void)
     return g_slist_append(NULL, processor);
 }
 
+gchar *processor_name(GSList * processors) {
+    return processor_name_default(processors);
+}
+
+gchar *processor_describe(GSList * processors) {
+    return processor_describe_default(processors);
+}
+
 gchar *
 processor_get_info(GSList *processors)
 {

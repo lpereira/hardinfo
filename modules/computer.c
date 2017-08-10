@@ -767,7 +767,7 @@ gchar *hi_module_get_summary(void)
                     "Method=computer::getOS\n"
                     "[%s]\n"
                     "Icon=processor.png\n"
-                    "Method=devices::getProcessorName\n"
+                    "Method=devices::getProcessorNameAndDesc\n"
                     "[%s]\n"
                     "Icon=memory.png\n"
                     "Method=devices::getMemoryTotal\n"
