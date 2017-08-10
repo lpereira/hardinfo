@@ -430,39 +430,61 @@ gchar *processor_get_detailed_info(Processor * processor)
     return ret;
 }
 
+gchar *processor_name(GSList * processors) {
+    return processor_name_default(processors);
+}
+
+gchar *processor_describe(GSList * processors) {
+    return processor_describe_default(processors);
+}
+
+gchar *processor_meta(GSList * processors) {
+    gchar *meta_cpu_name = processor_name(processors);
+    gchar *meta_cpu_desc = processor_describe(processors);
+    gchar *ret = NULL;
+    UNKIFNULL(meta_cpu_desc);
+    ret = g_strdup_printf("[%s]\n"
+                        "%s=%s\n"
+                        "%s=%s\n",
+                        _("Package Information"),
+                        _("Name"), meta_cpu_name,
+                        _("Description"), meta_cpu_desc);
+    g_free(meta_cpu_desc);
+    return ret;
+}
+
 gchar *processor_get_info(GSList * processors)
 {
     Processor *processor;
+    gchar *ret, *tmp, *hashkey;
+    gchar *meta; /* becomes owned by more_info? no need to free? */
+    GSList *l;
 
-    if (g_slist_length(processors) > 1) {
-	gchar *ret, *tmp, *hashkey;
-	GSList *l;
+    tmp = g_strdup_printf("$CPU_META$%s=\n", _("Package Information") );
 
-	tmp = g_strdup("");
+    meta = processor_meta(processors);
+    moreinfo_add_with_prefix("DEV", "CPU_META", meta);
 
-	for (l = processors; l; l = l->next) {
-	    processor = (Processor *) l->data;
+    for (l = processors; l; l = l->next) {
+        processor = (Processor *) l->data;
 
-	    tmp = g_strdup_printf(_("%s$CPU%d$%s=%.2fMHz\n"),
-				  tmp, processor->id,
-				  processor->model_name,
-				  processor->cpu_mhz);
+        tmp = g_strdup_printf(_("%s$CPU%d$%s=%.2fMHz\n"),
+                  tmp, processor->id,
+                  processor->model_name,
+                  processor->cpu_mhz);
 
-	    hashkey = g_strdup_printf("CPU%d", processor->id);
-	    moreinfo_add_with_prefix("DEV", hashkey,
-				processor_get_detailed_info(processor));
-           g_free(hashkey);
-	}
-
-	ret = g_strdup_printf("[$ShellParam$]\n"
-			      "ViewType=1\n"
-			      "[Processors]\n"
-			      "%s", tmp);
-	g_free(tmp);
-
-	return ret;
+        hashkey = g_strdup_printf("CPU%d", processor->id);
+        moreinfo_add_with_prefix("DEV", hashkey,
+                processor_get_detailed_info(processor));
+        g_free(hashkey);
     }
 
-    processor = (Processor *) processors->data;
-    return processor_get_detailed_info(processor);
+    ret = g_strdup_printf("[$ShellParam$]\n"
+                  "ViewType=1\n"
+                  "[Processors]\n"
+                  "%s", tmp);
+    g_free(tmp);
+
+    return ret;
 }
+

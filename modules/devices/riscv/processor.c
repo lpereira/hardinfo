@@ -150,6 +150,14 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
     return tmp;
 }
 
+gchar *processor_name(GSList * processors) {
+    return processor_name_default(processors);
+}
+
+gchar *processor_describe(GSList * processors) {
+    return processor_describe_default(processors);
+}
+
 gchar *
 processor_get_detailed_info(Processor *processor)
 {

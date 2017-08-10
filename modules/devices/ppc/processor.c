@@ -129,6 +129,14 @@ processor_scan(void)
     return procs;
 }
 
+gchar *processor_name(GSList * processors) {
+    return processor_name_default(processors);
+}
+
+gchar *processor_describe(GSList * processors) {
+    return processor_describe_default(processors);
+}
+
 gchar *
 processor_get_detailed_info(Processor *processor)
 {

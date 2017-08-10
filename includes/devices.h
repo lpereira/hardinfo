@@ -40,7 +40,11 @@ GSList *processor_scan(void);
 void get_processor_strfamily(Processor * processor);
 gchar *processor_get_detailed_info(Processor * processor);
 gchar *processor_get_info(GSList * processors);
+gchar *processor_name(GSList * processors);
+gchar *processor_name_default(GSList * processors);
 gchar *processor_describe(GSList * processors);
+gchar *processor_describe_default(GSList * processors);
+gchar *processor_describe_by_counting_names(GSList * processors);
 
 /* Memory */
 void init_memory_labels(void);

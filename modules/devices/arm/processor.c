@@ -256,7 +256,7 @@ processor_get_detailed_info(Processor *processor)
     return ret;
 }
 
-gchar *get_soc_name(GSList *processors) {
+gchar *processor_name(GSList *processors) {
     /* compatible contains a list of compatible hardware, so be careful
      * with matching order.
      * ex: "ti,omap3-beagleboard-xm", "ti,omap3450", "ti,omap3";
@@ -312,14 +312,18 @@ gchar *get_soc_name(GSList *processors) {
         }
     }
     g_free(compat);
+    UNKIFNULL(ret);
     return ret;
 }
 
+gchar *processor_describe(GSList * processors) {
+    return processor_describe_by_counting_names(processors);
+}
+
 gchar *processor_meta(GSList * processors) {
-    gchar *meta_soc = get_soc_name(processors);
+    gchar *meta_soc = processor_name(processors);
     gchar *meta_cpu_desc = processor_describe(processors);
     gchar *ret = NULL;
-    UNKIFNULL(meta_soc);
     UNKIFNULL(meta_cpu_desc);
     ret = g_strdup_printf("[%s]\n"
                             "%s=%s\n"
