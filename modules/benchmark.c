@@ -192,7 +192,7 @@ static gchar *__benchmark_include_results(gdouble result,
 {
     GKeyFile *conf;
     gchar **machines;
-    gchar *path, *results = g_strdup(""), *return_value, *processor_frequency;
+    gchar *path, *results = g_strdup(""), *return_value, *processor_frequency, *processor_name;
     int i;
 
     conf = g_key_file_new();
@@ -223,7 +223,8 @@ static gchar *__benchmark_include_results(gdouble result,
     g_key_file_free(conf);
 
     if (result > 0.0f) {
-        processor_frequency = module_call_method("devices::getProcessorFrequency");
+        processor_name = module_call_method("devices::getProcessorName");
+        processor_frequency = module_call_method("devices::getProcessorFrequencyDesc");
         return_value = g_strdup_printf("[$ShellParam$]\n"
                        "Zebra=1\n"
                        "OrderType=%d\n"
@@ -233,12 +234,13 @@ static gchar *__benchmark_include_results(gdouble result,
                        "ColumnTitle$TextValue=%s\n" /* CPU */
                        "ShowColumnHeaders=true\n"
                        "[%s]\n"
-                       "<big><b>This Machine</b></big>=%.3f|%s MHz\n"
+                       "<big><b>%s</b></big>=%.3f|%s\n"
                        "%s", order_type,
-                       _("CPU Clock"), _("Results"), _("CPU"),
+                       _("CPU Config"), _("Results"), _("CPU"),
                        benchmark,
-                       result, processor_frequency, results);
+                       processor_name, result, processor_frequency, results);
         g_free(processor_frequency);
+        g_free(processor_name);
     } else {
         return_value = g_strdup_printf("[$ShellParam$]\n"
                        "Zebra=1\n"
@@ -250,7 +252,7 @@ static gchar *__benchmark_include_results(gdouble result,
                        "ShowColumnHeaders=true\n"
                        "[%s]\n%s",
                        order_type,
-                       _("CPU Clock"), _("Results"), _("CPU"),
+                       _("CPU Config"), _("Results"), _("CPU"),
                        benchmark, results);
     }
     return return_value;

@@ -126,8 +126,16 @@ gchar *lginterval = NULL;
 
 #include <vendor.h>
 
-static gint proc_cmp(Processor *a, Processor *b) {
+static gint proc_cmp_model_name(Processor *a, Processor *b) {
     return g_strcmp0(a->model_name, b->model_name);
+}
+
+static gint proc_cmp_max_freq(Processor *a, Processor *b) {
+    if (a->cpu_mhz == b->cpu_mhz)
+        return 0;
+    if (a->cpu_mhz > b->cpu_mhz)
+        return -1;
+    return 1;
 }
 
 gchar *processor_describe_default(GSList * processors)
@@ -161,7 +169,7 @@ gchar *processor_name_default(GSList * processors)
     gint cur_count = 0;
 
     tmp = g_slist_copy(processors);
-    tmp = g_slist_sort(tmp, (GCompareFunc)proc_cmp);
+    tmp = g_slist_sort(tmp, (GCompareFunc)proc_cmp_model_name);
 
     for (l = tmp; l; l = l->next) {
         p = (Processor*)l->data;
@@ -183,6 +191,7 @@ gchar *processor_name_default(GSList * processors)
     return ret;
 }
 
+/* TODO: prefix counts are threads when they should be cores. */
 gchar *processor_describe_by_counting_names(GSList * processors)
 {
     gchar *ret = g_strdup("");
@@ -192,7 +201,7 @@ gchar *processor_describe_by_counting_names(GSList * processors)
     gint cur_count = 0;
 
     tmp = g_slist_copy(processors);
-    tmp = g_slist_sort(tmp, (GCompareFunc)proc_cmp);
+    tmp = g_slist_sort(tmp, (GCompareFunc)proc_cmp_model_name);
 
     for (l = tmp; l; l = l->next) {
         p = (Processor*)l->data;
@@ -266,17 +275,64 @@ gchar *get_processor_count(void)
     return g_strdup_printf("%d", g_slist_length(processors));
 }
 
-gchar *get_processor_frequency(void)
+/* TODO: maybe move into processor.c along with processor_name() etc.
+ * Could mention the big.LITTLE cluster arangement for ARM that kind of thing.
+ * TODO: prefix counts are threads when they should be cores. */
+gchar *processor_frequency_desc(GSList * processors)
 {
+    gchar *ret = g_strdup("");
+    GSList *tmp, *l;
     Processor *p;
+    float cur_val = -1;
+    gint cur_count = 0;
+
+    tmp = g_slist_copy(processors);
+    tmp = g_slist_sort(tmp, (GCompareFunc)proc_cmp_max_freq);
+
+    for (l = tmp; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (cur_val == -1) {
+            cur_val = p->cpu_mhz;
+            cur_count = 1;
+        } else {
+            if(cur_val != p->cpu_mhz) {
+                ret = h_strdup_cprintf("%s%dx %.2f %s", ret, strlen(ret) ? " + " : "", cur_count, cur_val, _("MHz") );
+                cur_val = p->cpu_mhz;
+                cur_count = 1;
+            } else {
+                cur_count++;
+            }
+        }
+    }
+    ret = h_strdup_cprintf("%s%dx %0.2f %s", ret, strlen(ret) ? " + " : "", cur_count, cur_val, _("MHz"));
+    g_slist_free(tmp);
+    return ret;
+}
+
+gchar *get_processor_frequency_desc(void)
+{
+    scan_processors(FALSE);
+    return processor_frequency_desc(processors);
+}
+
+gchar *get_processor_max_frequency(void)
+{
+    GSList *l;
+    Processor *p;
+    float max_freq = 0;
 
     scan_processors(FALSE);
 
-    p = (Processor *)processors->data;
-    if (p->cpu_mhz == 0.0f) {
+    for (l = processors; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (p->cpu_mhz > max_freq)
+            max_freq = p->cpu_mhz;
+    }
+
+    if (max_freq == 0.0f) {
         return g_strdup(N_("Unknown"));
     } else {
-        return g_strdup_printf("%.0f", p->cpu_mhz);
+        return g_strdup_printf("%.0f %s", max_freq, _("MHz") );
     }
 }
 
@@ -329,11 +385,12 @@ gchar *get_motherboard(void)
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
-        {"getProcessorCount", get_processor_count},
+	{"getProcessorCount", get_processor_count},
 	{"getProcessorName", get_processor_name},
 	{"getProcessorDesc", get_processor_desc},
 	{"getProcessorNameAndDesc", get_processor_name_and_desc},
-	{"getProcessorFrequency", get_processor_frequency},
+	{"getProcessorFrequency", get_processor_max_frequency},
+	{"getProcessorFrequencyDesc", get_processor_frequency_desc},
 	{"getMemoryTotal", get_memory_total},
 	{"getStorageDevices", get_storage_devices},
 	{"getPrinters", get_printers},
