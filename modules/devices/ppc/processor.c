@@ -181,10 +181,10 @@ gchar *processor_get_info(GSList * processors)
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
 
-        tmp = g_strdup_printf(_("%s$CPU%d$%s=%.2fMHz\n"),
+        tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s\n",
                   tmp, processor->id,
                   processor->model_name,
-                  processor->cpu_mhz);
+                  processor->cpu_mhz, _("MHz"));
 
         hashkey = g_strdup_printf("CPU%d", processor->id);
         moreinfo_add_with_prefix("DEV", hashkey,
