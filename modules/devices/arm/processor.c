@@ -323,16 +323,24 @@ gchar *processor_describe(GSList * processors) {
 gchar *processor_meta(GSList * processors) {
     gchar *meta_soc = processor_name(processors);
     gchar *meta_cpu_desc = processor_describe(processors);
+    gchar *meta_cpu_topo = processor_describe_default(processors);
+    gchar *meta_clocks = processor_frequency_desc(processors);
     gchar *ret = NULL;
     UNKIFNULL(meta_cpu_desc);
     ret = g_strdup_printf("[%s]\n"
                             "%s=%s\n"
+                            "%s=%s\n"
+                            "%s=%s\n"
                             "%s=%s\n",
                             _("SOC/Package"),
                             _("Name"), meta_soc,
-                            _("Description"), meta_cpu_desc);
+                            _("Description"), meta_cpu_desc,
+                            _("Topology"), meta_cpu_topo,
+                            _("Clocks"), meta_clocks );
     g_free(meta_soc);
     g_free(meta_cpu_desc);
+    g_free(meta_cpu_topo);
+    g_free(meta_clocks);
     return ret;
 }
 
@@ -351,10 +359,10 @@ gchar *processor_get_info(GSList * processors)
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
 
-        tmp = g_strdup_printf(_("%s$CPU%d$%s=%.2fMHz\n"),
+        tmp = g_strdup_printf(_("%s$CPU%d$%s=%.2f%s\n"),
                   tmp, processor->id,
                   processor->model_name,
-                  processor->cpu_mhz);
+                  processor->cpu_mhz, _("MHz"));
 
         hashkey = g_strdup_printf("CPU%d", processor->id);
         moreinfo_add_with_prefix("DEV", hashkey,
