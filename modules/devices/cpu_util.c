@@ -65,6 +65,13 @@ gint get_cpu_int(const char* item, int cpuid, int null_val) {
     return ret;
 }
 
+/* cpubits is 32768 bits long
+ * core_ids are not unique among physical_ids
+ * hack up cpubits into 128 packs of 256 cores
+ * to make cores unique in cpubits */
+#define MAX_CORES_PER_PACK 256
+#define MAX_PACKS 128
+
 int cpu_procs_cores_threads(int *p, int *c, int *t) {
     cpubits *threads, *cores, *packs;
     char *tmp;
@@ -79,7 +86,7 @@ int cpu_procs_cores_threads(int *p, int *c, int *t) {
             pack_id = get_cpu_int("topology/physical_package_id", i, CPU_TOPO_NULL);
             core_id = get_cpu_int("topology/core_id", i, CPU_TOPO_NULL);
             if (pack_id >= 0) { CPUBIT_SET(packs, pack_id); }
-            if (core_id >= 0) { CPUBIT_SET(cores, core_id); }
+            if (core_id >= 0) { CPUBIT_SET(cores, (pack_id * MAX_CORES_PER_PACK) + core_id ); }
         }
         *t = cpubits_count(threads);
         *c = cpubits_count(cores);
