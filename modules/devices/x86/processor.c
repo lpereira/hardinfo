@@ -265,6 +265,7 @@ GSList *processor_scan(void)
             get_str("flags", processor->flags);
             get_str("bugs", processor->bugs);
             get_str("power management", processor->pm);
+            get_str("microcode", processor->microcode);
             get_int("cache size", processor->cache_size);
             get_float("cpu MHz", processor->cpu_mhz);
             get_float("bogomips", processor->bogomips);
@@ -292,6 +293,8 @@ GSList *processor_scan(void)
 
     for (l = procs; l; l = l->next) {
         processor = (Processor *) l->data;
+
+        STRIFNULL(processor->microcode, _("(Not Available)") );
 
         get_processor_strfamily(processor);
         __cache_obtain_info(processor);
@@ -387,6 +390,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                        "%s=%s\n"
                        "%s=%d, %d, %d (%s)\n" /* family, model, stepping (decoded name) */
                        "%s=%s\n"      /* vendor */
+                       "%s=%s\n"      /* microcode */
                        "[%s]\n"       /* configuration */
                        "%s=%d %s\n"   /* cache size (from cpuinfo) */
                        "%s=%.2f %s\n" /* frequency */
@@ -410,6 +414,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                    processor->stepping,
                    processor->strmodel,
                    _("Vendor"), vendor_get_name(processor->vendor_id),
+                   _("Microcode Version"), processor->microcode,
                    _("Configuration"),
                    _("Cache Size"), processor->cache_size, _("kb"),
                    _("Frequency"), processor->cpu_mhz, _("MHz"),

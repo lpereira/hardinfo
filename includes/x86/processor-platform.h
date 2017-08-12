@@ -40,6 +40,7 @@ struct _Processor {
     gchar *pm;             /* power management features */
     gint cache_size;
     gfloat bogomips;
+    gchar *microcode;
 
     gint id;
     gfloat cpu_mhz; /* for devices.c, identical to cpukhz_max/1000 */
@@ -53,6 +54,7 @@ struct _Processor {
     gchar *strmodel;
 
     GSList *cache;
+
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */
