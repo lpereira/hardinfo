@@ -198,6 +198,7 @@ void scan_dev(gboolean reload)
        gboolean stdout;
     } detect_lang[] = {
        { N_("Scripting Languages"), NULL, FALSE },
+       { N_("Gambas3 (gbr3)"), "gbr3 --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Python"), "python -V", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("Python2"), "python2 -V", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("Python3"), "python3 -V", "\\d+\\.\\d+\\.\\d+", TRUE },
@@ -211,6 +212,7 @@ void scan_dev(gboolean reload)
        { N_("C (GCC)"), "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("C (Clang)"), "clang -v", "\\d+\\.\\d+", FALSE },
        { N_("D (dmd)"), "dmd --help", "\\d+\\.\\d+", TRUE },
+       { N_("Gambas3 (gbc3)"), "gbc3 --version", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("Java"), "javac -version", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("CSharp (Mono, old)"), "mcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("CSharp (Mono)"), "gmcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
@@ -225,6 +227,7 @@ void scan_dev(gboolean reload)
        { N_("valgrind"), "valgrind --version", "\\d+\\.\\d+\\.\\S+", TRUE },
        { N_("QMake"), "qmake --version", "\\d+\\.\\S+", TRUE},
        { N_("CMake"), "cmake --version", "\\d+\\.\\d+\\.?\\d*", TRUE},
+       { N_("Gambas3 IDE"), "gambas3 --version", "\\d+\\.\\d+\\.\\d+", FALSE },
     };
 
     g_free(dev_list);
