@@ -273,6 +273,31 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
 
 char *bench_result_more_info(bench_result *b) {
     return g_strdup_printf("[%s]\n"
+        /* threads */   "%s=%d\n"
+        /* legacy */    "%s=%s\n"
+                        "[%s]\n"
+        /* board */     "%s=%s\n"
+        /* cpu   */     "%s=%s\n"
+        /* cpudesc */   "%s=%s\n"
+        /* cpucfg */    "%s=%s\n"
+        /* threads */   "%s=%d\n"
+        /* mem */       "%s=%d %s\n",
+                        _("Benchmark Result"),
+                        _("Threads"), b->threads,
+                        b->legacy ? _("Note") : "#Note",
+                        b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
+                        _("Machine"),
+                        _("Board"), b->machine->board,
+                        _("CPU Name"), b->machine->cpu_name,
+                        _("CPU Description"), b->machine->cpu_desc,
+                        _("CPU Config"), b->machine->cpu_config,
+                        _("Threads Available"), b->machine->threads,
+                        _("Memory"), b->machine->memory_kiB, _("kiB")
+                        );
+}
+
+char *bench_result_more_info_complete(bench_result *b) {
+    return g_strdup_printf("[%s]\n"
         /* bench name */"%s=%s\n"
         /* result */    "%s=%0.2f\n"
         /* threads */   "%s=%d\n"
