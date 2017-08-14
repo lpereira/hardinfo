@@ -96,7 +96,6 @@ static gen_machine_id(simple_machine *m) {
     }
 }
 
-
 simple_machine *simple_machine_new() {
     simple_machine *m = NULL;
     m = malloc(sizeof(simple_machine));
@@ -161,7 +160,7 @@ bench_result *bench_result_this_machine(const char *bench_name, float result, in
 static int nx_prefix(const char *str) {
     char *s, *x;
     if (str != NULL) {
-        s = str;
+        s = (char*)str;
         x = strchr(str, 'x');
         if (x && x-s >= 1) {
             while(s != x) {
@@ -231,18 +230,18 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
              * "...@ 2.00GHz" -> 2000.0 */
             s0 = b->machine->cpu_name;
             s2 = strstr(s0, "Hz");
-            if (s2 && s2 != s0) {
-                s1 = s2 - 1;
+            if (s2 && s2 > s0 + 2) {
+                m = 1; /* assume M */
+                if (*(s2-1) == 'G')
+                    m = 1000;
+                s1 = s2 - 2;
                 while (s1 > s0) {
-                    if ( isdigit(*s1) || *s1 == '.' || *s1 == ' ')
+                    if (!( isdigit(*s1) || *s1 == '.' || *s1 == ' '))
                         break;
                     s1--;
                 }
 
                 if (s1 > s0) {
-                    m = 0; /* assume M */
-                    if (*(s2-1) == 'G')
-                        m = 1000;
                     n = atof(s1+1);
                     n *= m;
 
