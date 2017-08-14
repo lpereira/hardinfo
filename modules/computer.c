@@ -16,13 +16,14 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <config.h>
+#include <gtk/gtk.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gtk/gtk.h>
-#include <config.h>
-#include <time.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include <hardinfo.h>
 #include <iconcache.h>
@@ -31,21 +32,22 @@
 #include <vendor.h>
 
 #include "computer.h"
+#include "info.h"
 
 /* Callbacks */
-gchar *callback_summary();
-gchar *callback_os();
-gchar *callback_modules();
-gchar *callback_boots();
-gchar *callback_locales();
-gchar *callback_fs();
-gchar *callback_display();
-gchar *callback_network();
-gchar *callback_users();
-gchar *callback_groups();
-gchar *callback_env_var();
+gchar *callback_summary(void);
+gchar *callback_os(void);
+gchar *callback_modules(void);
+gchar *callback_boots(void);
+gchar *callback_locales(void);
+gchar *callback_fs(void);
+gchar *callback_display(void);
+gchar *callback_network(void);
+gchar *callback_users(void);
+gchar *callback_groups(void);
+gchar *callback_env_var(void);
 #if GLIB_CHECK_VERSION(2,14,0)
-gchar *callback_dev();
+gchar *callback_dev(void);
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 /* Scan callbacks */
@@ -80,6 +82,7 @@ static ModuleEntry entries[] = {
     {N_("Groups"), "users.png", callback_groups, scan_groups, MODULE_FLAG_NONE},
     {NULL},
 };
+
 
 gchar *module_list = NULL;
 Computer *computer = NULL;
@@ -282,7 +285,7 @@ void scan_dev(gboolean reload)
     SCAN_END();
 }
 
-gchar *callback_dev()
+gchar *callback_dev(void)
 {
     return g_strdup_printf(
                 "[$ShellParam$]\n"
@@ -460,221 +463,176 @@ gchar *computer_get_virtualization(void)
     return detect_machine_type();
 }
 
-gchar *callback_summary()
+gchar *callback_summary(void)
 {
-    gchar *processor_name, *alsa_cards;
-    gchar *input_devices, *printers;
-    gchar *storage_devices, *summary;
-    gchar *virt;
+    struct Info *info = info_new();
 
-    processor_name  = module_call_method("devices::getProcessorName");
-    alsa_cards      = computer_get_alsacards(computer);
-    input_devices   = module_call_method("devices::getInputDevices");
-    printers        = module_call_method("devices::getPrinters");
-    storage_devices = module_call_method("devices::getStorageDevices");
-    virt            = computer_get_virtualization();
+    info_add_group(info, _("Computer"),
+        info_field(_("Processor"),
+            idle_free(module_call_method("devices::getProcessorName"))),
+        info_field_update(_("Memory"), 1000),
+        info_field(_("Machine Type"),
+            idle_free(computer_get_virtualization())),
+        info_field(_("Operating System"), computer->os->distro),
+        info_field(_("User Name"), computer->os->username),
+        info_field_update(_("Date/Time"), 1000),
+        info_field_last());
 
-    summary = g_strdup_printf("[$ShellParam$]\n"
-                  "UpdateInterval$%s=1000\n"
-                  "UpdateInterval$%s=1000\n"
-                  "#ReloadInterval=5000\n"
-                  "[%s]\n"
-/*Processor*/     "%s=%s\n"
-/*Memory*/        "%s=...\n"
-/*Machine Type*/  "%s=%s\n"
-/*Operating Sys*/ "%s=%s\n"
-/*User Name*/     "%s=%s\n"
-/*Date/Time*/     "%s=...\n"
-                  "[%s]\n"
-/*Resolution*/    "%s=%dx%d %s\n"
-/*OpenGL Rend*/   "%s=%s\n"
-/*X11 Vendor*/    "%s=%s\n"
-                  "\n%s\n"
-/*Input Devices*/ "[%s]\n%s\n"
-                  "\n%s\n"
-                  "\n%s\n",
+    info_add_group(info, _("Display"),
+        info_field(_("Resolution"),
+            idle_free(g_strdup_printf(_("%dx%d pixels" /* label for resolution */),
+                computer->display->width, computer->display->height))),
+        info_field(_("OpenGL Renderer"), computer->display->ogl_renderer),
+        info_field(_("X11 Vendor"), computer->display->vendor),
+        info_field_last());
 
-                  /* Update Intervals */
-                  _("Memory"),
-                  _("Date/Time"),
+    info_add_computed_group(info, _("Audio Devices"),
+        idle_free(computer_get_alsacards(computer)));
+    info_add_computed_group(info, _("Input Devices"),
+        idle_free(module_call_method("devices::getInputDevices")));
+    info_add_computed_group(info, _("Printers"),
+        idle_free(module_call_method("devices::getPrinters")));
+    info_add_computed_group(info, _("Storage"),
+        idle_free(module_call_method("devices::getStorageDevices")));
 
-                  _("Computer"),
-                  _("Processor"), processor_name,
-                  _("Memory"),
-                  _("Machine Type"), virt,
-                  _("Operating System"), computer->os->distro,
-                  _("User Name"), computer->os->username,
-                  _("Date/Time"),
-                  _("Display"),
-                  _("Resolution"),
-                  computer->display->width, computer->display->height,
-                  _(/*/label for resolution */ "pixels"),
-                  _("OpenGL Renderer"), computer->display->ogl_renderer,
-                  _("X11 Vendor"), computer->display->vendor,
-                  alsa_cards,
-                  _("Input Devices"),
-                  input_devices, printers, storage_devices);
-
-    g_free(processor_name);
-    g_free(alsa_cards);
-    g_free(input_devices);
-    g_free(printers);
-    g_free(storage_devices);
-    g_free(virt);
-
-    return summary;
+    return info_flatten(info);
 }
 
-gchar *callback_os()
+gchar *callback_os(void)
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-                  "UpdateInterval$%s=10000\n"
-                  "UpdateInterval$%s=1000\n"
-                  "UpdateInterval$%s=1000\n"
+    struct Info *info = info_new();
 
-                  "[%s]\n"
-/*Kernel*/        "%s=%s\n"
-/*Version*/       "%s=%s\n"
-/*C Library*/     "%s=%s\n"
-/*Distribution*/  "%s=%s\n"
-                  "[%s]\n"
-/*Computer Name*/ "%s=%s\n"
-/*User Name*/     "%s=%s\n"
-/*#Language*/     "%s=%s\n"
-/*Home Dir*/      "%s=%s\n"
-/*Desktop Env*/   "%s=%s\n"
-                  "[%s]\n"
-/*Uptime*/        "%s=...\n"
-/*Load Average*/  "%s=...\n"
-/*Entropy*/       "%s=...\n",
+    info_add_group(info, _("Version"),
+        info_field(_("Kernel"), computer->os->kernel),
+        info_field(_("Version"), computer->os->kernel_version),
+        info_field(_("C Library"), computer->os->libc),
+        info_field(_("Distribution"), computer->os->distro),
+        info_field_last());
 
-               /* Update Intervals */
-               _("Uptime"),
-               _("Available entropy in /dev/random"),
-               _("Load Average"),
+    info_add_group(info, _("Current Session"),
+        info_field(_("Computer Name"), computer->os->hostname),
+        info_field(_("User Name"), computer->os->username),
+        info_field(_("Language"), computer->os->language),
+        info_field(_("Home Directory"), computer->os->homedir),
+        info_field_last());
 
-               _("Version"),
-               _("Kernel"), computer->os->kernel,
-               _("Version"), computer->os->kernel_version,
-               _("C Library"), computer->os->libc,
-               _("Distribution"), computer->os->distro,
-               _("Current Session"),
-               _("Computer Name"), computer->os->hostname,
-               _("User Name"), computer->os->username,
-               _("Language"), computer->os->language,
-               _("Home Directory"), computer->os->homedir,
-               _("Desktop Environment"), computer->os->desktop,
-               _("Misc"),
-               _("Uptime"),
-               _("Load Average"),
-               _("Available entropy in /dev/random") );
+    info_add_group(info, _("Misc"),
+        info_field_update(_("Uptime"), 1000),
+        info_field_update(_("Load Average"), 10000),
+        info_field_update(_("Available entropy in /dev/random"), 1000),
+        info_field_last());
+
+    return info_flatten(info);
 }
 
-gchar *callback_modules()
+gchar *callback_modules(void)
 {
-    return g_strdup_printf("[%s]\n"
-               "%s"
-               "[$ShellParam$]\n"
-               "ViewType=1\n"
-               "ColumnTitle$TextValue=%s\n" /* Name */
-               "ColumnTitle$Value=%s\n" /* Description */
-               "ShowColumnHeaders=true\n",
-               _("Loaded Modules"), module_list,
-               _("Name"), _("Description") );
+    struct Info *info = info_new();
+
+    info_add_computed_group(info, _("Loaded Modules"), module_list);
+
+    info_set_column_title(info, "TextValue", _("Name"));
+    info_set_column_title(info, "Value", _("Description"));
+    info_set_column_headers_visible(info, TRUE);
+    info_set_view_type(info, SHELL_VIEW_DUAL);
+
+    return info_flatten(info);
 }
 
-gchar *callback_boots()
+gchar *callback_boots(void)
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-               "ColumnTitle$TextValue=%s\n" /* Date & Time */
-               "ColumnTitle$Value=%s\n" /* Kernel Version */
-               "ShowColumnHeaders=true\n"
-               "\n%s",
-               _("Date & Time"), _("Kernel Version"),
-               computer->os->boots);
+    struct Info *info = info_new();
+
+    info_add_computed_group(info, _("Boots"), computer->os->boots);
+
+    info_set_column_title(info, "TextValue", _("Date & Time"));
+    info_set_column_title(info, "Value", _("Kernel Version"));
+    info_set_column_headers_visible(info, TRUE);
+
+    return info_flatten(info);
 }
 
-gchar *callback_locales()
+gchar *callback_locales(void)
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-               "ViewType=1\n"
-               "ColumnTitle$TextValue=%s\n" /* Language Code */
-               "ColumnTitle$Value=%s\n" /* Name */
-               "ShowColumnHeaders=true\n"
-               "[%s]\n%s",
-               _("Language Code"), _("Name"),
-               _("Available Languages"), computer->os->languages );
+    struct Info *info = info_new();
+
+    info_add_computed_group(info, _("Available Languages"), computer->os->languages);
+
+    info_set_column_title(info, "TextValue", _("Language Code"));
+    info_set_column_title(info, "Value", _("Name"));
+    info_set_view_type(info, SHELL_VIEW_DUAL);
+    info_set_column_headers_visible(info, TRUE);
+
+    return info_flatten(info);
 }
 
-gchar *callback_fs()
+gchar *callback_fs(void)
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-               "ViewType=4\n"
-               "ReloadInterval=5000\n"
-               "Zebra=1\n"
-               "NormalizePercentage=false\n"
-               "ColumnTitle$Extra1=%s\n" /* Mount Point */
-               "ColumnTitle$Progress=%s\n" /* Usage */
-               "ColumnTitle$TextValue=%s\n" /* Device */
-               "ShowColumnHeaders=true\n"
-               "[%s]\n%s\n",
-               _("Mount Point"), _("Usage"), _("Device"),
-               _("Mounted File Systems"), fs_list );
+    struct Info *info = info_new();
+
+    info_add_computed_group(info, _("Mounted File Systems"), fs_list);
+
+    info_set_column_title(info, "Extra1", _("Mount Point"));
+    info_set_column_title(info, "Progress", _("Usage"));
+    info_set_column_title(info, "TextValue", _("Device"));
+    info_set_column_headers_visible(info, TRUE);
+    info_set_view_type(info, SHELL_VIEW_PROGRESS_DUAL);
+    info_set_zebra_visible(info, TRUE);
+    info_set_normalize_percentage(info, FALSE);
+
+    return info_flatten(info);
 }
 
-gchar *callback_display()
+gchar *callback_display(void)
 {
-    return g_strdup_printf("[%s]\n"
-               "%s=%dx%d %s\n"
-               "%s=%s\n"
-               "%s=%s\n"
-               "[%s]\n"
-               "%s"
-               "[%s]\n"
-               "%s"
-               "[%s]\n"
-               "%s=%s\n"
-               "%s=%s\n"
-               "%s=%s\n"
-               "%s=%s\n",
-               _("Display"),
-               _("Resolution"),
-                   computer->display->width,
-                   computer->display->height,
-                   _(/*/ Resolution WxH unit */ "pixels"),
-               _("Vendor"), computer->display->vendor,
-               _("Version"), computer->display->version,
-               _("Monitors"),
-               computer->display->monitors,
-               _("Extensions"),
-               computer->display->extensions,
-               _("OpenGL"),
-               _("Vendor"), computer->display->ogl_vendor,
-               _("Renderer"), computer->display->ogl_renderer,
-               _("Version"), computer->display->ogl_version,
-               _("Direct Rendering"), computer->display->dri ? _("Yes") : _("No")
-               );
+    struct Info *info = info_new();
+
+    info_add_group(info, _("Display"),
+        info_field(_("Resolution"),
+            idle_free(g_strdup_printf(_("%dx%d pixels" /* resolution WxH unit */),
+                computer->display->width, computer->display->height))),
+        info_field(_("Vendor"), computer->display->vendor),
+        info_field(_("Version"), computer->display->version),
+        info_field_last());
+
+    info_add_computed_group(info, _("Monitors"), computer->display->monitors);
+
+    info_add_group(info, _("OpenGL"),
+        info_field(_("Vendor"), computer->display->ogl_vendor),
+        info_field(_("Renderer"), computer->display->ogl_renderer),
+        info_field(_("Version"), computer->display->ogl_version),
+        info_field(_("Direct Rendering"),
+            computer->display->dri ? _("Yes") : _("No")),
+        info_field_last());
+
+    info_add_computed_group(info, _("Extensions"), computer->display->extensions);
+
+    return info_flatten(info);
 }
 
-gchar *callback_users()
+gchar *callback_users(void)
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-               "ReloadInterval=10000\n"
-               "ViewType=1\n"
-               "[%s]\n"
-               "%s\n", _("Users"), users);
+    struct Info *info = info_new();
+
+    info_add_computed_group(info, _("Users"), users);
+    info_set_view_type(info, SHELL_VIEW_DUAL);
+    info_set_reload_interval(info, 10000);
+
+    return info_flatten(info);
 }
 
-gchar *callback_groups()
+gchar *callback_groups(void)
 {
-    return g_strdup_printf("[$ShellParam$]\n"
-               "ReloadInterval=10000\n"
-               "ColumnTitle$TextValue=%s\n" /* Name */
-               "ColumnTitle$Value=%s\n" /* Group ID */
-               "ShowColumnHeaders=true\n"
-               "[%s]\n%s\n",
-               _("Name"), _("Group ID"),
-               _("Groups"), groups);
+    struct Info *info = info_new();
+
+    info_add_computed_group(info, _("Group"), groups);
+
+    info_set_column_title(info, "TextValue", _("Name"));
+    info_set_column_title(info, "Value", _("Group ID"));
+    info_set_column_headers_visible(info, TRUE);
+    info_set_reload_interval(info, 10000);
+
+    return info_flatten(info);
 }
 
 gchar *get_os_kernel(void)
