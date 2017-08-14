@@ -207,8 +207,7 @@ gchar *hi_get_field(gchar * field)
 static void br_mi_add(char **results_list, bench_result *b) {
     gchar *ckey, *rkey;
 
-    //ckey = hardinfo_clean_label(b->machine->cpu_name, 0);
-    ckey = strdup(b->machine->cpu_name);
+    ckey = hardinfo_clean_label(b->machine->cpu_name, 0);
     rkey = strdup(b->machine->mid);
 
     *results_list = h_strdup_cprintf("$%s$%s=%.2f|%s\n", *results_list, rkey, ckey,
