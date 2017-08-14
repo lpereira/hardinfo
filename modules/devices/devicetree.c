@@ -243,7 +243,7 @@ void mi_add(const char *key, const char *value) {
     ckey = hardinfo_clean_label(key, 0);
     rkey = g_strdup_printf("%s:%s", "DTREE", ckey);
 
-    dtree_info = g_strdup_printf("%s$%s$%s=\n", dtree_info, rkey, ckey);
+    dtree_info = h_strdup_cprintf("$%s$%s=\n", dtree_info, rkey, ckey);
     moreinfo_add_with_prefix("DEV", rkey, g_strdup(value));
 
     g_free(ckey);
