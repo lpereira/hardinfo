@@ -22,7 +22,7 @@
 #include <sys/types.h>
 
 #include "devices.h"
-              
+
 typedef struct _DMIInfo		DMIInfo;
 
 struct _DMIInfo {
@@ -66,16 +66,16 @@ gboolean dmi_get_info_dmidecode()
     g_free(dmi_info);
     dmi_info = NULL;
   }
-  
+
   for (i = 0; i < G_N_ELEMENTS(dmi_info_table); i++) {
     info = &dmi_info_table[i];
-    
+
     if (*(info->name) == '$') {
       group = info->name + 1;
       dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
     } else {
       gchar *temp;
-      
+
       if (!info->param)
         continue;
 
@@ -88,7 +88,7 @@ gboolean dmi_get_info_dmidecode()
           dmi_failed = TRUE;
           break;
         }
-        
+
         add_to_moreinfo(group, info->name, buffer);
 
         const gchar *url = vendor_get_url(buffer);
@@ -119,14 +119,14 @@ gboolean dmi_get_info_dmidecode()
         dmi_failed = TRUE;
         break;
       }
-    }                                
+    }
   }
-  
+
   if (dmi_failed) {
     g_free(dmi_info);
     dmi_info = NULL;
   }
-  
+
   return !dmi_failed;
 }
 
@@ -136,17 +136,17 @@ gboolean dmi_get_info_sys()
   gchar buffer[256];
   const gchar *group = NULL;
   DMIInfo *info;
-  gboolean dmi_failed = FALSE;
+  gboolean dmi_succeeded = FALSE;
   gint i;
-  
+
   if (dmi_info) {
     g_free(dmi_info);
     dmi_info = NULL;
   }
-  
+
   for (i = 0; i < G_N_ELEMENTS(dmi_info_table); i++) {
     info = &dmi_info_table[i];
-    
+
     if (*(info->name) == '$') {
       group = info->name + 1;
       dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
@@ -156,7 +156,7 @@ gboolean dmi_get_info_sys()
         fclose(dmi_file);
 
         add_to_moreinfo(group, info->name, buffer);
-        
+
         const gchar *url = vendor_get_url(buffer);
         if (url) {
           const gchar *vendor = vendor_get_name(buffer);
@@ -180,31 +180,34 @@ gboolean dmi_get_info_sys()
                                       info->name,
                                       g_strstrip(buffer));
         }
+        dmi_succeeded = TRUE;
       } else {
-        dmi_failed = TRUE;
-        break;
+        dmi_info = h_strdup_cprintf("%s=%s\n",
+                                    dmi_info,
+                                    info->name,
+                                    _("(Not available; Perhaps try running HardInfo as root.)") );
       }
-    }                                
+    }
   }
-  
-  if (dmi_failed) {
+
+  if (!dmi_succeeded) {
     g_free(dmi_info);
     dmi_info = NULL;
   }
-  
-  return !dmi_failed;
+
+  return dmi_succeeded;
 }
 
 void __scan_dmi()
 {
   gboolean dmi_ok;
-  
+
   dmi_ok = dmi_get_info_sys();
-  
+
   if (!dmi_ok) {
     dmi_ok = dmi_get_info_dmidecode();
   }
-  
+
   if (!dmi_ok) {
     dmi_info = g_strdup("[No DMI information]\n"
                         "There was an error retrieving the information.=\n"
