@@ -24,6 +24,7 @@
 #include "shell.h"
 #include "vendor.h"
 #include "gettext.h"
+#include "info.h"
 
 #define HARDINFO_COPYRIGHT_LATEST_YEAR 2017
 

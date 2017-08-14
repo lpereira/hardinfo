@@ -245,6 +245,7 @@ add_executable(hardinfo
 	hardinfo/socket.c
 	hardinfo/util.c
 	hardinfo/vendor.c
+	hardinfo/info.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
