@@ -1606,7 +1606,7 @@ msgstr ""
 "Technologia de bateria=%s\n"
 "Manufacturador=%s\n"
 "Numero de modelo=%s\n"
-"Numero de serial=%s\n
+"Numero de serial=%s\n"
 
 #: modules/devices/battery.c:346
 #, c-format
@@ -2721,7 +2721,7 @@ msgstr "Centaur MCRs (= MTRRs)"
 #: modules/devices/x86/x86_data.c:94
 msgctxt "x86-flag"
 msgid "TSC ticks at a constant rate"
-msgstr "TSC ticks a una velocidad constante""
+msgstr "TSC ticks a una velocidad constante"
 
 #. /flag:up
 #: modules/devices/x86/x86_data.c:95
@@ -2857,7 +2857,7 @@ msgstr "Soporte Monitor/Mwait (suplementos Intel SSE3"
 #: modules/devices/x86/x86_data.c:118
 msgctxt "x86-flag"
 msgid "CPL Qual. Debug Store"
-msgstr "CPL Qual. Debug Store""
+msgstr "CPL Qual. Debug Store"
 
 #. /flag:vmx
 #: modules/devices/x86/x86_data.c:119
