@@ -94,32 +94,32 @@ __scan_input_devices(void)
 				 	  input_icons,
 					  tmp, name,
 					  input_devices[d].icon);
-	    gchar *strhash = g_strdup_printf("[Device Information]\n"
+	    gchar *strhash = g_strdup_printf(_("[Device Information]\n"
 					     "Name=%s\n"
 					     "Type=%s\n"
-					     "Bus=0x%x\n",
+					     "Bus=0x%x\n"),
 					     name,
 					     input_devices[d].name,
 					     bus);
 
 	    const gchar *url = vendor_get_url(name);
 	    if (url) {
-	    	strhash = h_strdup_cprintf("Vendor=%s (%s)\n",
+	    	strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
 					  strhash,
 					  vendor_get_name(name),
 					  url);
 	    } else {
-	    	strhash = h_strdup_cprintf("Vendor=%x\n",
+	    	strhash = h_strdup_cprintf(_("Vendor=%x\n"),
 					  strhash,
 					  vendor);
 	    }
 
-	    strhash = h_strdup_cprintf("Product=0x%x\n"
-				      "Version=0x%x\n",
+	    strhash = h_strdup_cprintf(_("Product=0x%x\n"
+				      "Version=0x%x\n"),
 				      strhash, product, version);
 	    
             if (phys && phys[1] != 0) {
-                 strhash = h_strdup_cprintf("Connected to=%s\n",
+                 strhash = h_strdup_cprintf(_("Connected to=%s\n"),
                                             strhash, phys);
             }
 
