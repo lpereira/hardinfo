@@ -304,7 +304,7 @@ gchar *processor_frequency_desc(GSList * processors)
             }
         }
     }
-    ret = h_strdup_cprintf("%s%dx %0.2f %s", ret, strlen(ret) ? " + " : "", cur_count, cur_val, _("MHz"));
+    ret = h_strdup_cprintf("%s%dx %.2f %s", ret, strlen(ret) ? " + " : "", cur_count, cur_val, _("MHz"));
     g_slist_free(tmp);
     return ret;
 }
@@ -332,7 +332,7 @@ gchar *get_processor_max_frequency(void)
     if (max_freq == 0.0f) {
         return g_strdup(N_("Unknown"));
     } else {
-        return g_strdup_printf("%.0f %s", max_freq, _("MHz") );
+        return g_strdup_printf("%.2f %s", max_freq, _("MHz") );
     }
 }
 
