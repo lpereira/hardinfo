@@ -18,8 +18,6 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include "cpu_util.h"
-
 typedef struct {
     char *board;
     int memory_kiB;
@@ -37,6 +35,39 @@ typedef struct {
     simple_machine *machine;
     int legacy; /* an old benchmark.conf result */
 } bench_result;
+
+static char *cpu_config_retranslate(char *str, int force_en, int replacing) {
+    char *new_str = NULL;
+    char *mhz = (force_en) ? "MHz" : _("MHz");
+    char *c = str, *tmp;
+    int t;
+    float f;
+
+    if (str != NULL) {
+        new_str = strdup("");
+        if (strchr(str, 'x')) {
+            while (c != NULL && sscanf(c, "%dx %f", &t, &f) ) {
+                tmp = g_strdup_printf("%s%s%dx %.2f %s",
+                        new_str, strlen(new_str) ? " + " : "",
+                        t, f, mhz );
+                free(new_str);
+                new_str = tmp;
+                c = strchr(c+1, '+');
+            }
+        } else {
+            sscanf(c, "%f", &f);
+            tmp = g_strdup_printf("%s%s%dx %.2f %s",
+                    new_str, strlen(new_str) ? " + " : "",
+                    1, f, mhz );
+            free(new_str);
+            new_str = tmp;
+        }
+
+        if (replacing)
+            free(str);
+    }
+    return new_str;
+}
 
 /* "2x 1400.00 MHz + 2x 800.00 MHz" -> 4400.0 */
 static float cpu_config_val(char *str) {
@@ -80,8 +111,10 @@ static gen_machine_id(simple_machine *m) {
     if (m) {
         if (m->mid != NULL)
             free(m->mid);
+        /* Don't try and translate unknown. The mid string needs to be made of all
+         * untranslated elements.*/
         m->mid = g_strdup_printf("%s;%s;%.2f",
-            m->board, m->cpu_name, cpu_config_val(m->cpu_config) );
+            (m->board != NULL) ? m->board : "(Unknown)", m->cpu_name, cpu_config_val(m->cpu_config) );
         s = m->mid;
         while (*s != 0) {
             if (!isalnum(*s)) {
@@ -256,19 +289,31 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
                 }
             }
         }
-        UNKIFNULL(b->machine->board);
-        UNKIFNULL(b->machine->cpu_desc);
+        b->machine->cpu_config = cpu_config_retranslate(b->machine->cpu_config, 0, 1);
+        if (b->machine->board != NULL && strlen(b->machine->board) == 0) {
+            free(b->machine->board);
+            b->machine->board = NULL;
+        }
+        if (b->machine->cpu_desc != NULL && strlen(b->machine->cpu_desc) == 0) {
+            free(b->machine->cpu_desc);
+            b->machine->cpu_desc = NULL;
+        }
         gen_machine_id(b->machine);
     }
     return b;
 }
 
 char *bench_result_benchmarkconf_line(bench_result *b) {
-    return g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d\n",
+    char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
+    char *ret = g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d\n",
             b->machine->mid, b->result, b->threads,
-            b->machine->board, b->machine->cpu_name,
-            b->machine->cpu_desc, b->machine->cpu_config,
+            (b->machine->board != NULL) ? b->machine->board : "",
+            b->machine->cpu_name,
+            (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : "",
+            cpu_config,
             b->machine->memory_kiB, b->machine->threads );
+    free(cpu_config);
+    return ret;
 }
 
 char *bench_result_more_info(bench_result *b) {
@@ -287,9 +332,9 @@ char *bench_result_more_info(bench_result *b) {
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
-                        _("Board"), b->machine->board,
+                        _("Board"), (b->machine->board != NULL) ? b->machine->board : _("(Unknown)"),
                         _("CPU Name"), b->machine->cpu_name,
-                        _("CPU Description"), b->machine->cpu_desc,
+                        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _("(Unknown)"),
                         _("CPU Config"), b->machine->cpu_config,
                         _("Threads Available"), b->machine->threads,
                         _("Memory"), b->machine->memory_kiB, _("kiB")
