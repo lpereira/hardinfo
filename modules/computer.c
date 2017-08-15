@@ -403,35 +403,43 @@ gchar *computer_get_virtualization(void)
         gchar *vmtype;
     } vm_types[] = {
         /* VMware */
-        { "VMware", "Virtual (VMware)" },
-        { ": VMware Virtual IDE CDROM Drive", "Virtual (VMware)" },
+        { "VMware", N_("Virtual (VMware)") },
+        { ": VMware Virtual IDE CDROM Drive", N_("Virtual (VMware)") },
         /* QEMU */
-        { "QEMU", "Virtual (QEMU)" },
-        { "QEMU Virtual CPU", "Virtual (QEMU)" },
-        { ": QEMU HARDDISK", "Virtual (QEMU)" },
-        { ": QEMU CD-ROM", "Virtual (QEMU)" },
+        { "QEMU", N_("Virtual (QEMU)") },
+        { "QEMU Virtual CPU", N_("Virtual (QEMU)") },
+        { ": QEMU HARDDISK", N_("Virtual (QEMU)") },
+        { ": QEMU CD-ROM", N_("Virtual (QEMU)") },
         /* Generic Virtual Machine */
-        { ": Virtual HD,", "Virtual (Unknown)" },
-        { ": Virtual CD,", "Virtual (Unknown)" },
+        { ": Virtual HD,", N_("Virtual (Unknown)") },
+        { ": Virtual CD,", N_("Virtual (Unknown)") },
         /* Virtual Box */
-        { "VBOX", "Virtual (VirtualBox)" },
-        { ": VBOX HARDDISK", "Virtual (VirtualBox)" },
-        { ": VBOX CD-ROM", "Virtual (VirtualBox)" },
+        { "VBOX", N_("Virtual (VirtualBox)") },
+        { ": VBOX HARDDISK", N_("Virtual (VirtualBox)") },
+        { ": VBOX CD-ROM", N_("Virtual (VirtualBox)") },
         /* Xen */
-        { "Xen virtual console", "Virtual (Xen)" },
-        { "Xen reported: ", "Virtual (Xen)" },
-        { "xen-vbd: registered block device", "Virtual (Xen)" },
+        { "Xen virtual console", N_("Virtual (Xen)") },
+        { "Xen reported: ", N_("Virtual (Xen)") },
+        { "xen-vbd: registered block device", N_("Virtual (Xen)") },
         /* Generic */
-        { " hypervisor", "Virtual (hypervisor present)"} ,
+        { " hypervisor", N_("Virtual (hypervisor present)") } ,
         { NULL }
     };
+    gchar *tmp;
 
     DEBUG("Detecting virtual machine");
 
     if (g_file_test("/proc/xen", G_FILE_TEST_EXISTS)) {
          DEBUG("/proc/xen found; assuming Xen");
-         return g_strdup("Xen");
+         return g_strdup(_("Virtual (Xen)"));
     }
+
+    tmp = module_call_method("devices::getMotherboard");
+    if (strstr(tmp, "VirtualBox") != NULL) {
+        g_free(tmp);
+        return g_strdup(_("Virtual (VirtualBox)"));
+    }
+    g_free(tmp);
 
     for (i = 0; files[i+1]; i++) {
          gchar buffer[512];
@@ -452,7 +460,7 @@ gchar *computer_get_virtualization(void)
               if (found) {
                   DEBUG("%s found (by reading file %s)",
                         vm_types[j].vmtype, files[i]);
-                  return g_strdup(vm_types[j].vmtype);
+                  return g_strdup(_(vm_types[j].vmtype));
               }
          }
 
