@@ -47,6 +47,21 @@ DMIInfo dmi_info_table[] = {
 
 gchar *dmi_info = NULL;
 
+const char *dmi_sysfs_root() {
+    char *candidates[] = {
+        "/sys/devices/virtual/dmi",
+        "/sys/class/dmi",
+        NULL
+    };
+    int i = 0;
+    while (candidates[i] != NULL) {
+        if(access(candidates[i], F_OK) != -1)
+            return candidates[i];
+        i++;
+    }
+    return NULL;
+}
+
 char *dmi_get_str(const char *id_str) {
   static struct {
     char *id;
@@ -64,6 +79,7 @@ char *dmi_get_str(const char *id_str) {
     { "chassis-type", "id/chassis_type" },
     { NULL, NULL }
   };
+  const gchar *dmi_root = dmi_sysfs_root();
   gchar *path = NULL, *full_path = NULL, *ret = NULL;
   gboolean spawned;
   gchar *out, *err;
@@ -78,8 +94,8 @@ char *dmi_get_str(const char *id_str) {
   }
 
   /* try sysfs first */
-  if (path) {
-    full_path = g_strdup_printf("/sys/class/dmi/%s", path);
+  if (dmi_root && path) {
+    full_path = g_strdup_printf("%s/%s", dmi_root, path);
     if (g_file_get_contents(full_path, &ret, NULL, NULL) )
       goto dmi_str_done;
   }
