@@ -32,6 +32,10 @@
 #include <vendor.h>
 
 #include "computer.h"
+
+#include "devices.h" /* for dmi_get_str() */
+#include "dt_util.h" /* for dtr_get_string() */
+
 #include "info.h"
 
 /* Callbacks */
@@ -303,7 +307,8 @@ static gchar *detect_machine_type(void)
     GDir *dir;
     gchar *chassis;
 
-    if (g_file_get_contents("/sys/devices/virtual/dmi/id/chassis_type", &chassis, NULL, NULL)) {
+    chassis = dmi_get_str("chassis-type");
+    if (chassis != NULL) {
         static const char *types[] = {
             N_("Invalid chassis type (0)"),
             N_("Unknown chassis type"), /* 1 is "Other", but not helpful in HardInfo */
@@ -331,10 +336,22 @@ static gchar *detect_machine_type(void)
             N_("Rack Mount Chassis"),
             N_("Sealed-case PC"),
         };
-        int chassis_type = atoi(idle_free(chassis));
+        int chassis_type = atoi(chassis);
+        g_free(chassis);
 
         if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types))
             return g_strdup(_(types[chassis_type]));
+    }
+
+    chassis = dtr_get_string("/model", 0);
+    if (chassis) {
+        if (strstr(chassis, "Raspberry Pi") != NULL
+            || strstr(chassis, "ODROID") != NULL
+            /* etc */ ) {
+                g_free(chassis);
+                return g_strdup(_("Single-board computer"));
+        }
+        g_free(chassis);
     }
 
     if (g_file_test("/proc/pmu/info", G_FILE_TEST_EXISTS))
@@ -380,8 +397,6 @@ static gchar *detect_machine_type(void)
     }
 
     /* FIXME: check if batteries are found using /proc/apm */
-
-    /* FIXME: use dmidecode if available to get chassis type */
 
     return g_strdup(_("Unknown physical machine type"));
 }
