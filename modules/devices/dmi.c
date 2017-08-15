@@ -95,6 +95,10 @@ char *dmi_get_str(const char *id_str) {
   }
 
 dmi_str_done:
+  if (ret != NULL) {
+    ret = strend(ret, '\n');
+    ret = g_strstrip(ret);
+  }
   g_free(full_path);
   return ret;
 }
