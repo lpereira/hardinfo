@@ -366,23 +366,25 @@ gchar *get_motherboard(void)
     scan_dmi(FALSE);
 
     board_name = dmi_get_str("baseboard-product-name");
-    if (board_name == NULL || !strlen(board_name) )
+    if (board_name == NULL)
         board_name = dmi_get_str("system-product-name");
-    if (board_name == NULL || !strlen(board_name) )
-        board_name = strdup(_(" (model unknown)"));
 
     board_vendor = dmi_get_str("baseboard-manufacturer");
-    if (board_vendor == NULL || !strlen(board_vendor) )
+    if (board_vendor == NULL)
         board_vendor = dmi_get_str("system-manufacturer");
-    if (board_vendor == NULL || !strlen(board_vendor) )
-        board_vendor = strdup(_(" (vendor unknown)"));
 
     product_version = dmi_get_str("system-product-version");
 
-    if (product_version && strlen(product_version) )
+    if (board_name && board_vendor && product_version)
         ret = g_strdup_printf("%s / %s (%s)", product_version, board_name, board_vendor);
-    else
+    else if (board_name && board_vendor)
         ret = g_strconcat(board_vendor, " ", board_name, NULL);
+    else if (board_name)
+        ret = g_strdup(board_name);
+    else if (board_vendor)
+        ret = g_strdup(board_vendor);
+    else
+        ret = g_strdup(_("(Unknown)"));
 
     free(board_name);
     free(board_vendor);
