@@ -468,20 +468,19 @@ gchar *callback_summary(void)
     struct Info *info = info_new();
 
     info_add_group(info, _("Computer"),
-        info_field(_("Processor"),
-            idle_free(module_call_method("devices::getProcessorName"))),
+        info_field_printf(_("Processor"), "%s",
+            module_call_method("devices::getProcessorName")),
         info_field_update(_("Memory"), 1000),
-        info_field(_("Machine Type"),
-            idle_free(computer_get_virtualization())),
+        info_field_printf(_("Machine Type"), "%s",
+            computer_get_virtualization()),
         info_field(_("Operating System"), computer->os->distro),
         info_field(_("User Name"), computer->os->username),
         info_field_update(_("Date/Time"), 1000),
         info_field_last());
 
     info_add_group(info, _("Display"),
-        info_field(_("Resolution"),
-            idle_free(g_strdup_printf(_("%dx%d pixels" /* label for resolution */),
-                computer->display->width, computer->display->height))),
+        info_field_printf(_("Resolution"), _(/* label for resolution */ "%dx%d pixels"),
+            computer->display->width, computer->display->height),
         info_field(_("OpenGL Renderer"), computer->display->ogl_renderer),
         info_field(_("X11 Vendor"), computer->display->vendor),
         info_field_last());
@@ -588,9 +587,8 @@ gchar *callback_display(void)
     struct Info *info = info_new();
 
     info_add_group(info, _("Display"),
-        info_field(_("Resolution"),
-            idle_free(g_strdup_printf(_("%dx%d pixels" /* resolution WxH unit */),
-                computer->display->width, computer->display->height))),
+        info_field_printf(_("Resolution"), _(/* resolution WxH unit */ "%dx%d pixels"),
+                computer->display->width, computer->display->height),
         info_field(_("Vendor"), computer->display->vendor),
         info_field(_("Version"), computer->display->version),
         info_field_last());
