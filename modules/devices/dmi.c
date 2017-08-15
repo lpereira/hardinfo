@@ -43,6 +43,12 @@ DMIInfo dmi_info_table[] = {
   { N_("Name"), "system-product-name", 0 },
   { N_("Family"), "system-product-family", 0 },
   { N_("Version#1"), "system-product-version", 0 },
+  { N_("Chassis"), NULL, 1 },
+  { N_("Vendor"), "chassis-manufacturer", 0 },
+  { N_("Type"), "chassis-type", 0 },
+  { N_("Version"), "chassis-version", 0 },
+  { N_("Serial Number"), "chassis-serial-number", 0 },
+  { N_("Asset Tag"), "chassis-asset-tag", 0 },
 };
 
 gchar *dmi_info = NULL;
@@ -77,6 +83,10 @@ char *dmi_get_str(const char *id_str) {
     { "system-product-family", "id/product_family" },
     { "system-product-version", "id/product_version" },
     { "chassis-type", "id/chassis_type" },
+    { "chassis-serial-number", "id/chassis_serial" },
+    { "chassis-manufacturer", "id/chassis_vendor" },
+    { "chassis-version", "id/chassis_version" },
+    { "chassis-asset-tag", "id/chassis_asset_tag" },
     { NULL, NULL }
   };
   const gchar *dmi_root = dmi_sysfs_root();
@@ -125,6 +135,48 @@ dmi_str_done:
   return ret;
 }
 
+char *dmi_chassis_type_str(int with_val) {
+    gchar *chassis = dmi_get_str("chassis-type");
+    if (chassis != NULL) {
+        static const char *types[] = {
+            N_("Invalid chassis type (0)"),
+            N_("Unknown chassis type"), /* 1 is "Other", but not helpful in HardInfo */
+            N_("Unknown chassis type"),
+            N_("Desktop"),
+            N_("Low-profile Desktop"),
+            N_("Pizza Box"),
+            N_("Mini Tower"),
+            N_("Tower"),
+            N_("Portable"),
+            N_("Laptop"),
+            N_("Notebook"),
+            N_("Handheld"),
+            N_("Docking Station"),
+            N_("All-in-one"),
+            N_("Subnotebook"),
+            N_("Space-saving"),
+            N_("Lunch Box"),
+            N_("Main Server Chassis"),
+            N_("Expansion Chassis"),
+            N_("Sub Chassis"),
+            N_("Bus Expansion Chassis"),
+            N_("Peripheral Chassis"),
+            N_("RAID Chassis"),
+            N_("Rack Mount Chassis"),
+            N_("Sealed-case PC"),
+        };
+        int chassis_type = atoi(chassis);
+        g_free(chassis);
+
+        if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types))
+            if (with_val)
+                return g_strdup_printf("[%d] %s", chassis_type, _(types[chassis_type]));
+            else
+                return g_strdup(_(types[chassis_type]));
+    }
+    return NULL;
+}
+
 static void add_to_moreinfo(const char *group, const char *key, char *value)
 {
   char *new_key = g_strconcat("DMI:", group, ":", key, NULL);
@@ -151,7 +203,10 @@ gboolean dmi_get_info()
       group = info->name;
       dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, _(info->name) );
     } else if (group && info->id_str) {
-      value = dmi_get_str(info->id_str);
+      if (strcmp(info->id_str, "chassis-type") == 0)
+        value = dmi_chassis_type_str(1);
+      else
+        value = dmi_get_str(info->id_str);
 
       if (value != NULL) {
         add_to_moreinfo(group, info->name, value);
@@ -162,13 +217,13 @@ gboolean dmi_get_info()
           dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n",
                                       dmi_info,
                                       _(info->name),
-                                      g_strstrip(value),
+                                      value,
                                       vendor, url);
         } else {
           dmi_info = h_strdup_cprintf("%s=%s\n",
                                       dmi_info,
                                       _(info->name),
-                                      g_strstrip(value));
+                                      value);
         }
         dmi_succeeded = TRUE;
       } else {

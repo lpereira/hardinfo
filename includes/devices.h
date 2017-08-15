@@ -74,6 +74,7 @@ void scan_spd_do(void);
 
 /* DMI */
 char *dmi_get_str(const char *id_str);
+char *dmi_chassis_type_str(int with_val);
 
 extern gchar *battery_list;
 extern gchar *input_icons;

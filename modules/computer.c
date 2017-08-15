@@ -307,41 +307,9 @@ static gchar *detect_machine_type(void)
     GDir *dir;
     gchar *chassis;
 
-    chassis = dmi_get_str("chassis-type");
-    if (chassis != NULL) {
-        static const char *types[] = {
-            N_("Invalid chassis type (0)"),
-            N_("Unknown chassis type"), /* 1 is "Other", but not helpful in HardInfo */
-            N_("Unknown chassis type"),
-            N_("Desktop"),
-            N_("Low-profile Desktop"),
-            N_("Pizza Box"),
-            N_("Mini Tower"),
-            N_("Tower"),
-            N_("Portable"),
-            N_("Laptop"),
-            N_("Notebook"),
-            N_("Handheld"),
-            N_("Docking Station"),
-            N_("All-in-one"),
-            N_("Subnotebook"),
-            N_("Space-saving"),
-            N_("Lunch Box"),
-            N_("Main Server Chassis"),
-            N_("Expansion Chassis"),
-            N_("Sub Chassis"),
-            N_("Bus Expansion Chassis"),
-            N_("Peripheral Chassis"),
-            N_("RAID Chassis"),
-            N_("Rack Mount Chassis"),
-            N_("Sealed-case PC"),
-        };
-        int chassis_type = atoi(chassis);
-        g_free(chassis);
-
-        if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types))
-            return g_strdup(_(types[chassis_type]));
-    }
+    chassis = dmi_chassis_type_str(0);
+    if (chassis != NULL)
+        return chassis;
 
     chassis = dtr_get_string("/model", 0);
     if (chassis) {
