@@ -72,6 +72,9 @@ void sensors_shutdown(void);
 void scan_spd_do(void);
 #endif /* ARCH_x86 */
 
+/* DMI */
+char *dmi_get_str(const char *id_str);
+
 extern gchar *battery_list;
 extern gchar *input_icons;
 extern gchar *input_list;
@@ -91,10 +94,10 @@ extern GHashTable *sensor_labels;
 extern GModule *cups;
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
-extern gchar *dmi_info;
 extern gchar *spd_info;
 #endif
 
+extern gchar *dmi_info;
 extern gchar *dtree_info;
 
 #endif /* __DEVICES_H__ */
