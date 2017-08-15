@@ -128,32 +128,31 @@ void info_set_reload_interval(struct Info *info, int setting)
     info->reload_interval = setting;
 }
 
-static gchar *flatten_group(gchar *output, const struct InfoGroup *group)
+static void flatten_group(GString *output, const struct InfoGroup *group)
 {
     guint i;
 
-    output = h_strdup_cprintf("[%s]\n", output, group->name);
+    g_string_append_printf(output, "[%s]\n", group->name);
 
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {
             struct InfoField field;
 
             field = g_array_index(group->fields, struct InfoField, i);
-            output = h_strdup_cprintf("%s=%s\n", output, field.name, field.value);
+
+            g_string_append_printf(output, "%s=%s\n", field.name, field.value);
         }
     } else if (group->computed) {
-        output = h_strdup_cprintf("%s\n", output, group->computed);
+        g_string_append_printf(output, "%s\n", group->computed);
     }
-
-    return output;
 }
 
-static gchar *flatten_shell_param(gchar *output, const struct InfoGroup *group)
+static void flatten_shell_param(GString *output, const struct InfoGroup *group)
 {
     guint i;
 
     if (!group->fields)
-        return output;
+        return;
 
     for (i = 0; i < group->fields->len; i++) {
         struct InfoField field;
@@ -161,40 +160,36 @@ static gchar *flatten_shell_param(gchar *output, const struct InfoGroup *group)
         field = g_array_index(group->fields, struct InfoField, i);
 
         if (field.update_interval) {
-            output = h_strdup_cprintf("UpdateInterval$%s=%d\n", output,
+            g_string_append_printf(output, "UpdateInterval$%s=%d\n",
                 field.name, field.update_interval);
         }
     }
-
-    return output;
 }
 
-static gchar *flatten_shell_param_global(gchar *output, const struct Info *info)
+static void flatten_shell_param_global(GString *output, const struct Info *info)
 {
     int i;
 
-    output = h_strdup_cprintf("ViewType=%d\n", output, info->view_type);
-    output = h_strdup_cprintf("ShowColumnHeaders=%s\n", output,
+    g_string_append_printf(output, "ViewType=%d\n", info->view_type);
+    g_string_append_printf(output, "ShowColumnHeaders=%s\n",
         info->column_headers_visible ? "true" : "false");
 
     if (info->zebra_visible)
-        output = h_strdup_cprintf("Zebra=1\n", output);
+        g_string_append(output, "Zebra=1\n");
 
     if (info->reload_interval)
-        output = h_strdup_cprintf("ReloadInterval=%d\n", output, info->reload_interval);
+        g_string_append_printf(output, "ReloadInterval=%d\n", info->reload_interval);
 
     if (!info->normalize_percentage)
-        output = h_strdup_cprintf("NormalizePercentage=false\n", output);
+        g_string_append(output, "NormalizePercentage=false\n");
 
     for (i = 0; i < G_N_ELEMENTS(info_column_titles); i++) {
         if (!info->column_titles[i])
             continue;
 
-        output = h_strdup_cprintf("ColumnTitle$%s=%s\n", output,
+        g_string_append_printf(output, "ColumnTitle$%s=%s\n",
             info_column_titles[i], info->column_titles[i]);
     }
-
-    return output;
 }
 
 gchar *info_flatten(struct Info *info)
@@ -204,18 +199,20 @@ gchar *info_flatten(struct Info *info)
      * brittle and unnecessarily complicates things.  Being a temporary
      * method, no attention is paid to improve the memory allocation
      * strategy. */
-    gchar *values = NULL;
-    gchar *shell_param = NULL;
-    gchar *output;
+    GString *values;
+    GString *shell_param;
     guint i;
+
+    values = g_string_new(NULL);
+    shell_param = g_string_new(NULL);
 
     if (info->groups) {
         for (i = 0; i < info->groups->len; i++) {
             struct InfoGroup group =
                 g_array_index(info->groups, struct InfoGroup, i);
 
-            values = flatten_group(values, &group);
-            shell_param = flatten_shell_param(shell_param, &group);
+            flatten_group(values, &group);
+            flatten_shell_param(shell_param, &group);
 
             if (group.fields)
                 g_array_free(group.fields, TRUE);
@@ -224,19 +221,9 @@ gchar *info_flatten(struct Info *info)
         g_array_free(info->groups, TRUE);
     }
 
-    if (!values)
-        values = g_strdup("");
+    flatten_shell_param_global(shell_param, info);
+    g_string_append_printf(values, "[$ShellParam$]\n%s", shell_param->str);
 
-    shell_param = flatten_shell_param_global(shell_param, info);
-    if (shell_param) {
-        output = g_strconcat(values, "[$ShellParam$]\n", shell_param, NULL);
-        g_free(values);
-        g_free(shell_param);
-    } else {
-        output = values;
-    }
-
-    g_free(info);
-
-    return output;
+    g_string_free(shell_param, TRUE);
+    return g_string_free(values, FALSE);
 }
