@@ -1821,25 +1821,25 @@ msgstr "Ресурсы"
 #, c-format
 msgid "%d physical processor"
 msgid_plural "%d physical processors"
-msgstr[0] "физический процессор"
-msgstr[1] "физических процессора"
-msgstr[2] "физических процессоров"
+msgstr[0] "%d физический процессор"
+msgstr[1] "%d физических процессора"
+msgstr[2] "%d физических процессоров"
 
 #: modules/devices.c:152
 #, c-format
 msgid "%d core"
 msgid_plural "%d cores"
-msgstr[0] "ядро"
-msgstr[1] "ядра"
-msgstr[2] "ядер"
+msgstr[0] "%d ядро"
+msgstr[1] "%d ядра"
+msgstr[2] "%d ядер"
 
 #: modules/devices.c:153
 #, c-format
 msgid "%d thread"
 msgid_plural "%d threads"
-msgstr[0] "поток"
-msgstr[1] "потока"
-msgstr[2] "потоков"
+msgstr[0] "%d поток"
+msgstr[1] "%d потока"
+msgstr[2] "%d потоков"
 
 #. /NP procs; NC cores; NT threads
 #: modules/devices.c:154
