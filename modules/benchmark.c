@@ -231,7 +231,7 @@ static gchar *__benchmark_include_results(gdouble result,
 
     moreinfo_del_with_prefix("BENCH");
 
-    if (result != 0.0) {
+    if (result > 0.0) {
         temp = module_call_method("devices::getProcessorCount");
         n_threads = temp ? atoi(temp) : 1;
         g_free(temp); temp = NULL;
