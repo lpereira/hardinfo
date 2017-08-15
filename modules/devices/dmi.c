@@ -28,20 +28,21 @@ typedef struct _DMIInfo		DMIInfo;
 struct _DMIInfo {
   const gchar *name;
   const gchar *id_str;
+  int group;
 };
 
 DMIInfo dmi_info_table[] = {
-  { "$BIOS", NULL },
-  { "Date", "bios-release-date" },
-  { "Vendor", "bios-vendor" },
-  { "Version#0", "bios-version" },
-  { "$Board", NULL },
-  { "Name", "baseboard-product-name" },
-  { "Vendor", "baseboard-manufacturer" },
-  { "$Product", NULL },
-  { "Name", "system-product-name" },
-  { "Family", "system-product-family" },
-  { "Version#1", "system-product-version" },
+  { N_("BIOS"), NULL, 1 },
+  { N_("Date"), "bios-release-date", 0 },
+  { N_("Vendor"), "bios-vendor", 0 },
+  { N_("Version#0"), "bios-version", 0 },
+  { N_("Board"), NULL, 1 },
+  { N_("Name"), "baseboard-product-name", 0 },
+  { N_("Vendor"), "baseboard-manufacturer", 0 },
+  { N_("Product"), NULL, 1 },
+  { N_("Name"), "system-product-name", 0 },
+  { N_("Family"), "system-product-family", 0 },
+  { N_("Version#1"), "system-product-version", 0 },
 };
 
 gchar *dmi_info = NULL;
@@ -125,9 +126,9 @@ gboolean dmi_get_info()
   for (i = 0; i < G_N_ELEMENTS(dmi_info_table); i++) {
     info = &dmi_info_table[i];
 
-    if (*(info->name) == '$') {
-      group = info->name + 1;
-      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
+    if (info->group) {
+      group = info->name;
+      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, _(info->name) );
     } else if (group && info->id_str) {
       value = dmi_get_str(info->id_str);
 
@@ -139,20 +140,20 @@ gboolean dmi_get_info()
           const gchar *vendor = vendor_get_name(value);
           dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n",
                                       dmi_info,
-                                      info->name,
+                                      _(info->name),
                                       g_strstrip(value),
                                       vendor, url);
         } else {
           dmi_info = h_strdup_cprintf("%s=%s\n",
                                       dmi_info,
-                                      info->name,
+                                      _(info->name),
                                       g_strstrip(value));
         }
         dmi_succeeded = TRUE;
       } else {
         dmi_info = h_strdup_cprintf("%s=%s\n",
                                     dmi_info,
-                                    info->name,
+                                    _(info->name),
                                     _("(Not available; Perhaps try running HardInfo as root.)") );
       }
     }
