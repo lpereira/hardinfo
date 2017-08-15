@@ -360,23 +360,29 @@ gchar *get_memory_total(void)
 gchar *get_motherboard(void)
 {
     char *board_name, *board_vendor, *product_version;
+    char *ret;
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     scan_dmi(FALSE);
 
-    board_name = moreinfo_lookup("DEV:DMI:Board:Name");
-    board_vendor = moreinfo_lookup("DEV:DMI:Board:Vendor");
-    product_version = moreinfo_lookup("DEV:DMI:Product:Version#1");
+    board_name = dmi_get_str("baseboard-product-name");
+    board_vendor = dmi_get_str("baseboard-manufacturer");
+    product_version = dmi_get_str("system-product-version");
 
     if (!board_name || !*board_name)
        board_name = _(" (model unknown)");
     if (!board_vendor || !*board_vendor)
        board_vendor = _(" (vendor unknown)");
 
-    if (product_version && *product_version)
-       return g_strdup_printf("%s / %s (%s)", product_version, board_name, board_vendor);
+    if (product_version && strlen(product_version) )
+        ret = g_strdup_printf("%s / %s (%s)", product_version, board_name, board_vendor);
+    else
+        ret = g_strconcat(board_vendor, " ", board_name, NULL);
 
-    return g_strconcat(board_vendor, " ", board_name, NULL);
+    free(board_name);
+    free(board_vendor);
+    free(product_version);
+    return ret;
 #endif
 
     /* use device tree "model" */
