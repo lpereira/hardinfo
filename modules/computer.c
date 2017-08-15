@@ -489,9 +489,9 @@ gchar *callback_summary(void)
         idle_free(computer_get_alsacards(computer)));
     info_add_computed_group(info, _("Input Devices"),
         idle_free(module_call_method("devices::getInputDevices")));
-    info_add_computed_group(info, _("Printers"),
+    info_add_computed_group(info, NULL, /* getPrinters provides group headers */
         idle_free(module_call_method("devices::getPrinters")));
-    info_add_computed_group(info, _("Storage"),
+    info_add_computed_group(info, NULL,  /* getStorageDevices provides group headers */
         idle_free(module_call_method("devices::getStorageDevices")));
 
     return info_flatten(info);
