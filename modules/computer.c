@@ -645,6 +645,13 @@ gchar *get_os(void)
     return g_strdup(computer->os->distro);
 }
 
+gchar *get_ogl_renderer(void)
+{
+    scan_display(FALSE);
+
+    return g_strdup(computer->display->ogl_renderer);
+}
+
 gchar *get_display_summary(void)
 {
     scan_display(FALSE);
@@ -689,6 +696,7 @@ ShellModuleMethod *hi_exported_methods(void)
         {"getOSKernel", get_os_kernel},
         {"getOS", get_os},
         {"getDisplaySummary", get_display_summary},
+        {"getOGLRenderer", get_ogl_renderer},
         {"getAudioCards", get_audio_cards},
         {"getKernelModuleDescription", get_kernel_module_description},
         {NULL}
