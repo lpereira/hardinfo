@@ -56,7 +56,7 @@ void info_add_group(struct Info *info, const gchar *group_name, ...)
     g_array_append_val(info->groups, group);
 }
 
-struct InfoField info_field(const gchar *name, const gchar *value)
+struct InfoField info_field(const gchar *name, gchar *value)
 {
     return (struct InfoField) {
         .name = name,
@@ -70,6 +70,22 @@ struct InfoField info_field_update(const gchar *name, int update_interval)
         .name = name,
         .value = "...",
         .update_interval = update_interval,
+    };
+}
+
+struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
+{
+    gchar *value;
+    va_list ap;
+
+    va_start(ap, format);
+    value = g_strdup_vprintf(format, ap);
+    va_end(ap);
+
+    return (struct InfoField) {
+        .name = name,
+        .value = value,
+        .free_value_on_flatten = TRUE,
     };
 }
 
@@ -141,6 +157,9 @@ static void flatten_group(GString *output, const struct InfoGroup *group)
             field = g_array_index(group->fields, struct InfoField, i);
 
             g_string_append_printf(output, "%s=%s\n", field.name, field.value);
+
+            if (field.free_value_on_flatten)
+                g_free(field.value);
         }
     } else if (group->computed) {
         g_string_append_printf(output, "%s\n", group->computed);

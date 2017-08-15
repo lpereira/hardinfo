@@ -45,9 +45,11 @@ struct InfoGroup {
 
 struct InfoField {
     const gchar *name;
-    const gchar *value;
+    gchar *value;
 
     int update_interval;
+
+    gboolean free_value_on_flatten;
 };
 
 struct Info *info_new(void);
@@ -55,7 +57,9 @@ struct Info *info_new(void);
 void info_add_group(struct Info *info, const gchar *group_name, ...);
 void info_add_computed_group(struct Info *info, const gchar *name, const gchar *value);
 
-struct InfoField info_field(const gchar *name, const gchar *value);
+struct InfoField info_field(const gchar *name, gchar *value);
+struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
+    __attribute__((format(printf, 2, 3)));
 struct InfoField info_field_update(const gchar *name, int update_interval);
 struct InfoField info_field_last(void);
 
