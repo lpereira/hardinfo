@@ -24,6 +24,7 @@ typedef struct {
     char *cpu_name;
     char *cpu_desc;
     char *cpu_config;
+    char *ogl_renderer;
     int threads;
     char *mid;
 } simple_machine;
@@ -146,6 +147,7 @@ simple_machine *simple_machine_this() {
         m->cpu_name = module_call_method("devices::getProcessorName");
         m->cpu_desc = module_call_method("devices::getProcessorDesc");
         m->cpu_config = module_call_method("devices::getProcessorFrequencyDesc");
+        m->ogl_renderer = module_call_method("computer::getOGLRenderer");
         tmp = module_call_method("devices::getMemoryTotal");
         m->memory_kiB = atoi(tmp);
         free(tmp);
@@ -222,7 +224,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
         b->machine = simple_machine_new();
         b->name = strdup(section);
 
-        if (vl >= 8) {
+        if (vl >= 8) { /* the 9th could be empty */
             b->machine->mid = strdup(key);
             b->result = atof(values[0]);
             b->threads = atoi(values[1]);
@@ -232,6 +234,8 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             b->machine->cpu_config = strdup(values[5]);
             b->machine->memory_kiB = atoi(values[6]);
             b->machine->threads = atoi(values[7]);
+            if (vl >= 9)
+                b->machine->ogl_renderer = strdup(values[8]);
             b->legacy = 0;
         } else if (vl >= 2) {
             b->result = atof(values[0]);
@@ -305,13 +309,15 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 
 char *bench_result_benchmarkconf_line(bench_result *b) {
     char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
-    char *ret = g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d\n",
+    char *ret = g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d|%s\n",
             b->machine->mid, b->result, b->threads,
             (b->machine->board != NULL) ? b->machine->board : "",
             b->machine->cpu_name,
             (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : "",
             cpu_config,
-            b->machine->memory_kiB, b->machine->threads );
+            b->machine->memory_kiB, b->machine->threads,
+            (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : ""
+            );
     free(cpu_config);
     return ret;
 }
@@ -326,6 +332,7 @@ char *bench_result_more_info(bench_result *b) {
         /* cpudesc */   "%s=%s\n"
         /* cpucfg */    "%s=%s\n"
         /* threads */   "%s=%d\n"
+        /* ogl rend */  "%s=%s\n"
         /* mem */       "%s=%d %s\n",
                         _("Benchmark Result"),
                         _("Threads"), b->threads,
@@ -337,6 +344,7 @@ char *bench_result_more_info(bench_result *b) {
                         _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _("(Unknown)"),
                         _("CPU Config"), b->machine->cpu_config,
                         _("Threads Available"), b->machine->threads,
+                        _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _("(Unknown)"),
                         _("Memory"), b->machine->memory_kiB, _("kiB")
                         );
 }
@@ -353,6 +361,7 @@ char *bench_result_more_info_complete(bench_result *b) {
         /* cpudesc */   "%s=%s\n"
         /* cpucfg */    "%s=%s\n"
         /* threads */   "%s=%d\n"
+        /* ogl rend */  "%s=%s\n"
         /* mem */       "%s=%d %s\n"
                         "[%s]\n"
         /* mid */       "%s=%s\n"
@@ -364,11 +373,12 @@ char *bench_result_more_info_complete(bench_result *b) {
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of Hardinfo.") : "",
                         _("Machine"),
-                        _("Board"), b->machine->board,
+                        _("Board"), (b->machine->board != NULL) ? b->machine->board : _("(Unknown)"),
                         _("CPU Name"), b->machine->cpu_name,
-                        _("CPU Description"), b->machine->cpu_desc,
+                        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _("(Unknown)"),
                         _("CPU Config"), b->machine->cpu_config,
                         _("Threads Available"), b->machine->threads,
+                        _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _("(Unknown)"),
                         _("Memory"), b->machine->memory_kiB, _("kiB"),
                         _("Handles"),
                         _("mid"), b->machine->mid,
