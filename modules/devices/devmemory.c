@@ -23,7 +23,7 @@ GHashTable *memlabels = NULL;
 
 void scan_memory_do(void)
 {
-    gchar **keys, *tmp, *tmp_label;
+    gchar **keys, *tmp, *tmp_label, *trans_val;
     static gint offset = -1;
     gint i;
 
@@ -68,11 +68,19 @@ void scan_memory_do(void)
             tmp_label = ""; /* or newkeys[0] */
         /* although it doesn't matter... */
 
-        moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
+        if (strstr(newkeys[1], "kB")) {
+            trans_val = g_strdup_printf("%d %s", atoi(newkeys[1]), _("KiB") );
+        } else {
+            trans_val = strdup(newkeys[1]);
+        }
 
-        tmp = g_strconcat(meminfo, newkeys[0], "=", newkeys[1], "|", tmp_label, "\n", NULL);
+        moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(trans_val));
+
+        tmp = g_strconcat(meminfo, newkeys[0], "=", trans_val, "|", tmp_label, "\n", NULL);
         g_free(meminfo);
         meminfo = tmp;
+
+        g_free(trans_val);
 
         tmp = g_strconcat(lginterval,
                           "UpdateInterval$", newkeys[0], "=1000\n", NULL);
