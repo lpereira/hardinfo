@@ -58,6 +58,7 @@ char *dmi_get_str(const char *id_str) {
     { "baseboard-product-name", "id/board_name" },
     { "baseboard-manufacturer", "id/board_vendor" },
     { "system-product-name", "id/product_name" },
+    { "system-manufacturer", "id/sys_vendor" },
     { "system-product-family", "id/product_family" },
     { "system-product-version", "id/product_version" },
     { "chassis-type", "id/chassis_type" },
