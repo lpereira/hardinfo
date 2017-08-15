@@ -100,6 +100,10 @@ dmi_str_done:
   if (ret != NULL) {
     ret = strend(ret, '\n');
     ret = g_strstrip(ret);
+    if (strlen(ret) == 0) {
+      g_free(ret);
+      ret = NULL;
+    }
   }
   g_free(full_path);
   return ret;
@@ -155,7 +159,9 @@ gboolean dmi_get_info()
         dmi_info = h_strdup_cprintf("%s=%s\n",
                                     dmi_info,
                                     _(info->name),
-                                    _("(Not available; Perhaps try running HardInfo as root.)") );
+                                    (getuid() == 0)
+                                      ? _("(Not available)")
+                                      : _("(Not available; Perhaps try running HardInfo as root.)") );
       }
     }
   }
