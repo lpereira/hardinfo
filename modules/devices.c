@@ -366,13 +366,18 @@ gchar *get_motherboard(void)
     scan_dmi(FALSE);
 
     board_name = dmi_get_str("baseboard-product-name");
-    board_vendor = dmi_get_str("baseboard-manufacturer");
-    product_version = dmi_get_str("system-product-version");
+    if (board_name == NULL || !strlen(board_name) )
+        board_name = dmi_get_str("system-product-name");
+    if (board_name == NULL || !strlen(board_name) )
+        board_name = strdup(_(" (model unknown)"));
 
-    if (!board_name || !*board_name)
-       board_name = _(" (model unknown)");
-    if (!board_vendor || !*board_vendor)
-       board_vendor = _(" (vendor unknown)");
+    board_vendor = dmi_get_str("baseboard-manufacturer");
+    if (board_vendor == NULL || !strlen(board_vendor) )
+        board_vendor = dmi_get_str("system-manufacturer");
+    if (board_vendor == NULL || !strlen(board_vendor) )
+        board_vendor = strdup(_(" (vendor unknown)"));
+
+    product_version = dmi_get_str("system-product-version");
 
     if (product_version && strlen(product_version) )
         ret = g_strdup_printf("%s / %s (%s)", product_version, board_name, board_vendor);
