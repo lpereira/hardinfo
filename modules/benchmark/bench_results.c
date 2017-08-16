@@ -25,6 +25,8 @@ typedef struct {
     char *cpu_desc;
     char *cpu_config;
     char *ogl_renderer;
+    int processors;
+    int cores;
     int threads;
     char *mid;
 } simple_machine;
@@ -141,6 +143,7 @@ simple_machine *simple_machine_new() {
 simple_machine *simple_machine_this() {
     simple_machine *m = NULL;
     char *tmp;
+
     m = simple_machine_new();
     if (m) {
         m->board = module_call_method("devices::getMotherboard");
@@ -151,9 +154,14 @@ simple_machine *simple_machine_this() {
         tmp = module_call_method("devices::getMemoryTotal");
         m->memory_kiB = atoi(tmp);
         free(tmp);
+
+        cpu_procs_cores_threads(&m->processors, &m->cores, &m->threads);
+        /*
         tmp = module_call_method("devices::getProcessorCount");
         m->threads = atoi(tmp);
         free(tmp);
+        */
+
         gen_machine_id(m);
     }
     return m;
@@ -224,7 +232,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
         b->machine = simple_machine_new();
         b->name = strdup(section);
 
-        if (vl >= 8) { /* the 9th could be empty */
+        if (vl >= 10) { /* the 11th could be empty */
             b->machine->mid = strdup(key);
             b->result = atof(values[0]);
             b->threads = atoi(values[1]);
@@ -233,9 +241,11 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             b->machine->cpu_desc = strdup(values[4]);
             b->machine->cpu_config = strdup(values[5]);
             b->machine->memory_kiB = atoi(values[6]);
-            b->machine->threads = atoi(values[7]);
-            if (vl >= 9)
-                b->machine->ogl_renderer = strdup(values[8]);
+            b->machine->processors = atoi(values[7]);
+            b->machine->cores = atoi(values[8]);
+            b->machine->threads = atoi(values[9]);
+            if (vl >= 11)
+                b->machine->ogl_renderer = strdup(values[10]);
             b->legacy = 0;
         } else if (vl >= 2) {
             b->result = atof(values[0]);
@@ -292,7 +302,12 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
                     }
                 }
             }
+
+            /* old results only give threads */
+            b->machine->processors = -1;
+            b->machine->cores = -1;
         }
+
         b->machine->cpu_config = cpu_config_retranslate(b->machine->cpu_config, 0, 1);
         if (b->machine->board != NULL && strlen(b->machine->board) == 0) {
             free(b->machine->board);
@@ -309,13 +324,14 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 
 char *bench_result_benchmarkconf_line(bench_result *b) {
     char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
-    char *ret = g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d|%s\n",
+    char *ret = g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s\n",
             b->machine->mid, b->result, b->threads,
             (b->machine->board != NULL) ? b->machine->board : "",
             b->machine->cpu_name,
             (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : "",
             cpu_config,
-            b->machine->memory_kiB, b->machine->threads,
+            b->machine->memory_kiB,
+            b->machine->processors, b->machine->cores, b->machine->threads,
             (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : ""
             );
     free(cpu_config);
