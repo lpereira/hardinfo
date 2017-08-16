@@ -307,7 +307,7 @@ static gchar *detect_machine_type(void)
     GDir *dir;
     gchar *chassis;
 
-    chassis = dmi_chassis_type_str(0);
+    chassis = dmi_chassis_type_str(-1, 0);
     if (chassis != NULL)
         return chassis;
 
