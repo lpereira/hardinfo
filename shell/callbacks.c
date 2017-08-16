@@ -114,7 +114,7 @@ void cb_about_module(GtkAction * action)
 
 	    gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(shell->window));
 
-	    text = g_strdup_printf(_("%s Module"), sm->name);
+	    text = g_strdup(sm->name);
 #if GTK_CHECK_VERSION(2, 12, 0)
 	    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), text);
 #else
