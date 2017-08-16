@@ -137,13 +137,11 @@ set(MODULE_computer_SOURCES
 )
 set(MODULE_devices_SOURCES
 	modules/devices.c
-	modules/devices/cpu_util.c
 	modules/devices/${HARDINFO_ARCH}/processor.c
 	modules/devices/battery.c
 	modules/devices/devmemory.c
 	modules/devices/dmi.c
 	modules/devices/devicetree.c
-	modules/devices/devicetree/dt_util.c
 	modules/devices/inputdevices.c
 	modules/devices/pci.c
 	modules/devices/printers.c
@@ -222,6 +220,9 @@ add_executable(hardinfo
 	hardinfo/util.c
 	hardinfo/vendor.c
 	hardinfo/info.c
+	hardinfo/cpu_util.c
+	hardinfo/dmi_util.c
+	hardinfo/dt_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
@@ -247,6 +248,9 @@ add_executable(hardinfo
 	hardinfo/util.c
 	hardinfo/vendor.c
 	hardinfo/info.c
+	hardinfo/cpu_util.c
+	hardinfo/dmi_util.c
+	hardinfo/dt_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
