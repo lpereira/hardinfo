@@ -397,7 +397,6 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        g_object_set_data(G_OBJECT(bench_dialog), "result", "0.0");
        gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog),
                               _("Cancel"), GTK_RESPONSE_ACCEPT, NULL);
-       gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(bench_dialog), bench_image);
 
        while (gtk_events_pending()) {
          gtk_main_iteration();
