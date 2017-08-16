@@ -85,7 +85,7 @@ gboolean dmi_get_info()
       dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, _(info->name) );
     } else if (group && info->id_str) {
       if (strcmp(info->id_str, "chassis-type") == 0)
-        value = dmi_chassis_type_str(1);
+        value = dmi_chassis_type_str(-1, 1);
       else
         value = dmi_get_str(info->id_str);
 
