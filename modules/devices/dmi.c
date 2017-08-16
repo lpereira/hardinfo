@@ -32,6 +32,11 @@ struct _DMIInfo {
 };
 
 DMIInfo dmi_info_table[] = {
+  { N_("Product"), NULL, 1 },
+  { N_("Name"), "system-product-name", 0 },
+  { N_("Family"), "system-product-family", 0 },
+  { N_("Vendor"), "system-manufacturer", 0 },
+  { N_("Version#1"), "system-version", 0 },
   { N_("BIOS"), NULL, 1 },
   { N_("Date"), "bios-release-date", 0 },
   { N_("Vendor"), "bios-vendor", 0 },
@@ -39,10 +44,9 @@ DMIInfo dmi_info_table[] = {
   { N_("Board"), NULL, 1 },
   { N_("Name"), "baseboard-product-name", 0 },
   { N_("Vendor"), "baseboard-manufacturer", 0 },
-  { N_("Product"), NULL, 1 },
-  { N_("Name"), "system-product-name", 0 },
-  { N_("Family"), "system-product-family", 0 },
-  { N_("Version#1"), "system-product-version", 0 },
+  { N_("Version"), "baseboard-version", 0 },
+  { N_("Serial Number"), "baseboard-serial-number", 0 },
+  { N_("Asset Tag"), "baseboard-asset-tag", 0 },
   { N_("Chassis"), NULL, 1 },
   { N_("Vendor"), "chassis-manufacturer", 0 },
   { N_("Type"), "chassis-type", 0 },
@@ -73,15 +77,21 @@ char *dmi_get_str(const char *id_str) {
     char *id;
     char *path;
   } tab_dmi_sysfs[] = {
+    /* dmidecode -> sysfs */
     { "bios-release-date", "id/bios_date" },
     { "bios-vendor", "id/bios_vendor" },
     { "bios-version", "id/bios_version" },
     { "baseboard-product-name", "id/board_name" },
     { "baseboard-manufacturer", "id/board_vendor" },
+    { "baseboard-version", "id/board_version" },
+    { "baseboard-serial-number", "id/board_serial" },
+    { "baseboard-asset-tag", "id/board_asset_tag" },
     { "system-product-name", "id/product_name" },
     { "system-manufacturer", "id/sys_vendor" },
+    { "system-serial-number", "id/product_serial" },
     { "system-product-family", "id/product_family" },
-    { "system-product-version", "id/product_version" },
+    { "system-version", "id/product_version" },
+    { "system-uuid", "product_uuid" },
     { "chassis-type", "id/chassis_type" },
     { "chassis-serial-number", "id/chassis_serial" },
     { "chassis-manufacturer", "id/chassis_vendor" },
@@ -90,24 +100,22 @@ char *dmi_get_str(const char *id_str) {
     { NULL, NULL }
   };
   const gchar *dmi_root = dmi_sysfs_root();
-  gchar *path = NULL, *full_path = NULL, *ret = NULL;
+  gchar *full_path = NULL, *ret = NULL;
   gboolean spawned;
   gchar *out, *err;
 
   int i = 0;
-  while (tab_dmi_sysfs[i].id != NULL) {
-    if (strcmp(id_str, tab_dmi_sysfs[i].id) == 0) {
-      path = tab_dmi_sysfs[i].path;
-      break;
-    }
-    i++;
-  }
 
   /* try sysfs first */
-  if (dmi_root && path) {
-    full_path = g_strdup_printf("%s/%s", dmi_root, path);
-    if (g_file_get_contents(full_path, &ret, NULL, NULL) )
-      goto dmi_str_done;
+  if (dmi_root) {
+    while (tab_dmi_sysfs[i].id != NULL) {
+      if (strcmp(id_str, tab_dmi_sysfs[i].id) == 0) {
+        full_path = g_strdup_printf("%s/%s", dmi_root, tab_dmi_sysfs[i].path);
+        if (g_file_get_contents(full_path, &ret, NULL, NULL) )
+          goto dmi_str_done;
+        }
+      i++;
+    }
   }
 
   /* try dmidecode, but may require root */
