@@ -24,43 +24,43 @@
 void
 scan_boots_real(void)
 {
-    FILE *last;
-    char buffer[256];
+    gchar **tmp;
+    gboolean spawned;
+    gchar *out, *err, *p, *s, *next_nl;
 
     scan_os(FALSE);
 
     if (!computer->os->boots)
-      computer->os->boots = g_strdup_printf("[%s]\n", _("Boots"));
+      computer->os->boots = strdup("");
     else
       return;
 
-    last = popen("last", "r");
-    if (last) {
-      while (fgets(buffer, 256, last)) {
-        if (strstr(buffer, "system boot")) {
-          gchar **tmp, *buf = buffer;
-
-          strend(buffer, '\n');
-
-          while (*buf) {
-            if (*buf == ' ' && *(buf + 1) == ' ') {
-              memmove(buf, buf + 1, strlen(buf) + 1);
-
-              buf--;
-            } else {
-              buf++;
+    spawned = g_spawn_command_line_sync("last",
+            &out, &err, NULL, NULL);
+    if (spawned && out != NULL) {
+        p = out;
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            if (strstr(p, "system boot")) {
+                s = p;
+                while (*s) {
+                  if (*s == ' ' && *(s + 1) == ' ') {
+                    memmove(s, s + 1, strlen(s) + 1);
+                    s--;
+                  } else {
+                    s++;
+                  }
+                }
+                tmp = g_strsplit(p, " ", 0);
+                computer->os->boots =
+                  h_strdup_cprintf("\n%s %s %s %s=%s",
+                    computer->os->boots,
+                    tmp[4], tmp[5], tmp[6], tmp[7], tmp[3]);
+                g_strfreev(tmp);
             }
-          }
-
-          tmp = g_strsplit(buffer, " ", 0);
-          computer->os->boots =
-            h_strdup_cprintf("\n%s %s %s %s=%s|%s",
-              computer->os->boots,
-              tmp[4], tmp[5], tmp[6], tmp[7], tmp[3], tmp[8]);
-          g_strfreev(tmp);
+            p = next_nl + 1;
         }
-      }
-
-      pclose(last);
+      g_free(out);
+      g_free(err);
     }
 }
