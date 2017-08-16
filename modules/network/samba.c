@@ -31,7 +31,7 @@ scan_samba(void)
 {
     gchar *str;
     gsize length;
-    
+
     if (smb_shares_list) {
         g_free(smb_shares_list);
         smb_shares_list = g_strdup("");
@@ -41,7 +41,7 @@ scan_samba(void)
                             &str, &length, NULL)) {
         shell_status_update("Scanning SAMBA shares...");
         scan_samba_from_string(str, length);
-        g_free(str);                        
+        g_free(str);
     }
 
     scan_samba_usershares();
@@ -51,32 +51,34 @@ void
 scan_samba_usershares(void)
 {
     FILE *usershare_list;
-    
-    if ((usershare_list = popen("net usershare list", "r"))) {
-        char buffer[512];
-        
+    gboolean spawned;
+    int status;
+    gchar *out, *err, *p, *next_nl;
+    gchar *usershare, *cmdline;
+    gsize length;
+
+    spawned = g_spawn_command_line_sync("net usershare list",
+            &out, &err, &status, NULL);
+
+    if (spawned && status == 0 && out != NULL) {
         shell_status_update("Scanning SAMBA user shares...");
-        
-        while (fgets(buffer, 512, usershare_list)) {
-            gchar *usershare, *cmdline;
-            gsize length;
-            
+        p = out;
+        while(next_nl = strchr(p, '\n')) {
             cmdline = g_strdup_printf("net usershare info '%s'",
-                                      strend(buffer, '\n'));
+                                      strend(p, '\n'));
             if (g_spawn_command_line_sync(cmdline,
-                                          &usershare, NULL,
-                                          NULL, NULL)) {
+                        &usershare, NULL, NULL, NULL)) {
                 length = strlen(usershare);
                 scan_samba_from_string(usershare, length);
                 g_free(usershare);
             }
-            
             g_free(cmdline);
-            
+
             shell_status_pulse();
+            p = next_nl + 1;
         }
-        
-        pclose(usershare_list);
+        g_free(out);
+        g_free(err);
     }
 }
 
@@ -87,13 +89,13 @@ scan_samba_from_string(gchar *str, gsize length)
     GError *error = NULL;
     gchar **groups;
     gint i = 0;
-    
+
     keyfile = g_key_file_new();
-    
+
     gchar *_smbconf = str;
     for (; *_smbconf; _smbconf++)
         if (*_smbconf == ';') *_smbconf = '\0';
-    
+
     if (!g_key_file_load_from_data(keyfile, str, length, 0, &error)) {
         smb_shares_list = g_strdup("Cannot parse smb.conf=\n");
         if (error)
@@ -112,12 +114,12 @@ scan_samba_from_string(gchar *str, gsize length)
                                                groups[i], path);
             g_free(path);
         }
-        
+
         i++;
     }
-    
+
     g_strfreev(groups);
-  
+
   cleanup:
     g_key_file_free(keyfile);
 }
