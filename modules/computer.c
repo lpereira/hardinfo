@@ -33,7 +33,7 @@
 
 #include "computer.h"
 
-#include "devices.h" /* for dmi_get_str() */
+#include "dmi_util.h" /* for dmi_get_str() */
 #include "dt_util.h" /* for dtr_get_string() */
 
 #include "info.h"

@@ -3,6 +3,7 @@
 
 #include "hardinfo.h"
 #include "processor-platform.h"
+#include "dmi_util.h"
 
 typedef struct _Processor Processor;
 
@@ -72,10 +73,6 @@ void sensors_shutdown(void);
 void scan_spd_do(void);
 #endif /* ARCH_x86 */
 
-/* DMI */
-char *dmi_get_str(const char *id_str);
-char *dmi_chassis_type_str(int with_val);
-
 extern gchar *battery_list;
 extern gchar *input_icons;
 extern gchar *input_list;
@@ -96,9 +93,9 @@ extern GModule *cups;
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
 extern gchar *spd_info;
+extern gchar *dmi_info;
 #endif
 
-extern gchar *dmi_info;
 extern gchar *dtree_info;
 
 #endif /* __DEVICES_H__ */
