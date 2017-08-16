@@ -132,7 +132,7 @@ void cb_about_module(GtkAction * action)
 
 	    if (ma->description)
 		gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-					      ma->description);
+					      _(ma->description));
 
 	    gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), sm->icon);
 	    gtk_dialog_run(GTK_DIALOG(about));
