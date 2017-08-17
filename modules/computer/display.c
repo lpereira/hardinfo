@@ -42,7 +42,7 @@ get_glx_info(DisplayInfo *di)
 
 		get_str("OpenGL vendor str", di->ogl_vendor);
 		get_str("OpenGL renderer str", di->ogl_renderer);
-		if ( corep > 0 ) {    get_str("OpenGL core profile version str", di->ogl_version);    }
+		if ( cpd > 0 ) {    get_str("OpenGL core profile version str", di->ogl_version);    }
                 else             {    get_str("OpenGL version str", di->ogl_version);    }
 
 		g_strfreev(tmp);
