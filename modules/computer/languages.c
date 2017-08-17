@@ -22,113 +22,170 @@
 #include "computer.h"
 #include "cpu_util.h" /* for UNKIFNULL() */
 
+typedef struct {
+    gchar name[32];
+    gchar *title,
+        *source,
+        *address,
+        *email,
+        *language,
+        *territory,
+        *revision,
+        *date,
+        *codeset;
+} locale_info;
+
+locale_info *locale_info_new() {
+    locale_info *s = malloc(sizeof(locale_info));
+    if (s) {
+        memset(s, 0, sizeof(locale_info) );
+    }
+    return s;
+}
+
+void locale_info_free(locale_info *s) {
+    if (s) {
+        g_free(s->title);
+        g_free(s->source);
+        g_free(s->address);
+        g_free(s->email);
+        g_free(s->language);
+        g_free(s->territory);
+        g_free(s->revision);
+        g_free(s->date);
+        g_free(s->codeset);
+        free(s);
+    }
+}
+
+/* TODO: use info_* */
+gchar *locale_info_section(locale_info *s) {
+    gchar *name = g_strdup(s->name);
+    gchar *title = g_strdup(s->title),
+        *source = g_strdup(s->source),
+        *address = g_strdup(s->address),
+        *email = g_strdup(s->email),
+        *language = g_strdup(s->language),
+        *territory = g_strdup(s->territory),
+        *revision = g_strdup(s->revision),
+        *date = g_strdup(s->date),
+        *codeset = g_strdup(s->codeset);
+
+    UNKIFNULL(title);
+    UNKIFNULL(source);
+    UNKIFNULL(address);
+    UNKIFNULL(email);
+    UNKIFNULL(language);
+    UNKIFNULL(territory);
+    UNKIFNULL(revision);
+    UNKIFNULL(date);
+    UNKIFNULL(codeset);
+
+    /* values may have & */
+    title = hardinfo_clean_value(title, 1);
+    source = hardinfo_clean_value(source, 1);
+    address = hardinfo_clean_value(address, 1);
+    email = hardinfo_clean_value(email, 1);
+    language = hardinfo_clean_value(language, 1);
+    territory = hardinfo_clean_value(territory, 1);
+
+    gchar *ret = g_strdup_printf("[%s]\n"
+    /* Name */     "%s=%s (%s)\n"
+    /* Source */   "%s=%s\n"
+    /* Address */  "%s=%s\n"
+    /* Email */    "%s=%s\n"
+    /* Language */ "%s=%s\n"
+    /* Territory */"%s=%s\n"
+    /* Revision */ "%s=%s\n"
+    /* Date */     "%s=%s\n"
+    /* Codeset */  "%s=%s\n",
+                 _("Locale Information"),
+                 _("Name"), name, title,
+                 _("Source"), source,
+                 _("Address"), address,
+                 _("E-mail"), email,
+                 _("Language"), language,
+                 _("Territory"), territory,
+                 _("Revision"), revision,
+                 _("Date"), date,
+                 _("Codeset"), codeset );
+    g_free(name);
+    g_free(title);
+    g_free(source);
+    g_free(address);
+    g_free(email);
+    g_free(language);
+    g_free(territory);
+    g_free(revision);
+    g_free(date);
+    g_free(codeset);
+    return ret;
+}
+
 void
 scan_languages(OperatingSystem * os)
 {
-    FILE *locale;
-    gchar buf[512], *retval = NULL;
+    //gchar **tmp;
+    gboolean spawned;
+    gchar *out, *err, *p, *next_nl;
 
-    locale = popen("locale -va && echo", "r");
-    if (!locale)
-	return;
+    gchar *ret = NULL;
+    locale_info *curr = NULL;
+    int last = 0;
 
-    gchar name[32];
-    gchar *title = NULL,
-          *source = NULL,
-	  *address = NULL,
-	  *email = NULL,
-	  *language = NULL,
-	  *territory = NULL,
-	  *revision = NULL,
-	  *date = NULL,
-	  *codeset = NULL;
-
-    while (fgets(buf, 512, locale)) {
-	if (!strncmp(buf, "locale:", 7)) {
-	    sscanf(buf, "locale: %s", name);
-	    (void)fgets(buf, 128, locale);
-	} else if (strchr(buf, '|')) {
-	    gchar **tmp = g_strsplit(buf, "|", 2);
-
-	    tmp[0] = g_strstrip(tmp[0]);
-
-	    if (tmp[1]) {
-		tmp[1] = g_strstrip(tmp[1]);
-
-		get_str("title", title);
-		get_str("source", source);
-		get_str("address", address);
-		get_str("email", email);
-		get_str("language", language);
-		get_str("territory", territory);
-		get_str("revision", revision);
-		get_str("date", date);
-		get_str("codeset", codeset);
-	    }
-
-	    g_strfreev(tmp);
-	} else {
-        gchar *currlocale;
-
-        retval = h_strdup_cprintf("$%s$%s=%s\n", retval, name, name, title);
-
-        UNKIFNULL(title);
-        UNKIFNULL(source);
-        UNKIFNULL(address);
-        UNKIFNULL(email);
-        UNKIFNULL(language);
-        UNKIFNULL(territory);
-        UNKIFNULL(revision);
-        UNKIFNULL(date);
-        UNKIFNULL(codeset);
-
-        /* values may have & */
-        title = hardinfo_clean_value(title, 1);
-        source = hardinfo_clean_value(source, 1);
-        address = hardinfo_clean_value(address, 1);
-        email = hardinfo_clean_value(email, 1);
-        language = hardinfo_clean_value(language, 1);
-        territory = hardinfo_clean_value(territory, 1);
-
-        currlocale = g_strdup_printf("[%s]\n"
-        /* Name */     "%s=%s (%s)\n"
-        /* Source */   "%s=%s\n"
-        /* Address */  "%s=%s\n"
-        /* Email */    "%s=%s\n"
-        /* Language */ "%s=%s\n"
-        /* Territory */"%s=%s\n"
-        /* Revision */ "%s=%s\n"
-        /* Date */     "%s=%s\n"
-        /* Codeset */  "%s=%s\n",
-                     _("Locale Information"),
-                     _("Name"), name, title,
-                     _("Source"), source,
-                     _("Address"), address,
-                     _("E-mail"), email,
-                     _("Language"), language,
-                     _("Territory"), territory,
-                     _("Revision"), revision,
-                     _("Date"), date,
-                     _("Codeset"), codeset );
-
-        moreinfo_add_with_prefix("COMP", name, currlocale);
-
-        g_free(title);
-        g_free(source);
-        g_free(address);
-        g_free(email);
-        g_free(language);
-        g_free(territory);
-        g_free(revision);
-        g_free(date);
-        g_free(codeset);
-
-        title = source = address = email = language = territory = \
-            revision = date = codeset = NULL;
+    spawned = g_spawn_command_line_sync("locale -va",
+            &out, &err, NULL, NULL);
+    if (spawned) {
+        ret = strdup("");
+        p = out;
+        while(1) {
+            /* `locale -va` doesn't end the last locale block
+             * with an \n, which makes this more complicated */
+            next_nl = strchr(p, '\n');
+            if (next_nl == NULL)
+                next_nl = strchr(p, 0);
+            last = (*next_nl == 0) ? 1 : 0;
+            strend(p, '\n');
+            if (strncmp(p, "locale:", 7) == 0) {
+                curr = locale_info_new();
+                sscanf(p, "locale: %s", curr->name);
+                /* TODO: 'directory:' and 'archive:' */
+            } else if (strchr(p, '|')) {
+                do {/* get_str() has a continue in it,
+                     * how fn frustrating that was to figure out */
+                    gchar **tmp = g_strsplit(p, "|", 2);
+                    tmp[0] = g_strstrip(tmp[0]);
+                    if (tmp[1]) {
+                        tmp[1] = g_strstrip(tmp[1]);
+                        get_str("title", curr->title);
+                        get_str("source", curr->source);
+                        get_str("address", curr->address);
+                        get_str("email", curr->email);
+                        get_str("language", curr->language);
+                        get_str("territory", curr->territory);
+                        get_str("revision", curr->revision);
+                        get_str("date", curr->date);
+                        get_str("codeset", curr->codeset);
+                    }
+                    g_strfreev(tmp);
+                } while (0);
+            } else if (strstr(p, "------")) {
+                /* do nothing */
+            } else {
+                /* a blank line is the end of a locale */
+                gchar *li_str = locale_info_section(curr);
+                gchar *clean_title = hardinfo_clean_value(curr->title, 0); /* may contain & */
+                ret = h_strdup_cprintf("$%s$%s=%s\n", ret, curr->name, curr->name, clean_title);
+                moreinfo_add_with_prefix("COMP", strdup(curr->name), li_str); /* becomes owned by moreinfo */
+                locale_info_free(curr);
+                curr = NULL;
+                g_free(clean_title);
+            }
+            if (last) break;
+            p = next_nl + 1;
+        }
+        g_free(out);
+        g_free(err);
     }
-    }
-
-    fclose(locale);
-
-    os->languages = retval;
+    os->languages = ret;
 }
