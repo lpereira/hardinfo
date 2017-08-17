@@ -875,11 +875,19 @@ static GSList *modules_check_deps(GSList * modules)
 							_("Module \"%s\" depends on module \"%s\", load it?"),
 							module->name,
 							deps[i]);
+#if GTK_CHECK_VERSION(3, 0, 0)
+            gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+					       "_No",
+					       GTK_RESPONSE_REJECT,
+					      "_Open",
+					       GTK_RESPONSE_ACCEPT, NULL);
+#else
 			gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 					       GTK_STOCK_NO,
 					       GTK_RESPONSE_REJECT,
 					       GTK_STOCK_OPEN,
 					       GTK_RESPONSE_ACCEPT, NULL);
+#endif
 
 			if (gtk_dialog_run(GTK_DIALOG(dialog)) ==
 			    GTK_RESPONSE_ACCEPT) {
