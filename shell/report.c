@@ -926,7 +926,7 @@ static ReportDialog
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
 
-    button8 = gtk_button_new_with_mnemonic(_("_Cancel"));
+    button8 = gtk_button_new_with_mnemonic(_("Cancel"));
     gtk_widget_show(button8);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
 				 GTK_RESPONSE_CANCEL);
