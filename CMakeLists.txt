@@ -213,6 +213,7 @@ endif()
 
 if (HARDINFO_GTK3)
 add_executable(hardinfo
+	hardinfo/usb_util.c
 	hardinfo/binreloc.c
 	hardinfo/expr.c
         hardinfo/hardinfo.c
@@ -241,6 +242,7 @@ target_link_libraries(hardinfo
 )
 else()
 add_executable(hardinfo
+	hardinfo/usb_util.c
 	hardinfo/binreloc.c
 	hardinfo/expr.c
         hardinfo/hardinfo.c
