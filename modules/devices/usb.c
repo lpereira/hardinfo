@@ -24,6 +24,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
+#include "usb_util.h"
 
 gchar *usb_list = NULL;
 
@@ -426,11 +427,92 @@ gboolean __scan_usb_lsusb(void)
     return usb_device_number > 0;
 }
 
+#define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)");
+
+void _usb_dev(const usbd *u) {
+    gchar *name, *key, *v_str, *str;
+    gchar *product, *vendor, *dev_class_str, *dev_subclass_str; /* don't free */
+
+    vendor = UNKIFNULL_AC(u->vendor);
+    product = UNKIFNULL_AC(u->product);
+    dev_class_str = UNKIFNULL_AC(u->dev_class_str);
+    dev_subclass_str = UNKIFNULL_AC(u->dev_subclass_str);
+
+    name = g_strdup_printf("%s %s", vendor, product);
+    key = g_strdup_printf("USB%03d:%03d:%03d", u->bus, u->dev, 0);
+
+    usb_list = h_strdup_cprintf("$%s$%03d:%03d=%s\n", usb_list, key, u->bus, u->dev, name);
+
+    const gchar *v_url = vendor_get_url(vendor);
+    const gchar *v_name = vendor_get_name(vendor);
+    if (v_url != NULL) {
+        v_str = g_strdup_printf("%s (%s)", v_name, v_url);
+    } else {
+        v_str = g_strdup_printf("%s", vendor );
+    }
+
+    str = g_strdup_printf("[%s]\n"
+             /* Product */      "%s=[0x%04x] %s\n"
+             /* Manufacturer */ "%s=[0x%04x] %s\n"
+             /* Max Current */  "%s=%d %s\n"
+             /* USB Version */ "%s=%s\n"
+             /* Class */       "%s=[%d] %s\n"
+             /* Sub-class */   "%s=[%d] %s\n"
+             /* Dev Version */ "%s=%s\n"
+                            "[%s]\n"
+             /* Bus */         "%s=%03d\n"
+             /* Device */      "%s=%03d\n",
+                _("Device Information"),
+                _("Product"), u->product_id, product,
+                _("Vendor"), u->vendor_id, v_str,
+                _("Max Current"), u->max_curr_ma, _("mA"),
+                _("USB Version"), u->usb_version,
+                _("Class"), u->dev_class, dev_class_str,
+                _("Sub-class"), u->dev_subclass, dev_subclass_str,
+                _("Device Version"), u->device_version,
+                _("Connection"),
+                _("Bus"), u->bus,
+                _("Device"), u->dev
+                );
+
+    moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
+
+    g_free(v_str);
+    g_free(name);
+    g_free(key);
+}
+
+gboolean __scan_usb_util(void) {
+    usbd *list = usb_get_device_list();
+    usbd *curr = list;
+
+    int c = usbd_list_count(list);
+
+    if (c > 0) {
+        if (usb_list) {
+            moreinfo_del_with_prefix("DEV:USB");
+            g_free(usb_list);
+        }
+        usb_list = g_strdup_printf("[%s]\n", _("USB Devices"));
+
+        while(curr) {
+            //printf("USB: Bus %03d Dev %03d Ven %04x Prod %04x %s %s\n",
+            //    curr->bus, curr->dev, curr->vendor_id, curr->product_id, curr->vendor, curr->product);
+            _usb_dev(curr);
+            c++;
+            curr=curr->next;
+        }
+
+        usbd_list_free(list);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 void __scan_usb(void)
 {
-    if (!__scan_usb_procfs()) {
-        if (!__scan_usb_sysfs()) {
-             __scan_usb_lsusb();
-        }
-    }
+    if (!__scan_usb_util())
+        if (!__scan_usb_procfs())
+            if (!__scan_usb_sysfs())
+                __scan_usb_lsusb();
 }
