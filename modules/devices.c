@@ -623,8 +623,7 @@ gchar *callback_usb()
 {
     return g_strdup_printf("%s"
 			   "[$ShellParam$]\n"
-			   "ViewType=1\n"
-			   "ReloadInterval=5000\n", usb_list);
+			   "ViewType=1\n", usb_list);
 }
 
 ModuleEntry *hi_module_get_entries(void)
