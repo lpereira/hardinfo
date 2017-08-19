@@ -56,6 +56,33 @@ void info_add_group(struct Info *info, const gchar *group_name, ...)
     g_array_append_val(info->groups, group);
 }
 
+void info_add_group_ff(struct Info *info, const gchar *group_name, ...)
+{
+    struct InfoGroup group = {
+        .name = group_name,
+        .fields = g_array_new(FALSE, FALSE, sizeof(struct InfoField))
+    };
+    va_list ap;
+
+    va_start(ap, group_name);
+    while (1) {
+        struct InfoField field = {
+            .name = va_arg(ap, char *),
+            .value = va_arg(ap, char *),
+            .free_value_on_flatten = TRUE,
+        };
+        if (field.value)
+            field.value = g_strdup(field.value);
+
+        if (!field.name)
+            break;
+        g_array_append_val(group.fields, field);
+    }
+    va_end(ap);
+
+    g_array_append_val(info->groups, group);
+}
+
 struct InfoField info_field(const gchar *name, gchar *value)
 {
     return (struct InfoField) {
