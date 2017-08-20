@@ -204,13 +204,14 @@ gchar *hi_get_field(gchar * field)
     return g_strdup(field);
 }
 
-static void br_mi_add(char **results_list, bench_result *b) {
+static void br_mi_add(char **results_list, bench_result *b, gboolean select) {
     gchar *ckey, *rkey;
 
     ckey = hardinfo_clean_label(b->machine->cpu_name, 0);
     rkey = strdup(b->machine->mid);
 
-    *results_list = h_strdup_cprintf("$%s$%s=%.2f|%s\n", *results_list, rkey, ckey,
+    *results_list = h_strdup_cprintf("$%s%s$%s=%.2f|%s\n", *results_list,
+        select ? "*" : "", rkey, ckey,
         b->result, b->machine->cpu_config);
 
     moreinfo_add_with_prefix("BENCH", rkey, bench_result_more_info(b) );
@@ -237,7 +238,7 @@ static gchar *__benchmark_include_results(gdouble result,
         g_free(temp); temp = NULL;
 
         b = bench_result_this_machine(benchmark, result, n_threads);
-        br_mi_add(&results, b);
+        br_mi_add(&results, b, 1);
 
         temp = bench_result_benchmarkconf_line(b);
         printf("[%s]\n%s", benchmark, temp);
@@ -264,7 +265,7 @@ static gchar *__benchmark_include_results(gdouble result,
         values = g_key_file_get_string_list(conf, benchmark, machines[i], NULL, NULL);
 
         sbr = bench_result_benchmarkconf(benchmark, machines[i], values);
-        br_mi_add(&results, sbr);
+        br_mi_add(&results, sbr, 0);
 
         bench_result_free(sbr);
         g_strfreev(values);
