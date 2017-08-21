@@ -181,10 +181,17 @@ static void flatten_group(GString *output, const struct InfoGroup *group)
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {
             struct InfoField field;
+            gchar *tag;
 
             field = g_array_index(group->fields, struct InfoField, i);
 
-            g_string_append_printf(output, "%s=%s\n", field.name, field.value);
+            if (field.mark_for_selection || field.tag) {
+                tag = g_strdup_printf("$%s%s$", field.mark_for_selection ? "*" : "", field.tag ? field.tag : "");
+            } else {
+                tag = g_strdup("");
+            }
+
+            g_string_append_printf(output, "%s%s=%s\n", tag, field.name, field.value);
 
             if (field.free_value_on_flatten)
                 g_free(field.value);
