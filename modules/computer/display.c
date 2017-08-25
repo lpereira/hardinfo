@@ -26,42 +26,46 @@ get_glx_info(DisplayInfo *di)
 {
     gchar *output;
     if (g_spawn_command_line_sync("glxinfo", &output, NULL, NULL, NULL)) {
-	gchar **output_lines;
-	gint i = 0;
-	gint cpd = 0;
 
-	for (output_lines = g_strsplit(output, "\n", 0);
-	     output_lines && output_lines[i];
-	     i++) {
-	    if (strstr(output_lines[i], "OpenGL")) 
-	    {
-		if ( strstr(output_lines[i], "profile") ) {    cpd = 1;    }
-		gchar **tmp = g_strsplit(output_lines[i], ":", 0);
+        gchar **output_lines;
+        gint i = 0;
+        gboolean has_core_profile = FALSE;
 
-		tmp[1] = g_strchug(tmp[1]);
+        for (output_lines = g_strsplit(output, "\n", 0);
+             output_lines && output_lines[i];
+             i++) {
+            if (strstr(output_lines[i], "OpenGL")) {
+                if (strstr(output_lines[i], "profile")) 
+                    has_core_profile = TRUE;
+                gchar **tmp = g_strsplit(output_lines[i], ":", 0);
 
-		get_str("OpenGL vendor str", di->ogl_vendor);
-		get_str("OpenGL renderer str", di->ogl_renderer);
-		if ( cpd > 0 ) {    get_str("OpenGL core profile version str", di->ogl_version);    }
-                else             {    get_str("OpenGL version str", di->ogl_version);    }
+                tmp[1] = g_strchug(tmp[1]);
 
-		g_strfreev(tmp);
-	    } else if (strstr(output_lines[i], "direct rendering: Yes")) {
-	        di->dri = TRUE;
-	    }
-	}
+                get_str("OpenGL vendor str", di->ogl_vendor);
+                get_str("OpenGL renderer str", di->ogl_renderer);
+                if (has_core_profile)
+                    get_str("OpenGL core profile version str", di->ogl_version);
+                else
+                    get_str("OpenGL version str", di->ogl_version);
 
-	g_free(output);
-	g_strfreev(output_lines);
+                g_strfreev(tmp);
+            } else if (strstr(output_lines[i], "direct rendering: Yes")) {
+                di->dri = TRUE;
+            }
+        }
 
-	if (!di->ogl_vendor)
-	    di->ogl_vendor = "Unknown";
-	if (!di->ogl_renderer)
-	    di->ogl_renderer = "Unknown";
-	if (!di->ogl_version)
-	    di->ogl_version = "Unknown";
+        g_free(output);
+        g_strfreev(output_lines);
+
+        if (!di->ogl_vendor)
+            di->ogl_vendor = _("(Unknown)");
+        if (!di->ogl_renderer)
+            di->ogl_renderer = _("(Unknown)");
+        if (!di->ogl_version)
+            di->ogl_version = _("(Unknown)");
+
     } else {
-	di->ogl_vendor = di->ogl_renderer = di->ogl_version = "Unknown";
+        di->ogl_vendor = di->ogl_renderer = di->ogl_version = _("(Unknown)");
     }
 
 }
@@ -70,7 +74,7 @@ static void
 get_x11_info(DisplayInfo *di)
 {
     gchar *output;
-    
+
     if (g_spawn_command_line_sync("xdpyinfo", &output, NULL, NULL, NULL)) {
 	gchar **output_lines, **old;
 
@@ -90,17 +94,17 @@ get_x11_info(DisplayInfo *di)
 
               if (g_str_has_prefix(tmp[0], "number of extensions")) {
                 int n;
-                
+
                 di->extensions = g_strdup("");
-                
+
                 for (n = atoi(tmp[1]); n; n--) {
-                  di->extensions = h_strconcat(di->extensions, 
+                  di->extensions = h_strconcat(di->extensions,
                                                g_strstrip(*(++output_lines)),
                                                "=\n",
                                                NULL);
                 }
                 g_strfreev(tmp);
-                
+
                 break;
               }
             }
@@ -110,19 +114,19 @@ get_x11_info(DisplayInfo *di)
 
 	g_strfreev(old);
     }
-    
+
     GdkScreen *screen = gdk_screen_get_default();
-    
+
     if (screen && GDK_IS_SCREEN(screen)) {
         gint n_monitors = gdk_screen_get_n_monitors(screen);
         gint i;
-        
+
         di->monitors = NULL;
         for (i = 0; i < n_monitors; i++) {
             GdkRectangle rect;
-            
+
             gdk_screen_get_monitor_geometry(screen, i, &rect);
-            
+
             di->monitors = h_strdup_cprintf(_("Monitor %d=%dx%d pixels\n"),
                                             di->monitors, i, rect.width, rect.height);
         }
@@ -135,9 +139,9 @@ DisplayInfo *
 computer_get_display(void)
 {
     DisplayInfo *di = g_new0(DisplayInfo, 1);
-    
+
     GdkScreen *screen = gdk_screen_get_default();
-    
+
     if (screen && GDK_IS_SCREEN(screen)) {
         di->width = gdk_screen_get_width(screen);
         di->height = gdk_screen_get_height(screen);

@@ -215,7 +215,7 @@ void scan_dev(gboolean reload)
        { N_("C (GCC)"), "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("C (Clang)"), "clang -v", "\\d+\\.\\d+", FALSE },
        { N_("D (dmd)"), "dmd --help", "\\d+\\.\\d+", TRUE },
-       { N_("Gambas3 (gbc3)"), "gbc3 --version", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Gambas3 (gbc3)"), "gbc3 --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Java"), "javac -version", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("CSharp (Mono, old)"), "mcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("CSharp (Mono)"), "gmcs --version", "\\d+\\.\\d+\\.\\d+\\.\\d+", TRUE },
@@ -230,7 +230,7 @@ void scan_dev(gboolean reload)
        { N_("valgrind"), "valgrind --version", "\\d+\\.\\d+\\.\\S+", TRUE },
        { N_("QMake"), "qmake --version", "\\d+\\.\\S+", TRUE},
        { N_("CMake"), "cmake --version", "\\d+\\.\\d+\\.?\\d*", TRUE},
-       { N_("Gambas3 IDE"), "gambas3 --version", "\\d+\\.\\d+\\.\\d+", FALSE },
+       { N_("Gambas3 IDE"), "gambas3 --version", "\\d+\\.\\d+\\.\\d+", TRUE },
     };
 
     g_free(dev_list);
@@ -403,35 +403,43 @@ gchar *computer_get_virtualization(void)
         gchar *vmtype;
     } vm_types[] = {
         /* VMware */
-        { "VMware", "Virtual (VMware)" },
-        { ": VMware Virtual IDE CDROM Drive", "Virtual (VMware)" },
+        { "VMware", N_("Virtual (VMware)") },
+        { ": VMware Virtual IDE CDROM Drive", N_("Virtual (VMware)") },
         /* QEMU */
-        { "QEMU", "Virtual (QEMU)" },
-        { "QEMU Virtual CPU", "Virtual (QEMU)" },
-        { ": QEMU HARDDISK", "Virtual (QEMU)" },
-        { ": QEMU CD-ROM", "Virtual (QEMU)" },
+        { "QEMU", N_("Virtual (QEMU)") },
+        { "QEMU Virtual CPU", N_("Virtual (QEMU)") },
+        { ": QEMU HARDDISK", N_("Virtual (QEMU)") },
+        { ": QEMU CD-ROM", N_("Virtual (QEMU)") },
         /* Generic Virtual Machine */
-        { ": Virtual HD,", "Virtual (Unknown)" },
-        { ": Virtual CD,", "Virtual (Unknown)" },
+        { ": Virtual HD,", N_("Virtual (Unknown)") },
+        { ": Virtual CD,", N_("Virtual (Unknown)") },
         /* Virtual Box */
-        { "VBOX", "Virtual (VirtualBox)" },
-        { ": VBOX HARDDISK", "Virtual (VirtualBox)" },
-        { ": VBOX CD-ROM", "Virtual (VirtualBox)" },
+        { "VBOX", N_("Virtual (VirtualBox)") },
+        { ": VBOX HARDDISK", N_("Virtual (VirtualBox)") },
+        { ": VBOX CD-ROM", N_("Virtual (VirtualBox)") },
         /* Xen */
-        { "Xen virtual console", "Virtual (Xen)" },
-        { "Xen reported: ", "Virtual (Xen)" },
-        { "xen-vbd: registered block device", "Virtual (Xen)" },
+        { "Xen virtual console", N_("Virtual (Xen)") },
+        { "Xen reported: ", N_("Virtual (Xen)") },
+        { "xen-vbd: registered block device", N_("Virtual (Xen)") },
         /* Generic */
-        { " hypervisor", "Virtual (hypervisor present)"} ,
+        { " hypervisor", N_("Virtual (hypervisor present)") } ,
         { NULL }
     };
+    gchar *tmp;
 
     DEBUG("Detecting virtual machine");
 
     if (g_file_test("/proc/xen", G_FILE_TEST_EXISTS)) {
          DEBUG("/proc/xen found; assuming Xen");
-         return g_strdup("Xen");
+         return g_strdup(_("Virtual (Xen)"));
     }
+
+    tmp = module_call_method("devices::getMotherboard");
+    if (strstr(tmp, "VirtualBox") != NULL) {
+        g_free(tmp);
+        return g_strdup(_("Virtual (VirtualBox)"));
+    }
+    g_free(tmp);
 
     for (i = 0; files[i+1]; i++) {
          gchar buffer[512];
@@ -452,7 +460,7 @@ gchar *computer_get_virtualization(void)
               if (found) {
                   DEBUG("%s found (by reading file %s)",
                         vm_types[j].vmtype, files[i]);
-                  return g_strdup(vm_types[j].vmtype);
+                  return g_strdup(_(vm_types[j].vmtype));
               }
          }
 
@@ -489,9 +497,9 @@ gchar *callback_summary(void)
         idle_free(computer_get_alsacards(computer)));
     info_add_computed_group(info, _("Input Devices"),
         idle_free(module_call_method("devices::getInputDevices")));
-    info_add_computed_group(info, _("Printers"),
+    info_add_computed_group(info, NULL, /* getPrinters provides group headers */
         idle_free(module_call_method("devices::getPrinters")));
-    info_add_computed_group(info, _("Storage"),
+    info_add_computed_group(info, NULL,  /* getStorageDevices provides group headers */
         idle_free(module_call_method("devices::getStorageDevices")));
 
     return info_flatten(info);
@@ -645,6 +653,13 @@ gchar *get_os(void)
     return g_strdup(computer->os->distro);
 }
 
+gchar *get_ogl_renderer(void)
+{
+    scan_display(FALSE);
+
+    return g_strdup(computer->display->ogl_renderer);
+}
+
 gchar *get_display_summary(void)
 {
     scan_display(FALSE);
@@ -689,6 +704,7 @@ ShellModuleMethod *hi_exported_methods(void)
         {"getOSKernel", get_os_kernel},
         {"getOS", get_os},
         {"getDisplaySummary", get_display_summary},
+        {"getOGLRenderer", get_ogl_renderer},
         {"getAudioCards", get_audio_cards},
         {"getKernelModuleDescription", get_kernel_module_description},
         {NULL}

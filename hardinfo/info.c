@@ -148,7 +148,8 @@ static void flatten_group(GString *output, const struct InfoGroup *group)
 {
     guint i;
 
-    g_string_append_printf(output, "[%s]\n", group->name);
+    if (group->name != NULL)
+        g_string_append_printf(output, "[%s]\n", group->name);
 
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {

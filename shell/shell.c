@@ -1389,6 +1389,30 @@ select_first_item(gpointer data)
     return FALSE;
 }
 
+static gboolean
+select_marked_or_first_item(gpointer data)
+{
+    GtkTreeIter first, it;
+    gboolean found_selection = FALSE;
+    gchar *datacol;
+
+    if ( gtk_tree_model_get_iter_first(shell->info->model, &first) ) {
+        it = first;
+        while ( gtk_tree_model_iter_next(shell->info->model, &it) ) {
+            gtk_tree_model_get(shell->info->model, &it, INFO_TREE_COL_DATA, &datacol, -1);
+            if (datacol != NULL && *datacol == '*') {
+                gtk_tree_selection_select_iter(shell->info->selection, &it);
+                found_selection = TRUE;
+            }
+            g_free(datacol);
+        }
+
+        if (!found_selection)
+            gtk_tree_selection_select_iter(shell->info->selection, &first);
+    }
+    return FALSE;
+}
+
 static void
 module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 {
@@ -1491,7 +1515,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
         case SHELL_VIEW_DUAL:
         case SHELL_VIEW_LOAD_GRAPH:
         case SHELL_VIEW_PROGRESS_DUAL:
-            g_idle_add(select_first_item, NULL);
+            g_idle_add(select_marked_or_first_item, NULL);
         }
     }
 }
@@ -1507,6 +1531,9 @@ static void info_selected_show_extra(gchar * data)
 	return;
 
     if (data) {
+        /* skip the select marker */
+        if (*data == '*')
+            data++;
 	GKeyFile *key_file = g_key_file_new();
 	gchar *key_data = shell->selected->morefunc(data);
 	gchar **groups;
