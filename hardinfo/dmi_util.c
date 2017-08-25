@@ -21,7 +21,7 @@
 #include "hardinfo.h"
 #include "dmi_util.h"
 
-const char *dmi_sysfs_root() {
+static const char *dmi_sysfs_root(void) {
     char *candidates[] = {
         "/sys/devices/virtual/dmi",
         "/sys/class/dmi",
@@ -37,77 +37,79 @@ const char *dmi_sysfs_root() {
 }
 
 char *dmi_get_str(const char *id_str) {
-  static struct {
-    char *id;
-    char *path;
-  } tab_dmi_sysfs[] = {
-    /* dmidecode -> sysfs */
-    { "bios-release-date", "id/bios_date" },
-    { "bios-vendor", "id/bios_vendor" },
-    { "bios-version", "id/bios_version" },
-    { "baseboard-product-name", "id/board_name" },
-    { "baseboard-manufacturer", "id/board_vendor" },
-    { "baseboard-version", "id/board_version" },
-    { "baseboard-serial-number", "id/board_serial" },
-    { "baseboard-asset-tag", "id/board_asset_tag" },
-    { "system-product-name", "id/product_name" },
-    { "system-manufacturer", "id/sys_vendor" },
-    { "system-serial-number", "id/product_serial" },
-    { "system-product-family", "id/product_family" },
-    { "system-version", "id/product_version" },
-    { "system-uuid", "product_uuid" },
-    { "chassis-type", "id/chassis_type" },
-    { "chassis-serial-number", "id/chassis_serial" },
-    { "chassis-manufacturer", "id/chassis_vendor" },
-    { "chassis-version", "id/chassis_version" },
-    { "chassis-asset-tag", "id/chassis_asset_tag" },
-    { NULL, NULL }
-  };
-  const gchar *dmi_root = dmi_sysfs_root();
-  gchar *full_path = NULL, *ret = NULL;
-  gboolean spawned;
-  gchar *out, *err;
+    static struct {
+        char *id;
+        char *path;
+    } tab_dmi_sysfs[] = {
+        /* dmidecode -> sysfs */
+        { "bios-release-date", "id/bios_date" },
+        { "bios-vendor", "id/bios_vendor" },
+        { "bios-version", "id/bios_version" },
+        { "baseboard-product-name", "id/board_name" },
+        { "baseboard-manufacturer", "id/board_vendor" },
+        { "baseboard-version", "id/board_version" },
+        { "baseboard-serial-number", "id/board_serial" },
+        { "baseboard-asset-tag", "id/board_asset_tag" },
+        { "system-product-name", "id/product_name" },
+        { "system-manufacturer", "id/sys_vendor" },
+        { "system-serial-number", "id/product_serial" },
+        { "system-product-family", "id/product_family" },
+        { "system-version", "id/product_version" },
+        { "system-uuid", "product_uuid" },
+        { "chassis-type", "id/chassis_type" },
+        { "chassis-serial-number", "id/chassis_serial" },
+        { "chassis-manufacturer", "id/chassis_vendor" },
+        { "chassis-version", "id/chassis_version" },
+        { "chassis-asset-tag", "id/chassis_asset_tag" },
+        { NULL, NULL }
+    };
+    const gchar *dmi_root = dmi_sysfs_root();
+    gchar *ret = NULL;
+    gchar full_path[PATH_MAX];
+    gboolean spawned;
+    gchar *out, *err;
 
-  int i = 0;
+    int i = 0;
 
-  /* try sysfs first */
-  if (dmi_root) {
-    while (tab_dmi_sysfs[i].id != NULL) {
-      if (strcmp(id_str, tab_dmi_sysfs[i].id) == 0) {
-        full_path = g_strdup_printf("%s/%s", dmi_root, tab_dmi_sysfs[i].path);
-        if (g_file_get_contents(full_path, &ret, NULL, NULL) )
-          goto dmi_str_done;
+    /* try sysfs first */
+    if (dmi_root) {
+        while (tab_dmi_sysfs[i].id != NULL) {
+            if (strcmp(id_str, tab_dmi_sysfs[i].id) == 0) {
+                snprintf(full_path, PATH_MAX, "%s/%s", dmi_root, tab_dmi_sysfs[i].path);
+                if (g_file_get_contents(full_path, &ret, NULL, NULL) )
+                    goto dmi_str_done;
+            }
+            i++;
         }
-      i++;
     }
-  }
 
-  /* try dmidecode, but may require root */
-  full_path = g_strconcat("dmidecode -s ", id_str, NULL);
-  spawned = g_spawn_command_line_sync(full_path,
+    /* try dmidecode, but may require root */
+    snprintf(full_path, PATH_MAX, "dmidecode -s %s", id_str);
+    spawned = g_spawn_command_line_sync(full_path,
             &out, &err, &i, NULL);
-  if (spawned) {
-    if (i == 0)
-      ret = out;
-    else
-      g_free(out);
-    g_free(err);
-  }
+    if (spawned) {
+        if (i == 0)
+            ret = out;
+        else
+            g_free(out);
+
+        g_free(err);
+    }
 
 dmi_str_done:
-  if (ret != NULL) {
-    ret = strend(ret, '\n');
-    ret = g_strstrip(ret);
-    if (strlen(ret) == 0) {
-      g_free(ret);
-      ret = NULL;
+    if (ret != NULL) {
+        ret = strend(ret, '\n');
+        ret = g_strstrip(ret);
+        /* return NULL on empty */
+        if (*ret == 0) {
+            g_free(ret);
+            ret = NULL;
+        }
     }
-  }
-  g_free(full_path);
-  return ret;
+    return ret;
 }
 
-char *dmi_chassis_type_str(int chassis_type, int with_val) {
+char *dmi_chassis_type_str(int chassis_type, gboolean with_val) {
     static const char *types[] = {
         N_("Invalid chassis type (0)"),
         N_("Unknown chassis type"), /* 1 is "Other", but not helpful in HardInfo */
@@ -145,8 +147,8 @@ char *dmi_chassis_type_str(int chassis_type, int with_val) {
     if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types)) {
         if (with_val)
             return g_strdup_printf("[%d] %s", chassis_type, _(types[chassis_type]));
-        else
-            return g_strdup(_(types[chassis_type]));
+
+        return g_strdup(_(types[chassis_type]));
     }
     return NULL;
 }
