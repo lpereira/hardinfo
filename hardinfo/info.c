@@ -355,3 +355,128 @@ gchar *info_flatten(struct Info *info)
 
     return g_string_free(values, FALSE);
 }
+
+#define SEQ(a,b) (g_strcmp0(a,b) == 0)
+
+struct InfoField *info_find_field(struct Info *info, const gchar *tag, const gchar *name) {
+    struct InfoGroup *group;
+    struct InfoField *field;
+    int gi,fi;
+    for (gi = 0; gi < info->groups->len; gi++) {
+        struct InfoGroup *group = &g_array_index(info->groups, struct InfoGroup, gi);
+        for (fi = 0; fi < group->fields->len; fi++) {
+            struct InfoField *field = &g_array_index(group->fields, struct InfoField, fi);
+            if (tag && SEQ(tag, field->tag) )
+                return field;
+            else if (name && SEQ(name, field->name) )
+                return field;
+        }
+    }
+    return NULL;
+}
+
+#define VAL_FALSE_OR_TRUE ((!g_strcmp0(value, "true") || !g_strcmp0(value, "1")) ? TRUE : FALSE)
+
+struct Info *info_unflatten(const gchar *str)
+{
+    struct Info *info = info_new();
+    GKeyFile *key_file = g_key_file_new();
+    gchar **groups;
+    gsize ngroups;
+    int g, k, spg = -1;
+
+    g_key_file_load_from_data(key_file, str, strlen(str), 0, NULL);
+    groups = g_key_file_get_groups(key_file, &ngroups);
+    for (g = 0; groups[g]; g++) {
+        gchar *group_name = groups[g];
+        gchar **keys = g_key_file_get_keys(key_file, group_name, NULL, NULL);
+
+        if (*group_name == '$') {
+            /* special group */
+            if (SEQ(group_name, "$ShellParam$") )
+                spg = g; /* handle after all groups are added */
+            else {
+                /* This special group is unknown and won't be handled, so
+                 * the name will not be linked anywhere. */
+                g_free(group_name);
+                continue;
+            }
+        } else {
+            /* normal group */
+            struct InfoGroup group = {};
+            group.name = group_name;
+            group.fields = g_array_new(FALSE, FALSE, sizeof(struct InfoField));
+            group.sort = INFO_GROUP_SORT_NONE;
+
+            for (k = 0; keys[k]; k++) {
+                struct InfoField field = {};
+                gchar *flags, *tag, *name;
+                key_get_components(keys[k], &flags, &tag, &name, NULL, NULL, TRUE);
+                gchar *value = g_key_file_get_value(key_file, group_name, keys[k], NULL);
+
+                field.tag = tag;
+                field.name = name;
+                field.value = value;
+                field.free_value_on_flatten = TRUE;
+                field.free_name_on_flatten = TRUE;
+                if (key_wants_details(flags))
+                    field.report_details = TRUE;
+                if (key_is_highlighted(flags))
+                    field.highlight = TRUE;
+
+                g_free(flags);
+                g_array_append_val(group.fields, field);
+            }
+            g_array_append_val(info->groups, group);
+        }
+    }
+
+    if (spg >= 0) {
+        gchar *group_name = groups[spg];
+        gchar **keys = g_key_file_get_keys(key_file, group_name, NULL, NULL);
+        for (k = 0; keys[k]; k++) {
+            gchar *value = g_key_file_get_value(key_file, group_name, keys[k], NULL);
+            gchar *parm = NULL;
+            if (SEQ(keys[k], "ViewType")) {
+                info_set_view_type(info, atoi(value));
+            } else if (SEQ(keys[k], "ShowColumnHeaders")) {
+                info_set_column_headers_visible(info, VAL_FALSE_OR_TRUE);
+            } else if (SEQ(keys[k], "Zebra")) {
+                info_set_zebra_visible(info, VAL_FALSE_OR_TRUE);
+            } else if (SEQ(keys[k], "ReloadInterval")) {
+                info_set_reload_interval(info, atoi(value));
+            } else if (SEQ(keys[k], "NormalizePercentage")) {
+                info_set_normalize_percentage(info, VAL_FALSE_OR_TRUE);
+            } else if (g_str_has_prefix(keys[k], "ColumnTitle$")) {
+                info_set_column_title(info, strchr(keys[k], '$') + 1, value);
+            } else if (g_str_has_prefix(keys[k], "Icon$")) {
+                const gchar *chk_name = NULL;
+                gchar *chk_tag = NULL;
+                parm = strchr(keys[k], '$');
+                if (key_is_flagged(parm))
+                    chk_tag = key_mi_tag(parm);
+                struct InfoField *field = info_find_field(info, chk_tag, NULL);
+                if (field)
+                    field->icon = value;
+                g_free(chk_tag);
+            } else if (g_str_has_prefix(keys[k], "UpdateInterval$")) {
+                const gchar *chk_name = NULL;
+                gchar *chk_tag = NULL;
+                parm = strchr(keys[k], '$');
+                if (key_is_flagged(parm)) {
+                    chk_tag = key_mi_tag(parm);
+                    chk_name = key_get_name(parm);
+                } else
+                    chk_name = key_get_name(parm+1);
+                struct InfoField *field = info_find_field(info, chk_tag, chk_name);
+                if (field)
+                    field->update_interval = atoi(value);
+                g_free(chk_tag);
+            }
+        }
+        g_free(group_name);
+        g_strfreev(keys);
+    }
+
+    return info;
+}
