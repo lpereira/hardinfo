@@ -26,7 +26,6 @@ get_glx_info(DisplayInfo *di)
 {
     gchar *output;
     if (g_spawn_command_line_sync("glxinfo", &output, NULL, NULL, NULL)) {
-
         gchar **output_lines;
         gint i = 0;
         gboolean has_core_profile = FALSE;
