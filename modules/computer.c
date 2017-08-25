@@ -308,14 +308,14 @@ static gchar *detect_machine_type(void)
     gchar *chassis;
 
     chassis = dmi_chassis_type_str(-1, 0);
-    if (chassis != NULL)
+    if (chassis)
         return chassis;
 
     chassis = dtr_get_string("/model", 0);
     if (chassis) {
         if (strstr(chassis, "Raspberry Pi") != NULL
             || strstr(chassis, "ODROID") != NULL
-            /* etc */ ) {
+            /* FIXME: consider making a table when adding more models */ ) {
                 g_free(chassis);
                 return g_strdup(_("Single-board computer"));
         }
