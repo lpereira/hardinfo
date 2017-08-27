@@ -29,8 +29,12 @@
 #include "cpu_util.h"
 #include "dt_util.h"
 
+/* These should really go into CMakeLists.txt */
+#if defined(__arm__)
 #include "devicetree/rpi_data.c"
+#elif defined(__powerpc__)
 #include "devicetree/pmac_data.c"
+#endif
 
 gchar *dtree_info = NULL;
 
@@ -112,7 +116,6 @@ static char *get_dt_string(dtr *dt, char *path, gboolean decode) {
 
 static gchar *get_summary(dtr *dt) {
     char *model = NULL, *compat = NULL;
-    char *tmp[10];
     char *ret = NULL;
 
     model = get_dt_string(dt, "/model", 0);
@@ -120,56 +123,80 @@ static gchar *get_summary(dtr *dt) {
     UNKIFNULL(model);
     EMPIFNULL(compat);
 
+#if defined(__arm__)
     /* Expand on the DT information from known machines, like RPi.
      * RPi stores a revision value in /proc/cpuinfo that can be used
      * to look up details. This is just a nice place to pull it all
      * together for DT machines, with a nice fallback.
      * PPC Macs could be handled this way too. They store
      * machine identifiers in /proc/cpuinfo. */
-    if ( strstr(model, "Raspberry Pi") != NULL
-        || strstr(compat, "raspberrypi") != NULL ) {
-        tmp[0] = get_dt_string(dt, "/serial-number", 1);
-        tmp[1] = get_dt_string(dt, "/soc/gpu/compatible", 1);
-        tmp[9] = rpi_board_details();
-        tmp[8] = g_strdup_printf(
-                "[%s]\n" "%s=%s\n" "%s=%s\n",
+    if (strstr(model, "Raspberry Pi")
+        || strstr(compat, "raspberrypi")) {
+        gchar *gpu_compat = get_dt_string(dt, "/soc/gpu/compatible", 1);
+        gchar *rpi_details = rpi_board_details();
+        gchar *basic_info;
+
+        basic_info = g_strdup_printf(
+                "[%s]\n"
+                "%s=%s\n"
+                "%s=%s\n",
                 _("Platform"),
                 _("Compatible"), compat,
-                _("GPU-compatible"), tmp[1] );
-        if (tmp[9] != NULL) {
-            ret = g_strdup_printf("%s%s", tmp[9], tmp[8]);
+                _("GPU-compatible"), gpu_compat);
+
+        if (rpi_details) {
+            ret = g_strconcat(rpi_details, basic_info, NULL);
+
+            g_free(rpi_details);
         } else {
+            gchar *serial_number = get_dt_string(dt, "/serial-number", 1);
+
             ret = g_strdup_printf(
-                "[%s]\n" "%s=%s\n" "%s=%s\n" "%s=%s\n" "%s",
+                "[%s]\n"
+                "%s=%s\n"
+                "%s=%s\n"
+                "%s=%s\n"
+                "%s",
                 _("Raspberry Pi or Compatible"),
                 _("Model"), model,
-                _("Serial Number"), tmp[0],
+                _("Serial Number"), serial_number,
                 _("RCode"), _("No revision code available; unable to lookup model details."),
-                tmp[8]);
-        }
-        free(tmp[0]); free(tmp[1]);
-        free(tmp[9]); free(tmp[8]);
-    }
+                basic_info);
 
+            g_free(serial_number);
+        }
+
+        g_free(gpu_compat);
+        g_free(basic_info);
+    }
+#endif
+
+#if defined(__powerpc__)
     /* Power Macintosh */
     if (strstr(compat, "PowerBook") != NULL
          || strstr(compat, "MacRISC") != NULL
          || strstr(compat, "Power Macintosh") != NULL) {
-        tmp[9] =  ppc_mac_details();
-        if (tmp[9] != NULL) {
-            tmp[0] = get_dt_string(dt, "/serial-number", 1);
+        gchar *mac_details = ppc_mac_details();
+
+        if (mac_details) {
+            gchar *serial_number = get_dt_string(dt, "/serial-number", 1);
+
             ret = g_strdup_printf(
-                "%s[%s]\n" "%s=%s\n", tmp[9],
+                "%s[%s]\n"
+                "%s=%s\n",
+                mac_details,
                 _("More"),
-                _("Serial Number"), tmp[0] );
-            free(tmp[0]);
+                _("Serial Number"), serial_number);
+
+            free(mac_details);
+            free(serial_number);
         }
-        free(tmp[9]);
     }
+#endif
 
     /* fallback */
-    if (ret == NULL) {
-        tmp[0] = get_dt_string(dt, "/serial-number", 1);
+    if (!ret) {
+        gchar *serial_number = get_dt_string(dt, "/serial-number", 1);
         EMPIFNULL(tmp[0]);
         ret = g_strdup_printf(
                 "[%s]\n"
@@ -178,11 +205,14 @@ static gchar *get_summary(dtr *dt) {
                 "%s=%s\n",
                 _("Board"),
                 _("Model"), model,
-                _("Serial Number"), tmp[0],
+                _("Serial Number"), serial_number,
                 _("Compatible"), compat);
-        free(tmp[0]);
+        free(serial_number);
     }
+
     free(model);
+    free(compat);
+
     return ret;
 }
 
