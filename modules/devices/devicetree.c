@@ -32,10 +32,9 @@
 #include "devicetree/rpi_data.c"
 #include "devicetree/pmac_data.c"
 
-dtr *dt;
 gchar *dtree_info = NULL;
 
-gchar *get_node(char *np) {
+static gchar *get_node(dtr *dt, char *np) {
     gchar *nodes = NULL, *props = NULL, *ret = NULL;
     gchar *tmp = NULL, *pstr = NULL, *lstr = NULL;
     gchar *dir_path;
@@ -90,29 +89,34 @@ gchar *get_node(char *np) {
     dtr_obj_free(node);
     g_free(props);
     g_free(nodes);
+
     return ret;
 }
 
 /* different from  dtr_get_string() in that it re-uses the existing dt */
-char *get_dt_string(char *path, int decode) {
-    dtr_obj *obj;
-    char *ret = NULL;
+static char *get_dt_string(dtr *dt, char *path, gboolean decode) {
+    char *ret;
+
     if (decode) {
-        obj = dtr_get_prop_obj(dt, NULL, path);
+        dtr_obj *obj = dtr_get_prop_obj(dt, NULL, path);
+
         ret = dtr_str(obj);
+
         dtr_obj_free(obj);
-    } else
+    } else {
         ret = dtr_get_prop_str(dt, NULL, path);
+    }
+
     return ret;
 }
 
-gchar *get_summary() {
+static gchar *get_summary(dtr *dt) {
     char *model = NULL, *compat = NULL;
     char *tmp[10];
     char *ret = NULL;
 
-    model = get_dt_string("/model", 0);
-    compat = get_dt_string("/compatible", 1);
+    model = get_dt_string(dt, "/model", 0);
+    compat = get_dt_string(dt, "/compatible", 1);
     UNKIFNULL(model);
     EMPIFNULL(compat);
 
@@ -124,8 +128,8 @@ gchar *get_summary() {
      * machine identifiers in /proc/cpuinfo. */
     if ( strstr(model, "Raspberry Pi") != NULL
         || strstr(compat, "raspberrypi") != NULL ) {
-        tmp[0] = get_dt_string("/serial-number", 1);
-        tmp[1] = get_dt_string("/soc/gpu/compatible", 1);
+        tmp[0] = get_dt_string(dt, "/serial-number", 1);
+        tmp[1] = get_dt_string(dt, "/soc/gpu/compatible", 1);
         tmp[9] = rpi_board_details();
         tmp[8] = g_strdup_printf(
                 "[%s]\n" "%s=%s\n" "%s=%s\n",
@@ -153,7 +157,7 @@ gchar *get_summary() {
          || strstr(compat, "Power Macintosh") != NULL) {
         tmp[9] =  ppc_mac_details();
         if (tmp[9] != NULL) {
-            tmp[0] = get_dt_string("/serial-number", 1);
+            tmp[0] = get_dt_string(dt, "/serial-number", 1);
             ret = g_strdup_printf(
                 "%s[%s]\n" "%s=%s\n", tmp[9],
                 _("More"),
@@ -165,7 +169,7 @@ gchar *get_summary() {
 
     /* fallback */
     if (ret == NULL) {
-        tmp[0] = get_dt_string("/serial-number", 1);
+        tmp[0] = get_dt_string(dt, "/serial-number", 1);
         EMPIFNULL(tmp[0]);
         ret = g_strdup_printf(
                 "[%s]\n"
@@ -182,7 +186,7 @@ gchar *get_summary() {
     return ret;
 }
 
-void mi_add(const char *key, const char *value) {
+static void mi_add(const char *key, const char *value) {
     gchar *ckey, *rkey;
 
     ckey = hardinfo_clean_label(key, 0);
@@ -195,7 +199,7 @@ void mi_add(const char *key, const char *value) {
     g_free(rkey);
 }
 
-void add_keys(char *np) {
+static void add_keys(dtr *dt, char *np) {
     gchar *dir_path, *dt_path;
     gchar *ftmp, *ntmp;
     gchar *n_info;
@@ -228,7 +232,7 @@ void add_keys(char *np) {
     g_dir_close(dir);
 }
 
-char *msg_section(int dump) {
+static char *msg_section(dtr *dt, int dump) {
     gchar *aslbl = NULL;
     gchar *messages = dtr_messages(dt);
     gchar *ret = g_strdup_printf("[%s]\n", _("Messages"));
@@ -249,8 +253,8 @@ char *msg_section(int dump) {
 
 void __scan_dtree()
 {
-    dt = dtr_new(NULL);
-    gchar *summary = get_summary();
+    dtr *dt = dtr_new(NULL);
+    gchar *summary = get_summary(dt);
     gchar *maps = dtr_maps_info(dt);
     gchar *messages = NULL;
 
@@ -260,10 +264,8 @@ void __scan_dtree()
 
     if(dtr_was_found(dt))
         add_keys("/");
-    messages = msg_section(0);
+    messages = msg_section(dt, 0);
     mi_add("Messages", messages);
-
-    //printf("%s\n", dtree_info);
 
     g_free(summary);
     g_free(maps);
