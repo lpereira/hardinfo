@@ -359,7 +359,7 @@ gchar *get_memory_total(void)
 
 gchar *get_motherboard(void)
 {
-    char *board_name, *board_vendor, *product_version;
+    char *board_name, *board_vendor, *system_version;
     char *ret;
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
@@ -373,10 +373,10 @@ gchar *get_motherboard(void)
     if (board_vendor == NULL)
         board_vendor = dmi_get_str("system-manufacturer");
 
-    product_version = dmi_get_str("system-product-version");
+    system_version = dmi_get_str("system-version");
 
-    if (board_name && board_vendor && product_version)
-        ret = g_strdup_printf("%s / %s (%s)", product_version, board_name, board_vendor);
+    if (board_name && board_vendor && system_version)
+        ret = g_strdup_printf("%s / %s (%s)", system_version, board_name, board_vendor);
     else if (board_name && board_vendor)
         ret = g_strconcat(board_vendor, " ", board_name, NULL);
     else if (board_name)
@@ -388,7 +388,7 @@ gchar *get_motherboard(void)
 
     free(board_name);
     free(board_vendor);
-    free(product_version);
+    free(system_version);
     return ret;
 #endif
 
