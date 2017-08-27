@@ -140,8 +140,11 @@ char *dmi_chassis_type_str(int chassis_type, gboolean with_val) {
 
     if (chassis_type <= 0) {
         gchar *chassis = dmi_get_str("chassis-type");
-        chassis_type = atoi(chassis);
-        g_free(chassis);
+        if (chassis) {
+            chassis_type = atoi(chassis);
+            g_free(chassis);
+        } else
+            chassis_type = -1;
     }
 
     if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types)) {
