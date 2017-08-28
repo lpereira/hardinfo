@@ -264,7 +264,7 @@ gchar *processor_name(GSList *processors) {
      * ex: "brcm,bcm2837", "brcm,bcm2836";
      * would match 2836 when it is a 2837.
      */
-#define UNKSOC "(Unknown)"
+#define UNKSOC "(Unknown)" /* don't translate this */
     const struct {
         char *search_str;
         char *vendor;
@@ -285,6 +285,23 @@ gchar *processor_name(GSList *processors) {
         { "ti,omap3", "Texas Instruments", "OMAP3-family" },
         { "ti,omap2", "Texas Instruments", "OMAP2-family" },
         { "ti,omap1", "Texas Instruments", "OMAP1-family" },
+        { "mediatek,mt6799", "MediaTek", "MT6799 Helio X30" },
+        { "mediatek,mt6799", "MediaTek", "MT6799 Helio X30" },
+        { "mediatek,mt6797x", "MediaTek", "MT6797X Helio X27" },
+        { "mediatek,mt6797t", "MediaTek", "MT6797T Helio X25" },
+        { "mediatek,mt6797", "MediaTek", "MT6797 Helio X20" },
+        { "mediatek,mt6757T", "MediaTek", "MT6757T Helio P25" },
+        { "mediatek,mt6757", "MediaTek", "MT6757 Helio P20" },
+        { "mediatek,mt6795", "MediaTek", "MT6795 Helio X10" },
+        { "mediatek,mt6755", "MediaTek", "MT6755 Helio P10" },
+        { "mediatek,mt6750t", "MediaTek", "MT6750T" },
+        { "mediatek,mt6750", "MediaTek", "MT6750" },
+        { "mediatek,mt6753", "MediaTek", "MT6753" },
+        { "mediatek,mt6752", "MediaTek", "MT6752" },
+        { "mediatek,mt6738", "MediaTek", "MT6738" },
+        { "mediatek,mt6737t", "MediaTek", "MT6737T" },
+        { "mediatek,mt6735", "MediaTek", "MT6735" },
+        { "mediatek,mt6732", "MediaTek", "MT6732" },
         { "qcom,msm8939", "Qualcomm", "Snapdragon 615"},
         { "qcom,msm", "Qualcomm", "Snapdragon-family"},
         { "nvidia,tegra" "nVidia", "Tegra-family" },
@@ -293,6 +310,7 @@ gchar *processor_name(GSList *processors) {
         { "rockchip," "Rockchip", UNKSOC },
         { "ti,", "Texas Instruments", UNKSOC },
         { "qcom,", "Qualcom", UNKSOC },
+        { "mediatek," "MediaTek", UNKSOC },
         { NULL, NULL }
     };
     gchar *ret = NULL;
