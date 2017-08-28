@@ -490,7 +490,7 @@ msgid ""
 "Please choose the information that you wish to view in your report:"
 msgstr ""
 "<big><b>Создать отчёт</b></big>\n"
-"Пожалуйста выберите информацию для отображения в отчёте:"
+"Пожалуйста, выберите информацию для отображения в отчёте:"
 
 #: shell/report.c:893
 msgid "Select _None"
@@ -502,7 +502,7 @@ msgstr "Выбор: все"
 
 #: shell/report.c:929 shell/syncmanager.c:748
 msgid "_Cancel"
-msgstr ""
+msgstr "_Отмена"
 
 #: shell/report.c:939
 msgid "_Generate"
@@ -2584,7 +2584,7 @@ msgid ""
 msgstr ""
 "Имя устройства=hd%c\n"
 "Медиа=%s\n"
-"Кэш=%dkb\n"
+"Кэш=%d кБ\n"
 
 #: modules/devices/storage.c:334
 #, c-format
@@ -2677,19 +2677,19 @@ msgstr ""
 #: modules/devices/x86/processor.c:170
 msgctxt "cache-type"
 msgid "Data"
-msgstr ""
+msgstr "данные"
 
 #. /cache type, as appears in: Level 1 (Instruction)
 #: modules/devices/x86/processor.c:171
 msgctxt "cache-type"
 msgid "Instruction"
-msgstr ""
+msgstr "инструкции"
 
 #. /cache type, as appears in: Level 2 (Unified)
 #: modules/devices/x86/processor.c:172
 msgctxt "cache-type"
 msgid "Unified"
-msgstr ""
+msgstr "унифицированный"
 
 #: modules/devices/x86/processor.c:410
 msgid "Model Name"
@@ -2701,7 +2701,7 @@ msgstr "Семейство, модель, степпинг"
 
 #: modules/devices/x86/processor.c:417
 msgid "Microcode Version"
-msgstr ""
+msgstr "Версия микрокода"
 
 #: modules/devices/x86/processor.c:418
 msgid "Configuration"
@@ -4490,15 +4490,3 @@ msgstr ""
 #: modules/network/net.c:479
 msgid "Broadcast Address"
 msgstr "Широковещательный адрес"
-
-#~ msgid "CPU Clock"
-#~ msgstr "Частота процессора"
-
-#~ msgid "pixels"
-#~ msgstr "пикселей"
-
-#~ msgid "Desktop Environment"
-#~ msgstr "Среда рабочего стола"
-
-#~ msgid "%s$CPU%d$%s=%.2fMHz\n"
-#~ msgstr "%s$CPU%d$%s=%.2f МГц\n"
