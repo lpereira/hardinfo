@@ -49,20 +49,41 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_sync_manager)},
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    {"OpenAction", "_Open",
+     N_("_Open..."), NULL,
+     NULL,
+     G_CALLBACK(cb_sync_manager)},
+#else
     {"OpenAction", GTK_STOCK_OPEN,
      N_("_Open..."), NULL,
      NULL,
      G_CALLBACK(cb_sync_manager)},
+#endif
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    {"CopyAction", "_Copy",
+     N_("_Copy to Clipboard"), "<control>C",
+     N_("Copy to clipboard"),
+     G_CALLBACK(cb_copy_to_clipboard)},
+#else
     {"CopyAction", GTK_STOCK_COPY,
      N_("_Copy to Clipboard"), "<control>C",
      N_("Copy to clipboard"),
      G_CALLBACK(cb_copy_to_clipboard)},
+#endif
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    {"RefreshAction", "_Refresh",
+     N_("_Refresh"), "F5",
+     NULL,
+     G_CALLBACK(cb_refresh)},
+#else
     {"RefreshAction", GTK_STOCK_REFRESH,
      N_("_Refresh"), "F5",
      NULL,
      G_CALLBACK(cb_refresh)},
+#endif
 
     {"HomePageAction", HI_STOCK_INTERNET,
      N_("_Open HardInfo Web Site"), NULL,
@@ -74,15 +95,29 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_report_bug)},
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    {"AboutAction", "_About",
+     N_("_About HardInfo"), NULL,
+     N_("Displays program version information"),
+     G_CALLBACK(cb_about)},
+#else
     {"AboutAction", GTK_STOCK_ABOUT,
      N_("_About HardInfo"), NULL,
      N_("Displays program version information"),
      G_CALLBACK(cb_about)},
+#endif
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    {"QuitAction", "_Quit",
+     N_("_Quit"), "<control>Q",
+     NULL,
+     G_CALLBACK(cb_quit)}
+#else
     {"QuitAction", GTK_STOCK_QUIT,
      N_("_Quit"), "<control>Q",
      NULL,
      G_CALLBACK(cb_quit)}
+#endif
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
