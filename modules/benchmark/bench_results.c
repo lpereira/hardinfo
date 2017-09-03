@@ -18,6 +18,9 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+/*/ Used for an unknown value. Having it in only one place cleans up the .po line references */
+static const char *unk = N_("(Unknown)");
+
 typedef struct {
     char *board;
     int memory_kiB;
@@ -339,7 +342,12 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
 }
 
 char *bench_result_more_info(bench_result *b) {
-    return g_strdup_printf("[%s]\n"
+    char *memory =
+        (b->machine->memory_kiB > 0)
+        ? g_strdup_printf("%d %s", b->machine->memory_kiB, _("kiB") )
+        : g_strdup(_(unk) );
+
+    char *ret = g_strdup_printf("[%s]\n"
         /* threads */   "%s=%d\n"
         /* legacy */    "%s=%s\n"
                         "[%s]\n"
@@ -349,20 +357,22 @@ char *bench_result_more_info(bench_result *b) {
         /* cpucfg */    "%s=%s\n"
         /* threads */   "%s=%d\n"
         /* ogl rend */  "%s=%s\n"
-        /* mem */       "%s=%d %s\n",
+        /* mem */       "%s=%s\n",
                         _("Benchmark Result"),
                         _("Threads"), b->threads,
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
-                        _("Board"), (b->machine->board != NULL) ? b->machine->board : _("(Unknown)"),
+                        _("Board"), (b->machine->board != NULL) ? b->machine->board : _(unk),
                         _("CPU Name"), b->machine->cpu_name,
-                        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _("(Unknown)"),
+                        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
                         _("CPU Config"), b->machine->cpu_config,
                         _("Threads Available"), b->machine->threads,
-                        _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _("(Unknown)"),
-                        _("Memory"), b->machine->memory_kiB, _("kiB")
+                        _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
+                        _("Memory"), memory
                         );
+    free(memory);
+    return ret;
 }
 
 char *bench_result_more_info_complete(bench_result *b) {
@@ -387,14 +397,14 @@ char *bench_result_more_info_complete(bench_result *b) {
                         _("Result"), b->result,
                         _("Threads"), b->threads,
                         b->legacy ? _("Note") : "#Note",
-                        b->legacy ? _("This result is from an old version of Hardinfo.") : "",
+                        b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
-                        _("Board"), (b->machine->board != NULL) ? b->machine->board : _("(Unknown)"),
+                        _("Board"), (b->machine->board != NULL) ? b->machine->board : _(unk),
                         _("CPU Name"), b->machine->cpu_name,
-                        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _("(Unknown)"),
+                        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
                         _("CPU Config"), b->machine->cpu_config,
                         _("Threads Available"), b->machine->threads,
-                        _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _("(Unknown)"),
+                        _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
                         _("Memory"), b->machine->memory_kiB, _("kiB"),
                         _("Handles"),
                         _("mid"), b->machine->mid,
