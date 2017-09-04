@@ -197,7 +197,7 @@ static gchar *get_summary(dtr *dt) {
     /* fallback */
     if (!ret) {
         gchar *serial_number = get_dt_string(dt, "/serial-number", 1);
-        EMPIFNULL(tmp[0]);
+        EMPIFNULL(serial_number);
         ret = g_strdup_printf(
                 "[%s]\n"
                 "%s=%s\n"
@@ -240,7 +240,7 @@ static void add_keys(dtr *dt, char *np) {
     /* add self */
     obj = dtr_obj_read(dt, np);
     dt_path = dtr_obj_path(obj);
-    n_info = get_node(dt_path);
+    n_info = get_node(dt, dt_path);
     mi_add(dt_path, n_info);
 
     dir_path = g_strdup_printf("%s/%s", dtr_base_path(dt), np);
@@ -253,7 +253,7 @@ static void add_keys(dtr *dt, char *np) {
                     ntmp = g_strdup_printf("/%s", fn);
                 else
                     ntmp = g_strdup_printf("%s/%s", np, fn);
-                add_keys(ntmp);
+                add_keys(dt, ntmp);
                 g_free(ntmp);
             }
             g_free(ftmp);
@@ -293,7 +293,7 @@ void __scan_dtree()
     mi_add("Maps", maps);
 
     if(dtr_was_found(dt))
-        add_keys("/");
+        add_keys(dt, "/");
     messages = msg_section(dt, 0);
     mi_add("Messages", messages);
 
