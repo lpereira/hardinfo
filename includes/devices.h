@@ -46,6 +46,7 @@ gchar *processor_name_default(GSList * processors);
 gchar *processor_describe(GSList * processors);
 gchar *processor_describe_default(GSList * processors);
 gchar *processor_describe_by_counting_names(GSList * processors);
+gchar *processor_frequency_desc(GSList *processors);
 
 /* Memory */
 void init_memory_labels(void);
