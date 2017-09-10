@@ -28,7 +28,7 @@
 
 gchar *usb_list = NULL;
 
-void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
+static void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
 {
     gchar *manufacturer, *product, *mxpwr, *tmp, *strhash;
     gint bus, classid, vendor, prodid;
@@ -100,7 +100,7 @@ void __scan_usb_sysfs_add_device(gchar * endpoint, int n)
     g_free(mxpwr);
 }
 
-gboolean __scan_usb_sysfs(void)
+static gboolean __scan_usb_sysfs(void)
 {
     GDir *sysfs;
     gchar *filename;
@@ -136,7 +136,7 @@ gboolean __scan_usb_sysfs(void)
     return usb_device_number > 0;
 }
 
-gboolean __scan_usb_procfs(void)
+static gboolean __scan_usb_procfs(void)
 {
     FILE *dev;
     gchar buffer[128];
@@ -260,7 +260,7 @@ gboolean __scan_usb_procfs(void)
 }
 
 
-void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE * lsusb, int usb_device_number)
+static void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE * lsusb, int usb_device_number)
 {
     gint bus, device, vendor_id, product_id;
     gchar *version = NULL, *product = NULL, *vendor = NULL, *dev_class = NULL, *int_class = NULL;
@@ -367,7 +367,7 @@ void __scan_usb_lsusb_add_device(char *buffer, int bufsize, FILE * lsusb, int us
     g_free(name);
 }
 
-gboolean __scan_usb_lsusb(void)
+static gboolean __scan_usb_lsusb(void)
 {
     static gchar *lsusb_path = NULL;
     int usb_device_number = 0;
@@ -428,7 +428,7 @@ gboolean __scan_usb_lsusb(void)
 
 #define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)");
 
-void _usb_dev(const usbd *u) {
+static void _usb_dev(const usbd *u) {
     gchar *name, *key, *v_str, *str;
     gchar *product, *vendor, *dev_class_str, *dev_subclass_str; /* don't free */
 
@@ -481,7 +481,7 @@ void _usb_dev(const usbd *u) {
     g_free(key);
 }
 
-gboolean __scan_usb_util(void) {
+static gboolean __scan_usb_util(void) {
     usbd *list = usb_get_device_list();
     usbd *curr = list;
 
@@ -495,8 +495,6 @@ gboolean __scan_usb_util(void) {
         usb_list = g_strdup_printf("[%s]\n", _("USB Devices"));
 
         while(curr) {
-            //printf("USB: Bus %03d Dev %03d Ven %04x Prod %04x %s %s\n",
-            //    curr->bus, curr->dev, curr->vendor_id, curr->product_id, curr->vendor, curr->product);
             _usb_dev(curr);
             c++;
             curr=curr->next;

@@ -22,22 +22,18 @@
 #include "usb_util.h"
 
 usbd *usbd_new() {
-    usbd *s = malloc(sizeof(usbd));
-    if (s) {
-        memset(s, 0, sizeof(usbd));
-    }
-    return s;
+    return g_new0(usbd, 1);
 }
 
 void usbd_free(usbd *s) {
     if (s) {
-        free(s->vendor);
-        free(s->product);
-        free(s->usb_version);
-        free(s->device_version);
-        free(s->dev_class_str);
-        free(s->dev_subclass_str);
-        free(s);
+        g_free(s->vendor);
+        g_free(s->product);
+        g_free(s->usb_version);
+        g_free(s->device_version);
+        g_free(s->dev_class_str);
+        g_free(s->dev_subclass_str);
+        g_free(s);
     }
 }
 
@@ -51,7 +47,7 @@ void usbd_list_free(usbd *s) {
 }
 
 /* returns number of items after append */
-int usbd_list_append(usbd *l, usbd *n) {
+static int usbd_list_append(usbd *l, usbd *n) {
     int c = 0;
     while(l != NULL) {
         c++;
@@ -71,15 +67,15 @@ int usbd_list_count(usbd *s) {
     return usbd_list_append(s, NULL);
 }
 
-char *_lsusb_lv(char *line, const char *prefix) {
-    if ( g_str_has_prefix(line, prefix) ) {
+static char *lsusb_line_value(char *line, const char *prefix) {
+    if (g_str_has_prefix(line, prefix)) {
         line += strlen(prefix) + 1;
         return g_strstrip(line);
     } else
         return NULL;
 }
 
-int usb_get_device_lsusb(int bus, int dev, usbd *s) {
+static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
     gboolean spawned;
     gchar *out, *err, *p, *l, *t, *next_nl;
     gchar *lsusb_cmd = g_strdup_printf("lsusb -s %d:%d -v", bus, dev);
@@ -92,34 +88,34 @@ int usb_get_device_lsusb(int bus, int dev, usbd *s) {
     g_free(lsusb_cmd);
     if (spawned) {
         if (strstr(err, "information will be missing")) {
-            s->user_scan = 1;
+            s->user_scan = TRUE;
         }
         p = out;
         while(next_nl = strchr(p, '\n')) {
             strend(p, '\n');
             g_strstrip(p);
-            if (l = _lsusb_lv(p, "idVendor")) {
+            if (l = lsusb_line_value(p, "idVendor")) {
                 s->vendor_id = strtol(l, NULL, 0);
                 if (t = strchr(l, ' '))
-                    s->vendor = strdup(t + 1);
-            } else if (l = _lsusb_lv(p, "idProduct")) {
+                    s->vendor = g_strdup(t + 1);
+            } else if (l = lsusb_line_value(p, "idProduct")) {
                 s->product_id = strtol(l, NULL, 0);
                 if (t = strchr(l, ' '))
-                    s->product = strdup(t + 1);
-            } else if (l = _lsusb_lv(p, "MaxPower")) {
+                    s->product = g_strdup(t + 1);
+            } else if (l = lsusb_line_value(p, "MaxPower")) {
                 s->max_curr_ma = atoi(l);
-            } else if (l = _lsusb_lv(p, "bcdUSB")) {
-                s->usb_version = strdup(l);
-            } else if (l = _lsusb_lv(p, "bcdDevice")) {
-                s->device_version = strdup(l);
-            } else if (l = _lsusb_lv(p, "bDeviceClass")) {
+            } else if (l = lsusb_line_value(p, "bcdUSB")) {
+                s->usb_version = g_strdup(l);
+            } else if (l = lsusb_line_value(p, "bcdDevice")) {
+                s->device_version = g_strdup(l);
+            } else if (l = lsusb_line_value(p, "bDeviceClass")) {
                 s->dev_class = atoi(l);
                 if (t = strchr(l, ' '))
-                    s->dev_class_str = strdup(t + 1);
-            } else if (l = _lsusb_lv(p, "bDeviceSubClass")) {
+                    s->dev_class_str = g_strdup(t + 1);
+            } else if (l = lsusb_line_value(p, "bDeviceSubClass")) {
                 s->dev_subclass = atoi(l);
                 if (t = strchr(l, ' '))
-                    s->dev_subclass_str = strdup(t + 1);
+                    s->dev_subclass_str = g_strdup(t + 1);
             }
             /* TODO: speed_mbs
              * WISHLIST: interfaces, drivers */
@@ -127,9 +123,9 @@ int usb_get_device_lsusb(int bus, int dev, usbd *s) {
         }
         g_free(out);
         g_free(err);
-        return 1;
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }
 
 usbd *usb_get_device(int bus, int dev) {
@@ -149,7 +145,7 @@ usbd *usb_get_device(int bus, int dev) {
     return s;
 }
 
-usbd *usb_get_device_list_lsusb() {
+static usbd *usb_get_device_list_lsusb() {
     gboolean spawned;
     gchar *out, *err, *p, *next_nl;
     usbd *head = NULL, *nd;
@@ -161,7 +157,8 @@ usbd *usb_get_device_list_lsusb() {
         p = out;
         while(next_nl = strchr(p, '\n')) {
             strend(p, '\n');
-            if (ec = sscanf(p, "Bus %d Device %d: ID %x:%x", &bus, &dev, &vend, &prod) ) {
+            ec = sscanf(p, "Bus %d Device %d: ID %x:%x", &bus, &dev, &vend, &prod);
+            if (ec == 4) {
                 nd = usb_get_device(bus, dev);
                 if (head == NULL) {
                     head = nd;
