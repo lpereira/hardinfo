@@ -29,13 +29,16 @@
 #include "cpu_util.h"
 #include "dt_util.h"
 
+/* These should really go into CMakeLists.txt */
+#if defined(__arm__)
 #include "devicetree/rpi_data.c"
+#elif defined(__powerpc__)
 #include "devicetree/pmac_data.c"
+#endif
 
-dtr *dt;
 gchar *dtree_info = NULL;
 
-gchar *get_node(char *np) {
+static gchar *get_node(dtr *dt, char *np) {
     gchar *nodes = NULL, *props = NULL, *ret = NULL;
     gchar *tmp = NULL, *pstr = NULL, *lstr = NULL;
     gchar *dir_path;
@@ -90,83 +93,111 @@ gchar *get_node(char *np) {
     dtr_obj_free(node);
     g_free(props);
     g_free(nodes);
+
     return ret;
 }
 
 /* different from  dtr_get_string() in that it re-uses the existing dt */
-char *get_dt_string(char *path, int decode) {
-    dtr_obj *obj;
-    char *ret = NULL;
+static char *get_dt_string(dtr *dt, char *path, gboolean decode) {
+    char *ret;
+
     if (decode) {
-        obj = dtr_get_prop_obj(dt, NULL, path);
+        dtr_obj *obj = dtr_get_prop_obj(dt, NULL, path);
+
         ret = dtr_str(obj);
+
         dtr_obj_free(obj);
-    } else
+    } else {
         ret = dtr_get_prop_str(dt, NULL, path);
+    }
+
     return ret;
 }
 
-gchar *get_summary() {
+static gchar *get_summary(dtr *dt) {
     char *model = NULL, *compat = NULL;
-    char *tmp[10];
     char *ret = NULL;
 
-    model = get_dt_string("/model", 0);
-    compat = get_dt_string("/compatible", 1);
+    model = get_dt_string(dt, "/model", 0);
+    compat = get_dt_string(dt, "/compatible", 1);
     UNKIFNULL(model);
     EMPIFNULL(compat);
 
+#if defined(__arm__)
     /* Expand on the DT information from known machines, like RPi.
      * RPi stores a revision value in /proc/cpuinfo that can be used
      * to look up details. This is just a nice place to pull it all
      * together for DT machines, with a nice fallback.
      * PPC Macs could be handled this way too. They store
      * machine identifiers in /proc/cpuinfo. */
-    if ( strstr(model, "Raspberry Pi") != NULL
-        || strstr(compat, "raspberrypi") != NULL ) {
-        tmp[0] = get_dt_string("/serial-number", 1);
-        tmp[1] = get_dt_string("/soc/gpu/compatible", 1);
-        tmp[9] = rpi_board_details();
-        tmp[8] = g_strdup_printf(
-                "[%s]\n" "%s=%s\n" "%s=%s\n",
+    if (strstr(model, "Raspberry Pi")
+        || strstr(compat, "raspberrypi")) {
+        gchar *gpu_compat = get_dt_string(dt, "/soc/gpu/compatible", 1);
+        gchar *rpi_details = rpi_board_details();
+        gchar *basic_info;
+
+        basic_info = g_strdup_printf(
+                "[%s]\n"
+                "%s=%s\n"
+                "%s=%s\n",
                 _("Platform"),
                 _("Compatible"), compat,
-                _("GPU-compatible"), tmp[1] );
-        if (tmp[9] != NULL) {
-            ret = g_strdup_printf("%s%s", tmp[9], tmp[8]);
+                _("GPU-compatible"), gpu_compat);
+
+        if (rpi_details) {
+            ret = g_strconcat(rpi_details, basic_info, NULL);
+
+            g_free(rpi_details);
         } else {
+            gchar *serial_number = get_dt_string(dt, "/serial-number", 1);
+
             ret = g_strdup_printf(
-                "[%s]\n" "%s=%s\n" "%s=%s\n" "%s=%s\n" "%s",
+                "[%s]\n"
+                "%s=%s\n"
+                "%s=%s\n"
+                "%s=%s\n"
+                "%s",
                 _("Raspberry Pi or Compatible"),
                 _("Model"), model,
-                _("Serial Number"), tmp[0],
+                _("Serial Number"), serial_number,
                 _("RCode"), _("No revision code available; unable to lookup model details."),
-                tmp[8]);
-        }
-        free(tmp[0]); free(tmp[1]);
-        free(tmp[9]); free(tmp[8]);
-    }
+                basic_info);
 
+            g_free(serial_number);
+        }
+
+        g_free(gpu_compat);
+        g_free(basic_info);
+    }
+#endif
+
+#if defined(__powerpc__)
     /* Power Macintosh */
     if (strstr(compat, "PowerBook") != NULL
          || strstr(compat, "MacRISC") != NULL
          || strstr(compat, "Power Macintosh") != NULL) {
-        tmp[9] =  ppc_mac_details();
-        if (tmp[9] != NULL) {
-            tmp[0] = get_dt_string("/serial-number", 1);
+        gchar *mac_details = ppc_mac_details();
+
+        if (mac_details) {
+            gchar *serial_number = get_dt_string(dt, "/serial-number", 1);
+
             ret = g_strdup_printf(
-                "%s[%s]\n" "%s=%s\n", tmp[9],
+                "%s[%s]\n"
+                "%s=%s\n",
+                mac_details,
                 _("More"),
-                _("Serial Number"), tmp[0] );
-            free(tmp[0]);
+                _("Serial Number"), serial_number);
+
+            free(mac_details);
+            free(serial_number);
         }
-        free(tmp[9]);
     }
+#endif
 
     /* fallback */
-    if (ret == NULL) {
-        tmp[0] = get_dt_string("/serial-number", 1);
-        EMPIFNULL(tmp[0]);
+    if (!ret) {
+        gchar *serial_number = get_dt_string(dt, "/serial-number", 1);
+        EMPIFNULL(serial_number);
         ret = g_strdup_printf(
                 "[%s]\n"
                 "%s=%s\n"
@@ -174,15 +205,18 @@ gchar *get_summary() {
                 "%s=%s\n",
                 _("Board"),
                 _("Model"), model,
-                _("Serial Number"), tmp[0],
+                _("Serial Number"), serial_number,
                 _("Compatible"), compat);
-        free(tmp[0]);
+        free(serial_number);
     }
+
     free(model);
+    free(compat);
+
     return ret;
 }
 
-void mi_add(const char *key, const char *value) {
+static void mi_add(const char *key, const char *value) {
     gchar *ckey, *rkey;
 
     ckey = hardinfo_clean_label(key, 0);
@@ -195,7 +229,7 @@ void mi_add(const char *key, const char *value) {
     g_free(rkey);
 }
 
-void add_keys(char *np) {
+static void add_keys(dtr *dt, char *np) {
     gchar *dir_path, *dt_path;
     gchar *ftmp, *ntmp;
     gchar *n_info;
@@ -206,7 +240,7 @@ void add_keys(char *np) {
     /* add self */
     obj = dtr_obj_read(dt, np);
     dt_path = dtr_obj_path(obj);
-    n_info = get_node(dt_path);
+    n_info = get_node(dt, dt_path);
     mi_add(dt_path, n_info);
 
     dir_path = g_strdup_printf("%s/%s", dtr_base_path(dt), np);
@@ -219,7 +253,7 @@ void add_keys(char *np) {
                     ntmp = g_strdup_printf("/%s", fn);
                 else
                     ntmp = g_strdup_printf("%s/%s", np, fn);
-                add_keys(ntmp);
+                add_keys(dt, ntmp);
                 g_free(ntmp);
             }
             g_free(ftmp);
@@ -228,7 +262,7 @@ void add_keys(char *np) {
     g_dir_close(dir);
 }
 
-char *msg_section(int dump) {
+static char *msg_section(dtr *dt, int dump) {
     gchar *aslbl = NULL;
     gchar *messages = dtr_messages(dt);
     gchar *ret = g_strdup_printf("[%s]\n", _("Messages"));
@@ -249,8 +283,8 @@ char *msg_section(int dump) {
 
 void __scan_dtree()
 {
-    dt = dtr_new(NULL);
-    gchar *summary = get_summary();
+    dtr *dt = dtr_new(NULL);
+    gchar *summary = get_summary(dt);
     gchar *maps = dtr_maps_info(dt);
     gchar *messages = NULL;
 
@@ -259,11 +293,9 @@ void __scan_dtree()
     mi_add("Maps", maps);
 
     if(dtr_was_found(dt))
-        add_keys("/");
-    messages = msg_section(0);
+        add_keys(dt, "/");
+    messages = msg_section(dt, 0);
     mi_add("Messages", messages);
-
-    //printf("%s\n", dtree_info);
 
     g_free(summary);
     g_free(maps);

@@ -22,27 +22,38 @@
 #include <sys/types.h>
 
 #include "devices.h"
+#include "dmi_util.h"
 
 typedef struct _DMIInfo		DMIInfo;
 
 struct _DMIInfo {
   const gchar *name;
-  const gchar *file;		/* for sysfs */
-  const gchar *param;		/* for dmidecode */
+  const gchar *id_str;
+  int group;
 };
 
 DMIInfo dmi_info_table[] = {
-  { "$BIOS",		NULL,					NULL },
-  { "Date",		"/sys/class/dmi/id/bios_date",		"bios-release-date" },
-  { "Vendor",		"/sys/class/dmi/id/bios_vendor",	"bios-vendor" },
-  { "Version#0",	"/sys/class/dmi/id/bios_version",	"bios-version" },
-  { "$Board",		NULL,					NULL },
-  { "Name",		"/sys/class/dmi/id/board_name",		"baseboard-product-name" },
-  { "Vendor",		"/sys/class/dmi/id/board_vendor",	"baseboard-manufacturer" },
-  { "$Product",		NULL,					NULL },
-  { "Name",		"/sys/class/dmi/id/product_name",	"system-product-name" },
-  { "Family",		"/sys/class/dmi/id/product_family",     "system-product-family" },
-  { "Version#1",	"/sys/class/dmi/id/product_version",    "system-product-version" },
+  { N_("Product"), NULL, 1 },
+  { N_("Name"), "system-product-name", 0 },
+  { N_("Family"), "system-product-family", 0 },
+  { N_("Vendor"), "system-manufacturer", 0 },
+  { N_("Version"), "system-version", 0 },
+  { N_("BIOS"), NULL, 1 },
+  { N_("Date"), "bios-release-date", 0 },
+  { N_("Vendor"), "bios-vendor", 0 },
+  { N_("Version"), "bios-version", 0 },
+  { N_("Board"), NULL, 1 },
+  { N_("Name"), "baseboard-product-name", 0 },
+  { N_("Vendor"), "baseboard-manufacturer", 0 },
+  { N_("Version"), "baseboard-version", 0 },
+  { N_("Serial Number"), "baseboard-serial-number", 0 },
+  { N_("Asset Tag"), "baseboard-asset-tag", 0 },
+  { N_("Chassis"), NULL, 1 },
+  { N_("Vendor"), "chassis-manufacturer", 0 },
+  { N_("Type"), "chassis-type", 0 },
+  { N_("Version"), "chassis-version", 0 },
+  { N_("Serial Number"), "chassis-serial-number", 0 },
+  { N_("Asset Tag"), "chassis-asset-tag", 0 },
 };
 
 gchar *dmi_info = NULL;
@@ -53,91 +64,13 @@ static void add_to_moreinfo(const char *group, const char *key, char *value)
   moreinfo_add_with_prefix("DEV", new_key, g_strdup(g_strstrip(value)));
 }
 
-gboolean dmi_get_info_dmidecode()
+gboolean dmi_get_info()
 {
-  FILE *dmi_pipe;
-  gchar buffer[256];
-  const gchar *group;
-  DMIInfo *info;
-  gboolean dmi_failed = FALSE;
-  gint i;
-
-  if (dmi_info) {
-    g_free(dmi_info);
-    dmi_info = NULL;
-  }
-
-  for (i = 0; i < G_N_ELEMENTS(dmi_info_table); i++) {
-    info = &dmi_info_table[i];
-
-    if (*(info->name) == '$') {
-      group = info->name + 1;
-      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
-    } else {
-      gchar *temp;
-
-      if (!info->param)
-        continue;
-
-      temp = g_strconcat("dmidecode -s ", info->param, NULL);
-      if ((dmi_pipe = popen(temp, "r"))) {
-        g_free(temp);
-
-        (void)fgets(buffer, 256, dmi_pipe);
-        if (pclose(dmi_pipe)) {
-          dmi_failed = TRUE;
-          break;
-        }
-
-        add_to_moreinfo(group, info->name, buffer);
-
-        const gchar *url = vendor_get_url(buffer);
-        if (url) {
-          const gchar *vendor = vendor_get_name(buffer);
-          if (g_strstr_len(vendor, -1, g_strstrip(buffer)) ||
-              g_strstr_len(g_strstrip(buffer), -1, vendor)) {
-            dmi_info = h_strdup_cprintf("%s=%s (%s)\n",
-                                        dmi_info,
-                                        info->name,
-                                        g_strstrip(buffer),
-                                        url);
-          } else {
-            dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n",
-                                        dmi_info,
-                                        info->name,
-                                        g_strstrip(buffer),
-                                        vendor, url);
-          }
-        } else {
-          dmi_info = h_strdup_cprintf("%s=%s\n",
-                                      dmi_info,
-                                      info->name,
-                                      buffer);
-        }
-      } else {
-        g_free(temp);
-        dmi_failed = TRUE;
-        break;
-      }
-    }
-  }
-
-  if (dmi_failed) {
-    g_free(dmi_info);
-    dmi_info = NULL;
-  }
-
-  return !dmi_failed;
-}
-
-gboolean dmi_get_info_sys()
-{
-  FILE *dmi_file;
-  gchar buffer[256];
   const gchar *group = NULL;
   DMIInfo *info;
   gboolean dmi_succeeded = FALSE;
   gint i;
+  gchar *value;
 
   if (dmi_info) {
     g_free(dmi_info);
@@ -147,45 +80,40 @@ gboolean dmi_get_info_sys()
   for (i = 0; i < G_N_ELEMENTS(dmi_info_table); i++) {
     info = &dmi_info_table[i];
 
-    if (*(info->name) == '$') {
-      group = info->name + 1;
-      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, group);
-    } else if (group && info->file) {
-      if ((dmi_file = fopen(info->file, "r"))) {
-        (void)fgets(buffer, 256, dmi_file);
-        fclose(dmi_file);
+    if (info->group) {
+      group = info->name;
+      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, _(info->name) );
+    } else if (group && info->id_str) {
+      if (strcmp(info->id_str, "chassis-type") == 0)
+        value = dmi_chassis_type_str(-1, 1);
+      else
+        value = dmi_get_str(info->id_str);
 
-        add_to_moreinfo(group, info->name, buffer);
+      if (value != NULL) {
+        add_to_moreinfo(group, info->name, value);
 
-        const gchar *url = vendor_get_url(buffer);
+        const gchar *url = vendor_get_url(value);
         if (url) {
-          const gchar *vendor = vendor_get_name(buffer);
-          if (g_strstr_len(vendor, -1, g_strstrip(buffer)) ||
-              g_strstr_len(g_strstrip(buffer), -1, vendor)) {
-            dmi_info = h_strdup_cprintf("%s=%s (%s)\n",
-                                        dmi_info,
-                                        info->name,
-                                        g_strstrip(buffer),
-                                        url);
-          } else {
-            dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n",
-                                        dmi_info,
-                                        info->name,
-                                        g_strstrip(buffer),
-                                        vendor, url);
-          }
+          const gchar *vendor = vendor_get_name(value);
+          dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n",
+                                      dmi_info,
+                                      _(info->name),
+                                      value,
+                                      vendor, url);
         } else {
           dmi_info = h_strdup_cprintf("%s=%s\n",
                                       dmi_info,
-                                      info->name,
-                                      g_strstrip(buffer));
+                                      _(info->name),
+                                      value);
         }
         dmi_succeeded = TRUE;
       } else {
         dmi_info = h_strdup_cprintf("%s=%s\n",
                                     dmi_info,
-                                    info->name,
-                                    _("(Not available; Perhaps try running HardInfo as root.)") );
+                                    _(info->name),
+                                    (getuid() == 0)
+                                      ? _("(Not available)")
+                                      : _("(Not available; Perhaps try running HardInfo as root.)") );
       }
     }
   }
@@ -202,11 +130,7 @@ void __scan_dmi()
 {
   gboolean dmi_ok;
 
-  dmi_ok = dmi_get_info_sys();
-
-  if (!dmi_ok) {
-    dmi_ok = dmi_get_info_dmidecode();
-  }
+  dmi_ok = dmi_get_info();
 
   if (!dmi_ok) {
     dmi_info = g_strdup("[No DMI information]\n"

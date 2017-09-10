@@ -32,6 +32,10 @@
 #include <vendor.h>
 
 #include "computer.h"
+
+#include "dmi_util.h" /* for dmi_get_str() */
+#include "dt_util.h" /* for dtr_get_string() */
+
 #include "info.h"
 
 /* Callbacks */
@@ -303,38 +307,19 @@ static gchar *detect_machine_type(void)
     GDir *dir;
     gchar *chassis;
 
-    if (g_file_get_contents("/sys/devices/virtual/dmi/id/chassis_type", &chassis, NULL, NULL)) {
-        static const char *types[] = {
-            N_("Invalid chassis type (0)"),
-            N_("Unknown chassis type"), /* 1 is "Other", but not helpful in HardInfo */
-            N_("Unknown chassis type"),
-            N_("Desktop"),
-            N_("Low-profile Desktop"),
-            N_("Pizza Box"),
-            N_("Mini Tower"),
-            N_("Tower"),
-            N_("Portable"),
-            N_("Laptop"),
-            N_("Notebook"),
-            N_("Handheld"),
-            N_("Docking Station"),
-            N_("All-in-one"),
-            N_("Subnotebook"),
-            N_("Space-saving"),
-            N_("Lunch Box"),
-            N_("Main Server Chassis"),
-            N_("Expansion Chassis"),
-            N_("Sub Chassis"),
-            N_("Bus Expansion Chassis"),
-            N_("Peripheral Chassis"),
-            N_("RAID Chassis"),
-            N_("Rack Mount Chassis"),
-            N_("Sealed-case PC"),
-        };
-        int chassis_type = atoi(idle_free(chassis));
+    chassis = dmi_chassis_type_str(-1, 0);
+    if (chassis)
+        return chassis;
 
-        if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types))
-            return g_strdup(_(types[chassis_type]));
+    chassis = dtr_get_string("/model", 0);
+    if (chassis) {
+        if (strstr(chassis, "Raspberry Pi") != NULL
+            || strstr(chassis, "ODROID") != NULL
+            /* FIXME: consider making a table when adding more models */ ) {
+                g_free(chassis);
+                return g_strdup(_("Single-board computer"));
+        }
+        g_free(chassis);
     }
 
     if (g_file_test("/proc/pmu/info", G_FILE_TEST_EXISTS))
@@ -380,8 +365,6 @@ static gchar *detect_machine_type(void)
     }
 
     /* FIXME: check if batteries are found using /proc/apm */
-
-    /* FIXME: use dmidecode if available to get chassis type */
 
     return g_strdup(_("Unknown physical machine type"));
 }

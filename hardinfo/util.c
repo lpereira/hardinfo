@@ -876,9 +876,9 @@ static GSList *modules_check_deps(GSList * modules)
 							module->name,
 							deps[i]);
 			gtk_dialog_add_buttons(GTK_DIALOG(dialog),
-					       GTK_STOCK_NO,
+					       "_No",
 					       GTK_RESPONSE_REJECT,
-					       GTK_STOCK_OPEN,
+					       "_Open",
 					       GTK_RESPONSE_ACCEPT, NULL);
 
 			if (gtk_dialog_run(GTK_DIALOG(dialog)) ==

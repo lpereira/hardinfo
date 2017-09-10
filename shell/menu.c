@@ -49,17 +49,17 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_sync_manager)},
 
-    {"OpenAction", GTK_STOCK_OPEN,
+    {"OpenAction", "_Open",
      N_("_Open..."), NULL,
      NULL,
      G_CALLBACK(cb_sync_manager)},
 
-    {"CopyAction", GTK_STOCK_COPY,
+    {"CopyAction", "_Copy",
      N_("_Copy to Clipboard"), "<control>C",
      N_("Copy to clipboard"),
      G_CALLBACK(cb_copy_to_clipboard)},
 
-    {"RefreshAction", GTK_STOCK_REFRESH,
+    {"RefreshAction", "_Refresh",
      N_("_Refresh"), "F5",
      NULL,
      G_CALLBACK(cb_refresh)},
@@ -74,12 +74,12 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_report_bug)},
 
-    {"AboutAction", GTK_STOCK_ABOUT,
+    {"AboutAction", "_About",
      N_("_About HardInfo"), NULL,
      N_("Displays program version information"),
      G_CALLBACK(cb_about)},
 
-    {"QuitAction", GTK_STOCK_QUIT,
+    {"QuitAction", "_Quit",
      N_("_Quit"), "<control>Q",
      NULL,
      G_CALLBACK(cb_quit)}

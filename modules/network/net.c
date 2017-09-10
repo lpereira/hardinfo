@@ -306,24 +306,19 @@ remove_net_devices(gpointer key, gpointer value, gpointer data)
 #ifdef HAS_LINUX_WE
 const char *wifi_bars(int signal, int noise)
 {
-    float quality;
+    signal = -signal;
 
-    if (signal <= -100)
-        quality = 0.0;
-    else if (signal >= -50)
-        quality = 1.0;
-    else
-        quality = (2.0 * (signal + 100.0)) / 100.0;
-
-    if (quality < 0.20)
-        return "▰▱▱▱▱";
-    if (quality < 0.40)
-        return "▰▰▱▱▱";
-    if (quality < 0.60)
-        return "▰▰▰▱▱";
-    if (quality < 0.80)
+    if (signal > 80)
+        return "▰▰▰▰▰";
+    if (signal > 55)
         return "▰▰▰▰▱";
-    return "▰▰▰▰▰";
+    if (signal > 30)
+        return "▰▰▰▱▱";
+    if (signal > 15)
+        return "▰▰▱▱▱";
+    if (signal > 5)
+        return "▰▱▱▱▱";
+    return "▱▱▱▱▱";
 }
 #endif
 

@@ -359,24 +359,37 @@ gchar *get_memory_total(void)
 
 gchar *get_motherboard(void)
 {
-    char *board_name, *board_vendor, *product_version;
+    char *board_name, *board_vendor, *system_version;
+    char *ret;
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     scan_dmi(FALSE);
 
-    board_name = moreinfo_lookup("DEV:DMI:Board:Name");
-    board_vendor = moreinfo_lookup("DEV:DMI:Board:Vendor");
-    product_version = moreinfo_lookup("DEV:DMI:Product:Version#1");
+    board_name = dmi_get_str("baseboard-product-name");
+    if (board_name == NULL)
+        board_name = dmi_get_str("system-product-name");
 
-    if (!board_name || !*board_name)
-       board_name = _(" (model unknown)");
-    if (!board_vendor || !*board_vendor)
-       board_vendor = _(" (vendor unknown)");
+    board_vendor = dmi_get_str("baseboard-manufacturer");
+    if (board_vendor == NULL)
+        board_vendor = dmi_get_str("system-manufacturer");
 
-    if (product_version && *product_version)
-       return g_strdup_printf("%s / %s (%s)", product_version, board_name, board_vendor);
+    system_version = dmi_get_str("system-version");
 
-    return g_strconcat(board_vendor, " ", board_name, NULL);
+    if (board_name && board_vendor && system_version)
+        ret = g_strdup_printf("%s / %s (%s)", system_version, board_name, board_vendor);
+    else if (board_name && board_vendor)
+        ret = g_strconcat(board_vendor, " ", board_name, NULL);
+    else if (board_name)
+        ret = g_strdup(board_name);
+    else if (board_vendor)
+        ret = g_strdup(board_vendor);
+    else
+        ret = g_strdup(_("(Unknown)"));
+
+    free(board_name);
+    free(board_vendor);
+    free(system_version);
+    return ret;
 #endif
 
     /* use device tree "model" */
