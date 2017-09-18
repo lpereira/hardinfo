@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-02 23:28+0300\n"
+"POT-Creation-Date: 2017-09-18 18:51+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -445,14 +445,9 @@ msgid "Scanning: %s..."
 msgstr "Сканирование: %s..."
 
 #: hardinfo/util.c:1034 shell/shell.c:301 shell/shell.c:760 shell/shell.c:1822
-#: modules/benchmark.c:483 modules/benchmark.c:491
+#: modules/benchmark.c:505 modules/benchmark.c:513
 msgid "Done."
 msgstr "Выполнено."
-
-#: shell/callbacks.c:117
-#, c-format
-msgid "%s Module"
-msgstr "%s модуль"
 
 #: shell/callbacks.c:128
 #, c-format
@@ -643,6 +638,14 @@ msgstr "_Панель инструментов"
 msgid "Save File"
 msgstr "Сохранить файл"
 
+#: shell/report.c:497 shell/report.c:929 shell/syncmanager.c:748
+msgid "_Cancel"
+msgstr "_Отмена"
+
+#: shell/report.c:499
+msgid "_Save"
+msgstr "_Сохранить"
+
 #: shell/report.c:629
 msgid "Cannot create ReportContext. Programming bug?"
 msgstr "Не могу создать ReportContext. Ошибка программирования?"
@@ -650,6 +653,14 @@ msgstr "Не могу создать ReportContext. Ошибка програм�
 #: shell/report.c:648
 msgid "Open the report with your web browser?"
 msgstr "Открыть отчёт в веб-браузере?"
+
+#: shell/report.c:651
+msgid "_No"
+msgstr "_Нет"
+
+#: shell/report.c:652
+msgid "_Open"
+msgstr "_Открыть"
 
 #: shell/report.c:682
 msgid "Generating report..."
@@ -682,10 +693,6 @@ msgstr "Выбор: нет"
 #: shell/report.c:904
 msgid "Select _All"
 msgstr "Выбор: все"
-
-#: shell/report.c:929 shell/syncmanager.c:748
-msgid "_Cancel"
-msgstr "_Отмена"
 
 #: shell/report.c:939
 msgid "_Generate"
@@ -802,7 +809,29 @@ msgstr "Сетевое обновление"
 msgid "_Synchronize"
 msgstr "_Синхронизировать"
 
-#: modules/benchmark/bench_results.c:44 modules/benchmark/bench_results.c:295
+#. /or modify
+#. *    it under the terms of the GNU General Public License as published by
+#. *    the Free Software Foundation, version 2.
+#. *
+#. *    This program is distributed in the hope that it will be useful,
+#. *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#. *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#. *    GNU General Public License for more details.
+#. *
+#. *    You should have received a copy of the GNU General Public License
+#. *    along with this program; if not, write to the Free Software
+#. *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#.
+#. / Used for an unknown value. Having it in only one place cleans up the .po line references
+#: modules/benchmark/bench_results.c:22 modules/computer/display.c:54
+#: modules/computer/display.c:56 modules/computer/display.c:58
+#: modules/computer/display.c:61 modules/computer/os.c:279
+#: modules/devices.c:387 modules/devices/usb.c:48 modules/devices/usb.c:307
+#: modules/devices/usb.c:310 modules/network/net.c:437 includes/cpu_util.h:11
+msgid "(Unknown)"
+msgstr "(Неизвестно)"
+
+#: modules/benchmark/bench_results.c:47 modules/benchmark/bench_results.c:298
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:240
 #: modules/devices/arm/processor.c:383 modules/devices.c:299
 #: modules/devices.c:307 modules/devices.c:335
@@ -818,100 +847,86 @@ msgstr "_Синхронизировать"
 msgid "MHz"
 msgstr "МГц"
 
-#: modules/benchmark/bench_results.c:353 modules/benchmark/bench_results.c:385
+#: modules/benchmark/bench_results.c:347 modules/benchmark/bench_results.c:408
+msgid "kiB"
+msgstr "КиБ"
+
+#: modules/benchmark/bench_results.c:361 modules/benchmark/bench_results.c:395
 msgid "Benchmark Result"
 msgstr "Результат теста"
 
-#: modules/benchmark/bench_results.c:354 modules/benchmark/bench_results.c:388
+#: modules/benchmark/bench_results.c:362 modules/benchmark/bench_results.c:398
 msgid "Threads"
 msgstr "Потоки"
 
-#: modules/benchmark/bench_results.c:355 modules/benchmark/bench_results.c:389
+#: modules/benchmark/bench_results.c:363 modules/benchmark/bench_results.c:399
 msgid "Note"
 msgstr "Примечание"
 
-#: modules/benchmark/bench_results.c:356
+#: modules/benchmark/bench_results.c:364 modules/benchmark/bench_results.c:400
 msgid ""
 "This result is from an old version of HardInfo. Results might not be "
 "comparable to current version. Some details are missing."
-msgstr "Данный результат получен с использованием старой версии HardInfo."
-"Он может быть несопоставим с результатом текущей версии, поскольку "
-"отсутствуют некоторые подробности."
+msgstr ""
+"Данный результат получен с использованием старой версии HardInfo.Он может "
+"быть несопоставим с результатом текущей версии, поскольку отсутствуют "
+"некоторые подробности."
 
-#: modules/benchmark/bench_results.c:357 modules/benchmark/bench_results.c:391
+#: modules/benchmark/bench_results.c:365 modules/benchmark/bench_results.c:401
 #: modules/devices/devicetree/pmac_data.c:81 modules/devices/sh/processor.c:85
 msgid "Machine"
 msgstr "Машина"
 
-#: modules/benchmark/bench_results.c:358 modules/benchmark/bench_results.c:392
-#: modules/devices/devicetree.c:175 modules/devices/dmi.c:45
+#: modules/benchmark/bench_results.c:366 modules/benchmark/bench_results.c:402
+#: modules/devices/devicetree.c:206 modules/devices/dmi.c:45
 msgid "Board"
 msgstr "Плата"
 
-#: modules/benchmark/bench_results.c:358 modules/benchmark/bench_results.c:360
-#: modules/benchmark/bench_results.c:363 modules/benchmark/bench_results.c:392
-#: modules/benchmark/bench_results.c:394 modules/benchmark/bench_results.c:397
-#: modules/computer/display.c:54 modules/computer/display.c:56
-#: modules/computer/display.c:58 modules/computer/display.c:61
-#: modules/computer/os.c:279 modules/devices.c:387 modules/devices/usb.c:48
-#: modules/devices/usb.c:307 modules/devices/usb.c:310
-#: modules/network/net.c:437 includes/cpu_util.h:11
-msgid "(Unknown)"
-msgstr "(Неизвестно)"
-
-#: modules/benchmark/bench_results.c:359 modules/benchmark/bench_results.c:393
+#: modules/benchmark/bench_results.c:367 modules/benchmark/bench_results.c:403
 msgid "CPU Name"
 msgstr "Название процессора"
 
-#: modules/benchmark/bench_results.c:360 modules/benchmark/bench_results.c:394
+#: modules/benchmark/bench_results.c:368 modules/benchmark/bench_results.c:404
 msgid "CPU Description"
 msgstr "Описание процессора"
 
-#: modules/benchmark/bench_results.c:361 modules/benchmark/bench_results.c:395
+#: modules/benchmark/bench_results.c:369 modules/benchmark/bench_results.c:405
 #: modules/benchmark.c:288
 msgid "CPU Config"
 msgstr "Конфигурация процессора"
 
-#: modules/benchmark/bench_results.c:362 modules/benchmark/bench_results.c:396
+#: modules/benchmark/bench_results.c:370 modules/benchmark/bench_results.c:406
 msgid "Threads Available"
 msgstr "Доступно потоков"
 
-#: modules/benchmark/bench_results.c:363 modules/benchmark/bench_results.c:397
+#: modules/benchmark/bench_results.c:371 modules/benchmark/bench_results.c:407
 #: modules/computer.c:475
 msgid "OpenGL Renderer"
 msgstr "Рендер OpenGL"
 
-#: modules/benchmark/bench_results.c:364 modules/benchmark/bench_results.c:398
+#: modules/benchmark/bench_results.c:372 modules/benchmark/bench_results.c:408
 #: modules/computer.c:108 modules/computer.c:464 modules/devices.c:96
 #: modules/devices/pci.c:149
 msgid "Memory"
 msgstr "Память"
 
-#: modules/benchmark/bench_results.c:364 modules/benchmark/bench_results.c:398
-msgid "kiB"
-msgstr "КиБ"
-
-#: modules/benchmark/bench_results.c:386
+#: modules/benchmark/bench_results.c:396
 msgid "Benchmark"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:387
+#: modules/benchmark/bench_results.c:397
 msgid "Result"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:390
-msgid "This result is from an old version of Hardinfo."
-msgstr ""
-
-#: modules/benchmark/bench_results.c:399
+#: modules/benchmark/bench_results.c:409
 msgid "Handles"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:400
+#: modules/benchmark/bench_results.c:410
 msgid "mid"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:401
+#: modules/benchmark/bench_results.c:411
 msgid "cfg_val"
 msgstr ""
 
@@ -961,39 +976,39 @@ msgstr "Процессор"
 msgid "Benchmarking: <b>%s</b>."
 msgstr "Тестирование: <b>%s</b>"
 
-#: modules/benchmark.c:429
-msgid "Benchmarking. Please do not move your mouse or press any keys."
-msgstr "Тестирование. Пожалуйста, не двигайте мышь и не нажимайте на кнопки."
-
-#: modules/benchmark.c:433
+#: modules/benchmark.c:434 modules/benchmark.c:454
 msgid "Cancel"
 msgstr "Отмена"
 
-#: modules/benchmark.c:570
+#: modules/benchmark.c:438 modules/benchmark.c:450
+msgid "Benchmarking. Please do not move your mouse or press any keys."
+msgstr "Тестирование. Пожалуйста, не двигайте мышь и не нажимайте на кнопки."
+
+#: modules/benchmark.c:592
 msgid "Results in MiB/second. Higher is better."
 msgstr "Результаты в МиБ/сек. Чем выше, тем лучше."
 
-#: modules/benchmark.c:574
+#: modules/benchmark.c:596
 msgid "Results in HIMarks. Higher is better."
 msgstr "Результаты в HIMarks. Чем выше, тем лучше."
 
-#: modules/benchmark.c:581
+#: modules/benchmark.c:603
 msgid "Results in seconds. Lower is better."
 msgstr "Результат в секундах. Чем ниже, тем лучше."
 
-#: modules/benchmark.c:589
+#: modules/benchmark.c:611
 msgid "Benchmarks"
 msgstr "Тесты"
 
-#: modules/benchmark.c:607
+#: modules/benchmark.c:629
 msgid "Perform tasks and compare with other systems"
 msgstr "Выполняет задания и сравнивает с другими системами"
 
-#: modules/benchmark.c:697
+#: modules/benchmark.c:719
 msgid "Send benchmark results"
 msgstr "Отправить результаты тестирования"
 
-#: modules/benchmark.c:702
+#: modules/benchmark.c:724
 msgid "Receive benchmark results"
 msgstr "Принять результаты тестирования"
 
@@ -1618,8 +1633,8 @@ msgstr "ID пользователя"
 msgid "Default Shell"
 msgstr "Оболочка по умолчанию"
 
-#: modules/devices/alpha/processor.c:88 modules/devices/devicetree.c:141
-#: modules/devices/devicetree.c:176 modules/devices/devicetree/pmac_data.c:80
+#: modules/devices/alpha/processor.c:88 modules/devices/devicetree.c:161
+#: modules/devices/devicetree.c:207 modules/devices/devicetree/pmac_data.c:80
 #: modules/devices/ia64/processor.c:165 modules/devices/m68k/processor.c:84
 #: modules/devices/mips/processor.c:75 modules/devices/parisc/processor.c:155
 #: modules/devices/ppc/processor.c:158 modules/devices/riscv/processor.c:182
@@ -2073,69 +2088,69 @@ msgstr "Собирает информацию об устройствах"
 msgid "Resource information requires superuser privileges"
 msgstr "Для вывода информации о ресурсах нужны права администратора"
 
-#: modules/devices/devicetree.c:47
+#: modules/devices/devicetree.c:50
 msgid "Properties"
 msgstr ""
 
-#: modules/devices/devicetree.c:48
+#: modules/devices/devicetree.c:51
 msgid "Children"
 msgstr ""
 
-#: modules/devices/devicetree.c:84
+#: modules/devices/devicetree.c:87
 msgid "Node"
 msgstr ""
 
-#: modules/devices/devicetree.c:85
+#: modules/devices/devicetree.c:88
 msgid "Node Path"
 msgstr ""
 
-#: modules/devices/devicetree.c:86
+#: modules/devices/devicetree.c:89
 msgid "Alias"
 msgstr ""
 
-#: modules/devices/devicetree.c:86 modules/devices/devicetree.c:87
+#: modules/devices/devicetree.c:89 modules/devices/devicetree.c:90
 msgid "(None)"
 msgstr ""
 
-#: modules/devices/devicetree.c:87
+#: modules/devices/devicetree.c:90
 msgid "Symbol"
 msgstr ""
 
-#: modules/devices/devicetree.c:132 modules/devices/devicetree/pmac_data.c:79
+#: modules/devices/devicetree.c:143 modules/devices/devicetree/pmac_data.c:79
 msgid "Platform"
 msgstr ""
 
-#: modules/devices/devicetree.c:133 modules/devices/devicetree.c:178
+#: modules/devices/devicetree.c:144 modules/devices/devicetree.c:209
 msgid "Compatible"
 msgstr ""
 
-#: modules/devices/devicetree.c:134
+#: modules/devices/devicetree.c:145
 msgid "GPU-compatible"
 msgstr ""
 
-#: modules/devices/devicetree.c:140
+#: modules/devices/devicetree.c:160
 msgid "Raspberry Pi or Compatible"
 msgstr ""
 
-#: modules/devices/devicetree.c:142 modules/devices/devicetree.c:160
-#: modules/devices/devicetree.c:177 modules/devices/devicetree/rpi_data.c:160
+#: modules/devices/devicetree.c:162 modules/devices/devicetree.c:189
+#: modules/devices/devicetree.c:208 modules/devices/devicetree/rpi_data.c:160
 #: modules/devices/dmi.c:49 modules/devices/dmi.c:55
 msgid "Serial Number"
 msgstr "Серийный номер"
 
-#: modules/devices/devicetree.c:143 modules/devices/devicetree/rpi_data.c:157
+#: modules/devices/devicetree.c:163 modules/devices/devicetree/rpi_data.c:157
 msgid "RCode"
 msgstr ""
 
-#: modules/devices/devicetree.c:143
+#: modules/devices/devicetree.c:163
 msgid "No revision code available; unable to lookup model details."
 msgstr ""
 
-#: modules/devices/devicetree.c:159
+#: modules/devices/devicetree.c:188
 msgid "More"
 msgstr ""
 
-#: modules/devices/devicetree.c:234
+#: modules/devices/devicetree.c:268
 msgid "Messages"
 msgstr ""
 
