@@ -918,7 +918,7 @@ static ReportDialog
  * gtk_dialog_get_action_area has been deprecated since version 3.12 and should not be used in newly-written code.
  * Direct access to the action area is discouraged; use gtk_dialog_add_button(), etc.
  */
-    dialog1_action_area = gtk_dialog_get_action_area(GTK_DIALOG(dialog));
+    dialog1_action_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 #else
     dialog1_action_area = GTK_DIALOG(dialog)->action_area;
 #endif
