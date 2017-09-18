@@ -494,9 +494,9 @@ static gchar *report_get_filename(void)
     dialog = gtk_file_chooser_dialog_new(_("Save File"),
 					 NULL,
 					 GTK_FILE_CHOOSER_ACTION_SAVE,
-					 "_Cancel",
+					 _("_Cancel"),
 					 GTK_RESPONSE_CANCEL,
-					 "_Save",
+					 _("_Save"),
 					 GTK_RESPONSE_ACCEPT, NULL);
 #else
     dialog = gtk_file_chooser_dialog_new(_("Save File"),
@@ -648,8 +648,8 @@ static gboolean report_generate(ReportDialog * rd)
 					_("Open the report with your web browser?"));
 #if GTK_CHECK_VERSION(3, 0, 0)
     gtk_dialog_add_buttons(GTK_DIALOG(dialog),
-			       "_No", GTK_RESPONSE_REJECT,
-			       "_Open", GTK_RESPONSE_ACCEPT, NULL);
+			       _("_No"), GTK_RESPONSE_REJECT,
+			       _("_Open"), GTK_RESPONSE_ACCEPT, NULL);
 #else
 	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 			       GTK_STOCK_NO, GTK_RESPONSE_REJECT,
