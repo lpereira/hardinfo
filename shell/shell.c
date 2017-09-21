@@ -447,7 +447,7 @@ static void create_window(void)
 
     shell->status = gtk_label_new("");
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_widget_set_valign(GTK_MISC(shell->status), GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(GTK_WIDGET(shell->status), GTK_ALIGN_CENTER);
 #else
     gtk_misc_set_alignment(GTK_MISC(shell->status), 0.0, 0.5);
 #endif
@@ -512,7 +512,8 @@ static void menu_item_set_icon_always_visible(Shell *shell,
 
     path = g_strdup_printf("%s/%s", parent_path, item_id);
     menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
-#if GTK_CHECK_VERSION(2, 18, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
+#else
     gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
 #endif
     g_free(path);
@@ -690,7 +691,7 @@ ShellSummary *summary_new(void)
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_container_add(GTK_SCROLLED_WINDOW(summary->scroll),
+    gtk_container_add(GTK_CONTAINER(summary->scroll),
                                           summary->view);
 #else
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(summary->scroll),
@@ -992,7 +993,10 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     }
 
     /* turn off the rules hint */
+#if GTK_CHECK_VERSION(3, 0, 0)
+#else
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
+#endif
 
     close_note(NULL, NULL);
 
@@ -1162,10 +1166,13 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		    g_free(file);
 		}
 	    } else if (g_str_equal(key, "Zebra")) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+#else
 		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW
 					     (shell->info->view),
 					     g_key_file_get_boolean
 					     (key_file, group, key, NULL));
+#endif
 	    }
 	}
 
@@ -1654,15 +1661,22 @@ static void shell_summary_add_item(ShellSummary *summary,
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_image, FALSE, FALSE, 0);
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_label, FALSE, FALSE, 0);
 
+     content = gtk_label_new(temp);
      /* TODO:GTK3 gtk_alignment_new(), etc is deprecated from 3.14 */
+#if GTK_CHECK_VERSION(3, 0, 0)
+     GtkWidget *frame_box;
+     frame_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+     gtk_widget_set_margin_start(GTK_BOX(frame_box), 48);
+     gtk_box_pack_start(GTK_BOX(frame_box), content, FALSE, FALSE, 0);
+     gtk_container_add(GTK_CONTAINER(frame), frame_box);
+#else
      alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
      gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 48, 0);
      gtk_widget_show(alignment);
      gtk_container_add(GTK_CONTAINER(frame), alignment);
-
-     content = gtk_label_new(temp);
      gtk_misc_set_alignment(GTK_MISC(content), 0.0, 0.5);
      gtk_container_add(GTK_CONTAINER(alignment), content);
+#endif
 
      gtk_widget_show_all(frame);
      gtk_widget_show_all(frame_label_box);
