@@ -447,7 +447,7 @@ static void create_window(void)
 
     shell->status = gtk_label_new("");
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_widget_set_valign(GTK_MISC(shell->status), GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(GTK_WIDGET(shell->status), GTK_ALIGN_CENTER);
 #else
     gtk_misc_set_alignment(GTK_MISC(shell->status), 0.0, 0.5);
 #endif
@@ -1640,15 +1640,22 @@ static void shell_summary_add_item(ShellSummary *summary,
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_image, FALSE, FALSE, 0);
      gtk_box_pack_start(GTK_BOX(frame_label_box), frame_label, FALSE, FALSE, 0);
 
+     content = gtk_label_new(temp);
      /* TODO:GTK3 gtk_alignment_new(), etc is deprecated from 3.14 */
+#if GTK_CHECK_VERSION(3, 0, 0)
+     GtkWidget *frame_box;
+     frame_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+     gtk_widget_set_margin_start(GTK_BOX(frame_box), 48);
+     gtk_box_pack_start(GTK_BOX(frame_box), content, FALSE, FALSE, 0);
+     gtk_container_add(GTK_CONTAINER(frame), frame_box);
+#else
      alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
      gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 48, 0);
      gtk_widget_show(alignment);
      gtk_container_add(GTK_CONTAINER(frame), alignment);
-
-     content = gtk_label_new(temp);
      gtk_misc_set_alignment(GTK_MISC(content), 0.0, 0.5);
      gtk_container_add(GTK_CONTAINER(alignment), content);
+#endif
 
      gtk_widget_show_all(frame);
      gtk_widget_show_all(frame_label_box);
