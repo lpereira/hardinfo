@@ -701,6 +701,17 @@ ShellSummary *summary_new(void)
     return summary;
 }
 
+static gboolean
+select_first_tree_item(gpointer data)
+{
+    GtkTreeIter first;
+
+    if (gtk_tree_model_get_iter_first(shell->tree->model, &first))
+        gtk_tree_selection_select_iter(shell->tree->selection, &first);
+
+    return FALSE;
+}
+
 void shell_init(GSList * modules)
 {
     if (shell) {
@@ -770,6 +781,9 @@ void shell_init(GSList * modules)
 #else
     shell_action_set_enabled("SyncManagerAction", sync_manager_count_entries() > 0);
 #endif
+
+    /* Should select Computer Summary (note: not Computer/Summary) */
+    g_idle_add(select_first_tree_item, NULL);
 }
 
 static gboolean update_field(gpointer data)
