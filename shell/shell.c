@@ -512,7 +512,8 @@ static void menu_item_set_icon_always_visible(Shell *shell,
 
     path = g_strdup_printf("%s/%s", parent_path, item_id);
     menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
-#if GTK_CHECK_VERSION(2, 18, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
+#else
     gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
 #endif
     g_free(path);
@@ -690,7 +691,7 @@ ShellSummary *summary_new(void)
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_container_add(GTK_SCROLLED_WINDOW(summary->scroll),
+    gtk_container_add(GTK_CONTAINER(summary->scroll),
                                           summary->view);
 #else
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(summary->scroll),
@@ -992,7 +993,10 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     }
 
     /* turn off the rules hint */
+#if GTK_CHECK_VERSION(3, 0, 0)
+#else
     gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(shell->info->view), FALSE);
+#endif
 
     close_note(NULL, NULL);
 
@@ -1162,10 +1166,13 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		    g_free(file);
 		}
 	    } else if (g_str_equal(key, "Zebra")) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+#else
 		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW
 					     (shell->info->view),
 					     g_key_file_get_boolean
 					     (key_file, group, key, NULL));
+#endif
 	    }
 	}
 
