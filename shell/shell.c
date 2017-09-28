@@ -1666,7 +1666,7 @@ static void shell_summary_add_item(ShellSummary *summary,
 #if GTK_CHECK_VERSION(3, 0, 0)
      GtkWidget *frame_box;
      frame_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-     gtk_widget_set_margin_start(GTK_BOX(frame_box), 48);
+     gtk_widget_set_margin_start(GTK_WIDGET(frame_box), 48);
      gtk_box_pack_start(GTK_BOX(frame_box), content, FALSE, FALSE, 0);
      gtk_container_add(GTK_CONTAINER(frame), frame_box);
 #else
