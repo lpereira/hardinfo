@@ -582,6 +582,7 @@ gchar *callback_display(void)
                 computer->display->width, computer->display->height),
         info_field(_("Vendor"), computer->display->vendor),
         info_field(_("Version"), computer->display->version),
+        info_field(_("Current Display Name"), computer->display->display_name),
         info_field_last());
 
     info_add_computed_group(info, _("Monitors"), computer->display->monitors);

@@ -75,8 +75,9 @@ get_x11_info(DisplayInfo *di)
 	g_free(output);
 
 	old = output_lines;
-	while (*(output_lines++)) {
-            gchar **tmp = g_strsplit(*output_lines, ":", 0);
+	while (*output_lines) {
+            gchar **tmp = g_strsplit(*output_lines, ":", 2);
+            output_lines++;
 
             if (tmp[1] && tmp[0]) {
               tmp[1] = g_strchug(tmp[1]);
@@ -84,6 +85,7 @@ get_x11_info(DisplayInfo *di)
               get_str("vendor string", di->vendor);
               get_str("X.Org version", di->version);
               get_str("XFree86 version", di->version);
+              get_str("name of display", di->display_name);
 
               if (g_str_has_prefix(tmp[0], "number of extensions")) {
                 int n;
