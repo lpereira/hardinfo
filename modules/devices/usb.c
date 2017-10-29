@@ -394,6 +394,7 @@ gboolean __scan_usb_lsusb(void)
     if (!temp_lsusb) {
         DEBUG("cannot create temporary file for lsusb");
         pclose(lsusb);
+	g_free(temp);
         return FALSE;
     }
 
