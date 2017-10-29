@@ -30,6 +30,7 @@ computer_get_uptime(void)
         ui->minutes = minutes / 60;
         fclose(procuptime);
     } else {
+        g_free(ui);
         return NULL;
     }
 
