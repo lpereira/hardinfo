@@ -351,19 +351,27 @@ gchar *processor_get_capabilities_from_flags(gchar *strflags, gchar *lookup_pref
     gchar tmp_flag[64] = "";
     const gchar *meaning;
     gchar *tmp = NULL;
-    gint j = 0;
+    gint j = 0, i = 0;
 
     flags = g_strsplit(strflags, " ", 0);
     old = flags;
 
     while (flags[j]) {
-        sprintf(tmp_flag, "%s%s", lookup_prefix, flags[j]);
-        meaning = x86_flag_meaning(tmp_flag);
-
-        if (meaning) {
-            tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
+        if ( sscanf(flags[j], "[%d]", &i) ) {
+            /* Some flags are indexes, like [13], and that looks like
+             * a new section to hardinfo shell */
+            tmp = h_strdup_cprintf("(%s%d)=\n", tmp,
+                (lookup_prefix) ? lookup_prefix : "",
+                i );
         } else {
-            tmp = h_strdup_cprintf("%s=\n", tmp, flags[j]);
+            sprintf(tmp_flag, "%s%s", lookup_prefix, flags[j]);
+            meaning = x86_flag_meaning(tmp_flag);
+
+            if (meaning) {
+                tmp = h_strdup_cprintf("%s=%s\n", tmp, flags[j], meaning);
+            } else {
+                tmp = h_strdup_cprintf("%s=\n", tmp, flags[j]);
+            }
         }
         j++;
     }
@@ -473,10 +481,13 @@ gchar *processor_get_info(GSList * processors)
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
 
-        tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s\n",
+        tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s|%d:%d|%d\n",
                   tmp, processor->id,
                   processor->model_name,
-                  processor->cpu_mhz, _("MHz"));
+                  processor->cpu_mhz, _("MHz"),
+                  processor->cputopo->socket_id,
+                  processor->cputopo->core_id,
+                  processor->cputopo->id );
 
         hashkey = g_strdup_printf("CPU%d", processor->id);
         moreinfo_add_with_prefix("DEV", hashkey,
@@ -486,8 +497,10 @@ gchar *processor_get_info(GSList * processors)
 
     ret = g_strdup_printf("[$ShellParam$]\n"
                   "ViewType=1\n"
+                  "ColumnTitle$Extra1=%s\n"
+                  "ColumnTitle$Extra2=%s\n"
                   "[Processors]\n"
-                  "%s", tmp);
+                  "%s", _("Socket:Core"), _("Thread" /*TODO: +s*/), tmp);
     g_free(tmp);
 
     return ret;
