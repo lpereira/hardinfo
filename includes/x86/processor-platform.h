@@ -30,6 +30,8 @@ struct _ProcessorCache {
     gint size;
     gchar *type;
     gint ways_of_associativity;
+    gint uid; /* uid is unique among caches with the same (type, level) */
+    gint phy_sock;
 };
 
 struct _Processor {
