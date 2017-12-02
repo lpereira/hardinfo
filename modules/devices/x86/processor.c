@@ -212,9 +212,17 @@ static void __cache_obtain_info(Processor *processor)
       cache->size = h_sysfs_read_int(endpoint, entry);
       g_free(entry);
 
-
       entry = g_strconcat(index, "ways_of_associativity", NULL);
       cache->ways_of_associativity = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "id", NULL);
+      cache->uid = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      /* reacharound */
+      entry = g_strconcat(index, "../../topology/physical_package_id", NULL);
+      cache->phy_sock = h_sysfs_read_int(endpoint, entry);
       g_free(entry);
 
       g_free(index);
@@ -225,6 +233,114 @@ static void __cache_obtain_info(Processor *processor)
 fail:
     g_free(endpoint);
 }
+
+#define cmp_cache_test(f) if (a->f < b->f) return -1; if (a->f > b->f) return 1;
+
+static gint cmp_cache(ProcessorCache *a, ProcessorCache *b) {
+        gint i = 0;
+        cmp_cache_test(phy_sock);
+        i = g_strcmp0(a->type, b->type); if (i!=0) return i;
+        cmp_cache_test(level);
+        cmp_cache_test(uid); /* uid is unique among caches with the same (type, level) */
+        cmp_cache_test(size);
+        return 0;
+}
+
+static gint cmp_cache_ignore_id(ProcessorCache *a, ProcessorCache *b) {
+        gint i = 0;
+        cmp_cache_test(phy_sock);
+        i = g_strcmp0(a->type, b->type); if (i!=0) return i;
+        cmp_cache_test(level);
+        cmp_cache_test(size);
+        return 0;
+}
+
+gchar *caches_summary(GSList * processors)
+{
+    gchar *ret = g_strdup("[Caches]\n");
+    GSList *all_cache = NULL, *uniq_cache = NULL;
+    GSList *tmp, *l;
+    Processor *p;
+    ProcessorCache *c, *cur = NULL;
+    gint cur_count = 0, i = 0;
+
+    /* create list of all cache references */
+    for (l = processors; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (p->cache) {
+            tmp = g_slist_copy(p->cache);
+            if (all_cache) {
+                all_cache = g_slist_concat(all_cache, tmp);
+            } else {
+                all_cache = tmp;
+            }
+        }
+    }
+
+    if (g_slist_length(all_cache) == 0) {
+        ret = h_strdup_cprintf("%s", ret, _("(Not Available)") );
+        g_slist_free(all_cache);
+        return ret;
+    }
+
+    /* ignore duplicate references */
+    all_cache = g_slist_sort(all_cache, (GCompareFunc)cmp_cache);
+    for (l = all_cache; l; l = l->next) {
+        c = (ProcessorCache*)l->data;
+        if (!cur) {
+            cur = c;
+        } else {
+            if (cmp_cache(cur, c) != 0) {
+                uniq_cache = g_slist_prepend(uniq_cache, cur);
+                cur = c;
+            }
+        }
+    }
+    uniq_cache = g_slist_prepend(uniq_cache, cur);
+    uniq_cache = g_slist_reverse(uniq_cache);
+    cur = 0, cur_count = 0;
+
+    /* count and list caches */
+    for (l = uniq_cache; l; l = l->next) {
+        c = (ProcessorCache*)l->data;
+        if (!cur) {
+            cur = c;
+            cur_count = 1;
+        } else {
+            if (cmp_cache_ignore_id(cur, c) != 0) {
+                ret = h_strdup_cprintf(_("Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"),
+                                      ret,
+                                      cur->level,
+                                      C_("cache-type", cur->type),
+                                      cur->phy_sock,
+                                      cur_count,
+                                      cur->size,
+                                      cur->size * cur_count,
+                                      cur->ways_of_associativity,
+                                      cur->number_of_sets);
+                cur = c;
+                cur_count = 1;
+            } else {
+                cur_count++;
+            }
+        }
+    }
+    ret = h_strdup_cprintf(_("Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"),
+                          ret,
+                          cur->level,
+                          C_("cache-type", cur->type),
+                          cur->phy_sock,
+                          cur_count,
+                          cur->size,
+                          cur->size * cur_count,
+                          cur->ways_of_associativity,
+                          cur->number_of_sets);
+
+    g_slist_free(all_cache);
+    g_slist_free(uniq_cache);
+    return ret;
+}
+
 
 GSList *processor_scan(void)
 {
@@ -454,15 +570,19 @@ gchar *processor_describe(GSList * processors) {
 gchar *processor_meta(GSList * processors) {
     gchar *meta_cpu_name = processor_name(processors);
     gchar *meta_cpu_desc = processor_describe(processors);
+    gchar *meta_caches = caches_summary(processors);
     gchar *ret = NULL;
     UNKIFNULL(meta_cpu_desc);
     ret = g_strdup_printf("[%s]\n"
                         "%s=%s\n"
-                        "%s=%s\n",
+                        "%s=%s\n"
+                        "%s",
                         _("Package Information"),
                         _("Name"), meta_cpu_name,
-                        _("Description"), meta_cpu_desc);
+                        _("Description"), meta_cpu_desc,
+                        meta_caches);
     g_free(meta_cpu_desc);
+    g_free(meta_caches);
     return ret;
 }
 
