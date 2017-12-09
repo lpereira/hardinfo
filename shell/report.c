@@ -371,7 +371,7 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
-    gint i;
+    gint i, mc;
 
     if (columns == 2) {
       if (strlen(value))
@@ -380,10 +380,11 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
           ctx->output = h_strdup_cprintf("%s\n", ctx->output, key);
     } else {
       values = g_strsplit(value, "|", columns);
+      mc = g_strv_length(values) - 1;
 
       ctx->output = h_strdup_cprintf("%s\t", ctx->output, key);
 
-      for (i = columns - 2; i >= 0; i--) {
+      for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("%s\t",
                                        ctx->output,
                                        values[i]);
