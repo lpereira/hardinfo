@@ -12,7 +12,8 @@ SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 include(GNUInstallDirs)
 
 if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
-  set(HARDINFO_DEBUG 1)
+	set(HARDINFO_DEBUG 1)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
 endif()
 
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
