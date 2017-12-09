@@ -41,7 +41,7 @@ uint32_t cpubits_count(cpubits *b) {
 }
 
 int cpubits_max(cpubits *b) {
-    int i = CPUBITS_SIZE * 8;
+    int i = CPUBITS_SIZE * 8 - 1;
     while (i >= 0) {
         if (CPUBIT_GET(b, i))
             break;
