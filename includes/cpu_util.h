@@ -25,6 +25,7 @@ typedef struct {
     gint cpukhz_max, cpukhz_min, cpukhz_cur;
     gchar *scaling_driver, *scaling_governor;
     gint transition_latency;
+    gchar *shared_list;
 } cpufreq_data;
 
 typedef struct {
