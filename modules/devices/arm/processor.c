@@ -203,6 +203,97 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
     return tmp;
 }
 
+#define khzint_to_mhzdouble(k) (((double)k)/1000)
+#define cmp_clocks_test(f) if (a->f < b->f) return -1; if (a->f > b->f) return 1;
+
+static gint cmp_cpufreq_data(cpufreq_data *a, cpufreq_data *b) {
+        gint i = 0;
+        i = g_strcmp0(a->shared_list, b->shared_list); if (i!=0) return i;
+        cmp_clocks_test(cpukhz_max);
+        cmp_clocks_test(cpukhz_min);
+        return 0;
+}
+
+static gint cmp_cpufreq_data_ignore_affected(cpufreq_data *a, cpufreq_data *b) {
+        gint i = 0;
+        cmp_clocks_test(cpukhz_max);
+        cmp_clocks_test(cpukhz_min);
+        return 0;
+}
+
+gchar *clocks_summary(GSList * processors)
+{
+    gchar *ret = g_strdup_printf("[%s]\n", _("Clocks"));
+    GSList *all_clocks = NULL, *uniq_clocks = NULL;
+    GSList *tmp, *l;
+    Processor *p;
+    cpufreq_data *c, *cur = NULL;
+    gint cur_count = 0, i = 0;
+
+    /* create list of all clock references */
+    for (l = processors; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (p->cpufreq) {
+            all_clocks = g_slist_prepend(all_clocks, p->cpufreq);
+        }
+    }
+
+    if (g_slist_length(all_clocks) == 0) {
+        ret = h_strdup_cprintf("%s=\n", ret, _("(Not Available)") );
+        g_slist_free(all_clocks);
+        return ret;
+    }
+
+    /* ignore duplicate references */
+    all_clocks = g_slist_sort(all_clocks, (GCompareFunc)cmp_cpufreq_data);
+    for (l = all_clocks; l; l = l->next) {
+        c = (cpufreq_data*)l->data;
+        if (!cur) {
+            cur = c;
+        } else {
+            if (cmp_cpufreq_data(cur, c) != 0) {
+                uniq_clocks = g_slist_prepend(uniq_clocks, cur);
+                cur = c;
+            }
+        }
+    }
+    uniq_clocks = g_slist_prepend(uniq_clocks, cur);
+    uniq_clocks = g_slist_reverse(uniq_clocks);
+    cur = 0, cur_count = 0;
+
+    /* count and list clocks */
+    for (l = uniq_clocks; l; l = l->next) {
+        c = (cpufreq_data*)l->data;
+        if (!cur) {
+            cur = c;
+            cur_count = 1;
+        } else {
+            if (cmp_cpufreq_data_ignore_affected(cur, c) != 0) {
+                ret = h_strdup_cprintf(_("%.2f-%.2f %s=%dx\n"),
+                                ret,
+                                khzint_to_mhzdouble(cur->cpukhz_min),
+                                khzint_to_mhzdouble(cur->cpukhz_max),
+                                _("MHz"),
+                                cur_count);
+                cur = c;
+                cur_count = 1;
+            } else {
+                cur_count++;
+            }
+        }
+    }
+    ret = h_strdup_cprintf(_("%.2f-%.2f %s=%dx\n"),
+                    ret,
+                    khzint_to_mhzdouble(cur->cpukhz_min),
+                    khzint_to_mhzdouble(cur->cpukhz_max),
+                    _("MHz"),
+                    cur_count);
+
+    g_slist_free(all_clocks);
+    g_slist_free(uniq_clocks);
+    return ret;
+}
+
 gchar *
 processor_get_detailed_info(Processor *processor)
 {
@@ -342,22 +433,26 @@ gchar *processor_meta(GSList * processors) {
     gchar *meta_soc = processor_name(processors);
     gchar *meta_cpu_desc = processor_describe(processors);
     gchar *meta_cpu_topo = processor_describe_default(processors);
-    gchar *meta_clocks = processor_frequency_desc(processors);
+    gchar *meta_freq_desc = processor_frequency_desc(processors);
+    gchar *meta_clocks = clocks_summary(processors);
     gchar *ret = NULL;
     UNKIFNULL(meta_cpu_desc);
     ret = g_strdup_printf("[%s]\n"
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
-                            "%s=%s\n",
+                            "%s=%s\n"
+                            "%s",
                             _("SOC/Package"),
                             _("Name"), meta_soc,
                             _("Description"), meta_cpu_desc,
                             _("Topology"), meta_cpu_topo,
-                            _("Clocks"), meta_clocks );
+                            _("Logical CPU Config"), meta_freq_desc,
+                            meta_clocks );
     g_free(meta_soc);
     g_free(meta_cpu_desc);
     g_free(meta_cpu_topo);
+    g_free(meta_freq_desc);
     g_free(meta_clocks);
     return ret;
 }
