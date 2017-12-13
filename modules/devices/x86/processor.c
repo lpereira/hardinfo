@@ -176,6 +176,7 @@ static void __cache_obtain_info(Processor *processor)
 {
     ProcessorCache *cache;
     gchar *endpoint, *entry, *index;
+    gchar *uref = NULL;
     gint i;
     gint processor_number = processor->id;
 
@@ -216,8 +217,17 @@ static void __cache_obtain_info(Processor *processor)
       cache->ways_of_associativity = h_sysfs_read_int(endpoint, entry);
       g_free(entry);
 
+      /* unique cache references: id is nice, but share_cpu_list can be
+       * used if it is not available. */
       entry = g_strconcat(index, "id", NULL);
-      cache->uid = h_sysfs_read_int(endpoint, entry);
+      uref = h_sysfs_read_string(endpoint, entry);
+      g_free(entry);
+      if (uref != NULL && *uref != 0 )
+        cache->uid = atoi(uref);
+      else
+        cache->uid = -1;
+      entry = g_strconcat(index, "shared_cpu_list", NULL);
+      cache->shared_cpu_list = h_sysfs_read_string(endpoint, entry);
       g_free(entry);
 
       /* reacharound */
@@ -254,7 +264,7 @@ static gint cmp_cpufreq_data_ignore_affected(cpufreq_data *a, cpufreq_data *b) {
 
 gchar *clocks_summary(GSList * processors)
 {
-    gchar *ret = g_strdup("[Clocks]\n");
+    gchar *ret = g_strdup_printf("[%s]\n", _("Clocks"));
     GSList *all_clocks = NULL, *uniq_clocks = NULL;
     GSList *tmp, *l;
     Processor *p;
@@ -332,8 +342,13 @@ static gint cmp_cache(ProcessorCache *a, ProcessorCache *b) {
         cmp_cache_test(phy_sock);
         i = g_strcmp0(a->type, b->type); if (i!=0) return i;
         cmp_cache_test(level);
-        cmp_cache_test(uid); /* uid is unique among caches with the same (type, level) */
         cmp_cache_test(size);
+        cmp_cache_test(uid); /* uid is unique among caches with the same (type, level) */
+        if (a->uid == -1) {
+            /* if id wasn't available, use shared_cpu_list as a unique ref */
+            i = g_strcmp0(a->shared_cpu_list, b->shared_cpu_list); if (i!=0)
+            return i;
+        }
         return 0;
 }
 

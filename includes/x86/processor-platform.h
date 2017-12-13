@@ -31,6 +31,7 @@ struct _ProcessorCache {
     gchar *type;
     gint ways_of_associativity;
     gint uid; /* uid is unique among caches with the same (type, level) */
+    gchar *shared_cpu_list; /* some kernel's don't give a uid, so try shared_cpu_list */
     gint phy_sock;
 };
 
