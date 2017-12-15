@@ -32,13 +32,13 @@ typedef struct {
     int cores;
     int threads;
     char *mid;
-} simple_machine;
+} bench_machine;
 
 typedef struct {
     char *name;
     float result;
     int threads;
-    simple_machine *machine;
+    bench_machine *machine;
     int legacy; /* an old benchmark.conf result */
 } bench_result;
 
@@ -112,7 +112,7 @@ static int cpu_config_is_close(char *str0, char *str1) {
     return 0;
 }
 
-static gen_machine_id(simple_machine *m) {
+static gen_machine_id(bench_machine *m) {
     char *s;
     if (m) {
         if (m->mid != NULL)
@@ -135,19 +135,19 @@ static gen_machine_id(simple_machine *m) {
     }
 }
 
-simple_machine *simple_machine_new() {
-    simple_machine *m = NULL;
-    m = malloc(sizeof(simple_machine));
+bench_machine *bench_machine_new() {
+    bench_machine *m = NULL;
+    m = malloc(sizeof(bench_machine));
     if (m)
-        memset(m, 0, sizeof(simple_machine));
+        memset(m, 0, sizeof(bench_machine));
     return m;
 }
 
-simple_machine *simple_machine_this() {
-    simple_machine *m = NULL;
+bench_machine *bench_machine_this() {
+    bench_machine *m = NULL;
     char *tmp;
 
-    m = simple_machine_new();
+    m = bench_machine_new();
     if (m) {
         m->board = module_call_method("devices::getMotherboard");
         m->cpu_name = module_call_method("devices::getProcessorName");
@@ -170,7 +170,7 @@ simple_machine *simple_machine_this() {
     return m;
 }
 
-void simple_machine_free(simple_machine *s) {
+void bench_machine_free(bench_machine *s) {
     if (s) {
         free(s->board);
         free(s->cpu_name);
@@ -183,7 +183,7 @@ void simple_machine_free(simple_machine *s) {
 void bench_result_free(bench_result *s) {
     if (s) {
         free(s->name);
-        simple_machine_free(s->machine);
+        bench_machine_free(s->machine);
     }
 }
 
@@ -193,7 +193,7 @@ bench_result *bench_result_this_machine(const char *bench_name, float result, in
     b = malloc(sizeof(bench_result));
     if (b) {
         memset(b, 0, sizeof(bench_result));
-        b->machine = simple_machine_this();
+        b->machine = bench_machine_this();
         b->name = strdup(bench_name);
         b->result = result;
         b->threads = threads;
@@ -232,7 +232,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
     b = malloc(sizeof(bench_result));
     if (b) {
         memset(b, 0, sizeof(bench_result));
-        b->machine = simple_machine_new();
+        b->machine = bench_machine_new();
         b->name = strdup(section);
 
         if (vl >= 10) { /* the 11th could be empty */
