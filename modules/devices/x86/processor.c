@@ -226,6 +226,7 @@ static void __cache_obtain_info(Processor *processor)
         cache->uid = atoi(uref);
       else
         cache->uid = -1;
+      g_free(uref);
       entry = g_strconcat(index, "shared_cpu_list", NULL);
       cache->shared_cpu_list = h_sysfs_read_string(endpoint, entry);
       g_free(entry);
