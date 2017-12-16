@@ -85,7 +85,8 @@ int cpu_procs_cores_threads(int *p, int *c, int *t) {
         for (i = 0; i <= m; i++) {
             pack_id = get_cpu_int("topology/physical_package_id", i, CPU_TOPO_NULL);
             core_id = get_cpu_int("topology/core_id", i, CPU_TOPO_NULL);
-            if (pack_id >= 0) { CPUBIT_SET(packs, pack_id); }
+            if (pack_id < 0) pack_id = 0;
+            CPUBIT_SET(packs, pack_id);
             if (core_id >= 0) { CPUBIT_SET(cores, (pack_id * MAX_CORES_PER_PACK) + core_id ); }
         }
         *t = cpubits_count(threads);
