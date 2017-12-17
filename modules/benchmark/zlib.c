@@ -31,8 +31,8 @@ static gpointer zlib_for(unsigned int start, unsigned int end, void *data, gint 
     compressed = malloc(bound);
     if (!compressed)
         return NULL;
-    
-    for (i = start; i <= end; i++) { 
+
+    for (i = start; i <= end; i++) {
         char uncompressed[65536];
         uLong compressedBound = bound;
         uLong destBound = sizeof(uncompressed);
@@ -42,30 +42,32 @@ static gpointer zlib_for(unsigned int start, unsigned int end, void *data, gint 
     }
 
     free(compressed);
-    
+
     return NULL;
 }
 
 void
 benchmark_zlib(void)
 {
-    gdouble elapsed = 0;
+    bench_value r = EMPTY_BENCH_VALUE;
     gchar *tmpsrc, *bdata_path;
-    
+
     bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);
         return;
-    }     
-    
+    }
+
     shell_view_set_enabled(FALSE);
     shell_status_update("Running Zlib benchmark...");
-        
-    elapsed = benchmark_parallel_for(0, 50000, zlib_for, tmpsrc);
-    
+
+    r = benchmark_parallel_for(0, 0, 50000, zlib_for, tmpsrc);
+
     g_free(bdata_path);
     g_free(tmpsrc);
 
-    gdouble marks = (50000. * 65536.) / (elapsed * 840205128.);
-    bench_results[BENCHMARK_ZLIB] = marks;
+    //TODO: explain in code comments
+    gdouble marks = (50000. * 65536.) / (r.elapsed_time * 840205128.);
+    r.result = marks;
+    bench_results[BENCHMARK_ZLIB] = r;
 }

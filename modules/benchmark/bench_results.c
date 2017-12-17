@@ -36,8 +36,7 @@ typedef struct {
 
 typedef struct {
     char *name;
-    float result;
-    int threads;
+    bench_value bvalue;
     bench_machine *machine;
     int legacy; /* an old benchmark.conf result */
 } bench_result;
@@ -159,12 +158,6 @@ bench_machine *bench_machine_this() {
         free(tmp);
 
         cpu_procs_cores_threads(&m->processors, &m->cores, &m->threads);
-        /*
-        tmp = module_call_method("devices::getProcessorCount");
-        m->threads = atoi(tmp);
-        free(tmp);
-        */
-
         gen_machine_id(m);
     }
     return m;
@@ -187,7 +180,7 @@ void bench_result_free(bench_result *s) {
     }
 }
 
-bench_result *bench_result_this_machine(const char *bench_name, float result, int threads) {
+bench_result *bench_result_this_machine(const char *bench_name, bench_value r) {
     bench_result *b = NULL;
 
     b = malloc(sizeof(bench_result));
@@ -195,8 +188,7 @@ bench_result *bench_result_this_machine(const char *bench_name, float result, in
         memset(b, 0, sizeof(bench_result));
         b->machine = bench_machine_this();
         b->name = strdup(bench_name);
-        b->result = result;
-        b->threads = threads;
+        b->bvalue = r;
         b->legacy = 0;
     }
     return b;
@@ -221,6 +213,32 @@ static int nx_prefix(const char *str) {
     return -1;
 }
 
+/* old results didn't store the actual number of threads used */
+static int guess_threads_old_result(const char *bench_name, int threads_available) {
+#define CHKBNAME(BN) (strcmp(bench_name, BN) == 0)
+    if (CHKBNAME("CPU Fibonacci") )
+        return 1;
+    if (CHKBNAME("FPU FFT") ) {
+        if (threads_available >= 4)
+            return 4;
+        else if (threads_available >= 2)
+            return 2;
+        else
+            return 1;
+    }
+    if (CHKBNAME("CPU N-Queens") ) {
+        if (threads_available >= 10)
+            return 10;
+        else if (threads_available >= 5)
+            return 5;
+        else if (threads_available >= 2)
+            return 2;
+        else
+            return 1;
+    }
+    return threads_available;
+}
+
 bench_result *bench_result_benchmarkconf(const char *section, const char *key, char **values) {
     bench_result *b = NULL;
     char *s0, *s1, *s2;
@@ -237,8 +255,8 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 
         if (vl >= 10) { /* the 11th could be empty */
             b->machine->mid = strdup(key);
-            b->result = atof(values[0]);
-            b->threads = atoi(values[1]);
+            b->bvalue.result = atof(values[0]);
+            b->bvalue.threads_used = atoi(values[1]);
             b->machine->board = strdup(values[2]);
             b->machine->cpu_name = strdup(values[3]);
             b->machine->cpu_desc = strdup(values[4]);
@@ -251,7 +269,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
                 b->machine->ogl_renderer = strdup(values[10]);
             b->legacy = 0;
         } else if (vl >= 2) {
-            b->result = atof(values[0]);
+            b->bvalue.result = atof(values[0]);
             b->legacy = 1;
 
             /* old old format has prefix before cpu name (ex: 4x Pentium...) */
@@ -259,11 +277,9 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             if (nx > 0) {
                 b->machine->cpu_name = strdup(strchr(key, 'x') + 1);
                 b->machine->threads = nx;
-                b->threads = nx;
             } else {
                 b->machine->cpu_name = strdup(key);
                 b->machine->threads = 1;
-                b->threads = 1;
             }
 
             b->machine->cpu_config = strdup(values[1]);
@@ -271,8 +287,9 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             nx = nx_prefix(values[1]);
             if (nx > 0) {
                 b->machine->threads = nx;
-                b->threads = nx;
             }
+
+            b->bvalue.threads_used = guess_threads_old_result(section, b->machine->threads);
 
             /* If the clock rate in the id string is more than the
              * config string, use that. Older hardinfo used current cpu freq
@@ -295,7 +312,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
                     n = atof(s1+1);
                     n *= m;
 
-                    s1 = g_strdup_printf("%dx %.2f %s", b->threads, n, _("MHz"));
+                    s1 = g_strdup_printf("%dx %.2f %s", b->bvalue.threads_used, n, _("MHz"));
                     if ( cpu_config_cmp(b->machine->cpu_config, s1) == -1
                          && !cpu_config_is_close(b->machine->cpu_config, s1) ) {
                         free(b->machine->cpu_config);
@@ -328,7 +345,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 char *bench_result_benchmarkconf_line(bench_result *b) {
     char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
     char *ret = g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s\n",
-            b->machine->mid, b->result, b->threads,
+            b->machine->mid, b->bvalue.result, b->bvalue.threads_used,
             (b->machine->board != NULL) ? b->machine->board : "",
             b->machine->cpu_name,
             (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : "",
@@ -341,7 +358,7 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
     return ret;
 }
 
-char *bench_result_more_info(bench_result *b) {
+static char *bench_result_more_info_less(bench_result *b) {
     char *memory =
         (b->machine->memory_kiB > 0)
         ? g_strdup_printf("%d %s", b->machine->memory_kiB, _("kiB") )
@@ -359,7 +376,7 @@ char *bench_result_more_info(bench_result *b) {
         /* ogl rend */  "%s=%s\n"
         /* mem */       "%s=%s\n",
                         _("Benchmark Result"),
-                        _("Threads"), b->threads,
+                        _("Threads"), b->bvalue.threads_used,
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
@@ -375,11 +392,12 @@ char *bench_result_more_info(bench_result *b) {
     return ret;
 }
 
-char *bench_result_more_info_complete(bench_result *b) {
+static char *bench_result_more_info_complete(bench_result *b) {
     return g_strdup_printf("[%s]\n"
         /* bench name */"%s=%s\n"
-        /* result */    "%s=%0.2f\n"
         /* threads */   "%s=%d\n"
+        /* result */    "%s=%0.2f\n"
+        /* elapsed */   "%s=%0.2f\n"
         /* legacy */    "%s=%s\n"
                         "[%s]\n"
         /* board */     "%s=%s\n"
@@ -394,8 +412,9 @@ char *bench_result_more_info_complete(bench_result *b) {
         /* cfg_val */   "%s=%.2f\n",
                         _("Benchmark Result"),
                         _("Benchmark"), b->name,
-                        _("Result"), b->result,
-                        _("Threads"), b->threads,
+                        _("Threads"), b->bvalue.threads_used,
+                        _("Result"), b->bvalue.result,
+                        _("Elapsed Time"), b->bvalue.elapsed_time,
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
@@ -410,4 +429,9 @@ char *bench_result_more_info_complete(bench_result *b) {
                         _("mid"), b->machine->mid,
                         _("cfg_val"), cpu_config_val(b->machine->cpu_config)
                         );
+}
+
+char *bench_result_more_info(bench_result *b) {
+    //return bench_result_more_info_complete(b);
+    return bench_result_more_info_less(b);
 }

@@ -22,8 +22,12 @@
 void
 benchmark_gui(void)
 {
+    bench_value r = EMPTY_BENCH_VALUE;
+
     shell_view_set_enabled(FALSE);
     shell_status_update("Running drawing benchmark...");
-        
-    bench_results[BENCHMARK_GUI] = guibench();
+
+    r.result = guibench(); //TODO: explain in code comments
+
+    bench_results[BENCHMARK_GUI] = r;
 }
