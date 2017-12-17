@@ -15,8 +15,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-  
-	
+
+
 
 COMMENTS ON USING THIS CODE:
 
@@ -31,7 +31,7 @@ Normal usage is as follows:
    [4] Decryption is the same as encryption except that the plaintext and
        ciphertext are reversed.
 
-Warning #1:  The code does not check key lengths. (Caveat encryptor.) 
+Warning #1:  The code does not check key lengths. (Caveat encryptor.)
 Warning #2:  Beware that Blowfish keys repeat such that "ab" = "abab".
 Warning #3:  It is normally a good idea to zeroize the BLOWFISH_CTX before
   freeing it.
@@ -41,33 +41,33 @@ Warning #4:  Endianness conversions are the responsibility of the caller.
 Warning #5:  Make sure to use a reasonable mode of operation for your
   application.  (If you don't know what CBC mode is, see Warning #7.)
 Warning #6:  This code is susceptible to timing attacks.
-Warning #7:  Security engineering is risky and non-intuitive.  Have someone 
+Warning #7:  Security engineering is risky and non-intuitive.  Have someone
   check your work.  If you don't know what you are doing, get help.
 
 
 This is code is fast enough for most applications, but is not optimized for
 speed.
 
-If you require this code under a license other than LGPL, please ask.  (I 
-can be located using your favorite search engine.)  Unfortunately, I do not 
-have time to provide unpaid support for everyone who uses this code.  
+If you require this code under a license other than LGPL, please ask.  (I
+can be located using your favorite search engine.)  Unfortunately, I do not
+have time to provide unpaid support for everyone who uses this code.
 
                                              -- Paul Kocher
-*/  
-    
+*/
+
 #include "hardinfo.h"
 #include "benchmark.h"
 #include "blowfish.h"
-    
+
 #define N               16
 static const unsigned long ORIG_P[16 + 2] =
     { 0x243F6A88L, 0x85A308D3L, 0x13198A2EL, 0x03707344L, 0xA4093822L,
     0x299F31D0L, 0x082EFA98L, 0xEC4E6C89L, 0x452821E6L, 0x38D01377L,
 	0xBE5466CFL, 0x34E90C6CL, 0xC0AC29B7L,
-    0xC97C50DDL, 0x3F84D5B5L, 0xB5470917L, 0x9216D5D9L, 0x8979FB1BL 
+    0xC97C50DDL, 0x3F84D5B5L, 0xB5470917L, 0x9216D5D9L, 0x8979FB1BL
 };
 
-static const unsigned long ORIG_S[4][256] = { 
+static const unsigned long ORIG_S[4][256] = {
 	{0xD1310BA6L, 0x98DFB5ACL, 0x2FFD72DBL, 0xD01ADFB7L, 0xB8E1AFEDL,
 	 0x6A267E96L, 0xBA7C9045L, 0xF12C7F99L, 0x24A19947L, 0xB3916CF7L,
 	 0x0801F2E2L, 0x858EFC16L, 0x636920D8L, 0x71574E69L, 0xA458FEA3L,
@@ -383,7 +383,7 @@ static const unsigned long ORIG_S[4][256] = {
  0x85CBFE4EL, 0x8AE88DD8L, 0x7AAAF9B0L, 0x4CF9AA7EL, 0x1948C25CL,
  0x02FB8A8CL, 0x01C36AE4L, 0xD6EBE1F9L, 0x90D4F869L, 0xA65CDEA0L,
  0x3F09252DL, 0xC208E69FL, 0xB74E6132L, 0xCE77E25BL, 0x578FDFE3L,
- 0x3AC372E6L} 
+ 0x3AC372E6L}
 };
 
 static unsigned long F(BLOWFISH_CTX * ctx, unsigned long x)
@@ -440,14 +440,14 @@ void Blowfish_Decrypt(BLOWFISH_CTX * ctx, unsigned long *xl,
     for (i = N + 1; i > 1; --i) {
 	Xl = Xl ^ ctx->P[i];
 	Xr = F(ctx, Xl) ^ Xr;
-	
-	    /* Exchange Xl and Xr */ 
+
+	    /* Exchange Xl and Xr */
 	    temp = Xl;
 	Xl = Xr;
 	Xr = temp;
     }
-    
-	/* Exchange Xl and Xr */ 
+
+	/* Exchange Xl and Xr */
 	temp = Xl;
     Xl = Xr;
     Xr = temp;
@@ -502,7 +502,7 @@ parallel_blowfish(unsigned int start, unsigned int end, void *data, gint thread_
     L = 0xBEBACAFE;
     R = 0xDEADBEEF;
 
-    for (i = start; i <= end; i++) { 
+    for (i = start; i <= end; i++) {
         Blowfish_Init(&ctx, (unsigned char*)data, 65536);
         Blowfish_Encrypt(&ctx, &L, &R);
         Blowfish_Decrypt(&ctx, &L, &R);
@@ -514,12 +514,14 @@ parallel_blowfish(unsigned int start, unsigned int end, void *data, gint thread_
 void
 benchmark_fish(void)
 {
+    bench_value r = EMPTY_BENCH_VALUE;
+
     gchar *tmpsrc;
     gchar *bdata_path;
 
     bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
-        bench_results[BENCHMARK_BLOWFISH] = -1.0f;
+        bench_results[BENCHMARK_BLOWFISH] = r;
         g_free(bdata_path);
         return;
     }
@@ -527,7 +529,10 @@ benchmark_fish(void)
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Blowfish benchmark...");
 
-    bench_results[BENCHMARK_BLOWFISH] = benchmark_parallel_for(0, 50000, parallel_blowfish, tmpsrc);
+    r = benchmark_parallel_for(0, 0, 50000, parallel_blowfish, tmpsrc);
+    r.result = r.elapsed_time;
+
+    bench_results[BENCHMARK_BLOWFISH] = r;
     g_free(bdata_path);
     g_free(tmpsrc);
 }

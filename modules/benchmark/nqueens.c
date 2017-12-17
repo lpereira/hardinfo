@@ -25,7 +25,7 @@ bool safe(int x, int y)
 int nqueens(int y)
 {
     int x;
-    
+
     for (x = 0; x < QUEENS; x++) {
 	if (safe((row[y - 1] = x), y - 1)) {
 	    if (y < QUEENS) {
@@ -35,32 +35,33 @@ int nqueens(int y)
             }
         }
     }
-    
+
     return 0;
 }
 
 static gpointer nqueens_for(unsigned int start, unsigned int end, void *data, gint thread_number)
 {
     unsigned int i;
-    
-    for (i = start; i <= end; i++) { 
+
+    for (i = start; i <= end; i++) {
         nqueens(0);
     }
-    
+
     return NULL;
 }
 
 void
 benchmark_nqueens(void)
 {
-    gdouble elapsed = 0;
-    
+    bench_value r = EMPTY_BENCH_VALUE;
+
     shell_view_set_enabled(FALSE);
     shell_status_update("Running N-Queens benchmark...");
-        
-    elapsed = benchmark_parallel_for(0, 10, nqueens_for, NULL);
-    
-    bench_results[BENCHMARK_NQUEENS] = elapsed;
+
+    r = benchmark_parallel_for(0, 0, 10, nqueens_for, NULL);
+    r.result = r.elapsed_time;
+
+    bench_results[BENCHMARK_NQUEENS] = r;
 }
 
 

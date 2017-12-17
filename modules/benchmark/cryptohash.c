@@ -20,21 +20,21 @@
 #include "sha1.h"
 #include "benchmark.h"
 
-static void inline md5_step(char *data, glong srclen)
+void inline md5_step(char *data, glong srclen)
 {
     struct MD5Context ctx;
     guchar checksum[16];
-    
+
     MD5Init(&ctx);
     MD5Update(&ctx, (guchar *)data, srclen);
     MD5Final(checksum, &ctx);
 }
 
-static void inline sha1_step(char *data, glong srclen)
+void inline sha1_step(char *data, glong srclen)
 {
     SHA1_CTX ctx;
     guchar checksum[20];
-    
+
     SHA1Init(&ctx);
     SHA1Update(&ctx, (guchar*)data, srclen);
     SHA1Final(checksum, &ctx);
@@ -43,37 +43,38 @@ static void inline sha1_step(char *data, glong srclen)
 static gpointer cryptohash_for(unsigned int start, unsigned int end, void *data, gint thread_number)
 {
     unsigned int i;
-    
-    for (i = start; i <= end; i++) { 
+
+    for (i = start; i <= end; i++) {
         if (i & 1) {
             md5_step(data, 65536);
         } else {
             sha1_step(data, 65536);
         }
     }
-    
+
     return NULL;
 }
 
 void
 benchmark_cryptohash(void)
 {
-    gdouble elapsed = 0;
+    bench_value r = EMPTY_BENCH_VALUE;
     gchar *tmpsrc, *bdata_path;
-    
+
     bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_get_contents(bdata_path, &tmpsrc, NULL, NULL)) {
         g_free(bdata_path);
         return;
-    }     
-    
+    }
+
     shell_view_set_enabled(FALSE);
     shell_status_update("Running CryptoHash benchmark...");
-        
-    elapsed = benchmark_parallel_for(0, 5000, cryptohash_for, tmpsrc);
-    
+
+    r = benchmark_parallel_for(0, 0, 5000, cryptohash_for, tmpsrc);
+
     g_free(bdata_path);
     g_free(tmpsrc);
-    
-    bench_results[BENCHMARK_CRYPTOHASH] = 312.0 / elapsed;
+
+    r.result = 312.0 / r.elapsed_time; //TODO: explain in code comments
+    bench_results[BENCHMARK_CRYPTOHASH] = r;
 }

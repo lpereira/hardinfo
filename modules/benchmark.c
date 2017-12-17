@@ -66,6 +66,25 @@ static ModuleEntry entries[] = {
 
 static gboolean sending_benchmark_results = FALSE;
 
+char *bench_value_to_str(bench_value r) {
+    return g_strdup_printf("%lf; %lf; %d", r.result, r.elapsed_time, r.threads_used);
+}
+
+bench_value bench_value_from_str(const char* str) {
+    bench_value ret = EMPTY_BENCH_VALUE;
+    double r, e;
+    int t, c;
+    if (str) {
+        c = sscanf(str, "%lf; %lf; %d", &r, &e, &t);
+        if (c >= 3) {
+            ret.result = r;
+            ret.elapsed_time = e;
+            ret.threads_used = t;
+        }
+    }
+    return ret;
+}
+
 typedef struct _ParallelBenchTask ParallelBenchTask;
 
 struct _ParallelBenchTask {
@@ -94,44 +113,51 @@ static gpointer benchmark_parallel_for_dispatcher(gpointer data)
     return return_value;
 }
 
-gdouble benchmark_parallel_for(guint start, guint end,
+bench_value benchmark_parallel_for(gint n_threads, guint start, guint end,
                                gpointer callback, gpointer callback_data) {
     gchar	*temp;
-    guint	n_cores, iter_per_core, iter, thread_number = 0;
-    gdouble	elapsed_time;
+    int 	cpu_procs, cpu_cores, cpu_threads;
+    guint	iter_per_thread, iter, thread_number = 0;
     GSList	*threads = NULL, *t;
     GTimer	*timer;
 
+    bench_value ret = EMPTY_BENCH_VALUE;
+
     timer = g_timer_new();
 
-    temp = module_call_method("devices::getProcessorCount");
-    n_cores = temp ? atoi(temp) : 1;
-    g_free(temp);
+    cpu_procs_cores_threads(&cpu_procs, &cpu_cores, &cpu_threads);
 
-    while (n_cores > 0) {
-        iter_per_core = (end - start) / n_cores;
+    if (n_threads > 0)
+        ret.threads_used = n_threads;
+    else if (n_threads < 0)
+        ret.threads_used = cpu_cores;
+    else
+        ret.threads_used = cpu_threads;
 
-        if (iter_per_core == 0) {
-          DEBUG("not enough items per core; disabling one");
-          n_cores--;
+    while (ret.threads_used > 0) {
+        iter_per_thread = (end - start) / ret.threads_used;
+
+        if (iter_per_thread == 0) {
+          DEBUG("not enough items per thread; disabling one thread");
+          ret.threads_used--;
         } else {
           break;
         }
     }
 
-    DEBUG("processor has %d cores; processing %d elements (%d per core)",
-          n_cores, (end - start), iter_per_core);
+    DEBUG("Using %d threads across %d logical processors; processing %d elements (%d per thread)",
+          ret.threads_used, cpu_threads, (end - start), iter_per_thread);
 
     g_timer_start(timer);
-    for (iter = start; iter < end; iter += iter_per_core) {
+    for (iter = start; iter < end; iter += iter_per_thread) {
         ParallelBenchTask *pbt = g_new0(ParallelBenchTask, 1);
         GThread *thread;
 
-        DEBUG("launching thread %d", 1 + (iter / iter_per_core));
+        DEBUG("launching thread %d", 1 + (iter / iter_per_thread));
 
         pbt->thread_number = thread_number++;
         pbt->start    = iter == 0 ? 0 : iter;
-        pbt->end      = iter + iter_per_core - 1;
+        pbt->end      = iter + iter_per_thread - 1;
         pbt->data     = callback_data;
         pbt->callback = callback;
 
@@ -152,14 +178,14 @@ gdouble benchmark_parallel_for(guint start, guint end,
     }
 
     g_timer_stop(timer);
-    elapsed_time = g_timer_elapsed(timer, NULL);
+    ret.elapsed_time = g_timer_elapsed(timer, NULL);
 
     g_slist_free(threads);
     g_timer_destroy(timer);
 
-    DEBUG("finishing; all threads took %f seconds to finish", elapsed_time);
+    DEBUG("finishing; all threads took %f seconds to finish", ret.elapsed_time);
 
-    return elapsed_time;
+    return ret;
 }
 
 static gchar *clean_cpuname(gchar *cpuname)
@@ -212,7 +238,7 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select) {
 
     *results_list = h_strdup_cprintf("$%s%s$%s=%.2f|%s\n", *results_list,
         select ? "*" : "", rkey, ckey,
-        b->result, b->machine->cpu_config);
+        b->bvalue.result, b->machine->cpu_config);
 
     moreinfo_add_with_prefix("BENCH", rkey, bench_result_more_info(b) );
 
@@ -220,7 +246,7 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select) {
     g_free(rkey);
 }
 
-static gchar *__benchmark_include_results(gdouble result,
+static gchar *__benchmark_include_results(bench_value r,
 					  const gchar * benchmark,
 					  ShellOrderType order_type)
 {
@@ -232,12 +258,8 @@ static gchar *__benchmark_include_results(gdouble result,
 
     moreinfo_del_with_prefix("BENCH");
 
-    if (result > 0.0) {
-        temp = module_call_method("devices::getProcessorCount");
-        n_threads = temp ? atoi(temp) : 1;
-        g_free(temp); temp = NULL;
-
-        b = bench_result_this_machine(benchmark, result, n_threads);
+    if (r.result > 0.0) {
+        b = bench_result_this_machine(benchmark, r);
         br_mi_add(&results, b, 1);
 
         temp = bench_result_benchmarkconf_line(b);
@@ -292,23 +314,21 @@ static gchar *__benchmark_include_results(gdouble result,
     return return_value;
 }
 
-
-
-static gchar *benchmark_include_results_reverse(gdouble result,
+static gchar *benchmark_include_results_reverse(bench_value result,
 						const gchar * benchmark)
 {
     return __benchmark_include_results(result, benchmark,
 				       SHELL_ORDER_DESCENDING);
 }
 
-static gchar *benchmark_include_results(gdouble result,
+static gchar *benchmark_include_results(bench_value result,
 					const gchar * benchmark)
 {
     return __benchmark_include_results(result, benchmark,
 				       SHELL_ORDER_ASCENDING);
 }
 
-gdouble bench_results[BENCHMARK_N_ENTRIES];
+bench_value bench_results[BENCHMARK_N_ENTRIES];
 
 gchar *callback_gui()
 {
@@ -361,7 +381,7 @@ gchar *callback_zlib()
 typedef struct _BenchmarkDialog BenchmarkDialog;
 struct _BenchmarkDialog {
     GtkWidget *dialog;
-    double result;
+    bench_value r;
 };
 
 static gboolean do_benchmark_handler(GIOChannel *source,
@@ -371,25 +391,19 @@ static gboolean do_benchmark_handler(GIOChannel *source,
     BenchmarkDialog *bench_dialog = (BenchmarkDialog*)data;
     GIOStatus status;
     gchar *result;
-    gchar *buffer;
-    float float_result;
+    bench_value r = EMPTY_BENCH_VALUE;
 
     status = g_io_channel_read_line(source, &result, NULL, NULL, NULL);
     if (status != G_IO_STATUS_NORMAL) {
         DEBUG("error while reading benchmark result");
-
-        bench_dialog->result = -1.0f;
+        r.result = -1.0f;
+        bench_dialog->r = r;
         gtk_widget_destroy(bench_dialog->dialog);
         return FALSE;
     }
 
-    float_result = strtof(result, &buffer);
-    if (buffer == result) {
-        DEBUG("error while converting floating point value");
-        bench_dialog->result = -1.0f;
-    } else {
-        bench_dialog->result = float_result;
-    }
+    r = bench_value_from_str(result);
+    bench_dialog->r = r;
 
     gtk_widget_destroy(bench_dialog->dialog);
     g_free(result);
@@ -412,6 +426,9 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        GSpawnFlags spawn_flags = G_SPAWN_STDERR_TO_DEV_NULL;
        gchar *bench_status;
 
+       bench_value r = EMPTY_BENCH_VALUE;
+       bench_results[entry] = r;
+
        bench_status = g_strdup_printf(_("Benchmarking: <b>%s</b>."), entries[entry].name);
 
        shell_view_set_enabled(FALSE);
@@ -427,7 +444,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        GtkWidget *content_area;
        GtkWidget *hbox;
        GtkWidget *label;
-       
+
        bench_dialog = gtk_dialog_new_with_buttons("",
                                                   NULL,
                                                   GTK_DIALOG_MODAL,
@@ -442,14 +459,13 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        gtk_box_pack_end(GTK_BOX(hbox), label, TRUE, TRUE, 5);
        gtk_container_add(GTK_CONTAINER (content_area), hbox);
        gtk_widget_show_all(bench_dialog);
-#else 
+#else
        bench_dialog = gtk_message_dialog_new(GTK_WINDOW(shell_get_main_shell()->window),
                                              GTK_DIALOG_MODAL,
                                              GTK_MESSAGE_INFO,
                                              GTK_BUTTONS_NONE,
                                              _("Benchmarking. Please do not move your mouse " \
                                              "or press any keys."));
-       g_object_set_data(G_OBJECT(bench_dialog), "result", "0.0");
        gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog),
                               _("Cancel"), GTK_RESPONSE_ACCEPT, NULL);
        gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(bench_dialog), bench_image);
@@ -461,7 +477,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 
        benchmark_dialog = g_new0(BenchmarkDialog, 1);
        benchmark_dialog->dialog = bench_dialog;
-       benchmark_dialog->result = -1.0f;
+       benchmark_dialog->r = r;
 
        if (!g_path_is_absolute(params.argv0)) {
           spawn_flags |= G_SPAWN_SEARCH_PATH;
@@ -495,7 +511,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
               kill(bench_pid, SIGINT);
           }
 
-          bench_results[entry] = benchmark_dialog->result;
+          bench_results[entry] = benchmark_dialog->r;
 
           g_io_channel_unref(channel);
           shell_view_set_enabled(TRUE);
@@ -522,6 +538,8 @@ void scan_gui(gboolean reload)
 {
     SCAN_START();
 
+    bench_value er = EMPTY_BENCH_VALUE;
+
     if (params.run_benchmark) {
         int argc = 0;
 
@@ -531,7 +549,7 @@ void scan_gui(gboolean reload)
     if (params.gui_running || params.run_benchmark) {
         do_benchmark(benchmark_gui, BENCHMARK_GUI);
     } else {
-        bench_results[BENCHMARK_GUI] = 0.0f;
+        bench_results[BENCHMARK_GUI] = er;
     }
     SCAN_END();
 }
@@ -658,7 +676,7 @@ static gchar *get_benchmark_results()
         if (!scan_callback)
             continue;
 
-        if (bench_results[i] < 0.0) {
+        if (bench_results[i].result < 0.0) {
            /* benchmark was cancelled */
            scan_callback(TRUE);
         } else {
@@ -694,7 +712,7 @@ static gchar *run_benchmark(gchar *name)
         if ((scan_callback = entries[i].scan_callback)) {
           scan_callback(FALSE);
 
-          return g_strdup_printf("%f", bench_results[i]);
+          return bench_value_to_str(bench_results[i]);
         }
       }
     }
@@ -706,7 +724,7 @@ ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
         {"runBenchmark", run_benchmark},
-	{NULL}
+        {NULL}
     };
 
     return m;
@@ -730,9 +748,10 @@ void hi_module_init(void)
     sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
 
+    bench_value er = EMPTY_BENCH_VALUE;
     int i;
     for (i = 0; i < G_N_ELEMENTS(entries) - 1; i++) {
-         bench_results[i] = -1.0f;
+         bench_results[i] = er;
     }
 }
 

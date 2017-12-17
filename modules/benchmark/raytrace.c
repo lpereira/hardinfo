@@ -24,24 +24,25 @@ static gpointer
 parallel_raytrace(unsigned int start, unsigned int end, gpointer data, gint thread_number)
 {
     unsigned int i;
-    
-    for (i = start; i <= end; i++) { 
+
+    for (i = start; i <= end; i++) {
         fbench();
     }
-    
+
     return NULL;
 }
 
 void
 benchmark_raytrace(void)
 {
-    gdouble elapsed = 0;
-    
+    bench_value r = EMPTY_BENCH_VALUE;
+
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing John Walker's FBENCH...");
-    
-    elapsed = benchmark_parallel_for(0, 1000, parallel_raytrace, NULL);
-    
-    bench_results[BENCHMARK_RAYTRACE] = elapsed;
+
+    r = benchmark_parallel_for(0, 0, 1000, parallel_raytrace, NULL);
+    r.result = r.elapsed_time;
+
+    bench_results[BENCHMARK_RAYTRACE] = r;
 }
 

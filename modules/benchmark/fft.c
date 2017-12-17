@@ -25,43 +25,43 @@ static gpointer fft_for(unsigned int start, unsigned int end, void *data, gint t
     unsigned int i;
     FFTBench **benches = (FFTBench **)data;
     FFTBench *fftbench = (FFTBench *)(benches[thread_number]);
-    
-    for (i = start; i <= end; i++) { 
+
+    for (i = start; i <= end; i++) {
         fft_bench_run(fftbench);
     }
-    
+
     return NULL;
 }
+
+#define FFT_MAXT 4
 
 void
 benchmark_fft(void)
 {
-    gdouble elapsed = 0;
+    bench_value r = EMPTY_BENCH_VALUE;
+
     int n_cores, i;
     gchar *temp;
     FFTBench **benches;
-    
+
     shell_view_set_enabled(FALSE);
     shell_status_update("Running FFT benchmark...");
-        
+
     /* Pre-allocate all benchmarks */
-    temp = module_call_method("devices::getProcessorCount");
-    n_cores = temp ? atoi(temp) : 1;
-    g_free(temp);
-    
-    benches = g_new0(FFTBench *, n_cores);
-    for (i = 0; i < n_cores; i++) {
+    benches = g_new0(FFTBench *, FFT_MAXT);
+    for (i = 0; i < FFT_MAXT; i++) {
       benches[i] = fft_bench_new();
     }
-    
+
     /* Run the benchmark */
-    elapsed = benchmark_parallel_for(0, 4, fft_for, benches);
-    
+    r = benchmark_parallel_for(FFT_MAXT, 0, FFT_MAXT, fft_for, benches);
+
     /* Free up the memory */
-    for (i = 0; i < n_cores; i++) {
+    for (i = 0; i < FFT_MAXT; i++) {
       fft_bench_free(benches[i]);
     }
     g_free(benches);
-        
-    bench_results[BENCHMARK_FFT] = elapsed;
+
+    r.result = r.elapsed_time;
+    bench_results[BENCHMARK_FFT] = r;
 }

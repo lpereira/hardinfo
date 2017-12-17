@@ -27,9 +27,20 @@ void benchmark_nqueens(void);
 void benchmark_raytrace(void);
 void benchmark_zlib(void);
 
-gdouble benchmark_parallel_for(guint start, guint end,
+typedef struct {
+    double result;
+    double elapsed_time;
+    int threads_used;
+} bench_value;
+
+#define EMPTY_BENCH_VALUE {-1.0f,0,0}
+
+char *bench_value_to_str(bench_value r);
+bench_value bench_value_from_str(const char* str);
+
+bench_value benchmark_parallel_for(gint n_threads, guint start, guint end,
                                gpointer callback, gpointer callback_data);
 
-extern gdouble bench_results[BENCHMARK_N_ENTRIES];
+extern bench_value bench_results[BENCHMARK_N_ENTRIES];
 
 #endif /* __BENCHMARK_H__ */
