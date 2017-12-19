@@ -712,6 +712,23 @@ static gchar *run_benchmark(gchar *name)
         if ((scan_callback = entries[i].scan_callback)) {
           scan_callback(FALSE);
 
+#define CHK_RESULT_FORMAT(F) (params.result_format && strcmp(params.result_format, F) == 0)
+
+          if (params.run_benchmark) {
+            if (CHK_RESULT_FORMAT("conf") ) {
+               bench_result *b = bench_result_this_machine(name, bench_results[i]);
+               char *temp = bench_result_benchmarkconf_line(b);
+               bench_result_free(b);
+               return temp;
+            } else if (CHK_RESULT_FORMAT("shell") ) {
+               bench_result *b = bench_result_this_machine(name, bench_results[i]);
+               char *temp = bench_result_more_info_complete(b);
+               bench_result_free(b);
+               return temp;
+            }
+            /* defaults to "short" which is below*/
+          }
+
           return bench_value_to_str(bench_results[i]);
         }
       }

@@ -390,6 +390,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean run_xmlrpc_server = FALSE;
     static gchar *report_format = NULL;
     static gchar *run_benchmark = NULL;
+    static gchar *result_format = NULL;
     static gchar **use_modules = NULL;
 
     static GOptionEntry options[] = {
@@ -411,6 +412,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &run_benchmark,
 	 .description = N_("run benchmark; requires benchmark.so to be loaded")},
+	{
+	 .long_name = "result-format",
+	 .short_name = 'g',
+	 .arg = G_OPTION_ARG_STRING,
+	 .arg_data = &result_format,
+	 .description = N_("benchmark result format ([short], conf, shell)")},
 	{
 	 .long_name = "list-modules",
 	 .short_name = 'l',
@@ -468,6 +475,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->list_modules = list_modules;
     param->use_modules = use_modules;
     param->run_benchmark = run_benchmark;
+    param->result_format = result_format;
     param->autoload_deps = autoload_deps;
     param->run_xmlrpc_server = run_xmlrpc_server;
     param->argv0 = *(argv)[0];

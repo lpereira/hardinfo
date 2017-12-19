@@ -55,6 +55,7 @@ struct _ProgramParameters {
 
   gchar  **use_modules;
   gchar   *run_benchmark;
+  gchar   *result_format;
   gchar   *path_lib;
   gchar   *path_data;
   gchar   *argv0;
