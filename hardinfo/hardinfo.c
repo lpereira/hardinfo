@@ -123,6 +123,7 @@ int main(int argc, char **argv)
         if (!result) {
           g_error(_("Unknown benchmark ``%s'' or libbenchmark.so not loaded"), params.run_benchmark);
         } else {
+          fprintf(stderr, "\n");
           g_print("%s\n", result);
           g_free(result);
         }
