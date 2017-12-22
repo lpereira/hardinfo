@@ -160,6 +160,7 @@ set(MODULE_network_SOURCES
 )
 set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark.c
+	modules/benchmark/crunch.c
 	modules/benchmark/flopsx.c
 	modules/benchmark/flops_hi.c
 	modules/benchmark/blowfish.c

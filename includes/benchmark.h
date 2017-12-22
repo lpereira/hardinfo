@@ -6,6 +6,9 @@
 extern ProgramParameters params;
 
 enum {
+    BENCHMARK_CRUNCH_SINGLE,
+    BENCHMARK_CRUNCH,
+    BENCHMARK_CRUNCH_CORES,
     BENCHMARK_FLOPS_SINGLE,
     BENCHMARK_FLOPS_MULTI,
     BENCHMARK_FLOPS_CORES,
@@ -20,6 +23,9 @@ enum {
     BENCHMARK_N_ENTRIES
 } BenchmarkEntries;
 
+void benchmark_crunch(void);
+void benchmark_crunch_single(void);
+void benchmark_crunch_cores(void);
 void benchmark_flops_single(void);
 void benchmark_flops_multi(void);
 void benchmark_flops_cores(void);

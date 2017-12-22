@@ -26,6 +26,9 @@ gchar *CN() { \
         return benchmark_include_results(bench_results[BID], BN); \
 }
 
+BENCH_CALLBACK(callback_crunch_single, "CPU (Single-thread)", BENCHMARK_CRUNCH_SINGLE, 0);
+BENCH_CALLBACK(callback_crunch, "CPU (Multi-thread)", BENCHMARK_CRUNCH, 0);
+BENCH_CALLBACK(callback_crunch_cores, "CPU (Multi-core)", BENCHMARK_CRUNCH_CORES, 0);
 BENCH_CALLBACK(callback_flops_single, "FPU (Single-thread)", BENCHMARK_FLOPS_SINGLE, 0);
 BENCH_CALLBACK(callback_flops_multi, "FPU (Multi-thread)", BENCHMARK_FLOPS_MULTI, 0);
 BENCH_CALLBACK(callback_flops_cores, "FPU (Multi-core)", BENCHMARK_FLOPS_CORES, 0);
@@ -45,6 +48,9 @@ void SN(gboolean reload) { \
     SCAN_END(); \
 }
 
+BENCH_SCAN_SIMPLE(scan_crunch_single, benchmark_crunch_single, BENCHMARK_CRUNCH_SINGLE);
+BENCH_SCAN_SIMPLE(scan_crunch, benchmark_crunch, BENCHMARK_CRUNCH);
+BENCH_SCAN_SIMPLE(scan_crunch_cores, benchmark_crunch_cores, BENCHMARK_CRUNCH_CORES);
 BENCH_SCAN_SIMPLE(scan_flops_single, benchmark_flops_single, BENCHMARK_FLOPS_SINGLE);
 BENCH_SCAN_SIMPLE(scan_flops_multi, benchmark_flops_multi, BENCHMARK_FLOPS_MULTI);
 BENCH_SCAN_SIMPLE(scan_flops_cores, benchmark_flops_cores, BENCHMARK_FLOPS_CORES);
@@ -77,6 +83,9 @@ void scan_gui(gboolean reload)
 }
 
 static ModuleEntry entries[] = {
+    {N_("CPU (Single-thread)"), "processor.png", callback_crunch_single, scan_crunch_single, MODULE_FLAG_NONE},
+    {N_("CPU (Multi-thread)"), "processor.png", callback_crunch, scan_crunch, MODULE_FLAG_NONE},
+    {N_("CPU (Multi-core)"), "processor.png", callback_crunch_cores, scan_crunch_cores, MODULE_FLAG_NONE},
     {N_("FPU (Single-thread)"), "processor.png", callback_flops_single, scan_flops_single, MODULE_FLAG_NONE},
     {N_("FPU (Multi-thread)"), "processor.png", callback_flops_multi, scan_flops_multi, MODULE_FLAG_NONE},
     {N_("FPU (Multi-core)"), "processor.png", callback_flops_cores, scan_flops_cores, MODULE_FLAG_NONE},
@@ -104,6 +113,9 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_FLOPS_CORES:
         return _("Result in double-precision MFLOPS. Higher is better.");
 
+    case BENCHMARK_CRUNCH:
+    case BENCHMARK_CRUNCH_SINGLE:
+    case BENCHMARK_CRUNCH_CORES:
     case BENCHMARK_ZLIB:
     case BENCHMARK_GUI:
         return _("Results in HIMarks. Higher is better.");
