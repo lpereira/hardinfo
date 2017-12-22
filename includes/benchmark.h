@@ -41,6 +41,11 @@ bench_value bench_value_from_str(const char* str);
 bench_value benchmark_parallel_for(gint n_threads, guint start, guint end,
                                gpointer callback, gpointer callback_data);
 
+bench_value benchmark_parallel(gint n_threads, gpointer callback, gpointer callback_data);
+
+bench_value benchmark_crunch_for(float seconds, gint n_threads,
+                               gpointer callback, gpointer callback_data);
+
 extern bench_value bench_results[BENCHMARK_N_ENTRIES];
 
 #endif /* __BENCHMARK_H__ */
