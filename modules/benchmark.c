@@ -32,37 +32,14 @@
 
 #include "benchmark/bench_results.c"
 
-void scan_fft(gboolean reload);
-void scan_raytr(gboolean reload);
-void scan_bfsh(gboolean reload);
-void scan_cryptohash(gboolean reload);
-void scan_fib(gboolean reload);
-void scan_nqueens(gboolean reload);
-void scan_zlib(gboolean reload);
-void scan_gui(gboolean reload);
+bench_value bench_results[BENCHMARK_N_ENTRIES];
 
-gchar *callback_fft();
-gchar *callback_raytr();
-gchar *callback_bfsh();
-gchar *callback_fib();
-gchar *callback_cryptohash();
-gchar *callback_nqueens();
-gchar *callback_zlib();
-gchar *callback_gui();
+static void do_benchmark(void (*benchmark_function)(void), int entry);
+static gchar *benchmark_include_results_reverse(bench_value result, const gchar * benchmark);
+static gchar *benchmark_include_results(bench_value result, const gchar * benchmark);
 
-static ModuleEntry entries[] = {
-    {N_("CPU Blowfish"), "blowfish.png", callback_bfsh, scan_bfsh, MODULE_FLAG_NONE},
-    {N_("CPU CryptoHash"), "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NONE},
-    {N_("CPU Fibonacci"), "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NONE},
-    {N_("CPU N-Queens"), "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NONE},
-    {N_("CPU Zlib"), "file-roller.png", callback_zlib, scan_zlib, MODULE_FLAG_NONE},
-    {N_("FPU FFT"), "fft.png", callback_fft, scan_fft, MODULE_FLAG_NONE},
-    {N_("FPU Raytracing"), "raytrace.png", callback_raytr, scan_raytr, MODULE_FLAG_NONE},
-#if !GTK_CHECK_VERSION(3,0,0)
-    {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
-#endif
-    {NULL}
-};
+/* ModuleEntry entries, scan_*(), callback_*(), etc. */
+#include "benchmark/benches.c"
 
 static gboolean sending_benchmark_results = FALSE;
 
@@ -414,68 +391,14 @@ static gchar *__benchmark_include_results(bench_value r,
     return return_value;
 }
 
-static gchar *benchmark_include_results_reverse(bench_value result,
-						const gchar * benchmark)
+static gchar *benchmark_include_results_reverse(bench_value result, const gchar * benchmark)
 {
-    return __benchmark_include_results(result, benchmark,
-				       SHELL_ORDER_DESCENDING);
+    return __benchmark_include_results(result, benchmark, SHELL_ORDER_DESCENDING);
 }
 
-static gchar *benchmark_include_results(bench_value result,
-					const gchar * benchmark)
+static gchar *benchmark_include_results(bench_value result, const gchar * benchmark)
 {
-    return __benchmark_include_results(result, benchmark,
-				       SHELL_ORDER_ASCENDING);
-}
-
-bench_value bench_results[BENCHMARK_N_ENTRIES];
-
-gchar *callback_gui()
-{
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_GUI],
-                                             "GPU Drawing");
-}
-
-gchar *callback_fft()
-{
-    return benchmark_include_results(bench_results[BENCHMARK_FFT],
-				     "FPU FFT");
-}
-
-gchar *callback_nqueens()
-{
-    return benchmark_include_results(bench_results[BENCHMARK_NQUEENS],
-				     "CPU N-Queens");
-}
-
-gchar *callback_raytr()
-{
-    return benchmark_include_results(bench_results[BENCHMARK_RAYTRACE],
-				     "FPU Raytracing");
-}
-
-gchar *callback_bfsh()
-{
-    return benchmark_include_results(bench_results[BENCHMARK_BLOWFISH],
-				     "CPU Blowfish");
-}
-
-gchar *callback_cryptohash()
-{
-    return benchmark_include_results_reverse(bench_results[BENCHMARK_CRYPTOHASH],
-					     "CPU CryptoHash");
-}
-
-gchar *callback_fib()
-{
-    return benchmark_include_results(bench_results[BENCHMARK_FIB],
-				     "CPU Fibonacci");
-}
-
-gchar *callback_zlib()
-{
-    return benchmark_include_results(bench_results[BENCHMARK_ZLIB],
-				     "CPU Zlib");
+    return __benchmark_include_results(result, benchmark, SHELL_ORDER_ASCENDING);
 }
 
 typedef struct _BenchmarkDialog BenchmarkDialog;
@@ -632,96 +555,6 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
     setpriority(PRIO_PROCESS, 0, -20);
     benchmark_function();
     setpriority(PRIO_PROCESS, 0, old_priority);
-}
-
-void scan_gui(gboolean reload)
-{
-    SCAN_START();
-
-    bench_value er = EMPTY_BENCH_VALUE;
-
-    if (params.run_benchmark) {
-        int argc = 0;
-
-        ui_init(&argc, NULL);
-    }
-
-    if (params.gui_running || params.run_benchmark) {
-        do_benchmark(benchmark_gui, BENCHMARK_GUI);
-    } else {
-        bench_results[BENCHMARK_GUI] = er;
-    }
-    SCAN_END();
-}
-
-void scan_fft(gboolean reload)
-{
-    SCAN_START();
-    do_benchmark(benchmark_fft, BENCHMARK_FFT);
-    SCAN_END();
-}
-
-void scan_nqueens(gboolean reload)
-{
-    SCAN_START();
-    do_benchmark(benchmark_nqueens, BENCHMARK_NQUEENS);
-    SCAN_END();
-}
-
-void scan_raytr(gboolean reload)
-{
-    SCAN_START();
-    do_benchmark(benchmark_raytrace, BENCHMARK_RAYTRACE);
-    SCAN_END();
-}
-
-void scan_bfsh(gboolean reload)
-{
-    SCAN_START();
-    do_benchmark(benchmark_fish, BENCHMARK_BLOWFISH);
-    SCAN_END();
-}
-
-void scan_cryptohash(gboolean reload)
-{
-    SCAN_START();
-    do_benchmark(benchmark_cryptohash, BENCHMARK_CRYPTOHASH);
-    SCAN_END();
-}
-
-void scan_fib(gboolean reload)
-{
-    SCAN_START();
-    do_benchmark(benchmark_fib, BENCHMARK_FIB);
-    SCAN_END();
-}
-
-void scan_zlib(gboolean reload)
-{
-    SCAN_START();
-    do_benchmark(benchmark_zlib, BENCHMARK_ZLIB);
-    SCAN_END();
-}
-
-const gchar *hi_note_func(gint entry)
-{
-    switch (entry) {
-    case BENCHMARK_CRYPTOHASH:
-	return _("Results in MiB/second. Higher is better.");
-
-    case BENCHMARK_ZLIB:
-    case BENCHMARK_GUI:
-        return _("Results in HIMarks. Higher is better.");
-
-    case BENCHMARK_FFT:
-    case BENCHMARK_RAYTRACE:
-    case BENCHMARK_BLOWFISH:
-    case BENCHMARK_FIB:
-    case BENCHMARK_NQUEENS:
-	return _("Results in seconds. Lower is better.");
-    }
-
-    return NULL;
 }
 
 gchar *hi_module_get_name(void)
