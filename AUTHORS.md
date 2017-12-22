@@ -41,6 +41,7 @@ Includes code from or based on:
 * Raytracing benchmark by John Walker (see fbench.c for details)
 * FFT benchmark by Scott Robert Ladd (see fftbench.c for details)
 * Vendor list based on GtkSysInfo by Pissens Sebastien
+* Al Aburto's flops.c
 
 Artwork:
 

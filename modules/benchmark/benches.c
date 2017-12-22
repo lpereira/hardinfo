@@ -26,6 +26,9 @@ gchar *CN() { \
         return benchmark_include_results(bench_results[BID], BN); \
 }
 
+BENCH_CALLBACK(callback_flops_single, "FPU (Single-thread)", BENCHMARK_FLOPS_SINGLE, 0);
+BENCH_CALLBACK(callback_flops_multi, "FPU (Multi-thread)", BENCHMARK_FLOPS_MULTI, 0);
+BENCH_CALLBACK(callback_flops_cores, "FPU (Multi-core)", BENCHMARK_FLOPS_CORES, 0);
 BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
 BENCH_CALLBACK(callback_fft, "FPU FFT", BENCHMARK_FFT, 0);
 BENCH_CALLBACK(callback_nqueens, "CPU N-Queens", BENCHMARK_NQUEENS, 0);
@@ -42,6 +45,9 @@ void SN(gboolean reload) { \
     SCAN_END(); \
 }
 
+BENCH_SCAN_SIMPLE(scan_flops_single, benchmark_flops_single, BENCHMARK_FLOPS_SINGLE);
+BENCH_SCAN_SIMPLE(scan_flops_multi, benchmark_flops_multi, BENCHMARK_FLOPS_MULTI);
+BENCH_SCAN_SIMPLE(scan_flops_cores, benchmark_flops_cores, BENCHMARK_FLOPS_CORES);
 BENCH_SCAN_SIMPLE(scan_fft, benchmark_fft, BENCHMARK_FFT);
 BENCH_SCAN_SIMPLE(scan_nqueens, benchmark_nqueens, BENCHMARK_NQUEENS);
 BENCH_SCAN_SIMPLE(scan_raytr, benchmark_raytrace, BENCHMARK_RAYTRACE);
@@ -71,6 +77,9 @@ void scan_gui(gboolean reload)
 }
 
 static ModuleEntry entries[] = {
+    {N_("FPU (Single-thread)"), "processor.png", callback_flops_single, scan_flops_single, MODULE_FLAG_NONE},
+    {N_("FPU (Multi-thread)"), "processor.png", callback_flops_multi, scan_flops_multi, MODULE_FLAG_NONE},
+    {N_("FPU (Multi-core)"), "processor.png", callback_flops_cores, scan_flops_cores, MODULE_FLAG_NONE},
     {N_("CPU Blowfish"), "blowfish.png", callback_bfsh, scan_bfsh, MODULE_FLAG_NONE},
     {N_("CPU CryptoHash"), "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NONE},
     {N_("CPU Fibonacci"), "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NONE},
@@ -89,6 +98,11 @@ const gchar *hi_note_func(gint entry)
     switch (entry) {
     case BENCHMARK_CRYPTOHASH:
         return _("Results in MiB/second. Higher is better.");
+
+    case BENCHMARK_FLOPS_SINGLE:
+    case BENCHMARK_FLOPS_MULTI:
+    case BENCHMARK_FLOPS_CORES:
+        return _("Al Aburto's flops.c 2.0 \"MFLOPS(3)\"\nResult in double-precision MFLOPS. Higher is better.");
 
     case BENCHMARK_ZLIB:
     case BENCHMARK_GUI:
