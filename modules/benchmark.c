@@ -185,6 +185,10 @@ bench_value benchmark_parallel(gint n_threads, gpointer callback, gpointer callb
     return  benchmark_parallel_for(n_threads, 0, n_threads, callback, callback_data);
 }
 
+/* Note:
+ *    benchmark_parallel_for(): element [start] included, but [end] is excluded.
+ *    callback(): expected to processes elements [start] through [end] inclusive.
+ */
 bench_value benchmark_parallel_for(gint n_threads, guint start, guint end,
                                gpointer callback, gpointer callback_data) {
     gchar	*temp;
@@ -221,20 +225,23 @@ bench_value benchmark_parallel_for(gint n_threads, guint start, guint end,
           ret.threads_used, cpu_threads, (end - start), iter_per_thread);
 
     g_timer_start(timer);
-    for (iter = start; iter < end; iter += iter_per_thread) {
+    for (iter = start; iter < end; ) {
         ParallelBenchTask *pbt = g_new0(ParallelBenchTask, 1);
         GThread *thread;
 
-        DEBUG("launching thread %d", 1 + (iter / iter_per_thread));
+        guint ts = iter, te = iter + iter_per_thread;
+        /* add the remainder of items/iter_per_thread to the last thread */
+        if (end - te < iter_per_thread)
+            te = end;
+        iter = te;
+
+        DEBUG("launching thread %d", 1 + thread_number);
 
         pbt->thread_number = thread_number++;
-        pbt->start    = iter == 0 ? 0 : iter;
-        pbt->end      = iter + iter_per_thread - 1;
+        pbt->start    = ts;
+        pbt->end      = te - 1;
         pbt->data     = callback_data;
         pbt->callback = callback;
-
-        if (pbt->end > end)
-            pbt->end = end;
 
         thread = g_thread_new("dispatcher",
             (GThreadFunc)benchmark_parallel_for_dispatcher, pbt);

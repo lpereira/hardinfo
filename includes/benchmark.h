@@ -38,6 +38,10 @@ typedef struct {
 char *bench_value_to_str(bench_value r);
 bench_value bench_value_from_str(const char* str);
 
+/* Note:
+ *    benchmark_parallel_for(): element [start] included, but [end] is excluded.
+ *    callback(): expected to processes elements [start] through [end] inclusive.
+ */
 bench_value benchmark_parallel_for(gint n_threads, guint start, guint end,
                                gpointer callback, gpointer callback_data);
 
