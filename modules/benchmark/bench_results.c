@@ -255,7 +255,10 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 
         if (vl >= 10) { /* the 11th could be empty */
             b->machine->mid = strdup(key);
-            b->bvalue.result = atof(values[0]);
+            /* first try as bench_value, then try as double 'result' only */
+            b->bvalue = bench_value_from_str(values[0]);
+            if (b->bvalue.result == -1)
+                b->bvalue.result = atoi(values[0]);
             b->bvalue.threads_used = atoi(values[1]);
             b->machine->board = strdup(values[2]);
             b->machine->cpu_name = strdup(values[3]);
@@ -344,8 +347,9 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 
 char *bench_result_benchmarkconf_line(bench_result *b) {
     char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
-    char *ret = g_strdup_printf("%s=%.2f|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s\n",
-            b->machine->mid, b->bvalue.result, b->bvalue.threads_used,
+    char *bv = bench_value_to_str(b->bvalue);
+    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s\n",
+            b->machine->mid, bv, b->bvalue.threads_used,
             (b->machine->board != NULL) ? b->machine->board : "",
             b->machine->cpu_name,
             (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : "",
@@ -355,6 +359,7 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
             (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : ""
             );
     free(cpu_config);
+    free(bv);
     return ret;
 }
 
