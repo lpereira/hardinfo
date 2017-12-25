@@ -152,6 +152,18 @@ char *dmi_chassis_type_str(int chassis_type, gboolean with_val) {
         N_("RAID Chassis"),
         N_("Rack Mount Chassis"),
         N_("Sealed-case PC"),
+        N_("Multi-system"),
+        N_("CompactPCI"),
+        N_("AdvancedTCA"),
+        N_("Blade"),
+        N_("Blade Enclosing"),
+        N_("Tablet"),
+        N_("Convertible"),
+        N_("Detachable"),
+        N_("IoT Gateway"),
+        N_("Embedded PC"),
+        N_("Mini PC"),
+        N_("Stick PC"),
     };
 
     if (chassis_type <= 0) {
@@ -170,4 +182,138 @@ char *dmi_chassis_type_str(int chassis_type, gboolean with_val) {
         return g_strdup(_(types[chassis_type]));
     }
     return NULL;
+}
+
+char *dmidecode_read(const unsigned long *dmi_type) {
+    gchar *ret = NULL;
+    gchar full_path[PATH_MAX];
+    gboolean spawned;
+    gchar *out, *err;
+
+    int i = 0;
+
+    if (dmi_type)
+        snprintf(full_path, PATH_MAX, "dmidecode -t %lu", *dmi_type);
+    else
+        snprintf(full_path, PATH_MAX, "dmidecode");
+
+    spawned = g_spawn_command_line_sync(full_path,
+            &out, &err, &i, NULL);
+    if (spawned) {
+        if (i == 0)
+            ret = out;
+        else
+            g_free(out);
+
+        g_free(err);
+    }
+
+    return ret;
+}
+
+dmi_handle_list *dmi_handle_list_add(dmi_handle_list *hl, unsigned int new_handle) {
+    if (!hl) {
+        hl = malloc(sizeof(dmi_handle_list));
+        hl->count = 1;
+        hl->handles = malloc(sizeof(unsigned long) * hl->count);
+    } else {
+        hl->count++;
+        hl->handles = realloc(hl->handles, sizeof(unsigned long) * hl->count);
+    }
+    hl->handles[hl->count - 1] = new_handle;
+    return hl;
+}
+
+dmi_handle_list *dmidecode_handles(const unsigned long *dmi_type) {
+    gchar *full = NULL, *p = NULL, *next_nl = NULL;
+    dmi_handle_list *hl = NULL;
+    unsigned int ch = 0;
+
+    full = dmidecode_read(dmi_type);
+    if (full) {
+        p = full;
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            if (sscanf(p, "Handle 0x%X", &ch) > 0) {
+                hl = dmi_handle_list_add(hl, ch);
+            }
+            p = next_nl + 1;
+        }
+        free(full);
+    }
+    return hl;
+}
+
+void dmi_handle_list_free(dmi_handle_list *hl) {
+    if (hl)
+        free(hl->handles);
+    free(hl);
+}
+
+char *dmidecode_match(const char *name, const unsigned long *dmi_type, const unsigned long *handle) {
+    gchar *ret = NULL, *full = NULL, *p = NULL, *next_nl = NULL;
+    unsigned int ch = 0;
+    int ln = 0;
+
+    if (!name) return NULL;
+    ln = strlen(name);
+
+    full = dmidecode_read(dmi_type);
+    if (full) {
+        p = full;
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            if (!sscanf(p, "Handle 0x%X", &ch) > 0 ) {
+                if (!handle || *handle == ch) {
+                    while(*p == '\t') p++;
+                    if (strncmp(p, name, ln) == 0) {
+                        if (*(p + ln) == ':') {
+                            p = p + ln + 1;
+                            while(*p == ' ') p++;
+                            ret = strdup(p);
+                            break;
+                        }
+                    }
+                }
+            }
+            p = next_nl + 1;
+        }
+        free(full);
+    }
+
+    return ret;
+}
+
+dmi_handle_list *dmidecode_match_value(const char *name, const char *value, const unsigned long *dmi_type) {
+    dmi_handle_list *hl = NULL;
+    gchar *full = NULL, *p = NULL, *next_nl = NULL;
+    unsigned int ch = 0;
+    int ln = 0, lnv = 0;
+
+    if (!name) return NULL;
+    ln = strlen(name);
+    lnv = (value) ? strlen(value) : 0;
+
+    full = dmidecode_read(dmi_type);
+    if (full) {
+        p = full;
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            if (!sscanf(p, "Handle 0x%X", &ch) > 0 ) {
+                while(*p == '\t') p++;
+                if (strncmp(p, name, ln) == 0) {
+                    if (*(p + ln) == ':') {
+                        p = p + ln + 1;
+                        while(*p == ' ') p++;
+                        if (!value || strncmp(p, value, lnv) == 0)
+                            hl = dmi_handle_list_add(hl, ch);
+                    }
+                }
+            }
+            p = next_nl + 1;
+        }
+        free(full);
+    }
+
+    return hl;
 }
