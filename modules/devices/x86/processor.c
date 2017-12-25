@@ -678,12 +678,121 @@ gchar *processor_describe(GSList * processors) {
     return processor_describe_default(processors);
 }
 
+gchar *dmi_socket_info() {
+    static const char empty_mem_str[] = "No Module Installed";
+    gchar *ret = strdup("");
+    unsigned long dt = 4, dtm = 17, i;
+    dmi_handle_list *hl = dmidecode_handles(&dt);
+    dmi_handle_list *hlm = dmidecode_handles(&dtm);
+    if (!hl) {
+        ret = g_strdup_printf("[%s]\n%s=%s\n",
+                _("Socket Information"), _("Result"),
+                (getuid() == 0)
+                ? _("(Not available)")
+                : _("(Not available; Perhaps try running HardInfo as root.)") );
+    } else {
+        for(i = 0; i < hl->count; i++) {
+            unsigned long h = hl->handles[i];
+            gchar *upgrade = dmidecode_match("Upgrade", &dt, &h);
+            gchar *socket = dmidecode_match("Socket Designation", &dt, &h);
+            gchar *bus_clock_str = dmidecode_match("External Clock", &dt, &h);
+            gchar *voltage_str = dmidecode_match("Voltage", &dt, &h);
+            gchar *max_speed_str = dmidecode_match("Max Speed", &dt, &h);
+
+            ret = h_strdup_cprintf("[%s (%lu) %s]\n"
+                            "%s=0x%x\n"
+                            "%s=%s\n"
+                            "%s=%s\n"
+                            "%s=%s\n"
+                            "%s=%s\n",
+                            ret,
+                            _("CPU Socket"), i, socket,
+                            _("DMI Handle"), h,
+                            _("Type"), upgrade,
+                            _("Voltage"), voltage_str,
+                            _("External Clock"), bus_clock_str,
+                            _("Max Frequency"), max_speed_str
+                            );
+            g_free(upgrade);
+            g_free(socket);
+            g_free(bus_clock_str);
+            g_free(voltage_str);
+            g_free(max_speed_str);
+        }
+
+        dmi_handle_list_free(hl);
+
+        if (hlm) {
+            for(i = 0; i < hlm->count; i++) {
+                unsigned long h = hlm->handles[i];
+                gchar *locator = dmidecode_match("Locator", &dtm, &h);
+                gchar *size_str = dmidecode_match("Size", &dtm, &h);
+
+                if (strcmp(size_str, empty_mem_str) == 0) {
+                    ret = h_strdup_cprintf("[%s (%lu) %s]\n"
+                                    "%s=0x%x\n"
+                                    "%s=%s\n",
+                                    ret,
+                                    _("Memory Socket"), i, locator,
+                                    _("DMI Handle"), h,
+                                    _("Size"), _("(Empty)") );
+                } else {
+                    gchar *form_factor = dmidecode_match("Form Factor", &dtm, &h);
+                    gchar *type = dmidecode_match("Type", &dtm, &h);
+                    gchar *type_detail = dmidecode_match("Type Detail", &dtm, &h);
+                    gchar *speed_str = dmidecode_match("Speed", &dtm, &h);
+                    gchar *configured_clock_str = dmidecode_match("Configured Clock Speed", &dtm, &h);
+                    gchar *voltage_min_str = dmidecode_match("Minimum Voltage", &dtm, &h);
+                    gchar *voltage_max_str = dmidecode_match("Maximum Voltage", &dtm, &h);
+                    gchar *voltage_conf_str = dmidecode_match("Configured Voltage", &dtm, &h);
+
+                    ret = h_strdup_cprintf("[%s (%lu) %s]\n"
+                                    "%s=0x%x\n"
+                                    "%s=%s\n"
+                                    "%s=%s / %s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n",
+                                    ret,
+                                    _("Memory Socket"), i, locator,
+                                    _("DMI Handle"), h,
+                                    _("Form Factor"), form_factor,
+                                    _("Type"), type, type_detail,
+                                    _("Size"), size_str,
+                                    _("Speed"), speed_str,
+                                    _("Configured Clock Frequency"), configured_clock_str,
+                                    _("Minimum Voltage"), voltage_min_str,
+                                    _("Maximum Voltage"), voltage_max_str,
+                                    _("Configured Voltage"), voltage_conf_str
+                                    );
+                    g_free(type);
+                    g_free(form_factor);
+                    g_free(speed_str);
+                    g_free(configured_clock_str);
+                    g_free(voltage_min_str);
+                    g_free(voltage_max_str);
+                    g_free(voltage_conf_str);
+                }
+                g_free(size_str);
+                g_free(locator);
+            }
+            dmi_handle_list_free(hlm);
+        }
+    }
+
+    return ret;
+}
+
 gchar *processor_meta(GSList * processors) {
     gchar *meta_cpu_name = processor_name(processors);
     gchar *meta_cpu_desc = processor_describe(processors);
     gchar *meta_freq_desc = processor_frequency_desc(processors);
     gchar *meta_clocks = clocks_summary(processors);
     gchar *meta_caches = caches_summary(processors);
+    gchar *meta_dmi = dmi_socket_info();
     gchar *ret = NULL;
     UNKIFNULL(meta_cpu_desc);
     ret = g_strdup_printf("[%s]\n"
@@ -691,13 +800,15 @@ gchar *processor_meta(GSList * processors) {
                         "%s=%s\n"
                         "%s=%s\n"
                         "%s"
+                        "%s"
                         "%s",
                         _("Package Information"),
                         _("Name"), meta_cpu_name,
                         _("Topology"), meta_cpu_desc,
                         _("Logical CPU Config"), meta_freq_desc,
                         meta_clocks,
-                        meta_caches);
+                        meta_caches,
+                        meta_dmi);
     g_free(meta_cpu_desc);
     g_free(meta_freq_desc);
     g_free(meta_clocks);
