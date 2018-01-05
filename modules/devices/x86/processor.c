@@ -341,19 +341,23 @@ gchar *caches_summary(GSList * processors)
     return ret;
 }
 
-
+#define PROC_SCAN_READ_BUFFER_SIZE 896
 GSList *processor_scan(void)
 {
     GSList *procs = NULL, *l = NULL;
     Processor *processor = NULL;
     FILE *cpuinfo;
-    gchar buffer[512];
+    gchar buffer[PROC_SCAN_READ_BUFFER_SIZE];
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
         return NULL;
 
-    while (fgets(buffer, 512, cpuinfo)) {
+    while (fgets(buffer, PROC_SCAN_READ_BUFFER_SIZE, cpuinfo)) {
+        int rlen = strlen(buffer);
+        if (rlen >= PROC_SCAN_READ_BUFFER_SIZE - 1) {
+            fprintf(stderr, "Warning: truncated a line (probably flags list) longer than %d bytes while reading %s.\n", PROC_SCAN_READ_BUFFER_SIZE, PROC_CPUINFO);
+        }
         gchar **tmp = g_strsplit(buffer, ":", 2);
         if (!tmp[1] || !tmp[0]) {
             g_strfreev(tmp);
