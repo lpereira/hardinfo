@@ -300,7 +300,7 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
-    gint i;
+    gint i, mc;
 
     if (columns == 2) {
       ctx->output = h_strdup_cprintf("<tr><td class=\"field\">%s</td>"
@@ -309,10 +309,11 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
                                     key, value);
     } else {
       values = g_strsplit(value, "|", columns);
+      mc = g_strv_length(values) - 1;
 
       ctx->output = h_strdup_cprintf("\n<tr>\n<td class=\"field\">%s</td>", ctx->output, key);
 
-      for (i = columns - 2; i >= 0; i--) {
+      for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
                                        ctx->output,
                                        values[i]);
