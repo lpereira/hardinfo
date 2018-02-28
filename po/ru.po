@@ -1900,7 +1900,7 @@ msgstr ""
 
 #: modules/devices/arm/processor.c:357
 msgid "Clocks"
-msgstr ""
+msgstr "Частоты"
 
 #: modules/devices/arm/processor.c:372
 msgid "SOC/Package Information"
@@ -2786,7 +2786,7 @@ msgstr ""
 
 #: modules/devices/usb.c:241
 msgid "Level"
-msgstr ""
+msgstr "Уровень"
 
 #: modules/devices/x86/processor.c:149
 msgid "Cache information not available=\n"
@@ -2817,6 +2817,10 @@ msgctxt "cache-type"
 msgid "Unified"
 msgstr "унифицированный"
 
+#: modules/devices/x86/processor.c:367
+msgid "Caches"
+msgstr "Кэши"
+
 #: modules/devices/x86/processor.c:410
 msgid "Model Name"
 msgstr "Название"
@@ -2832,6 +2836,12 @@ msgstr "Версия микрокода"
 #: modules/devices/x86/processor.c:418
 msgid "Configuration"
 msgstr "Конфигурация"
+
+#: modules/devices/x86/processor.c:418
+msgid "Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
+msgstr ""
+"Уровень %d (%s)#%d=%dx %d кБ (%d кБ), %d-канальный "
+"множественно-ассоциативный, %d множеств\n"
 
 #: modules/devices/x86/processor.c:419
 msgid "Cache Size"
@@ -2852,6 +2862,10 @@ msgstr "Обход багов"
 #: modules/devices/x86/processor.c:454 modules/devices/x86/processor.c:468
 msgid "Package Information"
 msgstr "Информация о комплекте"
+
+#: modules/devices/x86/processor.c:698
+msgid "Logical CPU Config"
+msgstr "Логическая конфигурация процессора"
 
 #. /flag:fpu
 #: modules/devices/x86/x86_data.c:43
