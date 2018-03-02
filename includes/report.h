@@ -15,7 +15,7 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
- 
+
 #ifndef __REPORT_H__
 #define __REPORT_H__
 #include <gtk/gtk.h>
@@ -41,16 +41,16 @@ typedef struct _ReportContext	ReportContext;
 struct _ReportContext {
   ShellModuleEntry	*entry;
   gchar			*output;
-  
+
   void (*header)      	(ReportContext *ctx);
   void (*footer)      	(ReportContext *ctx);
   void (*title)      	(ReportContext *ctx, gchar *text);
   void (*subtitle)    	(ReportContext *ctx, gchar *text);
   void (*subsubtitle)	(ReportContext *ctx, gchar *text);
-  void (*keyvalue)   	(ReportContext *ctx, gchar *key, gchar *value);
-  
+  void (*keyvalue)   	(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight);
+
   ReportFormat		format;
-  
+
   gboolean		is_image_enabled;
   gboolean		first_table;
 
@@ -67,7 +67,7 @@ struct _ReportDialog {
   GtkWidget *btn_sel_all;
   GtkWidget *btn_sel_none;
   GtkWidget *treeview;
-  
+
   GtkTreeModel *model;
 };
 
@@ -81,7 +81,7 @@ void		 report_footer		(ReportContext *ctx);
 void		 report_title		(ReportContext *ctx, gchar *text);
 void 		 report_subtitle	(ReportContext *ctx, gchar *text);
 void 		 report_subsubtitle	(ReportContext *ctx, gchar *text);
-void		 report_key_value	(ReportContext *ctx, gchar *key, gchar *value);
+void		 report_key_value	(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight);
 void		 report_table		(ReportContext *ctx, gchar *text);
 
 void             report_create_from_module_list(ReportContext *ctx, GSList *modules);
