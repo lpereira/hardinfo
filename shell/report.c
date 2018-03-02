@@ -59,9 +59,9 @@ void report_subsubtitle(ReportContext * ctx, gchar * text)
     ctx->subsubtitle(ctx, text);
 }
 
-void report_key_value(ReportContext * ctx, gchar * key, gchar * value)
+void report_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean highlight)
 {
-    ctx->keyvalue(ctx, key, value);
+    ctx->keyvalue(ctx, key, value, highlight);
 }
 
 gint report_get_visible_columns(ReportContext *ctx)
@@ -211,10 +211,12 @@ void report_table(ReportContext * ctx, gchar * text)
 		    }
 
 		    if (*key == '$') {
-			report_key_value(ctx, strchr(key + 1, '$') + 1,
-					 value);
+                if (*(key+1) == '*') /* check for selected/highlighted */
+                    report_key_value(ctx, strchr(key + 1, '$') + 1, value, TRUE);
+                else
+                    report_key_value(ctx, strchr(key + 1, '$') + 1, value, FALSE);
 		    } else {
-			report_key_value(ctx, key, value);
+                report_key_value(ctx, key, value, FALSE);
 		    }
 
 		}
@@ -248,6 +250,7 @@ static void report_html_header(ReportContext * ctx)
 	 "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n"
 	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n"
 	 "    .value  { font: 80%% sans-serif; color: #505050 }\n"
+	 "    .hilight  { font: bold 110%% sans-serif; color: #000000; background: #ffff66 }\n"
 	 "</style>\n" "</head><body>\n",
 	 VERSION);
 }
@@ -296,22 +299,23 @@ static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
 }
 
 static void
-report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
+report_html_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean highlight)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
     gint i, mc;
 
     if (columns == 2) {
-      ctx->output = h_strdup_cprintf("<tr><td class=\"field\">%s</td>"
+      ctx->output = h_strdup_cprintf("<tr%s><td class=\"field\">%s</td>"
                                     "<td class=\"value\">%s</td></tr>\n",
                                     ctx->output,
+                                    highlight ? " class=\"hilight\"" : "",
                                     key, value);
     } else {
       values = g_strsplit(value, "|", columns);
       mc = g_strv_length(values) - 1;
 
-      ctx->output = h_strdup_cprintf("\n<tr>\n<td class=\"field\">%s</td>", ctx->output, key);
+      ctx->output = h_strdup_cprintf("\n<tr%s>\n<td class=\"field\">%s</td>", ctx->output, highlight ? " class=\"hilight\"" : "", key);
 
       for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
@@ -368,7 +372,7 @@ static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
 }
 
 static void
-report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
+report_text_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean highlight)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
@@ -376,14 +380,14 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
 
     if (columns == 2) {
       if (strlen(value))
-          ctx->output = h_strdup_cprintf("%s\t\t: %s\n", ctx->output, key, value);
+          ctx->output = h_strdup_cprintf("%s%s\t\t: %s\n", ctx->output, highlight ? "* " : "", key, value);
       else
-          ctx->output = h_strdup_cprintf("%s\n", ctx->output, key);
+          ctx->output = h_strdup_cprintf("%s%s\n", ctx->output, highlight ? "* " : "", key);
     } else {
       values = g_strsplit(value, "|", columns);
       mc = g_strv_length(values) - 1;
 
-      ctx->output = h_strdup_cprintf("%s\t", ctx->output, key);
+      ctx->output = h_strdup_cprintf("%s%s\t", ctx->output, highlight ? "* " : "", key);
 
       for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("%s\t",
