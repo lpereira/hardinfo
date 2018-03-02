@@ -345,7 +345,7 @@ msgstr "VMWare, Inc. (icono USB de VMWare Workstation 6)"
 
 #: shell/callbacks.c:200
 msgid "System information and benchmark tool"
-msgstr "Herramienta de Informacion y Pruebas del Sistema"
+msgstr "Herramienta de Información y Pruebas del Sistema"
 
 #: shell/callbacks.c:205
 msgid ""
@@ -1226,7 +1226,7 @@ msgstr "Disponible"
 
 #: modules/computer/languages.c:103
 msgid "Locale Information"
-msgstr "Informacion regional"
+msgstr "Información regional"
 
 #: modules/computer/languages.c:105
 msgid "Source"
@@ -1270,7 +1270,7 @@ msgstr "(No disponible)"
 
 #: modules/computer/modules.c:142
 msgid "Module Information"
-msgstr "Informacion de modulo"
+msgstr "Información de modulo"
 
 #: modules/computer/modules.c:143
 msgid "Path"
@@ -1378,7 +1378,7 @@ msgstr "(desconocido)"
 
 #: modules/computer/users.c:47
 msgid "User Information"
-msgstr "Informacion de usuario"
+msgstr "Información de usuario"
 
 #: modules/computer/users.c:48
 msgid "User ID"
@@ -1675,7 +1675,7 @@ msgstr "Ciclos"
 
 #: modules/devices/arm/processor.c:354
 msgid "SOC/Package Information"
-msgstr "Informacion SOC/Paquete"
+msgstr "Información SOC/Paquete"
 
 #: modules/devices/battery.c:181
 #, c-format
@@ -1865,7 +1865,7 @@ msgstr "Obtiene información acerca de los dispositivos de hardware"
 
 #: modules/devices.c:708
 msgid "Resource information requires superuser privileges"
-msgstr "Informacion de recursos require privilegios de superusuario"
+msgstr "Información de recursos require privilegios de superusuario"
 
 #: modules/devices/cpu_util.c:30
 msgid "Little Endian"
@@ -2148,7 +2148,7 @@ msgstr "Capacidades"
 #: modules/devices/inputdevices.c:115 modules/devices/pci.c:214
 #: modules/devices/usb.c:82 modules/devices/usb.c:215 modules/devices/usb.c:347
 msgid "Device Information"
-msgstr "Informacion de dispositivo"
+msgstr "Información de dispositivo"
 
 #: modules/devices/inputdevices.c:118 modules/devices/usb.c:92
 #: modules/devices/usb.c:240 modules/devices/usb.c:356
@@ -2470,7 +2470,7 @@ msgid ""
 "ReloadInterval=500\n"
 msgstr ""
 "[SPD]\n"
-"Por favor carge el modulo eeprom para obtener informacion de memorias SPD=\n"
+"Por favor carge el modulo eeprom para obtener información de memorias SPD=\n"
 "[$ShellParam$]\n"
 "ReloadInterval=500\n"
 
@@ -2638,7 +2638,7 @@ msgstr "Nivel"
 
 #: modules/devices/x86/processor.c:149
 msgid "Cache information not available=\n"
-msgstr "Informacion de cache no disponible=\n"
+msgstr "Información de cache no disponible=\n"
 
 #: modules/devices/x86/processor.c:155
 #, c-format
@@ -2697,7 +2697,7 @@ msgstr "Manejo de errores"
 
 #: modules/devices/x86/processor.c:454 modules/devices/x86/processor.c:468
 msgid "Package Information"
-msgstr "Informacion paquete"
+msgstr "Información paquete"
 
 #. /flag:fpu
 #: modules/devices/x86/x86_data.c:43
