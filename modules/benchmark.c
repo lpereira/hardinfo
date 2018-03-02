@@ -336,7 +336,7 @@ static gchar *__benchmark_include_results(bench_value r,
 {
     bench_result *b = NULL;
     GKeyFile *conf;
-    gchar **machines, *temp = NULL;;
+    gchar **machines;
     gchar *path, *results = g_strdup(""), *return_value, *processor_frequency, *processor_name;
     int i, n_threads;
 
@@ -345,10 +345,6 @@ static gchar *__benchmark_include_results(bench_value r,
     if (r.result > 0.0) {
         b = bench_result_this_machine(benchmark, r);
         br_mi_add(&results, b, 1);
-
-        temp = bench_result_benchmarkconf_line(b);
-        printf("[%s]\n%s", benchmark, temp);
-        g_free(temp); temp = NULL;
     }
 
     conf = g_key_file_new();
