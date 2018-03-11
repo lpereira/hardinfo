@@ -88,6 +88,8 @@ if(NOT HARDINFO_NOSYNC)
 	pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
 endif()
 
+pkg_check_modules(X11 REQUIRED x11)
+
 include(FindZLIB REQUIRED)
 
 include_directories(
@@ -99,10 +101,12 @@ include_directories(
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
 	${ZLIB_INCLUDE_DIRS}
+	${X11_INCLUDE_DIRS}
 )
 link_directories(
 	${GTK_LIBRARY_DIRS}
 	${LIBSOUP_LIBRARY_DIRS}
+	${X11_LIBRARY_DIRS}
 )
 
 set(HARDINFO_MODULES
@@ -226,6 +230,7 @@ add_executable(hardinfo
 	hardinfo/cpu_util.c
 	hardinfo/dmi_util.c
 	hardinfo/dt_util.c
+	hardinfo/x_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
@@ -241,6 +246,7 @@ target_link_libraries(hardinfo
 	${LIBSOUP_LIBRARIES}
 	m
 	${ZLIB_LIBRARIES}
+	${X11_LIBRARIES}
 )
 else()
 add_executable(hardinfo
@@ -256,6 +262,7 @@ add_executable(hardinfo
 	hardinfo/cpu_util.c
 	hardinfo/dmi_util.c
 	hardinfo/dt_util.c
+	hardinfo/x_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
@@ -270,6 +277,7 @@ target_link_libraries(hardinfo
 	${LIBSOUP_LIBRARIES}
 	m
 	${ZLIB_LIBRARIES}
+	${X11_LIBRARIES}
 )
 endif()
 
