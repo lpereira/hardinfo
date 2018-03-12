@@ -6,6 +6,9 @@
 extern ProgramParameters params;
 
 enum {
+    BENCHMARK_FLOPS_SINGLE,
+    BENCHMARK_FLOPS_MULTI,
+    BENCHMARK_FLOPS_CORES,
     BENCHMARK_BLOWFISH,
     BENCHMARK_CRYPTOHASH,
     BENCHMARK_FIB,
@@ -17,6 +20,9 @@ enum {
     BENCHMARK_N_ENTRIES
 } BenchmarkEntries;
 
+void benchmark_flops_single(void);
+void benchmark_flops_multi(void);
+void benchmark_flops_cores(void);
 void benchmark_bfish(void);
 void benchmark_cryptohash(void);
 void benchmark_fft(void);
