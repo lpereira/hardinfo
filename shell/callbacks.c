@@ -199,7 +199,7 @@ void cb_about()
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				  _("System information and benchmark tool"));
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
-			      icon_cache_get_pixbuf("logo.png"));
+			      icon_cache_get_pixbuf("hardinfo.png"));
 
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about),
 				 _("HardInfo is free software; you can redistribute it and/or modify "
