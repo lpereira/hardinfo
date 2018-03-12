@@ -160,6 +160,9 @@ set(MODULE_network_SOURCES
 )
 set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark.c
+	modules/benchmark/crunch.c
+	modules/benchmark/flopsx.c
+	modules/benchmark/flops_hi.c
 	modules/benchmark/blowfish.c
 	modules/benchmark/cryptohash.c
 	modules/benchmark/drawing.c
@@ -183,6 +186,7 @@ else()
 endif()
 
 set_source_files_properties(
+	modules/benchmark/flopsx.c
 	modules/benchmark/blowfish.c
 	modules/benchmark/fftbench.c
 	modules/benchmark/md5.c
