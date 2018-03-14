@@ -492,12 +492,13 @@ gchar *callback_os(void)
 {
     struct Info *info = info_new();
 
-    info_add_group(info, _("Version"),
-        info_field(_("Kernel"), computer->os->kernel),
-        info_field(_("Version"), computer->os->kernel_version),
-        info_field(_("C Library"), computer->os->libc),
-        info_field(_("Distribution"), computer->os->distro),
-        info_field_last());
+    info_add_group_ff(info,
+        _("Version"),
+        _("Kernel"), computer->os->kernel,
+        _("Version"), computer->os->kernel_version,
+        _("C Library"), computer->os->libc,
+        _("Distribution"), computer->os->distro
+        );
 
     info_add_group(info, _("Current Session"),
         info_field(_("Computer Name"), computer->os->hostname),

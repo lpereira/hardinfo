@@ -44,17 +44,21 @@ struct InfoGroup {
 };
 
 struct InfoField {
+    const gchar *tag;
     const gchar *name;
     gchar *value;
 
     int update_interval;
 
     gboolean free_value_on_flatten;
+    gboolean mark_for_selection;
 };
 
 struct Info *info_new(void);
+struct Info *info_new_from_str(const gchar *str); /* opposite of info_flatten(); */
 
 void info_add_group(struct Info *info, const gchar *group_name, ...);
+void info_add_group_ff(struct Info *info, const gchar *group_name, ...);
 void info_add_computed_group(struct Info *info, const gchar *name, const gchar *value);
 
 struct InfoField info_field(const gchar *name, gchar *value);
