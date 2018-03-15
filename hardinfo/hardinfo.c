@@ -31,6 +31,7 @@ ProgramParameters params = { 0 };
 
 int main(int argc, char **argv)
 {
+    int exit_code = 0;
     GSList *modules;
 
     setlocale(LC_ALL, "");
@@ -121,7 +122,8 @@ int main(int argc, char **argv)
 
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
         if (!result) {
-          g_error(_("Unknown benchmark ``%s'' or benchmark.so not loaded"), params.run_benchmark);
+          fprintf(stderr, _("Unknown benchmark ``%s'' or benchmark.so not loaded"), params.run_benchmark);
+          exit_code = 1;
         } else {
           fprintf(stderr, "\n");
           g_print("%s\n", result);
@@ -156,5 +158,5 @@ int main(int argc, char **argv)
     moreinfo_shutdown();
 
     DEBUG("finished");
-    return 0;
+    return exit_code;
 }
