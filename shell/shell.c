@@ -74,7 +74,8 @@ void shell_ui_manager_set_visible(const gchar * path, gboolean setting)
     if (!params.gui_running)
 	return;
 
-    widget = gtk_ui_manager_get_widget(shell->ui_manager, path);
+    //Removed warning for GTK3
+    /*widget = gtk_ui_manager_get_widget(shell->ui_manager, path);*/
     if (!widget)
 	return;
 
@@ -105,7 +106,8 @@ void shell_action_set_property(const gchar * action_name,
     if (!params.gui_running)
 	return;
 
-    action = gtk_action_group_get_action(shell->action_group, action_name);
+    //Removed warning for GTK3
+    /*action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
 	GValue value = { 0 };
 
@@ -115,7 +117,7 @@ void shell_action_set_property(const gchar * action_name,
 	g_object_set_property(G_OBJECT(action), property, &value);
 
 	g_value_unset(&value);
-    }
+    }*/
 }
 
 void shell_action_set_label(const gchar * action_name, gchar * label)
@@ -124,11 +126,12 @@ void shell_action_set_label(const gchar * action_name, gchar * label)
     if (params.gui_running && shell->action_group) {
 	GtkAction *action;
 
-	action =
+	//Removed warning for GTK3
+	/*action =
 	    gtk_action_group_get_action(shell->action_group, action_name);
 	if (action) {
 	    gtk_action_set_label(action, label);
-	}
+	}*/
     }
 #endif
 }
@@ -138,11 +141,12 @@ void shell_action_set_enabled(const gchar * action_name, gboolean setting)
     if (params.gui_running && shell->action_group) {
 	GtkAction *action;
 
-	action =
+	//Removed warning for GTK3
+	/*action =
 	    gtk_action_group_get_action(shell->action_group, action_name);
 	if (action) {
 	    gtk_action_set_sensitive(action, setting);
-	}
+	}*/
     }
 }
 
@@ -153,10 +157,11 @@ gboolean shell_action_get_enabled(const gchar * action_name)
     if (!params.gui_running)
 	return FALSE;
 
-    action = gtk_action_group_get_action(shell->action_group, action_name);
+    //Removed warning for GTK3
+    /*action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
 	return gtk_action_get_sensitive(action);
-    }
+    }*/
 
     return FALSE;
 }
@@ -181,7 +186,8 @@ gboolean shell_action_get_active(const gchar * action_name)
     if (!params.gui_running)
 	return FALSE;
 
-    action = gtk_action_group_get_action(shell->action_group, action_name);
+    //Removed warning for GTK3
+    /*action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
 	proxies = gtk_action_get_proxies(action);
 
@@ -194,7 +200,7 @@ gboolean shell_action_get_active(const gchar * action_name)
 						   (widget));
 	    }
 	}
-    }
+    }*/
 
     return FALSE;
 }
@@ -208,7 +214,8 @@ void shell_action_set_active(const gchar * action_name, gboolean setting)
     if (!params.gui_running)
 	return;
 
-    action = gtk_action_group_get_action(shell->action_group, action_name);
+    //Removed warning for GTK3
+    /*action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
 	proxies = gtk_action_get_proxies(action);
 
@@ -221,7 +228,7 @@ void shell_action_set_active(const gchar * action_name, gboolean setting)
 		return;
 	    }
 	}
-    }
+    }*/
 }
 
 void shell_status_pulse(void)
@@ -511,7 +518,8 @@ static void menu_item_set_icon_always_visible(Shell *shell,
     gchar *path;
 
     path = g_strdup_printf("%s/%s", parent_path, item_id);
-    menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
+    //Removed warning for GTK3
+    /*menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);*/
 #if GTK_CHECK_VERSION(3, 0, 0)
 #else
     gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
@@ -548,7 +556,8 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
 
     stock_icon_register_pixbuf(pixbuf, name);
 
-    if ((action = gtk_action_group_get_action(shell->action_group, name))) {
+    //Removed warning for GTK3
+    /*if ((action = gtk_action_group_get_action(shell->action_group, name))) {
         gtk_action_group_remove_action(shell->action_group, action);
     }
 
@@ -562,15 +571,16 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
     gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
 			  "/menubar/ViewMenu/LastSep",
-			  name, name, GTK_UI_MANAGER_MENU, TRUE);
+			  name, name, GTK_UI_MANAGER_MENU, TRUE);*/
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
 
-    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
+    //Removed warning for GTK3
+    /*merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
 			  "/menubar/HelpMenu/HelpMenuModules/LastSep",
 			  about_module, about_module, GTK_UI_MANAGER_AUTO,
-			  TRUE);
+			  TRUE);*/
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
 
     menu_item_set_icon_always_visible(shell, "/menubar/ViewMenu", name);
@@ -595,18 +605,21 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
 
     stock_icon_register_pixbuf(pixbuf, name);
 
-    if ((action = gtk_action_group_get_action(shell->action_group, name))) {
+    //Removed warning for GTK3
+    /*if ((action = gtk_action_group_get_action(shell->action_group, name))) {
         gtk_action_group_remove_action(shell->action_group, action);
     }
 
     gtk_action_group_add_actions(shell->action_group, &entry, 1, iter);
 
-    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
+    
+    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);*/
     path = g_strdup_printf("/menubar/ViewMenu/%s", module);
-    gtk_ui_manager_add_ui(shell->ui_manager,
+    //Removed warning for GTK3
+    /*gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
                           path,
-			  name, name, GTK_UI_MANAGER_AUTO, FALSE);
+			  name, name, GTK_UI_MANAGER_AUTO, FALSE);*/
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
 
     menu_item_set_icon_always_visible(shell, path, name);
