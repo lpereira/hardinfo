@@ -21,6 +21,21 @@
 #include "hardinfo.h"
 #include "dmi_util.h"
 
+/* frees the string and sets it NULL if it is to be ignored
+ * returns -1 if error, 0 if ok, 1 if ignored */
+static int ignore_placeholder_strings(char **pstr) {
+    if (pstr == NULL || *pstr == NULL)
+        return -1;
+#define DMI_IGNORE(m) if (strcasecmp(m, *pstr) == 0) { free(*pstr); *pstr = NULL; return 1; }
+    DMI_IGNORE("To be filled by O.E.M.");
+    DMI_IGNORE("System Product Name");
+    DMI_IGNORE("System Manufacturer");
+    DMI_IGNORE("System Version");
+    DMI_IGNORE("Default String");
+    /*... more, I'm sure. */
+    return 0;
+}
+
 static const char *dmi_sysfs_root(void) {
     char *candidates[] = {
         "/sys/devices/virtual/dmi",
@@ -105,6 +120,7 @@ dmi_str_done:
             g_free(ret);
             ret = NULL;
         }
+        ignore_placeholder_strings(&ret);
     }
     return ret;
 }
