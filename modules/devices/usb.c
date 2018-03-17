@@ -497,7 +497,6 @@ static gboolean __scan_usb_util(void) {
 
         while(curr) {
             _usb_dev(curr);
-            c++;
             curr=curr->next;
         }
 
