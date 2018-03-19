@@ -388,6 +388,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean list_modules = FALSE;
     static gboolean autoload_deps = FALSE;
     static gboolean run_xmlrpc_server = FALSE;
+    static gboolean skip_benchmarks = FALSE;
     static gchar *report_format = NULL;
     static gchar *run_benchmark = NULL;
     static gchar *result_format = NULL;
@@ -450,6 +451,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &show_version,
 	 .description = N_("shows program version and quit")},
+	{
+	 .long_name = "skip-benchmarks",
+	 .short_name = 's',
+	 .arg = G_OPTION_ARG_NONE,
+	 .arg_data = &skip_benchmarks,
+	 .description = N_("do not run benchmarks")},
 	{NULL}
     };
     GOptionContext *ctx;
@@ -478,6 +485,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->result_format = result_format;
     param->autoload_deps = autoload_deps;
     param->run_xmlrpc_server = run_xmlrpc_server;
+    param->skip_benchmarks = skip_benchmarks;
     param->argv0 = *(argv)[0];
 
     if (report_format && g_str_equal(report_format, "html"))
