@@ -50,6 +50,7 @@ struct _ProgramParameters {
   gboolean list_modules;
   gboolean autoload_deps;
   gboolean run_xmlrpc_server;
+  gboolean skip_benchmarks;
 
   gint     report_format;
 

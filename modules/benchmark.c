@@ -441,6 +441,8 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 {
     int old_priority = 0;
 
+    if (params.skip_benchmarks) return;
+
     if (params.gui_running && !sending_benchmark_results) {
        gchar *argv[] = { params.argv0, "-b", entries[entry].name,
                          "-m", "benchmark.so", "-a", NULL };
