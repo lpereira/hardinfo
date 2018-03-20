@@ -63,6 +63,11 @@ SETTING UP
 Most things in HardInfo are detected automatically. However, some things
 depends on manual set up. They are:
 
+### Usb listing
+
+Recent distributions does not ship anymore usbutils by default, currently 
+usbutils package must provide the `lsusb` command to right working of the usb information module.
+
 ### Sensors
 
 **lm-sensors**: If your computer is compatible with lm-sensors module, use by example the
