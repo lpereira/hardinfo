@@ -21,13 +21,14 @@
 
 typedef struct _Vendor	Vendor;
 struct _Vendor {
-  char *id;
+  char *match_string;
+  int match_case; /* 0 = ignore case, 1 = match case*/
   char *name;
   char *url;
 };
 
 void  vendor_init(void);
-const gchar *vendor_get_name(const gchar *id);
-const gchar *vendor_get_url(const gchar *id);
+const gchar *vendor_get_name(const gchar *id_str);
+const gchar *vendor_get_url(const gchar *id_str);
 
 #endif	/* __VENDOR_H__ */
