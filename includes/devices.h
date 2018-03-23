@@ -98,5 +98,7 @@ extern gchar *dmi_info;
 #endif
 
 extern gchar *dtree_info;
+extern gchar *gpu_list;
+extern gchar *gpu_summary;
 
 #endif /* __DEVICES_H__ */
