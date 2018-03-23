@@ -38,6 +38,8 @@
 
 #include "info.h"
 
+#define THISORUNK(t) ( (t) ? t : _("(Unknown)") )
+
 /* Callbacks */
 gchar *callback_summary(void);
 gchar *callback_os(void);
@@ -173,6 +175,8 @@ void scan_fs(gboolean reload)
 void scan_display(gboolean reload)
 {
     SCAN_START();
+    if (computer->display)
+        computer_free_display(computer->display);
     computer->display = computer_get_display();
     SCAN_END();
 }
@@ -472,8 +476,8 @@ gchar *callback_summary(void)
     info_add_group(info, _("Display"),
         info_field_printf(_("Resolution"), _(/* label for resolution */ "%dx%d pixels"),
             computer->display->width, computer->display->height),
-        info_field(_("OpenGL Renderer"), computer->display->ogl_renderer),
-        info_field(_("X11 Vendor"), computer->display->vendor),
+        info_field(_("OpenGL Renderer"), THISORUNK(computer->display->xi->glx->ogl_renderer) ),
+        info_field(_("Session Display Server"), THISORUNK(computer->display->display_server) ),
         info_field_last());
 
     info_add_computed_group(info, _("Audio Devices"),
@@ -575,27 +579,76 @@ gchar *callback_fs(void)
 
 gchar *callback_display(void)
 {
+    int n = 0;
+    gchar *screens_str = strdup(""), *outputs_str = strdup("");
+    xinfo *xi = computer->display->xi;
+    xrr_info *xrr = xi->xrr;
+    glx_info *glx = xi->glx;
+    wl_info *wl = computer->display->wl;
+
     struct Info *info = info_new();
-
-    info_add_group(info, _("Display"),
-        info_field_printf(_("Resolution"), _(/* resolution WxH unit */ "%dx%d pixels"),
-                computer->display->width, computer->display->height),
-        info_field(_("Vendor"), computer->display->vendor),
-        info_field(_("Version"), computer->display->version),
-        info_field(_("Current Display Name"), computer->display->display_name),
+    info_add_group(info, _("Session"),
+        info_field(_("Type"), THISORUNK(computer->display->session_type) ),
         info_field_last());
 
-    info_add_computed_group(info, _("Monitors"), computer->display->monitors);
+    info_add_group(info, _("Wayland"),
+        info_field(_("Current Display Name"), (wl->display_name) ? (wl->display_name) : _("(Not Available)") ),
+        info_field_last());
 
-    info_add_group(info, _("OpenGL"),
-        info_field(_("Vendor"), computer->display->ogl_vendor),
-        info_field(_("Renderer"), computer->display->ogl_renderer),
-        info_field(_("Version"), computer->display->ogl_version),
+    info_add_group(info, _("X Server"),
+        info_field(_("Current Display Name"), THISORUNK(xi->display_name) ),
+        info_field(_("Vendor"), THISORUNK(xi->vendor) ),
+        info_field(_("Version"), THISORUNK(xi->version) ),
+        info_field(_("Release Number"), THISORUNK(xi->release_number) ),
+        info_field_last());
+
+    for (n = 0; n < xrr->screen_count; n++) {
+        gchar *dims = g_strdup_printf(_(/* resolution WxH unit */ "%dx%d pixels"), xrr->screens[n].px_width, xrr->screens[n].px_height);
+        screens_str = h_strdup_cprintf("Screen %d=%s\n", screens_str, xrr->screens[n].number, dims);
+        g_free(dims);
+    }
+    info_add_computed_group(info, _("Screens"), screens_str);
+
+    for (n = 0; n < xrr->output_count; n++) {
+        gchar *connection = NULL;
+        switch (xrr->outputs[n].connected) {
+            case 0:
+                connection = _("Disconnected");
+                break;
+            case 1:
+                connection = _("Connected");
+                break;
+            case -1:
+            default:
+                connection = _("Unknown");
+                break;
+        }
+        gchar *dims = (xrr->outputs[n].screen == -1)
+            ? g_strdup(_("Unused"))
+            : g_strdup_printf(_("%dx%d pixels, offset (%d, %d)"),
+                    xrr->outputs[n].px_width, xrr->outputs[n].px_height,
+                    xrr->outputs[n].px_offset_x, xrr->outputs[n].px_offset_y);
+
+        outputs_str = h_strdup_cprintf("%s=%s; %s\n", outputs_str,
+            xrr->outputs[n].name, connection, dims);
+
+        g_free(dims);
+    }
+    info_add_computed_group(info, _("Outputs (XRandR)"), outputs_str);
+
+    info_add_group(info, _("OpenGL (GLX)"),
+        info_field(_("Vendor"), THISORUNK(glx->ogl_vendor) ),
+        info_field(_("Renderer"), THISORUNK(glx->ogl_renderer) ),
         info_field(_("Direct Rendering"),
-            computer->display->dri ? _("Yes") : _("No")),
+            glx->direct_rendering ? _("Yes") : _("No")),
+        info_field(_("Version (Compatibility)"), THISORUNK(glx->ogl_version) ),
+        info_field(_("Shading Language Version (Compatibility)"), THISORUNK(glx->ogl_sl_version) ),
+        info_field(_("Version (Core)"), THISORUNK(glx->ogl_core_version) ),
+        info_field(_("Shading Language Version (Core)"), THISORUNK(glx->ogl_core_sl_version) ),
+        info_field(_("Version (ES)"), THISORUNK(glx->ogles_version) ),
+        info_field(_("Shading Language Version (ES)"), THISORUNK(glx->ogles_sl_version) ),
+        info_field(_("GLX Version"), THISORUNK(glx->glx_version) ),
         info_field_last());
-
-    info_add_computed_group(info, _("Extensions"), computer->display->extensions);
 
     return info_flatten(info);
 }
@@ -641,20 +694,28 @@ gchar *get_ogl_renderer(void)
 {
     scan_display(FALSE);
 
-    return g_strdup(computer->display->ogl_renderer);
+    return g_strdup(computer->display->xi->glx->ogl_renderer);
 }
 
 gchar *get_display_summary(void)
 {
     scan_display(FALSE);
 
-    return g_strdup_printf("%dx%d\n"
+    gchar *gpu_list = module_call_method("devices::getGPUList");
+
+    gchar *ret = g_strdup_printf(
+                           "%s\n"
+                           "%dx%d\n"
                            "%s\n"
                            "%s",
-                           computer->display->width,
-                           computer->display->height,
-                           computer->display->ogl_renderer,
-                           computer->display->vendor);
+                           gpu_list,
+                           computer->display->width, computer->display->height,
+                           computer->display->display_server,
+                           (computer->display->xi->glx->ogl_renderer)
+                              ? computer->display->xi->glx->ogl_renderer
+                              : "" );
+    g_free(gpu_list);
+    return ret;
 }
 
 gchar *get_kernel_module_description(gchar *module)
@@ -769,17 +830,7 @@ void hi_module_deinit(void)
         g_free(computer->os);
     }
 
-    if (computer->display) {
-        g_free(computer->display->ogl_vendor);
-        g_free(computer->display->ogl_renderer);
-        g_free(computer->display->ogl_version);
-        g_free(computer->display->display_name);
-        g_free(computer->display->vendor);
-        g_free(computer->display->version);
-        g_free(computer->display->extensions);
-        g_free(computer->display->monitors);
-        g_free(computer->display);
-    }
+    computer_free_display(computer->display);
 
     if (computer->alsa) {
         g_slist_free(computer->alsa->cards);
