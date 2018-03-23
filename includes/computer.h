@@ -19,6 +19,7 @@
 #define __COMPUTER_H__
 
 #include "hardinfo.h"
+#include "x_util.h"
 
 typedef struct _Computer	Computer;
 typedef struct _OperatingSystem	OperatingSystem;
@@ -36,14 +37,14 @@ typedef struct _FileSystemEntry	FileSystemEntry;
 struct _AlsaCard {
     gchar *alsa_name;
     gchar *friendly_name;
-/*  
+/*
   gchar   *board;
   gchar    revision, compat_class;
   gint     subsys_vendorid, subsys_id;
-  
+
   gint     cap_dac_res, cap_adc_res;
   gboolean cap_3d_enh;
-  
+
   gint     curr_mic_gain;
   gboolean curr_3d_enh,
            curr_loudness,
@@ -57,14 +58,18 @@ struct _AlsaInfo {
 };
 
 struct _DisplayInfo {
-    gchar *ogl_vendor, *ogl_renderer, *ogl_version;
-    gboolean dri;
-    
-    gchar *display_name, *vendor, *version;
-    gchar *extensions;
-    gchar *monitors;
-    
+    /* old stuff */
     gint width, height;
+
+    /* new stuff */
+    xinfo *xi; /* x info */
+    wl_info *wl; /* wayland info */
+
+    gchar *display_server;
+
+    /* don't free */
+    const gchar *vendor; /* X vendor; points to xrr->xi->vendor */
+    const gchar *session_type; /* points to wl->xdg_session_type */
 };
 
 struct _LoadInfo {
@@ -97,7 +102,7 @@ struct _OperatingSystem {
 
     gchar *desktop;
     gchar *username;
-    
+
     gchar *boots;
 
     gchar *entropy_avail;
@@ -144,6 +149,7 @@ AlsaInfo *computer_get_alsainfo(void);
 MemoryInfo *computer_get_memory(void);
 UptimeInfo *computer_get_uptime(void);
 DisplayInfo *computer_get_display(void);
+void computer_free_display(DisplayInfo *di);
 
 void scan_modules_do(void);
 void scan_filesystems(void);

@@ -21,131 +21,52 @@
 #include "hardinfo.h"
 #include "computer.h"
 
-static void
-get_glx_info(DisplayInfo *di)
-{
-    gchar *output;
-    if (g_spawn_command_line_sync("glxinfo", &output, NULL, NULL, NULL)) {
-        gchar **output_lines;
-        gint i = 0;
-
-        for (output_lines = g_strsplit(output, "\n", 0);
-             output_lines && output_lines[i];
-             i++) {
-            if (strstr(output_lines[i], "OpenGL")) {
-                gchar **tmp = g_strsplit(output_lines[i], ":", 0);
-
-                tmp[1] = g_strchug(tmp[1]);
-
-                get_str("OpenGL vendor str", di->ogl_vendor);
-                get_str("OpenGL renderer str", di->ogl_renderer);
-                get_str("OpenGL version str", di->ogl_version);
-
-                g_strfreev(tmp);
-            } else if (strstr(output_lines[i], "direct rendering: Yes")) {
-                di->dri = TRUE;
-            }
-        }
-
-        g_free(output);
-        g_strfreev(output_lines);
-
-        if (!di->ogl_vendor)
-            di->ogl_vendor = _("(Unknown)");
-        if (!di->ogl_renderer)
-            di->ogl_renderer = _("(Unknown)");
-        if (!di->ogl_version)
-            di->ogl_version = _("(Unknown)");
-
-    } else {
-        di->ogl_vendor = di->ogl_renderer = di->ogl_version = _("(Unknown)");
-    }
-
-}
-
-static void
-get_x11_info(DisplayInfo *di)
-{
-    gchar *output;
-
-    if (g_spawn_command_line_sync("xdpyinfo", &output, NULL, NULL, NULL)) {
-	gchar **output_lines, **old;
-
-	output_lines = g_strsplit(output, "\n", 0);
-	g_free(output);
-
-	old = output_lines;
-	while (*output_lines) {
-            gchar **tmp = g_strsplit(*output_lines, ":", 2);
-            output_lines++;
-
-            if (tmp[1] && tmp[0]) {
-              tmp[1] = g_strchug(tmp[1]);
-
-              get_str("vendor string", di->vendor);
-              get_str("X.Org version", di->version);
-              get_str("XFree86 version", di->version);
-              get_str("name of display", di->display_name);
-
-              if (g_str_has_prefix(tmp[0], "number of extensions")) {
-                int n;
-
-                di->extensions = g_strdup("");
-
-                for (n = atoi(tmp[1]); n; n--) {
-                  di->extensions = h_strconcat(di->extensions,
-                                               g_strstrip(*(++output_lines)),
-                                               "=\n",
-                                               NULL);
-                }
-                g_strfreev(tmp);
-
-                break;
-              }
-            }
-
-            g_strfreev(tmp);
-	}
-
-	g_strfreev(old);
-    }
-
-    GdkScreen *screen = gdk_screen_get_default();
-
-    if (screen && GDK_IS_SCREEN(screen)) {
-        gint n_monitors = gdk_screen_get_n_monitors(screen);
-        gint i;
-
-        di->monitors = NULL;
-        for (i = 0; i < n_monitors; i++) {
-            GdkRectangle rect;
-
-            gdk_screen_get_monitor_geometry(screen, i, &rect);
-
-            di->monitors = h_strdup_cprintf(_("Monitor %d=%dx%d pixels\n"),
-                                            di->monitors, i, rect.width, rect.height);
-        }
-      } else {
-          di->monitors = "";
-      }
-}
-
-DisplayInfo *
-computer_get_display(void)
-{
+DisplayInfo *computer_get_display(void) {
     DisplayInfo *di = g_new0(DisplayInfo, 1);
+    wl_info *wl = get_walyand_info();
+    xinfo *xi = xinfo_get_info();
+    xrr_info *xrr = xi->xrr;
+    glx_info *glx = xi->glx;
 
-    GdkScreen *screen = gdk_screen_get_default();
+    di->width = di->height = 0;
+    if (xrr->screen_count > 0) {
+        di->width = xrr->screens[0].px_width;
+        di->height = xrr->screens[0].px_height;
+    }
+    di->vendor = xi->vendor;
+    di->session_type = wl->xdg_session_type;
 
-    if (screen && GDK_IS_SCREEN(screen)) {
-        di->width = gdk_screen_get_width(screen);
-        di->height = gdk_screen_get_height(screen);
-    } else {
-        di->width = di->height = 0;
+    if (strcmp(di->session_type, "x11") == 0 ) {
+        if (xi->nox) {
+            di->display_server = g_strdup(_("(Unknown)"));
+            /* assumed x11 previously, because it wasn't set */
+            free(wl->xdg_session_type);
+            di->session_type = wl->xdg_session_type = NULL;
+        } else if (xi->vendor && xi->version)
+            di->display_server = g_strdup_printf("%s %s", xi->vendor, xi->version );
+        else if (xi->vendor && xi->release_number)
+            di->display_server = g_strdup_printf("[X11] %s %s", xi->vendor, xi->release_number );
+        else
+            di->display_server = g_strdup("X11");
+    } else
+    if (strcmp(di->session_type, "wayland") == 0 ) {
+        di->display_server = g_strdup("Wayland");
+    } else
+    if (strcmp(di->session_type, "mir") == 0 ) {
+        di->display_server = g_strdup("Mir");
     }
 
-    get_glx_info(di);
-    get_x11_info(di);
-
+    di->xi = xi;
+    di->wl = wl;
     return di;
+}
+
+void computer_free_display(DisplayInfo *di) {
+    /* fyi: DisplayInfo is in computer.h */
+    if (di) {
+        free(di->display_server);
+        xinfo_free(di->xi);
+        wl_free(di->wl);
+        free(di);
+    }
 }
