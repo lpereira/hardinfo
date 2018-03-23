@@ -28,18 +28,24 @@ get_glx_info(DisplayInfo *di)
     if (g_spawn_command_line_sync("glxinfo", &output, NULL, NULL, NULL)) {
         gchar **output_lines;
         gint i = 0;
+        gboolean has_core_profile = FALSE;
 
         for (output_lines = g_strsplit(output, "\n", 0);
              output_lines && output_lines[i];
              i++) {
             if (strstr(output_lines[i], "OpenGL")) {
+                if (strstr(output_lines[i], "profile")) 
+                    has_core_profile = TRUE;
                 gchar **tmp = g_strsplit(output_lines[i], ":", 0);
 
                 tmp[1] = g_strchug(tmp[1]);
 
                 get_str("OpenGL vendor str", di->ogl_vendor);
                 get_str("OpenGL renderer str", di->ogl_renderer);
-                get_str("OpenGL version str", di->ogl_version);
+                if (has_core_profile)
+                    get_str("OpenGL core profile version str", di->ogl_version);
+                else
+                    get_str("OpenGL version str", di->ogl_version);
 
                 g_strfreev(tmp);
             } else if (strstr(output_lines[i], "direct rendering: Yes")) {
