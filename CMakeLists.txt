@@ -231,6 +231,7 @@ add_executable(hardinfo
 	hardinfo/dmi_util.c
 	hardinfo/dt_util.c
 	hardinfo/x_util.c
+	hardinfo/gpu_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
@@ -263,6 +264,7 @@ add_executable(hardinfo
 	hardinfo/dmi_util.c
 	hardinfo/dt_util.c
 	hardinfo/x_util.c
+	hardinfo/gpu_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
