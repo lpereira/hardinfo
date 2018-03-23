@@ -40,6 +40,7 @@
 #include "dt_util.h"
 
 gchar *callback_processors();
+gchar *callback_gpu();
 gchar *callback_memory();
 gchar *callback_battery();
 gchar *callback_pci();
@@ -56,6 +57,7 @@ gchar *callback_dtree();
 gchar *callback_device_resources();
 
 void scan_processors(gboolean reload);
+void scan_gpu(gboolean reload);
 void scan_memory(gboolean reload);
 void scan_battery(gboolean reload);
 void scan_pci(gboolean reload);
@@ -79,6 +81,7 @@ enum {
     ENTRY_DTREE,
     ENTRY_PROCESSOR,
     ENTRY_MEMORY,
+    ENTRY_GPU,
     ENTRY_PCI,
     ENTRY_USB,
     ENTRY_PRINTERS,
@@ -94,6 +97,7 @@ enum {
 static ModuleEntry entries[] = {
     [ENTRY_PROCESSOR] = {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
     [ENTRY_MEMORY] = {N_("Memory"), "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
+    [ENTRY_GPU] = {N_("Graphics Processors"), "devices.png", callback_gpu, scan_gpu, MODULE_FLAG_NONE},
     [ENTRY_PCI] = {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
     [ENTRY_USB] = {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
     [ENTRY_PRINTERS] = {N_("Printers"), "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
@@ -125,6 +129,13 @@ gchar *meminfo = NULL;
 gchar *lginterval = NULL;
 
 #include <vendor.h>
+
+extern gchar *gpu_summary;
+const gchar *get_gpu_summary() {
+    if (gpu_summary == NULL)
+        scan_gpu(FALSE);
+    return gpu_summary;
+}
 
 static gint proc_cmp_model_name(Processor *a, Processor *b) {
     return g_strcmp0(a->model_name, b->model_name);
@@ -336,21 +347,6 @@ gchar *get_processor_max_frequency(void)
     }
 }
 
-gchar *get_pci_device_description(gchar *pci_id)
-{
-    gchar *description;
-
-    if (!_pci_devices) {
-        scan_pci(FALSE);
-    }
-
-    if ((description = g_hash_table_lookup(_pci_devices, pci_id))) {
-        return g_strdup(description);
-    }
-
-    return NULL;
-}
-
 gchar *get_memory_total(void)
 {
     scan_memory(FALSE);
@@ -413,8 +409,8 @@ ShellModuleMethod *hi_exported_methods(void)
 	{"getStorageDevices", get_storage_devices},
 	{"getPrinters", get_printers},
 	{"getInputDevices", get_input_devices},
-	{"getPCIDeviceDescription", get_pci_device_description},
 	{"getMotherboard", get_motherboard},
+	{"getGPUList", get_gpu_summary},
 	{NULL}
     };
 
@@ -483,6 +479,13 @@ void scan_battery(gboolean reload)
 {
     SCAN_START();
     scan_battery_do();
+    SCAN_END();
+}
+
+void scan_gpu(gboolean reload)
+{
+    SCAN_START();
+    scan_gpu_do();
     SCAN_END();
 }
 
@@ -585,6 +588,13 @@ gchar *callback_pci()
     return g_strdup_printf("[PCI Devices]\n"
 			   "%s"
 			   "[$ShellParam$]\n" "ViewType=1\n", pci_list);
+}
+
+gchar *callback_gpu()
+{
+    return g_strdup_printf("[GPUs]\n"
+			   "%s"
+			   "[$ShellParam$]\n" "ViewType=1\n", gpu_list);
 }
 
 gchar *callback_sensors()
