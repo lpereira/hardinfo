@@ -40,9 +40,6 @@ __scan_scsi_devices(void)
     /* remove old devices from global device table */
     moreinfo_del_with_prefix("DEV:SCSI");
 
-    if (!g_file_test("/proc/scsi/scsi", G_FILE_TEST_EXISTS))
-	return;
-
     scsi_storage_list = g_strdup(_("\n[SCSI Disks]\n"));
 
     int otype = 0;
