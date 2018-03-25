@@ -45,7 +45,14 @@ __scan_scsi_devices(void)
 
     scsi_storage_list = g_strdup(_("\n[SCSI Disks]\n"));
 
-    if ((proc_scsi = fopen("/proc/scsi/scsi", "r"))) {
+    int otype = 0;
+    if (proc_scsi = fopen("/proc/scsi/scsi", "r")) {
+        otype = 1;
+    } else if (proc_scsi = popen("lsscsi -c", "r")) {
+        otype = 2;
+    }
+
+    if (otype) {
         while (fgets(buffer, 256, proc_scsi)) {
             buf = g_strstrip(buffer);
             if (!strncmp(buf, "Host: scsi", 10)) {
@@ -145,7 +152,10 @@ __scan_scsi_devices(void)
                 scsi_controller = scsi_channel = scsi_id = scsi_lun = 0;
             }
         }
-        fclose(proc_scsi);
+        if (otype == 1)
+            fclose(proc_scsi);
+        else if (otype == 2)
+            pclose(proc_scsi);
     }
 
     if (n) {
