@@ -57,7 +57,7 @@ static void _gpu_pci_dev(gpud* gpu) {
     else
         drm_path = g_strdup(_("(Unknown)"));
 
-#define USE_HARDINFO_VENDOR_THING 0
+#define USE_HARDINFO_VENDOR_THING 1
     if (USE_HARDINFO_VENDOR_THING) {
         const gchar *v_url = vendor_get_url(vendor);
         const gchar *v_name = vendor_get_name(vendor);

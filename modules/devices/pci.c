@@ -35,7 +35,7 @@ static void _pci_dev(const pcid *p) {
     product = UNKIFNULL_AC(p->device_id_str);
     sproduct = UNKIFNULL_AC(p->sub_device_id_str);
 
-#define USE_HARDINFO_VENDOR_THING 0
+#define USE_HARDINFO_VENDOR_THING 1
     if (USE_HARDINFO_VENDOR_THING) {
         const gchar *v_url = vendor_get_url(vendor);
         const gchar *v_name = vendor_get_name(vendor);
