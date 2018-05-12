@@ -28,6 +28,7 @@ typedef struct {
     char *cpu_desc;
     char *cpu_config;
     char *ogl_renderer;
+    char *gpu_desc;
     int processors;
     int cores;
     int threads;
@@ -152,6 +153,7 @@ bench_machine *bench_machine_this() {
         m->cpu_name = module_call_method("devices::getProcessorName");
         m->cpu_desc = module_call_method("devices::getProcessorDesc");
         m->cpu_config = module_call_method("devices::getProcessorFrequencyDesc");
+        m->gpu_desc = module_call_method("devices::getGPUList");
         m->ogl_renderer = module_call_method("computer::getOGLRenderer");
         tmp = module_call_method("devices::getMemoryTotal");
         m->memory_kiB = atoi(tmp);
@@ -270,6 +272,8 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             b->machine->threads = atoi(values[9]);
             if (vl >= 11)
                 b->machine->ogl_renderer = strdup(values[10]);
+            if (vl >= 12)
+                b->machine->gpu_desc = strdup(values[11]);
             b->legacy = 0;
         } else if (vl >= 2) {
             b->bvalue.result = atof(values[0]);
@@ -348,7 +352,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 char *bench_result_benchmarkconf_line(bench_result *b) {
     char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
     char *bv = bench_value_to_str(b->bvalue);
-    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s\n",
+    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s|%s\n",
             b->machine->mid, bv, b->bvalue.threads_used,
             (b->machine->board != NULL) ? b->machine->board : "",
             b->machine->cpu_name,
@@ -356,7 +360,8 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
             cpu_config,
             b->machine->memory_kiB,
             b->machine->processors, b->machine->cores, b->machine->threads,
-            (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : ""
+            (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : "",
+            (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : ""
             );
     free(cpu_config);
     free(bv);
@@ -378,6 +383,7 @@ static char *bench_result_more_info_less(bench_result *b) {
         /* cpudesc */   "%s=%s\n"
         /* cpucfg */    "%s=%s\n"
         /* threads */   "%s=%d\n"
+        /* gpu desc */  "%s=%s\n"
         /* ogl rend */  "%s=%s\n"
         /* mem */       "%s=%s\n",
                         _("Benchmark Result"),
@@ -390,6 +396,7 @@ static char *bench_result_more_info_less(bench_result *b) {
                         _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
                         _("CPU Config"), b->machine->cpu_config,
                         _("Threads Available"), b->machine->threads,
+                        _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
                         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
                         _("Memory"), memory
                         );
@@ -410,6 +417,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
         /* cpudesc */   "%s=%s\n"
         /* cpucfg */    "%s=%s\n"
         /* threads */   "%s=%d\n"
+        /* gpu desc */  "%s=%s\n"
         /* ogl rend */  "%s=%s\n"
         /* mem */       "%s=%d %s\n"
                         "[%s]\n"
@@ -428,6 +436,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
                         _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
                         _("CPU Config"), b->machine->cpu_config,
                         _("Threads Available"), b->machine->threads,
+                        _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
                         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
                         _("Memory"), b->machine->memory_kiB, _("kiB"),
                         _("Handles"),
