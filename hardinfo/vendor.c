@@ -121,11 +121,12 @@ static GSList *vendor_list = NULL;
 /* sort the vendor list by length of match_string,
  * LONGEST first */
 gint vendor_sort (gconstpointer a, gconstpointer b) {
+    const Vendor *ap = a, *bp = b;
     int la = 0, lb = 0;
-    if (a) la = strlen(a);
-    if (b) lb = strlen(b);
-    if (a == b) return 0;
-    if (a > b) return -1;
+    if (ap && ap->match_string) la = strlen(ap->match_string);
+    if (bp && bp->match_string) lb = strlen(bp->match_string);
+    if (la == lb) return 0;
+    if (la > lb) return -1;
     return 1;
 }
 
