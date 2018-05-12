@@ -22,7 +22,7 @@
 typedef struct _Vendor	Vendor;
 struct _Vendor {
   char *match_string;
-  int match_case; /* 0 = ignore case, 1 = match case*/
+  int match_case; /* 0 = ignore case, 1 = match case */
   char *name;
   char *url;
 };
