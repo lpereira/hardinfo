@@ -282,6 +282,33 @@ computer_get_language(void)
 }
 
 static gchar *
+parse_os_release(void)
+{
+    gchar *pretty_name = NULL;
+    gchar **split, *contents, *line;
+
+    if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
+        return NULL;
+
+    split = g_strsplit(idle_free(contents), "\n", 0);
+    if (!split)
+        return NULL;
+
+    for (line = *split; *line; line++) {
+        if (!strncmp(line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
+            pretty_name = g_strdup(line +
+                                   strlen("PRETTY_NAME=") + 1);
+            strend(pretty_name, '"');
+            break;
+        }
+    }
+
+    g_strfreev(split);
+
+    return pretty_name;
+}
+
+static gchar *
 detect_distro(void)
 {
     static const struct {
@@ -326,6 +353,12 @@ detect_distro(void)
     };
     gchar *contents;
     int i;
+
+    if (g_file_test("/usr/lib/os-release", G_FILE_TEST_EXISTS)) {
+        contents = parse_os_release();
+        if (contents)
+            return contents;
+    }
 
     if (g_spawn_command_line_sync("lsb_release -d", &contents, NULL, NULL, NULL)) {
         gchar *tmp = strstr(idle_free(contents), "Description:\t");
