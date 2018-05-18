@@ -56,7 +56,7 @@ void info_add_group(struct Info *info, const gchar *group_name, ...)
     g_array_append_val(info->groups, group);
 }
 
-struct InfoField info_field(const gchar *name, gchar *value)
+struct InfoField info_field(const gchar *name, const gchar *value)
 {
     return (struct InfoField) {
         .name = name,
@@ -160,7 +160,7 @@ static void flatten_group(GString *output, const struct InfoGroup *group)
             g_string_append_printf(output, "%s=%s\n", field.name, field.value);
 
             if (field.free_value_on_flatten)
-                g_free(field.value);
+                g_free((gchar *)field.value);
         }
     } else if (group->computed) {
         g_string_append_printf(output, "%s\n", group->computed);

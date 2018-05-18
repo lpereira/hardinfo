@@ -588,11 +588,12 @@ gchar *callback_display(void)
 
     struct Info *info = info_new();
     info_add_group(info, _("Session"),
-        info_field(_("Type"), THISORUNK(computer->display->session_type) ),
+        info_field(_("Type"), THISORUNK(computer->display->session_type)),
         info_field_last());
 
     info_add_group(info, _("Wayland"),
-        info_field(_("Current Display Name"), (wl->display_name) ? (wl->display_name) : _("(Not Available)") ),
+        info_field(_("Current Display Name"),
+                    (wl->display_name) ? (wl->display_name) : _("(Not Available)")),
         info_field_last());
 
     info_add_group(info, _("X Server"),

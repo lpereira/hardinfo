@@ -571,8 +571,7 @@ char *dtr_list_byte(uint8_t *bytes, unsigned long count) {
     dest = ret + 1;
     for (i = 0; i < count; i++) {
         v = bytes[i];
-        sprintf(buff, "%s%02x", (i) ? " " : "", v);
-        l = strlen(buff);
+        l = sprintf(buff, "%s%02x", (i) ? " " : "", v);
         strncpy(dest, buff, l);
         dest += l;
     }
@@ -588,8 +587,7 @@ char *dtr_list_hex(dt_uint *list, unsigned long count) {
     dest = ret = malloc(l);
     memset(ret, 0, l);
     for (i = 0; i < count; i++) {
-        sprintf(buff, "%s0x%x", (i) ? " " : "", be32toh(list[i]));
-        l = strlen(buff);
+        l = sprintf(buff, "%s0x%x", (i) ? " " : "", be32toh(list[i]));
         strncpy(dest, buff, l);
         dest += l;
     }
