@@ -114,22 +114,37 @@ static void _gpu_pci_dev(gpud* gpu) {
     } else
         pcie_str = strdup("");
 
+    gchar *nv_str;
+    if (gpu->nv_info) {
+        nv_str = g_strdup_printf("[%s]\n"
+                     /* model */  "%s=%s\n"
+                     /* bios */   "%s=%s\n"
+                     /* uuid */   "%s=%s\n",
+                    _("NVIDIA"),
+                    _("Model"), gpu->nv_info->model,
+                    _("BIOS Version"), gpu->nv_info->bios_version,
+                    _("UUID"), gpu->nv_info->uuid );
+    } else
+        nv_str = strdup("");
+
     str = g_strdup_printf("[%s]\n"
              /* Location */  "%s=%s\n"
              /* DRM Dev */   "%s=%s\n"
              /* Class */     "%s=[%04x] %s\n"
                              "%s"
              /* Revision */  "%s=%02x\n"
-                             "%s"
+             /* NV */        "%s"
+             /* PCIe */      "%s"
                              "[%s]\n"
-            /* Driver */     "%s=%s\n"
-            /* Modules */    "%s=%s\n",
+             /* Driver */    "%s=%s\n"
+             /* Modules */   "%s=%s\n",
                 _("Device Information"),
                 _("Location"), gpu->location,
                 _("DRM Device"), drm_path,
                 _("Class"), p->class, p->class_str,
                 vendor_device_str,
                 _("Revision"), p->revision,
+                nv_str,
                 pcie_str,
                 _("Driver"),
                 _("In Use"), (p->driver) ? p->driver : _("(Unknown)"),
@@ -139,6 +154,8 @@ static void _gpu_pci_dev(gpud* gpu) {
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
 
     g_free(drm_path);
+    g_free(pcie_str);
+    g_free(nv_str);
     g_free(vendor_device_str);
     g_free(v_str);
     g_free(sv_str);
