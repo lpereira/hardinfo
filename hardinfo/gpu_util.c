@@ -21,6 +21,65 @@
 #include "hardinfo.h"
 #include "gpu_util.h"
 
+nvgpu *nvgpu_new() {
+    return g_new0(nvgpu, 1);
+}
+
+void *nvgpu_free(nvgpu *s) {
+    if (s) {
+        free(s->model);
+        free(s->bios_version);
+        free(s->uuid);
+    }
+}
+
+static char *_line_value(char *line, const char *prefix) {
+    if (g_str_has_prefix(g_strstrip(line), prefix)) {
+        line += strlen(prefix) + 1;
+        return g_strstrip(line);
+    } else
+        return NULL;
+}
+
+static gboolean nv_fill_procfs_info(gpud *s) {
+    gchar *data, *p, *l, *next_nl;
+    gchar *pci_loc = pci_address_str(s->pci_dev->domain, s->pci_dev->bus, s->pci_dev->device, s->pci_dev->function);
+    gchar *nvi_file = g_strdup_printf("/proc/driver/nvidia/gpus/%s/information", pci_loc);
+
+    g_file_get_contents(nvi_file, &data, NULL, NULL);
+    g_free(pci_loc);
+    g_free(nvi_file);
+
+    if (data) {
+        s->nv_info = nvgpu_new();
+        p = data;
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            g_strstrip(p);
+            if (l = _line_value(p, "Model")) {
+                s->nv_info->model = g_strdup(l);
+                goto nv_details_next;
+            }
+            if (l = _line_value(p, "GPU UUID")) {
+                s->nv_info->uuid = g_strdup(l);
+                goto nv_details_next;
+            }
+            if (l = _line_value(p, "Video BIOS")) {
+                s->nv_info->bios_version = g_strdup(l);
+                goto nv_details_next;
+            }
+
+            /* TODO: more details */
+
+            nv_details_next:
+                p = next_nl + 1;
+        }
+        g_free(data);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 gpud *gpud_new() {
     return g_new0(gpud, 1);
 }
@@ -36,6 +95,7 @@ void gpud_free(gpud *s) {
         free(s->sysfs_drm_path);
         free(s->dt_compat);
         pcid_free(s->pci_dev);
+        nvgpu_free(s->nv_info);
         g_free(s);
     }
 }
@@ -73,6 +133,13 @@ int gpud_list_count(gpud *s) {
 /* TODO: In the future, when there is more vendor specific information available in
  * the gpu struct, then more precise names can be given to each gpu */
 static void make_nice_name(gpud *s) {
+
+    /* NV information available */
+    if (s->nv_info && s->nv_info->model) {
+        s->nice_name = g_strdup_printf("%s %s", "NVIDIA", s->nv_info->model);
+        return;
+    }
+
     static const char unk_v[] = "Unknown"; /* do not...    */
     static const char unk_d[] = "Device";  /* ...translate */
     const char *vendor_str = s->vendor_str;
@@ -99,6 +166,7 @@ static void make_nice_name(gpud *s) {
         /* nothing nicer */
         s->nice_name = g_strdup_printf("%s %s", vendor_str, device_str);
     }
+
 }
 
 gpud *dt_soc_gpu() {
@@ -213,6 +281,7 @@ gpud *gpu_get_device_list() {
             new_gpu->id = strdup(card_id);
             if (curr->vendor_id_str) new_gpu->vendor_str = strdup(curr->vendor_id_str);
             if (curr->device_id_str) new_gpu->device_str = strdup(curr->device_id_str);
+            nv_fill_procfs_info(new_gpu);
             make_nice_name(new_gpu);
             if (list == NULL)
                 list = new_gpu;
