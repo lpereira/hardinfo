@@ -23,6 +23,12 @@
 #include "pci_util.h"
 #include "dt_util.h"
 
+typedef struct nvgpu {
+    char *model;
+    char *bios_version;
+    char *uuid;
+} nvgpu;
+
 typedef struct gpud {
     char *id; /* ours */
     char *nice_name;
@@ -36,6 +42,7 @@ typedef struct gpud {
     char *dt_compat;
     const char *dt_vendor, *dt_device;
 
+    nvgpu *nv_info;
     /* ... */
 
     struct gpud *next; /* this is a linked list */
