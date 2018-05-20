@@ -116,9 +116,9 @@ set(HARDINFO_MODULES
 	network
 )
 set(HARDINFO_RESOURCES
-	"benchmark.conf"
-	"benchmark.data"
-	"vendor.ids"
+	"data/benchmark.conf"
+	"data/benchmark.data"
+	"data/vendor.ids"
 )
 
 set(HARDINFO_MANPAGES
