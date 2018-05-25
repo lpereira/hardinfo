@@ -19,6 +19,7 @@
 #ifndef __HARDINFO_H__
 #define __HARDINFO_H__
 
+#include <unistd.h>
 #include <gtk/gtk.h>
 #include "config.h"
 #include "shell.h"
