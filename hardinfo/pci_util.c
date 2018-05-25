@@ -227,7 +227,7 @@ static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, u
                 }
             }
             if (l = lspci_line_value(p, "Rev")) {
-                s->revision = strtol(l, NULL, 0);
+                s->revision = strtol(l, NULL, 16);
             }
             lspci_line_string_and_code(p, "Class", &s->class_str, &s->class);
             lspci_line_string_and_code(p, "Vendor", &s->vendor_id_str, &s->vendor_id);
