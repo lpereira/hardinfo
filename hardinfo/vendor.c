@@ -30,6 +30,9 @@
 static Vendor vendors[] = {
     { "ASUS", 0, "ASUS", "www.asus.com" }, /* "ASUSTek" is common */
     { "ATI", 1, "ATI Technologies", "www.ati.com" },
+    { "Advanced Micro Devices", 0, "Advanced Micro Devices", "www.amd.com" },
+    { "AMD", 1, "Advanced Micro Devices", "www.amd.com" },
+    { "AMD/ATI", 1, "Advanced Micro Devices (formerly ATI)", "www.amd.com" },
     { "nVidia", 0, "nVidia", "www.nvidia.com" },
     { "3Com", 0, "3Com", "www.3com.com" },
     { "Intel", 0, "Intel", "www.intel.com" },
