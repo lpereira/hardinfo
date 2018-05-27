@@ -143,7 +143,7 @@ void vendor_init(void)
     DEBUG("initializing vendor list");
     sync_manager_add_entry(&se);
 
-    path = g_build_filename(g_get_home_dir(), ".hardinfo", "vendor.conf", NULL);
+    path = g_build_filename(g_get_user_config_dir(), "hardinfo", "vendor.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
       DEBUG("local vendor.conf not found, trying system-wise");
       g_free(path);
