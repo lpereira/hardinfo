@@ -307,7 +307,7 @@ static void _action_call_function_got_response(SoupSession * session,
     if ((string = _soup_get_xmlrpc_value_string(msg, sna)) &&
 	sna->entry->save_to) {
 	DEBUG("received string: %s\n", string);
-	gchar *filename = g_build_filename(g_get_home_dir(), ".hardinfo",
+	gchar *filename = g_build_filename(g_get_user_config_dir(), "hardinfo",
 					   sna->entry->save_to, NULL);
 
 	DEBUG("saving to %s", filename);
