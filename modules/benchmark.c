@@ -349,7 +349,7 @@ static gchar *__benchmark_include_results(bench_value r,
 
     conf = g_key_file_new();
 
-    path = g_build_filename(g_get_home_dir(), ".hardinfo", "benchmark.conf", NULL);
+    path = g_build_filename(g_get_user_config_dir(), "hardinfo", "benchmark.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
         DEBUG("local benchmark.conf not found, trying system-wide");
         g_free(path);
