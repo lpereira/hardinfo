@@ -1,0 +1,355 @@
+#
+# Vendor Name and URL
+#
+# Syntax:
+# name <name>
+#    url <url>
+#    [match_string|match_string_case] <match>
+#    ...
+#    [match_string|match_string_case] <match>
+#    [match_string|match_string_case] <match>
+#
+#
+# Except for the newline, trailing whitespace is included in the string.
+# Match strings should be unique.
+#
+
+name ASUS
+    url www.asus.com
+    # "ASUSTek" is common
+    match_string ASUSTek
+    match_string ASUS
+
+name Advanced Micro Devices
+    url www.amd.com
+    match_string Advanced Micro Devices
+    match_string_case AMD
+
+name Advanced Micro Devices (formerly ATI)
+    url www.amd.com
+    match_string ATI Technologies
+    match_string_case AMD/ATI
+    match_string_case ATI
+
+name nVidia
+    url www.nvidia.com
+    match_string nVidia
+
+name 3Com
+    url www.3com.com
+    match_string 3Com
+
+name Intel
+    url www.intel.com
+    match_string Intel
+
+name Cirrus Logic
+    url www.cirrus.com
+    match_string Cirrus Logic
+
+name VIA Technologies
+    url www.via.com.tw
+    match_string_case VIA
+
+name NEC Corporation
+    url www.nec.com
+    match_string_case NEC
+
+name Realtek
+    url www.realtek.com.tw
+    match_string Realtek
+
+name Toshiba
+    url www.toshiba.com
+    match_string Toshiba
+
+name LITE-ON
+    url www.liteonit.com
+    match_string_case LITE-ON
+
+name Maxtor
+    url www.maxtor.com
+    match_string Maxtor
+
+name Samsung
+    url www.samsung.com
+    match_string Samsung
+
+name Pioneer
+    url www.pioneer-eur.com
+    match_string Pioneer
+
+name Plextor
+    url www.plextor.be
+    match_string Plextor
+
+name Western Digital
+    url www.wdc.com
+    match_string_case WDC
+
+name LG Electronics
+    url www.lge.com
+    match_string_case HL-DT-ST
+
+name Lexmark
+    url www.lexmark.com
+    match_string Lexmark
+
+name Creative Labs
+    url www.creative.com
+    match_string Creative Labs
+
+name Conexant
+    url www.brooktree.com
+    match_string Brooktree
+
+name Atheros Communications
+    url www.atheros.com
+    match_string Atheros
+
+name Panasonic
+    url www.panasonic.com
+    match_string MATSHITA
+
+name Silicon Image
+    url www.siliconimage.com
+    match_string Silicon Image
+    match_string Silicon Integrated Image
+
+name Broadcom
+    url www.broadcom.com
+    match_string Broadcom
+
+name Apple
+    url www.apple.com
+    match_string Apple
+
+name IBM
+    url www.ibm.com
+    match_string_case IBM
+
+name Dell Computer
+    url www.dell.com
+    match_string Dell
+
+name Logitech International
+    url www.logitech.com
+    match_string Logitech
+
+name Fujitsu
+    url www.fujitsu.com
+    match_string FUJITSU
+
+name Sony
+    url www.sony.com
+    match_string_case CDU
+
+name SanDisk
+    url www.sandisk.com
+    match_string SanDisk
+
+name ExcelStor Technology
+    url www.excelstor.com
+    match_string ExcelStor
+
+name D-Link
+    url www.dlink.com.tw
+    match_string D-Link
+
+name Gigabyte Technology
+    url www.gigabyte.com.tw
+    match_string Giga-byte
+    match_string Gigabyte
+
+name C-Media Electronics
+    url www.cmedia.com.tw
+    match_string C-Media
+
+name AVerMedia Technologies
+    url www.aver.com
+    match_string Avermedia
+
+name Philips
+    url www.philips.com
+    match_string Philips
+
+name Ralink Technology
+    url www.ralinktech.com
+    match_string RaLink
+
+name Siemens AG
+    url www.siemens.com
+    match_string Siemens
+
+name Hewlett-Packard
+    url www.hp.com
+    match_string Hewlett-Packard
+    match_string_case HP
+
+name TEAC America
+    url www.teac.com
+    match_string_case TEAC
+
+name Microsoft
+    url www.microsoft.com
+    match_string Microsoft
+
+name Memorex Products
+    url www.memorex.com
+    match_string  Memorex
+
+name eMPIA Technology
+    url www.empiatech.com.tw
+    match_string_case eMPIA
+
+name Canon
+    url www.canon.com
+    match_string Canon
+
+name A4tech
+    url www.a4tech.com
+    match_string A4Tech
+
+name Alcor
+    url www.alcor.org
+    match_string ALCOR
+
+name Vimicro
+    url www.vimicro.com
+    match_string Vimicro
+
+name Ours Technology
+    url www.oti.com.tw
+    match_string_case OTi
+
+name BenQ
+    url www.benq.com
+    match_string BENQ
+
+name Acer
+    url www.acer.com
+    match_string Acer
+
+name Quantum
+    url www.quantum.com
+    match_string QUANTUM
+
+name Kingston
+    url www.kingston.com
+    match_string Kingston
+
+name Chicony
+    url www.chicony.com.tw
+    match_string Chicony
+
+name Genius
+    url www.genius.ru
+    match_string Genius
+
+name KYE Systems
+    url www.genius-kye.com
+    match_string_case KYE
+
+name SEAGATE
+    url www.seagate.com
+    match_string_case ST
+
+#
+# BIOS manufacturers
+#
+
+name American Megatrends
+    url www.ami.com
+    match_string American Megatrends
+
+name Award Software International
+    url www.award-bios.com
+    match_string Award
+
+name Phoenix Technologies
+    url www.phoenix.com
+    match_string Phoenix
+
+#
+# x86 vendor strings
+#
+
+name Advanced Micro Devices
+    url www.amd.com
+    match_string AMDisbetter!
+
+name Advanced Micro Devices
+    url www.amd.com
+    match_string AuthenticAMD
+
+name VIA (formerly Centaur Technology)
+    url www.via.tw
+    match_string CentaurHauls
+
+name Cyrix
+    url
+    match_string CyrixInstead
+
+name Intel
+    url www.intel.com
+    match_string GenuineIntel
+
+name Transmeta
+    url
+    match_string TransmetaCPU
+
+name Transmeta
+    url
+    match_string GenuineTMx86
+
+name National Semiconductor
+    url
+    match_string Geode by NSC
+
+name NexGen
+    url
+    match_string NexGenDriven
+
+name Rise Technology
+    url
+    match_string RiseRiseRise
+
+name Silicon Integrated Systems
+    url
+    match_string SiS SiS SiS
+
+name United Microelectronics Corporation
+    url
+    match_string UMC UMC UMC
+
+name VIA
+    url www.via.tw
+    match_string VIA VIA VIA
+
+name DMP Electronics
+    url
+    match_string Vortex86 SoC
+
+#
+# x86 VM vendor strings
+#
+
+name KVM
+    url
+    match_string KVMKVMKVM
+
+name Microsoft Hyper-V
+    url www.microsoft.com
+    match_string Microsoft Hv
+
+name Parallels
+    url
+    match_string lrpepyh vr
+
+name VMware
+    url
+    match_string VMwareVMware
+
+name Xen HVM
+    url
+    match_string XenVMMXenVMM

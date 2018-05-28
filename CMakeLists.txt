@@ -118,6 +118,7 @@ set(HARDINFO_MODULES
 set(HARDINFO_RESOURCES
 	"benchmark.conf"
 	"benchmark.data"
+	"vendor.ids"
 )
 
 set(HARDINFO_MANPAGES

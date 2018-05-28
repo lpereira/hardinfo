@@ -26,72 +26,8 @@
 #include "config.h"
 #include "hardinfo.h"
 
-/* { match_string, name, url } */
+/* { match_string, match_case, name, url } */
 static Vendor vendors[] = {
-    { "ASUS", 0, "ASUS", "www.asus.com" }, /* "ASUSTek" is common */
-    { "ATI", 1, "ATI Technologies", "www.ati.com" },
-    { "Advanced Micro Devices", 0, "Advanced Micro Devices", "www.amd.com" },
-    { "AMD", 1, "Advanced Micro Devices", "www.amd.com" },
-    { "AMD/ATI", 1, "Advanced Micro Devices (formerly ATI)", "www.amd.com" },
-    { "nVidia", 0, "nVidia", "www.nvidia.com" },
-    { "3Com", 0, "3Com", "www.3com.com" },
-    { "Intel", 0, "Intel", "www.intel.com" },
-    { "Cirrus Logic", 0, "Cirrus Logic", "www.cirrus.com" },
-    { "VIA", 1, "VIA Technologies", "www.via.com.tw" },
-    { "NEC", 1, "NEC Corporation", "www.nec.com"},
-    { "Realtek", 0, "Realtek", "www.realtek.com.tw"},
-    { "Toshiba", 0, "Toshiba", "www.toshiba.com"},
-    { "LITE-ON", 1, "LITE-ON", "www.liteonit.com"},
-    { "Maxtor", 0, "Maxtor", "www.maxtor.com"},
-    { "Samsung", 0, "Samsung", "www.samsung.com"},
-    { "Pioneer", 0, "Pioneer", "www.pioneer-eur.com"},
-    { "Plextor", 0, "Plextor", "www.plextor.be"},
-    { "WDC", 1, "Western Digital", "www.wdc.com"},
-    { "HL-DT-ST", 1, "LG Electronics", "www.lge.com"},
-    { "Lexmark", 0, "Lexmark", "www.lexmark.com"},
-    { "Creative Labs", 0, "Creative Labs", "www.creative.com"},
-    { "Brooktree", 0, "Conexant", "www.brooktree.com"},
-    { "Atheros", 0, "Atheros Communications", "www.atheros.com"},
-    { "MATSHITA", 0, "Panasonic", "www.panasonic.com"},
-    { "Silicon Image", 0, "Silicon Image", "www.siliconimage.com"},
-    { "Silicon Integrated Image", 0, "Silicon Image", "www.siliconimage.com"},
-    { "Broadcom", 0, "Broadcom", "www.broadcom.com"},
-    { "Apple", 0, "Apple", "www.apple.com"},
-    { "IBM", 1, "IBM", "www.ibm.com"},
-    { "Dell", 0, "Dell Computer", "www.dell.com"},
-    { "Logitech", 0, "Logitech International", "www.logitech.com"},
-    { "FUJITSU", 0, "Fujitsu", "www.fujitsu.com"},
-    { "CDU", 1, "Sony", "www.sony.com"},
-    { "SanDisk", 0, "SanDisk", "www.sandisk.com"},
-    { "ExcelStor", 0, "ExcelStor Technology", "www.excelstor.com"},
-    { "D-Link", 0, "D-Link", "www.dlink.com.tw"},
-    { "Giga-byte", 0, "Gigabyte Technology", "www.gigabyte.com.tw"},
-    { "Gigabyte", 0, "Gigabyte Technology", "www.gigabyte.com.tw"},
-    { "C-Media", 0, "C-Media Electronics", "www.cmedia.com.tw"},
-    { "Avermedia", 0, "AVerMedia Technologies", "www.aver.com"},
-    { "Philips", 0, "Philips", "www.philips.com"},
-    { "RaLink", 0, "Ralink Technology", "www.ralinktech.com"},
-    { "Siemens", 0, "Siemens AG", "www.siemens.com"},
-    { "Hewlett-Packard", 0, "Hewlett-Packard", "www.hp.com"},
-    { "HP", 1, "Hewlett-Packard", "www.hp.com"},
-    { "TEAC", 1, "TEAC America", "www.teac.com"},
-    { "Microsoft", 0, "Microsoft", "www.microsoft.com"},
-    {" Memorex", 0, "Memorex Products", "www.memorex.com"},
-    { "eMPIA", 1, "eMPIA Technology", "www.empiatech.com.tw"},
-    { "Canon", 0, "Canon", "www.canon.com"},
-    { "A4Tech", 0, "A4tech", "www.a4tech.com"},
-    { "ALCOR", 0, "Alcor", "www.alcor.org"},
-    { "Vimicro", 0, "Vimicro", "www.vimicro.com"},
-    { "OTi", 1, "Ours Technology", "www.oti.com.tw"},
-    { "BENQ", 0, "BenQ", "www.benq.com"},
-    { "Acer", 0, "Acer", "www.acer.com"},
-    { "QUANTUM", 0, "Quantum", "www.quantum.com"},
-    { "Kingston", 0, "Kingston", "www.kingston.com"},
-    { "Chicony", 0, "Chicony", "www.chicony.com.tw"},
-    { "Genius", 0, "Genius", "www.genius.ru"},
-    { "KYE", 1, "KYE Systems", "www.genius-kye.com"},
-    { "ST", 1, "SEAGATE", "www.seagate.com"},
-
     /* BIOS manufacturers */
     { "American Megatrends", 0, "American Megatrends", "www.ami.com"},
     { "Award", 0, "Award Software International", "www.award-bios.com"},
@@ -133,33 +69,12 @@ gint vendor_sort (gconstpointer a, gconstpointer b) {
     return 1;
 }
 
-void vendor_init(void)
-{
-    gint i;
-    gchar *path;
-    static SyncEntry se = {
-       .fancy_name = "Update vendor list",
-       .name = "RecvVendorList",
-       .save_to = "vendor.conf",
-       .get_data = NULL
-    };
-
-    DEBUG("initializing vendor list");
-    sync_manager_add_entry(&se);
-
-    path = g_build_filename(g_get_user_config_dir(), "hardinfo", "vendor.conf", NULL);
-    if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-      DEBUG("local vendor.conf not found, trying system-wise");
-      g_free(path);
-      path = g_build_filename(params.path_data, "vendor.conf", NULL);
-    }
-
-    if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+static int read_from_vendor_conf(const char *path) {
       GKeyFile *vendors;
       gchar *tmp;
-      gint num_vendors;
+      gint num_vendors, i, count = 0; /* num_vendors is file-reported, count is actual */
 
-      DEBUG("loading %s", path);
+      DEBUG("using vendor.conf format loader for %s", path);
 
       vendors = g_key_file_new();
       if (g_key_file_load_from_file(vendors, path, 0, NULL)) {
@@ -175,23 +90,139 @@ void vendor_init(void)
               /* try old name */
               v->match_string = g_key_file_get_string(vendors, tmp, "id", NULL);
           }
-          v->match_case = g_key_file_get_integer(vendors, tmp, "match_case", NULL);
-          v->name = g_key_file_get_string(vendors, tmp, "name", NULL);
-          v->url  = g_key_file_get_string(vendors, tmp, "url", NULL);
+          if (v->match_string) {
+              v->match_case = g_key_file_get_integer(vendors, tmp, "match_case", NULL);
+              v->name = g_key_file_get_string(vendors, tmp, "name", NULL);
+              v->url  = g_key_file_get_string(vendors, tmp, "url", NULL);
 
-          vendor_list = g_slist_prepend(vendor_list, v);
+              vendor_list = g_slist_prepend(vendor_list, v);
+              count++;
+          } else {
+              /* don't add if match_string is null */
+              g_free(v);
+          }
 
           g_free(tmp);
         }
-      }
+        g_key_file_free(vendors);
+        DEBUG("... found %d match strings", count);
+        return count;
+    }
+    g_key_file_free(vendors);
+    return 0;
+}
 
-      g_key_file_free(vendors);
-    } else {
-      DEBUG("system-wise vendor.conf not found, using internal database");
+static int read_from_vendor_ids(const char *path) {
+#define VEN_BUFF_SIZE 128
+#define VEN_FFWD() while(isspace((unsigned char)*p)) p++;
+#define VEN_CHK(TOK) (strncmp(p, TOK, tl = strlen(TOK)) == 0)
+    char buff[VEN_BUFF_SIZE];
+    char name[VEN_BUFF_SIZE];
+    char url[VEN_BUFF_SIZE];
+    int count = 0;
+    FILE *fd;
+    char *p, *b;
+    int tl;
 
-      for (i = G_N_ELEMENTS(vendors) - 1; i >= 0; i--) {
-        vendor_list = g_slist_prepend(vendor_list, (gpointer) &vendors[i]);
-      }
+    DEBUG("using vendor.ids format loader for %s", path);
+
+    fd = fopen(path, "r");
+    if (!fd) return 0;
+
+    while (fgets(buff, VEN_BUFF_SIZE, fd)) {
+        b = strchr(buff, '\n');
+        if (b) *b = 0;
+        p = buff;
+        VEN_FFWD();
+        if (VEN_CHK("name "))
+            strncpy(name, p + tl, VEN_BUFF_SIZE - 1);
+        if (VEN_CHK("url "))
+            strncpy(url, p + tl, VEN_BUFF_SIZE - 1);
+
+        if (VEN_CHK("match_string ")) {
+            Vendor *v = g_new0(Vendor, 1);
+            v->match_string = strdup(p+tl);
+            v->match_case = 0;
+            v->name = strdup(name);
+            v->url = strdup(url);
+            vendor_list = g_slist_prepend(vendor_list, v);
+            count++;
+        }
+
+        if (VEN_CHK("match_string_case ")) {
+            Vendor *v = g_new0(Vendor, 1);
+            v->match_string = strdup(p+tl);
+            v->match_case = 1;
+            v->name = strdup(name);
+            v->url = strdup(url);
+            vendor_list = g_slist_prepend(vendor_list, v);
+            count++;
+        }
+    }
+
+    fclose(fd);
+
+    DEBUG("... found %d match strings", count);
+
+    return count;
+}
+
+
+void vendor_init(void)
+{
+    gchar *path;
+    static SyncEntry se = {
+       .fancy_name = "Update vendor list",
+       .name = "RecvVendorList",
+       .save_to = "vendor.ids",
+       .get_data = NULL
+    };
+
+    DEBUG("initializing vendor list");
+    sync_manager_add_entry(&se);
+
+    char *file_search_order[] = {
+        /* new format */
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "vendor.ids", NULL),
+        g_build_filename(params.path_data, "vendor.ids", NULL),
+        /* old format */
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "vendor.conf", NULL),
+        g_build_filename(g_get_home_dir(), ".hardinfo", "vendor.conf", NULL), /* old place */
+        g_build_filename(params.path_data, "vendor.conf", NULL),
+        NULL
+    };
+
+    int n = 0;
+    while (file_search_order[n]) {
+        DEBUG("searching for vendor data at %s ...", file_search_order[n]);
+        if (!access(file_search_order[n], R_OK)) {
+            path = file_search_order[n];
+            DEBUG("... file exists.");
+            break;
+        }
+        n++;
+    }
+
+    int fail = 1;
+
+    /* new format */
+    if (path && strstr(path, "vendor.ids")) {
+        fail = !read_from_vendor_ids(path);
+    }
+
+    /* old format */
+    if (path && strstr(path, "vendor.conf")) {
+        fail = !read_from_vendor_conf(path);
+    }
+
+    if (fail) {
+        gint i;
+
+        DEBUG("vendor data not found, using internal database");
+
+        for (i = G_N_ELEMENTS(vendors) - 1; i >= 0; i--) {
+            vendor_list = g_slist_prepend(vendor_list, (gpointer) &vendors[i]);
+        }
     }
 
     /* sort the vendor list by length of match string so that short strings are
@@ -199,7 +230,12 @@ void vendor_init(void)
      * example: ST matches ASUSTeK but SEAGATE is not ASUS */
     vendor_list = g_slist_sort(vendor_list, &vendor_sort);
 
-    g_free(path);
+    /* free search location strings */
+    n = 0;
+    while (file_search_order[n]) {
+        free(file_search_order[n]);
+        n++;
+    }
 }
 
 const gchar *vendor_get_name(const gchar * id_str)
