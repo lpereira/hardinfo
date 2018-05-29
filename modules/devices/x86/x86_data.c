@@ -282,6 +282,7 @@ static struct {
     { "bug:cpu_meltdown",     NC_("x86-flag", /*/bug:cpu_insecure & bug:cpu_meltdown*/  "CPU is affected by meltdown attack and needs kernel page table isolation") },
     { "bug:spectre_v1",     NC_("x86-flag", /*/bug:spectre_v1*/  "CPU is affected by Spectre variant 1 attack with conditional branches") },
     { "bug:spectre_v2",     NC_("x86-flag", /*/bug:spectre_v2*/  "CPU is affected by Spectre variant 2 attack with indirect branches") },
+    { "bug:spec_store_bypass", NC_("x86-flag", /*/bug:spec_store_bypass*/  "CPU is affected by speculative store bypass attack") },
 /* power management
  * ... from arch/x86/kernel/cpu/powerflags.h */
     { "pm:ts",            NC_("x86-flag", /*/flag:pm:ts*/  "temperature sensor")     },
