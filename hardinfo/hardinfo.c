@@ -156,6 +156,7 @@ int main(int argc, char **argv)
     }
 
     moreinfo_shutdown();
+    vendor_cleanup();
 
     DEBUG("finished");
     return exit_code;

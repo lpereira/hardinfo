@@ -93,7 +93,9 @@ static int read_from_vendor_conf(const char *path) {
           if (v->match_string) {
               v->match_case = g_key_file_get_integer(vendors, tmp, "match_case", NULL);
               v->name = g_key_file_get_string(vendors, tmp, "name", NULL);
+              v->name_short = g_key_file_get_string(vendors, tmp, "name_short", NULL);
               v->url  = g_key_file_get_string(vendors, tmp, "url", NULL);
+              v->url_support  = g_key_file_get_string(vendors, tmp, "url_support", NULL);
 
               vendor_list = g_slist_prepend(vendor_list, v);
               count++;
@@ -116,9 +118,11 @@ static int read_from_vendor_ids(const char *path) {
 #define VEN_BUFF_SIZE 128
 #define VEN_FFWD() while(isspace((unsigned char)*p)) p++;
 #define VEN_CHK(TOK) (strncmp(p, TOK, tl = strlen(TOK)) == 0)
-    char buff[VEN_BUFF_SIZE];
-    char name[VEN_BUFF_SIZE];
-    char url[VEN_BUFF_SIZE];
+    char buff[VEN_BUFF_SIZE] = "";
+    char name[VEN_BUFF_SIZE] = "";
+    char name_short[VEN_BUFF_SIZE] = "";
+    char url[VEN_BUFF_SIZE] = "";
+    char url_support[VEN_BUFF_SIZE] = "";
     int count = 0;
     FILE *fd;
     char *p, *b;
@@ -134,17 +138,27 @@ static int read_from_vendor_ids(const char *path) {
         if (b) *b = 0;
         p = buff;
         VEN_FFWD();
-        if (VEN_CHK("name "))
+        if (VEN_CHK("name ")) {
             strncpy(name, p + tl, VEN_BUFF_SIZE - 1);
+            strcpy(name_short, "");
+            strcpy(url, "");
+            strcpy(url_support, "");
+        }
+        if (VEN_CHK("name_short "))
+            strncpy(name_short, p + tl, VEN_BUFF_SIZE - 1);
         if (VEN_CHK("url "))
             strncpy(url, p + tl, VEN_BUFF_SIZE - 1);
+        if (VEN_CHK("url_support "))
+            strncpy(url_support, p + tl, VEN_BUFF_SIZE - 1);
 
         if (VEN_CHK("match_string ")) {
             Vendor *v = g_new0(Vendor, 1);
             v->match_string = strdup(p+tl);
             v->match_case = 0;
             v->name = strdup(name);
+            v->name_short = strdup(name_short);
             v->url = strdup(url);
+            v->url_support = strdup(url_support);
             vendor_list = g_slist_prepend(vendor_list, v);
             count++;
         }
@@ -154,7 +168,9 @@ static int read_from_vendor_ids(const char *path) {
             v->match_string = strdup(p+tl);
             v->match_case = 1;
             v->name = strdup(name);
+            v->name_short = strdup(name_short);
             v->url = strdup(url);
+            v->url_support = strdup(url_support);
             vendor_list = g_slist_prepend(vendor_list, v);
             count++;
         }
@@ -177,6 +193,9 @@ void vendor_init(void)
        .save_to = "vendor.ids",
        .get_data = NULL
     };
+
+    /* already initialized */
+    if (vendor_list) return;
 
     DEBUG("initializing vendor list");
     sync_manager_add_entry(&se);
@@ -236,6 +255,79 @@ void vendor_init(void)
         free(file_search_order[n]);
         n++;
     }
+}
+
+void vendor_cleanup() {
+    DEBUG("cleanup vendor list");
+    g_slist_free_full(vendor_list, (void (*)(void *))&vendor_free);
+}
+
+void vendor_free(Vendor *v) {
+    if (v) {
+        free(v->name);
+        free(v->name_short);
+        free(v->url);
+        free(v->url_support);
+        free(v->match_string);
+        free(v);
+    }
+}
+
+const Vendor *vendor_match(const gchar *id_str, ...) {
+    va_list ap, ap2;
+    GSList *vlp;
+    gchar *tmp = NULL, *p = NULL;
+    int tl = 0, c = 0;
+    Vendor *ret = NULL;
+
+    if (id_str) {
+        c++;
+        tl += strlen(id_str);
+        tmp = g_malloc0(tl + c + 1);
+        strcat(tmp, id_str);
+        strcat(tmp, " ");
+
+        va_start(ap, id_str);
+        p = va_arg(ap, gchar*);
+        while(p) {
+            c++;
+            tl += strlen(p);
+            tmp = g_realloc(tmp, tl + c + 1); /* strings, spaces, null */
+            strcat(tmp, p);
+            strcat(tmp, " ");
+            p = va_arg(ap, gchar*);
+        }
+        va_end(ap);
+    }
+    if (!c || tl == 0)
+        return NULL;
+
+    DEBUG("full id_str: %s", tmp);
+
+    for (vlp = vendor_list; vlp; vlp = vlp->next) {
+        Vendor *v = (Vendor *)vlp->data;
+
+        if (v)
+            if (v->match_case) {
+                if (v->match_string && strstr(tmp, v->match_string)) {
+                    ret = v;
+                    break;
+                }
+            } else {
+                if (v->match_string && strcasestr(tmp, v->match_string)) {
+                    ret = v;
+                    break;
+                }
+            }
+    }
+
+    if (ret)
+        DEBUG("ret: match_string: %s -- case: %s -- name: %s", ret->match_string, (ret->match_case ? "yes" : "no"), ret->name);
+    else
+        DEBUG("ret: not found");
+
+    g_free(tmp);
+    return ret;
 }
 
 const gchar *vendor_get_name(const gchar * id_str)
