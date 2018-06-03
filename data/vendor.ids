@@ -3,7 +3,9 @@
 #
 # Syntax:
 # name <name>
+#    name_short <shorter name>
 #    url <url>
+#    url_support <url>
 #    [match_string|match_string_case] <match>
 #    ...
 #    [match_string|match_string_case] <match>
@@ -20,18 +22,24 @@ name ASUS
     match_string ASUSTek
     match_string ASUS
 
+# PCI Vendor 1022
 name Advanced Micro Devices
+    name_short AMD
     url www.amd.com
     match_string Advanced Micro Devices
     match_string_case AMD
 
+# PCI Vendor 1002
 name Advanced Micro Devices (formerly ATI)
+    name_short AMD/ATI
     url www.amd.com
     match_string ATI Technologies
+    match_string Advanced Micro Devices, Inc. [AMD/ATI]
     match_string_case AMD/ATI
     match_string_case ATI
 
-name nVidia
+name nVidia Corporation
+    name_short nVidia
     url www.nvidia.com
     match_string nVidia
 
@@ -39,7 +47,8 @@ name 3Com
     url www.3com.com
     match_string 3Com
 
-name Intel
+name Intel Corporation
+    name_short Intel
     url www.intel.com
     match_string Intel
 
