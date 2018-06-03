@@ -123,6 +123,8 @@ static void _pci_dev(const pcid *p) {
                 _("Function"), p->function
                 );
 
+    g_free(pcie_str);
+
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
 
     g_free(vendor_device_str);
