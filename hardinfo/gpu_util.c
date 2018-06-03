@@ -149,15 +149,25 @@ static void make_nice_name(gpud *s) {
     if (!device_str)
         device_str = unk_d;
 
-    if (strstr(vendor_str, "NVIDIA")) {
+    /* try and a get a "short name" for the vendor */
+    const Vendor *v = vendor_match(vendor_str, NULL);
+    if (v && v->name_short)
+        vendor_str = v->name_short;
+
+    /* These two former special cases are currently handled by the vendor_match()
+     * function well enough, but the notes are preserved here. */
         /* nvidia PCI strings are pretty nice already,
          * just shorten the company name */
-        s->nice_name = g_strdup_printf("%s %s", "NVIDIA", device_str);
-    } else if (strstr(vendor_str, "AMD/ATI")) {
+        // s->nice_name = g_strdup_printf("%s %s", "nVidia", device_str);
+        /* Intel Graphics may have very long names, like "Intel Corporation Seventh Generation Something Core Something Something Integrated Graphics Processor Revision Ninety-four"
+         * but for now at least shorten "Intel Corporation" to just "Intel" */
+        // s->nice_name = g_strdup_printf("%s %s", "Intel", device_str);
+
+    if (strstr(vendor_str, "AMD")) {
         /* AMD PCI strings are crazy stupid because they use the exact same
          * chip and device id for a zillion "different products" */
         char *full_name = strdup(device_str);
-        /* Try and shorten it to the chip code name only */
+        /* Try and shorten it to the chip code name only, at least */
         char *b = strchr(full_name, '[');
         if (b) *b = '\0';
         s->nice_name = g_strdup_printf("%s %s", "AMD/ATI", g_strstrip(full_name));
