@@ -151,7 +151,7 @@ static void make_nice_name(gpud *s) {
 
     /* try and a get a "short name" for the vendor */
     const Vendor *v = vendor_match(vendor_str, NULL);
-    if (v && v->name_short)
+    if (v && v->name_short && *v->name_short != 0)
         vendor_str = v->name_short;
 
     /* These two former special cases are currently handled by the vendor_match()
