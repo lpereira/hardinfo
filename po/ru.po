@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-09 18:08+0300\n"
+"POT-Creation-Date: 2018-06-09 14:09-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -4313,8 +4313,7 @@ msgctxt "x86-flag"
 msgid ""
 "CPU is affected by meltdown attack and needs kernel page table isolation"
 msgstr ""
-"Процессор подвержен атаке Meltdown, требуется изоляция таблицы страниц "
-"ядра"
+"Процессор подвержен атаке Meltdown, требуется изоляция таблицы страниц ядра"
 
 #. /bug:spectre_v1
 #: modules/devices/x86/x86_data.c:283
@@ -4327,8 +4326,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:284
 msgctxt "x86-flag"
 msgid "CPU is affected by Spectre variant 2 attack with indirect branches"
-msgstr ""
-"Процессор подвержен атаке Spectre variant 2 с непрямыми ветвями"
+msgstr "Процессор подвержен атаке Spectre variant 2 с непрямыми ветвями"
 
 #. /bug:spec_store_bypass
 #: modules/devices/x86/x86_data.c:285
