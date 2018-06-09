@@ -35,14 +35,6 @@ typedef struct {
         *codeset;
 } locale_info;
 
-locale_info *locale_info_new() {
-    locale_info *s = malloc(sizeof(locale_info));
-    if (s) {
-        memset(s, 0, sizeof(locale_info) );
-    }
-    return s;
-}
-
 void locale_info_free(locale_info *s) {
     if (s) {
         g_free(s->title);
@@ -125,7 +117,6 @@ gchar *locale_info_section(locale_info *s) {
 void
 scan_languages(OperatingSystem * os)
 {
-    //gchar **tmp;
     gboolean spawned;
     gchar *out, *err, *p, *next_nl;
 
@@ -136,7 +127,7 @@ scan_languages(OperatingSystem * os)
     spawned = g_spawn_command_line_sync("locale -va",
             &out, &err, NULL, NULL);
     if (spawned) {
-        ret = strdup("");
+        ret = g_strdup("");
         p = out;
         while(1) {
             /* `locale -va` doesn't end the last locale block
@@ -147,7 +138,7 @@ scan_languages(OperatingSystem * os)
             last = (*next_nl == 0) ? 1 : 0;
             strend(p, '\n');
             if (strncmp(p, "locale:", 7) == 0) {
-                curr = locale_info_new();
+                curr = g_new0(locale_info, 1);
                 sscanf(p, "locale: %s", curr->name);
                 /* TODO: 'directory:' and 'archive:' */
             } else if (strchr(p, '|')) {
@@ -176,7 +167,7 @@ scan_languages(OperatingSystem * os)
                 gchar *li_str = locale_info_section(curr);
                 gchar *clean_title = hardinfo_clean_value(curr->title, 0); /* may contain & */
                 ret = h_strdup_cprintf("$%s$%s=%s\n", ret, curr->name, curr->name, clean_title);
-                moreinfo_add_with_prefix("COMP", strdup(curr->name), li_str); /* becomes owned by moreinfo */
+                moreinfo_add_with_prefix("COMP", g_strdup(curr->name), li_str); /* becomes owned by moreinfo */
                 locale_info_free(curr);
                 curr = NULL;
                 g_free(clean_title);
