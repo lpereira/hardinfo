@@ -585,16 +585,12 @@ gchar *callback_battery()
 
 gchar *callback_pci()
 {
-    return g_strdup_printf("[PCI Devices]\n"
-			   "%s"
-			   "[$ShellParam$]\n" "ViewType=1\n", pci_list);
+    return g_strdup(pci_list);
 }
 
 gchar *callback_gpu()
 {
-    return g_strdup_printf("[GPUs]\n"
-			   "%s"
-			   "[$ShellParam$]\n" "ViewType=1\n", gpu_list);
+    return g_strdup(gpu_list);
 }
 
 gchar *callback_sensors()
