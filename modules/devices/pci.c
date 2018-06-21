@@ -154,9 +154,12 @@ void scan_pci_do(void) {
         }
 
         pcid_list_free(list);
-        return;
     }
 
-    /* NO PCI? */
-    pci_list = g_strconcat(pci_list, _("No PCI devices found"), "=\n", NULL);
+    if (c)
+        pci_list = g_strconcat(pci_list, "[$ShellParam$]\n", "ViewType=1\n", NULL);
+    else  {
+        /* NO PCI? */
+        pci_list = g_strconcat(pci_list, _("No PCI devices found"), "=\n", NULL);
+    }
 }
