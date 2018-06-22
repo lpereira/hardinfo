@@ -63,7 +63,7 @@ msgstr ""
 #: hardinfo/cpu_util.c:190 hardinfo/cpu_util.c:196 modules/devices/gpu.c:149
 #: modules/devices/pci.c:116
 msgid "Driver"
-msgstr "Driver"
+msgstr "驱动"
 
 #: hardinfo/cpu_util.c:202 modules/computer.c:596
 #: modules/devices/arm/processor.c:242 modules/devices/x86/processor.c:284
@@ -81,11 +81,11 @@ msgstr "核心"
 
 #: hardinfo/cpu_util.c:220
 msgid "Book"
-msgstr "书册"
+msgstr ""
 
 #: hardinfo/cpu_util.c:222
 msgid "Drawer"
-msgstr "抽屉"
+msgstr ""
 
 #: hardinfo/cpu_util.c:228 modules/devices/arm/processor.c:449
 #: modules/devices/x86/processor.c:697
@@ -106,7 +106,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:133
 msgid "Desktop"
-msgstr "桌面文件夹"
+msgstr "桌面"
 
 #: hardinfo/dmi_util.c:134
 msgid "Low-profile Desktop"
@@ -227,11 +227,11 @@ msgstr ""
 #: hardinfo/hardinfo.c:58 hardinfo/hardinfo.c:59 modules/computer.c:644
 #: modules/devices/inputdevices.c:128 modules/devices/printers.c:138
 msgid "Yes"
-msgstr "确定"
+msgstr "是"
 
 #: hardinfo/hardinfo.c:59 modules/computer.c:644 modules/devices/printers.c:138
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #: hardinfo/hardinfo.c:70
 #, c-format
@@ -381,7 +381,7 @@ msgstr ""
 
 #: hardinfo/util.c:453
 msgid "shows program version and quit"
-msgstr "显示 程序版本并退出"
+msgstr "显示程序版本并退出"
 
 #: hardinfo/util.c:459
 msgid "do not run benchmarks"
@@ -496,7 +496,7 @@ msgstr ""
 
 #: shell/callbacks.c:180
 msgid "Tango Project"
-msgstr ""
+msgstr "Tango 项目"
 
 #: shell/callbacks.c:181
 msgid "The GNOME Project"
@@ -628,7 +628,7 @@ msgstr "在默认浏览器中打开报告？"
 
 #: shell/report.c:657
 msgid "_No"
-msgstr ""
+msgstr "否(_N)"
 
 #: shell/report.c:658
 msgid "_Open"
@@ -863,7 +863,7 @@ msgstr "线程"
 
 #: modules/benchmark/bench_results.c:391 modules/benchmark/bench_results.c:431
 msgid "Note"
-msgstr "笔记"
+msgstr "注解"
 
 #: modules/benchmark/bench_results.c:392 modules/benchmark/bench_results.c:432
 msgid ""
