@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-21 17:21+0800\n"
-"PO-Revision-Date: 2018-06-21 16:53+0800\n"
+"POT-Creation-Date: 2018-06-22 16:35+0800\n"
+"PO-Revision-Date: 2018-06-22 16:23+0800\n"
 "Last-Translator: yetist <yetist@gmail.com>\n"
 "Language-Team: Chinese\n"
 "Language: zh_CN\n"
@@ -21,19 +21,16 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: hardinfo/cpu_util.c:30
-#, fuzzy
 msgid "Little Endian"
 msgstr "小端序"
 
 #: hardinfo/cpu_util.c:32
-#, fuzzy
 msgid "Big Endian"
 msgstr "大端序"
 
 #: hardinfo/cpu_util.c:184 hardinfo/cpu_util.c:195
-#, fuzzy
 msgid "Frequency Scaling"
-msgstr "更改 CPU 频率范围"
+msgstr ""
 
 #: hardinfo/cpu_util.c:185
 msgid "Minimum"
@@ -52,9 +49,8 @@ msgid "Current"
 msgstr "当前设置"
 
 #: hardinfo/cpu_util.c:188
-#, fuzzy
 msgid "Transition Latency"
-msgstr "延迟"
+msgstr ""
 
 #: hardinfo/cpu_util.c:188
 msgid "ns"
@@ -72,9 +68,8 @@ msgstr "Driver"
 #: hardinfo/cpu_util.c:202 modules/computer.c:596
 #: modules/devices/arm/processor.c:242 modules/devices/x86/processor.c:284
 #: modules/devices/x86/processor.c:388 modules/devices/x86/processor.c:524
-#, fuzzy
 msgid "(Not Available)"
-msgstr "无可用认证方式"
+msgstr ""
 
 #: hardinfo/cpu_util.c:210 hardinfo/cpu_util.c:212
 msgid "Socket"
@@ -94,47 +89,40 @@ msgstr "抽屉"
 
 #: hardinfo/cpu_util.c:228 modules/devices/arm/processor.c:449
 #: modules/devices/x86/processor.c:697
-#, fuzzy
 msgid "Topology"
-msgstr "拓扑结构(_T)"
+msgstr ""
 
 #: hardinfo/cpu_util.c:229
 msgid "ID"
-msgstr "编码"
+msgstr "ID"
 
 #: hardinfo/dmi_util.c:130
-#, fuzzy
 msgid "Invalid chassis type (0)"
-msgstr "%s：无效的邮箱类型"
+msgstr ""
 
 #: hardinfo/dmi_util.c:131 hardinfo/dmi_util.c:132
-#, fuzzy
 msgid "Unknown chassis type"
-msgstr "unhook：未知钩子类型：%s"
+msgstr ""
 
 #: hardinfo/dmi_util.c:133
 msgid "Desktop"
 msgstr "桌面文件夹"
 
 #: hardinfo/dmi_util.c:134
-#, fuzzy
 msgid "Low-profile Desktop"
-msgstr "VC2 低延迟配置文件"
+msgstr ""
 
 #: hardinfo/dmi_util.c:135
-#, fuzzy
 msgid "Pizza Box"
-msgstr "方盒(_B)"
+msgstr ""
 
 #: hardinfo/dmi_util.c:136
-#, fuzzy
 msgid "Mini Tower"
-msgstr "塔沃哈姆莱茨市"
+msgstr ""
 
 #: hardinfo/dmi_util.c:137
-#, fuzzy
 msgid "Tower"
-msgstr "塔沃哈姆莱茨市"
+msgstr ""
 
 #: hardinfo/dmi_util.c:138
 msgid "Portable"
@@ -150,7 +138,6 @@ msgid "Notebook"
 msgstr "笔记本"
 
 #: hardinfo/dmi_util.c:141
-#, fuzzy
 msgid "Handheld"
 msgstr "手持设备"
 
@@ -159,81 +146,64 @@ msgid "Docking Station"
 msgstr "扩展坞"
 
 #: hardinfo/dmi_util.c:143
-#, fuzzy
 msgid "All-in-one"
-msgstr "单击可切换循环全部/循环单首/不循环"
+msgstr ""
 
 #: hardinfo/dmi_util.c:144
 msgid "Subnotebook"
 msgstr ""
 
 #: hardinfo/dmi_util.c:145
-#, fuzzy
 msgid "Space-saving"
 msgstr ""
-"强制保持相应的纹理设置为单个的纹理，而不是为了节省空间而由更小的独立纹理组成"
 
 #: hardinfo/dmi_util.c:146
-#, fuzzy
 msgid "Lunch Box"
-msgstr "吃午餐"
+msgstr ""
 
 #: hardinfo/dmi_util.c:147
-#, fuzzy
 msgid "Main Server Chassis"
-msgstr "服务器选项："
+msgstr ""
 
 #: hardinfo/dmi_util.c:148
-#, fuzzy
 msgid "Expansion Chassis"
-msgstr " (没有 ~ 扩展)"
+msgstr ""
 
 #: hardinfo/dmi_util.c:149
-#, fuzzy
 msgid "Sub Chassis"
-msgstr "字幕轨道(&T)"
+msgstr ""
 
 #: hardinfo/dmi_util.c:150
-#, fuzzy
 msgid "Bus Expansion Chassis"
-msgstr " (没有 ~ 扩展)"
+msgstr ""
 
 #: hardinfo/dmi_util.c:151
 msgid "Peripheral Chassis"
 msgstr ""
 
 #: hardinfo/dmi_util.c:152
-#, fuzzy
 msgid "RAID Chassis"
-msgstr "raid"
+msgstr ""
 
 #: hardinfo/dmi_util.c:153
-#, fuzzy
 msgid "Rack Mount Chassis"
-msgstr "挂载(_M)"
+msgstr ""
 
 #: hardinfo/dmi_util.c:154
-#, fuzzy
 msgid "Sealed-case PC"
-msgstr "与父母印证"
+msgstr ""
 
 #: hardinfo/dt_util.c:1011
-#, fuzzy
 msgid "phandle Map"
-msgstr "%s：在对映表中没有此函数"
+msgstr ""
 
 #: hardinfo/dt_util.c:1012
-#, fuzzy
 msgid "Alias Map"
-msgstr "取别名为："
+msgstr ""
 
 #: hardinfo/dt_util.c:1013
-#, fuzzy
 msgid "Symbol Map"
 msgstr ""
-"  -t                           更新归档的符号映射时间戳记\n"
-"  -h --help                    打印本帮助消息\n"
-"  -v --version                 打印版本信息\n"
 
 #. / %d will be latest year of copyright
 #: hardinfo/hardinfo.c:50
@@ -308,15 +278,14 @@ msgid "Unknown benchmark ``%s'' or benchmark.so not loaded"
 msgstr ""
 
 #: hardinfo/hardinfo.c:155
-#, fuzzy
 msgid "Don't know what to do. Exiting."
-msgstr "您对崩溃知道多少？"
+msgstr ""
 
 #: hardinfo/util.c:104 modules/computer/uptime.c:54
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
+msgstr[0] "%d 天"
 
 #: hardinfo/util.c:105 modules/computer/uptime.c:55
 #, c-format
@@ -337,9 +306,9 @@ msgid_plural "%d seconds"
 msgstr[0] ""
 
 #: hardinfo/util.c:128
-#, fuzzy, c-format
+#, c-format
 msgid "%.1f B"
-msgstr "已完成 %.1f%%"
+msgstr "%.1f B"
 
 #: hardinfo/util.c:130
 #, c-format
@@ -379,9 +348,8 @@ msgid "Fatal Error"
 msgstr "严重错误"
 
 #: hardinfo/util.c:403
-#, fuzzy
 msgid "creates a report and prints to standard output"
-msgstr "在标准输出显示操作"
+msgstr ""
 
 #: hardinfo/util.c:409
 msgid "chooses a report format (text, html)"
@@ -396,44 +364,39 @@ msgid "benchmark result format ([short], conf, shell)"
 msgstr ""
 
 #: hardinfo/util.c:427
-#, fuzzy
 msgid "lists modules"
-msgstr "模块"
+msgstr "模块列表"
 
 #: hardinfo/util.c:433
-#, fuzzy
 msgid "specify module to load"
-msgstr "指定要使用的反交错模块。"
+msgstr ""
 
 #: hardinfo/util.c:439
-#, fuzzy
 msgid "automatically load module dependencies"
-msgstr "启动时自动载入扩展模块。"
+msgstr ""
 
 #: hardinfo/util.c:446
 msgid "run in XML-RPC server mode"
 msgstr ""
 
 #: hardinfo/util.c:453
-#, fuzzy
 msgid "shows program version and quit"
-msgstr "显示 lftp 的版本\n"
+msgstr "显示 程序版本并退出"
 
 #: hardinfo/util.c:459
-#, fuzzy
 msgid "do not run benchmarks"
-msgstr "第一次运行 GNOME 待办事项"
+msgstr ""
 
 #: hardinfo/util.c:464
 msgid "- System Profiler and Benchmark tool"
 msgstr ""
 
 #: hardinfo/util.c:474
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unrecognized arguments.\n"
 "Try ``%s --help'' for more information.\n"
-msgstr "尝试用‘%s --help’获取更多信息。\n"
+msgstr ""
 
 #: hardinfo/util.c:542
 #, c-format
@@ -441,14 +404,14 @@ msgid "Couldn't find a Web browser to open URL %s."
 msgstr ""
 
 #: hardinfo/util.c:891
-#, fuzzy, c-format
+#, c-format
 msgid "Module \"%s\" depends on module \"%s\", load it?"
-msgstr "加载用来载入图像的模块失败：%s：%s"
+msgstr ""
 
 #: hardinfo/util.c:914
-#, fuzzy, c-format
+#, c-format
 msgid "Module \"%s\" depends on module \"%s\"."
-msgstr "初始化模块“%s”出错：%s\n"
+msgstr ""
 
 #: hardinfo/util.c:959
 #, c-format
@@ -462,9 +425,9 @@ msgid ""
 msgstr ""
 
 #: hardinfo/util.c:1040
-#, fuzzy, c-format
+#, c-format
 msgid "Scanning: %s..."
-msgstr "正在扫描 %s..."
+msgstr "正在扫描：%s..."
 
 #: hardinfo/util.c:1050 shell/shell.c:301 shell/shell.c:772 shell/shell.c:1850
 #: modules/benchmark.c:549 modules/benchmark.c:557
@@ -479,9 +442,9 @@ msgid ""
 msgstr ""
 
 #: shell/callbacks.c:142
-#, fuzzy, c-format
+#, c-format
 msgid "No about information is associated with the %s module."
-msgstr "获取有关文件 %s 的信息失败：%s"
+msgstr ""
 
 #: shell/callbacks.c:158
 msgid "Author:"
@@ -492,9 +455,8 @@ msgid "Contributors:"
 msgstr "贡献者："
 
 #: shell/callbacks.c:166
-#, fuzzy
 msgid "Based on work by:"
-msgstr "在上班"
+msgstr ""
 
 #: shell/callbacks.c:167
 msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
@@ -533,15 +495,8 @@ msgid "SCSI support based on code by Pascal F. Martin"
 msgstr ""
 
 #: shell/callbacks.c:180
-#, fuzzy
 msgid "Tango Project"
 msgstr ""
-"很多 Gramps 的美术插图来自\n"
-"Tango 项目或者从 Tango 项目衍伸\n"
-"而来。这些美术插图是基于\n"
-"Creative Commons Attribution-ShareAlike 2.5\n"
-"（知识共享“署名-相同方式共享” 2.5）\n"
-"许可协议发布的。"
 
 #: shell/callbacks.c:181
 msgid "The GNOME Project"
@@ -552,11 +507,8 @@ msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
 msgstr ""
 
 #: shell/callbacks.c:200
-#, fuzzy
 msgid "System information and benchmark tool"
 msgstr ""
-"系统信息:\n"
-"\n"
 
 #: shell/callbacks.c:205
 msgid ""
@@ -577,27 +529,6 @@ msgstr ""
 #: shell/callbacks.c:220
 msgid "translator-credits"
 msgstr ""
-"Launchpad Contributions:\n"
-"  Aron Xu https://launchpad.net/~happyaron\n"
-"  Blue Dream https://launchpad.net/~shanxian1987\n"
-"  Carlos Gong https://launchpad.net/~bfsugxy\n"
-"  Dingyuan Wang https://launchpad.net/~gumblex\n"
-"  Heling Yao https://launchpad.net/~hyao\n"
-"  Kakurady Drakenar https://launchpad.net/~kakurady\n"
-"  Kyle Nitzsche https://launchpad.net/~knitzsche\n"
-"  Luo Lei https://launchpad.net/~luolei\n"
-"  Michael Terry https://launchpad.net/~mterry\n"
-"  Rockworld https://launchpad.net/~rockrock2222222\n"
-"  Wang Dianjin https://launchpad.net/~tuhaihe\n"
-"  Wylmer Wang https://launchpad.net/~wantinghard\n"
-"  YunQiang Su https://launchpad.net/~wzssyqa\n"
-"  fangfangtu https://launchpad.net/~gaoyukun54-deactivatedaccount\n"
-"  otm123 https://launchpad.net/~otm123\n"
-"  peaceman https://launchpad.net/~zengchang1985\n"
-"  shijing https://launchpad.net/~shijing\n"
-"  xcffl https://launchpad.net/~xcffl\n"
-"  冯垚 https://launchpad.net/~290188494-t\n"
-"  黄崇文 https://launchpad.net/~hcw1588"
 
 #: shell/menu.c:35
 msgid "_Information"
@@ -624,9 +555,8 @@ msgid "Generate _Report"
 msgstr "生成报表(_R)"
 
 #: shell/menu.c:48
-#, fuzzy
 msgid "_Network Updater..."
-msgstr "软件包更新程序"
+msgstr ""
 
 #: shell/menu.c:53
 msgid "_Open..."
@@ -693,9 +623,8 @@ msgid "Cannot create ReportContext. Programming bug?"
 msgstr ""
 
 #: shell/report.c:654
-#, fuzzy
 msgid "Open the report with your web browser?"
-msgstr "在默认浏览器中打开网址。"
+msgstr "在默认浏览器中打开报告？"
 
 #: shell/report.c:657
 msgid "_No"
@@ -780,14 +709,13 @@ msgid ""
 msgstr ""
 
 #: shell/syncmanager.c:161 shell/syncmanager.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "%s (error #%d)"
-msgstr "%s 错误 %d：%s。\n"
+msgstr "%s (错误 #%d)"
 
 #: shell/syncmanager.c:170 shell/syncmanager.c:198
-#, fuzzy
 msgid "Could not parse XML-RPC response"
-msgstr "无法解析 HTTP 响应"
+msgstr "无法解析 XML-RPC 响应"
 
 #: shell/syncmanager.c:280
 #, c-format
@@ -829,63 +757,52 @@ msgid ""
 msgstr ""
 
 #: shell/syncmanager.c:658
-#, fuzzy
 msgid "Network Updater"
-msgstr "软件包更新程序"
+msgstr ""
 
 #: shell/syncmanager.c:757
-#, fuzzy
 msgid "_Synchronize"
-msgstr "同步"
+msgstr "同步(_S)"
 
 #: modules/benchmark/benches.c:74
-#, fuzzy
 msgid "CPU Blowfish"
-msgstr "% CPU"
+msgstr ""
 
 #: modules/benchmark/benches.c:75
-#, fuzzy
 msgid "CPU CryptoHash"
-msgstr "CPU              "
+msgstr ""
 
 #: modules/benchmark/benches.c:76
-#, fuzzy
 msgid "CPU Fibonacci"
-msgstr "CPU              "
+msgstr ""
 
 #: modules/benchmark/benches.c:77
-#, fuzzy
 msgid "CPU N-Queens"
-msgstr "%s 继续吗(y/n)？"
+msgstr ""
 
 #: modules/benchmark/benches.c:78
-#, fuzzy
 msgid "CPU Zlib"
-msgstr "% CPU"
+msgstr ""
 
 #: modules/benchmark/benches.c:79
-#, fuzzy
 msgid "FPU FFT"
-msgstr "FFT 窗口"
+msgstr ""
 
 #: modules/benchmark/benches.c:80
-#, fuzzy
 msgid "FPU Raytracing"
-msgstr "指定 Xilinx FPU。"
+msgstr ""
 
 #: modules/benchmark/benches.c:82
-#, fuzzy
 msgid "GPU Drawing"
-msgstr "GPU"
+msgstr ""
 
 #: modules/benchmark/benches.c:91
 msgid "Results in MiB/second. Higher is better."
 msgstr "结果以 MiB/秒为单位，越大越好。"
 
 #: modules/benchmark/benches.c:95
-#, fuzzy
 msgid "Results in HIMarks. Higher is better."
-msgstr "压缩率 %4.2f%% (越高越好)\n"
+msgstr ""
 
 #: modules/benchmark/benches.c:102
 msgid "Results in seconds. Lower is better."
@@ -933,14 +850,12 @@ msgid "MHz"
 msgstr "MHz"
 
 #: modules/benchmark/bench_results.c:374 modules/benchmark/bench_results.c:441
-#, fuzzy
 msgid "kiB"
-msgstr "KiB"
+msgstr "kiB"
 
 #: modules/benchmark/bench_results.c:389 modules/benchmark/bench_results.c:426
-#, fuzzy
 msgid "Benchmark Result"
-msgstr "基准"
+msgstr ""
 
 #: modules/benchmark/bench_results.c:390 modules/benchmark/bench_results.c:428
 msgid "Threads"
@@ -958,9 +873,8 @@ msgstr ""
 
 #: modules/benchmark/bench_results.c:393 modules/benchmark/bench_results.c:433
 #: modules/devices/devicetree/pmac_data.c:81 modules/devices/sh/processor.c:85
-#, fuzzy
 msgid "Machine"
-msgstr "虚拟机(_M)"
+msgstr ""
 
 #: modules/benchmark/bench_results.c:394 modules/benchmark/bench_results.c:434
 #: modules/devices/devicetree.c:206 modules/devices/dmi.c:45
@@ -977,14 +891,12 @@ msgstr "处理器描述"
 
 #: modules/benchmark/bench_results.c:397 modules/benchmark/bench_results.c:437
 #: modules/benchmark.c:390
-#, fuzzy
 msgid "CPU Config"
-msgstr "% CPU"
+msgstr "CPU 配置"
 
 #: modules/benchmark/bench_results.c:398 modules/benchmark/bench_results.c:438
-#, fuzzy
 msgid "Threads Available"
-msgstr "没有更多的线索。"
+msgstr ""
 
 #: modules/benchmark/bench_results.c:399 modules/benchmark/bench_results.c:439
 msgid "GPU"
@@ -992,9 +904,8 @@ msgstr "GPU"
 
 #: modules/benchmark/bench_results.c:400 modules/benchmark/bench_results.c:440
 #: modules/computer.c:479
-#, fuzzy
 msgid "OpenGL Renderer"
-msgstr "渲染器(&R)"
+msgstr "OpenGL 渲染器"
 
 #: modules/benchmark/bench_results.c:401 modules/benchmark/bench_results.c:441
 #: modules/computer.c:110 modules/computer.c:468 modules/devices.c:99
@@ -1010,23 +921,20 @@ msgid "Result"
 msgstr "结果"
 
 #: modules/benchmark/bench_results.c:430
-#, fuzzy
 msgid "Elapsed Time"
-msgstr "播放时间"
+msgstr ""
 
 #: modules/benchmark/bench_results.c:442
 msgid "Handles"
 msgstr "控制柄"
 
 #: modules/benchmark/bench_results.c:443
-#, fuzzy
 msgid "mid"
-msgstr "MIDI文件(*.mid)|*.mid|Allegro文件(*.gro)|*.gro"
+msgstr ""
 
 #: modules/benchmark/bench_results.c:444
-#, fuzzy
 msgid "cfg_val"
-msgstr "瓦勒玛丽"
+msgstr ""
 
 #: modules/benchmark.c:390
 msgid "Results"
@@ -1038,9 +946,9 @@ msgid "CPU"
 msgstr "CPU"
 
 #: modules/benchmark.c:460
-#, fuzzy, c-format
+#, c-format
 msgid "Benchmarking: <b>%s</b>."
-msgstr "B/s"
+msgstr ""
 
 #: modules/benchmark.c:479 modules/benchmark.c:498
 msgid "Cancel"
@@ -1051,25 +959,20 @@ msgid "Benchmarking. Please do not move your mouse or press any keys."
 msgstr ""
 
 #: modules/benchmark.c:567
-#, fuzzy
 msgid "Benchmarks"
 msgstr ""
-"每个样本要读/写的 MiB（1048576 字节）数。大型样本能通过耗费更多时间来产生更精"
-"确的结果。"
 
 #: modules/benchmark.c:585
 msgid "Perform tasks and compare with other systems"
 msgstr ""
 
 #: modules/benchmark.c:692
-#, fuzzy
 msgid "Send benchmark results"
-msgstr "将结果发送到标准输出"
+msgstr ""
 
 #: modules/benchmark.c:697
-#, fuzzy
 msgid "Receive benchmark results"
-msgstr "接收"
+msgstr ""
 
 #: modules/computer/alsa.c:26 modules/computer.c:483
 msgid "Audio Devices"
@@ -1124,9 +1027,9 @@ msgid "Groups"
 msgstr "组"
 
 #: modules/computer.c:112
-#, fuzzy, c-format
+#, c-format
 msgid "%dMB (%dMB used)"
-msgstr "%s 选项必须单独使用。\n"
+msgstr ""
 
 #: modules/computer.c:114 modules/computer.c:514
 msgid "Uptime"
@@ -1141,9 +1044,8 @@ msgid "Load Average"
 msgstr "负载均值"
 
 #: modules/computer.c:123 modules/computer.c:516
-#, fuzzy
 msgid "Available entropy in /dev/random"
-msgstr "使用 /dev/random 生成卷密钥"
+msgstr ""
 
 #: modules/computer.c:211
 msgid "Scripting Languages"
@@ -1151,7 +1053,7 @@ msgstr "脚本语言"
 
 #: modules/computer.c:212
 msgid "Gambas3 (gbr3)"
-msgstr ""
+msgstr "Gambas3 (gbr3)"
 
 #: modules/computer.c:213
 msgid "Python"
@@ -1170,9 +1072,8 @@ msgid "Perl"
 msgstr "Perl"
 
 #: modules/computer.c:217
-#, fuzzy
 msgid "Perl6 (VM)"
-msgstr "VM 偏移"
+msgstr "Perl6 (VM)"
 
 #: modules/computer.c:218
 msgid "Perl6"
@@ -1195,46 +1096,40 @@ msgid "Compilers"
 msgstr "编译器"
 
 #: modules/computer.c:223
-#, fuzzy
 msgid "C (GCC)"
-msgstr "%C处的 GCC 指示无法分类"
+msgstr "C (GCC)"
 
 #: modules/computer.c:224
-#, fuzzy
 msgid "C (Clang)"
-msgstr "Clang"
+msgstr "C (Clang)"
 
 #: modules/computer.c:225
-#, fuzzy
 msgid "D (dmd)"
-msgstr "邮箱 [%d]"
+msgstr "D (dmd)"
 
 #: modules/computer.c:226
 msgid "Gambas3 (gbc3)"
-msgstr ""
+msgstr "Gambas3 (gbc3)"
 
 #: modules/computer.c:227
 msgid "Java"
 msgstr "Java"
 
 #: modules/computer.c:228
-#, fuzzy
 msgid "CSharp (Mono, old)"
-msgstr "mono：参数太少"
+msgstr "CSharp (Mono, old)"
 
 #: modules/computer.c:229
-#, fuzzy
 msgid "CSharp (Mono)"
-msgstr "mono：参数太少"
+msgstr "CSharp (Mono)"
 
 #: modules/computer.c:230
 msgid "Vala"
 msgstr "Vala"
 
 #: modules/computer.c:231
-#, fuzzy
 msgid "Haskell (GHC)"
-msgstr "Haskell"
+msgstr "Haskell (GHC)"
 
 #: modules/computer.c:232
 msgid "FreePascal"
@@ -1266,73 +1161,64 @@ msgstr ""
 
 #: modules/computer.c:239
 msgid "QMake"
-msgstr ""
+msgstr "QMake"
 
 #: modules/computer.c:240
 msgid "CMake"
 msgstr "CMake"
 
 #: modules/computer.c:241
-#, fuzzy
 msgid "Gambas3 IDE"
-msgstr "GNOME 的集成开发环境"
+msgstr "Gambas3 IDE"
 
 #: modules/computer.c:282
 msgid "Not found"
 msgstr "找不到"
 
 #: modules/computer.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting version: %s"
-msgstr "Sobel 边缘检测"
+msgstr "检测版本: %s"
 
 #: modules/computer.c:304
 msgid "Program"
 msgstr "程序"
 
 #: modules/computer.c:324
-#, fuzzy
 msgid "Single-board computer"
-msgstr "棋类"
+msgstr ""
 
 #. /proc/apm
 #: modules/computer.c:373
-#, fuzzy
 msgid "Unknown physical machine type"
-msgstr "内部错误：未知的机器类型：%d"
+msgstr ""
 
 #: modules/computer.c:393 modules/computer.c:394
-#, fuzzy
 msgid "Virtual (VMware)"
-msgstr "VMware VMKCORE"
+msgstr "Virtual (VMware)"
 
 #: modules/computer.c:396 modules/computer.c:397 modules/computer.c:398
 #: modules/computer.c:399
-#, fuzzy
 msgid "Virtual (QEMU)"
-msgstr "虚拟"
+msgstr "Virtual (QEMU)"
 
 #: modules/computer.c:401 modules/computer.c:402
-#, fuzzy
 msgid "Virtual (Unknown)"
-msgstr "未知的基类虚类字符"
+msgstr "Virtual (Unknown)"
 
 #: modules/computer.c:404 modules/computer.c:405 modules/computer.c:406
 #: modules/computer.c:427
-#, fuzzy
 msgid "Virtual (VirtualBox)"
-msgstr "虚拟"
+msgstr "Virtual (VirtualBox)"
 
 #: modules/computer.c:408 modules/computer.c:409 modules/computer.c:410
 #: modules/computer.c:421
-#, fuzzy
 msgid "Virtual (Xen)"
-msgstr "载入 Xen %s ..."
+msgstr "Virtual (Xen)"
 
 #: modules/computer.c:412
-#, fuzzy
 msgid "Virtual (hypervisor present)"
-msgstr "超管理器："
+msgstr "Virtual (hypervisor present)"
 
 #: modules/computer.c:465 modules/computer.c:769
 msgid "Computer"
@@ -1361,14 +1247,13 @@ msgid "Resolution"
 msgstr "解决方案"
 
 #: modules/computer.c:477 modules/computer.c:607
-#, fuzzy, c-format
+#, c-format
 msgid "%dx%d pixels"
-msgstr "%d 像素"
+msgstr ""
 
 #: modules/computer.c:480
-#, fuzzy
 msgid "Session Display Server"
-msgstr "使用 X-server 显示“displayname”"
+msgstr "会话显示服务器"
 
 #: modules/computer.c:485 modules/devices.c:106
 msgid "Input Devices"
@@ -1481,14 +1366,12 @@ msgid "Vendor"
 msgstr "销售者"
 
 #: modules/computer.c:603
-#, fuzzy
 msgid "Release Number"
-msgstr "释放(_R)"
+msgstr ""
 
 #: modules/computer.c:611
-#, fuzzy
 msgid "Screens"
-msgstr "全屏模式中保持黑色背景"
+msgstr "屏幕"
 
 #: modules/computer.c:617
 msgid "Disconnected"
@@ -1511,19 +1394,17 @@ msgid "Unused"
 msgstr "未使用"
 
 #: modules/computer.c:629
-#, fuzzy, c-format
+#, c-format
 msgid "%dx%d pixels, offset (%d, %d)"
-msgstr "设备“%s”不能在 %dx%d 处捕获"
+msgstr ""
 
 #: modules/computer.c:638
-#, fuzzy
 msgid "Outputs (XRandR)"
-msgstr "XRandR"
+msgstr "Outputs (XRandR)"
 
 #: modules/computer.c:640
-#, fuzzy
 msgid "OpenGL (GLX)"
-msgstr "OpenGL 的 GLX 扩展"
+msgstr "OpenGL (GLX)"
 
 #: modules/computer.c:642
 msgid "Renderer"
@@ -1534,34 +1415,28 @@ msgid "Direct Rendering"
 msgstr "直接渲染"
 
 #: modules/computer.c:645
-#, fuzzy
 msgid "Version (Compatibility)"
-msgstr "兼容性"
+msgstr ""
 
 #: modules/computer.c:646
-#, fuzzy
 msgid "Shading Language Version (Compatibility)"
-msgstr "OpenGL 着色语言"
+msgstr ""
 
 #: modules/computer.c:647
-#, fuzzy
 msgid "Version (Core)"
-msgstr "CORE (Core 文件)"
+msgstr ""
 
 #: modules/computer.c:648
-#, fuzzy
 msgid "Shading Language Version (Core)"
-msgstr "OpenGL 着色语言"
+msgstr ""
 
 #: modules/computer.c:649
-#, fuzzy
 msgid "Version (ES)"
-msgstr "音频 ES"
+msgstr ""
 
 #: modules/computer.c:650
-#, fuzzy
 msgid "Shading Language Version (ES)"
-msgstr "OpenGL 着色语言"
+msgstr ""
 
 #: modules/computer.c:651
 msgid "GLX Version"
@@ -1648,42 +1523,36 @@ msgid "E-mail"
 msgstr "电子邮件"
 
 #: modules/computer/languages.c:100
-#, fuzzy
 msgid "Territory"
-msgstr "英属南极洲领地"
+msgstr ""
 
 #: modules/computer/languages.c:101 modules/devices/arm/processor.c:341
 #: modules/devices/gpu.c:146 modules/devices/ia64/processor.c:166
 #: modules/devices/pci.c:114 modules/devices/ppc/processor.c:159
-#, fuzzy
 msgid "Revision"
-msgstr "版本"
+msgstr "修订版本"
 
 #: modules/computer/languages.c:102 modules/devices/dmi.c:42
 msgid "Date"
 msgstr "时间"
 
 #: modules/computer/languages.c:103
-#, fuzzy
 msgid "Codeset"
 msgstr "系统代码集"
 
 #: modules/computer/loadavg.c:64
-#, fuzzy
 msgid "Couldn't obtain load average"
-msgstr "无法获取文件夹名称"
+msgstr ""
 
 #: modules/computer/modules.c:125 modules/computer/modules.c:126
 #: modules/computer/modules.c:127 modules/computer/modules.c:128
 #: modules/computer/modules.c:129 modules/devices/dmi.c:115
-#, fuzzy
 msgid "(Not available)"
-msgstr "无可用认证方式"
+msgstr "（不可用）"
 
 #: modules/computer/modules.c:142
-#, fuzzy
 msgid "Module Information"
-msgstr "获取模块信息失败：%s"
+msgstr "模块信息"
 
 #: modules/computer/modules.c:143
 msgid "Path"
@@ -1698,9 +1567,8 @@ msgid "KiB"
 msgstr "KiB"
 
 #: modules/computer/modules.c:148
-#, fuzzy
 msgid "Version Magic"
-msgstr "  Magic：  "
+msgstr "版本魔数"
 
 #: modules/computer/modules.c:149
 msgid "Copyright"
@@ -1720,42 +1588,35 @@ msgstr "依赖"
 
 #: modules/computer/os.c:35 modules/computer/os.c:36 modules/computer/os.c:37
 #: modules/computer/os.c:38
-#, fuzzy
 msgid "GNU C Library"
-msgstr "媒体库"
+msgstr "GNU C库"
 
 #: modules/computer/os.c:39
-#, fuzzy
 msgid "uClibc or uClibc-ng"
-msgstr "ng"
+msgstr "uClibc or uClibc-ng"
 
 #: modules/computer/os.c:40
-#, fuzzy
 msgid "diet libc"
-msgstr "libc 伪随机函数"
+msgstr ""
 
 #: modules/computer/os.c:112 modules/computer/os.c:115
-#, fuzzy
 msgid "GNOME Shell "
-msgstr "启用 GNOME Shell 扩展源"
+msgstr "GNOME Shell "
 
 #: modules/computer/os.c:123 modules/computer/os.c:126
 msgid "Version: "
 msgstr "版本："
 
 #: modules/computer/os.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown (Window Manager: %s)"
-msgstr "在屏幕：%d(窗口管理器：%s)\n"
+msgstr "未知 (窗口管理器：%s)"
 
 #. /{desktop environment} on {session type}
 #: modules/computer/os.c:168
-#, fuzzy, c-format
+#, c-format
 msgid "%s on %s"
 msgstr ""
-"由 %s，%s，%s，\n"
-"%s，%s，%s，%s，\n"
-"%s，和 %s 所写。\n"
 
 #: modules/computer/os.c:232
 msgid "Terminal"
@@ -1763,27 +1624,26 @@ msgstr "终端"
 
 #. /bits of entropy for rng (0)
 #: modules/computer/os.c:241
-#, fuzzy
 msgid "(None or not available)"
-msgstr "  不可用。\n"
+msgstr ""
 
 #. /bits of entropy for rng (low/poor value)
 #: modules/computer/os.c:242
-#, fuzzy, c-format
+#, c-format
 msgid "%d bits (low)"
-msgstr "密钥长度：\t%d 位\n"
+msgstr ""
 
 #. /bits of entropy for rng (medium value)
 #: modules/computer/os.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "%d bits (medium)"
-msgstr "中(%d%%)"
+msgstr ""
 
 #. /bits of entropy for rng (high/good value)
 #: modules/computer/os.c:244
-#, fuzzy, c-format
+#, c-format
 msgid "%d bits (healthy)"
-msgstr "未知（类型 = %d，位数 = %d）\n"
+msgstr ""
 
 #: modules/computer/users.c:47
 msgid "User Information"
@@ -1808,9 +1668,8 @@ msgid "Model"
 msgstr "模型"
 
 #: modules/devices/alpha/processor.c:89
-#, fuzzy
 msgid "Platform String"
-msgstr "字符串无效平台于行%d (%s)"
+msgstr ""
 
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:331
 #: modules/devices/ia64/processor.c:167 modules/devices/m68k/processor.c:87
@@ -1852,10 +1711,9 @@ msgstr ""
 
 #. /flag:thumb
 #: modules/devices/arm/arm_data.c:44
-#, fuzzy
 msgctxt "arm-flag"
 msgid "Thumb (16-bit instruction set)"
-msgstr "预测到的 Thumb 指令"
+msgstr ""
 
 #. /flag:26bit
 #: modules/devices/arm/arm_data.c:45
@@ -1865,17 +1723,15 @@ msgstr ""
 
 #. /flag:fastmult
 #: modules/devices/arm/arm_data.c:46
-#, fuzzy
 msgctxt "arm-flag"
 msgid "32x32->64-bit multiplication"
-msgstr "64 位"
+msgstr ""
 
 #. /flag:fpa
 #: modules/devices/arm/arm_data.c:47
-#, fuzzy
 msgctxt "arm-flag"
 msgid "Floating point accelerator"
-msgstr "使用软件浮点单元。"
+msgstr ""
 
 #. /flag:vfp
 #: modules/devices/arm/arm_data.c:48
@@ -1927,10 +1783,9 @@ msgstr ""
 
 #. /flag:vfpv3
 #: modules/devices/arm/arm_data.c:56
-#, fuzzy
 msgctxt "arm-flag"
 msgid "VFP version 3"
-msgstr "GNU GPL 第 3 版"
+msgstr ""
 
 #. /flag:vfpv3d16
 #: modules/devices/arm/arm_data.c:57
@@ -1946,17 +1801,15 @@ msgstr ""
 
 #. /flag:vfpd32
 #: modules/devices/arm/arm_data.c:59
-#, fuzzy
 msgctxt "arm-flag"
 msgid "VFP with 32 D-registers"
-msgstr "32位Windows版本(MSVC %d)。\n"
+msgstr ""
 
 #. /flag:tls
 #: modules/devices/arm/arm_data.c:60
-#, fuzzy
 msgctxt "arm-flag"
 msgid "TLS register"
-msgstr "注册"
+msgstr ""
 
 #. /flag:idiva
 #: modules/devices/arm/arm_data.c:61
@@ -2019,53 +1872,42 @@ msgstr "ARM 处理器"
 
 #: modules/devices/arm/processor.c:200 modules/devices/riscv/processor.c:147
 #: modules/devices/x86/processor.c:606
-#, fuzzy
 msgid "Empty List"
-msgstr ""
-"可用输入源标识的列表。每个源以一对字符串构成的元组指定。第一个字符串是类型，"
-"可以取“xkb”或“ibus”。对于“xkb”源，第二个字符串为“xkb_layout+xkb_variant”或只"
-"是“xkb_layout”(不需要 XKB 变量时)。对于“ibus”源，第二个字符串为 IBus 引擎名。"
-"空列表代表 X 服务器当前的 XKB 布局和变量将不改动，并且不使用 IBus。"
+msgstr "空列表"
 
 #: modules/devices/arm/processor.c:226 modules/devices/x86/processor.c:268
-#, fuzzy
 msgid "Clocks"
-msgstr "点击更改时钟的默认背景颜色"
+msgstr "时钟"
 
 #: modules/devices/arm/processor.c:272 modules/devices/arm/processor.c:285
 #: modules/devices/x86/processor.c:314 modules/devices/x86/processor.c:327
-#, fuzzy, c-format
+#, c-format
 msgid "%.2f-%.2f %s=%dx\n"
-msgstr "# %s %.2f %.2f\n"
+msgstr ""
 
 #: modules/devices/arm/processor.c:328
-#, fuzzy
 msgid "Linux Name"
-msgstr "Linux"
+msgstr ""
 
 #: modules/devices/arm/processor.c:329
-#, fuzzy
 msgid "Decoded Name"
-msgstr "与解码后一致"
+msgstr ""
 
 #: modules/devices/arm/processor.c:330 modules/network/net.c:453
-#, fuzzy
 msgid "Mode"
-msgstr " (OppEnc 模式)"
+msgstr "模式"
 
 #: modules/devices/arm/processor.c:336
-#, fuzzy
 msgid "ARM"
-msgstr "ARM NEON 音频音量"
+msgstr "ARM"
 
 #: modules/devices/arm/processor.c:337
 msgid "Implementer"
 msgstr ""
 
 #: modules/devices/arm/processor.c:338
-#, fuzzy
 msgid "Part"
-msgstr "父文件夹"
+msgstr ""
 
 #: modules/devices/arm/processor.c:339 modules/devices/ia64/processor.c:162
 #: modules/devices/parisc/processor.c:156 modules/devices/riscv/processor.c:183
@@ -2082,19 +1924,16 @@ msgid "Capabilities"
 msgstr "容量"
 
 #: modules/devices/arm/processor.c:446
-#, fuzzy
 msgid "SOC/Package"
-msgstr "<package>+"
+msgstr ""
 
 #: modules/devices/arm/processor.c:450 modules/devices/x86/processor.c:698
-#, fuzzy
 msgid "Logical CPU Config"
-msgstr "逻辑 CPU 数量"
+msgstr "逻辑 CPU 配置"
 
 #: modules/devices/arm/processor.c:467
-#, fuzzy
 msgid "SOC/Package Information"
-msgstr "   -i, --info       查看软件包的信息"
+msgstr ""
 
 #: modules/devices/battery.c:181
 #, c-format
@@ -2146,11 +1985,10 @@ msgid ""
 msgstr ""
 
 #: modules/devices/battery.c:385
-#, fuzzy
 msgid ""
 "[No batteries]\n"
 "No batteries found on this system=\n"
-msgstr "电池低电量。"
+msgstr ""
 
 #: modules/devices.c:100
 msgid "Graphics Processors"
@@ -2177,9 +2015,8 @@ msgid "DMI"
 msgstr ""
 
 #: modules/devices.c:110
-#, fuzzy
 msgid "Memory SPD"
-msgstr "内存"
+msgstr ""
 
 #: modules/devices.c:115
 msgid "Device Tree"
@@ -2205,16 +2042,13 @@ msgstr[0] ""
 #, c-format
 msgid "%d thread"
 msgid_plural "%d threads"
-msgstr[0] ""
+msgstr[0] "%d 线程"
 
 #. /NP procs; NC cores; NT threads
 #: modules/devices.c:165
-#, fuzzy, c-format
+#, c-format
 msgid "%s; %s; %s"
 msgstr ""
-"由 %s，%s，%s，\n"
-"%s，%s，%s，%s，\n"
-"%s，和 %s 所写。\n"
 
 #: modules/devices.c:575
 msgid "Field"
@@ -2233,19 +2067,16 @@ msgid "Devices"
 msgstr "设备"
 
 #: modules/devices.c:673
-#, fuzzy
 msgid "Update PCI ID listing"
-msgstr "更新远程 ID"
+msgstr ""
 
 #: modules/devices.c:685
-#, fuzzy
 msgid "Update CPU feature database"
-msgstr "无法更新数据库"
+msgstr ""
 
 #: modules/devices.c:713
-#, fuzzy
 msgid "Gathers information about hardware devices"
-msgstr "列出块设备的信息。\n"
+msgstr ""
 
 #: modules/devices.c:732
 msgid "Resource information requires superuser privileges"
@@ -2264,38 +2095,32 @@ msgid "Node"
 msgstr "节点"
 
 #: modules/devices/devicetree.c:88
-#, fuzzy
 msgid "Node Path"
-msgstr "OSS 设备节点路径。"
+msgstr "节点路径"
 
 #: modules/devices/devicetree.c:89
-#, fuzzy
 msgid "Alias"
-msgstr "别名："
+msgstr "别名"
 
 #: modules/devices/devicetree.c:89 modules/devices/devicetree.c:90
-#, fuzzy
 msgid "(None)"
-msgstr "<无>"
+msgstr "（无）"
 
 #: modules/devices/devicetree.c:90
 msgid "Symbol"
 msgstr "符号"
 
 #: modules/devices/devicetree.c:143 modules/devices/devicetree/pmac_data.c:79
-#, fuzzy
 msgid "Platform"
-msgstr "重载目标平台"
+msgstr "平台"
 
 #: modules/devices/devicetree.c:144 modules/devices/devicetree.c:209
-#, fuzzy
 msgid "Compatible"
-msgstr "完全兼容"
+msgstr ""
 
 #: modules/devices/devicetree.c:145
-#, fuzzy
 msgid "GPU-compatible"
-msgstr "GPU"
+msgstr ""
 
 #: modules/devices/devicetree.c:160
 msgid "Raspberry Pi or Compatible"
@@ -2320,49 +2145,41 @@ msgid "More"
 msgstr "更多"
 
 #: modules/devices/devicetree.c:268
-#, fuzzy
 msgid "Messages"
-msgstr "消息(&M)"
+msgstr "消息"
 
 #: modules/devices/devicetree/pmac_data.c:78
-#, fuzzy
 msgid "Apple Power Macintosh"
-msgstr "苹果"
+msgstr ""
 
 #: modules/devices/devicetree/pmac_data.c:83
-#, fuzzy
 msgid "Detected as"
-msgstr "已监测到一个“%s”。"
+msgstr ""
 
 #: modules/devices/devicetree/pmac_data.c:84
-#, fuzzy
 msgid "PMAC Flags"
-msgstr "       旗标\n"
+msgstr ""
 
 #: modules/devices/devicetree/pmac_data.c:85
-#, fuzzy
 msgid "L2 Cache"
-msgstr "分配l2表时"
+msgstr "L2 缓存"
 
 #: modules/devices/devicetree/pmac_data.c:86
-#, fuzzy
 msgid "PMAC Generation"
-msgstr "辈分页面"
+msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:153
 #: modules/devices/devicetree/rpi_data.c:154
-#, fuzzy
 msgid "Raspberry Pi"
-msgstr "用于 Raspberry Pi 的基于 MMAL 的视频输出插件"
+msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:154
 msgid "Board Name"
 msgstr "主板名称"
 
 #: modules/devices/devicetree/rpi_data.c:155
-#, fuzzy
 msgid "PCB Revision"
-msgstr "版本"
+msgstr "PCB 修订版本"
 
 #: modules/devices/devicetree/rpi_data.c:156
 msgid "Introduction"
@@ -2373,91 +2190,62 @@ msgid "Manufacturer"
 msgstr "制造商"
 
 #: modules/devices/devicetree/rpi_data.c:159
-#, fuzzy
 msgid "SOC (spec)"
-msgstr "Spec 宏"
+msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:160
-#, fuzzy
 msgid "Memory (spec)"
-msgstr "内存不足！"
+msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:162
-#, fuzzy
 msgid "Permanent overvolt bit"
-msgstr "%s, %lu 位 %s\n"
+msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:162
-#, fuzzy
 msgctxt "rpi-ov-bit"
 msgid "Set"
-msgstr "<not set>"
+msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:162
-#, fuzzy
 msgctxt "rpi-ov-bit"
 msgid "Not set"
-msgstr "<not set>"
+msgstr ""
 
 #: modules/devices/devmemory.c:101
-#, fuzzy
 msgid "Total Memory"
-msgstr "同时对总内存用量作图"
+msgstr "总内存"
 
 #: modules/devices/devmemory.c:102
-#, fuzzy
 msgid "Free Memory"
-msgstr "内存不足"
+msgstr "可用内存"
 
 #: modules/devices/devmemory.c:103
-#, fuzzy
 msgid "Cached Swap"
-msgstr "(已缓存)"
+msgstr "已缓存的交换分区"
 
 #: modules/devices/devmemory.c:104
-#, fuzzy
 msgid "High Memory"
-msgstr ""
-" --max-download-result=NUM    设置最多可以保存在内存中的下载结果\n"
-"                              数。下载结果分为“已完成”、“错误”和“已移除”。下"
-"载结\n"
-"                              果保存在 FIFO 队列中，最多可以达 NUM 个。若当队"
-"列已\n"
-"                              满时仍继续创建下载结果，队列前端最旧的下载结果"
-"将被\n"
-"                              移除，新的下载结果将存到队列尾端。将这个值设"
-"得\n"
-"                              太大会导致下载数累积变多后消耗大量内存。设为 0 "
-"表示\n"
-"                              不保存下载结果。注：未完成的下载保存于内存中，"
-"不受\n"
-"                              此选项值影响。参见 --keep-unfinished-download-"
-"result \n"
-"                              选项。"
+msgstr "高内存"
 
 #: modules/devices/devmemory.c:105
-#, fuzzy
 msgid "Free High Memory"
-msgstr "内存不足"
+msgstr "可用高内存"
 
 #: modules/devices/devmemory.c:106
-#, fuzzy
 msgid "Low Memory"
-msgstr "内存不足！"
+msgstr "低内存"
 
 #: modules/devices/devmemory.c:107
-#, fuzzy
 msgid "Free Low Memory"
-msgstr "内存不足"
+msgstr "可用低内存"
 
 #: modules/devices/devmemory.c:108
 msgid "Virtual Memory"
 msgstr "虚拟内存"
 
 #: modules/devices/devmemory.c:109
-#, fuzzy
 msgid "Free Virtual Memory"
-msgstr "虚拟内存"
+msgstr "可用虚拟内存"
 
 #: modules/devices/dmi.c:36 modules/devices/inputdevices.c:120
 #: modules/devices/usb.c:63
@@ -2474,9 +2262,8 @@ msgid "BIOS"
 msgstr "BIOS"
 
 #: modules/devices/dmi.c:50 modules/devices/dmi.c:56
-#, fuzzy
 msgid "Asset Tag"
-msgstr "标记符合此模式的邮件："
+msgstr ""
 
 #: modules/devices/dmi.c:51
 msgid "Chassis"
@@ -2495,24 +2282,20 @@ msgid "SDevice"
 msgstr ""
 
 #: modules/devices/gpu.c:111 modules/devices/pci.c:90
-#, fuzzy
 msgid "PCI Express"
-msgstr "列出 PCI 设备。"
+msgstr ""
 
 #: modules/devices/gpu.c:112 modules/devices/pci.c:92
-#, fuzzy
 msgid "Maximum Link Width"
-msgstr "最大宽度"
+msgstr ""
 
 #: modules/devices/gpu.c:113 modules/devices/pci.c:94
-#, fuzzy
 msgid "Maximum Link Speed"
-msgstr "链路速度"
+msgstr ""
 
 #: modules/devices/gpu.c:113 modules/devices/pci.c:93 modules/devices/pci.c:94
-#, fuzzy
 msgid "GT/s"
-msgstr "捷克(带 &lt;\\|&gt; 键)"
+msgstr "GT/s"
 
 #: modules/devices/gpu.c:123
 msgid "NVIDIA"
@@ -2534,7 +2317,7 @@ msgstr "设备信息"
 
 #: modules/devices/gpu.c:142 modules/devices/gpu.c:184
 msgid "Location"
-msgstr "位置(_L)"
+msgstr "位置"
 
 #: modules/devices/gpu.c:143
 msgid "DRM Device"
@@ -2546,37 +2329,31 @@ msgstr "分类"
 
 #: modules/devices/gpu.c:150 modules/devices/pci.c:117
 msgid "In Use"
-msgstr "在用"
+msgstr "使用中"
 
 #: modules/devices/gpu.c:174
-#, fuzzy
 msgid "Unknown integrated GPU"
-msgstr "集成固件"
+msgstr ""
 
 #: modules/devices/gpu.c:185
-#, fuzzy
 msgid "DT Compatibility"
-msgstr "dt"
+msgstr ""
 
 #: modules/devices/gpu.c:201
-#, fuzzy
 msgid "GPUs"
-msgstr "该选项主要针对高级用户和专家。在使用独立显卡遇到性能问题时启用此项"
+msgstr ""
 
 #: modules/devices/ia64/processor.c:108
-#, fuzzy
 msgid "IA64 Processor"
-msgstr "处理器："
+msgstr ""
 
 #: modules/devices/ia64/processor.c:163
-#, fuzzy
 msgid "Architecture Revision"
-msgstr "架构           "
+msgstr ""
 
 #: modules/devices/ia64/processor.c:170
-#, fuzzy
 msgid "CPU regs"
-msgstr "% CPU"
+msgstr ""
 
 #: modules/devices/ia64/processor.c:171
 msgid "Features"
@@ -2588,37 +2365,32 @@ msgid "Bus"
 msgstr "总线"
 
 #: modules/devices/inputdevices.c:124
-#, fuzzy
 msgid "Connected to"
-msgstr "没有连接上"
+msgstr "连接到"
 
 #: modules/devices/inputdevices.c:128
-#, fuzzy
 msgid "InfraRed port"
-msgstr "红外线"
+msgstr ""
 
 #: modules/devices/m68k/processor.c:85 modules/devices/riscv/processor.c:185
 msgid "MMU"
-msgstr ""
+msgstr "MMU"
 
 #: modules/devices/m68k/processor.c:86 modules/devices/sparc/processor.c:76
-#, fuzzy
 msgid "FPU"
-msgstr "禁用 RX FPU 指令。"
+msgstr "FPU"
 
 #: modules/devices/m68k/processor.c:90
 msgid "Calibration"
 msgstr "校正"
 
 #: modules/devices/mips/processor.c:76
-#, fuzzy
 msgid "System Type"
-msgstr "未知的文件系统类型“%s”。"
+msgstr "系统类型"
 
 #: modules/devices/parisc/processor.c:107
-#, fuzzy
 msgid "PA-RISC Processor"
-msgstr "Linux/PA-RISC 启动"
+msgstr ""
 
 #: modules/devices/parisc/processor.c:157
 msgid "System"
@@ -2629,25 +2401,20 @@ msgid "HVersion"
 msgstr ""
 
 #: modules/devices/parisc/processor.c:162
-#, fuzzy
 msgid "SVersion"
 msgstr ""
-"%s%s%s %s版本 %s (%s)\n"
-"%s\t由 GNU C 版本 %s 编译，"
 
 #: modules/devices/parisc/processor.c:163 modules/devices/x86/processor.c:660
 msgid "Cache"
 msgstr "缓存"
 
 #: modules/devices/pci.c:91
-#, fuzzy
 msgid "Link Width"
-msgstr "链接        "
+msgstr ""
 
 #: modules/devices/pci.c:93
-#, fuzzy
 msgid "Link Speed"
-msgstr "链路速度"
+msgstr ""
 
 #: modules/devices/pci.c:119 modules/devices/usb.c:70
 msgid "Connection"
@@ -2662,9 +2429,8 @@ msgid "Function"
 msgstr "功能"
 
 #: modules/devices/pci.c:161
-#, fuzzy
 msgid "No PCI devices found"
-msgstr "操作 PCI 设备。"
+msgstr "未找到 PCI 设备"
 
 #: modules/devices/ppc/processor.c:117
 msgid "POWER Processor"
@@ -2675,48 +2441,40 @@ msgid "⚬ Can do black and white printing=\n"
 msgstr ""
 
 #: modules/devices/printers.c:83
-#, fuzzy
 msgid "⚬ Can do color printing=\n"
-msgstr "当打印摘录和结果时不使用彩色"
+msgstr ""
 
 #: modules/devices/printers.c:85
-#, fuzzy
 msgid "⚬ Can do duplexing=\n"
-msgstr "只有 root 能执行该操作"
+msgstr ""
 
 #: modules/devices/printers.c:87
-#, fuzzy
 msgid "⚬ Can do staple output=\n"
-msgstr "不输出其后的换行符"
+msgstr ""
 
 #: modules/devices/printers.c:89
-#, fuzzy
 msgid "⚬ Can do copies=\n"
-msgstr "份数:"
+msgstr ""
 
 #: modules/devices/printers.c:91
-#, fuzzy
 msgid "⚬ Can collate copies=\n"
-msgstr "校对"
+msgstr ""
 
 #: modules/devices/printers.c:93
-#, fuzzy
 msgid "⚬ Printer is rejecting jobs=\n"
-msgstr "队列拒绝任务"
+msgstr ""
 
 #: modules/devices/printers.c:95
-#, fuzzy
 msgid "⚬ Printer was automatically discovered and added=\n"
-msgstr "已添加的打印机"
+msgstr ""
 
 #: modules/devices/printers.c:110
 msgid "Idle"
 msgstr "发呆"
 
 #: modules/devices/printers.c:112
-#, fuzzy
 msgid "Printing a Job"
-msgstr "正在打印任务“%s”"
+msgstr "打印一个任务"
 
 #: modules/devices/printers.c:114
 msgid "Stopped"
@@ -2727,11 +2485,12 @@ msgid ""
 "[Printers]\n"
 "No suitable CUPS library found="
 msgstr ""
+"[打印机]\n"
+"未找到合适的 CUPS 库="
 
 #: modules/devices/printers.c:200
-#, fuzzy
 msgid "[Printers (CUPS)]\n"
-msgstr "液体杯"
+msgstr ""
 
 #: modules/devices/printers.c:263
 msgid ""
@@ -2751,24 +2510,21 @@ msgstr ""
 
 #. /ext:RV32
 #: modules/devices/riscv/riscv_data.c:37
-#, fuzzy
 msgctxt "rv-ext"
 msgid "RISC-V 32-bit"
-msgstr "Linux/PA-RISC 启动"
+msgstr "RISC-V 32位"
 
 #. /ext:RV64
 #: modules/devices/riscv/riscv_data.c:38
-#, fuzzy
 msgctxt "rv-ext"
 msgid "RISC-V 64-bit"
-msgstr "Linux/PA-RISC 启动"
+msgstr "RISC-V 64位"
 
 #. /ext:RV128
 #: modules/devices/riscv/riscv_data.c:39
-#, fuzzy
 msgctxt "rv-ext"
 msgid "RISC-V 128-bit"
-msgstr "WEP 128 位密码"
+msgstr "RISC-V 128位"
 
 #. /ext:E
 #: modules/devices/riscv/riscv_data.c:40
@@ -2784,120 +2540,101 @@ msgstr ""
 
 #. /ext:M
 #: modules/devices/riscv/riscv_data.c:42
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Hardware integer multiply and divide"
-msgstr "整数被零除"
+msgstr ""
 
 #. /ext:A
 #: modules/devices/riscv/riscv_data.c:43
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Atomic memory operations"
-msgstr "内存不足！"
+msgstr ""
 
 #. /ext:C
 #: modules/devices/riscv/riscv_data.c:44
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Compressed 16-bit instructions"
-msgstr "生成 16 位指令。"
+msgstr ""
 
 #. /ext:F
 #: modules/devices/riscv/riscv_data.c:45
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Floating-point instructions, single-precision"
-msgstr "  fpus            识别单精度 FPU 指令。\n"
+msgstr ""
 
 #. /ext:D
 #: modules/devices/riscv/riscv_data.c:46
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Floating-point instructions, double-precision"
-msgstr "  fpud            识别双精度 FPU 指令。\n"
+msgstr ""
 
 #. /ext:Q
 #: modules/devices/riscv/riscv_data.c:47
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Floating-point instructions, quad-precision"
-msgstr "将导入的图像提升为浮点精度(_F)"
+msgstr ""
 
 #. /ext:B
 #: modules/devices/riscv/riscv_data.c:48
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Bit manipulation instructions"
-msgstr "支持生成高级位操作(ABM)指令。"
+msgstr ""
 
 #. /ext:V
 #: modules/devices/riscv/riscv_data.c:49
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Vector operations"
 msgstr ""
-"使用 Cairo 矢量操作渲染。最终图像文件通常更小，并且可以任意缩放，但是一些滤镜"
-"效果可能无法正常渲染。"
 
 #. /ext:T
 #: modules/devices/riscv/riscv_data.c:50
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Transactional memory"
-msgstr "内存"
+msgstr ""
 
 #. /ext:P
 #: modules/devices/riscv/riscv_data.c:51
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Packed SIMD instructions"
-msgstr "无指令"
+msgstr ""
 
 #. /ext:L
 #: modules/devices/riscv/riscv_data.c:52
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Decimal floating-point instructions"
-msgstr "硬件十进制浮点指令在 ESA/390 模式下不可用"
+msgstr ""
 
 #. /ext:J
 #: modules/devices/riscv/riscv_data.c:53
-#, fuzzy
 msgctxt "rv-ext"
 msgid "Dynamically translated languages"
-msgstr "语言"
+msgstr ""
 
 #. /ext:N
 #: modules/devices/riscv/riscv_data.c:54
-#, fuzzy
 msgctxt "rv-ext"
 msgid "User-level interrupts"
-msgstr "本地中断"
+msgstr "用户级中断"
 
 #: modules/devices/s390/processor.c:92
 msgid "S390 Processor"
 msgstr "S390 处理器"
 
 #: modules/devices/s390/processor.c:133
-#, fuzzy
 msgid "ID String"
-msgstr "畸形的节点版本 ID 字符串。"
+msgstr "ID 字符串"
 
 #: modules/devices/sh/processor.c:55
-#, fuzzy
 msgid "SuperH Processor"
-msgstr "处理器："
+msgstr ""
 
 #: modules/devices/sh/processor.c:88
-#, fuzzy
 msgid "Bus Frequency"
-msgstr "频率"
+msgstr ""
 
 #: modules/devices/sh/processor.c:89
-#, fuzzy
 msgid "Module Frequency"
-msgstr "模块"
+msgstr ""
 
 #: modules/devices/spd-decode.c:1475
 msgid ""
@@ -2918,33 +2655,31 @@ msgid "SPD"
 msgstr ""
 
 #: modules/devices/spd-decode.c:1510
-#, fuzzy
 msgid "Bank"
-msgstr " [memory=bank-model]"
+msgstr ""
 
 #: modules/devices/storage.c:43
-#, fuzzy
 msgid ""
 "\n"
 "[SCSI Disks]\n"
-msgstr "磁盘"
+msgstr ""
 
 #: modules/devices/storage.c:114 modules/devices/storage.c:320
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "[Device Information]\n"
 "Model=%s\n"
-msgstr "设备模式"
+msgstr ""
 
 #: modules/devices/storage.c:119 modules/devices/storage.c:326
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor=%s (%s)\n"
-msgstr "经销商：%s"
+msgstr ""
 
 #: modules/devices/storage.c:124 modules/devices/storage.c:328
-#, fuzzy, c-format
+#, c-format
 msgid "Vendor=%s\n"
-msgstr "经销商：%s"
+msgstr ""
 
 #: modules/devices/storage.c:129
 #, c-format
@@ -2959,16 +2694,15 @@ msgid ""
 msgstr ""
 
 #: modules/devices/storage.c:174
-#, fuzzy
 msgid ""
 "\n"
 "[IDE Disks]\n"
-msgstr "隐藏(_I)"
+msgstr ""
 
 #: modules/devices/storage.c:257
-#, fuzzy, c-format
+#, c-format
 msgid "Driver=%s\n"
-msgstr "智能卡驱动 %s 不能被加载"
+msgstr ""
 
 #: modules/devices/storage.c:331
 #, c-format
@@ -2979,31 +2713,30 @@ msgid ""
 msgstr ""
 
 #: modules/devices/storage.c:341
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "[Geometry]\n"
 "Physical=%s\n"
 "Logical=%s\n"
-msgstr "LVM2 物理卷(%s)"
+msgstr ""
 
 #: modules/devices/storage.c:351
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "[Capabilities]\n"
 "%s"
-msgstr "无法获取地址簿容量：%s"
+msgstr ""
 
 #: modules/devices/storage.c:358
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "[Speeds]\n"
 "%s"
-msgstr "备选速度过多"
+msgstr ""
 
 #: modules/devices/usb.c:65
-#, fuzzy
 msgid "Max Current"
-msgstr "最大"
+msgstr ""
 
 #: modules/devices/usb.c:65
 msgid "mA"
@@ -3014,23 +2747,20 @@ msgid "USB Version"
 msgstr "USB 版本"
 
 #: modules/devices/usb.c:68
-#, fuzzy
 msgid "Sub-class"
-msgstr "字幕轨道(&T)"
+msgstr ""
 
 #: modules/devices/usb.c:69
-#, fuzzy
 msgid "Device Version"
-msgstr "ZFS 设备(ZPool 版本 %s)"
+msgstr "设备版本"
 
 #: modules/devices/usb.c:103
 msgid "No USB devices found."
 msgstr "没找到 USB 设备"
 
 #: modules/devices/x86/processor.c:149
-#, fuzzy
 msgid "Cache information not available=\n"
-msgstr "没有可用的软件包缓存。"
+msgstr ""
 
 #: modules/devices/x86/processor.c:155
 #, c-format
@@ -3045,22 +2775,19 @@ msgstr "数据"
 
 #. /cache type, as appears in: Level 1 (Instruction)
 #: modules/devices/x86/processor.c:171
-#, fuzzy
 msgctxt "cache-type"
 msgid "Instruction"
-msgstr "指令集"
+msgstr ""
 
 #. /cache type, as appears in: Level 2 (Unified)
 #: modules/devices/x86/processor.c:172
-#, fuzzy
 msgctxt "cache-type"
 msgid "Unified"
-msgstr "中日韩统一表意文字"
+msgstr ""
 
 #: modules/devices/x86/processor.c:367
-#, fuzzy
 msgid "Caches"
-msgstr "显示 CPU 间是如何共享缓存的"
+msgstr "缓存"
 
 #: modules/devices/x86/processor.c:418 modules/devices/x86/processor.c:435
 #, c-format
@@ -3068,78 +2795,66 @@ msgid "Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
 msgstr ""
 
 #: modules/devices/x86/processor.c:645
-#, fuzzy
 msgid "Model Name"
-msgstr "型号名称："
+msgstr "型号名称"
 
 #: modules/devices/x86/processor.c:646
-#, fuzzy
 msgid "Family, model, stepping"
-msgstr "步进："
+msgstr ""
 
 #: modules/devices/x86/processor.c:652
-#, fuzzy
 msgid "Microcode Version"
-msgstr "显示版本"
+msgstr ""
 
 #: modules/devices/x86/processor.c:653
 msgid "Configuration"
 msgstr "配置"
 
 #: modules/devices/x86/processor.c:654
-#, fuzzy
 msgid "Cache Size"
-msgstr "磁盘缓存大小(&S)："
+msgstr "缓存大小"
 
 #: modules/devices/x86/processor.c:654
 msgid "kb"
 msgstr "kb"
 
 #: modules/devices/x86/processor.c:661
-#, fuzzy
 msgid "Power Management"
 msgstr "电源管理"
 
 #: modules/devices/x86/processor.c:662
-#, fuzzy
 msgid "Bug Workarounds"
-msgstr "错误：请报告这个问题"
+msgstr ""
 
 #: modules/devices/x86/processor.c:695 modules/devices/x86/processor.c:715
-#, fuzzy
 msgid "Package Information"
-msgstr "   -i, --info       查看软件包的信息"
+msgstr ""
 
 #: modules/devices/x86/processor.c:742
-#, fuzzy
 msgid "Socket:Core"
-msgstr "每个座的核数："
+msgstr ""
 
 #: modules/devices/x86/processor.c:742
-#, fuzzy
 msgid "Thread"
-msgstr "失败的线程的<线程号>"
+msgstr "线程"
 
 #. /flag:fpu
 #: modules/devices/x86/x86_data.c:43
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Onboard FPU (floating point support)"
-msgstr "ISO C 不支持十进制浮点数"
+msgstr ""
 
 #. /flag:vme
 #: modules/devices/x86/x86_data.c:44
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Virtual 8086 mode enhancements"
-msgstr "开启独占模式以避免虚拟混合。"
+msgstr ""
 
 #. /flag:de
 #: modules/devices/x86/x86_data.c:45
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Debugging Extensions (CR4.DE)"
-msgstr "调试中"
+msgstr ""
 
 #. /flag:pse
 #: modules/devices/x86/x86_data.c:46
@@ -3149,10 +2864,9 @@ msgstr ""
 
 #. /flag:tsc
 #: modules/devices/x86/x86_data.c:47
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Time Stamp Counter (RDTSC)"
-msgstr "FontForge 时间戳表"
+msgstr ""
 
 #. /flag:msr
 #: modules/devices/x86/x86_data.c:48
@@ -3168,10 +2882,9 @@ msgstr ""
 
 #. /flag:mce
 #: modules/devices/x86/x86_data.c:50
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Machine Check Exception"
-msgstr "例外"
+msgstr ""
 
 #. /flag:cx8
 #: modules/devices/x86/x86_data.c:51
@@ -3193,10 +2906,9 @@ msgstr ""
 
 #. /flag:mtrr
 #: modules/devices/x86/x86_data.c:54
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Memory Type Range Registers"
-msgstr "删除指定范围内的全部内存区域。"
+msgstr ""
 
 #. /flag:pge
 #: modules/devices/x86/x86_data.c:55
@@ -3206,12 +2918,9 @@ msgstr ""
 
 #. /flag:mca
 #: modules/devices/x86/x86_data.c:56
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Machine Check Architecture"
 msgstr ""
-"输出机器的体系结构。\n"
-"\n"
 
 #. /flag:cmov
 #: modules/devices/x86/x86_data.c:57
@@ -3221,10 +2930,9 @@ msgstr ""
 
 #. /flag:pat
 #: modules/devices/x86/x86_data.c:58
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Page Attribute Table"
-msgstr "L2P 页表溢出"
+msgstr ""
 
 #. /flag:pse36
 #: modules/devices/x86/x86_data.c:59
@@ -3234,17 +2942,15 @@ msgstr ""
 
 #. /flag:pn
 #: modules/devices/x86/x86_data.c:60
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Processor serial number"
-msgstr "序列号: "
+msgstr ""
 
 #. /flag:clflush
 #: modules/devices/x86/x86_data.c:61
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Cache Line Flush instruction"
-msgstr "写入 %1 的操作系统缓存"
+msgstr ""
 
 #. /flag:dts
 #: modules/devices/x86/x86_data.c:62
@@ -3262,45 +2968,39 @@ msgstr ""
 
 #. /flag:mmx
 #: modules/devices/x86/x86_data.c:64
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Multimedia Extensions"
-msgstr "多媒体"
+msgstr ""
 
 #. /flag:fxsr
 #: modules/devices/x86/x86_data.c:65
-#, fuzzy
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
-msgstr "支持 FXSAVE 和 FXRSTOR 指令。"
+msgstr ""
 
 #. /flag:sse
 #: modules/devices/x86/x86_data.c:66
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel SSE vector instructions"
-msgstr "编码带 VEX 前缀的 SSE 指令。"
+msgstr ""
 
 #. /flag:sse2
 #: modules/devices/x86/x86_data.c:67
-#, fuzzy
 msgctxt "x86-flag"
 msgid "SSE2"
-msgstr "SSE2 转换从"
+msgstr ""
 
 #. /flag:ss
 #: modules/devices/x86/x86_data.c:68
-#, fuzzy
 msgctxt "x86-flag"
 msgid "CPU self snoop"
-msgstr "% CPU"
+msgstr ""
 
 #. /flag:ht
 #: modules/devices/x86/x86_data.c:69
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Hyper-Threading"
-msgstr "线索功能尚未启用。"
+msgstr ""
 
 #. /flag:tm
 #: modules/devices/x86/x86_data.c:70
@@ -3330,31 +3030,27 @@ msgstr ""
 
 #. /flag:mp
 #: modules/devices/x86/x86_data.c:76
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Multiprocessing Capable."
-msgstr "此聊天室无法进行配置"
+msgstr ""
 
 #. /flag:nx
 #: modules/devices/x86/x86_data.c:77
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Execute Disable"
-msgstr "执行(&E)"
+msgstr ""
 
 #. /flag:mmxext
 #: modules/devices/x86/x86_data.c:78
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AMD MMX extensions"
-msgstr "扩展(_E)..."
+msgstr ""
 
 #. /flag:fxsr_opt
 #: modules/devices/x86/x86_data.c:79
-#, fuzzy
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR optimizations"
-msgstr "支持 FXSAVE 和 FXRSTOR 指令。"
+msgstr ""
 
 #. /flag:pdpe1gb
 #: modules/devices/x86/x86_data.c:80
@@ -3382,38 +3078,33 @@ msgstr ""
 
 #. /flag:3dnowext
 #: modules/devices/x86/x86_data.c:84
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AMD 3DNow! extensions"
-msgstr "支持 3DNow! 内建函数。"
+msgstr ""
 
 #. /flag:recovery
 #: modules/devices/x86/x86_data.c:86
-#, fuzzy
 msgctxt "x86-flag"
 msgid "CPU in recovery mode"
-msgstr "CPU 运行模式："
+msgstr ""
 
 #. /flag:longrun
 #: modules/devices/x86/x86_data.c:87
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Longrun power control"
-msgstr "强度："
+msgstr ""
 
 #. /flag:lrti
 #: modules/devices/x86/x86_data.c:88
-#, fuzzy
 msgctxt "x86-flag"
 msgid "LongRun table interface"
-msgstr "界面"
+msgstr ""
 
 #. /flag:cxmmx
 #: modules/devices/x86/x86_data.c:90
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Cyrix MMX extensions"
-msgstr "扩展(_E)..."
+msgstr ""
 
 #. /flag:k6_mtrr
 #: modules/devices/x86/x86_data.c:91
@@ -3435,10 +3126,9 @@ msgstr ""
 
 #. /flag:constant_tsc
 #: modules/devices/x86/x86_data.c:94
-#, fuzzy
 msgctxt "x86-flag"
 msgid "TSC ticks at a constant rate"
-msgstr "恒定速率因子："
+msgstr ""
 
 #. /flag:up
 #: modules/devices/x86/x86_data.c:95
@@ -3448,20 +3138,15 @@ msgstr ""
 
 #. /flag:art
 #: modules/devices/x86/x86_data.c:96
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Always-Running Timer"
 msgstr ""
-"从不\n"
-"有进程正在运行时\n"
-"总是"
 
 #. /flag:arch_perfmon
 #: modules/devices/x86/x86_data.c:97
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel Architectural PerfMon"
-msgstr "Intel 64 位"
+msgstr ""
 
 #. /flag:pebs
 #: modules/devices/x86/x86_data.c:98
@@ -3471,10 +3156,9 @@ msgstr ""
 
 #. /flag:bts
 #: modules/devices/x86/x86_data.c:99
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Branch Trace Store"
-msgstr "备份存储位置的类型"
+msgstr ""
 
 #. /flag:rep_good
 #: modules/devices/x86/x86_data.c:100
@@ -3502,10 +3186,9 @@ msgstr ""
 
 #. /flag:tsc_reliable
 #: modules/devices/x86/x86_data.c:104
-#, fuzzy
 msgctxt "x86-flag"
 msgid "TSC is known to be reliable"
-msgstr "没有已知的 schema 用于“%s”\n"
+msgstr ""
 
 #. /flag:nonstop_tsc
 #: modules/devices/x86/x86_data.c:105
@@ -3521,10 +3204,9 @@ msgstr ""
 
 #. /flag:amd_dcm
 #: modules/devices/x86/x86_data.c:107
-#, fuzzy
 msgctxt "x86-flag"
 msgid "multi-node processor"
-msgstr "配置多处理器系统中的 CPU。\n"
+msgstr ""
 
 #. /flag:aperfmperf
 #: modules/devices/x86/x86_data.c:108
@@ -3566,10 +3248,9 @@ msgstr ""
 
 #. /flag:dtes64
 #: modules/devices/x86/x86_data.c:116
-#, fuzzy
 msgctxt "x86-flag"
 msgid "64-bit Debug Store"
-msgstr "备份存储位置的类型"
+msgstr ""
 
 #. /flag:monitor
 #: modules/devices/x86/x86_data.c:117
@@ -3597,80 +3278,69 @@ msgstr ""
 
 #. /flag:est
 #: modules/devices/x86/x86_data.c:121
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Enhanced SpeedStep"
-msgstr "增强型图元文件"
+msgstr ""
 
 #. /flag:tm2
 #: modules/devices/x86/x86_data.c:122
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Thermal Monitor 2"
-msgstr "备份监视器"
+msgstr ""
 
 #. /flag:ssse3
 #: modules/devices/x86/x86_data.c:123
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Supplemental SSE-3"
-msgstr "补充箭头-A"
+msgstr ""
 
 #. /flag:cid
 #: modules/devices/x86/x86_data.c:124
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Context ID"
-msgstr "重复的上下文 id “%s”"
+msgstr ""
 
 #. /flag:sdbg
 #: modules/devices/x86/x86_data.c:125
-#, fuzzy
 msgctxt "x86-flag"
 msgid "silicon debug"
-msgstr "调试"
+msgstr ""
 
 #. /flag:fma
 #: modules/devices/x86/x86_data.c:126
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Fused multiply-add"
-msgstr "乘法 [*]"
+msgstr ""
 
 #. /flag:cx16
 #: modules/devices/x86/x86_data.c:127
-#, fuzzy
 msgctxt "x86-flag"
 msgid "CMPXCHG16B"
-msgstr "支持生成 cmpxchg16b 指令。"
+msgstr ""
 
 #. /flag:xtpr
 #: modules/devices/x86/x86_data.c:128
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Send Task Priority Messages"
-msgstr "在控制台而不是对话框中显示警告信息"
+msgstr ""
 
 #. /flag:pdcm
 #: modules/devices/x86/x86_data.c:129
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Performance Capabilities"
-msgstr "容量"
+msgstr ""
 
 #. /flag:pcid
 #: modules/devices/x86/x86_data.c:130
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Process Context Identifiers"
-msgstr "进程上下文描述"
+msgstr ""
 
 #. /flag:dca
 #: modules/devices/x86/x86_data.c:131
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Direct Cache Access"
-msgstr "通过直接 IO 访问后备文件"
+msgstr ""
 
 #. /flag:sse4_1
 #: modules/devices/x86/x86_data.c:132
@@ -3706,10 +3376,9 @@ msgstr ""
 
 #. /flag:tsc_deadline_timer
 #: modules/devices/x86/x86_data.c:137
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Tsc deadline timer"
-msgstr "不支持 SCHED_DEADLINE"
+msgstr ""
 
 #. /flag:aes/aes-ni
 #: modules/devices/x86/x86_data.c:138
@@ -3725,10 +3394,9 @@ msgstr ""
 
 #. /flag:avx
 #: modules/devices/x86/x86_data.c:140
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Advanced Vector Extensions"
-msgstr "高级"
+msgstr ""
 
 #. /flag:f16c
 #: modules/devices/x86/x86_data.c:141
@@ -3744,39 +3412,34 @@ msgstr ""
 
 #. /flag:hypervisor
 #: modules/devices/x86/x86_data.c:143
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Running on a hypervisor"
-msgstr "超管理器："
+msgstr ""
 
 #. /Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001
 #. /flag:rng
 #: modules/devices/x86/x86_data.c:145
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Random Number Generator present (xstore)"
-msgstr "伪随机数产生器的初始值"
+msgstr ""
 
 #. /flag:rng_en
 #: modules/devices/x86/x86_data.c:146
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Random Number Generator enabled"
-msgstr "伪随机数产生器的初始值"
+msgstr ""
 
 #. /flag:ace
 #: modules/devices/x86/x86_data.c:147
-#, fuzzy
 msgctxt "x86-flag"
 msgid "on-CPU crypto (xcrypt)"
-msgstr "非法的加密(crypto)邮件头"
+msgstr ""
 
 #. /flag:ace_en
 #: modules/devices/x86/x86_data.c:148
-#, fuzzy
 msgctxt "x86-flag"
 msgid "on-CPU crypto enabled"
-msgstr "CPU %u 已经启用\n"
+msgstr ""
 
 #. /flag:ace2
 #: modules/devices/x86/x86_data.c:149
@@ -3786,38 +3449,33 @@ msgstr ""
 
 #. /flag:ace2_en
 #: modules/devices/x86/x86_data.c:150
-#, fuzzy
 msgctxt "x86-flag"
 msgid "ACE v2 enabled"
-msgstr "Ace (.ace)"
+msgstr ""
 
 #. /flag:phe
 #: modules/devices/x86/x86_data.c:151
-#, fuzzy
 msgctxt "x86-flag"
 msgid "PadLock Hash Engine"
-msgstr "[数字键盘锁定]"
+msgstr ""
 
 #. /flag:phe_en
 #: modules/devices/x86/x86_data.c:152
-#, fuzzy
 msgctxt "x86-flag"
 msgid "PHE enabled"
-msgstr "启用"
+msgstr ""
 
 #. /flag:pmm
 #: modules/devices/x86/x86_data.c:153
-#, fuzzy
 msgctxt "x86-flag"
 msgid "PadLock Montgomery Multiplier"
-msgstr "倍数："
+msgstr ""
 
 #. /flag:pmm_en
 #: modules/devices/x86/x86_data.c:154
-#, fuzzy
 msgctxt "x86-flag"
 msgid "PMM enabled"
-msgstr "线索功能尚未启用。"
+msgstr ""
 
 #. /flag:lahf_lm
 #: modules/devices/x86/x86_data.c:156
@@ -3827,10 +3485,9 @@ msgstr ""
 
 #. /flag:cmp_legacy
 #: modules/devices/x86/x86_data.c:157
-#, fuzzy
 msgctxt "x86-flag"
 msgid "If yes HyperThreading not valid"
-msgstr "有效至: "
+msgstr ""
 
 #. /flag:svm
 #: modules/devices/x86/x86_data.c:158
@@ -3840,24 +3497,21 @@ msgstr ""
 
 #. /flag:extapic
 #: modules/devices/x86/x86_data.c:159
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Extended APIC space"
-msgstr "无剩余空间。"
+msgstr ""
 
 #. /flag:cr8_legacy
 #: modules/devices/x86/x86_data.c:160
-#, fuzzy
 msgctxt "x86-flag"
 msgid "CR8 in 32-bit mode"
-msgstr "32 位"
+msgstr ""
 
 #. /flag:abm
 #: modules/devices/x86/x86_data.c:161
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Advanced Bit Manipulation"
-msgstr "支持生成高级位操作(ABM)指令。"
+msgstr ""
 
 #. /flag:sse4a
 #: modules/devices/x86/x86_data.c:162
@@ -3876,10 +3530,9 @@ msgstr ""
 
 #. /flag:3dnowprefetch
 #: modules/devices/x86/x86_data.c:164
-#, fuzzy
 msgctxt "x86-flag"
 msgid "3DNow prefetch instructions"
-msgstr "支持 3DNow! 内建函数。"
+msgstr ""
 
 #. /flag:osvw
 #: modules/devices/x86/x86_data.c:165
@@ -3891,10 +3544,9 @@ msgstr ""
 
 #. /flag:ibs
 #: modules/devices/x86/x86_data.c:166
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Instruction Based Sampling"
-msgstr "采样"
+msgstr ""
 
 #. /flag:xop
 #: modules/devices/x86/x86_data.c:167
@@ -3904,24 +3556,21 @@ msgstr ""
 
 #. /flag:skinit
 #: modules/devices/x86/x86_data.c:168
-#, fuzzy
 msgctxt "x86-flag"
 msgid "SKINIT/STGI instructions"
-msgstr "无指令"
+msgstr ""
 
 #. /flag:wdt
 #: modules/devices/x86/x86_data.c:169
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Watchdog timer"
-msgstr "%s：喂看门狗失败"
+msgstr ""
 
 #. /flag:lwp
 #: modules/devices/x86/x86_data.c:170
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Light Weight Profiling"
-msgstr "光线"
+msgstr ""
 
 #. /flag:fma4
 #: modules/devices/x86/x86_data.c:171
@@ -3931,10 +3580,9 @@ msgstr ""
 
 #. /flag:tce
 #: modules/devices/x86/x86_data.c:172
-#, fuzzy
 msgctxt "x86-flag"
 msgid "translation cache extension"
-msgstr "翻译："
+msgstr ""
 
 #. /flag:nodeid_msr
 #: modules/devices/x86/x86_data.c:173
@@ -3944,10 +3592,9 @@ msgstr ""
 
 #. /flag:tbm
 #: modules/devices/x86/x86_data.c:174
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Trailing Bit Manipulation"
-msgstr "尾随"
+msgstr ""
 
 #. /flag:topoext
 #: modules/devices/x86/x86_data.c:175
@@ -3969,17 +3616,15 @@ msgstr ""
 
 #. /flag:bpext
 #: modules/devices/x86/x86_data.c:178
-#, fuzzy
 msgctxt "x86-flag"
 msgid "data breakpoint extension"
-msgstr "没有该扩展"
+msgstr ""
 
 #. /flag:ptsc
 #: modules/devices/x86/x86_data.c:179
-#, fuzzy
 msgctxt "x86-flag"
 msgid "performance time-stamp counter"
-msgstr "FontForge 时间戳表"
+msgstr ""
 
 #. /flag:perfctr_l2
 #: modules/devices/x86/x86_data.c:180
@@ -4007,10 +3652,9 @@ msgstr ""
 
 #. /flag:hw_pstate
 #: modules/devices/x86/x86_data.c:185
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AMD HW-PState"
-msgstr "hW"
+msgstr ""
 
 #. /flag:proc_feedback
 #: modules/devices/x86/x86_data.c:186
@@ -4020,38 +3664,33 @@ msgstr ""
 
 #. /flag:intel_pt
 #: modules/devices/x86/x86_data.c:187
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel Processor Tracing"
-msgstr "Intel"
+msgstr ""
 
 #. /flag:tpr_shadow
 #: modules/devices/x86/x86_data.c:189
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel TPR Shadow"
-msgstr "阴影"
+msgstr ""
 
 #. /flag:vnmi
 #: modules/devices/x86/x86_data.c:190
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel Virtual NMI"
-msgstr "Intel"
+msgstr ""
 
 #. /flag:flexpriority
 #: modules/devices/x86/x86_data.c:191
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel FlexPriority"
-msgstr "Intel"
+msgstr ""
 
 #. /flag:ept
 #: modules/devices/x86/x86_data.c:192
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel Extended Page Table"
-msgstr "扩展metamorphosis表"
+msgstr ""
 
 #. /flag:vpid
 #: modules/devices/x86/x86_data.c:193
@@ -4061,10 +3700,9 @@ msgstr ""
 
 #. /flag:vmmcall
 #: modules/devices/x86/x86_data.c:194
-#, fuzzy
 msgctxt "x86-flag"
 msgid "prefer VMMCALL to VMCALL"
-msgstr "语法已过时，请改用‘%s’"
+msgstr ""
 
 #. /flag:fsgsbase
 #: modules/devices/x86/x86_data.c:196
@@ -4074,10 +3712,9 @@ msgstr ""
 
 #. /flag:tsc_adjust
 #: modules/devices/x86/x86_data.c:197
-#, fuzzy
 msgctxt "x86-flag"
 msgid "TSC adjustment MSR"
-msgstr "调整："
+msgstr ""
 
 #. /flag:bmi1
 #: modules/devices/x86/x86_data.c:198
@@ -4087,17 +3724,15 @@ msgstr ""
 
 #. /flag:hle
 #: modules/devices/x86/x86_data.c:199
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Hardware Lock Elision"
-msgstr "无法锁定 %s。\n"
+msgstr ""
 
 #. /flag:avx2
 #: modules/devices/x86/x86_data.c:200
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AVX2 instructions"
-msgstr "无指令"
+msgstr ""
 
 #. /flag:smep
 #: modules/devices/x86/x86_data.c:201
@@ -4119,24 +3754,21 @@ msgstr ""
 
 #. /flag:invpcid
 #: modules/devices/x86/x86_data.c:204
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Invalidate Processor Context ID"
-msgstr "重复的上下文 id “%s”"
+msgstr ""
 
 #. /flag:rtm
 #: modules/devices/x86/x86_data.c:205
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Restricted Transactional Memory"
-msgstr "受限的"
+msgstr ""
 
 #. /flag:cqm
 #: modules/devices/x86/x86_data.c:206
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Cache QoS Monitoring"
-msgstr " 监视中 "
+msgstr ""
 
 #. /flag:mpx
 #: modules/devices/x86/x86_data.c:207
@@ -4146,80 +3778,69 @@ msgstr ""
 
 #. /flag:avx512f
 #: modules/devices/x86/x86_data.c:208
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AVX-512 foundation"
-msgstr "自由软件基金会"
+msgstr ""
 
 #. /flag:avx512dq
 #: modules/devices/x86/x86_data.c:209
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AVX-512 Double/Quad instructions"
-msgstr "  fpud            识别双精度 FPU 指令。\n"
+msgstr ""
 
 #. /flag:rdseed
 #: modules/devices/x86/x86_data.c:210
-#, fuzzy
 msgctxt "x86-flag"
 msgid "The RDSEED instruction"
-msgstr "支持 RDSEED 指令。"
+msgstr ""
 
 #. /flag:adx
 #: modules/devices/x86/x86_data.c:211
-#, fuzzy
 msgctxt "x86-flag"
 msgid "The ADCX and ADOX instructions"
-msgstr "无指令"
+msgstr ""
 
 #. /flag:smap
 #: modules/devices/x86/x86_data.c:212
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Supervisor Mode Access Prevention"
-msgstr "模式=%#o\t访问权限=%#o\n"
+msgstr ""
 
 #. /flag:clflushopt
 #: modules/devices/x86/x86_data.c:213
-#, fuzzy
 msgctxt "x86-flag"
 msgid "CLFLUSHOPT instruction"
-msgstr "支持 CLFLUSHOPT 指令。"
+msgstr ""
 
 #. /flag:clwb
 #: modules/devices/x86/x86_data.c:214
-#, fuzzy
 msgctxt "x86-flag"
 msgid "CLWB instruction"
-msgstr "支持 CLWB 指令。"
+msgstr ""
 
 #. /flag:avx512pf
 #: modules/devices/x86/x86_data.c:215
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AVX-512 Prefetch"
-msgstr "流预装取滤镜"
+msgstr ""
 
 #. /flag:avx512er
 #: modules/devices/x86/x86_data.c:216
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AVX-512 Exponential and Reciprocal"
-msgstr "指数"
+msgstr ""
 
 #. /flag:avx512cd
 #: modules/devices/x86/x86_data.c:217
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AVX-512 Conflict Detection"
-msgstr "边界侦测"
+msgstr ""
 
 #. /flag:sha_ni
 #: modules/devices/x86/x86_data.c:218
-#, fuzzy
 msgctxt "x86-flag"
 msgid "SHA1/SHA256 Instruction Extensions"
-msgstr "扩展(_E)..."
+msgstr ""
 
 #. /flag:avx512bw
 #: modules/devices/x86/x86_data.c:219
@@ -4235,31 +3856,27 @@ msgstr ""
 
 #. /flag:xsaveopt
 #: modules/devices/x86/x86_data.c:222
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Optimized XSAVE"
-msgstr "优化："
+msgstr ""
 
 #. /flag:xsavec
 #: modules/devices/x86/x86_data.c:223
-#, fuzzy
 msgctxt "x86-flag"
 msgid "XSAVEC"
-msgstr "支持 XSAVEC 指令。"
+msgstr ""
 
 #. /flag:xgetbv1
 #: modules/devices/x86/x86_data.c:224
-#, fuzzy
 msgctxt "x86-flag"
 msgid "XGETBV with ECX = 1"
-msgstr "1: DES, 2: 三重DES"
+msgstr ""
 
 #. /flag:xsaves
 #: modules/devices/x86/x86_data.c:225
-#, fuzzy
 msgctxt "x86-flag"
 msgid "XSAVES/XRSTORS"
-msgstr "支持 XSAVES 和 XRSTORS 指令。"
+msgstr ""
 
 #. /flag:cqm_llc
 #: modules/devices/x86/x86_data.c:227
@@ -4269,10 +3886,9 @@ msgstr ""
 
 #. /flag:cqm_occup_llc
 #: modules/devices/x86/x86_data.c:229
-#, fuzzy
 msgctxt "x86-flag"
 msgid "LLC occupancy monitoring"
-msgstr " 监视中 "
+msgstr ""
 
 #. /flag:cqm_mbm_total
 #: modules/devices/x86/x86_data.c:230
@@ -4282,17 +3898,15 @@ msgstr ""
 
 #. /flag:cqm_mbm_local
 #: modules/devices/x86/x86_data.c:231
-#, fuzzy
 msgctxt "x86-flag"
 msgid "LLC local MBM monitoring"
-msgstr "用于监视本地天气情况的面板小程序。"
+msgstr ""
 
 #. /flag:clzero
 #: modules/devices/x86/x86_data.c:233
-#, fuzzy
 msgctxt "x86-flag"
 msgid "CLZERO instruction"
-msgstr "无法识别的指令"
+msgstr ""
 
 #. /flag:irperf
 #: modules/devices/x86/x86_data.c:234
@@ -4302,27 +3916,21 @@ msgstr ""
 
 #. /flag:dtherm
 #: modules/devices/x86/x86_data.c:236
-#, fuzzy
 msgctxt "x86-flag"
 msgid "digital thermal sensor"
-msgstr "热导率"
+msgstr ""
 
 #. /flag:ida
 #: modules/devices/x86/x86_data.c:237
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel Dynamic Acceleration"
-msgstr "加速度"
+msgstr ""
 
 #. /flag:arat
 #: modules/devices/x86/x86_data.c:238
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Always Running APIC Timer"
 msgstr ""
-"从不\n"
-"有进程正在运行时\n"
-"总是"
 
 #. /flag:pln
 #: modules/devices/x86/x86_data.c:239
@@ -4344,17 +3952,15 @@ msgstr ""
 
 #. /flag:hwp_notify
 #: modules/devices/x86/x86_data.c:242
-#, fuzzy
 msgctxt "x86-flag"
 msgid "HWP notification"
-msgstr "通知(_N)："
+msgstr ""
 
 #. /flag:hwp_act_window
 #: modules/devices/x86/x86_data.c:243
-#, fuzzy
 msgctxt "x86-flag"
 msgid "HWP Activity Window"
-msgstr "没有找到活动项"
+msgstr ""
 
 #. /flag:hwp_epp
 #: modules/devices/x86/x86_data.c:244
@@ -4364,10 +3970,9 @@ msgstr ""
 
 #. /flag:hwp_pkg_req
 #: modules/devices/x86/x86_data.c:245
-#, fuzzy
 msgctxt "x86-flag"
 msgid "HWP package-level request"
-msgstr "在执行请求过程中软件包数据库已更改。"
+msgstr ""
 
 #. /flag:npt
 #: modules/devices/x86/x86_data.c:247
@@ -4395,10 +4000,9 @@ msgstr ""
 
 #. /flag:tsc_scale
 #: modules/devices/x86/x86_data.c:251
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AMD TSC scaling support"
-msgstr "后端不支持窗口缩放"
+msgstr ""
 
 #. /flag:vmcb_clean
 #: modules/devices/x86/x86_data.c:252
@@ -4426,31 +4030,27 @@ msgstr ""
 
 #. /flag:pfthreshold
 #: modules/devices/x86/x86_data.c:256
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AMD pause filter threshold"
-msgstr "色彩阈值滤镜"
+msgstr ""
 
 #. /flag:avic
 #: modules/devices/x86/x86_data.c:257
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Virtual Interrupt Controller"
-msgstr "控制器对象"
+msgstr ""
 
 #. /flag:pku
 #: modules/devices/x86/x86_data.c:259
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Protection Keys for Userspace"
-msgstr "用户空间选项︰ %s"
+msgstr ""
 
 #. /flag:ospke
 #: modules/devices/x86/x86_data.c:260
-#, fuzzy
 msgctxt "x86-flag"
 msgid "OS Protection Keys Enable"
-msgstr "启用“回弹键”"
+msgstr ""
 
 #. /flag:overflow_recov
 #: modules/devices/x86/x86_data.c:262
@@ -4466,24 +4066,21 @@ msgstr ""
 
 #. /flag:smca
 #: modules/devices/x86/x86_data.c:264
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Scalable MCA"
-msgstr "用户可伸展性"
+msgstr ""
 
 #. /bug:f00f
 #: modules/devices/x86/x86_data.c:267
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Intel F00F bug"
-msgstr "Intel"
+msgstr ""
 
 #. /bug:fdiv
 #: modules/devices/x86/x86_data.c:268
-#, fuzzy
 msgctxt "x86-flag"
 msgid "FPU FDIV"
-msgstr "指定 Xilinx FPU。"
+msgstr ""
 
 #. /bug:coma
 #: modules/devices/x86/x86_data.c:269
@@ -4493,18 +4090,16 @@ msgstr ""
 
 #. /bug:tlb_mmatch
 #: modules/devices/x86/x86_data.c:270
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AMD Erratum 383"
-msgstr "禁用矢量优化 (用于AMD CPU)"
+msgstr ""
 
 #. /bug:apic_c1e
 #. /bug:amd_e400
 #: modules/devices/x86/x86_data.c:271 modules/devices/x86/x86_data.c:280
-#, fuzzy
 msgctxt "x86-flag"
 msgid "AMD Erratum 400"
-msgstr "400%"
+msgstr ""
 
 #. /bug:11ap
 #: modules/devices/x86/x86_data.c:272
@@ -4582,45 +4177,39 @@ msgstr ""
 #. /x86/kernel/cpu/powerflags.h
 #. /flag:pm:ts
 #: modules/devices/x86/x86_data.c:288
-#, fuzzy
 msgctxt "x86-flag"
 msgid "temperature sensor"
-msgstr "色温"
+msgstr ""
 
 #. /flag:pm:fid
 #: modules/devices/x86/x86_data.c:289
-#, fuzzy
 msgctxt "x86-flag"
 msgid "frequency id control"
-msgstr "ID 不被信任。"
+msgstr ""
 
 #. /flag:pm:vid
 #: modules/devices/x86/x86_data.c:290
-#, fuzzy
 msgctxt "x86-flag"
 msgid "voltage id control"
-msgstr "电压"
+msgstr ""
 
 #. /flag:pm:ttp
 #: modules/devices/x86/x86_data.c:291
-#, fuzzy
 msgctxt "x86-flag"
 msgid "thermal trip"
-msgstr "热导率"
+msgstr ""
 
 #. /flag:pm:tm
 #: modules/devices/x86/x86_data.c:292
-#, fuzzy
 msgctxt "x86-flag"
 msgid "hardware thermal control"
-msgstr "热导率"
+msgstr ""
 
 #. /flag:pm:stc
 #: modules/devices/x86/x86_data.c:293
-#, fuzzy
 msgctxt "x86-flag"
 msgid "software thermal control"
-msgstr "热导率"
+msgstr ""
 
 #. /flag:pm:100mhzsteps
 #: modules/devices/x86/x86_data.c:294
@@ -4630,72 +4219,61 @@ msgstr ""
 
 #. /flag:pm:hwpstate
 #: modules/devices/x86/x86_data.c:295
-#, fuzzy
 msgctxt "x86-flag"
 msgid "hardware P-state control"
-msgstr "上一控制点(_R)"
+msgstr ""
 
 #. /flag:pm:cpb
 #: modules/devices/x86/x86_data.c:296
-#, fuzzy
 msgctxt "x86-flag"
 msgid "core performance boost"
-msgstr "性能"
+msgstr ""
 
 #. /flag:pm:eff_freq_ro
 #: modules/devices/x86/x86_data.c:297
-#, fuzzy
 msgctxt "x86-flag"
 msgid "Readonly aperf/mperf"
-msgstr "无法在只读邮箱切换写入！"
+msgstr ""
 
 #. /flag:pm:proc_feedback
 #: modules/devices/x86/x86_data.c:298
-#, fuzzy
 msgctxt "x86-flag"
 msgid "processor feedback interface"
-msgstr "处理器："
+msgstr ""
 
 #. /flag:pm:acc_power
 #: modules/devices/x86/x86_data.c:299
-#, fuzzy
 msgctxt "x86-flag"
 msgid "accumulated power mechanism"
-msgstr "关闭电源(_D)"
+msgstr ""
 
 #: modules/network.c:59
 msgid "Interfaces"
 msgstr "界面"
 
 #: modules/network.c:60
-#, fuzzy
 msgid "IP Connections"
-msgstr "连接"
+msgstr "IP 连接"
 
 #: modules/network.c:61
-#, fuzzy
 msgid "Routing Table"
-msgstr "获取路由表"
+msgstr ""
 
 #: modules/network.c:62 modules/network.c:303
-#, fuzzy
 msgid "ARP Table"
-msgstr "表格(_T)..."
+msgstr ""
 
 #: modules/network.c:63
-#, fuzzy
 msgid "DNS Servers"
-msgstr ""
-"       --dns-servers=地址          指定请求的 DNS 服务器列表（逗号分隔）\n"
+msgstr "DNS 服务器"
 
 #: modules/network.c:64
 msgid "Statistics"
 msgstr "统计信息"
 
 #: modules/network.c:65
-#, fuzzy
 msgid "Shared Directories"
-msgstr "改变目录"
+msgstr "共享目录"
 
 #: modules/network.c:304 modules/network.c:326 modules/network.c:357
 #: modules/network/net.c:472
@@ -4711,18 +4289,16 @@ msgid "MAC Address"
 msgstr "MAC 地址"
 
 #: modules/network.c:313
-#, fuzzy
 msgid "SAMBA"
-msgstr "桑巴"
+msgstr ""
 
 #: modules/network.c:314
 msgid "NFS"
 msgstr "NFS"
 
 #: modules/network.c:325
-#, fuzzy
 msgid "Name Servers"
-msgstr "服务器"
+msgstr "名称服务器"
 
 #: modules/network.c:340
 msgid "Connections"
@@ -4737,9 +4313,8 @@ msgid "Protocol"
 msgstr "协议"
 
 #: modules/network.c:341
-#, fuzzy
 msgid "Foreign Address"
-msgstr "地址："
+msgstr "外部地址"
 
 #: modules/network.c:341
 msgid "State"
@@ -4754,18 +4329,16 @@ msgid "Received"
 msgstr "已接收"
 
 #: modules/network.c:373
-#, fuzzy
 msgid "IP routing table"
-msgstr "获取路由表"
+msgstr "IP 路由表"
 
 #: modules/network.c:374
-#, fuzzy
 msgid "Destination/Gateway"
-msgstr "目的\t网关\t网络掩码\t接口\n"
+msgstr ""
 
 #: modules/network.c:374
 msgid "Flags"
-msgstr "标签"
+msgstr "标志"
 
 #: modules/network.c:374 modules/network/net.c:473
 msgid "Mask"
@@ -4785,16 +4358,14 @@ msgid "Auto"
 msgstr "自动"
 
 #: modules/network/net.c:73
-#, fuzzy
 msgctxt "wi-op-mode"
 msgid "Ad-Hoc"
-msgstr "Ad-hoc"
+msgstr ""
 
 #: modules/network/net.c:74
-#, fuzzy
 msgctxt "wi-op-mode"
 msgid "Managed"
-msgstr "颜色管理的显示"
+msgstr ""
 
 #: modules/network/net.c:75
 msgctxt "wi-op-mode"
@@ -4809,13 +4380,12 @@ msgstr ""
 #: modules/network/net.c:77
 msgctxt "wi-op-mode"
 msgid "Secondary"
-msgstr "次"
+msgstr ""
 
 #: modules/network/net.c:78
-#, fuzzy
 msgctxt "wi-op-mode"
 msgid "(Unknown)"
-msgstr "<未知>"
+msgstr ""
 
 #: modules/network/net.c:242 modules/network/net.c:262
 #: modules/network/net.c:270
@@ -4841,22 +4411,19 @@ msgid "Wireless"
 msgstr "无线网卡"
 
 #: modules/network/net.c:249
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Virtual Point-to-Point (TUN)"
-msgstr "采样点"
+msgstr ""
 
 #: modules/network/net.c:250
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Ethernet (TAP)"
-msgstr "以太网卡"
+msgstr ""
 
 #: modules/network/net.c:251
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Parallel Line Internet Protocol"
-msgstr "并行端口连接"
+msgstr ""
 
 #: modules/network/net.c:252
 msgctxt "net-if-type"
@@ -4864,22 +4431,19 @@ msgid "Infrared"
 msgstr "红外线"
 
 #: modules/network/net.c:253 modules/network/net.c:271
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Serial Line Internet Protocol"
-msgstr "互联网打印协议(IPP)"
+msgstr ""
 
 #: modules/network/net.c:254
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Integrated Services Digital Network"
-msgstr "Zeroconf 网络服务"
+msgstr ""
 
 #: modules/network/net.c:255
-#, fuzzy
 msgctxt "net-if-type"
 msgid "IPv6-over-IPv4 Tunnel"
-msgstr "隧道模式"
+msgstr ""
 
 #: modules/network/net.c:256
 msgctxt "net-if-type"
@@ -4887,10 +4451,9 @@ msgid "VMWare Virtual Network Interface (NAT)"
 msgstr ""
 
 #: modules/network/net.c:257
-#, fuzzy
 msgctxt "net-if-type"
 msgid "VMWare Virtual Network Interface"
-msgstr "用于监听的网络接口"
+msgstr ""
 
 #: modules/network/net.c:258
 msgctxt "net-if-type"
@@ -4903,10 +4466,9 @@ msgid "Bluetooth"
 msgstr "蓝牙"
 
 #: modules/network/net.c:260
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Bridge Interface"
-msgstr "桥接输入"
+msgstr ""
 
 #: modules/network/net.c:261
 msgctxt "net-if-type"
@@ -4914,34 +4476,29 @@ msgid "Hamachi Virtual Personal Network"
 msgstr ""
 
 #: modules/network/net.c:263
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Intermediate Functional Block"
-msgstr "中级"
+msgstr ""
 
 #: modules/network/net.c:264
-#, fuzzy
 msgctxt "net-if-type"
 msgid "GRE Network Tunnel"
-msgstr "隧道模式"
+msgstr ""
 
 #: modules/network/net.c:265
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Mesh Network"
-msgstr "网状"
+msgstr ""
 
 #: modules/network/net.c:266
-#, fuzzy
 msgctxt "net-if-type"
 msgid "Wireless Master Interface"
-msgstr "无线网卡"
+msgstr ""
 
 #: modules/network/net.c:267
-#, fuzzy
 msgctxt "net-if-type"
 msgid "VirtualBox Virtual Network Interface"
-msgstr "用于监听的网络接口"
+msgstr ""
 
 #: modules/network/net.c:273
 msgctxt "net-if-type"
@@ -4949,18 +4506,13 @@ msgid "Wireless (WAN)"
 msgstr ""
 
 #: modules/network/net.c:275
-#, fuzzy
 msgctxt "net-if-type"
 msgid "(Unknown)"
-msgstr "<未知>"
+msgstr ""
 
 #: modules/network/net.c:343 modules/network/net.c:353
-#, fuzzy
 msgid "Network Interfaces"
-msgstr ""
-"如果不设置，服务器将监听所有网络接口。\n"
-"\n"
-"如果您只打算接收来自某些指定网络接口的连接(eth0，wifi0，lo 等)，请设置该值。"
+msgstr "网络接口"
 
 #: modules/network/net.c:343
 msgid "None Found"
@@ -4972,14 +4524,12 @@ msgid "MiB"
 msgstr "MiB"
 
 #: modules/network/net.c:409
-#, fuzzy
 msgid "Network Adapter Properties"
-msgstr "设置蓝牙适配器属性"
+msgstr ""
 
 #: modules/network/net.c:410
-#, fuzzy
 msgid "Interface Type"
-msgstr "已初始化远程控制接口。输入 `help' 获取帮助。"
+msgstr "接口类型"
 
 #: modules/network/net.c:411
 msgid "Hardware Address (MAC)"
@@ -4990,9 +4540,8 @@ msgid "MTU"
 msgstr "MTU"
 
 #: modules/network/net.c:416
-#, fuzzy
 msgid "Transfer Details"
-msgstr "文件传送细节(_D)"
+msgstr ""
 
 #: modules/network/net.c:417
 msgid "Bytes Received"
@@ -5012,14 +4561,12 @@ msgid "mW"
 msgstr "mW"
 
 #: modules/network/net.c:449
-#, fuzzy
 msgid "Wireless Properties"
-msgstr "无线网卡"
+msgstr "无线属性"
 
 #: modules/network/net.c:450
-#, fuzzy
 msgid "Network Name (SSID)"
-msgstr "_SSID"
+msgstr ""
 
 #: modules/network/net.c:451
 msgid "Bit Rate"
@@ -5030,27 +4577,20 @@ msgid "Mb/s"
 msgstr "Mb/s"
 
 #: modules/network/net.c:452
-#, fuzzy
 msgid "Transmission Power"
-msgstr "传输管理器(_T)"
+msgstr ""
 
 #: modules/network/net.c:454
 msgid "Status"
 msgstr "状态"
 
 #: modules/network/net.c:455
-#, fuzzy
 msgid "Link Quality"
 msgstr ""
-"<b>已连接</b>\n"
-"<b>接收的信号强度: %(rssi)u%% <i>(%(rssi_state)s)</i>\n"
-"l连接质量: %(lq)u%%\n"
-"传输强度级别: %(tpl)u%%</b> <i>(%(tpl_state)s)</i>"
 
 #: modules/network/net.c:456
-#, fuzzy
 msgid "Signal / Noise"
-msgstr "SIGNAL"
+msgstr ""
 
 #: modules/network/net.c:471
 msgid "Internet Protocol (IPv4)"
