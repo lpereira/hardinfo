@@ -229,11 +229,11 @@ read_contents(const gchar *base, const gchar *key)
         return NULL;
 
     if (!g_file_get_contents(path, &value, NULL, NULL)) {
-        free(path);
+        g_free(path);
         return NULL;
     }
 
-    free(path);
+    g_free(path);
     return g_strchomp(value);
 }
 
