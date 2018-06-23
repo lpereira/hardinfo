@@ -27,11 +27,13 @@ do
 done;
 
 MSGTOTAL=`msgattrib --untranslated hardinfo.pot | grep -E "^msgstr \"\"" | wc -l`
+CMSG=`msgattrib --untranslated hardinfo.pot | grep -E "^#,.*c-format" | wc -l`
+
 TDIFF=$(($MSGTOTAL - $MSGTOTALOLD))
 CHANGE="$TDIFF"
 if [ $TDIFF -gt 0 ]; then CHANGE="+$TDIFF"; fi
 if [ $TDIFF -eq 0 ]; then CHANGE="no change"; fi
-echo "hardinfo.pot now has $MSGTOTAL strings ($CHANGE)"
+echo "hardinfo.pot now has $MSGTOTAL strings ($CHANGE), with $CMSG c-format strings"
 echo "(as of $GITVER $GITHASH)"
 
 for f in *.po
@@ -47,6 +49,7 @@ do
 
     # stats
     UNMSG=`msgattrib --untranslated "$f" | grep -E "^msgstr \"\"" | wc -l`
+    FUZMSG=`msgattrib --translated "$f" | grep -E "^#,.*fuzzy" | wc -l`
     DONE=" "; if [ $UNMSG -eq 0 ]; then DONE="x"; fi
-    echo "- [$DONE] $f : ($UNMSG / $MSGTOTAL remain untranslated)"
+    echo "- [$DONE] $f : ($UNMSG / $MSGTOTAL remain untranslated, needs work/fuzzy: $FUZMSG)"
 done
