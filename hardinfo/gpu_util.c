@@ -179,6 +179,60 @@ static void make_nice_name(gpud *s) {
 
 }
 
+/*  Look for this kind of thing:
+ *     * /soc/gpu
+ *     * /gpu@ff300000
+ *
+ *  Usually a gpu dt node will have ./name = "gpu"
+ */
+static gchar *dt_find_gpu(dtr *dt, char *np) {
+    gchar *dir_path, *dt_path, *ret;
+    gchar *ftmp, *ntmp;
+    const gchar *fn;
+    GDir *dir;
+    dtr_obj *obj;
+
+    /* consider self */
+    obj = dtr_obj_read(dt, np);
+    dt_path = dtr_obj_path(obj);
+    ntmp = strstr(dt_path, "/gpu");
+    if (ntmp) {
+        /* was found in node name */
+        if ( strchr(ntmp+1, '/') == NULL) {
+            ftmp = ntmp + 4;
+            /* should either be NULL or @ */
+            if (*ftmp == '\0' || *ftmp == '@')
+                return g_strdup(dt_path);
+        }
+    }
+
+    /* search children ... */
+    dir_path = g_strdup_printf("%s/%s", dtr_base_path(dt), np);
+    dir = g_dir_open(dir_path, 0 , NULL);
+    if (dir) {
+        while((fn = g_dir_read_name(dir)) != NULL) {
+            ftmp = g_strdup_printf("%s/%s", dir_path, fn);
+            if ( g_file_test(ftmp, G_FILE_TEST_IS_DIR) ) {
+                if (strcmp(np, "/") == 0)
+                    ntmp = g_strdup_printf("/%s", fn);
+                else
+                    ntmp = g_strdup_printf("%s/%s", np, fn);
+                ret = dt_find_gpu(dt, ntmp);
+                g_free(ntmp);
+                if (ret != NULL) {
+                    g_free(ftmp);
+                    g_dir_close(dir);
+                    return ret;
+                }
+            }
+            g_free(ftmp);
+        }
+        g_dir_close(dir);
+    }
+
+    return NULL;
+}
+
 gpud *dt_soc_gpu() {
     static const char std_soc_gpu_drm_path[] = "/sys/devices/platform/soc/soc:gpu/drm";
 
@@ -197,16 +251,31 @@ gpud *dt_soc_gpu() {
         { "brcm,bcm2837-vc4", "Broadcom", "VideoCore IV" },
         { "brcm,bcm2836-vc4", "Broadcom", "VideoCore IV" },
         { "brcm,bcm2835-vc4", "Broadcom", "VideoCore IV" },
+        { "arm,mali-450", "ARM", "Mali 450" },
+        { "arm,mali", "ARM", "Mali family" },
         { NULL, NULL }
     };
+    char *dt_gpu_path = NULL, *compat_path = NULL;
     char *compat = NULL;
     char *vendor = NULL, *device = NULL;
     int i;
 
     gpud *gpu = NULL;
 
-    compat = dtr_get_string("/soc/gpu/compatible", 1);
-    if (compat == NULL) return NULL;
+    dtr *dt = dtr_new(NULL);
+    if (!dtr_was_found(dt))
+        goto dt_gpu_end;
+
+    dt_gpu_path = dt_find_gpu(dt, "/");
+
+    if (dt_gpu_path == NULL)
+        goto dt_gpu_end;
+
+    compat_path = g_strdup_printf("%s/compatible", dt_gpu_path);
+    compat = dtr_get_string(compat_path, 1);
+
+    if (compat == NULL)
+        goto dt_gpu_end;
 
     gpu = gpud_new();
 
@@ -233,6 +302,11 @@ gpud *dt_soc_gpu() {
     if (device) gpu->device_str = strdup(device);
     make_nice_name(gpu);
 
+
+dt_gpu_end:
+    free(dt_gpu_path);
+    free(compat_path);
+    dtr_free(dt);
     return gpu;
 }
 
