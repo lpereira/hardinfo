@@ -283,6 +283,7 @@ static struct {
     { "bug:spectre_v1",     NC_("x86-flag", /*/bug:spectre_v1*/  "CPU is affected by Spectre variant 1 attack with conditional branches") },
     { "bug:spectre_v2",     NC_("x86-flag", /*/bug:spectre_v2*/  "CPU is affected by Spectre variant 2 attack with indirect branches") },
     { "bug:spec_store_bypass", NC_("x86-flag", /*/bug:spec_store_bypass*/  "CPU is affected by speculative store bypass attack") },
+    { "bug:l1tf", NC_("x86-flag", /*/bug:l1tf*/  "CPU is affected by L1 Terminal Fault") },
 /* power management
  * ... from arch/x86/kernel/cpu/powerflags.h */
     { "pm:ts",            NC_("x86-flag", /*/flag:pm:ts*/  "temperature sensor")     },
