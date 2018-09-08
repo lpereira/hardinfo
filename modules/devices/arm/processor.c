@@ -395,13 +395,13 @@ gchar *processor_name(GSList *processors) {
         { "mediatek,mt6732", "MediaTek", "MT6732" },
         { "qcom,msm8939", "Qualcomm", "Snapdragon 615"},
         { "qcom,msm", "Qualcomm", "Snapdragon-family"},
-        { "nvidia,tegra" "nVidia", "Tegra-family" },
+        { "nvidia,tegra", "nVidia", "Tegra-family" },
         { "bcm,", "Broadcom", UNKSOC },
-        { "nvidia," "nVidia", UNKSOC },
-        { "rockchip," "Rockchip", UNKSOC },
+        { "nvidia,", "nVidia", UNKSOC },
+        { "rockchip,", "Rockchip", UNKSOC },
         { "ti,", "Texas Instruments", UNKSOC },
         { "qcom,", "Qualcom", UNKSOC },
-        { "mediatek," "MediaTek", UNKSOC },
+        { "mediatek,", "MediaTek", UNKSOC },
         { NULL, NULL }
     };
     gchar *ret = NULL;
