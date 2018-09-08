@@ -258,8 +258,8 @@ static void add_keys(dtr *dt, char *np) {
             }
             g_free(ftmp);
         }
+        g_dir_close(dir);
     }
-    g_dir_close(dir);
 }
 
 static char *msg_section(dtr *dt, int dump) {
