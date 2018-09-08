@@ -361,9 +361,14 @@ gchar *processor_name(GSList *processors) {
         char *vendor;
         char *soc;
     } dt_compat_searches[] = {
-        { "brcm,bcm2837", "Broadcom", "BCM2837" },
-        { "brcm,bcm2836", "Broadcom", "BCM2836" },
-        { "brcm,bcm2835", "Broadcom", "BCM2835" },
+        { "brcm,bcm2837", "Broadcom", "BCM2837" }, // RPi 1
+        { "brcm,bcm2836", "Broadcom", "BCM2836" }, // RPi 2
+        { "brcm,bcm2835", "Broadcom", "BCM2835" }, // RPi 3
+        { "rockchip,rk3288", "Rockchip", "RK3288" }, // Asus Tinkerboard
+        { "rockchip,rk3328", "Rockchip", "RK3328" }, // Firefly Renegade
+        { "rockchip,rk3399", "Rockchip", "RK3399" }, // Firefly Renegade Elite
+        { "rockchip,rk32", "Rockchip", "RK32xx-family" },
+        { "rockchip,rk33", "Rockchip", "RK33xx-family" },
         { "ti,omap5432", "Texas Instruments", "OMAP5432" },
         { "ti,omap5430", "Texas Instruments", "OMAP5430" },
         { "ti,omap4470", "Texas Instruments", "OMAP4470" },
