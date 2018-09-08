@@ -319,6 +319,7 @@ static gchar *detect_machine_type(void)
     if (chassis) {
         if (strstr(chassis, "Raspberry Pi") != NULL
             || strstr(chassis, "ODROID") != NULL
+            || strstr(chassis, "Firefly ROC") != NULL
             /* FIXME: consider making a table when adding more models */ ) {
                 g_free(chassis);
                 return g_strdup(_("Single-board computer"));
