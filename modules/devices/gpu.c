@@ -177,14 +177,22 @@ int _dt_soc_gpu(gpud *gpu) {
     gpu_list = h_strdup_cprintf("$%s$%s=%s\n", gpu_list, key, key, name);
     gchar *str = g_strdup_printf("[%s]\n"
              /* Location */  "%s=%s\n"
-             /* dt compat */  "%s=%s\n"
              /* Vendor */  "%s=%s\n"
-             /* Device */  "%s=%s\n",
+             /* Device */  "%s=%s\n"
+                           "[%s]\n"
+             /* Path */    "%s=%s\n"
+             /* Compat */  "%s=%s\n"
+             /* Status */  "%s=%s\n"
+             /* Name */    "%s=%s\n",
                 _("Device Information"),
                 _("Location"), gpu->location,
-                _("DT Compatibility"), gpu->dt_compat,
                 _("Vendor"), vendor,
-                _("Device"), device
+                _("Device"), device,
+                _("Device Tree Node"),
+                _("Path"), gpu->dt_path,
+                _("Compatible"), gpu->dt_compat,
+                _("Status"), gpu->dt_status,
+                _("Name"), gpu->dt_name
                 );
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
     return 1;

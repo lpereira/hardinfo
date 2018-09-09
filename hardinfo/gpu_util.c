@@ -21,6 +21,9 @@
 #include "hardinfo.h"
 #include "gpu_util.h"
 
+#include "cpu_util.h" /* for EMPIFNULL() */
+
+
 nvgpu *nvgpu_new() {
     return g_new0(nvgpu, 1);
 }
@@ -255,7 +258,8 @@ gpud *dt_soc_gpu() {
         { "arm,mali", "ARM", "Mali family" },
         { NULL, NULL }
     };
-    char *dt_gpu_path = NULL, *compat_path = NULL;
+    char tmp_path[256] = "";
+    char *dt_gpu_path = NULL;
     char *compat = NULL;
     char *vendor = NULL, *device = NULL;
     int i;
@@ -271,8 +275,8 @@ gpud *dt_soc_gpu() {
     if (dt_gpu_path == NULL)
         goto dt_gpu_end;
 
-    compat_path = g_strdup_printf("%s/compatible", dt_gpu_path);
-    compat = dtr_get_string(compat_path, 1);
+    snprintf(tmp_path, 255, "%s/compatible", dt_gpu_path);
+    compat = dtr_get_string(tmp_path, 1);
 
     if (compat == NULL)
         goto dt_gpu_end;
@@ -292,6 +296,13 @@ gpud *dt_soc_gpu() {
     gpu->dt_compat = compat;
     gpu->dt_vendor = vendor;
     gpu->dt_device = device;
+    gpu->dt_path = dt_gpu_path;
+    snprintf(tmp_path, 255, "%s/status", dt_gpu_path);
+    gpu->dt_status = dtr_get_string(tmp_path, 1);
+    snprintf(tmp_path, 255, "%s/name", dt_gpu_path);
+    gpu->dt_name = dtr_get_string(tmp_path, 1);
+    EMPIFNULL(gpu->dt_name);
+    EMPIFNULL(gpu->dt_status);
 
     gpu->id = strdup("dt-soc-gpu");
     gpu->location = strdup("SOC");
@@ -304,8 +315,6 @@ gpud *dt_soc_gpu() {
 
 
 dt_gpu_end:
-    free(dt_gpu_path);
-    free(compat_path);
     dtr_free(dt);
     return gpu;
 }

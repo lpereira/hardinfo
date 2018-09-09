@@ -39,7 +39,8 @@ typedef struct gpud {
     char *drm_dev;
     char *sysfs_drm_path;
     pcid *pci_dev;
-    char *dt_compat;
+
+    char *dt_compat, *dt_status, *dt_name, *dt_path;
     const char *dt_vendor, *dt_device;
 
     nvgpu *nv_info;
