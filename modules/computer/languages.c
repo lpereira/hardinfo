@@ -162,7 +162,7 @@ scan_languages(OperatingSystem * os)
                 } while (0);
             } else if (strstr(p, "------")) {
                 /* do nothing */
-            } else {
+            } else if (curr) {
                 /* a blank line is the end of a locale */
                 gchar *li_str = locale_info_section(curr);
                 gchar *clean_title = hardinfo_clean_value(curr->title, 0); /* may contain & */
