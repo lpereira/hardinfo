@@ -275,7 +275,7 @@ gchar *clocks_summary(GSList * processors)
     /* create list of all clock references */
     for (l = processors; l; l = l->next) {
         p = (Processor*)l->data;
-        if (p->cpufreq) {
+        if (p->cpufreq && p->cpufreq->cpukhz_max > 0) {
             all_clocks = g_slist_prepend(all_clocks, p->cpufreq);
         }
     }
