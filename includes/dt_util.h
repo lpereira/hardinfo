@@ -20,6 +20,7 @@ enum {
     DTP_STR,     /* null-delimited list of strings */
     DTP_HEX,     /* list of 32-bit values displayed in hex */
     DTP_UINT,    /* unsigned int list */
+    DTP_UINT64,  /* unsigned int64 list */
     DTP_INTRUPT, /* interrupt-specifier list */
     DTP_INTRUPT_EX, /* extended interrupt-specifier list */
     DTP_OVR,     /* all in /__overrides__ */
@@ -36,6 +37,7 @@ enum {
 char* dtr_get_string(const char *p, int decode);
 
 typedef uint32_t dt_uint; /* big-endian */
+typedef uint64_t dt_uint64; /* big-endian */
 
 typedef struct _dtr dtr;
 typedef struct _dtr_obj dtr_obj;

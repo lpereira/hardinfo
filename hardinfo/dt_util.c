@@ -23,6 +23,7 @@
  */
 #include <unistd.h>
 #include <sys/types.h>
+#include <inttypes.h> /* for PRIu64 */
 #include <endian.h>
 #include "hardinfo.h"
 #include "dt_util.h"
@@ -48,6 +49,16 @@ static struct {
     { "dmas", DTP_DMAS },
     { "dma-channels", DTP_UINT },
     { "dma-requests", DTP_UINT },
+
+    /* operating-points-v2: */
+    /* https://www.kernel.org/doc/Documentation/devicetree/bindings/opp/opp.txt */
+    { "opp-hz", DTP_UINT64 },
+    { "opp-microvolt", DTP_UINT },
+    { "opp-microvolt-L0", DTP_UINT }, /* opp-microvolt-<named>, but this kind of */
+    { "opp-microvolt-L1", DTP_UINT }, /* wildcard matching isn't supported yet */
+    { "opp-microamp", DTP_UINT },
+    { "clock-latency-ns", DTP_UINT },
+
     { NULL, 0 },
 };
 
@@ -82,6 +93,7 @@ struct _dtr_obj {
         void *data;
         char *data_str;
         dt_uint *data_int;
+        dt_uint64 *data_int64;
     };
     char *name;
     uint32_t length;
@@ -559,6 +571,10 @@ char *dtr_elem_uint(dt_uint e) {
     return g_strdup_printf("%u", be32toh(e) );
 }
 
+char *dtr_elem_uint64(dt_uint64 e) {
+    return g_strdup_printf("%" PRIu64, be64toh(e) );
+}
+
 char *dtr_list_byte(uint8_t *bytes, unsigned long count) {
     char *ret, *dest;
     char buff[4] = "";  /* max element: " 00\0" */
@@ -802,6 +818,9 @@ char* dtr_str(dtr_obj *obj) {
             break;
         case DTP_UINT:
             ret = dtr_elem_uint(*obj->data_int);
+            break;
+        case DTP_UINT64:
+            ret = dtr_elem_uint64(*obj->data_int64);
             break;
         case DTP_UNK:
         default:
