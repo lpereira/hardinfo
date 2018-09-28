@@ -407,6 +407,8 @@ gchar *processor_name(GSList *processors) {
         { "ti,", "Texas Instruments", UNKSOC },
         { "qcom,", "Qualcom", UNKSOC },
         { "mediatek,", "MediaTek", UNKSOC },
+        { "amlogic,", "Amlogic", UNKSOC },
+        { "allwinner,", "Allwinner", UNKSOC },
         { NULL, NULL }
     };
     gchar *ret = NULL;
