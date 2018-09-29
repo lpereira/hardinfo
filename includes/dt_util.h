@@ -61,6 +61,7 @@ char *dtr_obj_full_path(dtr_obj *);   /* system path */
 dtr_obj *dtr_get_prop_obj(dtr *, dtr_obj *node, const char *name);
 char *dtr_get_prop_str(dtr *, dtr_obj *node, const char *name);
 uint32_t dtr_get_prop_u32(dtr *, dtr_obj *node, const char *name);
+uint64_t dtr_get_prop_u64(dtr *, dtr_obj *node, const char *name);
 
 /* attempts to render the object as a string */
 char* dtr_str(dtr_obj *obj);
@@ -87,5 +88,15 @@ void dtr_msg(dtr *s, char *fmt, ...);
  * the string is not empty.
  * ex: ret = appf(ret, "%s=%s\n", name, value); */
 char *appf(char *src, char *fmt, ...);
+
+/* operating-points-v2 */
+typedef struct {
+    uint32_t phandle;
+    uint32_t khz_min;
+    uint32_t khz_max;
+    uint32_t clock_latency_ns;
+} dt_opp_range;
+
+dt_opp_range *dtr_get_opp_range(dtr *, const char *name);
 
 #endif

@@ -97,6 +97,7 @@ void gpud_free(gpud *s) {
         free(s->drm_dev);
         free(s->sysfs_drm_path);
         free(s->dt_compat);
+        free(s->dt_opp);
         pcid_free(s->pci_dev);
         nvgpu_free(s->nv_info);
         g_free(s);
@@ -301,6 +302,10 @@ gpud *dt_soc_gpu() {
     gpu->dt_status = dtr_get_string(tmp_path, 1);
     snprintf(tmp_path, 255, "%s/name", dt_gpu_path);
     gpu->dt_name = dtr_get_string(tmp_path, 1);
+    gpu->dt_opp = dtr_get_opp_range(dt, dt_gpu_path);
+    if (gpu->dt_opp) {
+        gpu->khz_max = gpu->dt_opp->khz_max;
+    }
     EMPIFNULL(gpu->dt_name);
     EMPIFNULL(gpu->dt_status);
 

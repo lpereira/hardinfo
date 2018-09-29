@@ -482,6 +482,21 @@ uint32_t dtr_get_prop_u32(dtr *s, dtr_obj *node, const char *name) {
     return ret;
 }
 
+uint64_t dtr_get_prop_u64(dtr *s, dtr_obj *node, const char *name) {
+    dtr_obj *prop;
+    char *ptmp;
+    uint64_t ret = 0;
+
+    ptmp = g_strdup_printf("%s/%s", (node == NULL) ? "" : node->path, name);
+    prop = dtr_obj_read(s, ptmp);
+    if (prop != NULL && prop->data != NULL) {
+        ret = be64toh(*prop->data_int64);
+        dtr_obj_free(prop);
+    }
+    g_free(ptmp);
+    return ret;
+}
+
 int dtr_guess_type(dtr_obj *obj) {
     char *tmp, *dash;
     int i = 0, anc = 0, might_be_str = 1;
@@ -894,6 +909,85 @@ int dtr_inh_find(dtr_obj *obj, char *qprop, int limit) {
 
     return ret;
 }
+
+dt_opp_range *dtr_get_opp_range(dtr *s, const char *name) {
+    dt_opp_range *ret = NULL;
+    dtr_obj *obj = NULL, *table_obj = NULL, *row_obj = NULL;
+    uint32_t opp_ph = 0;
+    const char *opp_table_path = NULL;
+    char *tab_compat = NULL, *tab_status = NULL;
+    const gchar *fn;
+    gchar *full_path;
+    GDir *dir;
+    uint64_t hz = 0;
+    uint32_t lns = 0;
+    char *row_status = NULL;
+
+    if (!s)
+        return NULL;
+
+    obj = dtr_obj_read(s, name);
+    if (!obj)
+        goto get_opp_finish;
+
+    opp_ph = dtr_get_prop_u32(s, obj, "operating-points-v2");
+    if (!opp_ph)
+        goto get_opp_finish;
+
+    opp_table_path = dtr_phandle_lookup(s, opp_ph);
+    if (!opp_table_path)
+        goto get_opp_finish;
+
+    table_obj = dtr_obj_read(s, opp_table_path);
+    if (!table_obj)
+        goto get_opp_finish;
+
+    tab_compat = dtr_get_prop_str(s, table_obj, "compatible");
+    tab_status = dtr_get_prop_str(s, table_obj, "status");
+
+    if (!tab_compat || strcmp(tab_compat, "operating-points-v2") != 0)
+        goto get_opp_finish;
+    if (tab_status && strcmp(tab_status, "disabled") == 0)
+        goto get_opp_finish;
+
+    ret = malloc(sizeof(dt_opp_range));
+    ret->phandle = opp_ph;
+    ret->khz_min = ret->khz_max = ret->clock_latency_ns = 0;
+
+    full_path = g_strdup_printf("%s%s", s->base_path, opp_table_path);
+    dir = g_dir_open(full_path, 0 , NULL);
+    if (dir) {
+        while((fn = g_dir_read_name(dir)) != NULL) {
+            row_obj = dtr_get_prop_obj(s, table_obj, fn);
+            if (row_obj->type == DT_NODE) {
+                row_status = dtr_get_prop_str(s, row_obj, "status");
+                if (!row_status || strcmp(row_status, "disabled") != 0) {
+                    hz = dtr_get_prop_u64(s, row_obj, "opp-hz");
+                    lns = dtr_get_prop_u32(s, row_obj, "clock-latency-ns");
+                    if (hz > ret->khz_max)
+                        ret->khz_max = hz / 1000;
+                    if (hz < ret->khz_min || ret->khz_min == 0)
+                        ret->khz_min = hz / 1000;
+                    ret->clock_latency_ns = lns;
+                }
+            }
+            free(row_status); row_status = NULL;
+            dtr_obj_free(row_obj);
+            row_obj = NULL;
+        }
+        g_dir_close(dir);
+    }
+    g_free(full_path);
+
+get_opp_finish:
+    dtr_obj_free(obj);
+    dtr_obj_free(table_obj);
+    free(tab_status);
+    free(tab_compat);
+    free(row_status);
+    return ret;
+}
+
 
 void _dtr_read_aliases(dtr *s) {
     gchar *dir_path;
