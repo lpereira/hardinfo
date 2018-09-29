@@ -127,12 +127,19 @@ static void _gpu_pci_dev(gpud* gpu) {
     } else
         nv_str = strdup("");
 
+    gchar *freq = g_strdup(_("(Unknown)"));
+    if (gpu->khz_max > 0) {
+        freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
+    }
+
     str = g_strdup_printf("[%s]\n"
              /* Location */  "%s=%s\n"
              /* DRM Dev */   "%s=%s\n"
              /* Class */     "%s=[%04x] %s\n"
                              "%s"
              /* Revision */  "%s=%02x\n"
+                             "[%s]\n"
+             /* Frequency */ "%s=%s\n"
              /* NV */        "%s"
              /* PCIe */      "%s"
                              "[%s]\n"
@@ -144,6 +151,8 @@ static void _gpu_pci_dev(gpud* gpu) {
                 _("Class"), p->class, p->class_str,
                 vendor_device_str,
                 _("Revision"), p->revision,
+                _("Clocks"),
+                _("Core"), freq,
                 nv_str,
                 pcie_str,
                 _("Driver"),
@@ -169,16 +178,37 @@ int _dt_soc_gpu(gpud *gpu) {
     gchar *device = gpu->device_str;
     if (vendor == NULL) vendor = UNKSOC;
     if (device == NULL) device = UNKSOC;
+    gchar *freq = g_strdup(_("(Unknown)"));
+    if (gpu->khz_max > 0) {
+        freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
+    }
     gchar *key = g_strdup(gpu->id);
     gchar *name = (vendor == UNKSOC && device == UNKSOC)
             ? g_strdup(_("Unknown integrated GPU"))
             : g_strdup_printf("%s %s", vendor, device);
+
+    gchar *opp_str;
+    if (gpu->dt_opp) {
+        opp_str = g_strdup_printf("[%s]\n"
+                     /* MinFreq */  "%s=%d %s\n"
+                     /* MaxFreq */  "%s=%d %s\n"
+                     /* Latency */  "%s=%d %s\n",
+                    _("Frequency Scaling"),
+                    _("Minimum"), gpu->dt_opp->khz_min, _("kHz"),
+                    _("Maximum"), gpu->dt_opp->khz_max, _("kHz"),
+                    _("Transition Latency"), gpu->dt_opp->clock_latency_ns, _("ns") );
+    } else
+        opp_str = strdup("");
+
     gpu_summary_add((gpu->nice_name) ? gpu->nice_name : name);
     gpu_list = h_strdup_cprintf("$%s$%s=%s\n", gpu_list, key, key, name);
     gchar *str = g_strdup_printf("[%s]\n"
              /* Location */  "%s=%s\n"
              /* Vendor */  "%s=%s\n"
              /* Device */  "%s=%s\n"
+                           "[%s]\n"
+             /* Freq */    "%s=%s\n"
+             /* opp-v2 */  "%s"
                            "[%s]\n"
              /* Path */    "%s=%s\n"
              /* Compat */  "%s=%s\n"
@@ -188,6 +218,9 @@ int _dt_soc_gpu(gpud *gpu) {
                 _("Location"), gpu->location,
                 _("Vendor"), vendor,
                 _("Device"), device,
+                _("Clocks"),
+                _("Core"), freq,
+                opp_str,
                 _("Device Tree Node"),
                 _("Path"), gpu->dt_path,
                 _("Compatible"), gpu->dt_compat,
@@ -195,6 +228,8 @@ int _dt_soc_gpu(gpud *gpu) {
                 _("Name"), gpu->dt_name
                 );
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
+    g_free(freq);
+    g_free(opp_str);
     return 1;
 }
 

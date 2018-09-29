@@ -30,6 +30,7 @@ enum {
     DTP_CLOCKS,  /* <phref, #clock-cells> */
     DTP_GPIOS,   /* <phref, #gpio-cells> */
     DTP_DMAS,    /* dma-specifier list */
+    DTP_PH_REF_OPP2,  /* phandle reference to opp-v2 table */
 };
 
 /* simplest, no aliases, doesn't require an existing dt.
@@ -55,18 +56,20 @@ char *dtr_obj_alias(dtr_obj *);
 char *dtr_obj_symbol(dtr_obj *);
 char *dtr_obj_path(dtr_obj *);        /* device tree path */
 char *dtr_obj_full_path(dtr_obj *);   /* system path */
+dtr_obj *dtr_get_parent_obj(dtr_obj *);
 
 /* find property/node 'name' relative to node
  * if node is NULL, then from root */
 dtr_obj *dtr_get_prop_obj(dtr *, dtr_obj *node, const char *name);
 char *dtr_get_prop_str(dtr *, dtr_obj *node, const char *name);
 uint32_t dtr_get_prop_u32(dtr *, dtr_obj *node, const char *name);
+uint64_t dtr_get_prop_u64(dtr *, dtr_obj *node, const char *name);
 
 /* attempts to render the object as a string */
 char* dtr_str(dtr_obj *obj);
 
 int dtr_guess_type(dtr_obj *obj);
-char *dtr_elem_phref(dtr *, dt_uint e, int show_path);
+char *dtr_elem_phref(dtr *, dt_uint e, int show_path, const char *extra);
 char *dtr_elem_hex(dt_uint e);
 char *dtr_elem_byte(uint8_t e);
 char *dtr_elem_uint(dt_uint e);
@@ -87,5 +90,15 @@ void dtr_msg(dtr *s, char *fmt, ...);
  * the string is not empty.
  * ex: ret = appf(ret, "%s=%s\n", name, value); */
 char *appf(char *src, char *fmt, ...);
+
+/* operating-points-v2 */
+typedef struct {
+    uint32_t phandle;
+    uint32_t khz_min;
+    uint32_t khz_max;
+    uint32_t clock_latency_ns;
+} dt_opp_range;
+
+dt_opp_range *dtr_get_opp_range(dtr *, const char *name);
 
 #endif
