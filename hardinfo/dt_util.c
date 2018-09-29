@@ -917,8 +917,8 @@ void _dtr_read_aliases(dtr *s) {
             }
             dtr_obj_free(prop);
         }
+        g_dir_close(dir);
     }
-    g_dir_close(dir);
     g_free(dir_path);
     dtr_obj_free(anode);
     dtr_map_sort(s->aliases, 0);
@@ -946,8 +946,8 @@ void _dtr_read_symbols(dtr *s) {
             }
             dtr_obj_free(prop);
         }
+        g_dir_close(dir);
     }
-    g_dir_close(dir);
     g_free(dir_path);
     dtr_obj_free(anode);
     dtr_map_sort(s->symbols, 0);
@@ -987,8 +987,8 @@ void _dtr_map_phandles(dtr *s, char *np) {
             }
             g_free(ftmp);
         }
+        g_dir_close(dir);
     }
-    g_dir_close(dir);
     dtr_obj_free(prop);
     dtr_map_sort(s->phandles, 1);
 }
