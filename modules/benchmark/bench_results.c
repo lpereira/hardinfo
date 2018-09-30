@@ -58,7 +58,7 @@ static char *cpu_config_retranslate(char *str, int force_en, int replacing) {
                         t, f, mhz );
                 free(new_str);
                 new_str = tmp;
-                c = strchr(c+1, '+');
+                c = strchr(c+1, '+'); if (c) c++; /* move past the + */
             }
         } else {
             sscanf(c, "%f", &f);
@@ -72,6 +72,7 @@ static char *cpu_config_retranslate(char *str, int force_en, int replacing) {
         if (replacing)
             free(str);
     }
+
     return new_str;
 }
 
@@ -84,7 +85,7 @@ static float cpu_config_val(char *str) {
         if (strchr(str, 'x')) {
             while (c != NULL && sscanf(c, "%dx %f", &t, &f) ) {
                 r += f * t;
-                c = strchr(c+1, '+');
+                c = strchr(c+1, '+'); if (c) c++; /* move past the + */
             }
         } else {
             sscanf(c, "%f", &r);
