@@ -97,7 +97,7 @@ void gpud_free(gpud *s) {
         free(s->drm_dev);
         free(s->sysfs_drm_path);
         free(s->dt_compat);
-        free(s->dt_opp);
+        g_free(s->dt_opp);
         pcid_free(s->pci_dev);
         nvgpu_free(s->nv_info);
         g_free(s);

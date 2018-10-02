@@ -475,8 +475,9 @@ uint32_t dtr_get_prop_u32(dtr *s, dtr_obj *node, const char *name) {
 
     ptmp = g_strdup_printf("%s/%s", (node == NULL) ? "" : node->path, name);
     prop = dtr_obj_read(s, ptmp);
-    if (prop != NULL && prop->data != NULL) {
-        ret = be32toh(*prop->data_int);
+    if (prop != NULL) {
+        if (prop->data != NULL)
+            ret = be32toh(*prop->data_int);
         dtr_obj_free(prop);
     }
     g_free(ptmp);
@@ -490,8 +491,9 @@ uint64_t dtr_get_prop_u64(dtr *s, dtr_obj *node, const char *name) {
 
     ptmp = g_strdup_printf("%s/%s", (node == NULL) ? "" : node->path, name);
     prop = dtr_obj_read(s, ptmp);
-    if (prop != NULL && prop->data != NULL) {
-        ret = be64toh(*prop->data_int64);
+    if (prop != NULL) {
+        if (prop->data != NULL)
+            ret = be64toh(*prop->data_int64);
         dtr_obj_free(prop);
     }
     g_free(ptmp);
@@ -582,7 +584,7 @@ char *dtr_elem_oppv2(dtr_obj* obj) {
         dt_opp_range *opp = dtr_get_opp_range(obj->dt, parent->path);
         if (opp) {
             snprintf(opp_str, 511, "[%d - %d %s]", opp->khz_min, opp->khz_max, _("kHz"));
-            free(opp);
+            g_free(opp);
         }
         dtr_obj_free(parent);
     }
@@ -968,9 +970,8 @@ dt_opp_range *dtr_get_opp_range(dtr *s, const char *name) {
     if (tab_status && strcmp(tab_status, "disabled") == 0)
         goto get_opp_finish;
 
-    ret = malloc(sizeof(dt_opp_range));
+    ret = g_new0(dt_opp_range, 1);
     ret->phandle = opp_ph;
-    ret->khz_min = ret->khz_max = ret->clock_latency_ns = 0;
 
     full_path = dtr_obj_full_path(table_obj);
     dir = g_dir_open(full_path, 0 , NULL);
