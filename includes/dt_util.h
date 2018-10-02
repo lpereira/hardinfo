@@ -99,6 +99,7 @@ typedef struct {
     uint32_t clock_latency_ns;
 } dt_opp_range;
 
+/* free result with g_free() */
 dt_opp_range *dtr_get_opp_range(dtr *, const char *name);
 
 #endif
