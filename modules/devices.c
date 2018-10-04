@@ -358,6 +358,7 @@ gchar *get_motherboard(void)
     gchar *board_name, *board_vendor, *board_version;
     gchar *product_name, *product_vendor, *product_version;
     gchar *board_part = NULL, *product_part = NULL;
+    const gchar *tmp;
     int b = 0, p = 0;
 
     gchar *ret;
@@ -366,12 +367,28 @@ gchar *get_motherboard(void)
     scan_dmi(FALSE);
 
     board_name = dmi_get_str("baseboard-product-name");
-    board_vendor = dmi_get_str("baseboard-manufacturer");
     board_version = dmi_get_str("baseboard-version");
+    board_vendor = dmi_get_str("baseboard-manufacturer");
+    if (board_vendor) {
+        /* attempt to shorten */
+        tmp = vendor_get_shortest_name(board_vendor);
+        if (tmp) {
+            g_free(board_vendor);
+            board_vendor = g_strdup(tmp);
+        }
+    }
 
     product_name = dmi_get_str("system-product-name");
-    product_vendor = dmi_get_str("system-manufacturer");
     product_version = dmi_get_str("system-version");
+    product_vendor = dmi_get_str("system-manufacturer");
+    if (product_vendor) {
+        /* attempt to shorten */
+        tmp = vendor_get_shortest_name(product_vendor);
+        if (tmp) {
+            g_free(product_vendor);
+            product_vendor = g_strdup(tmp);
+        }
+    }
 
     if (board_vendor && product_vendor &&
         strcmp(board_vendor, product_vendor) == 0) {
