@@ -358,7 +358,7 @@ gchar *get_motherboard(void)
     gchar *board_name, *board_vendor, *board_version;
     gchar *product_name, *product_vendor, *product_version;
     gchar *board_part = NULL, *product_part = NULL;
-    int b = 0, p = 0, iv = 0;
+    int b = 0, p = 0;
 
     gchar *ret;
 
@@ -374,8 +374,18 @@ gchar *get_motherboard(void)
     product_version = dmi_get_str("system-version");
 
     if (board_vendor && product_vendor &&
-        strcmp(board_vendor, product_vendor) == 0)
-        iv = 1;
+        strcmp(board_vendor, product_vendor) == 0) {
+            /* ignore duplicate vendor */
+            g_free(product_vendor);
+            product_vendor = NULL;
+    }
+
+    if (board_name && product_name &&
+        strcmp(board_name, product_name) == 0) {
+            /* ignore duplicate name */
+            g_free(product_name);
+            product_name = NULL;
+    }
 
     if (board_name) b += 1;
     if (board_vendor) b += 2;
@@ -390,6 +400,12 @@ gchar *get_motherboard(void)
             break;
         case 3: /* only name and vendor */
             board_part = g_strdup_printf("%s %s", board_vendor, board_name);
+            break;
+        case 4: /* only version? Seems unlikely */
+            board_part = g_strdup(board_version);
+            break;
+        case 5: /* only name and version? */
+            board_part = g_strdup_printf("%s %s", board_name, board_version);
             break;
         case 6: /* only vendor and version (like lpereira's Thinkpad) */
             board_part = g_strdup_printf("%s %s", board_vendor, board_version);
@@ -407,17 +423,23 @@ gchar *get_motherboard(void)
         case 1: /* only name */
             product_part = g_strdup(product_name);
             break;
+        case 2: /* only vendor */
+            product_part = g_strdup(product_vendor);
+            break;
         case 3: /* only name and vendor */
-            if (board_part && iv)
-                product_part = g_strdup(product_name);
-            else
-                product_part = g_strdup_printf("%s %s", product_vendor, product_name);
+            product_part = g_strdup_printf("%s %s", product_vendor, product_name);
+            break;
+        case 4: /* only version? Seems unlikely */
+            product_part = g_strdup(product_version);
+            break;
+        case 5: /* only name and version? */
+            product_part = g_strdup_printf("%s %s", product_name, product_version);
+            break;
+        case 6: /* only vendor and version? */
+            product_part = g_strdup_printf("%s %s", product_vendor, product_version);
             break;
         case 7: /* all */
-            if (board_part && iv)
-                product_part = g_strdup_printf("%s %s", product_name, product_version);
-            else
-                product_part = g_strdup_printf("%s %s %s", product_vendor, product_name, product_version);
+            product_part = g_strdup_printf("%s %s %s", product_vendor, product_name, product_version);
             break;
     }
 
