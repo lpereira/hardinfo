@@ -355,31 +355,90 @@ gchar *get_memory_total(void)
 
 gchar *get_motherboard(void)
 {
-    char *board_name, *board_vendor;
-    char *ret;
+    gchar *board_name, *board_vendor, *board_version;
+    gchar *product_name, *product_vendor, *product_version;
+    gchar *board_part = NULL, *product_part = NULL;
+    int b = 0, p = 0, iv = 0;
+
+    gchar *ret;
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     scan_dmi(FALSE);
 
     board_name = dmi_get_str("baseboard-product-name");
-    if (board_name == NULL)
-        board_name = dmi_get_str("system-product-name");
-
     board_vendor = dmi_get_str("baseboard-manufacturer");
-    if (board_vendor == NULL)
-        board_vendor = dmi_get_str("system-manufacturer");
+    board_version = dmi_get_str("baseboard-version");
 
-    if (board_name && board_vendor)
-        ret = g_strconcat(board_vendor, " ", board_name, NULL);
-    else if (board_name)
-        ret = g_strdup(board_name);
-    else if (board_vendor)
-        ret = g_strdup(board_vendor);
+    product_name = dmi_get_str("system-product-name");
+    product_vendor = dmi_get_str("system-manufacturer");
+    product_version = dmi_get_str("system-version");
+
+    if (board_vendor && product_vendor &&
+        strcmp(board_vendor, product_vendor) == 0)
+        iv = 1;
+
+    if (board_name) b += 1;
+    if (board_vendor) b += 2;
+    if (board_version) b += 4;
+
+    switch(b) {
+        case 1: /* only name */
+            board_part = g_strdup(board_name);
+            break;
+        case 2: /* only vendor */
+            board_part = g_strdup(board_vendor);
+            break;
+        case 3: /* only name and vendor */
+            board_part = g_strdup_printf("%s %s", board_vendor, board_name);
+            break;
+        case 6: /* only vendor and version (like lpereira's Thinkpad) */
+            board_part = g_strdup_printf("%s %s", board_vendor, board_version);
+            break;
+        case 7: /* all */
+            board_part = g_strdup_printf("%s %s %s", board_vendor, board_name, board_version);
+            break;
+    }
+
+    if (product_name) p += 1;
+    if (product_vendor) p += 2;
+    if (product_version) p += 4;
+
+    switch(p) {
+        case 1: /* only name */
+            product_part = g_strdup(product_name);
+            break;
+        case 3: /* only name and vendor */
+            if (board_part && iv)
+                product_part = g_strdup(product_name);
+            else
+                product_part = g_strdup_printf("%s %s", product_vendor, product_name);
+            break;
+        case 7: /* all */
+            if (board_part && iv)
+                product_part = g_strdup_printf("%s %s", product_name, product_version);
+            else
+                product_part = g_strdup_printf("%s %s %s", product_vendor, product_name, product_version);
+            break;
+    }
+
+    if (board_part && product_part) {
+        ret = g_strdup_printf("%s (%s)", board_part, product_part);
+        g_free(board_part);
+        g_free(product_part);
+    } else if (board_part)
+        ret = board_part;
+    else if (product_part)
+        ret = product_part;
     else
         ret = g_strdup(_("(Unknown)"));
 
-    free(board_name);
-    free(board_vendor);
+    g_free(board_name);
+    g_free(board_vendor);
+    g_free(board_version);
+    g_free(product_name);
+    g_free(product_vendor);
+    g_free(product_version);
+
     return ret;
 #endif
 
