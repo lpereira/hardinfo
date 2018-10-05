@@ -154,11 +154,9 @@ static void make_nice_name(gpud *s) {
         device_str = unk_d;
 
     /* try and a get a "short name" for the vendor */
-    const Vendor *v = vendor_match(vendor_str, NULL);
-    if (v && v->name_short && *v->name_short != 0)
-        vendor_str = v->name_short;
+    vendor_str = vendor_get_shortest_name(vendor_str);
 
-    /* These two former special cases are currently handled by the vendor_match()
+    /* These two former special cases are currently handled by the vendor_get_shortest_name()
      * function well enough, but the notes are preserved here. */
         /* nvidia PCI strings are pretty nice already,
          * just shorten the company name */
