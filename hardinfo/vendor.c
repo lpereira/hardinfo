@@ -330,46 +330,26 @@ const Vendor *vendor_match(const gchar *id_str, ...) {
     return ret;
 }
 
-static const gchar *vendor_get_name_ex(const gchar * id_str, short shortest)
-{
-    GSList *vendor;
-    int found = 0;
+static const gchar *vendor_get_name_ex(const gchar * id_str, short shortest) {
+    const Vendor *v = vendor_match(id_str, NULL);
 
-    if (!id_str)
-        return NULL;
-
-    for (vendor = vendor_list; vendor; vendor = vendor->next) {
-        Vendor *v = (Vendor *)vendor->data;
-
-        if (v) {
-            if (v->match_case) {
-                if (v->match_string && strstr(id_str, v->match_string))
-                    found = 1;
-            } else {
-                if (v->match_string && strcasestr(id_str, v->match_string))
-                    found = 1;
-            }
-
-            if (found) {
-                if (shortest) {
-                    int sl = strlen(id_str);
-                    int nl = (v->name) ? strlen(v->name) : 0;
-                    int snl = (v->name_short) ? strlen(v->name_short) : 0;
-                    if (!nl) nl = 9999;
-                    if (!snl) snl = 9999;
-                    /* if id_str is shortest, then return null as if nothing
-                     * was found */
-                    if (nl <= snl)
-                        return (sl <= nl) ? NULL : v->name;
-                    else
-                        return (sl <= snl) ? NULL : v->name_short;
-                } else
-                    return v->name;
-            }
-        }
+    if (v) {
+        if (shortest) {
+            int sl = strlen(id_str);
+            int nl = (v->name) ? strlen(v->name) : 0;
+            int snl = (v->name_short) ? strlen(v->name_short) : 0;
+            if (!nl) nl = 9999;
+            if (!snl) snl = 9999;
+            /* if id_str is shortest, then return as if not found (see below) */
+            if (nl <= snl)
+                return (sl <= nl) ? id_str : v->name;
+            else
+                return (sl <= snl) ? id_str : v->name_short;
+        } else
+            return v->name;
     }
 
-    return id_str; /* What about const? */
+    return id_str; /* Preserve an old behavior, but what about const? */
 }
 
 const gchar *vendor_get_name(const gchar * id_str) {
@@ -380,27 +360,11 @@ const gchar *vendor_get_shortest_name(const gchar * id_str) {
     return vendor_get_name_ex(id_str, 1);
 }
 
-const gchar *vendor_get_url(const gchar * id_str)
-{
-    GSList *vendor;
+const gchar *vendor_get_url(const gchar * id_str) {
+    const Vendor *v = vendor_match(id_str, NULL);
 
-    if (!id_str) {
-      return NULL;
-    }
-
-    for (vendor = vendor_list; vendor; vendor = vendor->next) {
-        Vendor *v = (Vendor *)vendor->data;
-
-        if (v)
-            if (v->match_case) {
-                if (v->match_string && strstr(id_str, v->match_string))
-                    return v->url;
-            } else {
-                if (v->match_string && strcasestr(id_str, v->match_string))
-                    return v->url;
-            }
-
-    }
+    if (v)
+        return v->url;
 
     return NULL;
 }

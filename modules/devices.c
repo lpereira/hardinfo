@@ -372,7 +372,7 @@ gchar *get_motherboard(void)
     if (board_vendor) {
         /* attempt to shorten */
         tmp = vendor_get_shortest_name(board_vendor);
-        if (tmp) {
+        if (tmp && tmp != board_vendor) {
             g_free(board_vendor);
             board_vendor = g_strdup(tmp);
         }
@@ -384,7 +384,7 @@ gchar *get_motherboard(void)
     if (product_vendor) {
         /* attempt to shorten */
         tmp = vendor_get_shortest_name(product_vendor);
-        if (tmp) {
+        if (tmp && tmp != product_vendor) {
             g_free(product_vendor);
             product_vendor = g_strdup(tmp);
         }
