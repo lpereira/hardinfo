@@ -172,9 +172,18 @@ name D-Link
     match_string D-Link
 
 name Gigabyte Technology
+    name_short Gigabyte
     url www.gigabyte.com.tw
     match_string Giga-byte
     match_string Gigabyte
+
+name Micro-Star International
+    name_short MSI
+    url www.msi.com
+    url_support www.msi.com/support
+    match_string Micro-Star Int'l Co.,Ltd.
+    match_string Micro Star
+    match_string_case MSI
 
 name C-Media Electronics
     url www.cmedia.com.tw
@@ -269,6 +278,12 @@ name SEAGATE
     url www.seagate.com
     match_string_case ST
 
+name Silicon Integrated Systems Corporation
+    name_short SIS
+    url www.sis.com
+    match_string Silicon Integrated Systems
+    match_string_case SIS
+
 #
 # BIOS manufacturers
 #
@@ -278,10 +293,12 @@ name American Megatrends
     match_string American Megatrends
 
 name Award Software International
+    name_short Award
     url www.award-bios.com
     match_string Award
 
 name Phoenix Technologies
+    name_short Phoenix
     url www.phoenix.com
     match_string Phoenix
 
@@ -290,59 +307,53 @@ name Phoenix Technologies
 #
 
 name Advanced Micro Devices
+    name_short AMD
     url www.amd.com
     match_string AMDisbetter!
-
-name Advanced Micro Devices
-    url www.amd.com
     match_string AuthenticAMD
 
-name VIA (formerly Centaur Technology)
-    url www.via.tw
-    match_string CentaurHauls
-
-name Cyrix
-    url
-    match_string CyrixInstead
-
-name Intel
+name Intel Corporation
+    name_short Intel
     url www.intel.com
+    url_support http://ark.intel.com/search.aspx?q=
     match_string GenuineIntel
 
-name Transmeta
-    url
-    match_string TransmetaCPU
-
-name Transmeta
-    url
-    match_string GenuineTMx86
-
-name National Semiconductor
-    url
-    match_string Geode by NSC
-
-name NexGen
-    url
-    match_string NexGenDriven
-
-name Rise Technology
-    url
-    match_string RiseRiseRise
-
-name Silicon Integrated Systems
-    url
-    match_string SiS SiS SiS
-
-name United Microelectronics Corporation
-    url
-    match_string UMC UMC UMC
-
-name VIA
+name VIA Technologies
+    name_short VIA
     url www.via.tw
     match_string VIA VIA VIA
 
+name VIA (formerly Centaur Technology)
+    name_short VIA (Centaur)
+    url www.via.tw
+    match_string CentaurHauls
+
+name VIA (formerly Cyrix)
+    name_short VIA (Cyrix)
+    url www.via.tw
+    match_string CyrixInstead
+
+name Transmeta Corporation
+    name_short Transmeta
+    match_string TransmetaCPU
+    match_string GenuineTMx86
+
+name National Semiconductor
+    match_string Geode by NSC
+
+name NexGen
+    match_string NexGenDriven
+
+name Rise Technology
+    match_string RiseRiseRise
+
+name Silicon Integrated Systems
+    match_string SiS SiS SiS
+
+name United Microelectronics Corporation
+    match_string UMC UMC UMC
+
 name DMP Electronics
-    url
     match_string Vortex86 SoC
 
 #
@@ -350,7 +361,7 @@ name DMP Electronics
 #
 
 name KVM
-    url
+    url www.linux-kvm.org
     match_string KVMKVMKVM
 
 name Microsoft Hyper-V
@@ -358,13 +369,13 @@ name Microsoft Hyper-V
     match_string Microsoft Hv
 
 name Parallels
-    url
+    url www.parallels.com
     match_string lrpepyh vr
 
 name VMware
-    url
+    url www.vmware.com
     match_string VMwareVMware
 
 name Xen HVM
-    url
+    url www.xenproject.org
     match_string XenVMMXenVMM
