@@ -151,8 +151,11 @@ void __scan_dmi()
   dmi_ok = dmi_get_info();
 
   if (!dmi_ok) {
-    dmi_info = g_strdup("[No DMI information]\n"
-                        "There was an error retrieving the information.=\n"
-                        "Please try running HardInfo as root.=\n");
+    dmi_info = g_strdup_printf("[%s]\n%s=\n",
+                        _("DMI Unavailable"),
+                        (getuid() == 0)
+                            ? _("DMI is not avaliable. Perhaps this platform does not provide DMI.")
+                            : _("DMI is not available; Perhaps try running HardInfo as root.") );
+
   }
 }

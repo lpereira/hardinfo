@@ -49,10 +49,8 @@ gchar *callback_printers();
 gchar *callback_storage();
 gchar *callback_input();
 gchar *callback_usb();
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
 gchar *callback_dmi();
 gchar *callback_spd();
-#endif
 gchar *callback_dtree();
 gchar *callback_device_resources();
 
@@ -66,10 +64,8 @@ void scan_printers(gboolean reload);
 void scan_storage(gboolean reload);
 void scan_input(gboolean reload);
 void scan_usb(gboolean reload);
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
 void scan_dmi(gboolean reload);
 void scan_spd(gboolean reload);
-#endif
 void scan_dtree(gboolean reload);
 void scan_device_resources(gboolean reload);
 
@@ -105,13 +101,11 @@ static ModuleEntry entries[] = {
     [ENTRY_SENSORS] = {N_("Sensors"), "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
     [ENTRY_INPUT] = {N_("Input Devices"), "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
     [ENTRY_STORAGE] = {N_("Storage"), "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
     [ENTRY_DMI] = {N_("DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
     [ENTRY_SPD] = {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
+#if defined(ARCH_x86) || defined(ARCH_x86_64)
     [ENTRY_DTREE] = {"#"},
 #else
-    [ENTRY_DMI] = {"#"},
-    [ENTRY_SPD] = {"#"},
     [ENTRY_DTREE] = {N_("Device Tree"), "devices.png", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
     [ENTRY_RESOURCES] = {N_("Resources"), "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
@@ -537,7 +531,6 @@ gchar *hi_get_field(gchar * field)
     return g_strdup(field);
 }
 
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
 void scan_dmi(gboolean reload)
 {
     SCAN_START();
@@ -551,7 +544,6 @@ void scan_spd(gboolean reload)
     scan_spd_do();
     SCAN_END();
 }
-#endif
 
 void scan_dtree(gboolean reload)
 {
@@ -640,7 +632,6 @@ gchar *callback_processors()
     return processor_get_info(processors);
 }
 
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
 gchar *callback_dmi()
 {
     return g_strdup(dmi_info);
@@ -650,7 +641,6 @@ gchar *callback_spd()
 {
     return g_strdup(spd_info);
 }
-#endif
 
 gchar *callback_dtree()
 {
