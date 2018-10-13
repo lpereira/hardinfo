@@ -511,10 +511,14 @@ gchar *callback_os(void)
         info_field(_("Home Directory"), computer->os->homedir),
         info_field_last());
 
+    info_add_group(info, _("Security"),
+        info_field_update(_("Available entropy in /dev/random"), 1000),
+        info_field(_("ASLR"), idle_free(computer_get_aslr())),
+        info_field_last());
+
     info_add_group(info, _("Misc"),
         info_field_update(_("Uptime"), 1000),
         info_field_update(_("Load Average"), 10000),
-        info_field_update(_("Available entropy in /dev/random"), 1000),
         info_field_last());
 
     return info_flatten(info);

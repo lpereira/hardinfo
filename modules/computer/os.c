@@ -235,6 +235,20 @@ detect_desktop_environment(void)
 }
 
 gchar *
+computer_get_aslr(void)
+{
+    switch (h_sysfs_read_int("/proc/sys/kernel", "randomize_va_space")) {
+    case 0:
+        return g_strdup(_("Disabled"));
+    case 1:
+        return g_strdup(_("Partially enabled (mmap base+stack+VDSO base)"));
+    case 2:
+        return g_strdup(_("Fully enabled (mmap base+stack+VDSO base+heap)"));
+    default:
+        return g_strdup(_("Unknown"));
+    }
+}
+gchar *
 computer_get_entropy_avail(void)
 {
     gchar tab_entropy_fstr[][32] = {
