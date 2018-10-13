@@ -69,10 +69,8 @@ void scan_sensors_do(void);
 void sensors_init(void);
 void sensors_shutdown(void);
 
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
 /* SPD */
 void scan_spd_do(void);
-#endif /* ARCH_x86 */
 
 extern gchar *battery_list;
 extern gchar *input_icons;
@@ -93,10 +91,8 @@ extern GHashTable *sensor_compute;
 extern GHashTable *sensor_labels;
 extern GModule *cups;
 
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
 extern gchar *spd_info;
 extern gchar *dmi_info;
-#endif
 
 extern gchar *dtree_info;
 extern gchar *gpu_list;
