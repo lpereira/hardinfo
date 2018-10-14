@@ -185,6 +185,12 @@ name Micro-Star International
     match_string Micro Star
     match_string_case MSI
 
+name ZOTAC International
+    name_short ZOTAC
+    url www.zotac.com
+    url_support www.zotac.com/support/
+    match_string ZOTAC
+
 name C-Media Electronics
     url www.cmedia.com.tw
     match_string C-Media
