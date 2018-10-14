@@ -34,6 +34,8 @@ static int ignore_placeholder_strings(char **pstr) {
     DMI_IGNORE("Default String");
     DMI_IGNORE("Rev X.0x"); /* ASUS board version nonsense */
     DMI_IGNORE("x.x");      /* Gigabyte board version nonsense */
+    DMI_IGNORE("XX");       /* Zotac version nonsense */
+    DMI_IGNORE("NA");
     /*... more, I'm sure. */
     return 0;
 }
