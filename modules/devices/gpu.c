@@ -195,14 +195,21 @@ int _dt_soc_gpu(gpud *gpu) {
 
     gchar *opp_str;
     if (gpu->dt_opp) {
-        opp_str = g_strdup_printf("[%s %s]\n"
+        static const char *freq_src[] = {
+            N_("clock-frequency property"),
+            N_("Operating Points (OPPv1)"),
+            N_("Operating Points (OPPv2)"),
+        };
+        opp_str = g_strdup_printf("[%s]\n"
                      /* MinFreq */  "%s=%d %s\n"
                      /* MaxFreq */  "%s=%d %s\n"
-                     /* Latency */  "%s=%d %s\n",
-                    _("Frequency Scaling"), _("(OPPv2)"),
+                     /* Latency */  "%s=%d %s\n"
+                     /* Source */   "%s=%s\n",
+                    _("Frequency Scaling"),
                     _("Minimum"), gpu->dt_opp->khz_min, _("kHz"),
                     _("Maximum"), gpu->dt_opp->khz_max, _("kHz"),
-                    _("Transition Latency"), gpu->dt_opp->clock_latency_ns, _("ns") );
+                    _("Transition Latency"), gpu->dt_opp->clock_latency_ns, _("ns"),
+                    _("Source"), _(freq_src[gpu->dt_opp->version]) );
     } else
         opp_str = strdup("");
 
