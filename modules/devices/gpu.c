@@ -129,7 +129,10 @@ static void _gpu_pci_dev(gpud* gpu) {
 
     gchar *freq = g_strdup(_("(Unknown)"));
     if (gpu->khz_max > 0) {
-        freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
+        if (gpu->khz_min > 0)
+            freq = g_strdup_printf("%0.2f-%0.2f %s", (double) gpu->khz_min / 1000, (double) gpu->khz_max / 1000, _("MHz"));
+        else
+            freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
     }
 
     str = g_strdup_printf("[%s]\n"
@@ -180,7 +183,10 @@ int _dt_soc_gpu(gpud *gpu) {
     if (device == NULL) device = UNKSOC;
     gchar *freq = g_strdup(_("(Unknown)"));
     if (gpu->khz_max > 0) {
-        freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
+        if (gpu->khz_min > 0)
+            freq = g_strdup_printf("%0.2f-%0.2f %s", (double) gpu->khz_min / 1000, (double) gpu->khz_max / 1000, _("MHz"));
+        else
+            freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
     }
     gchar *key = g_strdup(gpu->id);
     gchar *name = (vendor == UNKSOC && device == UNKSOC)

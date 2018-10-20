@@ -35,7 +35,7 @@ typedef struct gpud {
     char *vendor_str;
     char *device_str;
     char *location;
-    uint32_t khz_max;
+    uint32_t khz_min, khz_max; /* core */
 
     char *drm_dev;
     char *sysfs_drm_path;
