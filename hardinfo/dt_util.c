@@ -942,6 +942,7 @@ dt_opp_range *dtr_get_opp_range(dtr *s, const char *name) {
     uint64_t khz = 0;
     uint32_t lns = 0;
     char *row_status = NULL;
+    uint32_t i = 0;
 
     if (!s)
         return NULL;
@@ -950,9 +951,40 @@ dt_opp_range *dtr_get_opp_range(dtr *s, const char *name) {
     if (!obj)
         goto get_opp_finish;
 
-    opp_ph = dtr_get_prop_u32(s, obj, "operating-points-v2");
-    if (!opp_ph)
+    opp_ph = dtr_get_prop_u32(s, obj, "operating-points-v2"); /* OPPv2 */
+    table_obj = dtr_get_prop_obj(s, obj, "operating-points"); /* OPPv1 */
+    if (!opp_ph) {
+        if (table_obj) {
+            /* only v1 */
+            ret = g_new0(dt_opp_range, 1);
+            ret->version = 1;
+            ret->clock_latency_ns = dtr_get_prop_u32(s, obj, "clock-latency");
+
+            /* pairs of (kHz,uV) */
+            for (i = 0; i < table_obj->length; i += 2) {
+                khz = table_obj->data_int[i];
+                if (khz > ret->khz_max)
+                    ret->khz_max = khz;
+                if (khz < ret->khz_min || ret->khz_min == 0)
+                    ret->khz_min = khz;
+            }
+
+        } else {
+            /* is clock-frequency available? */
+            khz = dtr_get_prop_u32(s, obj, "clock-frequency");
+            if (khz) {
+                ret = g_new0(dt_opp_range, 1);
+                ret->version = 0;
+                ret->khz_max = khz;
+                ret->clock_latency_ns = dtr_get_prop_u32(s, obj, "clock-latency");
+            }
+        }
         goto get_opp_finish;
+    } else {
+        /* use v2 if both available */
+        dtr_obj_free(table_obj);
+        table_obj = NULL;
+    }
 
     opp_table_path = dtr_phandle_lookup(s, opp_ph);
     if (!opp_table_path)
@@ -971,6 +1003,7 @@ dt_opp_range *dtr_get_opp_range(dtr *s, const char *name) {
         goto get_opp_finish;
 
     ret = g_new0(dt_opp_range, 1);
+    ret->version = 2;
     ret->phandle = opp_ph;
 
     full_path = dtr_obj_full_path(table_obj);

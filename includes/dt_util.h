@@ -30,6 +30,7 @@ enum {
     DTP_CLOCKS,  /* <phref, #clock-cells> */
     DTP_GPIOS,   /* <phref, #gpio-cells> */
     DTP_DMAS,    /* dma-specifier list */
+    DTP_OPP1,    /* list of operating points, pairs of (kHz,uV) */
     DTP_PH_REF_OPP2,  /* phandle reference to opp-v2 table */
 };
 
@@ -91,9 +92,10 @@ void dtr_msg(dtr *s, char *fmt, ...);
  * ex: ret = appf(ret, "%s=%s\n", name, value); */
 char *appf(char *src, char *fmt, ...);
 
-/* operating-points-v2 */
+/* operating-points v0,v1,v2 */
 typedef struct {
-    uint32_t phandle;
+    uint32_t version; /* opp version, 0 = clock-frequency only */
+    uint32_t phandle; /* v2 only */
     uint32_t khz_min;
     uint32_t khz_max;
     uint32_t clock_latency_ns;
