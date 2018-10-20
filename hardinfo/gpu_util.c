@@ -305,6 +305,7 @@ gpud *dt_soc_gpu() {
     gpu->dt_opp = dtr_get_opp_range(dt, dt_gpu_path);
     if (gpu->dt_opp) {
         gpu->khz_max = gpu->dt_opp->khz_max;
+        gpu->khz_min = gpu->dt_opp->khz_min;
     }
     EMPIFNULL(gpu->dt_name);
     EMPIFNULL(gpu->dt_status);
