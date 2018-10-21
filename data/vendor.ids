@@ -43,6 +43,12 @@ name nVidia Corporation
     url www.nvidia.com
     match_string nVidia
 
+name G.Skill International Enterprise
+    name_short G.Skill
+    url www.gskill.com
+    match_string G.Skill
+    match_string G-Skill
+
 name 3Com
     url www.3com.com
     match_string 3Com
