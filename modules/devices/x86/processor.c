@@ -745,9 +745,25 @@ gchar *dmi_socket_info() {
                     gchar *voltage_min_str = dmidecode_match("Minimum Voltage", &dtm, &h);
                     gchar *voltage_max_str = dmidecode_match("Maximum Voltage", &dtm, &h);
                     gchar *voltage_conf_str = dmidecode_match("Configured Voltage", &dtm, &h);
+                    gchar *mfgr = dmidecode_match("Manufacturer", &dtm, &h);
+                    gchar *partno = dmidecode_match("Part Number", &dtm, &h);
+
+                    gchar *vendor_str = NULL;
+                    if (mfgr) {
+                        const gchar *v_url = vendor_get_url(mfgr);
+                        if (v_url)
+                            vendor_str = g_strdup_printf(" (%s, %s)",
+                                vendor_get_name(mfgr), v_url );
+                        else
+                            vendor_str = g_strdup("");
+                    }
+
+#define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 
                     ret = h_strdup_cprintf("[%s (%lu) %s]\n"
                                     "%s=0x%x\n"
+                                    "%s=%s\n"
+                                    "%s=%s%s\n"
                                     "%s=%s\n"
                                     "%s=%s / %s\n"
                                     "%s=%s\n"
@@ -759,14 +775,16 @@ gchar *dmi_socket_info() {
                                     ret,
                                     _("Memory Socket"), i, locator,
                                     _("DMI Handle"), h,
-                                    _("Form Factor"), form_factor,
-                                    _("Type"), type, type_detail,
-                                    _("Size"), size_str,
-                                    _("Speed"), speed_str,
-                                    _("Configured Clock Frequency"), configured_clock_str,
-                                    _("Minimum Voltage"), voltage_min_str,
-                                    _("Maximum Voltage"), voltage_max_str,
-                                    _("Configured Voltage"), voltage_conf_str
+                                    _("Form Factor"), UNKIFNULL2(form_factor),
+                                    _("Manufacturer"), UNKIFNULL2(mfgr), vendor_str,
+                                    _("Part Number"), UNKIFNULL2(partno),
+                                    _("Type"), UNKIFNULL2(type), UNKIFNULL2(type_detail),
+                                    _("Size"), UNKIFNULL2(size_str),
+                                    _("Speed"), UNKIFNULL2(speed_str),
+                                    _("Configured Clock Frequency"), UNKIFNULL2(configured_clock_str),
+                                    _("Minimum Voltage"), UNKIFNULL2(voltage_min_str),
+                                    _("Maximum Voltage"), UNKIFNULL2(voltage_max_str),
+                                    _("Configured Voltage"), UNKIFNULL2(voltage_conf_str)
                                     );
                     g_free(type);
                     g_free(form_factor);
@@ -775,6 +793,9 @@ gchar *dmi_socket_info() {
                     g_free(voltage_min_str);
                     g_free(voltage_max_str);
                     g_free(voltage_conf_str);
+                    g_free(mfgr);
+                    g_free(partno);
+                    g_free(vendor_str);
                 }
                 g_free(size_str);
                 g_free(locator);
