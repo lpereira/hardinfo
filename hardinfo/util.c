@@ -491,6 +491,15 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     if (report_format && g_str_equal(report_format, "html"))
 	param->report_format = REPORT_FORMAT_HTML;
 
+    /* html ok?
+     * gui: yes
+     * report html: yes
+     * report text: no
+     * anything else? */
+    param->html_ok = TRUE;
+    if (param->create_report && param->report_format != REPORT_FORMAT_HTML)
+        param->html_ok = FALSE;
+
     gchar *confdir = g_build_filename(g_get_user_config_dir(), "hardinfo", NULL);
     if (!g_file_test(confdir, G_FILE_TEST_EXISTS)) {
 	mkdir(confdir, 0744);

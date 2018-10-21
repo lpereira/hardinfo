@@ -52,6 +52,7 @@ struct _ProgramParameters {
   gboolean autoload_deps;
   gboolean run_xmlrpc_server;
   gboolean skip_benchmarks;
+  gboolean html_ok; /* ok to use html in the value part of a key/value */
 
   gint     report_format;
 

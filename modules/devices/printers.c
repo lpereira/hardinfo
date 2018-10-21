@@ -33,7 +33,7 @@ struct _CUPSDest {
     char *name, *instance;
     int is_default;
     int num_options;
-    CUPSOption *options;  
+    CUPSOption *options;
 };
 
 static int (*cups_dests_get) (CUPSDest **dests) = NULL;
@@ -49,13 +49,13 @@ init_cups(void)
 
     if (!(cups_dests_get && cups_dests_free)) {
         int i;
-        
+
         for (i = 0; libcups[i] != NULL; i++) {
             cups = g_module_open(libcups[i], G_MODULE_BIND_LAZY);
             if (cups)
-                break; 
+                break;
         }
-        
+
         if (!cups) {
 	    cups_init = FALSE;
 	    return;
@@ -67,7 +67,7 @@ init_cups(void)
 	    cups_init = FALSE;
 	}
     }
-    
+
     cups_init = TRUE;
 }
 
@@ -76,7 +76,7 @@ gchar *__cups_callback_ptype(gchar *strvalue)
   if (strvalue) {
     unsigned value = atoi(strvalue);
     gchar *output = g_strdup("\n");
-    
+
     if (value & 0x0004)
       output = h_strdup_cprintf(_("\342\232\254 Can do black and white printing=\n"), output);
     if (value & 0x0008)
@@ -121,7 +121,7 @@ gchar *__cups_callback_state_change_time(gchar *value)
 {
   struct tm tm;
   char buf[255];
-  
+
   if (value) {
     strptime(value, "%s", &tm);
     strftime(buf, sizeof(buf), "%c", &tm);
@@ -148,25 +148,25 @@ const struct {
   { "Printer Information", NULL, NULL },
   { "printer-info", "Destination Name", NULL },
   { "printer-make-and-model", "Make and Model", NULL },
-  
+
   { "Capabilities", NULL, NULL },
   { "printer-type", "#", __cups_callback_ptype },
-  
+
   { "Printer State", NULL, NULL },
   { "printer-state", "State", __cups_callback_state },
   { "printer-state-change-time", "Change Time", __cups_callback_state_change_time },
   { "printer-state-reasons", "State Reasons" },
-  
+
   { "Sharing Information", NULL, NULL },
   { "printer-is-shared", "Shared?", __cups_callback_boolean },
   { "printer-location", "Physical Location" },
   { "auth-info-required", "Authentication Required", __cups_callback_boolean },
-  
+
   { "Jobs", NULL, NULL },
   { "job-hold-until", "Hold Until", NULL },
   { "job-priority", "Priority", NULL },
   { "printer-is-accepting-jobs", "Accepting Jobs", __cups_callback_boolean },
-  
+
   { "Media", NULL, NULL },
   { "media", "Media", NULL },
   { "finishings", "Finishings", NULL },
@@ -185,7 +185,7 @@ scan_printers_do(void)
 
     if (!cups_init) {
         init_cups();
-        
+
         printer_icons = g_strdup("");
         printer_list = g_strdup(_("[Printers]\n"
                                 "No suitable CUPS library found="));
@@ -201,22 +201,22 @@ scan_printers_do(void)
         printer_icons = g_strdup("");
 	for (i = 0; i < num_dests; i++) {
 	    GHashTable *options;
-	    
+
 	    options = g_hash_table_new(g_str_hash, g_str_equal);
-	    
+
 	    for (j = 0; j < dests[i].num_options; j++) {
 	      g_hash_table_insert(options,
 	                          g_strdup(dests[i].options[j].name),
 	                          g_strdup(dests[i].options[j].value));
 	    }
-	
+
             prn_id = g_strdup_printf("PRN%d", i);
-	
+
 	    printer_list = h_strdup_cprintf("\n$%s$%s=%s\n",
 					    printer_list,
-					    prn_id,						
+					    prn_id,
 					    dests[i].name,
-					    dests[i].is_default ? "<i>Default</i>" : "");
+					    dests[i].is_default ? ((params.html_ok) ? "<i>Default</i>" : "(Default)") : "");
             printer_icons = h_strdup_cprintf("\nIcon$%s$%s=printer.png",
                                              printer_icons,
                                              prn_id,
@@ -230,9 +230,9 @@ scan_printers_do(void)
                                                 cups_fields[j].key);
               } else {
                 gchar *temp;
-                
+
                 temp = g_hash_table_lookup(options, cups_fields[j].key);
-                
+
                 if (cups_fields[j].callback) {
                   temp = cups_fields[j].callback(temp);
                 } else {
@@ -243,21 +243,21 @@ scan_printers_do(void)
                     temp = g_strdup(_("Unknown"));
                   }
                 }
-                
+
                 prn_moreinfo = h_strdup_cprintf("%s=%s\n",
                                                 prn_moreinfo,
                                                 cups_fields[j].name,
                                                 temp);
-                
+
                 g_free(temp);
               }
             }
-            
+
             moreinfo_add_with_prefix("DEV", prn_id, prn_moreinfo);
             g_free(prn_id);
             g_hash_table_destroy(options);
 	}
-	
+
 	cups_dests_free(num_dests, dests);
     } else {
 	printer_list = g_strdup(_("[Printers]\n"
