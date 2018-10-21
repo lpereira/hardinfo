@@ -30,7 +30,9 @@ BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
 BENCH_CALLBACK(callback_fft, "FPU FFT", BENCHMARK_FFT, 0);
 BENCH_CALLBACK(callback_nqueens, "CPU N-Queens", BENCHMARK_NQUEENS, 0);
 BENCH_CALLBACK(callback_raytr, "FPU Raytracing", BENCHMARK_RAYTRACE, 0);
-BENCH_CALLBACK(callback_bfsh, "CPU Blowfish", BENCHMARK_BLOWFISH, 0);
+BENCH_CALLBACK(callback_bfsh_single, "CPU Blowfish (Single-thread)", BENCHMARK_BLOWFISH_SINGLE, 0);
+BENCH_CALLBACK(callback_bfsh_threads, "CPU Blowfish (Multi-thread)", BENCHMARK_BLOWFISH_THREADS, 0);
+BENCH_CALLBACK(callback_bfsh_cores, "CPU Blowfish (Multi-core)", BENCHMARK_BLOWFISH_CORES, 0);
 BENCH_CALLBACK(callback_cryptohash, "CPU CryptoHash", BENCHMARK_CRYPTOHASH, 1);
 BENCH_CALLBACK(callback_fib, "CPU Fibonacci", BENCHMARK_FIB, 0);
 BENCH_CALLBACK(callback_zlib, "CPU Zlib", BENCHMARK_ZLIB, 0);
@@ -45,7 +47,9 @@ void SN(gboolean reload) { \
 BENCH_SCAN_SIMPLE(scan_fft, benchmark_fft, BENCHMARK_FFT);
 BENCH_SCAN_SIMPLE(scan_nqueens, benchmark_nqueens, BENCHMARK_NQUEENS);
 BENCH_SCAN_SIMPLE(scan_raytr, benchmark_raytrace, BENCHMARK_RAYTRACE);
-BENCH_SCAN_SIMPLE(scan_bfsh, benchmark_fish, BENCHMARK_BLOWFISH);
+BENCH_SCAN_SIMPLE(scan_bfsh_single, benchmark_bfish_single, BENCHMARK_BLOWFISH_SINGLE);
+BENCH_SCAN_SIMPLE(scan_bfsh_threads, benchmark_bfish_threads, BENCHMARK_BLOWFISH_THREADS);
+BENCH_SCAN_SIMPLE(scan_bfsh_cores, benchmark_bfish_cores, BENCHMARK_BLOWFISH_CORES);
 BENCH_SCAN_SIMPLE(scan_cryptohash, benchmark_cryptohash, BENCHMARK_CRYPTOHASH);
 BENCH_SCAN_SIMPLE(scan_fib, benchmark_fib, BENCHMARK_FIB);
 BENCH_SCAN_SIMPLE(scan_zlib, benchmark_zlib, BENCHMARK_ZLIB);
@@ -71,7 +75,9 @@ void scan_gui(gboolean reload)
 }
 
 static ModuleEntry entries[] = {
-    {N_("CPU Blowfish"), "blowfish.png", callback_bfsh, scan_bfsh, MODULE_FLAG_NONE},
+    {N_("CPU Blowfish (Single-thread)"), "blowfish.png", callback_bfsh_single, scan_bfsh_single, MODULE_FLAG_NONE},
+    {N_("CPU Blowfish (Multi-thread)"), "blowfish.png", callback_bfsh_threads, scan_bfsh_threads, MODULE_FLAG_NONE},
+    {N_("CPU Blowfish (Multi-core)"), "blowfish.png", callback_bfsh_cores, scan_bfsh_cores, MODULE_FLAG_NONE},
     {N_("CPU CryptoHash"), "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NONE},
     {N_("CPU Fibonacci"), "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NONE},
     {N_("CPU N-Queens"), "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NONE},
@@ -90,13 +96,15 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_CRYPTOHASH:
         return _("Results in MiB/second. Higher is better.");
 
+    case BENCHMARK_BLOWFISH_SINGLE:
+    case BENCHMARK_BLOWFISH_THREADS:
+    case BENCHMARK_BLOWFISH_CORES:
     case BENCHMARK_ZLIB:
     case BENCHMARK_GUI:
         return _("Results in HIMarks. Higher is better.");
 
     case BENCHMARK_FFT:
     case BENCHMARK_RAYTRACE:
-    case BENCHMARK_BLOWFISH:
     case BENCHMARK_FIB:
     case BENCHMARK_NQUEENS:
         return _("Results in seconds. Lower is better.");

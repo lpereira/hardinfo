@@ -167,6 +167,7 @@ set(MODULE_network_SOURCES
 set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark.c
 	modules/benchmark/blowfish.c
+	modules/benchmark/blowfish2.c
 	modules/benchmark/cryptohash.c
 	modules/benchmark/drawing.c
 	modules/benchmark/fbench.c
