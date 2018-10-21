@@ -45,6 +45,7 @@ processor_scan(void)
     gchar buffer[128];
     gchar *rep_pname = NULL;
     GSList *pi = NULL;
+    dtr *dt = dtr_new(NULL);
 
     cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
@@ -162,6 +163,18 @@ processor_scan(void)
         else
             processor->cpu_mhz = 0.0f;
 
+        /* Try OPP, although if it exists, it should have been available
+         * via cpufreq. */
+        if (dt && processor->cpu_mhz == 0.0f) {
+            gchar *dt_cpu_path = g_strdup_printf("/cpus/cpu@%d", processor->id);
+            dt_opp_range *opp = dtr_get_opp_range(dt, dt_cpu_path);
+            if (opp) {
+                processor->cpu_mhz = (double)opp->khz_max / 1000;
+                g_free(opp);
+            }
+            g_free(dt_cpu_path);
+        }
+
         /* mode */
         processor->mode = ARM_A32;
         if ( processor_has_flag(processor->flags, "pmull")
@@ -173,6 +186,7 @@ processor_scan(void)
 #endif
         }
     }
+    dtr_free(dt);
 
     return procs;
 }
