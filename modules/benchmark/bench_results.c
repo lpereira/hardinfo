@@ -377,6 +377,7 @@ static char *bench_result_more_info_less(bench_result *b) {
 
     char *ret = g_strdup_printf("[%s]\n"
         /* threads */   "%s=%d\n"
+        /* elapsed */   "%s=%0.4f %s\n"
         /* legacy */    "%s=%s\n"
                         "[%s]\n"
         /* board */     "%s=%s\n"
@@ -389,6 +390,7 @@ static char *bench_result_more_info_less(bench_result *b) {
         /* mem */       "%s=%s\n",
                         _("Benchmark Result"),
                         _("Threads"), b->bvalue.threads_used,
+                        _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
@@ -410,7 +412,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
         /* bench name */"%s=%s\n"
         /* threads */   "%s=%d\n"
         /* result */    "%s=%0.2f\n"
-        /* elapsed */   "%s=%0.2f\n"
+        /* elapsed */   "%s=%0.4f %s\n"
         /* legacy */    "%s=%s\n"
                         "[%s]\n"
         /* board */     "%s=%s\n"
@@ -428,7 +430,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
                         _("Benchmark"), b->name,
                         _("Threads"), b->bvalue.threads_used,
                         _("Result"), b->bvalue.result,
-                        _("Elapsed Time"), b->bvalue.elapsed_time,
+                        _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
