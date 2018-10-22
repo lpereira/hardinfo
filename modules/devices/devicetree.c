@@ -216,13 +216,14 @@ static gchar *get_summary(dtr *dt) {
     return ret;
 }
 
-static void mi_add(const char *key, const char *value) {
+static void mi_add(const char *key, const char *value, int report_details) {
     gchar *ckey, *rkey;
 
     ckey = hardinfo_clean_label(key, 0);
     rkey = g_strdup_printf("%s:%s", "DTREE", ckey);
 
-    dtree_info = h_strdup_cprintf("$%s$%s=\n", dtree_info, rkey, ckey);
+    dtree_info = h_strdup_cprintf("$%s%s$%s=\n", dtree_info,
+        (report_details) ? "!" : "", rkey, ckey);
     moreinfo_add_with_prefix("DEV", rkey, g_strdup(value));
 
     g_free(ckey);
@@ -241,7 +242,7 @@ static void add_keys(dtr *dt, char *np) {
     obj = dtr_obj_read(dt, np);
     dt_path = dtr_obj_path(obj);
     n_info = get_node(dt, dt_path);
-    mi_add(dt_path, n_info);
+    mi_add(dt_path, n_info, 0);
 
     dir_path = g_strdup_printf("%s/%s", dtr_base_path(dt), np);
     dir = g_dir_open(dir_path, 0 , NULL);
@@ -289,13 +290,13 @@ void __scan_dtree()
     gchar *messages = NULL;
 
     dtree_info = g_strdup("[Device Tree]\n");
-    mi_add("Summary", summary);
-    mi_add("Maps", maps);
+    mi_add("Summary", summary, 1);
+    mi_add("Maps", maps, 0);
 
     if(dtr_was_found(dt))
         add_keys(dt, "/");
     messages = msg_section(dt, 0);
-    mi_add("Messages", messages);
+    mi_add("Messages", messages, 0);
 
     g_free(summary);
     g_free(maps);
