@@ -49,13 +49,19 @@ struct _ReportContext {
   void (*subsubtitle)	(ReportContext *ctx, gchar *text);
   void (*keyvalue)   	(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight);
 
+  void (*details_start)     (ReportContext *ctx, gchar *key, gchar *value, gboolean highlight);
+  void (*details_section)   (ReportContext *ctx, gchar *name);
+  void (*details_keyvalue)  (ReportContext *ctx, gchar *key, gchar *value, gboolean highlight);
+  void (*details_end)       (ReportContext *ctx);
+
   ReportFormat		format;
 
   gboolean		is_image_enabled;
   gboolean		first_table;
+  gboolean		in_details;
 
   gboolean		show_column_headers;
-  guint			columns;
+  guint			columns, parent_columns;
   GHashTable		*column_titles;
 };
 
@@ -83,6 +89,7 @@ void 		 report_subtitle	(ReportContext *ctx, gchar *text);
 void 		 report_subsubtitle	(ReportContext *ctx, gchar *text);
 void		 report_key_value	(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight);
 void		 report_table		(ReportContext *ctx, gchar *text);
+void		 report_details		(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight, gchar *details);
 
 void             report_create_from_module_list(ReportContext *ctx, GSList *modules);
 gchar           *report_create_from_module_list_format(GSList *modules, ReportFormat format);
