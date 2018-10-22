@@ -485,7 +485,7 @@ gchar *processor_get_info(GSList * processors)
     gchar *meta; /* becomes owned by more_info? no need to free? */
     GSList *l;
 
-    tmp = g_strdup_printf("$CPU_META$%s=\n", _("SOC/Package Information") );
+    tmp = g_strdup_printf("$!CPU_META$%s=\n", _("SOC/Package Information") );
 
     meta = processor_meta(processors);
     moreinfo_add_with_prefix("DEV", "CPU_META", meta);
