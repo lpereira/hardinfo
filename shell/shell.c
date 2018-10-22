@@ -1242,11 +1242,11 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
             *(strchr(flags+1, '$')+1) = 0;
 
             gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME,
-                _(name), INFO_TREE_COL_DATA, flags, -1);
+                name, INFO_TREE_COL_DATA, flags, -1);
 
             g_free(flags);
         } else {
-            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, _(key),
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
                 INFO_TREE_COL_DATA, NULL, -1);
         }
 
