@@ -97,10 +97,10 @@ struct _Shell {
 
     ShellViewType	 view_type;
     gboolean		 normalize_percentage;
-    
+
     gint		_pulses;
     ShellOrderType	_order_type;
-    
+
     GKeyFile		*hosts;
     HelpViewer		*help_viewer;
 };
@@ -109,7 +109,7 @@ struct _ShellSummary {
     GtkWidget		*header;
     GtkWidget		*scroll;
     GtkWidget		*view;
-    
+
     GSList		*items;
 };
 
@@ -127,7 +127,7 @@ struct _ShellInfoTree {
     GtkWidget		*view;
     GtkTreeModel        *model;
     GtkTreeSelection	*selection;
-    
+
     GtkTreeViewColumn	 *col_progress, *col_value, *col_extra1, *col_extra2, *col_textvalue;
 };
 
@@ -144,7 +144,7 @@ struct _ShellModule {
     gpointer		(*aboutfunc) ();
     gchar		*(*summaryfunc) ();
     void		(*deinit) ();
-    
+
     guchar		 weight;
 
     GSList		*entries;
@@ -162,7 +162,7 @@ struct _ShellModuleEntry {
     gboolean		 selected;
     gint		 number;
     guint32		 flags;
-    
+
     gchar		*(*func) ();
     void		(*scan_func) ();
 
@@ -219,6 +219,13 @@ void		shell_save_hosts_file(void);
 void		shell_update_remote_menu(void);
 
 void		shell_set_remote_label(Shell *shell, gchar *label);
+
+/* decode special information in keys */
+gboolean    key_is_flagged(gchar *key);       /* has $[<flags>][<tag>]$ at the start of the key */
+gboolean    key_is_highlighted(gchar *key);   /* flag '*' = select/highlight */
+gboolean    key_wants_details(gchar *key);    /* flag '!' = report should include the "moreinfo" */
+gchar       *key_mi_tag(gchar *key);          /* moreinfo lookup tag */
+const gchar *key_get_name(gchar *key);        /* get the key's name, flagged or not */
 
 #endif				/* __SHELL_H__ */
 

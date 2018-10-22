@@ -34,35 +34,37 @@ static FileTypes file_types[] = {
     {NULL, NULL, NULL, NULL}
 };
 
+/* virtual functions */
 void report_header(ReportContext * ctx)
-{
-    ctx->header(ctx);
-}
+{ ctx->header(ctx); }
 
 void report_footer(ReportContext * ctx)
-{
-    ctx->footer(ctx);
-}
+{ ctx->footer(ctx); }
 
 void report_title(ReportContext * ctx, gchar * text)
-{
-    ctx->title(ctx, text);
-}
+{ ctx->title(ctx, text); }
 
 void report_subtitle(ReportContext * ctx, gchar * text)
-{
-    ctx->subtitle(ctx, text);
-}
+{ ctx->subtitle(ctx, text); }
 
 void report_subsubtitle(ReportContext * ctx, gchar * text)
-{
-    ctx->subsubtitle(ctx, text);
-}
+{ ctx->subsubtitle(ctx, text); }
 
 void report_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean highlight)
-{
-    ctx->keyvalue(ctx, key, value, highlight);
-}
+{ ctx->keyvalue(ctx, key, value, highlight); }
+
+void report_details_start(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight)
+{ ctx->details_start(ctx, key, value, highlight); }
+
+void report_details_section(ReportContext *ctx, gchar *label)
+{ ctx->details_section(ctx, label); }
+
+void report_details_keyvalue(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight)
+{ ctx->details_keyvalue(ctx, key, value, highlight); }
+
+void report_details_end(ReportContext *ctx)
+{ ctx->details_end(ctx); }
+/* end virtual functions */
 
 gint report_get_visible_columns(ReportContext *ctx)
 {
@@ -151,6 +153,90 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 
 }
 
+static void report_html_details_start(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight) {
+    guint cols = report_get_visible_columns(ctx);
+    report_key_value(ctx, key, value, highlight);
+    ctx->parent_columns = ctx->columns;
+    ctx->columns = REPORT_COL_VALUE;
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\"><table class=\"details\">\n", ctx->output, cols);
+}
+
+static void report_html_details_end(ReportContext *ctx) {
+    ctx->output = h_strdup_cprintf("</table></td></tr>\n", ctx->output);
+    ctx->columns = ctx->parent_columns;
+    ctx->parent_columns = 0;
+}
+
+void report_details(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight, gchar *details)
+{
+    GKeyFile *key_file = g_key_file_new();
+    gchar **groups;
+    gint i;
+
+    report_details_start(ctx, key, value, highlight);
+    ctx->in_details = TRUE;
+
+    g_key_file_load_from_data(key_file, details, strlen(details), 0, NULL);
+    groups = g_key_file_get_groups(key_file, NULL);
+
+    for (i = 0; groups[i]; i++) {
+        gchar *group, *tmpgroup;
+        gchar **keys;
+        gint j;
+
+        if (groups[i][0] == '$') {
+            continue;
+        }
+
+        group = groups[i];
+
+        tmpgroup = g_strdup(group);
+        strend(group, '#');
+
+        report_subsubtitle(ctx, group);
+
+        keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
+        for (j = 0; keys[j]; j++) {
+            gchar *key = keys[j];
+            gchar *value;
+
+            value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+
+            if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
+                strend(key, '#');
+
+                if (g_str_equal(value, "...")) {
+                    g_free(value);
+                    if (!(value = ctx->entry->fieldfunc(key))) {
+                        value = g_strdup("...");
+                    }
+                }
+
+                if ( key_is_flagged(key) ) {
+                    if (key_wants_details(key)) {
+                        /* huh? */
+                    }
+                    report_key_value(ctx, strchr(key + 1, '$') + 1, value, key_is_highlighted(key) );
+                } else {
+                    report_key_value(ctx, key, value, FALSE);
+                }
+
+            }
+
+            g_free(value);
+        }
+
+        g_strfreev(keys);
+        g_free(tmpgroup);
+    }
+
+    g_strfreev(groups);
+    g_key_file_free(key_file);
+
+    ctx->in_details = FALSE;
+    report_details_end(ctx);
+}
+
 void report_table(ReportContext * ctx, gchar * text)
 {
     GKeyFile *key_file = g_key_file_new();
@@ -166,69 +252,74 @@ void report_table(ReportContext * ctx, gchar * text)
     groups = g_key_file_get_groups(key_file, NULL);
 
     for (i = 0; groups[i]; i++) {
-	if (groups[i][0] == '$') {
-	    report_context_configure(ctx, key_file);
-	    break;
-	}
+        if (groups[i][0] == '$') {
+            report_context_configure(ctx, key_file);
+            break;
+        }
     }
 
     for (i = 0; groups[i]; i++) {
-	gchar *group, *tmpgroup;
-	gchar **keys;
-	gint j;
+        gchar *group, *tmpgroup;
+        gchar **keys;
+        gint j;
 
-	if (groups[i][0] == '$') {
-	    continue;
-	}
+        if (groups[i][0] == '$') {
+            continue;
+        }
 
-	group = groups[i];
+        group = groups[i];
 
-	tmpgroup = g_strdup(group);
-	strend(group, '#');
+        tmpgroup = g_strdup(group);
+        strend(group, '#');
 
-	report_subsubtitle(ctx, group);
+        report_subsubtitle(ctx, group);
 
 #if 0
-	if (ctx->is_image_enabled) {
-	    report_embed_image(ctx, key_file, group);
-	} else {
+        if (ctx->is_image_enabled) {
+            report_embed_image(ctx, key_file, group);
+        } else {
 #endif
-	    keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
-	    for (j = 0; keys[j]; j++) {
-		gchar *key = keys[j];
-		gchar *value;
+            keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
+            for (j = 0; keys[j]; j++) {
+                gchar *key = keys[j];
+                gchar *value;
 
-		value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+                value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
 
-		if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-		    strend(key, '#');
+                if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
+                    strend(key, '#');
 
-		    if (g_str_equal(value, "...")) {
-			g_free(value);
-			if (!(value = ctx->entry->fieldfunc(key))) {
-			    value = g_strdup("...");
-			}
-		    }
+                    if (g_str_equal(value, "...")) {
+                        g_free(value);
+                        if (!(value = ctx->entry->fieldfunc(key))) {
+                            value = g_strdup("...");
+                        }
+                    }
 
-		    if (*key == '$') {
-                if (*(key+1) == '*') /* check for selected/highlighted */
-                    report_key_value(ctx, strchr(key + 1, '$') + 1, value, TRUE);
-                else
-                    report_key_value(ctx, strchr(key + 1, '$') + 1, value, FALSE);
-		    } else {
-                report_key_value(ctx, key, value, FALSE);
-		    }
+                    if ( key_is_flagged(key) ) {
+                        gchar *mi_tag = key_mi_tag(key);
+                        gchar *mi_data = NULL; /*const*/
+                        if (key_wants_details(key)) {
+                            mi_data = ctx->entry->morefunc(mi_tag);
+                            report_details(ctx, (gchar*)key_get_name(key), value, key_is_highlighted(key), mi_data);
+                        } else {
+                            report_key_value(ctx, (gchar*)key_get_name(key), value, key_is_highlighted(key) );
+                        }
+                        g_free(mi_tag);
+                    } else {
+                        report_key_value(ctx, key, value, FALSE);
+                    }
 
-		}
+                }
 
-		g_free(value);
-	    }
+                g_free(value);
+            }
 
-	    g_strfreev(keys);
+            g_strfreev(keys);
 #if 0
-	}
+        }
 #endif
-	g_free(tmpgroup);
+        g_free(tmpgroup);
     }
 
     g_strfreev(groups);
@@ -248,9 +339,10 @@ static void report_html_header(ReportContext * ctx)
 	 "    .title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n"
 	 "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n"
 	 "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n"
-	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 50px }\n"
+	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 30px }\n"
 	 "    .value  { font: 80%% sans-serif; color: #505050 }\n"
 	 "    .hilight  { font: bold 110%% sans-serif; color: #000000; background: #ffff66 }\n"
+	 "    table.details { margin-left: 50px; }\n"
 	 "</style>\n" "</head><body>\n",
 	 VERSION);
 }
@@ -368,7 +460,10 @@ static void report_text_subtitle(ReportContext * ctx, gchar * text)
 
 static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
 {
-    ctx->output = h_strdup_cprintf("-%s-\n", ctx->output, text);
+    gchar indent[10] = "   ";
+    if (!ctx->in_details)
+        indent[0] = 0;
+    ctx->output = h_strdup_cprintf("%s-%s-\n", ctx->output, indent, text);
 }
 
 static void
@@ -377,20 +472,23 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean 
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
     gint i, mc;
+    gchar indent[10] = "      ";
+    if (!ctx->in_details)
+        indent[0] = 0;
 
-    if (columns == 2) {
+    if (columns == 2 || ctx->in_details) {
       if (strlen(value))
-          ctx->output = h_strdup_cprintf("%s%s\t\t: %s\n", ctx->output, highlight ? "* " : "", key, value);
+          ctx->output = h_strdup_cprintf("%s%s%s\t\t: %s\n", ctx->output, indent, highlight ? "* " : "", key, value);
       else
-          ctx->output = h_strdup_cprintf("%s%s\n", ctx->output, highlight ? "* " : "", key);
+          ctx->output = h_strdup_cprintf("%s%s%s\n", ctx->output, indent, highlight ? "* " : "", key);
     } else {
       values = g_strsplit(value, "|", columns);
       mc = g_strv_length(values) - 1;
 
-      ctx->output = h_strdup_cprintf("%s%s\t", ctx->output, highlight ? "* " : "", key);
+      ctx->output = h_strdup_cprintf("%s%s%s", ctx->output, indent, highlight ? "* " : "", key);
 
       for (i = mc; i >= 0; i--) {
-        ctx->output = h_strdup_cprintf("%s\t",
+        ctx->output = h_strdup_cprintf("\t%s",
                                        ctx->output,
                                        values[i]);
       }
@@ -540,6 +638,11 @@ ReportContext *report_context_html_new()
     ctx->subsubtitle = report_html_subsubtitle;
     ctx->keyvalue = report_html_key_value;
 
+    ctx->details_start = report_html_details_start;
+    ctx->details_section = report_html_subsubtitle;
+    ctx->details_keyvalue = report_html_key_value;
+    ctx->details_end = report_html_details_end;
+
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_HTML;
 
@@ -561,6 +664,11 @@ ReportContext *report_context_text_new()
     ctx->subtitle = report_text_subtitle;
     ctx->subsubtitle = report_text_subsubtitle;
     ctx->keyvalue = report_text_key_value;
+
+    ctx->details_start = report_text_key_value;
+    ctx->details_section = report_text_subsubtitle;
+    ctx->details_keyvalue = report_text_key_value;
+    ctx->details_end = report_text_footer; /* nothing */
 
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_TEXT;

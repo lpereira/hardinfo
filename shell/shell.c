@@ -45,7 +45,7 @@ static void module_selected(gpointer data);
 static void module_selected_show_info(ShellModuleEntry * entry,
 				      gboolean reload);
 static void info_selected(GtkTreeSelection * ts, gpointer data);
-static void info_selected_show_extra(gchar * data);
+static void info_selected_show_extra(const gchar *tag);
 static gboolean reload_section(gpointer data);
 static gboolean rescan_section(gpointer data);
 static gboolean update_field(gpointer data);
@@ -1236,19 +1236,19 @@ group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
 
 	    strend(key, '#');
 
-	    if (*key == '$') {
-		gchar **tmp;
+        if (key_is_flagged(key)) {
+            const gchar *name = key_get_name(key);
+            gchar *flags = g_strdup(key);
+            *(strchr(flags+1, '$')+1) = 0;
 
-		tmp = g_strsplit(++key, "$", 0);
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME,
+                _(name), INFO_TREE_COL_DATA, flags, -1);
 
-		gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME,
-				   tmp[1], INFO_TREE_COL_DATA, tmp[0], -1);
-
-		g_strfreev(tmp);
-	    } else {
-		gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, _(key),
-				   INFO_TREE_COL_DATA, NULL, -1);
-	    }
+            g_free(flags);
+        } else {
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, _(key),
+                INFO_TREE_COL_DATA, NULL, -1);
+        }
 
 	    g_hash_table_insert(update_tbl, g_strdup(key),
 				gtk_tree_iter_copy(&child));
@@ -1421,7 +1421,7 @@ select_marked_or_first_item(gpointer data)
         it = first;
         while ( gtk_tree_model_iter_next(shell->info->model, &it) ) {
             gtk_tree_model_get(shell->info->model, &it, INFO_TREE_COL_DATA, &datacol, -1);
-            if (datacol != NULL && *datacol == '*') {
+            if (key_is_highlighted(datacol)) {
                 gtk_tree_selection_select_iter(shell->info->selection, &it);
                 found_selection = TRUE;
             }
@@ -1541,7 +1541,7 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     }
 }
 
-static void info_selected_show_extra(gchar * data)
+static void info_selected_show_extra(const gchar *tag)
 {
     GtkTreeStore *store;
 
@@ -1551,12 +1551,9 @@ static void info_selected_show_extra(gchar * data)
     if (!shell->selected->morefunc)
 	return;
 
-    if (data) {
-        /* skip the select marker */
-        if (*data == '*')
-            data++;
+    if (tag) {
 	GKeyFile *key_file = g_key_file_new();
-	gchar *key_data = shell->selected->morefunc(data);
+	gchar *key_data = shell->selected->morefunc((gchar *)tag);
 	gchar **groups;
 	gint i;
 
@@ -1871,7 +1868,7 @@ static void info_selected(GtkTreeSelection * ts, gpointer data)
     ShellInfoTree *info = (ShellInfoTree *) data;
     GtkTreeModel *model = GTK_TREE_MODEL(info->model);
     GtkTreeIter parent;
-    gchar *datacol;
+    gchar *datacol, *mi_tag;
 
     if (!gtk_tree_selection_get_selected(ts, &model, &parent))
 	return;
@@ -1883,8 +1880,10 @@ static void info_selected(GtkTreeSelection * ts, gpointer data)
     }
 
     gtk_tree_model_get(model, &parent, INFO_TREE_COL_DATA, &datacol, -1);
-    info_selected_show_extra(datacol);
+    mi_tag = key_mi_tag(datacol);
+    info_selected_show_extra(mi_tag);
     gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->moreinfo->view));
+    g_free(mi_tag);
 }
 
 static ShellInfoTree *info_tree_new(gboolean extra)
@@ -2048,4 +2047,47 @@ static ShellTree *tree_new()
     gtk_widget_show_all(scroll);
 
     return shelltree;
+}
+
+gboolean key_is_flagged(gchar *key) {
+    return (key && *key == '$' && strchr(key+1, '$')) ? TRUE : FALSE;
+}
+
+gboolean key_is_highlighted(gchar *key) {
+    if (key_is_flagged(key)) {
+        if (strchr(key, '*'))
+            return TRUE;
+    }
+    return FALSE;
+}
+
+gboolean key_wants_details(gchar *key) {
+    if (key_is_flagged(key)) {
+        if (strchr(key, '!'))
+            return TRUE;
+    }
+    return FALSE;
+}
+
+gchar *key_mi_tag(gchar *key) {
+    gchar *p = key, *l, *t;
+
+    if (key_is_flagged(key)) {
+        l = strchr(key+1, '$');
+        while(p < l && (*p == '$' || *p == '*' || *p == '!') ) {
+            p++;
+        }
+        if (strlen(p)) {
+            t = g_strdup(p);
+            *(strchr(t, '$')) = 0;
+            return t;
+        }
+    }
+    return NULL;
+}
+
+const gchar *key_get_name(gchar *key) {
+    if (key_is_flagged(key))
+        return strchr(key+1, '$')+1;
+    return key;
 }
