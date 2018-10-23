@@ -23,10 +23,10 @@
 
 /* frees the string and sets it NULL if it is to be ignored
  * returns -1 if error, 0 if ok, 1 if ignored */
-static int ignore_placeholder_strings(char **pstr) {
+static int ignore_placeholder_strings(gchar **pstr) {
     if (pstr == NULL || *pstr == NULL)
         return -1;
-#define DMI_IGNORE(m) if (strcasecmp(m, *pstr) == 0) { free(*pstr); *pstr = NULL; return 1; }
+#define DMI_IGNORE(m) if (strcasecmp(m, *pstr) == 0) { g_free(*pstr); *pstr = NULL; return 1; }
     DMI_IGNORE("To be filled by O.E.M.");
     DMI_IGNORE("System Product Name");
     DMI_IGNORE("System Manufacturer");
@@ -55,7 +55,32 @@ static const char *dmi_sysfs_root(void) {
     return NULL;
 }
 
+int dmi_str_status(const char *id_str) {
+    gchar *str = dmi_get_str_abs(id_str);
+    int ret = 1;
+
+    if (!str)
+        ret = 0;
+
+    if ( ignore_placeholder_strings(&str) > 0 )
+        ret = -1;
+
+    g_free(str);
+    return ret;
+}
+
 char *dmi_get_str(const char *id_str) {
+    gchar *ret = dmi_get_str_abs(id_str);
+    /* return NULL on empty */
+    if (ret && *ret == 0) {
+        g_free(ret);
+        ret = NULL;
+    }
+    ignore_placeholder_strings(&ret);
+    return ret;
+}
+
+char *dmi_get_str_abs(const char *id_str) {
     static struct {
         char *id;
         char *path;
@@ -119,12 +144,6 @@ dmi_str_done:
     if (ret != NULL) {
         ret = strend(ret, '\n');
         ret = g_strstrip(ret);
-        /* return NULL on empty */
-        if (*ret == 0) {
-            g_free(ret);
-            ret = NULL;
-        }
-        ignore_placeholder_strings(&ret);
     }
     return ret;
 }

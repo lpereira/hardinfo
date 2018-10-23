@@ -21,7 +21,12 @@
 #ifndef __DMI_UTIL_H__
 #define __DMI_UTIL_H__
 
-char *dmi_get_str(const char *id_str);
+/* -1 = yes, but will be ignored
+ *  0 = no
+ *  1 = yes */
+int dmi_str_status(const char *id_str);
+char *dmi_get_str(const char *id_str);     /* ignore nonsense */
+char *dmi_get_str_abs(const char *id_str); /* include nonsense */
 
 /* if chassis_type is <=0 it will be fetched from DMI.
  * with_val = true, will return a string like "[3] Desktop" instead of just
