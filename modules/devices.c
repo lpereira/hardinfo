@@ -404,6 +404,13 @@ gchar *get_motherboard(void)
             product_name = NULL;
     }
 
+    if (board_version && product_version &&
+        strcmp(board_version, product_version) == 0) {
+            /* ignore duplicate version */
+            g_free(product_version);
+            product_version = NULL;
+    }
+
     if (board_name) b += 1;
     if (board_vendor) b += 2;
     if (board_version) b += 4;
