@@ -16,9 +16,15 @@
 # Match strings should be unique.
 #
 
-name ASUS
+name Lenovo Group
+    name_short Lenovo
+    url www.lenovo.com
+    url_support support.lenovo.com
+    match_string lenovo
+
+name ASUSTeK Computer
+    name_short ASUS
     url www.asus.com
-    # "ASUSTek" is common
     match_string ASUSTek
     match_string ASUS
 
