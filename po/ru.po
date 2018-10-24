@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-09 14:09-0500\n"
+"POT-Creation-Date: 2018-10-25 02:12+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -25,19 +25,20 @@ msgstr ""
 msgid "Big Endian"
 msgstr ""
 
-#: hardinfo/cpu_util.c:184 hardinfo/cpu_util.c:195
+#: hardinfo/cpu_util.c:184 hardinfo/cpu_util.c:195 modules/devices/gpu.c:208
 msgid "Frequency Scaling"
 msgstr "Масштабирование частоты"
 
-#: hardinfo/cpu_util.c:185
+#: hardinfo/cpu_util.c:185 modules/devices/gpu.c:209
 msgid "Minimum"
 msgstr "Минимальная"
 
 #: hardinfo/cpu_util.c:185 hardinfo/cpu_util.c:186 hardinfo/cpu_util.c:187
+#: hardinfo/dt_util.c:586 modules/devices/gpu.c:209 modules/devices/gpu.c:210
 msgid "kHz"
 msgstr "кГц"
 
-#: hardinfo/cpu_util.c:186
+#: hardinfo/cpu_util.c:186 modules/devices/gpu.c:210
 msgid "Maximum"
 msgstr "Максимальная"
 
@@ -45,11 +46,11 @@ msgstr "Максимальная"
 msgid "Current"
 msgstr "Текущая"
 
-#: hardinfo/cpu_util.c:188
+#: hardinfo/cpu_util.c:188 modules/devices/gpu.c:211
 msgid "Transition Latency"
 msgstr "Задержка перехода"
 
-#: hardinfo/cpu_util.c:188
+#: hardinfo/cpu_util.c:188 modules/devices/gpu.c:211
 msgid "ns"
 msgstr "нс"
 
@@ -57,13 +58,13 @@ msgstr "нс"
 msgid "Governor"
 msgstr "Регулятор"
 
-#: hardinfo/cpu_util.c:190 hardinfo/cpu_util.c:196 modules/devices/gpu.c:149
+#: hardinfo/cpu_util.c:190 hardinfo/cpu_util.c:196 modules/devices/gpu.c:161
 #: modules/devices/pci.c:116
 msgid "Driver"
 msgstr "Драйвер"
 
-#: hardinfo/cpu_util.c:202 modules/computer.c:596
-#: modules/devices/arm/processor.c:242 modules/devices/x86/processor.c:284
+#: hardinfo/cpu_util.c:202 modules/computer.c:601
+#: modules/devices/arm/processor.c:256 modules/devices/x86/processor.c:284
 #: modules/devices/x86/processor.c:388 modules/devices/x86/processor.c:524
 msgid "(Not Available)"
 msgstr "(Недоступно)"
@@ -72,7 +73,8 @@ msgstr "(Недоступно)"
 msgid "Socket"
 msgstr "Сокет"
 
-#: hardinfo/cpu_util.c:215 hardinfo/cpu_util.c:217
+#: hardinfo/cpu_util.c:215 hardinfo/cpu_util.c:217 modules/devices/gpu.c:158
+#: modules/devices/gpu.c:235
 msgid "Core"
 msgstr "Ядро"
 
@@ -84,8 +86,8 @@ msgstr "Книга"
 msgid "Drawer"
 msgstr "Трассировщик"
 
-#: hardinfo/cpu_util.c:228 modules/devices/arm/processor.c:449
-#: modules/devices/x86/processor.c:697
+#: hardinfo/cpu_util.c:228 modules/devices/arm/processor.c:470
+#: modules/devices/x86/processor.c:828
 msgid "Topology"
 msgstr "Топология"
 
@@ -125,8 +127,8 @@ msgstr ""
 msgid "Portable"
 msgstr "Портативный компьютер"
 
-#: hardinfo/dmi_util.c:139 modules/computer.c:330 modules/computer.c:339
-#: modules/computer.c:361
+#: hardinfo/dmi_util.c:139 modules/computer.c:331 modules/computer.c:340
+#: modules/computer.c:362
 msgid "Laptop"
 msgstr ""
 
@@ -190,15 +192,63 @@ msgstr ""
 msgid "Sealed-case PC"
 msgstr ""
 
-#: hardinfo/dt_util.c:1011
+#: hardinfo/dmi_util.c:155
+msgid "Multi-system"
+msgstr ""
+
+#: hardinfo/dmi_util.c:156
+msgid "CompactPCI"
+msgstr ""
+
+#: hardinfo/dmi_util.c:157
+msgid "AdvancedTCA"
+msgstr ""
+
+#: hardinfo/dmi_util.c:158
+msgid "Blade"
+msgstr ""
+
+#: hardinfo/dmi_util.c:159
+msgid "Blade Enclosing"
+msgstr ""
+
+#: hardinfo/dmi_util.c:160
+msgid "Tablet"
+msgstr ""
+
+#: hardinfo/dmi_util.c:161
+msgid "Convertible"
+msgstr ""
+
+#: hardinfo/dmi_util.c:162
+msgid "Detachable"
+msgstr ""
+
+#: hardinfo/dmi_util.c:163
+msgid "IoT Gateway"
+msgstr ""
+
+#: hardinfo/dmi_util.c:164
+msgid "Embedded PC"
+msgstr ""
+
+#: hardinfo/dmi_util.c:165
+msgid "Mini PC"
+msgstr ""
+
+#: hardinfo/dmi_util.c:166
+msgid "Stick PC"
+msgstr ""
+
+#: hardinfo/dt_util.c:1177
 msgid "phandle Map"
 msgstr ""
 
-#: hardinfo/dt_util.c:1012
+#: hardinfo/dt_util.c:1178
 msgid "Alias Map"
 msgstr ""
 
-#: hardinfo/dt_util.c:1013
+#: hardinfo/dt_util.c:1179
 msgid "Symbol Map"
 msgstr ""
 
@@ -230,12 +280,12 @@ msgstr ""
 "  Префикс библиотеки: %s\n"
 "  Скомпилировано на:  %s\n"
 
-#: hardinfo/hardinfo.c:58 hardinfo/hardinfo.c:59 modules/computer.c:644
+#: hardinfo/hardinfo.c:58 hardinfo/hardinfo.c:59 modules/computer.c:649
 #: modules/devices/inputdevices.c:128 modules/devices/printers.c:138
 msgid "Yes"
 msgstr "Да"
 
-#: hardinfo/hardinfo.c:59 modules/computer.c:644 modules/devices/printers.c:138
+#: hardinfo/hardinfo.c:59 modules/computer.c:649 modules/devices/printers.c:138
 msgid "No"
 msgstr "Нет"
 
@@ -265,18 +315,18 @@ msgstr ""
 msgid "File Name"
 msgstr "Имя файла"
 
-#: hardinfo/hardinfo.c:78 modules/computer.c:528 modules/computer.c:556
-#: modules/computer.c:674 modules/computer/languages.c:104
-#: modules/computer/modules.c:146 modules/devices/arm/processor.c:447
-#: modules/devices/dmi.c:37 modules/devices/dmi.c:46
+#: hardinfo/hardinfo.c:78 modules/computer.c:533 modules/computer.c:561
+#: modules/computer.c:679 modules/computer/languages.c:95
+#: modules/computer/modules.c:146 modules/devices/arm/processor.c:468
+#: modules/devices/dmi.c:37 modules/devices/dmi.c:46 modules/devices/gpu.c:241
 #: modules/devices/ia64/processor.c:160 modules/devices/inputdevices.c:116
-#: modules/devices/sh/processor.c:84 modules/devices/x86/processor.c:696
-#: modules/network.c:326
+#: modules/devices/sh/processor.c:84 modules/devices/x86/processor.c:827
+#: modules/network.c:331
 msgid "Name"
 msgstr "Название"
 
-#: hardinfo/hardinfo.c:78 modules/computer.c:304 modules/computer.c:499
-#: modules/computer.c:501 modules/computer.c:602 modules/devices/dmi.c:40
+#: hardinfo/hardinfo.c:78 modules/computer.c:304 modules/computer.c:500
+#: modules/computer.c:502 modules/computer.c:607 modules/devices/dmi.c:40
 #: modules/devices/dmi.c:44 modules/devices/dmi.c:48 modules/devices/dmi.c:54
 #: modules/devices/inputdevices.c:121
 msgid "Version"
@@ -418,29 +468,29 @@ msgstr ""
 "Неизвестные аргументы.\n"
 "Используйте `%s --help' для справки.\n"
 
-#: hardinfo/util.c:542
+#: hardinfo/util.c:551
 #, c-format
 msgid "Couldn't find a Web browser to open URL %s."
 msgstr "Не удаётся найти веб-браузер для открытия URL %s."
 
-#: hardinfo/util.c:891
+#: hardinfo/util.c:900
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\", load it?"
 msgstr "Модуль \"%s\" зависит от модуля \"%s\", загрузить его?"
 
-#: hardinfo/util.c:914
+#: hardinfo/util.c:923
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\"."
 msgstr "Модуль \"%s\" зависит от модуля \"%s\"."
 
-#: hardinfo/util.c:959
+#: hardinfo/util.c:968
 #, c-format
 msgid "No module could be loaded. Check permissions on \"%s\" and try again."
 msgstr ""
 "Модули не могут быть загружены. Проверьте разрешения на \"%s\" и попробуйте "
 "снова."
 
-#: hardinfo/util.c:963
+#: hardinfo/util.c:972
 msgid ""
 "No module could be loaded. Please use hardinfo -l to list all available "
 "modules and try again with a valid module list."
@@ -449,12 +499,12 @@ msgstr ""
 "получения списка доступных модулей и попробуйте снова с правильным списком "
 "модулей."
 
-#: hardinfo/util.c:1040
+#: hardinfo/util.c:1049
 #, c-format
 msgid "Scanning: %s..."
 msgstr "Сканирование: %s..."
 
-#: hardinfo/util.c:1050 shell/shell.c:301 shell/shell.c:772 shell/shell.c:1850
+#: hardinfo/util.c:1059 shell/shell.c:301 shell/shell.c:772 shell/shell.c:1850
 #: modules/benchmark.c:549 modules/benchmark.c:557
 msgid "Done."
 msgstr "Выполнено."
@@ -878,49 +928,52 @@ msgstr "Результат в секундах. Чем ниже, тем лучш
 #.
 #. / Used for an unknown value. Having it in only one place cleans up the .po line references
 #: modules/benchmark/bench_results.c:22 modules/computer.c:41
-#: modules/computer/display.c:41 modules/computer/os.c:279
+#: modules/computer/display.c:41 modules/computer/os.c:293
 #: modules/devices.c:383 modules/devices/gpu.c:42 modules/devices/gpu.c:58
-#: modules/devices/gpu.c:150 modules/devices/gpu.c:151 modules/devices/pci.c:25
+#: modules/devices/gpu.c:130 modules/devices/gpu.c:162
+#: modules/devices/gpu.c:163 modules/devices/gpu.c:184 modules/devices/pci.c:25
 #: modules/devices/pci.c:117 modules/devices/pci.c:118 modules/devices/usb.c:27
-#: modules/network/net.c:437 includes/cpu_util.h:11
+#: modules/devices/x86/processor.c:761 modules/network/net.c:437
+#: includes/cpu_util.h:11
 msgid "(Unknown)"
 msgstr "(Неизвестно)"
 
-#: modules/benchmark/bench_results.c:47 modules/benchmark/bench_results.c:322
-#: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:276
-#: modules/devices/arm/processor.c:289 modules/devices/arm/processor.c:331
-#: modules/devices/arm/processor.c:478 modules/devices.c:310
-#: modules/devices.c:318 modules/devices.c:346
-#: modules/devices/ia64/processor.c:167 modules/devices/ia64/processor.c:196
-#: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
-#: modules/devices/parisc/processor.c:158
+#: modules/benchmark/bench_results.c:47 modules/benchmark/bench_results.c:323
+#: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:290
+#: modules/devices/arm/processor.c:303 modules/devices/arm/processor.c:345
+#: modules/devices/arm/processor.c:499 modules/devices.c:310
+#: modules/devices.c:318 modules/devices.c:346 modules/devices/gpu.c:133
+#: modules/devices/gpu.c:135 modules/devices/gpu.c:187
+#: modules/devices/gpu.c:189 modules/devices/ia64/processor.c:167
+#: modules/devices/ia64/processor.c:196 modules/devices/m68k/processor.c:87
+#: modules/devices/mips/processor.c:77 modules/devices/parisc/processor.c:158
 #: modules/devices/parisc/processor.c:191 modules/devices/ppc/processor.c:160
 #: modules/devices/ppc/processor.c:187 modules/devices/riscv/processor.c:186
 #: modules/devices/riscv/processor.c:214 modules/devices/s390/processor.c:160
 #: modules/devices/sh/processor.c:87 modules/devices/sh/processor.c:88
 #: modules/devices/sh/processor.c:89 modules/devices/x86/processor.c:318
 #: modules/devices/x86/processor.c:331 modules/devices/x86/processor.c:655
-#: modules/devices/x86/processor.c:726
+#: modules/devices/x86/processor.c:858
 msgid "MHz"
 msgstr "МГц"
 
-#: modules/benchmark/bench_results.c:374 modules/benchmark/bench_results.c:441
+#: modules/benchmark/bench_results.c:375 modules/benchmark/bench_results.c:442
 msgid "kiB"
 msgstr "КиБ"
 
-#: modules/benchmark/bench_results.c:389 modules/benchmark/bench_results.c:426
+#: modules/benchmark/bench_results.c:390 modules/benchmark/bench_results.c:427
 msgid "Benchmark Result"
 msgstr "Результат теста"
 
-#: modules/benchmark/bench_results.c:390 modules/benchmark/bench_results.c:428
+#: modules/benchmark/bench_results.c:391 modules/benchmark/bench_results.c:429
 msgid "Threads"
 msgstr "Потоки"
 
-#: modules/benchmark/bench_results.c:391 modules/benchmark/bench_results.c:431
+#: modules/benchmark/bench_results.c:392 modules/benchmark/bench_results.c:432
 msgid "Note"
 msgstr "Примечание"
 
-#: modules/benchmark/bench_results.c:392 modules/benchmark/bench_results.c:432
+#: modules/benchmark/bench_results.c:393 modules/benchmark/bench_results.c:433
 msgid ""
 "This result is from an old version of HardInfo. Results might not be "
 "comparable to current version. Some details are missing."
@@ -929,68 +982,68 @@ msgstr ""
 "быть несопоставим с результатом текущей версии, поскольку отсутствуют "
 "некоторые подробности."
 
-#: modules/benchmark/bench_results.c:393 modules/benchmark/bench_results.c:433
+#: modules/benchmark/bench_results.c:394 modules/benchmark/bench_results.c:434
 #: modules/devices/devicetree/pmac_data.c:81 modules/devices/sh/processor.c:85
 msgid "Machine"
 msgstr "Машина"
 
-#: modules/benchmark/bench_results.c:394 modules/benchmark/bench_results.c:434
+#: modules/benchmark/bench_results.c:395 modules/benchmark/bench_results.c:435
 #: modules/devices/devicetree.c:206 modules/devices/dmi.c:45
 msgid "Board"
 msgstr "Плата"
 
-#: modules/benchmark/bench_results.c:395 modules/benchmark/bench_results.c:435
+#: modules/benchmark/bench_results.c:396 modules/benchmark/bench_results.c:436
 msgid "CPU Name"
 msgstr "Название процессора"
 
-#: modules/benchmark/bench_results.c:396 modules/benchmark/bench_results.c:436
+#: modules/benchmark/bench_results.c:397 modules/benchmark/bench_results.c:437
 msgid "CPU Description"
 msgstr "Описание процессора"
 
-#: modules/benchmark/bench_results.c:397 modules/benchmark/bench_results.c:437
+#: modules/benchmark/bench_results.c:398 modules/benchmark/bench_results.c:438
 #: modules/benchmark.c:390
 msgid "CPU Config"
 msgstr "Конфигурация процессора"
 
-#: modules/benchmark/bench_results.c:398 modules/benchmark/bench_results.c:438
+#: modules/benchmark/bench_results.c:399 modules/benchmark/bench_results.c:439
 msgid "Threads Available"
 msgstr "Доступно потоков"
 
-#: modules/benchmark/bench_results.c:399 modules/benchmark/bench_results.c:439
+#: modules/benchmark/bench_results.c:400 modules/benchmark/bench_results.c:440
 msgid "GPU"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:400 modules/benchmark/bench_results.c:440
-#: modules/computer.c:479
+#: modules/benchmark/bench_results.c:401 modules/benchmark/bench_results.c:441
+#: modules/computer.c:480
 msgid "OpenGL Renderer"
 msgstr "Рендер OpenGL"
 
-#: modules/benchmark/bench_results.c:401 modules/benchmark/bench_results.c:441
-#: modules/computer.c:110 modules/computer.c:468 modules/devices.c:99
+#: modules/benchmark/bench_results.c:402 modules/benchmark/bench_results.c:442
+#: modules/computer.c:110 modules/computer.c:469 modules/devices.c:99
 msgid "Memory"
 msgstr "Память"
 
-#: modules/benchmark/bench_results.c:427
+#: modules/benchmark/bench_results.c:428
 msgid "Benchmark"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:429
+#: modules/benchmark/bench_results.c:430 modules/devices/x86/processor.c:689
 msgid "Result"
-msgstr ""
+msgstr "Результат"
 
-#: modules/benchmark/bench_results.c:430
+#: modules/benchmark/bench_results.c:431
 msgid "Elapsed Time"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:442
+#: modules/benchmark/bench_results.c:443
 msgid "Handles"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:443
+#: modules/benchmark/bench_results.c:444
 msgid "mid"
 msgstr ""
 
-#: modules/benchmark/bench_results.c:444
+#: modules/benchmark/bench_results.c:445
 msgid "cfg_val"
 msgstr ""
 
@@ -998,7 +1051,7 @@ msgstr ""
 msgid "Results"
 msgstr "Результаты"
 
-#: modules/benchmark.c:390 modules/computer.c:811
+#: modules/benchmark.c:390 modules/computer.c:816
 #: modules/devices/sparc/processor.c:75
 msgid "CPU"
 msgstr "Процессор"
@@ -1032,7 +1085,7 @@ msgstr "Отправить результаты тестирования"
 msgid "Receive benchmark results"
 msgstr "Принять результаты тестирования"
 
-#: modules/computer/alsa.c:26 modules/computer.c:483
+#: modules/computer/alsa.c:26 modules/computer.c:484
 msgid "Audio Devices"
 msgstr "Аудио устройства"
 
@@ -1044,15 +1097,15 @@ msgstr "Звуковая карта"
 msgid "Summary"
 msgstr "Общая информация"
 
-#: modules/computer.c:77 modules/computer.c:471 modules/computer.c:810
+#: modules/computer.c:77 modules/computer.c:472 modules/computer.c:815
 msgid "Operating System"
 msgstr "Операционная система"
 
-#: modules/computer.c:78 modules/devices/gpu.c:151 modules/devices/pci.c:118
+#: modules/computer.c:78 modules/devices/gpu.c:163 modules/devices/pci.c:118
 msgid "Kernel Modules"
 msgstr "Модули ядра"
 
-#: modules/computer.c:79 modules/computer.c:540
+#: modules/computer.c:79 modules/computer.c:545
 msgid "Boots"
 msgstr "Загрузки"
 
@@ -1064,7 +1117,7 @@ msgstr "Языки"
 msgid "Filesystems"
 msgstr "Файловые системы"
 
-#: modules/computer.c:82 modules/computer.c:476
+#: modules/computer.c:82 modules/computer.c:477
 msgid "Display"
 msgstr "Дисплей"
 
@@ -1076,7 +1129,7 @@ msgstr "Переменные среды"
 msgid "Development"
 msgstr "Разработка"
 
-#: modules/computer.c:87 modules/computer.c:661
+#: modules/computer.c:87 modules/computer.c:666
 msgid "Users"
 msgstr "Пользователи"
 
@@ -1089,20 +1142,20 @@ msgstr "Группы"
 msgid "%dMB (%dMB used)"
 msgstr "%d Мб (%d Мб занято)"
 
-#: modules/computer.c:114 modules/computer.c:514
+#: modules/computer.c:114 modules/computer.c:520
 msgid "Uptime"
 msgstr "Время работы"
 
-#: modules/computer.c:116 modules/computer.c:473
+#: modules/computer.c:116 modules/computer.c:474
 msgid "Date/Time"
 msgstr "Дата/время"
 
 # Должно совпадать с таким-же полем в строке 430 computer.c
-#: modules/computer.c:121 modules/computer.c:515
+#: modules/computer.c:121 modules/computer.c:521
 msgid "Load Average"
 msgstr "Средняя нагрузка"
 
-#: modules/computer.c:123 modules/computer.c:516
+#: modules/computer.c:123 modules/computer.c:515
 msgid "Available entropy in /dev/random"
 msgstr "Доступная энтропия в /dev/random"
 
@@ -1171,24 +1224,20 @@ msgid "Gambas3 (gbc3)"
 msgstr ""
 
 #: modules/computer.c:227
-#, fuzzy
 msgid "Java"
-msgstr "Язык программирования Java"
+msgstr ""
 
 #: modules/computer.c:228
-#, fuzzy
 msgid "CSharp (Mono, old)"
-msgstr "Найдена старая установка %s."
+msgstr ""
 
 #: modules/computer.c:229
-#, fuzzy
 msgid "CSharp (Mono)"
-msgstr "Моноширинный шрифт"
+msgstr ""
 
 #: modules/computer.c:230
-#, fuzzy
 msgid "Vala"
-msgstr "базы данных vala"
+msgstr ""
 
 #: modules/computer.c:231
 msgid "Haskell (GHC)"
@@ -1247,48 +1296,48 @@ msgstr "Определена версия: %s"
 msgid "Program"
 msgstr "Программа"
 
-#: modules/computer.c:324
+#: modules/computer.c:325
 msgid "Single-board computer"
 msgstr ""
 
 #. /proc/apm
-#: modules/computer.c:373
+#: modules/computer.c:374
 msgid "Unknown physical machine type"
 msgstr ""
 
-#: modules/computer.c:393 modules/computer.c:394
+#: modules/computer.c:394 modules/computer.c:395
 msgid "Virtual (VMware)"
 msgstr ""
 
-#: modules/computer.c:396 modules/computer.c:397 modules/computer.c:398
-#: modules/computer.c:399
+#: modules/computer.c:397 modules/computer.c:398 modules/computer.c:399
+#: modules/computer.c:400
 msgid "Virtual (QEMU)"
 msgstr ""
 
-#: modules/computer.c:401 modules/computer.c:402
+#: modules/computer.c:402 modules/computer.c:403
 msgid "Virtual (Unknown)"
 msgstr ""
 
-#: modules/computer.c:404 modules/computer.c:405 modules/computer.c:406
-#: modules/computer.c:427
+#: modules/computer.c:405 modules/computer.c:406 modules/computer.c:407
+#: modules/computer.c:428
 msgid "Virtual (VirtualBox)"
 msgstr ""
 
-#: modules/computer.c:408 modules/computer.c:409 modules/computer.c:410
-#: modules/computer.c:421
+#: modules/computer.c:409 modules/computer.c:410 modules/computer.c:411
+#: modules/computer.c:422
 msgid "Virtual (Xen)"
 msgstr ""
 
-#: modules/computer.c:412
+#: modules/computer.c:413
 msgid "Virtual (hypervisor present)"
 msgstr ""
 
-#: modules/computer.c:465 modules/computer.c:769
+#: modules/computer.c:466 modules/computer.c:774
 msgid "Computer"
 msgstr "Компьютер"
 
-#: modules/computer.c:466 modules/devices/alpha/processor.c:87
-#: modules/devices/arm/processor.c:327 modules/devices.c:98
+#: modules/computer.c:467 modules/devices/alpha/processor.c:87
+#: modules/devices/arm/processor.c:341 modules/devices.c:98
 #: modules/devices/ia64/processor.c:159 modules/devices/m68k/processor.c:83
 #: modules/devices/mips/processor.c:74 modules/devices/parisc/processor.c:154
 #: modules/devices/ppc/processor.c:157 modules/devices/riscv/processor.c:181
@@ -1297,247 +1346,257 @@ msgstr "Компьютер"
 msgid "Processor"
 msgstr "Процессор"
 
-#: modules/computer.c:469
+#: modules/computer.c:470
 msgid "Machine Type"
 msgstr "Тип машины"
 
-#: modules/computer.c:472 modules/computer.c:508
+#: modules/computer.c:473 modules/computer.c:509
 msgid "User Name"
 msgstr "Пользователь"
 
-#: modules/computer.c:477
+#: modules/computer.c:478
 msgid "Resolution"
 msgstr "Разрешение"
 
-#: modules/computer.c:477 modules/computer.c:607
+#: modules/computer.c:478 modules/computer.c:612
 #, c-format
 msgid "%dx%d pixels"
 msgstr "%dx%d пикселей"
 
-#: modules/computer.c:480
+#: modules/computer.c:481
 msgid "Session Display Server"
 msgstr "Дисплейный драйвер сессии"
 
-#: modules/computer.c:485 modules/devices.c:106
+#: modules/computer.c:486 modules/devices.c:106
 msgid "Input Devices"
 msgstr "Устройства ввода"
 
-#: modules/computer.c:500
+#: modules/computer.c:501
 msgid "Kernel"
 msgstr "Ядро"
 
-#: modules/computer.c:502
+#: modules/computer.c:503
 msgid "C Library"
 msgstr "Библиотека C"
 
-#: modules/computer.c:503
+#: modules/computer.c:504
 msgid "Distribution"
 msgstr "Дистрибутив"
 
-#: modules/computer.c:506
+#: modules/computer.c:507
 msgid "Current Session"
 msgstr "Текущая сессия"
 
-#: modules/computer.c:507
+#: modules/computer.c:508
 msgid "Computer Name"
 msgstr "Имя компьютера"
 
-#: modules/computer.c:509 modules/computer/languages.c:108
+#: modules/computer.c:510 modules/computer/languages.c:99
 msgid "Language"
 msgstr "Язык"
 
-#: modules/computer.c:510 modules/computer/users.c:50
+#: modules/computer.c:511 modules/computer/users.c:50
 msgid "Home Directory"
 msgstr "Домашний каталог"
 
-#: modules/computer.c:513
+#: modules/computer.c:514
+msgid "Security"
+msgstr "Безопасность"
+
+#: modules/computer.c:516
+msgid "ASLR"
+msgstr ""
+
+#: modules/computer.c:519
 msgid "Misc"
 msgstr "Разное"
 
-#: modules/computer.c:526
+#: modules/computer.c:531
 msgid "Loaded Modules"
 msgstr ""
 
-#: modules/computer.c:529 modules/computer/modules.c:145
-#: modules/computer/modules.c:147 modules/devices/arm/processor.c:448
+#: modules/computer.c:534 modules/computer/modules.c:145
+#: modules/computer/modules.c:147 modules/devices/arm/processor.c:469
 #: modules/devices.c:575
 msgid "Description"
 msgstr "Описание"
 
-#: modules/computer.c:542
+#: modules/computer.c:547
 msgid "Date & Time"
 msgstr "Дата и время"
 
-#: modules/computer.c:543
+#: modules/computer.c:548
 msgid "Kernel Version"
 msgstr "Версия ядра"
 
-#: modules/computer.c:553
+#: modules/computer.c:558
 msgid "Available Languages"
 msgstr ""
 
-#: modules/computer.c:555
+#: modules/computer.c:560
 msgid "Language Code"
 msgstr "Код языка"
 
-#: modules/computer.c:567
+#: modules/computer.c:572
 msgid "Mounted File Systems"
 msgstr ""
 
-#: modules/computer.c:569 modules/computer/filesystem.c:85
+#: modules/computer.c:574 modules/computer/filesystem.c:85
 msgid "Mount Point"
 msgstr "Точка монтирования"
 
-#: modules/computer.c:570
+#: modules/computer.c:575
 msgid "Usage"
 msgstr "Использование"
 
-#: modules/computer.c:571 modules/devices/gpu.c:93 modules/devices/gpu.c:101
-#: modules/devices/gpu.c:187 modules/devices/pci.c:70 modules/devices/pci.c:78
+#: modules/computer.c:576 modules/devices/gpu.c:93 modules/devices/gpu.c:101
+#: modules/devices/gpu.c:233 modules/devices/pci.c:70 modules/devices/pci.c:78
 #: modules/devices/pci.c:122 modules/devices/usb.c:72
 msgid "Device"
 msgstr "Устройство"
 
-#: modules/computer.c:590
+#: modules/computer.c:595
 msgid "Session"
 msgstr "Сессия"
 
-#: modules/computer.c:591 modules/devices.c:614 modules/devices/dmi.c:53
-#: modules/devices/inputdevices.c:117
+#: modules/computer.c:596 modules/devices.c:610 modules/devices/dmi.c:53
+#: modules/devices/inputdevices.c:117 modules/devices/x86/processor.c:711
+#: modules/devices/x86/processor.c:781
 msgid "Type"
 msgstr "Тип"
 
-#: modules/computer.c:594
+#: modules/computer.c:599
 msgid "Wayland"
 msgstr ""
 
-#: modules/computer.c:595 modules/computer.c:600
+#: modules/computer.c:600 modules/computer.c:605
 msgid "Current Display Name"
 msgstr "Имя текущего дисплея"
 
-#: modules/computer.c:599
+#: modules/computer.c:604
 msgid "X Server"
 msgstr "X сервер"
 
-#: modules/computer.c:601 modules/computer.c:641 modules/devices/dmi.c:39
+#: modules/computer.c:606 modules/computer.c:646 modules/devices/dmi.c:39
 #: modules/devices/dmi.c:43 modules/devices/dmi.c:47 modules/devices/dmi.c:52
-#: modules/devices/gpu.c:92 modules/devices/gpu.c:100 modules/devices/gpu.c:186
+#: modules/devices/gpu.c:92 modules/devices/gpu.c:100 modules/devices/gpu.c:232
 #: modules/devices/ia64/processor.c:161 modules/devices/inputdevices.c:119
 #: modules/devices/pci.c:69 modules/devices/pci.c:77 modules/devices/usb.c:64
 #: modules/devices/x86/processor.c:651
 msgid "Vendor"
 msgstr "Производитель"
 
-#: modules/computer.c:603
+#: modules/computer.c:608
 msgid "Release Number"
 msgstr "Номер релиза"
 
-#: modules/computer.c:611
+#: modules/computer.c:616
 msgid "Screens"
 msgstr "Экраны"
 
-#: modules/computer.c:617
+#: modules/computer.c:622
 msgid "Disconnected"
 msgstr "Отключено"
 
-#: modules/computer.c:620
+#: modules/computer.c:625
 msgid "Connected"
 msgstr "Подключено"
 
-#: modules/computer.c:624 modules/computer/os.c:78 modules/computer/os.c:234
-#: modules/computer/os.c:392 modules/devices.c:344 modules/devices.c:396
-#: modules/devices/printers.c:99 modules/devices/printers.c:106
-#: modules/devices/printers.c:116 modules/devices/printers.c:131
-#: modules/devices/printers.c:140 modules/devices/printers.c:243
+#: modules/computer.c:629 modules/computer/os.c:78 modules/computer/os.c:234
+#: modules/computer/os.c:248 modules/computer/os.c:406 modules/devices.c:344
+#: modules/devices.c:396 modules/devices/printers.c:99
+#: modules/devices/printers.c:106 modules/devices/printers.c:116
+#: modules/devices/printers.c:131 modules/devices/printers.c:140
+#: modules/devices/printers.c:243
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: modules/computer.c:628
+#: modules/computer.c:633
 msgid "Unused"
 msgstr "Не используется"
 
-#: modules/computer.c:629
+#: modules/computer.c:634
 #, c-format
 msgid "%dx%d pixels, offset (%d, %d)"
 msgstr "%dx%d пикселей, смещение (%d, %d)"
 
-#: modules/computer.c:638
+#: modules/computer.c:643
 msgid "Outputs (XRandR)"
 msgstr "Выводы (XRandR)"
 
-#: modules/computer.c:640
+#: modules/computer.c:645
 msgid "OpenGL (GLX)"
 msgstr ""
 
-#: modules/computer.c:642
+#: modules/computer.c:647
 msgid "Renderer"
 msgstr "Рендер"
 
-#: modules/computer.c:643
+#: modules/computer.c:648
 msgid "Direct Rendering"
 msgstr "Графическое ускорение"
 
-#: modules/computer.c:645
+#: modules/computer.c:650
 msgid "Version (Compatibility)"
 msgstr "Версия (совместимость)"
 
-#: modules/computer.c:646
+#: modules/computer.c:651
 msgid "Shading Language Version (Compatibility)"
 msgstr "Версия языка шейдеров (совместимость)"
 
-#: modules/computer.c:647
+#: modules/computer.c:652
 msgid "Version (Core)"
 msgstr "Версия (ядро)"
 
-#: modules/computer.c:648
+#: modules/computer.c:653
 msgid "Shading Language Version (Core)"
 msgstr "Версия языка шейдеров (ядро)"
 
-#: modules/computer.c:649
+#: modules/computer.c:654
 msgid "Version (ES)"
 msgstr "Версия (ES)"
 
-#: modules/computer.c:650
+#: modules/computer.c:655
 msgid "Shading Language Version (ES)"
 msgstr "Версия языка шейдеров (ES)"
 
-#: modules/computer.c:651
+#: modules/computer.c:656
 msgid "GLX Version"
 msgstr "Версия GLX"
 
-#: modules/computer.c:672
+#: modules/computer.c:677
 msgid "Group"
 msgstr "Группа"
 
-#: modules/computer.c:675 modules/computer/users.c:49
+#: modules/computer.c:680 modules/computer/users.c:49
 msgid "Group ID"
 msgstr "ID группы"
 
-#: modules/computer.c:811
+#: modules/computer.c:816
 msgid "RAM"
 msgstr "Оперативная память"
 
-#: modules/computer.c:811 modules/devices/devicetree/pmac_data.c:82
+#: modules/computer.c:816 modules/devices/devicetree/pmac_data.c:82
 msgid "Motherboard"
 msgstr "Материнская плата"
 
-#: modules/computer.c:811
+#: modules/computer.c:816
 msgid "Graphics"
 msgstr "Графика"
 
-#: modules/computer.c:812 modules/devices.c:107
+#: modules/computer.c:817 modules/devices.c:107
 msgid "Storage"
 msgstr "Устройства хранения"
 
-#: modules/computer.c:812 modules/devices.c:103
+#: modules/computer.c:817 modules/devices.c:103
 msgid "Printers"
 msgstr "Принтеры"
 
-#: modules/computer.c:812
+#: modules/computer.c:817
 msgid "Audio"
 msgstr "Аудио"
 
-#: modules/computer.c:857
+#: modules/computer.c:862
 msgid "Gathers high-level computer information"
 msgstr "Собирает высокоуровневую информацию о компьютере"
 
@@ -1558,6 +1617,7 @@ msgid "Read-Only"
 msgstr "Только для чтения"
 
 #: modules/computer/filesystem.c:86 modules/devices/spd-decode.c:1510
+#: modules/devices/x86/processor.c:738 modules/devices/x86/processor.c:782
 msgid "Size"
 msgstr "Размер"
 
@@ -1569,37 +1629,37 @@ msgstr "Занято"
 msgid "Available"
 msgstr "Свободно"
 
-#: modules/computer/languages.c:103
+#: modules/computer/languages.c:94
 msgid "Locale Information"
 msgstr "Информация о языке"
 
-#: modules/computer/languages.c:105
+#: modules/computer/languages.c:96 modules/devices/gpu.c:212
 msgid "Source"
 msgstr "Источник"
 
-#: modules/computer/languages.c:106
+#: modules/computer/languages.c:97
 msgid "Address"
 msgstr "Адрес"
 
-#: modules/computer/languages.c:107
+#: modules/computer/languages.c:98
 msgid "E-mail"
 msgstr "Электронная почта"
 
-#: modules/computer/languages.c:109
+#: modules/computer/languages.c:100
 msgid "Territory"
 msgstr "Территория"
 
-#: modules/computer/languages.c:110 modules/devices/arm/processor.c:341
-#: modules/devices/gpu.c:146 modules/devices/ia64/processor.c:166
+#: modules/computer/languages.c:101 modules/devices/arm/processor.c:355
+#: modules/devices/gpu.c:156 modules/devices/ia64/processor.c:166
 #: modules/devices/pci.c:114 modules/devices/ppc/processor.c:159
 msgid "Revision"
 msgstr "Ревизия"
 
-#: modules/computer/languages.c:111 modules/devices/dmi.c:42
+#: modules/computer/languages.c:102 modules/devices/dmi.c:42
 msgid "Date"
 msgstr "Дата"
 
-#: modules/computer/languages.c:112
+#: modules/computer/languages.c:103
 msgid "Codeset"
 msgstr "Кодировка"
 
@@ -1610,6 +1670,7 @@ msgstr "Не удается установить среднюю загрузку
 #: modules/computer/modules.c:125 modules/computer/modules.c:126
 #: modules/computer/modules.c:127 modules/computer/modules.c:128
 #: modules/computer/modules.c:129 modules/devices/dmi.c:115
+#: modules/devices/x86/processor.c:691
 msgid "(Not available)"
 msgstr "(Недоступно)"
 
@@ -1617,7 +1678,7 @@ msgstr "(Недоступно)"
 msgid "Module Information"
 msgstr "Информация о модуле"
 
-#: modules/computer/modules.c:143
+#: modules/computer/modules.c:143 modules/devices/gpu.c:238
 msgid "Path"
 msgstr "Путь"
 
@@ -1685,25 +1746,37 @@ msgstr "%s на %s"
 msgid "Terminal"
 msgstr "Терминал"
 
+#: modules/computer/os.c:242
+msgid "Disabled"
+msgstr "Отключено"
+
+#: modules/computer/os.c:244
+msgid "Partially enabled (mmap base+stack+VDSO base)"
+msgstr "Частично включено (mmap base+stack+VDSO base)"
+
+#: modules/computer/os.c:246
+msgid "Fully enabled (mmap base+stack+VDSO base+heap)"
+msgstr "Полностью включено (mmap base+stack+VDSO base+heap)"
+
 #. /bits of entropy for rng (0)
-#: modules/computer/os.c:241
+#: modules/computer/os.c:255
 msgid "(None or not available)"
 msgstr "(Нет или недоступно)"
 
 #. /bits of entropy for rng (low/poor value)
-#: modules/computer/os.c:242
+#: modules/computer/os.c:256
 #, c-format
 msgid "%d bits (low)"
 msgstr "%d бит (низкая)"
 
 #. /bits of entropy for rng (medium value)
-#: modules/computer/os.c:243
+#: modules/computer/os.c:257
 #, c-format
 msgid "%d bits (medium)"
 msgstr "%d бит (средняя)"
 
 #. /bits of entropy for rng (high/good value)
-#: modules/computer/os.c:244
+#: modules/computer/os.c:258
 #, c-format
 msgid "%d bits (healthy)"
 msgstr "%d бит (огромная)"
@@ -1734,7 +1807,7 @@ msgstr "Модель"
 msgid "Platform String"
 msgstr "Строка платформы"
 
-#: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:331
+#: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:345
 #: modules/devices/ia64/processor.c:167 modules/devices/m68k/processor.c:87
 #: modules/devices/mips/processor.c:77 modules/devices/parisc/processor.c:158
 #: modules/devices/ppc/processor.c:160 modules/devices/riscv/processor.c:186
@@ -1742,7 +1815,7 @@ msgstr "Строка платформы"
 msgid "Frequency"
 msgstr "Частота"
 
-#: modules/devices/alpha/processor.c:91 modules/devices/arm/processor.c:332
+#: modules/devices/alpha/processor.c:91 modules/devices/arm/processor.c:346
 #: modules/devices/ia64/processor.c:168 modules/devices/m68k/processor.c:88
 #: modules/devices/mips/processor.c:78 modules/devices/parisc/processor.c:159
 #: modules/devices/ppc/processor.c:161 modules/devices/s390/processor.c:134
@@ -1750,7 +1823,7 @@ msgstr "Частота"
 msgid "BogoMips"
 msgstr ""
 
-#: modules/devices/alpha/processor.c:92 modules/devices/arm/processor.c:333
+#: modules/devices/alpha/processor.c:92 modules/devices/arm/processor.c:347
 #: modules/devices/ia64/processor.c:169 modules/devices/m68k/processor.c:89
 #: modules/devices/mips/processor.c:79 modules/devices/parisc/processor.c:160
 #: modules/devices/ppc/processor.c:162 modules/devices/riscv/processor.c:187
@@ -1930,72 +2003,73 @@ msgctxt "arm-flag"
 msgid "Advanced SIMD/NEON on AArch64 (arch>8)"
 msgstr "Дополнительный SIMD/NEON на AArch64 (arch>8)"
 
-#: modules/devices/arm/processor.c:142
+#: modules/devices/arm/processor.c:143
 msgid "ARM Processor"
 msgstr "Процессор ARM"
 
-#: modules/devices/arm/processor.c:200 modules/devices/riscv/processor.c:147
+#: modules/devices/arm/processor.c:214 modules/devices/riscv/processor.c:147
 #: modules/devices/x86/processor.c:606
 msgid "Empty List"
 msgstr "Пустой список"
 
-#: modules/devices/arm/processor.c:226 modules/devices/x86/processor.c:268
+#: modules/devices/arm/processor.c:240 modules/devices/gpu.c:157
+#: modules/devices/gpu.c:234 modules/devices/x86/processor.c:268
 msgid "Clocks"
 msgstr "Частоты"
 
-#: modules/devices/arm/processor.c:272 modules/devices/arm/processor.c:285
+#: modules/devices/arm/processor.c:286 modules/devices/arm/processor.c:299
 #: modules/devices/x86/processor.c:314 modules/devices/x86/processor.c:327
 #, c-format
 msgid "%.2f-%.2f %s=%dx\n"
 msgstr ""
 
-#: modules/devices/arm/processor.c:328
+#: modules/devices/arm/processor.c:342
 msgid "Linux Name"
 msgstr "Имя Linux"
 
-#: modules/devices/arm/processor.c:329
+#: modules/devices/arm/processor.c:343
 msgid "Decoded Name"
 msgstr "Декодированное имя"
 
-#: modules/devices/arm/processor.c:330 modules/network/net.c:453
+#: modules/devices/arm/processor.c:344 modules/network/net.c:453
 msgid "Mode"
 msgstr "Режим"
 
-#: modules/devices/arm/processor.c:336
+#: modules/devices/arm/processor.c:350
 msgid "ARM"
 msgstr ""
 
-#: modules/devices/arm/processor.c:337
+#: modules/devices/arm/processor.c:351
 msgid "Implementer"
 msgstr "Исполнитель"
 
-#: modules/devices/arm/processor.c:338
+#: modules/devices/arm/processor.c:352
 msgid "Part"
 msgstr "Часть"
 
-#: modules/devices/arm/processor.c:339 modules/devices/ia64/processor.c:162
+#: modules/devices/arm/processor.c:353 modules/devices/ia64/processor.c:162
 #: modules/devices/parisc/processor.c:156 modules/devices/riscv/processor.c:183
 msgid "Architecture"
 msgstr "Архитектура"
 
-#: modules/devices/arm/processor.c:340
+#: modules/devices/arm/processor.c:354
 msgid "Variant"
 msgstr "Вариант"
 
-#: modules/devices/arm/processor.c:342 modules/devices/riscv/processor.c:190
+#: modules/devices/arm/processor.c:356 modules/devices/riscv/processor.c:190
 #: modules/devices/sparc/processor.c:78 modules/devices/x86/processor.c:663
 msgid "Capabilities"
 msgstr "Возможности"
 
-#: modules/devices/arm/processor.c:446
+#: modules/devices/arm/processor.c:467
 msgid "SOC/Package"
 msgstr ""
 
-#: modules/devices/arm/processor.c:450 modules/devices/x86/processor.c:698
+#: modules/devices/arm/processor.c:471 modules/devices/x86/processor.c:829
 msgid "Logical CPU Config"
 msgstr "Логическая конфигурация процессора"
 
-#: modules/devices/arm/processor.c:467
+#: modules/devices/arm/processor.c:488
 msgid "SOC/Package Information"
 msgstr ""
 
@@ -2155,31 +2229,31 @@ msgstr ""
 msgid "Field"
 msgstr "Поле"
 
-#: modules/devices.c:575 modules/devices.c:614
+#: modules/devices.c:575 modules/devices.c:610
 msgid "Value"
 msgstr "Значение"
 
-#: modules/devices.c:614
+#: modules/devices.c:610
 msgid "Sensor"
 msgstr "Сенсор"
 
-#: modules/devices.c:661
+#: modules/devices.c:657
 msgid "Devices"
 msgstr "Устройства"
 
-#: modules/devices.c:673
+#: modules/devices.c:669
 msgid "Update PCI ID listing"
 msgstr "Обновить список PCI ID"
 
-#: modules/devices.c:685
+#: modules/devices.c:681
 msgid "Update CPU feature database"
 msgstr "Обновить базу данных функций процессора"
 
-#: modules/devices.c:713
+#: modules/devices.c:709
 msgid "Gathers information about hardware devices"
 msgstr "Собирает информацию об устройствах"
 
-#: modules/devices.c:732
+#: modules/devices.c:728
 msgid "Resource information requires superuser privileges"
 msgstr "Для вывода информации о ресурсах нужны права администратора"
 
@@ -2216,6 +2290,7 @@ msgid "Platform"
 msgstr ""
 
 #: modules/devices/devicetree.c:144 modules/devices/devicetree.c:209
+#: modules/devices/gpu.c:239
 msgid "Compatible"
 msgstr ""
 
@@ -2287,8 +2362,9 @@ msgid "Introduction"
 msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:157 modules/devices/spd-decode.c:1510
+#: modules/devices/x86/processor.c:779
 msgid "Manufacturer"
-msgstr ""
+msgstr "Производитель"
 
 #: modules/devices/devicetree/rpi_data.c:159
 msgid "SOC (spec)"
@@ -2370,7 +2446,7 @@ msgstr "Метка актива"
 msgid "Chassis"
 msgstr "Шасси"
 
-#: modules/devices/dmi.c:116
+#: modules/devices/dmi.c:116 modules/devices/x86/processor.c:692
 msgid "(Not available; Perhaps try running HardInfo as root.)"
 msgstr "(Недоступно, попробуйте выполнить HardInfo с правами администратора.)"
 
@@ -2410,39 +2486,59 @@ msgstr "Версия BIOS"
 msgid "UUID"
 msgstr ""
 
-#: modules/devices/gpu.c:141 modules/devices/gpu.c:183
+#: modules/devices/gpu.c:151 modules/devices/gpu.c:230
 #: modules/devices/inputdevices.c:115 modules/devices/pci.c:111
 #: modules/devices/usb.c:62
 msgid "Device Information"
 msgstr "Информация об устройстве"
 
-#: modules/devices/gpu.c:142 modules/devices/gpu.c:184
+#: modules/devices/gpu.c:152 modules/devices/gpu.c:231
 msgid "Location"
 msgstr "Место"
 
-#: modules/devices/gpu.c:143
+#: modules/devices/gpu.c:153
 msgid "DRM Device"
 msgstr "Устройство DRM"
 
-#: modules/devices/gpu.c:144 modules/devices/pci.c:112 modules/devices/usb.c:67
+#: modules/devices/gpu.c:154 modules/devices/pci.c:112 modules/devices/usb.c:67
 msgid "Class"
 msgstr "Класс"
 
-#: modules/devices/gpu.c:150 modules/devices/pci.c:117
+#: modules/devices/gpu.c:162 modules/devices/pci.c:117
 msgid "In Use"
 msgstr "Используется"
 
-#: modules/devices/gpu.c:174
+#: modules/devices/gpu.c:193
 msgid "Unknown integrated GPU"
 msgstr "Неизвестный интегрированный графический процессор"
 
-#: modules/devices/gpu.c:185
-msgid "DT Compatibility"
+#: modules/devices/gpu.c:199
+msgid "clock-frequency property"
+msgstr ""
+
+#: modules/devices/gpu.c:200
+msgid "Operating Points (OPPv1)"
 msgstr ""
 
 #: modules/devices/gpu.c:201
+msgid "Operating Points (OPPv2)"
+msgstr ""
+
+#: modules/devices/gpu.c:237
+msgid "Device Tree Node"
+msgstr ""
+
+#: modules/devices/gpu.c:240 modules/network/net.c:454
+msgid "Status"
+msgstr ""
+
+#: modules/devices/gpu.c:257
 msgid "GPUs"
 msgstr "Графические процессоры"
+
+#: modules/devices/gpu.c:281
+msgid "No GPU devices found"
+msgstr ""
 
 #: modules/devices/ia64/processor.c:108
 msgid "IA64 Processor"
@@ -2529,7 +2625,7 @@ msgstr "Домен"
 msgid "Function"
 msgstr "Функция"
 
-#: modules/devices/pci.c:161
+#: modules/devices/pci.c:163
 msgid "No PCI devices found"
 msgstr "Устройства PCI не найдены"
 
@@ -2546,14 +2642,12 @@ msgid "⚬ Can do color printing=\n"
 msgstr "⚬ Может печатать цветным=\n"
 
 #: modules/devices/printers.c:85
-#, fuzzy
 msgid "⚬ Can do duplexing=\n"
-msgstr "Не исправлять:"
+msgstr "⚬ Может печатать на обеих сторонах=\n"
 
 #: modules/devices/printers.c:87
-#, fuzzy
 msgid "⚬ Can do staple output=\n"
-msgstr "Выходной файл не может быть переименован."
+msgstr "⚬ Может скреплять на выходе=\n"
 
 #: modules/devices/printers.c:89
 msgid "⚬ Can do copies=\n"
@@ -2962,15 +3056,76 @@ msgstr "Управление питанием"
 msgid "Bug Workarounds"
 msgstr "Обход багов"
 
-#: modules/devices/x86/processor.c:695 modules/devices/x86/processor.c:715
+#: modules/devices/x86/processor.c:689
+msgid "Socket Information"
+msgstr "Информация о сокете"
+
+#: modules/devices/x86/processor.c:709
+msgid "CPU Socket"
+msgstr "Сокет процессора"
+
+#: modules/devices/x86/processor.c:710 modules/devices/x86/processor.c:737
+#: modules/devices/x86/processor.c:777
+msgid "DMI Handle"
+msgstr ""
+
+#: modules/devices/x86/processor.c:712
+msgid "Voltage"
+msgstr "Напряжение"
+
+#: modules/devices/x86/processor.c:713
+msgid "External Clock"
+msgstr "Частота системной шины"
+
+#: modules/devices/x86/processor.c:714
+msgid "Max Frequency"
+msgstr "Максимальная частота"
+
+#: modules/devices/x86/processor.c:736 modules/devices/x86/processor.c:776
+msgid "Memory Socket"
+msgstr "Сокет памяти"
+
+#: modules/devices/x86/processor.c:738
+msgid "(Empty)"
+msgstr "(Пусто)"
+
+#: modules/devices/x86/processor.c:778
+msgid "Form Factor"
+msgstr "Форм-фактор"
+
+#: modules/devices/x86/processor.c:780
+msgid "Part Number"
+msgstr "Номер детали"
+
+#: modules/devices/x86/processor.c:783
+msgid "Speed"
+msgstr "Скорость"
+
+#: modules/devices/x86/processor.c:784
+msgid "Configured Clock Frequency"
+msgstr "Настроенная тактовая частота"
+
+#: modules/devices/x86/processor.c:785
+msgid "Minimum Voltage"
+msgstr "Минимальное напряжение"
+
+#: modules/devices/x86/processor.c:786
+msgid "Maximum Voltage"
+msgstr "Максимальное напряжение"
+
+#: modules/devices/x86/processor.c:787
+msgid "Configured Voltage"
+msgstr "Настроенное напряжение"
+
+#: modules/devices/x86/processor.c:826 modules/devices/x86/processor.c:847
 msgid "Package Information"
 msgstr "Информация о комплекте"
 
-#: modules/devices/x86/processor.c:742
+#: modules/devices/x86/processor.c:874
 msgid "Socket:Core"
 msgstr ""
 
-#: modules/devices/x86/processor.c:742
+#: modules/devices/x86/processor.c:874
 msgid "Thread"
 msgstr ""
 
@@ -4334,75 +4489,81 @@ msgctxt "x86-flag"
 msgid "CPU is affected by speculative store bypass attack"
 msgstr "Процессор подвержен атаке спекулятивного обхода хранилища"
 
+#. /bug:l1tf
+#: modules/devices/x86/x86_data.c:286
+msgctxt "x86-flag"
+msgid "CPU is affected by L1 Terminal Fault"
+msgstr ""
+
 #. /x86/kernel/cpu/powerflags.h
 #. /flag:pm:ts
-#: modules/devices/x86/x86_data.c:288
+#: modules/devices/x86/x86_data.c:289
 msgctxt "x86-flag"
 msgid "temperature sensor"
 msgstr "сенсор температуры"
 
 #. /flag:pm:fid
-#: modules/devices/x86/x86_data.c:289
+#: modules/devices/x86/x86_data.c:290
 msgctxt "x86-flag"
 msgid "frequency id control"
 msgstr "контроль частоты id"
 
 #. /flag:pm:vid
-#: modules/devices/x86/x86_data.c:290
+#: modules/devices/x86/x86_data.c:291
 msgctxt "x86-flag"
 msgid "voltage id control"
 msgstr "контроль вольтажа id"
 
 #. /flag:pm:ttp
-#: modules/devices/x86/x86_data.c:291
+#: modules/devices/x86/x86_data.c:292
 msgctxt "x86-flag"
 msgid "thermal trip"
 msgstr "изменение температуры"
 
 #. /flag:pm:tm
-#: modules/devices/x86/x86_data.c:292
+#: modules/devices/x86/x86_data.c:293
 msgctxt "x86-flag"
 msgid "hardware thermal control"
 msgstr "аппаратный контроль температуры"
 
 #. /flag:pm:stc
-#: modules/devices/x86/x86_data.c:293
+#: modules/devices/x86/x86_data.c:294
 msgctxt "x86-flag"
 msgid "software thermal control"
 msgstr "программный контроль температуры"
 
 #. /flag:pm:100mhzsteps
-#: modules/devices/x86/x86_data.c:294
+#: modules/devices/x86/x86_data.c:295
 msgctxt "x86-flag"
 msgid "100 MHz multiplier control"
 msgstr "контроль множителя 100 МГц"
 
 #. /flag:pm:hwpstate
-#: modules/devices/x86/x86_data.c:295
+#: modules/devices/x86/x86_data.c:296
 msgctxt "x86-flag"
 msgid "hardware P-state control"
 msgstr "аппаратное управление P-state"
 
 #. /flag:pm:cpb
-#: modules/devices/x86/x86_data.c:296
+#: modules/devices/x86/x86_data.c:297
 msgctxt "x86-flag"
 msgid "core performance boost"
 msgstr "повышение производительности ядра"
 
 #. /flag:pm:eff_freq_ro
-#: modules/devices/x86/x86_data.c:297
+#: modules/devices/x86/x86_data.c:298
 msgctxt "x86-flag"
 msgid "Readonly aperf/mperf"
 msgstr "aperf/mperf только для чтения"
 
 #. /flag:pm:proc_feedback
-#: modules/devices/x86/x86_data.c:298
+#: modules/devices/x86/x86_data.c:299
 msgctxt "x86-flag"
 msgid "processor feedback interface"
 msgstr "интерфейс отзыва процессора"
 
 #. /flag:pm:acc_power
-#: modules/devices/x86/x86_data.c:299
+#: modules/devices/x86/x86_data.c:300
 msgctxt "x86-flag"
 msgid "accumulated power mechanism"
 msgstr "механизм накопления питания"
@@ -4419,7 +4580,7 @@ msgstr "IP Подключения"
 msgid "Routing Table"
 msgstr "Таблица маршрутизации"
 
-#: modules/network.c:62 modules/network.c:303
+#: modules/network.c:62 modules/network.c:308
 msgid "ARP Table"
 msgstr "Таблица ARP"
 
@@ -4435,80 +4596,80 @@ msgstr "Статистика"
 msgid "Shared Directories"
 msgstr "Общие каталоги"
 
-#: modules/network.c:304 modules/network.c:326 modules/network.c:357
+#: modules/network.c:309 modules/network.c:331 modules/network.c:362
 #: modules/network/net.c:472
 msgid "IP Address"
 msgstr "IP-адрес"
 
-#: modules/network.c:304 modules/network.c:357 modules/network.c:374
+#: modules/network.c:309 modules/network.c:362 modules/network.c:379
 msgid "Interface"
 msgstr "Интерфейс"
 
-#: modules/network.c:304
+#: modules/network.c:309
 msgid "MAC Address"
 msgstr "MAC-адрес"
 
-#: modules/network.c:313
+#: modules/network.c:318
 msgid "SAMBA"
 msgstr ""
 
-#: modules/network.c:314
+#: modules/network.c:319
 msgid "NFS"
 msgstr ""
 
-#: modules/network.c:325
+#: modules/network.c:330
 msgid "Name Servers"
 msgstr ""
 
-#: modules/network.c:340
+#: modules/network.c:345
 msgid "Connections"
 msgstr ""
 
-#: modules/network.c:341
+#: modules/network.c:346
 msgid "Local Address"
 msgstr "Локальный адрес"
 
-#: modules/network.c:341
+#: modules/network.c:346
 msgid "Protocol"
 msgstr "Протокол"
 
-#: modules/network.c:341
+#: modules/network.c:346
 msgid "Foreign Address"
 msgstr "Удалённый адрес"
 
-#: modules/network.c:341
+#: modules/network.c:346
 msgid "State"
 msgstr "Состояние"
 
-#: modules/network.c:357
+#: modules/network.c:362
 msgid "Sent"
 msgstr "Отправлено"
 
-#: modules/network.c:357
+#: modules/network.c:362
 msgid "Received"
 msgstr "Получено"
 
-#: modules/network.c:373
+#: modules/network.c:378
 msgid "IP routing table"
 msgstr ""
 
-#: modules/network.c:374
+#: modules/network.c:379
 msgid "Destination/Gateway"
 msgstr "Цель / Шлюз"
 
-#: modules/network.c:374
+#: modules/network.c:379
 msgid "Flags"
 msgstr "Флаги"
 
-#: modules/network.c:374 modules/network/net.c:473
+#: modules/network.c:379 modules/network/net.c:473
 msgid "Mask"
 msgstr "Маска"
 
-#: modules/network.c:402
+#: modules/network.c:407
 msgid "Network"
 msgstr "Сеть"
 
-#: modules/network.c:435
+#: modules/network.c:440
 msgid "Gathers information about this computer's network connection"
 msgstr "Собирает информацию о сетевых подключениях"
 
@@ -4738,10 +4899,6 @@ msgstr ""
 
 #: modules/network/net.c:452
 msgid "Transmission Power"
-msgstr ""
-
-#: modules/network/net.c:454
-msgid "Status"
 msgstr ""
 
 #: modules/network/net.c:455
