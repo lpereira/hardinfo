@@ -63,6 +63,7 @@ struct _ProgramParameters {
   gboolean markup_ok;
 
   gint     report_format;
+  gint     max_bench_results;
 
   gchar  **use_modules;
   gchar   *run_benchmark;

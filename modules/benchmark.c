@@ -349,7 +349,7 @@ static gchar *__benchmark_include_results(bench_value r,
     GKeyFile *conf;
     gchar **machines;
     gchar *path, *results = g_strdup("");
-    int i, len, loc, win_min, win_max, win_size = 10;
+    int i, len, loc, win_min, win_max, win_size = params.max_bench_results;
 
     GSList *result_list = NULL, *li = NULL;
 
