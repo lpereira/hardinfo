@@ -394,6 +394,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gchar *run_benchmark = NULL;
     static gchar *result_format = NULL;
     static gchar **use_modules = NULL;
+    static gint max_bench_results = 10;
 
     static GOptionEntry options[] = {
 	{
@@ -420,6 +421,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &result_format,
 	 .description = N_("benchmark result format ([short], conf, shell)")},
+	{
+	 .long_name = "max-results",
+	 .short_name = 'n',
+	 .arg = G_OPTION_ARG_INT,
+	 .arg_data = &max_bench_results,
+	 .description = N_("maximum number of benchmark results to include (-1 for no limit, default is 10)")},
 	{
 	 .long_name = "list-modules",
 	 .short_name = 'l',
@@ -490,6 +497,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->use_modules = use_modules;
     param->run_benchmark = run_benchmark;
     param->result_format = result_format;
+    param->max_bench_results = max_bench_results;
     param->autoload_deps = autoload_deps;
     param->run_xmlrpc_server = run_xmlrpc_server;
     param->skip_benchmarks = skip_benchmarks;
