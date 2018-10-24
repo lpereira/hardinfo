@@ -107,7 +107,7 @@ void scan_statistics(gboolean reload)
 
             while (*tmp && isspace(*tmp)) tmp++;
                 /* the bolded-space/dot used here is a hardinfo shell hack */
-                if (params.html_ok)
+                if (params.markup_ok)
                     __statistics = h_strdup_cprintf("<b> </b>#%d=%s\n",
                                             __statistics,
                                             line++, tmp);

@@ -52,7 +52,14 @@ struct _ProgramParameters {
   gboolean autoload_deps;
   gboolean run_xmlrpc_server;
   gboolean skip_benchmarks;
-  gboolean html_ok; /* ok to use html in the value part of a key/value */
+
+  /*
+   * OK to use the common parts of HTML(4.0) and Pango Markup
+   * in the value part of a key/value.
+   * Including the (b,big,i,s,sub,sup,small,tt,u) tags.
+   * https://developer.gnome.org/pango/stable/PangoMarkupFormat.html
+   */
+  gboolean markup_ok;
 
   gint     report_format;
 

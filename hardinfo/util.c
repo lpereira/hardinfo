@@ -496,9 +496,9 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
      * report html: yes
      * report text: no
      * anything else? */
-    param->html_ok = TRUE;
+    param->markup_ok = TRUE;
     if (param->create_report && param->report_format != REPORT_FORMAT_HTML)
-        param->html_ok = FALSE;
+        param->markup_ok = FALSE;
 
     gchar *confdir = g_build_filename(g_get_user_config_dir(), "hardinfo", NULL);
     if (!g_file_test(confdir, G_FILE_TEST_EXISTS)) {
