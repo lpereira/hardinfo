@@ -31,6 +31,7 @@ static void set_all_active(ReportDialog * rd, gboolean setting);
 static FileTypes file_types[] = {
     {"HTML (*.html)", "text/html", ".html", report_context_html_new},
     {"Plain Text (*.txt)", "text/plain", ".txt", report_context_text_new},
+    {"Shell Dump (*.txt)", "text/plain", ".txt", report_context_shell_new},
     {NULL, NULL, NULL, NULL}
 };
 
@@ -237,11 +238,55 @@ void report_details(ReportContext *ctx, gchar *key, gchar *value, gboolean highl
     report_details_end(ctx);
 }
 
+static void report_table_shell_dump(ReportContext *ctx, gchar *key_file_str, int level)
+{
+    gchar *text, *p, *next_nl, *eq, *indent;
+    gchar *key, *value;
+
+    indent = g_strnfill(level * 4, ' ');
+
+    if (key_file_str) {
+        p = text = g_strdup(key_file_str);
+        while(next_nl = strchr(p, '\n')) {
+            *next_nl = 0;
+            eq = strchr(p, '=');
+            if (*p != '[' && eq) {
+                *eq = 0;
+                key = p; value = eq + 1;
+
+                ctx->output = h_strdup_cprintf("%s%s=%s\n", ctx->output, indent, key, value);
+                if (key_wants_details(key) || params.force_all_details) {
+                    gchar *mi_tag = key_mi_tag(key);
+                    gchar *mi_data = ctx->entry->morefunc(mi_tag); /*const*/
+
+                    if (mi_data)
+                        report_table_shell_dump(ctx, mi_data, level + 1);
+
+                    g_free(mi_tag);
+                }
+
+            } else
+                ctx->output = h_strdup_cprintf("%s%s\n", ctx->output, indent, p);
+            p = next_nl + 1;
+        }
+    }
+    g_free(text);
+    g_free(indent);
+    return;
+}
+
 void report_table(ReportContext * ctx, gchar * text)
 {
-    GKeyFile *key_file = g_key_file_new();
+    GKeyFile *key_file = NULL;
     gchar **groups;
     gint i;
+
+    if (ctx->format == REPORT_FORMAT_SHELL) {
+        report_table_shell_dump(ctx, text, 0);
+        return;
+    }
+
+    key_file = g_key_file_new();
 
     /* make only "Value" column visible ("Key" column is always visible) */
     ctx->columns = REPORT_COL_VALUE;
@@ -675,6 +720,29 @@ ReportContext *report_context_text_new()
 
     ctx->output = g_strdup("");
     ctx->format = REPORT_FORMAT_TEXT;
+
+    ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                               g_free, g_free);
+    ctx->first_table = TRUE;
+
+    return ctx;
+}
+
+ReportContext *report_context_shell_new()
+{
+    ReportContext *ctx;
+
+    ctx = g_new0(ReportContext, 1);
+    ctx->header = report_text_header;
+    ctx->footer = report_text_footer;
+
+    ctx->title = report_text_title;
+    ctx->subtitle = report_text_subtitle;
+    /* special format handled in report_table(),
+     * doesn't need the others. */
+
+    ctx->output = g_strdup("");
+    ctx->format = REPORT_FORMAT_SHELL;
 
     ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                g_free, g_free);
