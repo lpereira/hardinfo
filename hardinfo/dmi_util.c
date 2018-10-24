@@ -24,9 +24,12 @@
 /* frees the string and sets it NULL if it is to be ignored
  * returns -1 if error, 0 if ok, 1 if ignored */
 static int ignore_placeholder_strings(gchar **pstr) {
+    gchar *chk, *p;
+    chk = g_strdup(*pstr);
+
     if (pstr == NULL || *pstr == NULL)
         return -1;
-#define DMI_IGNORE(m) if (strcasecmp(m, *pstr) == 0) { g_free(*pstr); *pstr = NULL; return 1; }
+#define DMI_IGNORE(m) if (strcasecmp(m, *pstr) == 0) { g_free(chk); g_free(*pstr); *pstr = NULL; return 1; }
     DMI_IGNORE("To be filled by O.E.M.");
     DMI_IGNORE("System Product Name");
     DMI_IGNORE("System Manufacturer");
@@ -34,9 +37,19 @@ static int ignore_placeholder_strings(gchar **pstr) {
     DMI_IGNORE("Default String");
     DMI_IGNORE("Rev X.0x"); /* ASUS board version nonsense */
     DMI_IGNORE("x.x");      /* Gigabyte board version nonsense */
-    DMI_IGNORE("XX");       /* Zotac version nonsense */
     DMI_IGNORE("NA");
+
+    /* Zotac version nonsense */
+    p = chk;
+    while (*p != 0) { *p = 'x'; p++; } /* all X */
+    DMI_IGNORE(chk);
+    p = chk;
+    while (*p != 0) { *p = '0'; p++; } /* all 0 */
+    DMI_IGNORE(chk);
+
     /*... more, I'm sure. */
+
+    g_free(chk);
     return 0;
 }
 
