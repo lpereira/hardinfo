@@ -299,12 +299,15 @@ void report_table(ReportContext * ctx, gchar * text)
                     if ( key_is_flagged(key) ) {
                         gchar *mi_tag = key_mi_tag(key);
                         gchar *mi_data = NULL; /*const*/
-                        if (key_wants_details(key)) {
+
+                        if (key_wants_details(key) || params.force_all_details)
                             mi_data = ctx->entry->morefunc(mi_tag);
+
+                        if (mi_data)
                             report_details(ctx, (gchar*)key_get_name(key), value, key_is_highlighted(key), mi_data);
-                        } else {
+                        else
                             report_key_value(ctx, (gchar*)key_get_name(key), value, key_is_highlighted(key) );
-                        }
+
                         g_free(mi_tag);
                     } else {
                         report_key_value(ctx, key, value, FALSE);

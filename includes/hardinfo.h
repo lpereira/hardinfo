@@ -46,6 +46,7 @@ typedef struct _ProgramParameters	ProgramParameters;
 
 struct _ProgramParameters {
   gboolean create_report;
+  gboolean force_all_details; /* for create_report, include any "moreinfo" that exists for any item */
   gboolean show_version;
   gboolean gui_running;
   gboolean list_modules;
