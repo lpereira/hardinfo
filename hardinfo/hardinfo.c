@@ -92,13 +92,17 @@ int main(int argc, char **argv)
     }
 
     if (!params.create_report && !params.run_benchmark) {
-	/* we only try to open the UI if the user didn't ask for a report. */
-	params.gui_running = ui_init(&argc, &argv);
+        /* we only try to open the UI if the user didn't ask for a report. */
+        params.gui_running = ui_init(&argc, &argv);
 
-	/* as a fallback, if GTK+ initialization failed, run in report
-	   generation mode. */
-	if (!params.gui_running)
-	    params.create_report = TRUE;
+        /* as a fallback, if GTK+ initialization failed, run in report
+           generation mode. */
+        if (!params.gui_running) {
+            params.create_report = TRUE;
+            /* ... it is possible to -f html without -r */
+            if (params.report_format != REPORT_FORMAT_HTML)
+                params.markup_ok = FALSE;
+        }
     }
 
     if (params.use_modules) {

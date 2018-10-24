@@ -216,7 +216,7 @@ scan_printers_do(void)
 					    printer_list,
 					    prn_id,
 					    dests[i].name,
-					    dests[i].is_default ? ((params.html_ok) ? "<i>Default</i>" : "(Default)") : "");
+					    dests[i].is_default ? ((params.markup_ok) ? "<i>Default</i>" : "(Default)") : "");
             printer_icons = h_strdup_cprintf("\nIcon$%s$%s=printer.png",
                                              printer_icons,
                                              prn_id,

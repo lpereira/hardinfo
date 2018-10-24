@@ -43,7 +43,7 @@ static gchar *_resource_obtain_name(gchar *name)
     if (g_regex_match(_regex_pci, name, 0, NULL)) {
       temp = module_call_method_param("devices::getPCIDeviceDescription", name);
       if (temp) {
-        if (params.html_ok)
+        if (params.markup_ok)
           return g_strdup_printf("<b><small>PCI</small></b> %s", (gchar *)idle_free(temp));
         else
           return g_strdup_printf("PCI %s", (gchar *)idle_free(temp));
@@ -51,7 +51,7 @@ static gchar *_resource_obtain_name(gchar *name)
     } else if (g_regex_match(_regex_module, name, 0, NULL)) {
       temp = module_call_method_param("computer::getKernelModuleDescription", name);
       if (temp) {
-        if (params.html_ok)
+        if (params.markup_ok)
           return g_strdup_printf("<b><small>Module</small></b> %s", (gchar *)idle_free(temp));
         else
           return g_strdup_printf("Module %s", (gchar *)idle_free(temp));
@@ -98,7 +98,7 @@ void scan_device_resources(gboolean reload)
           if (strstr(temp[0], "0000-0000"))
             zero_to_zero_addr++;
 
-          if (params.html_ok)
+          if (params.markup_ok)
             _resources = h_strdup_cprintf("<tt>%s</tt>=%s\n", _resources,
                                           temp[0], name);
           else
