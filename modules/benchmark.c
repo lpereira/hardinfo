@@ -330,6 +330,17 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select) {
     g_free(rkey);
 }
 
+gint bench_result_sort (gconstpointer a, gconstpointer b) {
+    bench_result
+        *A = (bench_result*)a,
+        *B = (bench_result*)b;
+    if ( A->bvalue.result < B->bvalue.result )
+        return -1;
+    if ( A->bvalue.result > B->bvalue.result )
+        return 1;
+    return 0;
+}
+
 static gchar *__benchmark_include_results(bench_value r,
 					  const gchar * benchmark,
 					  ShellOrderType order_type)
@@ -337,18 +348,21 @@ static gchar *__benchmark_include_results(bench_value r,
     bench_result *b = NULL;
     GKeyFile *conf;
     gchar **machines;
-    gchar *path, *results = g_strdup(""), *return_value, *processor_frequency, *processor_name;
-    int i, n_threads;
+    gchar *path, *results = g_strdup("");
+    int i, len, loc, win_min, win_max, win_size = 10;
+
+    GSList *result_list = NULL, *li = NULL;
 
     moreinfo_del_with_prefix("BENCH");
 
+    /* this result */
     if (r.result > 0.0) {
         b = bench_result_this_machine(benchmark, r);
-        br_mi_add(&results, b, 1);
+        result_list = g_slist_append(result_list, b);
     }
 
+    /* load saved results */
     conf = g_key_file_new();
-
     path = g_build_filename(g_get_user_config_dir(), "hardinfo", "benchmark.conf", NULL);
     if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
         DEBUG("local benchmark.conf not found, trying system-wide");
@@ -365,11 +379,9 @@ static gchar *__benchmark_include_results(bench_value r,
         bench_result *sbr;
 
         values = g_key_file_get_string_list(conf, benchmark, machines[i], NULL, NULL);
-
         sbr = bench_result_benchmarkconf(benchmark, machines[i], values);
-        br_mi_add(&results, sbr, 0);
+        result_list = g_slist_append(result_list, sbr);
 
-        bench_result_free(sbr);
         g_strfreev(values);
     }
 
@@ -377,7 +389,50 @@ static gchar *__benchmark_include_results(bench_value r,
     g_free(path);
     g_key_file_free(conf);
 
-    return_value = g_strdup_printf("[$ShellParam$]\n"
+    /* sort */
+    result_list = g_slist_sort(result_list, bench_result_sort);
+    if (order_type == SHELL_ORDER_DESCENDING)
+        result_list = g_slist_reverse(result_list);
+
+    /* limit results to those near the current result */
+    len = g_slist_length(result_list);
+    if (win_size == 0) win_size = 1;
+    if (win_size < 0) win_size = len;
+    loc = g_slist_index(result_list, b); /* -1 if not found */
+    if (loc >= 0) {
+        win_min = loc - win_size/2;
+        win_max = win_min + win_size;
+        if (win_min < 0) {
+            win_min = 0;
+            win_max = MIN(win_size, len);
+        } else if (win_max > len) {
+            win_max = len;
+            win_min = MAX(len - win_size, 0);
+        }
+    } else {
+        win_min = 0;
+        win_max = len;
+    }
+
+    DEBUG("...len: %d, loc: %d, win_size: %d, win: [%d..%d]\n",
+        len, loc, win_size, win_min, win_max-1 );
+
+    /* prepare for shell */
+    i = 0;
+    li = result_list;
+    while (li) {
+        bench_result *tr = (bench_result*)li->data;
+        if (i >= win_min && i < win_max)
+            br_mi_add(&results, tr, (tr == b) ? 1 : 0 );
+        bench_result_free(tr); /* no longer needed */
+        i++;
+        li = g_slist_next(li);
+    }
+
+    g_slist_free(result_list);
+
+    /* send to shell */
+    return g_strdup_printf("[$ShellParam$]\n"
                    "Zebra=1\n"
                    "OrderType=%d\n"
                    "ViewType=4\n"
@@ -390,8 +445,6 @@ static gchar *__benchmark_include_results(bench_value r,
                    _("CPU Config"), _("Results"), _("CPU"),
                    benchmark, results);
 
-    bench_result_free(b);
-    return return_value;
 }
 
 static gchar *benchmark_include_results_reverse(bench_value result, const gchar * benchmark)
