@@ -384,6 +384,7 @@ log_handler(const gchar * log_domain,
 void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 {
     static gboolean create_report = FALSE;
+    static gboolean force_all_details = FALSE;
     static gboolean show_version = FALSE;
     static gboolean list_modules = FALSE;
     static gboolean autoload_deps = FALSE;
@@ -457,6 +458,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &skip_benchmarks,
 	 .description = N_("do not run benchmarks")},
+	{
+	 .long_name = "very-verbose",
+	 .short_name = 'w', /* like -vv */
+	 .arg = G_OPTION_ARG_NONE,
+	 .arg_data = &force_all_details,
+	 .description = N_("show all details")},
 	{NULL}
     };
     GOptionContext *ctx;
@@ -486,6 +493,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->autoload_deps = autoload_deps;
     param->run_xmlrpc_server = run_xmlrpc_server;
     param->skip_benchmarks = skip_benchmarks;
+    param->force_all_details = force_all_details;
     param->argv0 = *(argv)[0];
 
     if (report_format && g_str_equal(report_format, "html"))
