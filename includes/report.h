@@ -24,6 +24,7 @@
 typedef enum {
     REPORT_FORMAT_HTML,
     REPORT_FORMAT_TEXT,
+    REPORT_FORMAT_SHELL,
     N_REPORT_FORMAT
 } ReportFormat;
 
@@ -81,6 +82,7 @@ void		 report_dialog_show();
 
 ReportContext	*report_context_html_new();
 ReportContext	*report_context_text_new();
+ReportContext	*report_context_shell_new();
 
 void		 report_header		(ReportContext *ctx);
 void		 report_footer		(ReportContext *ctx);

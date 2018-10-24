@@ -407,7 +407,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .short_name = 'f',
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &report_format,
-	 .description = N_("chooses a report format (text, html)")},
+	 .description = N_("chooses a report format ([text], html)")},
 	{
 	 .long_name = "run-benchmark",
 	 .short_name = 'b',
@@ -496,8 +496,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->force_all_details = force_all_details;
     param->argv0 = *(argv)[0];
 
-    if (report_format && g_str_equal(report_format, "html"))
-	param->report_format = REPORT_FORMAT_HTML;
+    if (report_format) {
+        if (g_str_equal(report_format, "html"))
+            param->report_format = REPORT_FORMAT_HTML;
+        if (g_str_equal(report_format, "shell"))
+            param->report_format = REPORT_FORMAT_SHELL;
+    }
 
     /* html ok?
      * gui: yes
