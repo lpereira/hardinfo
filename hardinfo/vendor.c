@@ -340,11 +340,14 @@ static const gchar *vendor_get_name_ex(const gchar * id_str, short shortest) {
             int snl = (v->name_short) ? strlen(v->name_short) : 0;
             if (!nl) nl = 9999;
             if (!snl) snl = 9999;
-            /* if id_str is shortest, then return as if not found (see below) */
-            if (nl <= snl)
-                return (sl <= nl) ? id_str : v->name;
+            /* if id_str is shortest, then return as if
+             *   not found (see below).
+             * if all equal then prefer
+             *   name_short > name > id_str. */
+            if (nl < snl)
+                return (sl < nl) ? id_str : v->name;
             else
-                return (sl <= snl) ? id_str : v->name_short;
+                return (sl < snl) ? id_str : v->name_short;
         } else
             return v->name;
     }
