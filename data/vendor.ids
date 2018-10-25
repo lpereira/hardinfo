@@ -80,7 +80,9 @@ name Realtek
     url www.realtek.com.tw
     match_string Realtek
 
-name Toshiba
+name Toshiba Corporation
+# styled in all-caps
+    name_short TOSHIBA
     url www.toshiba.com
     match_string Toshiba
 
