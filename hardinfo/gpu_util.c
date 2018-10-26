@@ -28,7 +28,7 @@ nvgpu *nvgpu_new() {
     return g_new0(nvgpu, 1);
 }
 
-void *nvgpu_free(nvgpu *s) {
+void nvgpu_free(nvgpu *s) {
     if (s) {
         free(s->model);
         free(s->bios_version);
