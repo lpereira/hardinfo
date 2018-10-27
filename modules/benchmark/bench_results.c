@@ -113,7 +113,7 @@ static int cpu_config_is_close(char *str0, char *str1) {
     return 0;
 }
 
-static gen_machine_id(bench_machine *m) {
+static void gen_machine_id(bench_machine *m) {
     char *s;
     if (m) {
         if (m->mid != NULL)
