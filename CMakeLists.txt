@@ -225,6 +225,7 @@ set_source_files_properties(
 	hardinfo/gpu_util.c
 	hardinfo/cpu_util.c
 	hardinfo/x_util.c
+	hardinfo/dt_util.c
 	PROPERTIES
 	COMPILE_FLAGS "-Wall -Wextra -Wno-parentheses -Wno-unused-function"
 )
