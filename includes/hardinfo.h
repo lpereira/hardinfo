@@ -19,6 +19,9 @@
 #ifndef __HARDINFO_H__
 #define __HARDINFO_H__
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
 #include "config.h"
