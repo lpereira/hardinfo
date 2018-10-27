@@ -168,7 +168,8 @@ static gboolean pci_get_device_sysfs(uint32_t dom, uint32_t bus, uint32_t dev, u
     s->bus = bus;
     s->device = dev;
     s->function = func;
-    _sysfs_bus_pci_read_hex(dom, bus, dev, func, "class", &s->class);
+    if (! _sysfs_bus_pci_read_hex(dom, bus, dev, func, "class", &s->class) )
+        return FALSE;
     s->class >>= 8; /* TODO: find out why */
     _sysfs_bus_pci_read_hex(dom, bus, dev, func, "device", &s->device_id);
     _sysfs_bus_pci_read_hex(dom, bus, dev, func, "vendor", &s->vendor_id);
@@ -198,7 +199,7 @@ static gboolean pci_get_device_sysfs(uint32_t dom, uint32_t bus, uint32_t dev, u
         s->pcie_width_curr = strtoul(tmp, NULL, 0);
         free(tmp);
     }
-
+    return TRUE;
 }
 
 static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func, pcid *s) {
@@ -248,7 +249,7 @@ static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, u
 
 pcid *pci_get_device(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func) {
     pcid *s = pcid_new();
-    int ok = 0;
+    gboolean ok = FALSE;
     if (s) {
         ok = pci_get_device_sysfs(dom, bus, dev, func, s);
         ok |= pci_get_device_lspci(dom, bus, dev, func, s);
