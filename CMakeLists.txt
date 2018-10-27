@@ -219,6 +219,16 @@ add_library(uber-graph STATIC
 )
 endif()
 
+set_source_files_properties(
+	hardinfo/usb_util.c
+	hardinfo/pci_util.c
+	hardinfo/gpu_util.c
+	hardinfo/cpu_util.c
+	hardinfo/x_util.c
+	PROPERTIES
+	COMPILE_FLAGS "-Wall -Wextra -Wno-parentheses -Wno-unused-function"
+)
+
 if (HARDINFO_GTK3)
 add_executable(hardinfo
 	hardinfo/usb_util.c

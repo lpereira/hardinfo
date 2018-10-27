@@ -80,9 +80,7 @@ static char *lspci_line_value(char *line, const char *prefix) {
 /* read output line of lspci -vmmnn */
 static int lspci_line_string_and_code(char *line, char *prefix, char **str, uint32_t *code) {
     char *l = lspci_line_value(line, prefix);
-    char buff[512] = "";
     char *e;
-    int ec;
 
     if (l) {
         e = strchr(l, 0);
@@ -97,7 +95,7 @@ static int lspci_line_string_and_code(char *line, char *prefix, char **str, uint
 
 static gboolean pci_fill_details(pcid *s) {
     gboolean spawned;
-    gchar *out, *err, *p, *l, *t, *next_nl;
+    gchar *out, *err, *p, *l, *next_nl;
     gchar *pci_loc = pci_address_str(s->domain, s->bus, s->device, s->function);
     gchar *lspci_cmd = g_strdup_printf("lspci -D -s %s -vvv", pci_loc);
 
@@ -154,9 +152,9 @@ gboolean _sysfs_bus_pci_read_hex(uint32_t dom, uint32_t bus, uint32_t dev, uint3
         if (ec) {
             *val = tval;
             return TRUE;
-        } else
-            return FALSE;
+        }
     }
+    return FALSE;
 }
 
 /* https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-bus-pci */
@@ -204,7 +202,7 @@ static gboolean pci_get_device_sysfs(uint32_t dom, uint32_t bus, uint32_t dev, u
 
 static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func, pcid *s) {
     gboolean spawned;
-    gchar *out, *err, *p, *l, *t, *next_nl;
+    gchar *out, *err, *p, *l, *next_nl;
     gchar *pci_loc = pci_address_str(dom, bus, dev, func);
     gchar *lspci_cmd = g_strdup_printf("lspci -D -s %s -vmmnn", pci_loc);
 
