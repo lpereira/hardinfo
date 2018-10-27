@@ -947,7 +947,7 @@ static void decode_ddr_module_size(unsigned char *bytes, int *size)
     }
 }
 
-static void *decode_ddr_module_timings(unsigned char *bytes, float *tcl, float *trcd, float *trp, float *tras)
+static void decode_ddr_module_timings(unsigned char *bytes, float *tcl, float *trcd, float *trp, float *tras)
 {
     float ctime;
     float highest_cas = 0;
