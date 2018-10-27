@@ -220,6 +220,8 @@ const char *dtr_symbol_lookup_by_path(dtr *s, const char* path) {
 void _dtr_read_aliases(dtr *);
 void _dtr_read_symbols(dtr *);
 void _dtr_map_phandles(dtr *, char *np);
+int dtr_inh_find(dtr_obj *obj, char *qprop, int limit);
+#define UMIN(a,b) MIN(((uint32_t)(a)), ((uint32_t)(b)))
 
 const char *dtr_find_device_tree_root() {
     char *candidates[] = {
@@ -502,7 +504,7 @@ uint64_t dtr_get_prop_u64(dtr *s, dtr_obj *node, const char *name) {
 
 int dtr_guess_type(dtr_obj *obj) {
     char *tmp, *dash;
-    int i = 0, anc = 0, might_be_str = 1;
+    uint32_t i = 0, anc = 0, might_be_str = 1;
 
     if (obj->length == 0)
         return DTP_EMPTY;
@@ -516,13 +518,13 @@ int dtr_guess_type(dtr_obj *obj) {
         }
     }
 
-    /* /aliases/* and /__symbols__/* are always strings */
+    /* /aliases/ * and /__symbols__/ * are always strings */
     if (strncmp(obj->path, "/aliases/", strlen("/aliases/") ) == 0)
         return DTP_STR;
     if (strncmp(obj->path, "/__symbols__/", strlen("/__symbols__/") ) == 0)
         return DTP_STR;
 
-    /* /__overrides__/* */
+    /* /__overrides__/ * */
     if (strncmp(obj->path, "/__overrides__/", strlen("/__overrides__/") ) == 0)
         if (strcmp(obj->name, "name") != 0)
             return DTP_OVR;
@@ -672,7 +674,8 @@ char *dtr_list_override(dtr_obj *obj) {
     char *ret = NULL;
     char *ph, *str;
     char *src;
-    int l, consumed = 0;
+    uint32_t consumed = 0;
+    int l;
     src = obj->data_str;
     while (consumed + 5 <= obj->length) {
         ph = dtr_elem_phref(obj->dt, *(dt_uint*)src, 1, NULL);
@@ -685,7 +688,7 @@ char *dtr_list_override(dtr_obj *obj) {
         free(str);
     }
     if (consumed < obj->length) {
-        str = dtr_list_byte(src, obj->length - consumed);
+        str = dtr_list_byte((uint8_t*)src, obj->length - consumed);
         ret = appf(ret, "%s", str);
         free(str);
     }
@@ -707,8 +710,8 @@ char *dtr_list_phref(dtr_obj *obj, char *ext_cell_prop) {
     /* <phref, #XXX-cells> */
     int count = obj->length / 4;
     int i = 0, ext_cells = 0;
-    char *ph_path;
     char *ph, *ext, *ret = NULL;
+
     while (i < count) {
         if (ext_cell_prop == NULL)
             ext_cells = 0;
@@ -743,7 +746,7 @@ char *dtr_list_interrupts(dtr_obj *obj) {
 
     count = obj->length / 4;
     while (i < count) {
-        icells = MIN(icells, count - i);
+        icells = UMIN(icells, count - i);
         ext = dtr_list_hex((obj->data_int + i), icells); i+=icells;
         ret = appf(ret, "<%s>", ext);
     }
@@ -757,13 +760,12 @@ intr_err:
 char *dtr_list_reg(dtr_obj *obj) {
     char *tup_str, *ret = NULL;
     uint32_t acells, scells, tup_len;
-    uint32_t tups, extra, consumed; /* extra and consumed are bytes */
+    uint32_t extra, consumed; /* bytes */
     uint32_t *next;
 
     acells = dtr_inh_find(obj, "#address-cells", 2);
     scells = dtr_inh_find(obj, "#size-cells", 2);
     tup_len = acells + scells;
-    tups = obj->length / (tup_len * 4);
     extra = obj->length % (tup_len * 4);
     consumed = 0; /* bytes */
 
@@ -860,7 +862,7 @@ char* dtr_str(dtr_obj *obj) {
         case DTP_UNK:
         default:
             if (obj->length > 64) /* maybe should use #define at the top */
-                ret = g_strdup_printf(ret, "{data} (%lu bytes)", obj->length);
+                ret = g_strdup_printf("{data} (%lu bytes)", (long unsigned int)obj->length);
             else
                 ret = dtr_list_byte((uint8_t*)obj->data, obj->length);
             break;
@@ -1108,7 +1110,6 @@ void _dtr_map_phandles(dtr *s, char *np) {
     GDir *dir;
     dtr_obj *prop, *ph_prop;
     dtr_map *ph;
-    uint32_t phandle;
 
     if (np == NULL) np = "";
     dir_path = g_strdup_printf("%s/%s", s->base_path, np);
