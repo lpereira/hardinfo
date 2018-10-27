@@ -255,7 +255,7 @@ gpud *dt_soc_gpu() {
         { "brcm,bcm2835-vc4", "Broadcom", "VideoCore IV" },
         { "arm,mali-450", "ARM", "Mali 450" },
         { "arm,mali", "ARM", "Mali family" },
-        { NULL, NULL }
+        { NULL, NULL, NULL }
     };
     char tmp_path[256] = "";
     char *dt_gpu_path = NULL;
@@ -399,7 +399,7 @@ gpud *gpu_get_device_list() {
 
 /* Try other things ... */
 
-
+    return list;
 }
 
 

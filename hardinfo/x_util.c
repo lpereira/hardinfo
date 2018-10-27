@@ -54,10 +54,8 @@ static char *simple_line_value(char *line, const char *prefix) {
 
 gboolean fill_glx_info(glx_info *glx) {
     gboolean spawned;
-    gchar *out, *err, *p, *l, *t, *next_nl;
+    gchar *out, *err, *p, *l, *next_nl;
     gchar *glx_cmd = g_strdup("glxinfo");
-
-    int ec;
 
 #define GLX_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { glx->struct_member = g_strdup(l); goto glx_next_line; }
@@ -120,10 +118,8 @@ void glx_free(glx_info *s) {
 
 gboolean fill_xinfo(xinfo *xi) {
     gboolean spawned;
-    gchar *out, *err, *p, *l, *t, *next_nl;
+    gchar *out, *err, *p, *l, *next_nl;
     gchar *xi_cmd = g_strdup("xdpyinfo");
-
-    int ec;
 
 #define XI_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { xi->struct_member = g_strdup(l); goto xi_next_line; }
@@ -154,10 +150,10 @@ gboolean fill_xinfo(xinfo *xi) {
 
 gboolean fill_xrr_info(xrr_info *xrr) {
     gboolean spawned;
-    gchar *out, *err, *p, *l, *t, *next_nl;
+    gchar *out, *err, *p, *next_nl;
     gchar *xrr_cmd = g_strdup("xrandr");
-
     int ec;
+
     x_screen ts;
     x_output to;
     char output_id[128];
