@@ -211,7 +211,7 @@ char *dmi_chassis_type_str(int chassis_type, gboolean with_val) {
             chassis_type = -1;
     }
 
-    if (chassis_type >= 0 && chassis_type < G_N_ELEMENTS(types)) {
+    if (chassis_type >= 0 && chassis_type < (int)G_N_ELEMENTS(types)) {
         if (with_val)
             return g_strdup_printf("[%d] %s", chassis_type, _(types[chassis_type]));
 
@@ -299,7 +299,7 @@ char *dmidecode_match(const char *name, const unsigned long *dmi_type, const uns
         p = full;
         while(next_nl = strchr(p, '\n')) {
             strend(p, '\n');
-            if (!sscanf(p, "Handle 0x%X", &ch) > 0 ) {
+            if (!(sscanf(p, "Handle 0x%X", &ch) > 0) ) {
                 if (!handle || *handle == ch) {
                     while(*p == '\t') p++;
                     if (strncmp(p, name, ln) == 0) {
@@ -335,7 +335,7 @@ dmi_handle_list *dmidecode_match_value(const char *name, const char *value, cons
         p = full;
         while(next_nl = strchr(p, '\n')) {
             strend(p, '\n');
-            if (!sscanf(p, "Handle 0x%X", &ch) > 0 ) {
+            if (!(sscanf(p, "Handle 0x%X", &ch) > 0) ) {
                 while(*p == '\t') p++;
                 if (strncmp(p, name, ln) == 0) {
                     if (*(p + ln) == ':') {
