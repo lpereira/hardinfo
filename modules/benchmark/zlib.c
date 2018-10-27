@@ -22,10 +22,17 @@
 
 #include "benchmark.h"
 
+/* must be less than or equal to
+ * file size of ( params.path_data + "benchmark.data" ) */
+#define BENCH_DATA_SIZE 65536
+
+#define BENCH_EVENTS 50000
+#define BENCH_WTF_NUMBER 840205128
+
 static gpointer zlib_for(unsigned int start, unsigned int end, void *data, gint thread_number)
 {
     char *compressed;
-    uLong bound = compressBound(bound);
+    uLong bound = compressBound(BENCH_DATA_SIZE);
     unsigned int i;
 
     compressed = malloc(bound);
@@ -33,11 +40,11 @@ static gpointer zlib_for(unsigned int start, unsigned int end, void *data, gint 
         return NULL;
 
     for (i = start; i <= end; i++) {
-        char uncompressed[65536];
+        char uncompressed[BENCH_DATA_SIZE];
         uLong compressedBound = bound;
         uLong destBound = sizeof(uncompressed);
 
-        compress(compressed, &compressedBound, data, 65536);
+        compress(compressed, &compressedBound, data, BENCH_DATA_SIZE);
         uncompress(uncompressed, &destBound, compressed, compressedBound);
     }
 
@@ -61,13 +68,13 @@ benchmark_zlib(void)
     shell_view_set_enabled(FALSE);
     shell_status_update("Running Zlib benchmark...");
 
-    r = benchmark_parallel_for(0, 0, 50000, zlib_for, tmpsrc);
+    r = benchmark_parallel_for(0, 0, BENCH_EVENTS, zlib_for, tmpsrc);
 
     g_free(bdata_path);
     g_free(tmpsrc);
 
-    //TODO: explain in code comments
-    gdouble marks = (50000. * 65536.) / (r.elapsed_time * 840205128.);
+    //TODO: explain in code comments!
+    gdouble marks = ((double)BENCH_EVENTS * (double)BENCH_DATA_SIZE) / (r.elapsed_time * (double)BENCH_WTF_NUMBER);
     r.result = marks;
     bench_results[BENCHMARK_ZLIB] = r;
 }
