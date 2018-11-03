@@ -142,16 +142,14 @@ static void add_sensor(const char *type,
     lginterval = h_strdup_cprintf("UpdateInterval$%s=1000\n", lginterval, key);
 }
 
-static gchar *get_sensor_label(gchar *sensor) {
+static gchar *get_sensor_label_from_conf(gchar *sensor) {
     gchar *ret;
-
     ret = g_hash_table_lookup(sensor_labels, sensor);
-    if (!ret)
-        ret = g_strdup(sensor);
-    else
-        ret = g_strdup(ret);
 
-    return ret;
+    if (ret)
+        return g_strdup(ret);
+
+    return NULL;
 }
 
 static float adjust_sensor(gchar *name, float value) {
@@ -200,7 +198,8 @@ static char *determine_driver_for_hwmon_path(char *path) {
 
 struct HwmonSensor {
     const char *friendly_name;
-    const char *path_format;
+    const char *value_path_format;
+    const char *label_path_format;
     const char *key_format;
     const char *unit;
     const float adjust_ratio;
@@ -211,6 +210,7 @@ static const struct HwmonSensor hwmon_sensors[] = {
     {
         "Fan",
         "%s/fan%d_input",
+        "%s/fan%d_label",
         "fan%d",
         "RPM",
         1.0,
@@ -219,6 +219,7 @@ static const struct HwmonSensor hwmon_sensors[] = {
     {
         "Temperature",
         "%s/temp%d_input",
+        "%s/temp%d_label",
         "temp%d",
         "\302\260C",
         1000.0,
@@ -227,6 +228,7 @@ static const struct HwmonSensor hwmon_sensors[] = {
     {
         "Voltage",
         "%s/in%d_input",
+        "%s/in%d_label",
         "in%d",
         "V",
         1000.0,
@@ -237,9 +239,21 @@ static const struct HwmonSensor hwmon_sensors[] = {
 
 static const char *hwmon_prefix[] = {"device", "", NULL};
 
+static gboolean read_raw_hwmon_value(gchar *path_hwmon, const gchar *item_path_format, int item_id, gchar **result){
+    gchar *full_path;
+    gboolean file_result;
+
+    full_path = g_strdup_printf(item_path_format, path_hwmon, item_id);
+    file_result = g_file_get_contents(full_path, result, NULL, NULL);
+
+    g_free(full_path);
+
+    return file_result;
+}
+
 static void read_sensors_hwmon(void) {
     int hwmon, count;
-    gchar *path_hwmon, *path_sensor, *tmp, *driver, *name, *mon;
+    gchar *path_hwmon, *tmp, *driver, *name, *mon;
     const char **prefix;
 
     for (prefix = hwmon_prefix; *prefix; prefix++) {
@@ -250,7 +264,6 @@ static void read_sensors_hwmon(void) {
 
             driver = determine_driver_for_hwmon_path(path_hwmon);
             DEBUG("hwmon%d has driver=%s", hwmon, driver);
-
             if (!sensor_labels) {
                 read_sensor_labels(driver);
             }
@@ -259,11 +272,7 @@ static void read_sensors_hwmon(void) {
                 DEBUG("current sensor type=%s", sensor->friendly_name);
 
                 for (count = sensor->begin_at;; count++) {
-                    path_sensor =
-                        g_strdup_printf(sensor->path_format, path_hwmon, count);
-                    DEBUG("should be reading from %s", path_sensor);
-                    if (!g_file_get_contents(path_sensor, &tmp, NULL, NULL)) {
-                        g_free(path_sensor);
+                    if (!read_raw_hwmon_value(path_hwmon, sensor->value_path_format, count, &tmp)) {
                         if (count < 256)
                             continue; // brute-force find all
                         else
@@ -271,7 +280,16 @@ static void read_sensors_hwmon(void) {
                     }
 
                     mon = g_strdup_printf(sensor->key_format, count);
-                    name = get_sensor_label(mon);
+                    name = get_sensor_label_from_conf(mon);
+                    if (name == NULL){
+                        if (read_raw_hwmon_value(path_hwmon, sensor->label_path_format, count, &name)){
+                            name = g_strchomp(name);
+                        }
+                        else{
+                            name = g_strdup(mon);
+                        }
+                    }
+
                     if (!g_str_equal(name, "ignore")) {
                         float adjusted = adjust_sensor(mon,
                             atof(tmp) / sensor->adjust_ratio);
@@ -286,7 +304,6 @@ static void read_sensors_hwmon(void) {
                     g_free(tmp);
                     g_free(mon);
                     g_free(name);
-                    g_free(path_sensor);
                 }
             }
 
