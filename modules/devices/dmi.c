@@ -113,7 +113,7 @@ gboolean dmi_get_info()
                         _(info->name), _("(Not available; Perhaps try running HardInfo as root.)") );
           break;
         case 2: /* ignored value */
-          if (params.html_ok)
+          if (params.markup_ok)
             dmi_info = h_strdup_cprintf("%s=<s>%s</s>\n", dmi_info,
                         _(info->name), value);
           else
