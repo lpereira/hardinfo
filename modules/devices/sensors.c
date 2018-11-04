@@ -26,6 +26,7 @@
 gchar *sensors = NULL;
 GHashTable *sensor_compute = NULL;
 GHashTable *sensor_labels = NULL;
+gboolean hwmon_first_run = TRUE;
 
 static void read_sensor_labels(gchar *driver) {
     FILE *conf;
@@ -264,7 +265,7 @@ static void read_sensors_hwmon(void) {
 
             driver = determine_driver_for_hwmon_path(path_hwmon);
             DEBUG("hwmon%d has driver=%s", hwmon, driver);
-            if (!sensor_labels) {
+            if (hwmon_first_run) {
                 read_sensor_labels(driver);
             }
 
@@ -312,9 +313,9 @@ static void read_sensors_hwmon(void) {
 
             path_hwmon = get_sensor_path(++hwmon, *prefix);
         }
-
         g_free(path_hwmon);
     }
+    hwmon_first_run = FALSE;
 }
 
 static void read_sensors_acpi(void) {
