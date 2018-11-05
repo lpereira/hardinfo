@@ -1152,7 +1152,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 	    } else if (g_str_has_prefix(key, "Icon")) {
 		GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
 							g_utf8_strchr(key,
-							       -1, '$') + 1);
+							       -1, '$') );
 
 		if (iter) {
 		    gchar *file =
