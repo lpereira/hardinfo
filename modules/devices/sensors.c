@@ -235,6 +235,15 @@ static const struct HwmonSensor hwmon_sensors[] = {
         1000.0,
         0
     },
+    {
+        "Voltage",
+        "%s/cpu%d_vid",
+        NULL,
+        "cpu%d_vid",
+        "V",
+        1000.0,
+        0
+    },
     { }
 };
 
@@ -243,6 +252,9 @@ static const char *hwmon_prefix[] = {"device", "", NULL};
 static gboolean read_raw_hwmon_value(gchar *path_hwmon, const gchar *item_path_format, int item_id, gchar **result){
     gchar *full_path;
     gboolean file_result;
+
+    if (item_path_format == NULL)
+        return FALSE;
 
     full_path = g_strdup_printf(item_path_format, path_hwmon, item_id);
     file_result = g_file_get_contents(full_path, result, NULL, NULL);
