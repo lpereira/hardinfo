@@ -29,6 +29,9 @@ gchar *usb_list = NULL;
 static void _usb_dev(const usbd *u) {
     gchar *name, *key, *v_str, *str;
     gchar *product, *vendor, *dev_class_str, *dev_subclass_str; /* don't free */
+    gchar *if_class_str, *if_subclass_str, *if_protocol_str;    /* don't free */
+    gchar *interfaces = strdup("");
+    usbi *i;
 
     vendor = UNKIFNULL_AC(u->vendor);
     product = UNKIFNULL_AC(u->product);
@@ -48,6 +51,27 @@ static void _usb_dev(const usbd *u) {
         v_str = g_strdup_printf("%s", vendor );
     }
 
+    if (u->if_list != NULL) {
+        i = u->if_list;
+        while (i != NULL){
+            if_class_str = UNKIFNULL_AC(i->if_class_str);
+            if_subclass_str = UNKIFNULL_AC(i->if_subclass_str);
+            if_protocol_str = UNKIFNULL_AC(i->if_protocol_str);
+
+            interfaces = h_strdup_cprintf("[%s %d]\n"
+                /* Class */       "%s=[%d] %s\n"
+                /* Sub-class */   "%s=[%d] %s\n"
+                /* Protocol */    "%s=[%d] %s\n",
+                    interfaces,
+                    _("Interface"), i->if_number,
+                    _("Class"), i->if_class, if_class_str,
+                    _("Sub-class"), i->if_subclass, if_subclass_str,
+                    _("Protocol"), i->if_protocol, if_protocol_str
+                );
+            i = i->next;
+        }
+    }
+
     str = g_strdup_printf("[%s]\n"
              /* Product */      "%s=[0x%04x] %s\n"
              /* Manufacturer */ "%s=[0x%04x] %s\n"
@@ -58,7 +82,8 @@ static void _usb_dev(const usbd *u) {
              /* Dev Version */ "%s=%s\n"
                             "[%s]\n"
              /* Bus */         "%s=%03d\n"
-             /* Device */      "%s=%03d\n",
+             /* Device */      "%s=%03d\n"
+             /* Interfaces */  "%s",
                 _("Device Information"),
                 _("Product"), u->product_id, product,
                 _("Vendor"), u->vendor_id, v_str,
@@ -69,7 +94,8 @@ static void _usb_dev(const usbd *u) {
                 _("Device Version"), u->device_version,
                 _("Connection"),
                 _("Bus"), u->bus,
-                _("Device"), u->dev
+                _("Device"), u->dev,
+                interfaces
                 );
 
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
@@ -77,6 +103,7 @@ static void _usb_dev(const usbd *u) {
     g_free(v_str);
     g_free(name);
     g_free(key);
+    g_free(interfaces);
 }
 
 void __scan_usb(void) {
