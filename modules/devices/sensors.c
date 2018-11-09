@@ -56,14 +56,14 @@ static void read_sensor_labels(gchar *driver) {
             continue;
         } else if (lock && strstr(line, "label")) { /* label lines */
             gchar **names = g_strsplit(strstr(line, "label") + 5, " ", 0);
-            gchar *name = NULL, *value = NULL;
+            gchar *key = NULL, *value = NULL;
 
             for (i = 0; names[i]; i++) {
                 if (names[i][0] == '\0')
                     continue;
 
-                if (!name)
-                    name = g_strdup(names[i]);
+                if (!key)
+                    key = g_strdup_printf("%s/%s", driver, names[i]);
                 else if (!value)
                     value = g_strdup(names[i]);
                 else
@@ -71,7 +71,7 @@ static void read_sensor_labels(gchar *driver) {
             }
 
             remove_quotes(value);
-            g_hash_table_insert(sensor_labels, name, value);
+            g_hash_table_insert(sensor_labels, key, value);
 
             g_strfreev(names);
         } else if (lock && strstr(line, "ignore")) { /* ignore lines */
@@ -81,10 +81,10 @@ static void read_sensor_labels(gchar *driver) {
 
             while (*p == ' ')
                 p++;
-            g_hash_table_insert(sensor_labels, g_strdup(p), "ignore");
+            g_hash_table_insert(sensor_labels, g_strdup_printf("%s/%s", driver, p), "ignore");
         } else if (lock && strstr(line, "compute")) { /* compute lines */
             gchar **formulas = g_strsplit(strstr(line, "compute") + 7, " ", 0);
-            gchar *name = NULL, *formula = NULL;
+            gchar *key = NULL, *formula = NULL;
 
             for (i = 0; formulas[i]; i++) {
                 if (formulas[i][0] == '\0')
@@ -92,8 +92,8 @@ static void read_sensor_labels(gchar *driver) {
                 if (formulas[i][0] == ',')
                     break;
 
-                if (!name)
-                    name = g_strdup(formulas[i]);
+                if (!key)
+                    key = g_strdup_printf("%s/%s", driver, formulas[i]);
                 else if (!formula)
                     formula = g_strdup(formulas[i]);
                 else
@@ -101,7 +101,7 @@ static void read_sensor_labels(gchar *driver) {
             }
 
             g_strfreev(formulas);
-            g_hash_table_insert(sensor_compute, name,
+            g_hash_table_insert(sensor_compute, key,
                                 math_string_to_postfix(formula));
         } else if (g_str_has_prefix(line,
                                     "chip")) { /* chip lines (delimiter) */
@@ -143,9 +143,9 @@ static void add_sensor(const char *type,
     lginterval = h_strdup_cprintf("UpdateInterval$%s=1000\n", lginterval, key);
 }
 
-static gchar *get_sensor_label_from_conf(gchar *sensor) {
+static gchar *get_sensor_label_from_conf(gchar *key) {
     gchar *ret;
-    ret = g_hash_table_lookup(sensor_labels, sensor);
+    ret = g_hash_table_lookup(sensor_labels, key);
 
     if (ret)
         return g_strdup(ret);
@@ -153,10 +153,10 @@ static gchar *get_sensor_label_from_conf(gchar *sensor) {
     return NULL;
 }
 
-static float adjust_sensor(gchar *name, float value) {
+static float adjust_sensor(gchar *key, float value) {
     GSList *postfix;
 
-    postfix = g_hash_table_lookup(sensor_compute, name);
+    postfix = g_hash_table_lookup(sensor_compute, key);
     if (!postfix)
         return value;
 
@@ -266,7 +266,7 @@ static gboolean read_raw_hwmon_value(gchar *path_hwmon, const gchar *item_path_f
 
 static void read_sensors_hwmon(void) {
     int hwmon, count;
-    gchar *path_hwmon, *tmp, *driver, *name, *mon;
+    gchar *path_hwmon, *tmp, *driver, *name, *mon, *key;
     const char **prefix;
 
     for (prefix = hwmon_prefix; *prefix; prefix++) {
@@ -293,7 +293,8 @@ static void read_sensors_hwmon(void) {
                     }
 
                     mon = g_strdup_printf(sensor->key_format, count);
-                    name = get_sensor_label_from_conf(mon);
+                    key = g_strdup_printf("%s/%s", driver, mon);
+                    name = get_sensor_label_from_conf(key);
                     if (name == NULL){
                         if (read_raw_hwmon_value(path_hwmon, sensor->label_path_format, count, &name)){
                             name = g_strchomp(name);
@@ -304,7 +305,7 @@ static void read_sensors_hwmon(void) {
                     }
 
                     if (!g_str_equal(name, "ignore")) {
-                        float adjusted = adjust_sensor(mon,
+                        float adjusted = adjust_sensor(key,
                             atof(tmp) / sensor->adjust_ratio);
 
                         add_sensor(sensor->friendly_name,
@@ -316,6 +317,7 @@ static void read_sensors_hwmon(void) {
 
                     g_free(tmp);
                     g_free(mon);
+                    g_free(key);
                     g_free(name);
                 }
             }
