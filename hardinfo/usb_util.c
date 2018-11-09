@@ -116,7 +116,7 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
     gboolean spawned;
     gchar *out, *err, *p, *l, *t, *next_nl;
     gchar *lsusb_cmd = g_strdup_printf("lsusb -s %d:%d -v", bus, dev);
-    usbi *curr_if; // do not free
+    usbi *curr_if = NULL; // do not free
 
     s->bus = bus;
     s->dev = dev;
