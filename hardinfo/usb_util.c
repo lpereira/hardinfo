@@ -159,27 +159,27 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
 
             // interface info
             } else if (l = lsusb_line_value(p, "bInterfaceNumber")) {
-				curr_if = usbi_new();
+                curr_if = usbi_new();
                 curr_if->if_number = atoi(l);
                 usbd_append_interface(s, curr_if);
             } else if (l = lsusb_line_value(p, "bInterfaceClass")) {
                 if (curr_if != NULL){
-					curr_if->if_class = atoi(l);
-					if (t = strchr(l, ' '))
-						curr_if->if_class_str = g_strdup(t + 1);
-				}
+                    curr_if->if_class = atoi(l);
+                    if (t = strchr(l, ' '))
+                        curr_if->if_class_str = g_strdup(t + 1);
+                }
             } else if (l = lsusb_line_value(p, "bInterfaceSubClass")) {
                 if (curr_if != NULL){
-					curr_if->if_subclass = atoi(l);
-					if (t = strchr(l, ' '))
-						curr_if->if_subclass_str = g_strdup(t + 1);
-				}
+                    curr_if->if_subclass = atoi(l);
+                    if (t = strchr(l, ' '))
+                        curr_if->if_subclass_str = g_strdup(t + 1);
+                }
             } else if (l = lsusb_line_value(p, "bInterfaceProtocol")) {
                 if (curr_if != NULL){
-					curr_if->if_protocol = atoi(l);
-					if (t = strchr(l, ' '))
-						curr_if->if_protocol_str = g_strdup(t + 1);
-				}
+                    curr_if->if_protocol = atoi(l);
+                    if (t = strchr(l, ' '))
+                        curr_if->if_protocol_str = g_strdup(t + 1);
+                }
             }
 
             /* TODO: speed_mbs, improve interfaces
