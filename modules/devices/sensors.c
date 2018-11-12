@@ -285,6 +285,7 @@ static void read_sensors_hwmon(void) {
                 DEBUG("current sensor type=%s", sensor->friendly_name);
 
                 for (count = sensor->begin_at;; count++) {
+                    usleep(1);
                     if (!read_raw_hwmon_value(path_hwmon, sensor->value_path_format, count, &tmp)) {
                         if (count < 256)
                             continue; // brute-force find all
