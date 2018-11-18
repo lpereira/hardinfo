@@ -131,6 +131,28 @@ detect_gnome_version(void)
     return NULL;
 }
 
+
+static gchar *
+detect_mate_version(void)
+{
+    gchar *tmp;
+    gchar *out;
+    gboolean spawned;
+
+    spawned = g_spawn_command_line_sync(
+        "mate-about --version", &out, NULL, NULL, NULL);
+    if (spawned) {
+        tmp = strstr(idle_free(out), _("MATE Desktop Environment "));
+
+        if (tmp) {
+            tmp += strlen(_("MATE Desktop Environment "));
+            return g_strdup_printf("MATE %s", strend(tmp, '\n'));
+        }
+    }
+
+    return NULL;
+}
+
 static gchar *
 detect_window_manager(void)
 {
@@ -191,6 +213,12 @@ detect_xdg_environment(const gchar *env_var)
 
         if (maybe_kde)
             return maybe_kde;
+    }
+    if (g_str_equal(tmp, "MATE") || g_str_equal(tmp, "mate")) {
+        gchar *maybe_mate = detect_mate_version();
+
+        if (maybe_mate)
+            return maybe_mate;
     }
 
     return g_strdup(tmp);
