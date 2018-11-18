@@ -509,6 +509,7 @@ gchar *callback_os(void)
         info_field(_("User Name"), computer->os->username),
         info_field(_("Language"), computer->os->language),
         info_field(_("Home Directory"), computer->os->homedir),
+        info_field(_("Desktop Environment"), computer->os->desktop),
         info_field_last());
 
     info_add_group(info, _("Security"),
