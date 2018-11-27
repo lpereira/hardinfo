@@ -791,12 +791,14 @@ void hi_module_init(void)
     init_memory_labels();
     init_cups();
     sensors_init();
+    storage_init();
 }
 
 void hi_module_deinit(void)
 {
     moreinfo_del_with_prefix("DEV");
     sensors_shutdown();
+    storage_shutdown();
     g_hash_table_destroy(memlabels);
     g_module_close(cups);
 }
