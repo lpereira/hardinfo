@@ -20,12 +20,95 @@
 
 #include "hardinfo.h"
 #include "devices.h"
+#include "udisks2_util.h"
 
 gchar *storage_icons = NULL;
+gboolean udisks2_available = FALSE;
+
+gboolean print_udisks2_info(const gchar *blockdev_name, gchar **str) {
+    udiskd *disk;
+    gchar *features = NULL;
+
+    disk = get_udisks2_drive_info(blockdev_name);
+    if (disk == NULL) {
+        return FALSE;
+    }
+
+    features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
+    if (disk->ejectable) {
+        features = h_strdup_cprintf(", %s", features, _("Ejectable"));
+    }
+    if (disk->smart_enabled) {
+        features = h_strdup_cprintf(", %s", features, _("Smart monitoring"));
+    }
+
+    *str = h_strdup_cprintf(_(  "Block Device=%s\n"
+                                "Serial=%s\n"
+                                "Size=%s\n"
+                                "Features=%s\n"),
+                                *str,
+                                disk->block_dev,
+                                disk->serial,
+                                size_human_readable((gfloat) disk->size),
+                                features);
+
+    if (disk->rotation_rate > 0){
+        *str = h_strdup_cprintf(_("Rotation Rate=%d\n"), *str, disk->rotation_rate);
+    }
+    if (disk->media_compatibility || disk->media){
+        *str = h_strdup_cprintf(_(  "Media=%s\n"
+                                    "Media compatibility=%s\n"),
+                                    *str,
+                                    disk->media ? disk->media : _("(None)"),
+                                    disk->media_compatibility ? disk->media_compatibility : _("(Unknown)"));
+    }
+    if (disk->smart_enabled){
+        *str = h_strdup_cprintf(_(  "[Smart monitoring]\n"
+                                    "Status=%s\n"
+                                    "Bad Sectors=%ld\n"
+                                    "Power on time=%d days %d hours\n"
+                                    "Temperature=%d°C\n"),
+                                    *str,
+                                    disk->smart_failing ? _("Failing"): _("OK"),
+                                    disk->smart_bad_sectors,
+                                    disk->smart_poweron/(60*60*24), (disk->smart_poweron/60/60) % 24,
+                                    disk->smart_temperature);
+    }
+
+    g_free(features);
+    udiskd_free(disk);
+
+    return TRUE;
+}
+
+void print_scsi_dev_info(gint controller, gint channel, gint id, gint lun, gchar **str) {
+    gchar *path;
+    GDir *dir;
+    const gchar *entry;
+
+    path = g_strdup_printf("/sys/class/scsi_device/%d:%d:%d:%d/device/block/", controller, channel, id, lun);
+    dir = g_dir_open(path, 0, NULL);
+    if (!dir){
+        g_free(path);
+        return;
+    }
+
+    if ((entry = g_dir_read_name(dir))) {
+        gboolean udisk_info = FALSE;
+        if (udisks2_available) {
+            udisk_info = print_udisks2_info(entry, str);
+        }
+        if (!udisk_info) {
+            // TODO: fallback
+        }
+    }
+
+    g_dir_close(dir);
+    g_free(path);
+}
 
 /* SCSI support by Pascal F.Martin <pascalmartin@earthlink.net> */
-void
-__scan_scsi_devices(void)
+void __scan_scsi_devices(void)
 {
     FILE *proc_scsi;
     gchar buffer[256], *buf;
@@ -127,14 +210,18 @@ __scan_scsi_devices(void)
                 }
 
                 strhash = h_strdup_cprintf(_("Type=%s\n"
-                                           "Revision=%s\n"
-                                           "[SCSI Controller]\n"
+                                           "Revision=%s\n"),
+                                           strhash,
+                                           type,
+                                           revision);
+
+                print_scsi_dev_info(scsi_controller, scsi_channel, scsi_id, scsi_lun, &strhash);
+
+                strhash = h_strdup_cprintf(_("[SCSI Controller]\n"
                                            "Controller=scsi%d\n"
                                            "Channel=%d\n"
                                            "ID=%d\n" "LUN=%d\n"),
                                            strhash,
-                                           type,
-                                           revision,
                                            scsi_controller,
                                            scsi_channel,
                                            scsi_id,
@@ -375,4 +462,12 @@ void __scan_ide_devices(void)
 	storage_list = h_strconcat(storage_list, ide_storage_list, NULL);
 	g_free(ide_storage_list);
     }
+}
+
+void storage_init(void) {
+    udisks2_available = udisks2_init();
+}
+
+void storage_shutdown(void) {
+    udisks2_shutdown();
 }
