@@ -327,7 +327,7 @@ static gchar *
 parse_os_release(void)
 {
     gchar *pretty_name = NULL;
-    gchar **split, *contents, *line;
+    gchar **split, *contents, **line;
 
     if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
         return NULL;
@@ -336,9 +336,9 @@ parse_os_release(void)
     if (!split)
         return NULL;
 
-    for (line = *split; *line; line++) {
-        if (!strncmp(line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
-            pretty_name = g_strdup(line +
+    for (line = split; *line; line++) {
+        if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
+            pretty_name = g_strdup(*line +
                                    strlen("PRETTY_NAME=") + 1);
             strend(pretty_name, '"');
             break;
