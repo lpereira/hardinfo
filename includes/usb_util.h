@@ -39,9 +39,23 @@ typedef struct usbd {
     int speed_mbs; /* TODO: */
 
     gboolean user_scan; /* not scanned as root */
+    struct usbi *if_list;
 
     struct usbd *next;
 } usbd;
+
+/* another linked list */
+typedef struct usbi {
+    int if_number;
+    int if_class;
+    int if_subclass;
+    int if_protocol;
+    char *if_class_str;
+    char *if_subclass_str;
+    char *if_protocol_str;
+
+    struct usbi *next;
+} usbi;
 
 usbd *usb_get_device_list();
 int usbd_list_count(usbd *);

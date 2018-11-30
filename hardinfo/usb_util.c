@@ -21,12 +21,35 @@
 #include "hardinfo.h"
 #include "usb_util.h"
 
+usbi *usbi_new() {
+    return g_new0(usbi, 1);
+}
+
+void usbi_free(usbi *s) {
+    if (s) {
+        g_free(s->if_class_str);
+        g_free(s->if_subclass_str);
+        g_free(s->if_protocol_str);
+        g_free(s);
+    }
+}
+
+void usbi_list_free(usbi *s) {
+    usbi *n;
+    while(s != NULL) {
+        n = s->next;
+        usbi_free(s);
+        s = n;
+    }
+}
+
 usbd *usbd_new() {
     return g_new0(usbd, 1);
 }
 
 void usbd_free(usbd *s) {
     if (s) {
+        usbi_list_free(s->if_list);
         g_free(s->vendor);
         g_free(s->product);
         g_free(s->usb_version);
@@ -63,6 +86,20 @@ static int usbd_list_append(usbd *l, usbd *n) {
     return c;
 }
 
+void usbd_append_interface(usbd *dev, usbi *new_if){
+    usbi *curr_if;
+    if (dev->if_list == NULL){
+        dev->if_list = new_if;
+    return;
+    }
+
+    curr_if = dev->if_list;
+    while(curr_if->next != NULL) {
+        curr_if = curr_if->next;
+    }
+    curr_if->next = new_if;
+}
+
 int usbd_list_count(usbd *s) {
     return usbd_list_append(s, NULL);
 }
@@ -79,6 +116,7 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
     gboolean spawned;
     gchar *out, *err, *p, *l, *t, *next_nl;
     gchar *lsusb_cmd = g_strdup_printf("lsusb -s %d:%d -v", bus, dev);
+    usbi *curr_if = NULL; // do not free
 
     s->bus = bus;
     s->dev = dev;
@@ -94,6 +132,8 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
         while(next_nl = strchr(p, '\n')) {
             strend(p, '\n');
             g_strstrip(p);
+
+            // device info
             if (l = lsusb_line_value(p, "idVendor")) {
                 s->vendor_id = strtol(l, NULL, 0);
                 if (t = strchr(l, ' '))
@@ -116,9 +156,34 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
                 s->dev_subclass = atoi(l);
                 if (t = strchr(l, ' '))
                     s->dev_subclass_str = g_strdup(t + 1);
+
+            // interface info
+            } else if (l = lsusb_line_value(p, "bInterfaceNumber")) {
+                curr_if = usbi_new();
+                curr_if->if_number = atoi(l);
+                usbd_append_interface(s, curr_if);
+            } else if (l = lsusb_line_value(p, "bInterfaceClass")) {
+                if (curr_if != NULL){
+                    curr_if->if_class = atoi(l);
+                    if (t = strchr(l, ' '))
+                        curr_if->if_class_str = g_strdup(t + 1);
+                }
+            } else if (l = lsusb_line_value(p, "bInterfaceSubClass")) {
+                if (curr_if != NULL){
+                    curr_if->if_subclass = atoi(l);
+                    if (t = strchr(l, ' '))
+                        curr_if->if_subclass_str = g_strdup(t + 1);
+                }
+            } else if (l = lsusb_line_value(p, "bInterfaceProtocol")) {
+                if (curr_if != NULL){
+                    curr_if->if_protocol = atoi(l);
+                    if (t = strchr(l, ' '))
+                        curr_if->if_protocol_str = g_strdup(t + 1);
+                }
             }
-            /* TODO: speed_mbs
-             * WISHLIST: interfaces, drivers */
+
+            /* TODO: speed_mbs, improve interfaces
+             * WISHLIST: drivers */
             p = next_nl + 1;
         }
         g_free(out);
