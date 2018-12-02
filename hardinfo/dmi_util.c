@@ -31,13 +31,19 @@ static int ignore_placeholder_strings(gchar **pstr) {
         return -1;
 #define DMI_IGNORE(m) if (strcasecmp(m, *pstr) == 0) { g_free(chk); g_free(*pstr); *pstr = NULL; return 1; }
     DMI_IGNORE("To be filled by O.E.M.");
+    DMI_IGNORE("Default String");
     DMI_IGNORE("System Product Name");
     DMI_IGNORE("System Manufacturer");
     DMI_IGNORE("System Version");
-    DMI_IGNORE("Default String");
+    DMI_IGNORE("System Serial Number");
     DMI_IGNORE("Rev X.0x"); /* ASUS board version nonsense */
     DMI_IGNORE("x.x");      /* Gigabyte board version nonsense */
     DMI_IGNORE("NA");
+    DMI_IGNORE("SKU");
+
+    /* noticed on an HP x360 */
+    DMI_IGNORE("Type2 - Board Asset Tag");
+    DMI_IGNORE("Type1ProductConfigId");
 
     /* Zotac version nonsense */
     p = chk;
@@ -113,6 +119,7 @@ char *dmi_get_str_abs(const char *id_str) {
         { "system-product-family", "id/product_family" },
         { "system-version", "id/product_version" },
         { "system-uuid", "product_uuid" },
+        { "system-sku", "id/product_sku" },  /*dmidecode doesn't actually support this one*/
         { "chassis-type", "id/chassis_type" },
         { "chassis-serial-number", "id/chassis_serial" },
         { "chassis-manufacturer", "id/chassis_vendor" },
