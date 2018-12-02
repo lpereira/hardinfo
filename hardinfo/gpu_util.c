@@ -86,9 +86,9 @@ static void intel_fill_freq(gpud *s) {
     gchar path[256] = "";
     gchar *min_mhz = NULL, *max_mhz = NULL;
     if (s->sysfs_drm_path) {
-        snprintf(path, 255, "%s/gt_min_freq_mhz", s->sysfs_drm_path);
+        snprintf(path, 255, "%s/%s/gt_min_freq_mhz", s->sysfs_drm_path, s->id);
         g_file_get_contents(path, &min_mhz, NULL, NULL);
-        snprintf(path, 255, "%s/gt_max_freq_mhz", s->sysfs_drm_path);
+        snprintf(path, 255, "%s/%s/gt_max_freq_mhz", s->sysfs_drm_path, s->id);
         g_file_get_contents(path, &max_mhz, NULL, NULL);
 
         if (min_mhz)
@@ -375,7 +375,7 @@ gpud *gpu_get_device_list() {
                 /* drm has the card */
                 drm_dev = strstr(drm_id, "card");
                 if (drm_dev)
-                    snprintf(card_id, 64, "drm-%s", drm_dev);
+                    snprintf(card_id, 64, "%s", drm_dev);
             }
 
             if (strlen(card_id) == 0) {
