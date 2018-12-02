@@ -82,7 +82,7 @@ static void _gpu_pci_dev(gpud* gpu) {
     key = g_strdup_printf("GPU%s", gpu->id);
 
     gpu_summary_add((gpu->nice_name) ? gpu->nice_name : name);
-    gpu_list = h_strdup_cprintf("$%s$%s=%s\n", gpu_list, key, gpu->id, name);
+    gpu_list = h_strdup_cprintf("$!%s$%s=%s\n", gpu_list, key, gpu->id, name);
 
     gchar *vendor_device_str;
     if (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id) {
@@ -214,7 +214,7 @@ int _dt_soc_gpu(gpud *gpu) {
         opp_str = strdup("");
 
     gpu_summary_add((gpu->nice_name) ? gpu->nice_name : name);
-    gpu_list = h_strdup_cprintf("$%s$%s=%s\n", gpu_list, key, key, name);
+    gpu_list = h_strdup_cprintf("$!%s$%s=%s\n", gpu_list, key, key, name);
     gchar *str = g_strdup_printf("[%s]\n"
              /* Location */  "%s=%s\n"
              /* Vendor */  "%s=%s\n"
