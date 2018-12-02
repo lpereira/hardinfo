@@ -141,7 +141,7 @@ void dtr_map_free(dtr_map *map) {
 void dtr_map_sort(dtr_map *map, int sv)
 {
     int done = 0, cmp;
-    dtr_map *this, *next, *top, *next_top;
+    dtr_map *this, *next, *top = NULL, *next_top;
     uint32_t tmp_v;
     char *tmp_l, *tmp_p;
     if (map == NULL) return;
@@ -893,7 +893,7 @@ dtr_obj *dtr_get_parent_obj(dtr_obj *obj) {
 
 /* find the value of a path-inherited property by climbing the path */
 int dtr_inh_find(dtr_obj *obj, char *qprop, int limit) {
-    dtr_obj *tobj, *pobj, *qobj;
+    dtr_obj *tobj, *pobj = NULL, *qobj;
     uint32_t ret = 0;
     int i, found = 0;
 
