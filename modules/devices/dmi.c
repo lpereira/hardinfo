@@ -38,6 +38,8 @@ DMIInfo dmi_info_table[] = {
   { N_("Family"), "system-product-family", 0 },
   { N_("Vendor"), "system-manufacturer", 0 },
   { N_("Version"), "system-version", 0 },
+  { N_("Serial Number"), "system-serial-number", 0 },
+  { N_("SKU"), "system-sku", 0 },
   { N_("BIOS"), NULL, 1 },
   { N_("Date"), "bios-release-date", 0 },
   { N_("Vendor"), "bios-vendor", 0 },
