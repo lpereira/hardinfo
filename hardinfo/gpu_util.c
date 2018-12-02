@@ -23,7 +23,6 @@
 
 #include "cpu_util.h" /* for EMPIFNULL() */
 
-
 nvgpu *nvgpu_new() {
     return g_new0(nvgpu, 1);
 }
@@ -81,6 +80,25 @@ static gboolean nv_fill_procfs_info(gpud *s) {
         return TRUE;
     }
     return FALSE;
+}
+
+static void intel_fill_freq(gpud *s) {
+    gchar path[256] = "";
+    gchar *min_mhz = NULL, *max_mhz = NULL;
+    if (s->sysfs_drm_path) {
+        snprintf(path, 255, "%s/gt_min_freq_mhz", s->sysfs_drm_path);
+        g_file_get_contents(path, &min_mhz, NULL, NULL);
+        snprintf(path, 255, "%s/gt_max_freq_mhz", s->sysfs_drm_path);
+        g_file_get_contents(path, &max_mhz, NULL, NULL);
+
+        if (min_mhz)
+            s->khz_min = atoi(min_mhz) * 1000;
+        if (max_mhz)
+            s->khz_max = atoi(max_mhz) * 1000;
+
+        g_free(min_mhz);
+        g_free(max_mhz);
+    }
 }
 
 gpud *gpud_new() {
@@ -379,6 +397,7 @@ gpud *gpu_get_device_list() {
             if (curr->vendor_id_str) new_gpu->vendor_str = strdup(curr->vendor_id_str);
             if (curr->device_id_str) new_gpu->device_str = strdup(curr->device_id_str);
             nv_fill_procfs_info(new_gpu);
+            intel_fill_freq(new_gpu);
             make_nice_name(new_gpu);
             if (list == NULL)
                 list = new_gpu;
