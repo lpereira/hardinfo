@@ -967,9 +967,12 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 #if GTK_CHECK_VERSION(2, 18, 0)
     GtkAllocation* alloc;
 #endif
+    gboolean type_changed = FALSE;
+    if (viewtype != shell->view_type)
+        type_changed = TRUE;
 
     if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
-	viewtype = SHELL_VIEW_NORMAL;
+        viewtype = SHELL_VIEW_NORMAL;
 
     shell->normalize_percentage = TRUE;
     shell->view_type = viewtype;
@@ -1004,27 +1007,29 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     default:
     case SHELL_VIEW_NORMAL:
         gtk_widget_show(shell->info->scroll);
-	gtk_widget_hide(shell->notebook);
+        gtk_widget_hide(shell->notebook);
 
-	if (!reload) {
-          gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+        if (!reload) {
+            gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
         }
-	break;
+        break;
     case SHELL_VIEW_DUAL:
         gtk_widget_show(shell->info->scroll);
         gtk_widget_show(shell->moreinfo->scroll);
         gtk_notebook_set_current_page(GTK_NOTEBOOK(shell->notebook), 0);
         gtk_widget_show(shell->notebook);
 
+        if (type_changed) {
 #if GTK_CHECK_VERSION(2, 18, 0)
-        alloc = g_new(GtkAllocation, 1);
-        gtk_widget_get_allocation(shell->hpaned, alloc);
-        gtk_paned_set_position(GTK_PANED(shell->vpaned), alloc->height / 2);
-        g_free(alloc);
+            alloc = g_new(GtkAllocation, 1);
+            gtk_widget_get_allocation(shell->hpaned, alloc);
+            gtk_paned_set_position(GTK_PANED(shell->vpaned), alloc->height / 2);
+            g_free(alloc);
 #else
-    gtk_paned_set_position(GTK_PANED(shell->vpaned),
-                    shell->hpaned->allocation.height / 2);
+            gtk_paned_set_position(GTK_PANED(shell->vpaned),
+                            shell->hpaned->allocation.height / 2);
 #endif
+        }
         break;
     case SHELL_VIEW_LOAD_GRAPH:
         gtk_widget_show(shell->info->scroll);
@@ -1032,19 +1037,20 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         gtk_widget_show(shell->notebook);
         load_graph_clear(shell->loadgraph);
 
+        if (type_changed) {
 #if GTK_CHECK_VERSION(2, 18, 0)
-        alloc = g_new(GtkAllocation, 1);
-        gtk_widget_get_allocation(shell->hpaned, alloc);
-        gtk_paned_set_position(GTK_PANED(shell->vpaned),
-                alloc->height - load_graph_get_height(shell->loadgraph) - 16);
-        g_free(alloc);
+            alloc = g_new(GtkAllocation, 1);
+            gtk_widget_get_allocation(shell->hpaned, alloc);
+            gtk_paned_set_position(GTK_PANED(shell->vpaned),
+                    alloc->height - load_graph_get_height(shell->loadgraph) - 16);
+            g_free(alloc);
 #else
-    gtk_paned_set_position(GTK_PANED(shell->vpaned),
-			       shell->hpaned->allocation.height -
-			       load_graph_get_height(shell->loadgraph) - 16);
+            gtk_paned_set_position(GTK_PANED(shell->vpaned),
+                           shell->hpaned->allocation.height -
+                           load_graph_get_height(shell->loadgraph) - 16);
 #endif
-
-	break;
+        }
+        break;
     case SHELL_VIEW_PROGRESS_DUAL:
 	gtk_widget_show(shell->notebook);
         gtk_widget_show(shell->moreinfo->scroll);
@@ -1460,9 +1466,6 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     g_object_ref(shell->info->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info->view), NULL);
 
-    /* reset the view type to normal */
-    set_view_type(SHELL_VIEW_NORMAL, reload);
-
     if (!reload) {
         /* recreate the iter hash table */
         h_hash_table_remove_all(update_tbl);
@@ -1498,6 +1501,8 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 
     /* */
     if (!has_shell_param) {
+        /* reset the view type to normal */
+        set_view_type(SHELL_VIEW_NORMAL, reload);
         gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
     }
 
