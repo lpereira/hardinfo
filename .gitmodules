@@ -1,3 +1,0 @@
-[submodule "deps/uber-graph"]
-	path = deps/uber-graph
-	url = https://gitlab.gnome.org/chergert/uber-graph.git
