@@ -96,7 +96,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/includes
 	${CMAKE_SOURCE_DIR}/includes/${HARDINFO_ARCH}
-	${CMAKE_SOURCE_DIR}/deps/uber-graph/uber
+	${CMAKE_SOURCE_DIR}/deps/uber-graph
 	${CMAKE_BINARY_DIR}
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
@@ -205,18 +205,19 @@ endforeach()
 
 if (HARDINFO_GTK3)
 add_library(uber-graph STATIC
-	deps/uber-graph/uber/g-ring.c
-	deps/uber-graph/uber/uber-frame-source.c
-	deps/uber-graph/uber/uber-graph.c
-	deps/uber-graph/uber/uber-heat-map.c
-	deps/uber-graph/uber/uber-label.c
-	deps/uber-graph/uber/uber-line-graph.c
-	deps/uber-graph/uber/uber-range.c
-	deps/uber-graph/uber/uber-scale.c
-	deps/uber-graph/uber/uber-scatter.c
-	deps/uber-graph/uber/uber-timeout-interval.c
-	deps/uber-graph/uber/uber-window.c
+	deps/uber-graph/g-ring.c
+	deps/uber-graph/uber-frame-source.c
+	deps/uber-graph/uber-graph.c
+	deps/uber-graph/uber-heat-map.c
+	deps/uber-graph/uber-label.c
+	deps/uber-graph/uber-line-graph.c
+	deps/uber-graph/uber-range.c
+	deps/uber-graph/uber-scale.c
+	deps/uber-graph/uber-scatter.c
+	deps/uber-graph/uber-timeout-interval.c
+	deps/uber-graph/uber-window.c
 )
+set_target_properties(uber-graph PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
 
 set_source_files_properties(
@@ -264,6 +265,7 @@ target_link_libraries(hardinfo
 	${ZLIB_LIBRARIES}
 	${X11_LIBRARIES}
 )
+set_target_properties(hardinfo PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 else()
 add_executable(hardinfo
 	hardinfo/usb_util.c
