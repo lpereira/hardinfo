@@ -199,50 +199,50 @@ static char *determine_driver_for_hwmon_path(char *path) {
 
 struct HwmonSensor {
     const char *friendly_name;
+    const char *value_file_regex;
     const char *value_path_format;
     const char *label_path_format;
     const char *key_format;
     const char *unit;
     const float adjust_ratio;
-    const int begin_at;
 };
 
 static const struct HwmonSensor hwmon_sensors[] = {
     {
         "Fan",
+        "^fan([0-9]+)_input$",
         "%s/fan%d_input",
         "%s/fan%d_label",
         "fan%d",
         "RPM",
-        1.0,
-        1
+        1.0
     },
     {
         "Temperature",
+        "^temp([0-9]+)_input$",
         "%s/temp%d_input",
         "%s/temp%d_label",
         "temp%d",
         "\302\260C",
-        1000.0,
-        1
+        1000.0
     },
     {
         "Voltage",
+        "^in([0-9]+)_input$",
         "%s/in%d_input",
         "%s/in%d_label",
         "in%d",
         "V",
-        1000.0,
-        0
+        1000.0
     },
     {
         "Voltage",
+        "^cpu([0-9]+)_vid$",
         "%s/cpu%d_vid",
         NULL,
         "cpu%d_vid",
         "V",
-        1000.0,
-        0
+        1000.0
     },
     { }
 };
@@ -265,9 +265,13 @@ static gboolean read_raw_hwmon_value(gchar *path_hwmon, const gchar *item_path_f
 }
 
 static void read_sensors_hwmon(void) {
-    int hwmon, count;
+    int hwmon, count, min, max;
     gchar *path_hwmon, *tmp, *driver, *name, *mon, *key;
-    const char **prefix;
+    const char **prefix, *entry;
+    GDir *dir;
+    GRegex *regex;
+    GMatchInfo *match_info;
+    GError *err = NULL;
 
     for (prefix = hwmon_prefix; *prefix; prefix++) {
         hwmon = 0;
@@ -281,15 +285,44 @@ static void read_sensors_hwmon(void) {
                 read_sensor_labels(driver);
             }
 
+            dir = g_dir_open(path_hwmon, 0, NULL);
+            if (!dir)
+                continue;
+
             for (sensor = hwmon_sensors; sensor->friendly_name; sensor++) {
                 DEBUG("current sensor type=%s", sensor->friendly_name);
+                regex = g_regex_new (sensor->value_file_regex, 0, 0, &err);
+                if (err != NULL){
+                    g_free(err);
+                    err = NULL;
+                    continue;
+                }
 
-                for (count = sensor->begin_at;; count++) {
+                g_dir_rewind(dir);
+                min = 999;
+                max = -1;
+
+                while ((entry = g_dir_read_name(dir))) {
+                    g_regex_match(regex, entry, 0, &match_info);
+                    if (g_match_info_matches(match_info)) {
+                       tmp = g_match_info_fetch(match_info, 1);
+                       count = atoi(tmp);
+                       g_free (tmp);
+
+                       if (count < min){
+                           min = count;
+                       }
+                       if (count > max){
+                           max = count;
+                       }
+                    }
+                    g_match_info_free(match_info);
+                }
+                g_regex_unref(regex);
+
+                for (count = min; count <= max; count++) {
                     if (!read_raw_hwmon_value(path_hwmon, sensor->value_path_format, count, &tmp)) {
-                        if (count < 256)
-                            continue; // brute-force find all
-                        else
-                            break;
+                        continue;
                     }
 
                     mon = g_strdup_printf(sensor->key_format, count);
@@ -322,6 +355,7 @@ static void read_sensors_hwmon(void) {
                 }
             }
 
+            g_dir_close(dir);
             g_free(path_hwmon);
             g_free(driver);
 
