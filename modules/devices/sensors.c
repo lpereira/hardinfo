@@ -71,7 +71,7 @@ static void read_sensor_labels(gchar *driver) {
             }
 
             remove_quotes(value);
-            g_hash_table_insert(sensor_labels, key, value);
+            g_hash_table_insert(sensor_labels, key, g_strstrip(value));
 
             g_strfreev(names);
         } else if (lock && strstr(line, "ignore")) { /* ignore lines */
