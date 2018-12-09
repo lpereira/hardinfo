@@ -236,6 +236,24 @@ static const struct HwmonSensor hwmon_sensors[] = {
         1000.0
     },
     {
+        "Current",
+        "^curr([0-9]+)_input$",
+        "%s/curr%d_input",
+        "%s/curr%d_label",
+        "curr%d",
+        "A",
+        1000.0
+    },
+    {
+        "Power",
+        "^power([0-9]+)_input$",
+        "%s/power%d_input",
+        "%s/power%d_label",
+        "power%d",
+        "W",
+        1000000.0
+    },
+    {
         "Voltage",
         "^cpu([0-9]+)_vid$",
         "%s/cpu%d_vid",
