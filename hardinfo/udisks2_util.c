@@ -122,6 +122,7 @@ udiskd *udiskd_new() {
 void udiskd_free(udiskd *u) {
     if (u) {
         g_free(u->block_dev);
+        g_free(u->serial);
         g_free(u->media);
         g_free(u->media_compatibility);
         g_free(u);
