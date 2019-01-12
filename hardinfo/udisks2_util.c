@@ -211,8 +211,19 @@ GDBusConnection* get_udisks2_connection(void) {
     return conn;
 }
 
+udiskt* udiskt_new() {
+    return g_new0(udiskt, 1);
+}
+
 udiskd* udiskd_new() {
     return g_new0(udiskd, 1);
+}
+
+void udiskt_free(udiskt *u) {
+    if (u) {
+        g_free(u->drive);
+        g_free(u);
+    }
 }
 
 void udiskd_free(udiskd *u) {
@@ -227,6 +238,41 @@ void udiskd_free(udiskd *u) {
         g_free(u->media_compatibility);
         g_free(u);
     }
+}
+
+gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *drive){
+    GVariant *v;
+    gboolean smart_enabled = FALSE;
+    udiskt* disk_temp = NULL;
+
+    v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "SmartEnabled");
+    if (v) {
+        smart_enabled = g_variant_get_boolean(v);
+        g_variant_unref(v);
+    }
+
+    if (!smart_enabled) {
+        return NULL;
+    }
+
+    v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "SmartTemperature");
+    if (v) {
+        disk_temp = udiskt_new();
+        disk_temp->temperature = (gint32) g_variant_get_double(v) - 273.15;
+        g_variant_unref(v);
+    }
+
+    if (!disk_temp) {
+        return NULL;
+    }
+
+    v = get_dbus_property(drive, UDISKS2_DRIVE_INTERFACE, "Model");
+    if (v) {
+        disk_temp->drive = g_variant_dup_string(v, NULL);
+        g_variant_unref(v);
+    }
+
+    return disk_temp;
 }
 
 gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *drive) {
@@ -333,6 +379,10 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *drive) {
         }
     }
     return u;
+}
+
+GSList* get_udisks2_temps(void){
+    return udisks2_drives_func_caller(udisks2_conn, get_udisks2_temp);
 }
 
 GSList* get_udisks2_all_drives_info(void){

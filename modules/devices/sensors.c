@@ -22,6 +22,7 @@
 #include "expr.h"
 #include "hardinfo.h"
 #include "socket.h"
+#include "udisks2_util.h"
 
 gchar *sensors = NULL;
 GHashTable *sensor_compute = NULL;
@@ -510,6 +511,24 @@ static void read_sensors_hddtemp(void) {
     }
 }
 
+void read_sensors_udisks2(void) {
+    GSList *node;
+    GSList *temps;
+    udiskt *disk;
+
+    temps = get_udisks2_temps();
+    for (node = temps; node != NULL; node = node->next) {
+        disk = (udiskt *)node->data;
+        add_sensor("Hard Drive",
+                   disk->drive,
+                   "udisks2",
+                   disk->temperature,
+                   "\302\260C");
+        udiskt_free(disk);
+    }
+    g_slist_free(temps);
+}
+
 void scan_sensors_do(void) {
     g_free(sensors);
     sensors = g_strdup("");
@@ -522,6 +541,8 @@ void scan_sensors_do(void) {
     read_sensors_sys_thermal();
     read_sensors_omnibook();
     read_sensors_hddtemp();
+    read_sensors_udisks2();
+
     /* FIXME: Add support for  ibm acpi and more sensors */
 }
 

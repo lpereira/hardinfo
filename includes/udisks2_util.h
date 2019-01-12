@@ -18,6 +18,12 @@ typedef struct udiskd {
     gint32 smart_temperature;
 } udiskd;
 
+typedef struct udiskt {
+    gchar *drive;
+    gint32 temperature;
+} udiskt;
+
 void udisks2_init();
 void udisks2_shutdown();
+GSList *get_udisks2_temps();
 GSList *get_udisks2_all_drives_info();
