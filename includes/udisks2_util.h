@@ -1,6 +1,10 @@
 typedef struct udiskd {
+    gchar *model;
+    gchar *vendor;
+    gchar *revision;
     gchar *block_dev;
     gchar *serial;
+    gchar *connection_bus;
     gboolean ejectable;
     gboolean removable;
     gint32 rotation_rate;
@@ -14,6 +18,6 @@ typedef struct udiskd {
     gint32 smart_temperature;
 } udiskd;
 
-gboolean udisks2_init();
+void udisks2_init();
 void udisks2_shutdown();
-udiskd *get_udisks2_drive_info(const gchar *blockdev);
+GSList *get_udisks2_all_drives_info();

@@ -23,88 +23,146 @@
 #include "udisks2_util.h"
 
 gchar *storage_icons = NULL;
-gboolean udisks2_available = FALSE;
 
-gboolean print_udisks2_info(const gchar *blockdev_name, gchar **str) {
+gboolean __scan_udisks2_devices(void) {
+    GSList *node, *drives;
     udiskd *disk;
-    gchar *features = NULL;
+    gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
+    gchar *devid, *label;
+    const gchar *url, *vendor_str, *icon;
+    int n = 0, i;
 
-    disk = get_udisks2_drive_info(blockdev_name);
-    if (disk == NULL) {
-        return FALSE;
-    }
+    static struct {
+        char *media_prefix;
+        char *icon;
+    } media2icon[] = {
+        { "thumb", "usbfldisk"},
+        { "flash", "usbfldisk"},
+        { "floppy", "media-floppy"},
+        { "optical", "cdrom"},
+        { NULL, NULL}
+    };
 
-    features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
-    if (disk->ejectable) {
-        features = h_strdup_cprintf(", %s", features, _("Ejectable"));
-    }
-    if (disk->smart_enabled) {
-        features = h_strdup_cprintf(", %s", features, _("Smart monitoring"));
-    }
+    moreinfo_del_with_prefix("DEV:UDISKS");
+    udisks2_storage_list = g_strdup(_("\n[UDisks2]\n"));
 
-    *str = h_strdup_cprintf(_(  "Block Device=%s\n"
-                                "Serial=%s\n"
-                                "Size=%s\n"
-                                "Features=%s\n"),
-                                *str,
-                                disk->block_dev,
-                                disk->serial,
-                                size_human_readable((gfloat) disk->size),
-                                features);
+    drives = get_udisks2_all_drives_info();
+    for (node = drives; node != NULL; node = node->next) {
+        disk = (udiskd *)node->data;
+        devid = g_strdup_printf("UDISKS%d", n++);
 
-    if (disk->rotation_rate > 0){
-        *str = h_strdup_cprintf(_("Rotation Rate=%d\n"), *str, disk->rotation_rate);
-    }
-    if (disk->media_compatibility || disk->media){
-        *str = h_strdup_cprintf(_(  "Media=%s\n"
-                                    "Media compatibility=%s\n"),
-                                    *str,
-                                    disk->media ? disk->media : _("(None)"),
-                                    disk->media_compatibility ? disk->media_compatibility : _("(Unknown)"));
-    }
-    if (disk->smart_enabled){
-        *str = h_strdup_cprintf(_(  "[Smart monitoring]\n"
-                                    "Status=%s\n"
-                                    "Bad Sectors=%ld\n"
-                                    "Power on time=%d days %d hours\n"
-                                    "Temperature=%d°C\n"),
-                                    *str,
-                                    disk->smart_failing ? _("Failing"): _("OK"),
-                                    disk->smart_bad_sectors,
-                                    disk->smart_poweron/(60*60*24), (disk->smart_poweron/60/60) % 24,
-                                    disk->smart_temperature);
-    }
-
-    g_free(features);
-    udiskd_free(disk);
-
-    return TRUE;
-}
-
-void print_scsi_dev_info(gint controller, gint channel, gint id, gint lun, gchar **str) {
-    gchar *path;
-    GDir *dir;
-    const gchar *entry;
-
-    path = g_strdup_printf("/sys/class/scsi_device/%d:%d:%d:%d/device/block/", controller, channel, id, lun);
-    dir = g_dir_open(path, 0, NULL);
-    if (!dir){
-        g_free(path);
-        return;
-    }
-
-    if ((entry = g_dir_read_name(dir))) {
-        gboolean udisk_info = FALSE;
-        if (udisks2_available) {
-            udisk_info = print_udisks2_info(entry, str);
+        if (disk->vendor && strlen(disk->vendor) > 0) {
+            label = g_strdup_printf("%s %s", disk->vendor, disk->model);
+            vendor_str = disk->vendor;
         }
-        if (!udisk_info) {
-            // TODO: fallback
+        else{
+            label = g_strdup(disk->model);
+            vendor_str = disk->model;
         }
+
+        icon = NULL;
+        if (disk->media_compatibility){
+            for (i = 0; media2icon[i].media_prefix != NULL; i++) {
+                if (g_str_has_prefix(disk->media_compatibility,
+                                     media2icon[i].media_prefix)) {
+                    icon = media2icon[i].icon;
+                    break;
+                }
+            }
+        }
+        if (icon == NULL && disk->ejectable && g_strcmp0(disk->connection_bus, "usb") == 0) {
+            icon = "usbfldisk";
+        }
+        if (icon == NULL){
+            icon = "hdd";
+        }
+
+        url = vendor_get_url(vendor_str);
+        udisks2_storage_list = h_strdup_cprintf("$%s$%s=\n", udisks2_storage_list, devid, label);
+        storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, label, icon);
+        features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
+
+        if (disk->ejectable) {
+            features = h_strdup_cprintf(", %s", features, _("Ejectable"));
+        }
+        if (disk->smart_enabled) {
+            features = h_strdup_cprintf(", %s", features, _("Smart monitoring"));
+        }
+
+        moreinfo = g_strdup_printf(_("[Drive Information]\n"
+                                   "Model=%s\n"),
+                                   label);
+        if (url) {
+            moreinfo = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
+                                         moreinfo,
+                                         vendor_get_name(vendor_str),
+                                         url);
+        }
+        else {
+            moreinfo = h_strdup_cprintf(_("Vendor=%s\n"),
+                                         moreinfo,
+                                         vendor_get_name(vendor_str));
+        }
+
+        moreinfo = h_strdup_cprintf(_("Revision=%s\n"
+                                    "Block Device=%s\n"
+                                    "Serial=%s\n"
+                                    "Size=%s\n"
+                                    "Features=%s\n"),
+                                    moreinfo,
+                                    disk->revision,
+                                    disk->block_dev,
+                                    disk->serial,
+                                    size_human_readable((gfloat) disk->size),
+                                    features);
+
+        if (disk->rotation_rate > 0) {
+            moreinfo = h_strdup_cprintf(_("Rotation Rate=%d\n"), moreinfo, disk->rotation_rate);
+        }
+        if (disk->media_compatibility || disk->media) {
+            moreinfo = h_strdup_cprintf(_("Media=%s\n"
+                                        "Media compatibility=%s\n"),
+                                        moreinfo,
+                                        disk->media ? disk->media : _("(None)"),
+                                        disk->media_compatibility ? disk->media_compatibility : _("(Unknown)"));
+        }
+        if (disk->connection_bus && strlen(disk->connection_bus) > 0) {
+            moreinfo = h_strdup_cprintf(_("Connection bus=%s\n"), moreinfo, disk->connection_bus);
+        }
+        if (disk->smart_enabled) {
+            moreinfo = h_strdup_cprintf(_("[Smart monitoring]\n"
+                                        "Status=%s\n"
+                                        "Bad Sectors=%ld\n"
+                                        "Power on time=%d days %d hours\n"
+                                        "Temperature=%d°C\n"),
+                                        moreinfo,
+                                        disk->smart_failing ? _("Failing"): _("OK"),
+                                        disk->smart_bad_sectors,
+                                        disk->smart_poweron/(60*60*24), (disk->smart_poweron/60/60) % 24,
+                                        disk->smart_temperature);
+        }
+
+        moreinfo_add_with_prefix("DEV", devid, moreinfo);
+        g_free(devid);
+        g_free(features);
+        g_free(label);
+
+        features = NULL;
+        moreinfo = NULL;
+        devid = NULL;
+
+        udiskd_free(disk);
+    }
+    g_slist_free(drives);
+
+    if (n) {
+        storage_list = h_strconcat(storage_list, udisks2_storage_list, NULL);
+        g_free(udisks2_storage_list);
+        return TRUE;
     }
 
-    g_dir_close(dir);
-    g_free(path);
+    g_free(udisks2_storage_list);
+    return FALSE;
 }
 
 /* SCSI support by Pascal F.Martin <pascalmartin@earthlink.net> */
@@ -210,22 +268,19 @@ void __scan_scsi_devices(void)
                 }
 
                 strhash = h_strdup_cprintf(_("Type=%s\n"
-                                           "Revision=%s\n"),
-                                           strhash,
-                                           type,
-                                           revision);
-
-                print_scsi_dev_info(scsi_controller, scsi_channel, scsi_id, scsi_lun, &strhash);
-
-                strhash = h_strdup_cprintf(_("[SCSI Controller]\n"
+                                           "Revision=%s\n"
+                                           "[SCSI Controller]\n"
                                            "Controller=scsi%d\n"
                                            "Channel=%d\n"
                                            "ID=%d\n" "LUN=%d\n"),
                                            strhash,
+                                           type,
+                                           revision,
                                            scsi_controller,
                                            scsi_channel,
                                            scsi_id,
                                            scsi_lun);
+
                 moreinfo_add_with_prefix("DEV", devid, strhash);
                 g_free(devid);
 
@@ -462,12 +517,4 @@ void __scan_ide_devices(void)
 	storage_list = h_strconcat(storage_list, ide_storage_list, NULL);
 	g_free(ide_storage_list);
     }
-}
-
-void storage_init(void) {
-    udisks2_available = udisks2_init();
-}
-
-void storage_shutdown(void) {
-    udisks2_shutdown();
 }
