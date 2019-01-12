@@ -38,6 +38,7 @@
 
 #include "devices.h"
 #include "dt_util.h"
+#include "udisks2_util.h"
 
 gchar *callback_processors();
 gchar *callback_gpu();
@@ -616,8 +617,10 @@ void scan_storage(gboolean reload)
     g_free(storage_list);
     storage_list = g_strdup("");
 
-    __scan_ide_devices();
-    __scan_scsi_devices();
+    if (!__scan_udisks2_devices()) {
+        __scan_ide_devices();
+        __scan_scsi_devices();
+    }
     SCAN_END();
 }
 
@@ -791,14 +794,14 @@ void hi_module_init(void)
     init_memory_labels();
     init_cups();
     sensors_init();
-    storage_init();
+    udisks2_init();
 }
 
 void hi_module_deinit(void)
 {
     moreinfo_del_with_prefix("DEV");
     sensors_shutdown();
-    storage_shutdown();
+    udisks2_shutdown();
     g_hash_table_destroy(memlabels);
     g_module_close(cups);
 }
