@@ -166,6 +166,7 @@ name Fujitsu
 name Sony
     url www.sony.com
     match_string_case CDU
+    match_string_case SONY
 
 name SanDisk
     url www.sandisk.com
