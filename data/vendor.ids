@@ -22,6 +22,16 @@ name Lenovo Group
     url_support support.lenovo.com
     match_string lenovo
 
+name ASMedia Technology
+    name_short ASMedia
+    url www.asmedia.com.tw
+    match_string ASMedia
+
+name ASRock
+    url www.asrock.com
+    url_support www.asrock.com/suport/
+    match_string ASRock
+
 name ASUSTeK Computer
     name_short ASUS
     url www.asus.com
