@@ -6,10 +6,11 @@
 #    name_short <shorter name>
 #    url <url>
 #    url_support <url>
-#    [match_string|match_string_case] <match>
+#    ansi_color n[;n][...]
+#    [match_string|match_string_case|match_string_exact] <match>
 #    ...
-#    [match_string|match_string_case] <match>
-#    [match_string|match_string_case] <match>
+#    [match_string|match_string_case|match_string_exact] <match>
+#    [match_string|match_string_case|match_string_exact] <match>
 #
 #
 # Except for the newline, trailing whitespace is included in the string.
@@ -20,21 +21,15 @@ name Lenovo Group
     name_short Lenovo
     url www.lenovo.com
     url_support support.lenovo.com
+    ansi_color 0;97;41
     match_string lenovo
-
-name ASMedia Technology
-    name_short ASMedia
-    url www.asmedia.com.tw
-    match_string ASMedia
-
-name ASRock
-    url www.asrock.com
-    url_support www.asrock.com/suport/
-    match_string ASRock
+# EDID vendor code: LEN
+    match_string_exact LEN
 
 name ASUSTeK Computer
     name_short ASUS
     url www.asus.com
+    ansi_color 0;30;47
     match_string ASUSTek
     match_string ASUS
 
@@ -42,13 +37,15 @@ name ASUSTeK Computer
 name Advanced Micro Devices
     name_short AMD
     url www.amd.com
+    ansi_color 0;97;41
     match_string Advanced Micro Devices
     match_string_case AMD
 
-# PCI Vendor 1002
+# PCI Vendor 1002 (used for GPUs)
 name Advanced Micro Devices (formerly ATI)
     name_short AMD/ATI
     url www.amd.com
+    ansi_color 0;97;41
     match_string ATI Technologies
     match_string Advanced Micro Devices, Inc. [AMD/ATI]
     match_string_case AMD/ATI
@@ -57,11 +54,13 @@ name Advanced Micro Devices (formerly ATI)
 name nVidia Corporation
     name_short nVidia
     url www.nvidia.com
+    ansi_color 0;97;42
     match_string nVidia
 
 name G.Skill International Enterprise
     name_short G.Skill
     url www.gskill.com
+    ansi_color 0;31;107
     match_string G.Skill
     match_string G-Skill
 
@@ -72,6 +71,7 @@ name 3Com
 name Intel Corporation
     name_short Intel
     url www.intel.com
+    ansi_color 0;97;44
     match_string Intel
 
 name Cirrus Logic
@@ -79,22 +79,43 @@ name Cirrus Logic
     match_string Cirrus Logic
 
 name VIA Technologies
+    name_short VIA
     url www.via.com.tw
+    ansi_color 0;36;107
     match_string_case VIA
 
 name NEC Corporation
+    name_short NEC
     url www.nec.com
+    ansi_color 0;94;107
+# EDID vendor code: NEC
     match_string_case NEC
 
-name Realtek
+name Realtek Semiconductor
+    name_short Realtek
     url www.realtek.com.tw
+    ansi_color 0;34;107
     match_string Realtek
 
 name Toshiba Corporation
 # styled in all-caps
     name_short TOSHIBA
     url www.toshiba.com
+    ansi_color 0;91;47
     match_string Toshiba
+# EDID vendor code: TSB
+    match_string_exact TSB
+
+name Vizio
+# EDID vendor code: VIZ
+    match_string_exact VIZ
+
+name ViewSonic Corporation
+    name_short ViewSonic
+    url www.viewsonic.com
+    ansi_color 0;35;103
+# EDID vendor code: VSC
+    match_string_exact VSC
 
 name LITE-ON
     url www.liteonit.com
@@ -106,23 +127,55 @@ name Maxtor
 
 name Samsung
     url www.samsung.com
+    ansi_color 0;47;30
     match_string Samsung
+# EDID vendor code: SAM
+    match_string_exact SAM
 
 name Pioneer
     url www.pioneer-eur.com
     match_string Pioneer
+# EDID vendor code: PIO
+    match_string_exact PIO
 
 name Plextor
     url www.plextor.be
     match_string Plextor
 
 name Western Digital
+    name_short WD
     url www.wdc.com
+    ansi_color 0;37;40
     match_string_case WDC
 
 name LG Electronics
+    name_short LG
     url www.lge.com
+    ansi_color 0;97;41
+    match_string Lucky-Goldstar
+    match_string_case LG
+
+name LG Display
+    name_short LG Display
+    url www.lgdisplay.com
+    ansi_color 0;97;41
+    match_string LG Display
+    match_string LG.Philips
+# EDID vendor code: LGD
+    match_string_exact LGD
+
+name Hitachi-LG Data Storage
+    name_short HLDS
+    url http://hlds.co.kr
     match_string_case HL-DT-ST
+
+name Hitachi
+    name_short HITACHI
+    url www.hitachi.com
+    ansi_color 0;30;47
+    match_string Hitachi
+# EDID vendor code: HTC
+    match_string_exact HTC
 
 name Lexmark
     url www.lexmark.com
@@ -140,32 +193,52 @@ name Atheros Communications
     url www.atheros.com
     match_string Atheros
 
-name Panasonic
+name Panasonic Industry Company
+    name_short Panasonic
     url www.panasonic.com
+    ansi_color 0;30;107
     match_string MATSHITA
+# EDID vendor code: MEI
+    match_string_exact MEI
 
 name Silicon Image
     url www.siliconimage.com
     match_string Silicon Image
     match_string Silicon Integrated Image
 
-name Broadcom
+name Broadcom Corporation
+    name_short Broadcom
     url www.broadcom.com
+    ansi_color 0;30;41
     match_string Broadcom
 
-name Apple
+name Apple Computer
+    name_short Apple
     url www.apple.com
+    ansi_color 0;97;100
     match_string Apple
+# EDID vendor code: APP
+    match_string_exact APP
 
-name IBM
+name International Business Machines Corporation
+    name_short IBM
     url www.ibm.com
+    ansi_color 0;94;107
     match_string_case IBM
 
 name Dell Computer
+    name_short Dell
     url www.dell.com
+    ansi_color 0;97;44
     match_string Dell
+# Dell PowerEdge/PowerVault controller SCSI vendor
+    match_string PE/PV
+# EDID vendor code: DEL
+    match_string_exact DEL
 
 name Logitech International
+    name_short logitech
+    ansi_color 0;30;107
     url www.logitech.com
     match_string Logitech
 
@@ -174,12 +247,17 @@ name Fujitsu
     match_string FUJITSU
 
 name Sony
+    name_short SONY
     url www.sony.com
-    match_string_case CDU
-    match_string_case SONY
+    ansi_color 0;30;107
+    match_string Sony
+#   match_string_case CDU
+# EDID vendor code: SNY
+    match_string_exact SNY
 
 name SanDisk
     url www.sandisk.com
+    ansi_color 0;31;40
     match_string SanDisk
 
 name ExcelStor Technology
@@ -188,11 +266,13 @@ name ExcelStor Technology
 
 name D-Link
     url www.dlink.com.tw
+    ansi_color 0;97;44
     match_string D-Link
 
 name Gigabyte Technology
     name_short Gigabyte
     url www.gigabyte.com.tw
+    ansi_color 0;94;47
     match_string Giga-byte
     match_string Gigabyte
 
@@ -200,6 +280,7 @@ name Micro-Star International
     name_short MSI
     url www.msi.com
     url_support www.msi.com/support
+    ansi_color 0;97;40
     match_string Micro-Star Int'l Co.,Ltd.
     match_string Micro Star
     match_string_case MSI
@@ -208,44 +289,68 @@ name ZOTAC International
     name_short ZOTAC
     url www.zotac.com
     url_support www.zotac.com/support/
+    ansi_color 0;90;43
     match_string ZOTAC
 
 name C-Media Electronics
+    name_short C-Media
     url www.cmedia.com.tw
     match_string C-Media
 
 name AVerMedia Technologies
+    name_short AVerMedia
     url www.aver.com
     match_string Avermedia
 
-name Philips
+name Koninklijke Philips
+    name_short PHILIPS
     url www.philips.com
     match_string Philips
+# EDID vendor code: PHL
+    match_string_exact PHL
+
+name Sharp Corporation
+    name_short SHARP
+    ansi_color 0;31;107
+    match_string Sharp
+# EDID vendor code: SHP
+    match_string_exact SHP
 
 name Ralink Technology
+    name_short Ralink
     url www.ralinktech.com
+    ansi_color 0;36;107
     match_string RaLink
 
 name Siemens AG
+    name_short Siemens
     url www.siemens.com
     match_string Siemens
 
 name Hewlett-Packard
+    name_short HP
     url www.hp.com
+    ansi_color 0;97;46
     match_string Hewlett-Packard
+# EDID vendor code: HWP
+    match_string_exact HWP
     match_string_case HP
 
-name TEAC America
+name TEAC Corporation
+    name_short TEAC
     url www.teac.com
+    ansi_color 0;34;107
     match_string_case TEAC
 
 name Microsoft
     url www.microsoft.com
+    ansi_color 0;97;40
     match_string Microsoft
 
 name Memorex Products
+    name_short Memorex
     url www.memorex.com
-    match_string  Memorex
+    match_string Memorex
 
 name eMPIA Technology
     url www.empiatech.com.tw
@@ -253,6 +358,7 @@ name eMPIA Technology
 
 name Canon
     url www.canon.com
+    ansi_color 0;31;107
     match_string Canon
 
 name A4tech
@@ -276,15 +382,21 @@ name BenQ
     match_string BENQ
 
 name Acer
+    name_short acer
     url www.acer.com
+    ansi_color 0;32;107
     match_string Acer
+# EDID vendor code: ACR
+    match_string_exact ACR
 
 name Quantum
     url www.quantum.com
     match_string QUANTUM
 
-name Kingston
+name Kingston Technology
+    name_short Kingston
     url www.kingston.com
+    ansi_color 0;31;40
     match_string Kingston
 
 name Chicony
@@ -296,12 +408,40 @@ name Genius
     match_string Genius
 
 name KYE Systems
+    name_short KYE
     url www.genius-kye.com
     match_string_case KYE
 
-name SEAGATE
+name STMicroelectronics
+    name_short ST
+    url www.st.com
+    ansi_color 0;97;104
+    match_string STMicroelectronics
+    match_string ST Micro
+
+name Micron Technology
+    name_short Micron
+    url www.micron.com
+    ansi_color 0;34;47
+    match_string Micron
+
+name Crucial (Micron)
+    name_short Crucial
+    url www.crucial.com
+    ansi_color 0;37;44
+    match_string Crucial
+
+name Toshiba Samsung Storage Technology
+    name_short TSST
+    url www.tsst.co.kr
+    match_string_case TSST
+
+name Seagate Technology
+    name_short SEAGATE
     url www.seagate.com
-    match_string_case ST
+    ansi_color 0;92;100
+    match_string Seagate
+#    match_string_case ST
 
 name Silicon Integrated Systems Corporation
     name_short SIS
@@ -309,23 +449,169 @@ name Silicon Integrated Systems Corporation
     match_string Silicon Integrated Systems
     match_string_case SIS
 
+name S3 Graphics
+    name_short VIA/S3
+    url www.s3graphics.com
+    url_support www.s3graphics.com/en/drivers
+    ansi_color 0;30;103
+    match_string S3 Graphics
+    match_string_case VIA/S3
+
+name Fuzhou Rockchip Electronics
+    name_short Rockchip
+    url www.rock-chips.com
+    ansi_color 0;34;43
+    match_string Rockchip
+
+name Qualcomm Incorporated
+    name_short Qualcomm
+    url www.qualcomm.com
+    ansi_color 0;94;47
+    match_string Qualcomm
+
+name Arm Holdings
+# styled lower-case "arm"
+    name_short arm
+    url arm.com
+    ansi_color 0;36;107
+    match_string ARM
+
+name Microchip Technology (formerly Standard Microsystems)
+    name_short SMC
+    ansi_color 0;37;40
+    match_string Standard Microsystems
+
+name Linux Foundation
+    name_short Linux
+    ansi_color 0;33;40
+    match_string Linux Foundation
+    match_string Linux
+
+name ASMedia Technology
+    name_short ASMedia
+    url www.asmedia.com.tw
+    ansi_color 0;30;46
+    match_string_case ASMedia
+
+name Sapphire Technology
+    name_short SAPPHIRE
+    url www.sapphiretech.com
+    ansi_color 0;30;107
+    match_string sapphire tech
+
+name Synopsys
+    url www.synopsys.com
+    ansi_color 0;35;107
+    match_string Synopsys
+
+name Raspberry Pi Foundation
+    name_short RaspberryPi
+    url www.raspberrypi.org
+    ansi_color 0;97;42
+    match_string RaspberryPi
+    match_string Raspberry Pi
+
+name Embest Technology
+    name_short Embest
+    url www.embest-tech.com
+    ansi_color 0;96;44
+    match_string Embest
+
+name Transcend Information
+    name_short Transcend
+    url transcend-info.com
+    ansi_color 0;31;47
+    match_string Transcend
+
+name ADATA Technology
+    name_short ADATA
+    ansi_color 0;34;47
+    match_string_case ADATA
+
+name Victor Company of Japan
+    name_short JVC
+    url www.victor.co.jp
+    ansi_color 0;91;107
+    match_string_case JVC
+
+name ASRock
+    url www.asrock.com
+    ansi_color 0;32;107
+    match_string ASRock
+
+name Biostar Microtech International
+    name_short BIOSTAR
+    url www.biostar.tw
+    ansi_color 0;31;40
+    match_string Biostar
+
+name EVGA
+    url www.evga.com
+    ansi_color 0;34;107
+    match_string EVGA
+
+name Elitegroup Computer Systems
+    name_short ECS
+    ansi_color 0;36;41
+    match_string_case ECS
+
 #
 # BIOS manufacturers
 #
 
 name American Megatrends
+    name_short AMI
     url www.ami.com
+    ansi_color 0;31;47
     match_string American Megatrends
 
 name Award Software International
     name_short Award
     url www.award-bios.com
+    ansi_color 0;93;44
     match_string Award
 
 name Phoenix Technologies
     name_short Phoenix
     url www.phoenix.com
+    ansi_color 0;31;47
     match_string Phoenix
+
+name Insyde Software
+    name_short Insyde
+    url www.insyde.com
+    ansi_color 0;30;42
+    match_string Insyde
+
+#
+# Linux
+#
+
+name Debian
+    url www.debian.org
+    ansi_color 0;31;107
+    match_string debian
+
+name Raspbian
+    url www.raspberrypi.org/downloads/raspbian/
+    ansi_color 0;97;101
+    match_string raspbian
+
+name Canonical
+    url www.canonical.com
+    ansi_color 0;97;45
+    match_string canonical
+
+name Ubuntu
+    url www.ubuntu.com
+    ansi_color 0;97;45
+    match_string ubuntu
+
+name Arch Linux
+    name_short Arch
+    url www.archlinux.org
+    ansi_color 0;36;107
+    match_string arch linux
 
 #
 # x86 vendor strings
@@ -334,28 +620,33 @@ name Phoenix Technologies
 name Advanced Micro Devices
     name_short AMD
     url www.amd.com
+    ansi_color 0;97;41
     match_string AMDisbetter!
     match_string AuthenticAMD
 
 name Intel Corporation
     name_short Intel
     url www.intel.com
-    url_support http://ark.intel.com/search.aspx?q=
+    url_support ark.intel.com
+    ansi_color 0;97;44
     match_string GenuineIntel
 
 name VIA Technologies
     name_short VIA
     url www.via.tw
+    ansi_color 0;36;107
     match_string VIA VIA VIA
 
 name VIA (formerly Centaur Technology)
     name_short VIA (Centaur)
     url www.via.tw
+    ansi_color 0;36;107
     match_string CentaurHauls
 
 name VIA (formerly Cyrix)
     name_short VIA (Cyrix)
     url www.via.tw
+    ansi_color 0;36;107
     match_string CyrixInstead
 
 name Transmeta Corporation
@@ -364,18 +655,22 @@ name Transmeta Corporation
     match_string GenuineTMx86
 
 name National Semiconductor
+    name_short NSC
     match_string Geode by NSC
 
 name NexGen
     match_string NexGenDriven
 
 name Rise Technology
+    name_short Rise
     match_string RiseRiseRise
 
 name Silicon Integrated Systems
+    name_short SIS
     match_string SiS SiS SiS
 
 name United Microelectronics Corporation
+    name_short UMC
     match_string UMC UMC UMC
 
 name DMP Electronics
