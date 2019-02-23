@@ -5,12 +5,18 @@ typedef struct udiskd {
     gchar *block_dev;
     gchar *serial;
     gchar *connection_bus;
+    gchar *partition_table;
+    gchar *partitions;
     gboolean ejectable;
     gboolean removable;
     gint32 rotation_rate;
     gint64 size;
     gchar *media;
     gchar *media_compatibility;
+    gboolean pm_supported;
+    gboolean aam_supported;
+    gboolean apm_supported;
+    gboolean smart_supported;
     gboolean smart_enabled;
     gboolean smart_failing;
     guint64 smart_poweron;
