@@ -85,8 +85,17 @@ gboolean __scan_udisks2_devices(void) {
         if (disk->ejectable) {
             features = h_strdup_cprintf(", %s", features, _("Ejectable"));
         }
-        if (disk->smart_enabled) {
+        if (disk->smart_supported) {
             features = h_strdup_cprintf(", %s", features, _("Smart monitoring"));
+        }
+        if (disk->pm_supported) {
+            features = h_strdup_cprintf(", %s", features, _("Power Managment"));
+        }
+        if (disk->apm_supported) {
+            features = h_strdup_cprintf(", %s", features, _("Advanced Power Management"));
+        }
+        if (disk->aam_supported) {
+            features = h_strdup_cprintf(", %s", features, _("Automatic Acoustic Management"));
         }
 
         moreinfo = g_strdup_printf(_("[Drive Information]\n"
@@ -140,6 +149,14 @@ gboolean __scan_udisks2_devices(void) {
                                         disk->smart_bad_sectors,
                                         disk->smart_poweron/(60*60*24), (disk->smart_poweron/60/60) % 24,
                                         disk->smart_temperature);
+        }
+        if (disk->partition_table || disk->partitions) {
+            moreinfo = h_strdup_cprintf(_("[Partition table]\n"
+                                        "Type=%s\n"
+                                        "Partitions=%s\n"),
+                                        moreinfo,
+                                        disk->partition_table ? disk->partition_table : _("(Unknown)"),
+                                        disk->partitions ? disk->partitions : _("(Unknown)"));
         }
 
         moreinfo_add_with_prefix("DEV", devid, moreinfo);

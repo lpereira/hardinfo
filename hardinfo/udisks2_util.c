@@ -2,16 +2,17 @@
 #include "udisks2_util.h"
 #include "hardinfo.h"
 
-#define UDISKS2_INTERFACE           "org.freedesktop.UDisks2"
-#define UDISKS2_MANAGER_INTERFACE   "org.freedesktop.UDisks2.Manager"
-#define UDISKS2_BLOCK_INTERFACE     "org.freedesktop.UDisks2.Block"
-#define UDISKS2_LOOP_INTERFACE      "org.freedesktop.UDisks2.Loop"
-#define UDISKS2_PARTITION_INTERFACE "org.freedesktop.UDisks2.Partition"
-#define UDISKS2_DRIVE_INTERFACE     "org.freedesktop.UDisks2.Drive"
-#define UDISKS2_DRIVE_ATA_INTERFACE "org.freedesktop.UDisks2.Drive.Ata"
-#define DBUS_PROPERTIES_INTERFACE   "org.freedesktop.DBus.Properties"
-#define UDISKS2_MANAGER_OBJ_PATH    "/org/freedesktop/UDisks2/Manager"
-#define UDISKS2_BLOCK_DEVICES_PATH  "/org/freedesktop/UDisks2/block_devices"
+#define UDISKS2_INTERFACE            "org.freedesktop.UDisks2"
+#define UDISKS2_MANAGER_INTERFACE    "org.freedesktop.UDisks2.Manager"
+#define UDISKS2_BLOCK_INTERFACE      "org.freedesktop.UDisks2.Block"
+#define UDISKS2_LOOP_INTERFACE       "org.freedesktop.UDisks2.Loop"
+#define UDISKS2_PARTITION_INTERFACE  "org.freedesktop.UDisks2.Partition"
+#define UDISKS2_PART_TABLE_INTERFACE "org.freedesktop.UDisks2.PartitionTable"
+#define UDISKS2_DRIVE_INTERFACE      "org.freedesktop.UDisks2.Drive"
+#define UDISKS2_DRIVE_ATA_INTERFACE  "org.freedesktop.UDisks2.Drive.Ata"
+#define DBUS_PROPERTIES_INTERFACE    "org.freedesktop.DBus.Properties"
+#define UDISKS2_MANAGER_OBJ_PATH     "/org/freedesktop/UDisks2/Manager"
+#define UDISKS2_BLOCK_DEVICES_PATH   "/org/freedesktop/UDisks2/block_devices"
 
 GDBusConnection* udisks2_conn = NULL;
 
@@ -94,8 +95,8 @@ GSList* get_block_dev_paths_from_sysfs(){
 }
 
 GSList* udisks2_drives_func_caller(GDBusConnection* conn,
-                                   gpointer (*func)(const char*, GDBusProxy*)) {
-    GDBusProxy *proxy, *drive_proxy;
+                                   gpointer (*func)(const char*, GDBusProxy*, GDBusProxy*)) {
+    GDBusProxy *block_proxy, *drive_proxy;
     GVariant *block_v, *v;
     GSList *result_list = NULL, *block_dev_list, *node;
     GError *error = NULL;
@@ -114,7 +115,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
 
     for (node = block_dev_list; node != NULL; node = node->next) {
         block_path = (gchar *)node->data;
-        proxy = g_dbus_proxy_new_sync(conn, G_DBUS_PROXY_FLAGS_NONE,
+        block_proxy = g_dbus_proxy_new_sync(conn, G_DBUS_PROXY_FLAGS_NONE,
                                       NULL, UDISKS2_INTERFACE, block_path,
                                       DBUS_PROPERTIES_INTERFACE, NULL, &error);
         if (error){
@@ -124,18 +125,18 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
         }
 
         // Skip partitions
-        v = get_dbus_property(proxy, UDISKS2_PARTITION_INTERFACE, "Size");
+        v = get_dbus_property(block_proxy, UDISKS2_PARTITION_INTERFACE, "Size");
         if (v){
             g_variant_unref(v);
-            g_object_unref(proxy);
+            g_object_unref(block_proxy);
             continue;
         }
 
         // Skip loop devices
-        v = get_dbus_property(proxy, UDISKS2_LOOP_INTERFACE, "BackingFile");
+        v = get_dbus_property(block_proxy, UDISKS2_LOOP_INTERFACE, "BackingFile");
         if (v){
             g_variant_unref(v);
-            g_object_unref(proxy);
+            g_object_unref(block_proxy);
             continue;
         }
 
@@ -143,7 +144,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
         drive_path = NULL;
 
         // let's find drive proxy
-        v = get_dbus_property(proxy, UDISKS2_BLOCK_INTERFACE, "Drive");
+        v = get_dbus_property(block_proxy, UDISKS2_BLOCK_INTERFACE, "Drive");
         if (v){
             drive_path = g_variant_get_string(v, NULL);
 
@@ -155,7 +156,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
 
                 if (error == NULL) {
                     // call requested function
-                    output = func(block_dev, drive_proxy);
+                    output = func(block_dev, block_proxy, drive_proxy);
 
                     if (output != NULL){
                         result_list = g_slist_append(result_list, output);
@@ -169,7 +170,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
             }
             g_variant_unref(v);
         }
-        g_object_unref(proxy);
+        g_object_unref(block_proxy);
     }
     g_slist_free_full(block_dev_list, g_free);
 
@@ -234,13 +235,15 @@ void udiskd_free(udiskd *u) {
         g_free(u->block_dev);
         g_free(u->serial);
         g_free(u->connection_bus);
+        g_free(u->partition_table);
+        g_free(u->partitions);
         g_free(u->media);
         g_free(u->media_compatibility);
         g_free(u);
     }
 }
 
-gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *drive){
+gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *block, GDBusProxy *drive){
     GVariant *v;
     gboolean smart_enabled = FALSE;
     udiskt* disk_temp = NULL;
@@ -275,9 +278,10 @@ gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *drive){
     return disk_temp;
 }
 
-gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *drive) {
+gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusProxy *drive) {
     GVariant *v;
-    const gchar *str;
+    GVariantIter *iter;
+    const gchar *str, *part;
     udiskd *u = NULL;
 
     u = udiskd_new();
@@ -328,7 +332,6 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *drive) {
     }
     v = get_dbus_property(drive, UDISKS2_DRIVE_INTERFACE, "MediaCompatibility");
     if (v){
-        GVariantIter *iter;
         g_variant_get(v, "as", &iter);
         while (g_variant_iter_loop (iter, "s", &str)){
             if (u->media_compatibility == NULL){
@@ -349,6 +352,26 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *drive) {
     v = get_dbus_property(drive, UDISKS2_DRIVE_INTERFACE, "Removable");
     if (v){
         u->removable = g_variant_get_boolean(v);
+        g_variant_unref(v);
+    }
+    v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "PmSupported");
+    if (v){
+        u->pm_supported = g_variant_get_boolean(v);
+        g_variant_unref(v);
+    }
+    v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "ApmSupported");
+    if (v){
+        u->apm_supported = g_variant_get_boolean(v);
+        g_variant_unref(v);
+    }
+    v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "AamSupported");
+    if (v){
+        u->aam_supported = g_variant_get_boolean(v);
+        g_variant_unref(v);
+    }
+    v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "SmartSupported");
+    if (v){
+        u->smart_supported = g_variant_get_boolean(v);
         g_variant_unref(v);
     }
     v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "SmartEnabled");
@@ -378,6 +401,31 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *drive) {
             g_variant_unref(v);
         }
     }
+
+    v = get_dbus_property(block, UDISKS2_PART_TABLE_INTERFACE, "Type");
+    if (v){
+        u->partition_table = g_variant_dup_string(v, NULL);
+        g_variant_unref(v);
+    }
+    // 'Partitions' property is available in udisks2 version 2.7.2 or newer
+    v = get_dbus_property(block, UDISKS2_PART_TABLE_INTERFACE, "Partitions");
+    if (v){
+        g_variant_get(v, "ao", &iter);
+        while (g_variant_iter_loop (iter, "o", &str)){
+            if (g_str_has_prefix(str, UDISKS2_BLOCK_DEVICES_PATH)){
+                part = str + strlen(UDISKS2_BLOCK_DEVICES_PATH) + 1;
+                if (u->partitions == NULL){
+                    u->partitions = g_strdup(part);
+                }
+                else{
+                    u->partitions = h_strdup_cprintf(", %s", u->partitions, part);
+                }
+            }
+        }
+        g_variant_iter_free (iter);
+        g_variant_unref(v);
+    }
+
     return u;
 }
 
