@@ -613,6 +613,8 @@ static const char **vendors[VENDORS_BANKS] = { vendors1, vendors2, vendors3, ven
     vendors7
 };
 
+gboolean ddr4_partial_data = FALSE;
+
 /*
  * We consider that no data was written to this area of the SPD EEPROM if
  * all bytes read 0x00 or all bytes read 0xff
@@ -1654,6 +1656,7 @@ static gchar *decode_dimms(GSList * dimm_list, gboolean use_sysfs, int max_size)
 	    detailed_info = decode_ddr4_sdram(bytes, &module_size);
 	    decode_ddr4_part_number(bytes, spd_size, part_number);
 	    decode_ddr4_module_manufacturer(bytes, spd_size, &manufacturer);
+	    ddr4_partial_data = ddr4_partial_data || (spd_size < 512);
 	    break;
 	case DDR_SDRAM:
 	    detailed_info = decode_ddr_sdram(bytes, &module_size);
@@ -1745,4 +1748,13 @@ void scan_spd_do(void)
                    _("SPD"), list,
                    _("Bank"), _("Size"), _("Manufacturer"), _("Model") );
     g_free(list);
+}
+
+gboolean spd_decode_show_hinote(const char **msg){
+    if (ddr4_partial_data){
+        *msg = g_strdup(_("A current driver has provided only partial DDR4 SPD data. Please load and\nconfigure ee1004 driver to obtain additional information about DDR4 SPD."));
+        return TRUE;
+    }
+
+    return FALSE;
 }
