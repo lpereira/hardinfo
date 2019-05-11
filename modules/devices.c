@@ -75,6 +75,7 @@ void scan_dtree(gboolean reload);
 void scan_device_resources(gboolean reload);
 
 gboolean root_required_for_resources(void);
+gboolean spd_decode_show_hinote(const char**);
 
 gchar *hi_more_info(gchar *entry);
 
@@ -831,6 +832,12 @@ const gchar *hi_note_func(gint entry)
     if (entry == ENTRY_RESOURCES) {
         if (root_required_for_resources()) {
             return g_strdup(_("Resource information requires superuser privileges"));
+        }
+    }
+    else if (entry == ENTRY_SPD){
+        const char *msg;
+        if (spd_decode_show_hinote(&msg)) {
+            return msg;
         }
     }
     return NULL;
