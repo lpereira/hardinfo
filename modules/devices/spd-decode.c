@@ -854,6 +854,8 @@ static const char *vendors7[] = {"MOVEKING",
 static const char **vendors[VENDORS_BANKS] = {vendors1, vendors2, vendors3, vendors4,
                                               vendors5, vendors6, vendors7};
 
+gboolean no_driver = FALSE;
+gboolean no_support = FALSE;
 gboolean ddr4_partial_data = FALSE;
 
 /*
@@ -1689,6 +1691,9 @@ void scan_spd_do(void) {
     const gchar *dir_path = NULL;
     int max_size = 256;
 
+    no_driver = FALSE;
+    no_support = FALSE;
+
     if (g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_EXISTS)) {
         dir_path = "/sys/bus/i2c/drivers/ee1004";
         max_size = 512;
@@ -1704,14 +1709,17 @@ void scan_spd_do(void) {
     if (!dir) {
         g_free(spd_info);
         if (!g_file_test("/sys/module/eeprom", G_FILE_TEST_EXISTS)) {
+            no_driver = TRUE; /* trigger hinote for no eeprom driver */
             spd_info =
-                g_strdup(_("[SPD]\n"
-                           "Please load the eeprom module to obtain information about memory SPD=\n"
-                           "[$ShellParam$]\n"
-                           "ReloadInterval=500\n"));
+                g_strdup("[$ShellParam$]\n"
+                         "ViewType=0\n"
+                         "ReloadInterval=500\n");
         } else {
-            spd_info = g_strdup(_("[SPD]\n"
-                                  "Reading memory SPD not supported on this system=\n"));
+            no_support = TRUE; /* trigger hinote for unsupported system */
+            spd_info =
+                g_strdup("[$ShellParam$]\n"
+                         "ViewType=0\n"
+                         "ReloadInterval=500\n");
         }
 
         return;
@@ -1747,6 +1755,16 @@ gboolean spd_decode_show_hinote(const char **msg) {
         *msg = g_strdup(
             _("A current driver has provided only partial DDR4 SPD data. Please load and\n"
               "configure ee1004 driver to obtain additional information about DDR4 SPD."));
+        return TRUE;
+    }
+    if (no_driver) {
+        *msg = g_strdup(
+            _("Please load the eeprom module to obtain information about memory SPD."));
+        return TRUE;
+    }
+    if (no_support) {
+        *msg = g_strdup(
+            _("Reading memory SPD not supported on this system."));
         return TRUE;
     }
 
