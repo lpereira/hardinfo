@@ -133,8 +133,10 @@ static void amdgpu_parse_dpmclk(gchar *path, int *min, int *max) {
 
 static void amdgpu_fill_freq(gpud *s) {
     gchar path[256] = "";
-    int clk_min = -1, clk_max = -1;
+    int clk_min = -1, clk_max = -1, mem_clk_min = -1, mem_clk_max = -1;
+
     if (s->sysfs_drm_path) {
+        /* core */
         snprintf(path, 255, "%s/%s/device/pp_dpm_sclk", s->sysfs_drm_path, s->id);
         amdgpu_parse_dpmclk(path, &clk_min, &clk_max);
 
@@ -142,6 +144,15 @@ static void amdgpu_fill_freq(gpud *s) {
             s->khz_max = clk_max * 1000;
         if (clk_min > 0)
             s->khz_min = clk_min * 1000;
+
+        /* memory */
+        snprintf(path, 255, "%s/%s/device/pp_dpm_mclk", s->sysfs_drm_path, s->id);
+        amdgpu_parse_dpmclk(path, &mem_clk_min, &mem_clk_max);
+
+        if (mem_clk_max > 0)
+            s->mem_khz_max = mem_clk_max * 1000;
+        if (mem_clk_min > 0)
+            s->mem_khz_min = mem_clk_min * 1000;
     }
 }
 
