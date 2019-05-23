@@ -129,10 +129,18 @@ static void _gpu_pci_dev(gpud* gpu) {
 
     gchar *freq = g_strdup(_("(Unknown)"));
     if (gpu->khz_max > 0) {
-        if (gpu->khz_min > 0)
+        if (gpu->khz_min > 0 && gpu->khz_min != gpu->khz_max)
             freq = g_strdup_printf("%0.2f-%0.2f %s", (double) gpu->khz_min / 1000, (double) gpu->khz_max / 1000, _("MHz"));
         else
             freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
+    }
+
+    gchar *mem_freq = g_strdup(_("(Unknown)"));
+    if (gpu->mem_khz_max > 0) {
+        if (gpu->mem_khz_min > 0 && gpu->mem_khz_min != gpu->mem_khz_max)
+            mem_freq = g_strdup_printf("%0.2f-%0.2f %s", (double) gpu->mem_khz_min / 1000, (double) gpu->mem_khz_max / 1000, _("MHz"));
+        else
+            mem_freq = g_strdup_printf("%0.2f %s", (double) gpu->mem_khz_max / 1000, _("MHz"));
     }
 
     str = g_strdup_printf("[%s]\n"
@@ -142,7 +150,8 @@ static void _gpu_pci_dev(gpud* gpu) {
                              "%s"
              /* Revision */  "%s=%02x\n"
                              "[%s]\n"
-             /* Frequency */ "%s=%s\n"
+             /* Core freq */ "%s=%s\n"
+             /* Mem freq */  "%s=%s\n"
              /* NV */        "%s"
              /* PCIe */      "%s"
                              "[%s]\n"
@@ -156,6 +165,7 @@ static void _gpu_pci_dev(gpud* gpu) {
                 _("Revision"), p->revision,
                 _("Clocks"),
                 _("Core"), freq,
+                _("Memory"), mem_freq,
                 nv_str,
                 pcie_str,
                 _("Driver"),
