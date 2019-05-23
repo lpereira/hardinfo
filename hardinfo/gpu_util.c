@@ -101,6 +101,50 @@ static void intel_fill_freq(gpud *s) {
     }
 }
 
+static void amdgpu_parse_dpmclk(gchar *path, int *min, int *max) {
+    gchar *data = NULL, *p, *next_nl;
+    int sp, i, clk;
+
+    *min = -1;
+    *max = -1;
+
+    g_file_get_contents(path, &data, NULL, NULL);
+    if (data) {
+        p = data;
+
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            sp = sscanf(p, "%d: %dMhz", &i, &clk);
+
+            if (sp == 2) {
+                if (clk > 0) {
+                    if (*min < 0 || clk < *min)
+                        *min = clk;
+                    if (clk > *max)
+                        *max = clk;
+                }
+            }
+
+            p = next_nl + 1;
+        }
+    }
+    g_free(data);
+}
+
+static void amdgpu_fill_freq(gpud *s) {
+    gchar path[256] = "";
+    int clk_min = -1, clk_max = -1;
+    if (s->sysfs_drm_path) {
+        snprintf(path, 255, "%s/%s/device/pp_dpm_sclk", s->sysfs_drm_path, s->id);
+        amdgpu_parse_dpmclk(path, &clk_min, &clk_max);
+
+        if (clk_max > 0)
+            s->khz_max = clk_max * 1000;
+        if (clk_min > 0)
+            s->khz_min = clk_min * 1000;
+    }
+}
+
 gpud *gpud_new() {
     return g_new0(gpud, 1);
 }
@@ -398,6 +442,7 @@ gpud *gpu_get_device_list() {
             if (curr->device_id_str) new_gpu->device_str = strdup(curr->device_id_str);
             nv_fill_procfs_info(new_gpu);
             intel_fill_freq(new_gpu);
+            amdgpu_fill_freq(new_gpu);
             make_nice_name(new_gpu);
             if (list == NULL)
                 list = new_gpu;
