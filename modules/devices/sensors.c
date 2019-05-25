@@ -29,7 +29,7 @@ GHashTable *sensor_compute = NULL;
 GHashTable *sensor_labels = NULL;
 gboolean hwmon_first_run = TRUE;
 
-static void read_sensor_labels(gchar *driver) {
+static void read_sensor_labels(gchar *devname) {
     FILE *conf;
     gchar buf[256], *line, *p;
     gboolean lock = FALSE;
@@ -64,7 +64,7 @@ static void read_sensor_labels(gchar *driver) {
                     continue;
 
                 if (!key)
-                    key = g_strdup_printf("%s/%s", driver, names[i]);
+                    key = g_strdup_printf("%s/%s", devname, names[i]);
                 else if (!value)
                     value = g_strdup(names[i]);
                 else
@@ -82,7 +82,7 @@ static void read_sensor_labels(gchar *driver) {
 
             while (*p == ' ')
                 p++;
-            g_hash_table_insert(sensor_labels, g_strdup_printf("%s/%s", driver, p), "ignore");
+            g_hash_table_insert(sensor_labels, g_strdup_printf("%s/%s", devname, p), "ignore");
         } else if (lock && strstr(line, "compute")) { /* compute lines */
             strend(line, ',');
             gchar **formulas = g_strsplit(strstr(line, "compute") + 7, " ", 0);
@@ -93,7 +93,7 @@ static void read_sensor_labels(gchar *driver) {
                     continue;
 
                 if (!key)
-                    key = g_strdup_printf("%s/%s", driver, formulas[i]);
+                    key = g_strdup_printf("%s/%s", devname, formulas[i]);
                 else if (!formula)
                     formula = g_strdup(formulas[i]);
                 else
@@ -111,7 +111,7 @@ static void read_sensor_labels(gchar *driver) {
                 for (i = 1; chips[i]; i++) {
                     strend(chips[i], '*');
 
-                    if (g_str_has_prefix(chips[i] + 1, driver)) {
+                    if (g_str_has_prefix(chips[i] + 1, devname)) {
                         lock = TRUE;
                         break;
                     }
@@ -129,15 +129,15 @@ static void read_sensor_labels(gchar *driver) {
 
 static void add_sensor(const char *type,
                        const char *sensor,
-                       const char *driver,
+                       const char *parent,
                        double value,
                        const char *unit) {
     char key[64];
 
     sensors = h_strdup_cprintf("%s/%s=%.2f%s|%s\n", sensors,
-        driver, sensor, value, unit, type);
+        parent, sensor, value, unit, type);
 
-    snprintf(key, sizeof(key), "%s/%s", driver, sensor);
+    snprintf(key, sizeof(key), "%s/%s", parent, sensor);
     moreinfo_add_with_prefix("DEV", key, g_strdup_printf("%.2f%s", value, unit));
 
     lginterval = h_strdup_cprintf("UpdateInterval$%s=1000\n", lginterval, key);
@@ -167,34 +167,35 @@ static char *get_sensor_path(int number, const char *prefix) {
     return g_strdup_printf("/sys/class/hwmon/hwmon%d/%s", number, prefix);
 }
 
-static char *determine_driver_for_hwmon_path(char *path) {
-    char *tmp, *driver;
+static char *determine_devname_for_hwmon_path(char *path) {
+    char *tmp, *devname = NULL;
 
+    // device name
+    tmp = g_strdup_printf("%s/name", path);
+    g_file_get_contents(tmp, &devname, NULL, NULL);
+    g_free(tmp);
+    if (devname)
+        return g_strstrip(devname);
+
+    // fallback: driver name (from driver link)
     tmp = g_strdup_printf("%s/device/driver", path);
-    driver = g_file_read_link(tmp, NULL);
+    devname = g_file_read_link(tmp, NULL);
     g_free(tmp);
 
-    if (driver) {
-        tmp = g_path_get_basename(driver);
-        g_free(driver);
-        driver = tmp;
-    } else {
+    if (!devname) {
+        // fallback: device folder name (from device link)
         tmp = g_strdup_printf("%s/device", path);
-        driver = g_file_read_link(tmp, NULL);
+        devname = g_file_read_link(tmp, NULL);
         g_free(tmp);
     }
 
-    if (!driver) {
-        tmp = g_strdup_printf("%s/name", path);
-        if (!g_file_get_contents(tmp, &driver, NULL, NULL)) {
-            driver = g_strdup("unknown");
-        } else {
-            driver = g_strstrip(driver);
-        }
-        g_free(tmp);
+    if (devname) {
+        tmp = g_path_get_basename(devname);
+        g_free(devname);
+        return tmp;
     }
 
-    return driver;
+    return g_strdup("unknown");
 }
 
 struct HwmonSensor {
@@ -284,7 +285,7 @@ static gboolean read_raw_hwmon_value(gchar *path_hwmon, const gchar *item_path_f
 
 static void read_sensors_hwmon(void) {
     int hwmon, count, min, max;
-    gchar *path_hwmon, *tmp, *driver, *name, *mon, *key;
+    gchar *path_hwmon, *tmp, *devname, *name, *mon, *key;
     const char **prefix, *entry;
     GDir *dir;
     GRegex *regex;
@@ -297,10 +298,10 @@ static void read_sensors_hwmon(void) {
         while (path_hwmon && g_file_test(path_hwmon, G_FILE_TEST_EXISTS)) {
             const struct HwmonSensor *sensor;
 
-            driver = determine_driver_for_hwmon_path(path_hwmon);
-            DEBUG("hwmon%d has driver=%s", hwmon, driver);
+            devname = determine_devname_for_hwmon_path(path_hwmon);
+            DEBUG("hwmon%d has device=%s", hwmon, devname);
             if (hwmon_first_run) {
-                read_sensor_labels(driver);
+                read_sensor_labels(devname);
             }
 
             dir = g_dir_open(path_hwmon, 0, NULL);
@@ -344,7 +345,7 @@ static void read_sensors_hwmon(void) {
                     }
 
                     mon = g_strdup_printf(sensor->key_format, count);
-                    key = g_strdup_printf("%s/%s", driver, mon);
+                    key = g_strdup_printf("%s/%s", devname, mon);
                     name = get_sensor_label_from_conf(key);
                     if (name == NULL){
                         if (read_raw_hwmon_value(path_hwmon, sensor->label_path_format, count, &name)){
@@ -361,7 +362,7 @@ static void read_sensors_hwmon(void) {
 
                         add_sensor(sensor->friendly_name,
                                    name,
-                                   driver,
+                                   devname,
                                    adjusted,
                                    sensor->unit);
                     }
@@ -375,7 +376,7 @@ static void read_sensors_hwmon(void) {
 
             g_dir_close(dir);
             g_free(path_hwmon);
-            g_free(driver);
+            g_free(devname);
 
             path_hwmon = get_sensor_path(++hwmon, *prefix);
         }
