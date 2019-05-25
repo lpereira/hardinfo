@@ -84,14 +84,13 @@ static void read_sensor_labels(gchar *driver) {
                 p++;
             g_hash_table_insert(sensor_labels, g_strdup_printf("%s/%s", driver, p), "ignore");
         } else if (lock && strstr(line, "compute")) { /* compute lines */
+            strend(line, ',');
             gchar **formulas = g_strsplit(strstr(line, "compute") + 7, " ", 0);
             gchar *key = NULL, *formula = NULL;
 
             for (i = 0; formulas[i]; i++) {
                 if (formulas[i][0] == '\0')
                     continue;
-                if (formulas[i][0] == ',')
-                    break;
 
                 if (!key)
                     key = g_strdup_printf("%s/%s", driver, formulas[i]);
