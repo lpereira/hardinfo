@@ -1593,18 +1593,19 @@ static void decode_ddr4_manufacturer(unsigned char count, unsigned char code, ch
         return;
     }
 
-    if (parity(count) != 1) {
+    if (parity(count) != 1 || parity(code) != 1) {
         *manufacturer = _("Invalid");
         return;
     }
 
     int bank = count & 0x7f;
-    if (bank >= VENDORS_BANKS || (bank == VENDORS_BANKS - 1 && code > VENDORS_LAST_BANK_SIZE)) {
+    int pos = code & 0x7f;
+    if (bank >= VENDORS_BANKS || (bank == VENDORS_BANKS - 1 && pos > VENDORS_LAST_BANK_SIZE)) {
         *manufacturer = _("Unknown");
         return;
     }
 
-    *manufacturer = (char *)vendors[bank][code - 1];
+    *manufacturer = (char *)vendors[bank][pos - 1];
 }
 
 static void decode_ddr4_module_manufacturer(unsigned char *bytes, int spd_size,
