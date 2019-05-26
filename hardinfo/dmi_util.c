@@ -41,9 +41,16 @@ static int ignore_placeholder_strings(gchar **pstr) {
     DMI_IGNORE("NA");
     DMI_IGNORE("SKU");
 
-    /* noticed on an HP x360 */
+    /* noticed on an HP x360 with Insyde BIOS */
     DMI_IGNORE("Type2 - Board Asset Tag");
     DMI_IGNORE("Type1ProductConfigId");
+
+    /* Toshiba Laptop with Insyde BIOS */
+    DMI_IGNORE("Base Board Version");
+    DMI_IGNORE("No Asset Tag");
+    DMI_IGNORE("None");
+    DMI_IGNORE("Type1Family");
+    DMI_IGNORE("123456789");
 
     /* Zotac version nonsense */
     p = chk;
