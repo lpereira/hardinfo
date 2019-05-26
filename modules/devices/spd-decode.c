@@ -1480,29 +1480,91 @@ static void decode_ddr4_module_size(unsigned char *bytes, int *size) {
     *size = sdrcap / 8 * buswidth / sdrwidth * lranks_per_dimm;
 }
 
-static gchar *decode_ddr4_sdram(unsigned char *bytes, int *size) {
+static void detect_ddr4_xmp(unsigned char *bytes, int spd_size, int *majv, int *minv) {
+    if (spd_size < 387)
+        return;
+
+    *majv = 0; *minv = 0;
+
+    if (bytes[384] != 0x0c || bytes[385] != 0x4a) // XMP magic number
+        return;
+
+    if (majv)
+        *majv = bytes[387] >> 4;
+    if (minv)
+        *minv = bytes[387] & 0xf;
+}
+
+static void decode_ddr4_xmp(unsigned char *bytes, int spd_size, char **str) {
+    float ctime;
+    float ddrclk, taa, trcd, trp, tras;
+
+    if (spd_size < 405)
+        return;
+
+    ctime = ddr4_mtb_ftb_calc(bytes[396], bytes[431]);
+    ddrclk = 2 * (1000 / ctime);
+    taa = ddr4_mtb_ftb_calc(bytes[401], bytes[430]);
+    trcd = ddr4_mtb_ftb_calc(bytes[402], bytes[429]);
+    trp  = ddr4_mtb_ftb_calc(bytes[403], bytes[428]);
+    tras = (((bytes[404] & 0x0f) << 8) + bytes[405]) * 0.125;
+
+    *str = g_strdup_printf("[%s]\n"
+               "%s=DDR4 %d MHz\n"
+               "%s=%d.%d V\n"
+               "[%s]\n"
+               "%s",
+               _("XMP Profile"),
+               _("Speed"), (int) ddrclk,
+               _("Voltage"), bytes[393] >> 7, bytes[393] & 0x7f,
+               _("XMP Timings"),
+               print_spd_timings((int) ddrclk, ceil(taa/ctime - 0.025), trcd, trp, tras, ctime));
+}
+
+
+static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
     float ddr_clock;
-    int pc4_speed;
+    int pc4_speed, xmp_majv = -1, xmp_minv = -1;
     const char *type;
-    char *speed_timings = NULL;
+    char *speed_timings = NULL, *xmp_profile = NULL, *xmp = NULL;
     static gchar *out;
 
     decode_ddr4_module_speed(bytes, &ddr_clock, &pc4_speed);
     decode_ddr4_module_size(bytes, size);
     decode_ddr4_module_type(bytes, &type);
     decode_ddr4_module_spd_timings(bytes, ddr_clock, &speed_timings);
+    detect_ddr4_xmp(bytes, spd_size, &xmp_majv, &xmp_minv);
+
+    if (xmp_majv == -1 && xmp_minv == -1) {
+        xmp = g_strdup(_("unknown"));
+    }
+    else if (xmp_majv <= 0 && xmp_minv <= 0) {
+        xmp = g_strdup(_("no"));
+    }
+    else {
+        xmp = g_strdup_printf("%s (revision %d.%d)", _("yes"), xmp_majv, xmp_minv);
+        if (xmp_majv == 2 && xmp_minv == 0)
+            decode_ddr4_xmp(bytes, spd_size, &xmp_profile);
+    }
 
     out = g_strdup_printf("[%s]\n"
                           "%s=DDR4 %.0f MHz (PC4-%d)\n"
                           "%s=%d.%d\n"
                           "%s=%s\n"
+                          "%s=%s\n"
+                          "%s=%s\n"
                           "[%s]\n"
+                          "%s\n"
                           "%s",
                           _("Module Information"), _("Module type"), ddr_clock, pc4_speed,
                           _("SPD revision"), bytes[1] >> 4, bytes[1] & 0xf, _("Type"), type,
-                          _("Supported speeds and timings"), speed_timings);
+                          _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("Unknown"),
+                          _("XMP"), xmp, _("JEDEC Timings"), speed_timings,
+                          xmp_profile ? xmp_profile: "");
 
     g_free(speed_timings);
+    g_free(xmp);
+    g_free(xmp_profile);
 
     return out;
 }
@@ -1650,7 +1712,7 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) 
             decode_ddr3_manufacturer(bytes, &manufacturer);
             break;
         case DDR4_SDRAM:
-            detailed_info = decode_ddr4_sdram(bytes, &module_size);
+            detailed_info = decode_ddr4_sdram(bytes, spd_size, &module_size);
             decode_ddr4_part_number(bytes, spd_size, part_number);
             decode_ddr4_module_manufacturer(bytes, spd_size, &manufacturer);
             ddr4_partial_data = ddr4_partial_data || (spd_size < 512);
@@ -1703,7 +1765,6 @@ void scan_spd_do(void) {
         dir_path = "/proc/sys/dev/sensors";
         use_sysfs = FALSE;
     }
-
     if (dir_path) { dir = g_dir_open(dir_path, 0, NULL); }
 
     if (!dir) {
