@@ -18,29 +18,25 @@
 
 #include <string.h>
 
-#include "hardinfo.h"
 #include "computer.h"
 #include "cpu_util.h" /* for STRIFNULL() */
+#include "hardinfo.h"
 
-#define GET_STR(field_name,ptr)      					\
-  if (!ptr && strstr(tmp[0], field_name)) {				\
-    ptr = g_markup_escape_text(g_strstrip(tmp[1]), strlen(tmp[1]));	\
-    g_strfreev(tmp);                 					\
-    continue;                        					\
-  }
+#define GET_STR(field_name, ptr)                                        \
+    if (!ptr && strstr(tmp[0], field_name)) {                           \
+        ptr = g_markup_escape_text(g_strstrip(tmp[1]), strlen(tmp[1])); \
+        g_strfreev(tmp);                                                \
+        continue;                                                       \
+    }
 
 GHashTable *_module_hash_table = NULL;
 
-void
-scan_modules_do(void)
-{
+void scan_modules_do(void) {
     FILE *lsmod;
     gchar buffer[1024];
     gchar *lsmod_path;
 
-    if (!_module_hash_table) {
-        _module_hash_table = g_hash_table_new(g_str_hash, g_str_equal);
-    }
+    if (!_module_hash_table) { _module_hash_table = g_hash_table_new(g_str_hash, g_str_equal); }
 
     g_free(module_list);
 
@@ -48,128 +44,111 @@ scan_modules_do(void)
     moreinfo_del_with_prefix("COMP:MOD");
 
     lsmod_path = find_program("lsmod");
-    if (!lsmod_path)
-        return;
+    if (!lsmod_path) return;
     lsmod = popen(lsmod_path, "r");
     if (!lsmod) {
         g_free(lsmod_path);
-	return;
+        return;
     }
 
-    (void)fgets(buffer, 1024, lsmod);	/* Discards the first line */
+    (void)fgets(buffer, 1024, lsmod); /* Discards the first line */
 
     while (fgets(buffer, 1024, lsmod)) {
-	gchar *buf, *strmodule, *hashkey;
-	gchar *author = NULL,
-	    *description = NULL,
-	    *license = NULL,
-	    *deps = NULL, *vermagic = NULL, *filename = NULL, modname[64];
-	FILE *modi;
-	glong memory;
+        gchar *buf, *strmodule, *hashkey;
+        gchar *author = NULL, *description = NULL, *license = NULL, *deps = NULL, *vermagic = NULL,
+              *filename = NULL, modname[64];
+        FILE *modi;
+        glong memory;
 
-	shell_status_pulse();
+        shell_status_pulse();
 
-	buf = buffer;
+        buf = buffer;
 
-	sscanf(buf, "%s %ld", modname, &memory);
+        sscanf(buf, "%s %ld", modname, &memory);
 
-	hashkey = g_strdup_printf("MOD%s", modname);
-	buf = g_strdup_printf("/sbin/modinfo %s 2>/dev/null", modname);
+        hashkey = g_strdup_printf("MOD%s", modname);
+        buf = g_strdup_printf("/sbin/modinfo %s 2>/dev/null", modname);
 
-	modi = popen(buf, "r");
-	while (fgets(buffer, 1024, modi)) {
-	    gchar **tmp = g_strsplit(buffer, ":", 2);
+        modi = popen(buf, "r");
+        while (fgets(buffer, 1024, modi)) {
+            gchar **tmp = g_strsplit(buffer, ":", 2);
 
-	    GET_STR("author", author);
-	    GET_STR("description", description);
-	    GET_STR("license", license);
-	    GET_STR("depends", deps);
-	    GET_STR("vermagic", vermagic);
-	    GET_STR("filename", filename);
+            GET_STR("author", author);
+            GET_STR("description", description);
+            GET_STR("license", license);
+            GET_STR("depends", deps);
+            GET_STR("vermagic", vermagic);
+            GET_STR("filename", filename);
 
-	    g_strfreev(tmp);
-	}
-	pclose(modi);
-	g_free(buf);
+            g_strfreev(tmp);
+        }
+        pclose(modi);
+        g_free(buf);
 
-	/* old modutils includes quotes in some strings; strip them */
-	/*remove_quotes(modname);
-	   remove_quotes(description);
-	   remove_quotes(vermagic);
-	   remove_quotes(author);
-	   remove_quotes(license); */
+        /* old modutils includes quotes in some strings; strip them */
+        /*remove_quotes(modname);
+           remove_quotes(description);
+           remove_quotes(vermagic);
+           remove_quotes(author);
+           remove_quotes(license); */
 
-	/* old modutils displays <none> when there's no value for a
-	   given field; this is not desirable in the module name
-	   display, so change it to an empty string */
-	if (description && g_str_equal(description, "&lt;none&gt;")) {
-	    g_free(description);
-	    description = g_strdup("");
+        /* old modutils displays <none> when there's no value for a
+           given field; this is not desirable in the module name
+           display, so change it to an empty string */
+        if (description && g_str_equal(description, "&lt;none&gt;")) {
+            g_free(description);
+            description = g_strdup("");
 
-            g_hash_table_insert(_module_hash_table,
-                                g_strdup(modname),
+            g_hash_table_insert(_module_hash_table, g_strdup(modname),
                                 g_strdup_printf("Kernel module (%s)", modname));
-	} else {
-            g_hash_table_insert(_module_hash_table,
-                                g_strdup(modname),
-                                g_strdup(description));
+        } else {
+            g_hash_table_insert(_module_hash_table, g_strdup(modname), g_strdup(description));
         }
 
-	/* append this module to the list of modules */
-	module_list = h_strdup_cprintf("$%s$%s=%s\n",
-				      module_list,
-				      hashkey,
-				      modname,
-				      description ? description : "");
+        /* append this module to the list of modules */
+        module_list = h_strdup_cprintf("$%s$%s=%s\n", module_list, hashkey, modname,
+                                       description ? description : "");
 
-    STRIFNULL(filename, _("(Not available)") );
-    STRIFNULL(description, _("(Not available)") );
-    STRIFNULL(vermagic, _("(Not available)") );
-    STRIFNULL(author, _("(Not available)") );
-    STRIFNULL(license, _("(Not available)") );
+        STRIFNULL(filename, _("(Not available)"));
+        STRIFNULL(description, _("(Not available)"));
+        STRIFNULL(vermagic, _("(Not available)"));
+        STRIFNULL(author, _("(Not available)"));
+        STRIFNULL(license, _("(Not available)"));
 
-    /* create the module information string */
-    strmodule = g_strdup_printf("[%s]\n"
-                        "%s=%s\n"
-                        "%s=%.2f %s\n"
-                        "[%s]\n"
-                        "%s=%s\n"
-                        "%s=%s\n"
-                        "%s=%s\n"
-                        "[%s]\n"
-                        "%s=%s\n"
-                        "%s=%s\n",
-                        _("Module Information"),
-                        _("Path"), filename,
-                        _("Used Memory"), memory / 1024.0, _("KiB"),
-                        _("Description"),
-                        _("Name"), modname,
-                        _("Description"), description,
-                        _("Version Magic"), vermagic,
-                        _("Copyright"),
-                        _("Author"), author,
-                        _("License"), license );
+        /* create the module information string */
+        strmodule = g_strdup_printf("[%s]\n"
+                                    "%s=%s\n"
+                                    "%s=%.2f %s\n"
+                                    "[%s]\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
+                                    "[%s]\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n",
+                                    _("Module Information"), _("Path"), filename, _("Used Memory"),
+                                    memory / 1024.0, _("KiB"), _("Description"), _("Name"), modname,
+                                    _("Description"), description, _("Version Magic"), vermagic,
+                                    _("Copyright"), _("Author"), author, _("License"), license);
 
-    /* if there are dependencies, append them to that string */
-    if (deps && strlen(deps)) {
-        gchar **tmp = g_strsplit(deps, ",", 0);
+        /* if there are dependencies, append them to that string */
+        if (deps && strlen(deps)) {
+            gchar **tmp = g_strsplit(deps, ",", 0);
 
-        strmodule = h_strconcat(strmodule,
-                                "\n[", _("Dependencies"), "]\n",
-                                g_strjoinv("=\n", tmp),
-                                "=\n", NULL);
-        g_strfreev(tmp);
-        g_free(deps);
-    }
+            strmodule = h_strconcat(strmodule, "\n[", _("Dependencies"), "]\n",
+                                    g_strjoinv("=\n", tmp), "=\n", NULL);
+            g_strfreev(tmp);
+            g_free(deps);
+        }
 
-	moreinfo_add_with_prefix("COMP", hashkey, strmodule);
-	g_free(hashkey);
+        moreinfo_add_with_prefix("COMP", hashkey, strmodule);
+        g_free(hashkey);
 
-	g_free(license);
-	g_free(description);
-	g_free(author);
-	g_free(vermagic);
-	g_free(filename);
+        g_free(license);
+        g_free(description);
+        g_free(author);
+        g_free(vermagic);
+        g_free(filename);
     }
     pclose(lsmod);
 
