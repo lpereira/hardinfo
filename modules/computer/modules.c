@@ -56,7 +56,8 @@ void scan_modules_do(void) {
     while (fgets(buffer, 1024, lsmod)) {
         gchar *buf, *strmodule, *hashkey;
         gchar *author = NULL, *description = NULL, *license = NULL, *deps = NULL, *vermagic = NULL,
-              *filename = NULL, modname[64];
+              *filename = NULL, *srcversion = NULL, *version = NULL, *retpoline = NULL,
+              *intree = NULL, modname[64];
         FILE *modi;
         glong memory;
 
@@ -79,6 +80,10 @@ void scan_modules_do(void) {
             GET_STR("depends", deps);
             GET_STR("vermagic", vermagic);
             GET_STR("filename", filename);
+            GET_STR("srcversion", srcversion); /* so "version" doesn't catch */
+            GET_STR("version", version);
+            GET_STR("retpoline", retpoline);
+            GET_STR("intree", intree);
 
             g_strfreev(tmp);
         }
@@ -114,6 +119,17 @@ void scan_modules_do(void) {
         STRIFNULL(vermagic, _("(Not available)"));
         STRIFNULL(author, _("(Not available)"));
         STRIFNULL(license, _("(Not available)"));
+        STRIFNULL(version, _("(Not available)"));
+
+        gboolean ry = FALSE, ity = FALSE;
+        if (retpoline && *retpoline == 'Y') ry = TRUE;
+        if (intree && *intree == 'Y') ity = TRUE;
+
+        g_free(retpoline);
+        g_free(intree);
+
+        retpoline = g_strdup(ry ? _("Yes") : _("No"));
+        intree = g_strdup(ity ? _("Yes") : _("No"));
 
         /* create the module information string */
         strmodule = g_strdup_printf("[%s]\n"
@@ -123,13 +139,18 @@ void scan_modules_do(void) {
                                     "%s=%s\n"
                                     "%s=%s\n"
                                     "%s=%s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
+                                    "%s=%s\n"
                                     "[%s]\n"
                                     "%s=%s\n"
                                     "%s=%s\n",
                                     _("Module Information"), _("Path"), filename, _("Used Memory"),
                                     memory / 1024.0, _("KiB"), _("Description"), _("Name"), modname,
                                     _("Description"), description, _("Version Magic"), vermagic,
-                                    _("Copyright"), _("Author"), author, _("License"), license);
+                                    _("Version"), version, _("In Linus' Tree"), intree,
+                                    _("Retpoline Enabled"), retpoline, _("Copyright"), _("Author"),
+                                    author, _("License"), license);
 
         /* if there are dependencies, append them to that string */
         if (deps && strlen(deps)) {
@@ -149,6 +170,10 @@ void scan_modules_do(void) {
         g_free(author);
         g_free(vermagic);
         g_free(filename);
+        g_free(srcversion);
+        g_free(version);
+        g_free(retpoline);
+        g_free(intree);
     }
     pclose(lsmod);
 
