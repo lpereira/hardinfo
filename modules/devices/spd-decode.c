@@ -1711,12 +1711,12 @@ static int read_spd(char *spd_path, int offset, size_t size, int use_sysfs,
 
 static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) {
     GSList *dimm;
-    GString *output;
+    GString *output = NULL;
     gint count = 0;
     int spd_size = 0;
     guchar *bytes;
 
-    output = g_string_new("");
+    bytes = malloc(sizeof(guchar) * max_size);
 
     for (dimm = dimm_list; dimm; dimm = dimm->next, count++) {
         gchar *spd_path = (gchar *)dimm->data;
@@ -1729,7 +1729,6 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) 
 
         shell_status_pulse();
 
-        bytes = malloc(sizeof(unsigned char) * max_size);
         spd_size = read_spd(spd_path, 0, max_size, use_sysfs, bytes);
         ram_type = decode_ram_type(bytes);
 
@@ -1766,6 +1765,10 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) 
         gchar *key = g_strdup_printf("MEM%d", count);
         moreinfo_add_with_prefix("DEV", key, g_strdup(detailed_info));
         g_free(key);
+
+        if (!output)
+            output = g_string_new("");
+
         g_string_append_printf(output, "$MEM%d$%d=%s|%d MB|%s\n", count, count, part_number,
                                module_size, manufacturer);
 
@@ -1774,34 +1777,64 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) 
     }
     g_free(bytes);
 
+    if (!output)
+        return NULL;
+
     return g_string_free(output, FALSE);
 }
+
+struct SpdDriver {
+    const char *dir_path;
+    const gint max_size;
+    const gboolean use_sysfs;
+};
+
+static const struct SpdDriver spd_drivers[] = {
+    { "/sys/bus/i2c/drivers/ee1004", 512, TRUE  },
+    { "/sys/bus/i2c/drivers/eeprom", 256, TRUE  },
+    { "/proc/sys/dev/sensors"      , 256, FALSE },
+    { NULL }
+};
 
 void scan_spd_do(void) {
     GDir *dir = NULL;
     GSList *dimm_list = NULL;
-    gboolean use_sysfs = TRUE;
-    gchar *dir_entry;
-    gchar *list;
-    const gchar *dir_path = NULL;
-    int max_size = 256;
+    void *dimm_list_entry;
+    gchar *dir_entry, *list = NULL;
+    const struct SpdDriver *driver;
+    gboolean driver_found = FALSE;
 
     ddr4_partial_data = FALSE;
     no_driver = FALSE;
     no_support = FALSE;
 
-    if (g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_EXISTS)) {
-        dir_path = "/sys/bus/i2c/drivers/ee1004";
-        max_size = 512;
-    } else if (g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_EXISTS)) {
-        dir_path = "/sys/bus/i2c/drivers/eeprom";
-    } else if (g_file_test("/proc/sys/dev/sensors", G_FILE_TEST_EXISTS)) {
-        dir_path = "/proc/sys/dev/sensors";
-        use_sysfs = FALSE;
-    }
-    if (dir_path) { dir = g_dir_open(dir_path, 0, NULL); }
+    for (driver = spd_drivers; driver->dir_path; driver++) {
+        if (g_file_test(driver->dir_path, G_FILE_TEST_EXISTS)) {
+            dir = g_dir_open(driver->dir_path, 0, NULL);
+            if (!dir) continue;
 
-    if (!dir) {
+            driver_found = TRUE;
+            while ((dir_entry = (char *)g_dir_read_name(dir))) {
+                if ((driver->use_sysfs && isdigit(dir_entry[0])) ||
+                    g_str_has_prefix(dir_entry, "eeprom-")) {
+
+                    dimm_list_entry = g_strdup_printf("%s/%s", driver->dir_path, dir_entry);
+                    dimm_list = g_slist_prepend(dimm_list, dimm_list_entry);
+                }
+            }
+
+            g_dir_close(dir);
+
+            if (dimm_list) {
+                list = decode_dimms(dimm_list, driver->use_sysfs, driver->max_size);
+                g_slist_free(dimm_list);
+                dimm_list = NULL;
+            }
+            if (list) break;
+        }
+    }
+
+    if (!driver_found) {
         g_free(spd_info);
         if (!g_file_test("/sys/module/eeprom", G_FILE_TEST_EXISTS)) {
             no_driver = TRUE; /* trigger hinote for no eeprom driver */
@@ -1819,17 +1852,6 @@ void scan_spd_do(void) {
 
         return;
     }
-
-    while ((dir_entry = (char *)g_dir_read_name(dir))) {
-        if ((use_sysfs && isdigit(dir_entry[0])) || g_str_has_prefix(dir_entry, "eeprom-")) {
-            dimm_list = g_slist_prepend(dimm_list, g_strdup_printf("%s/%s", dir_path, dir_entry));
-        }
-    }
-
-    g_dir_close(dir);
-
-    list = decode_dimms(dimm_list, use_sysfs, max_size);
-    g_slist_free(dimm_list);
 
     g_free(spd_info);
     spd_info = g_strdup_printf("[%s]\n"
