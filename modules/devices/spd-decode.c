@@ -1786,6 +1786,7 @@ void scan_spd_do(void) {
     const gchar *dir_path = NULL;
     int max_size = 256;
 
+    ddr4_partial_data = FALSE;
     no_driver = FALSE;
     no_support = FALSE;
 
