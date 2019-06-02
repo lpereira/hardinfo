@@ -1480,6 +1480,22 @@ static void decode_ddr4_module_size(unsigned char *bytes, int *size) {
     *size = sdrcap / 8 * buswidth / sdrwidth * lranks_per_dimm;
 }
 
+static void decode_ddr4_module_date(unsigned char *bytes, int spd_size, char **str) {
+    if (spd_size < 324) {
+        *str = g_strdup(_("Unknown (Missing data)"));
+        return;
+    }
+
+    if (bytes[323] == 0x0 || bytes[323] == 0xffff ||
+        bytes[324] == 0x0 || bytes[324] == 0xffff) {
+        *str = g_strdup(_("Unknown"));
+        return;
+    }
+
+    *str = g_strdup_printf("%s %02X, %s 20%02X",
+                           _("Week"), bytes[324], _("Year"), bytes[323]);
+}
+
 static void detect_ddr4_xmp(unsigned char *bytes, int spd_size, int *majv, int *minv) {
     if (spd_size < 387)
         return;
@@ -1526,13 +1542,14 @@ static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
     float ddr_clock;
     int pc4_speed, xmp_majv = -1, xmp_minv = -1;
     const char *type;
-    char *speed_timings = NULL, *xmp_profile = NULL, *xmp = NULL;
+    char *speed_timings = NULL, *xmp_profile = NULL, *xmp = NULL, *manf_date = NULL;
     static gchar *out;
 
     decode_ddr4_module_speed(bytes, &ddr_clock, &pc4_speed);
     decode_ddr4_module_size(bytes, size);
     decode_ddr4_module_type(bytes, &type);
     decode_ddr4_module_spd_timings(bytes, ddr_clock, &speed_timings);
+    decode_ddr4_module_date(bytes, spd_size, &manf_date);
     detect_ddr4_xmp(bytes, spd_size, &xmp_majv, &xmp_minv);
 
     if (xmp_majv == -1 && xmp_minv == -1) {
@@ -1553,16 +1570,19 @@ static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
                           "%s=%s\n"
                           "%s=%s\n"
                           "%s=%s\n"
+                          "%s=%s\n"
                           "[%s]\n"
                           "%s\n"
                           "%s",
                           _("Module Information"), _("Module type"), ddr_clock, pc4_speed,
                           _("SPD revision"), bytes[1] >> 4, bytes[1] & 0xf, _("Type"), type,
                           _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("Unknown"),
+                          _("Manufacturing Date"), manf_date,
                           _("XMP"), xmp, _("JEDEC Timings"), speed_timings,
                           xmp_profile ? xmp_profile: "");
 
     g_free(speed_timings);
+    g_free(manf_date);
     g_free(xmp);
     g_free(xmp_profile);
 
