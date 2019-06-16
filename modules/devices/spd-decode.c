@@ -1762,9 +1762,13 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) 
         default: DEBUG("Unsupported EEPROM type: %s\n", ram_types[ram_type]); continue;
         }
 
-        gchar *key = g_strdup_printf("MEM%d", count);
-        moreinfo_add_with_prefix("DEV", key, g_strdup(detailed_info));
-        g_free(key);
+        if (detailed_info) {
+            gchar *more_detailed_info = g_strdup_printf("%s[%s]\n%s=%s\n",
+                            detailed_info, _("Source"), _("Path"), spd_path);
+            gchar *key = g_strdup_printf("MEM%d", count);
+            moreinfo_add_with_prefix("DEV", key, more_detailed_info); /* moreinfo now owns *more_detailed_info */
+            g_free(key);
+        }
 
         if (!output)
             output = g_string_new("");
