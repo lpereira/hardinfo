@@ -263,6 +263,29 @@ detect_desktop_environment(void)
 }
 
 gchar *
+computer_get_dmesg_status(void)
+{
+    gchar *out = NULL, *err = NULL;
+    int ex = 1, result = 0;
+    g_spawn_command_line_sync("dmesg", &out, &err, &ex, NULL);
+    g_free(out);
+    g_free(err);
+    result += (getuid() == 0) ? 2 : 0;
+    result += ex ? 1 : 0;
+    switch(result) {
+        case 0: /* readable, user */
+            return g_strdup(_("User access allowed"));
+        case 1: /* unreadable, user */
+            return g_strdup(_("User access forbidden"));
+        case 2: /* readable, root */
+            return g_strdup(_("Access allowed (running as superuser)"));
+        case 3: /* unreadable, root */
+            return g_strdup(_("Access forbidden? (running as superuser)"));
+    }
+    return g_strdup(_("(Unknown)"));
+}
+
+gchar *
 computer_get_aslr(void)
 {
     switch (h_sysfs_read_int("/proc/sys/kernel", "randomize_va_space")) {
@@ -276,6 +299,7 @@ computer_get_aslr(void)
         return g_strdup(_("Unknown"));
     }
 }
+
 gchar *
 computer_get_entropy_avail(void)
 {
