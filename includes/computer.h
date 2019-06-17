@@ -144,6 +144,7 @@ gchar *computer_get_formatted_uptime();
 gchar *computer_get_alsacards(Computer * computer);
 gchar *computer_get_entropy_avail(void);
 gchar *computer_get_aslr(void);
+gchar *computer_get_dmesg_status(void);
 
 OperatingSystem *computer_get_os(void);
 AlsaInfo *computer_get_alsainfo(void);

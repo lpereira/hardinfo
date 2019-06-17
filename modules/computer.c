@@ -43,6 +43,7 @@
 /* Callbacks */
 gchar *callback_summary(void);
 gchar *callback_os(void);
+gchar *callback_security(void);
 gchar *callback_modules(void);
 gchar *callback_boots(void);
 gchar *callback_locales(void);
@@ -59,6 +60,7 @@ gchar *callback_dev(void);
 /* Scan callbacks */
 void scan_summary(gboolean reload);
 void scan_os(gboolean reload);
+void scan_security(gboolean reload);
 void scan_modules(gboolean reload);
 void scan_boots(gboolean reload);
 void scan_locales(gboolean reload);
@@ -75,6 +77,7 @@ void scan_dev(gboolean reload);
 static ModuleEntry entries[] = {
     {N_("Summary"), "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
     {N_("Operating System"), "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
+    {N_("Security"), "os.png", callback_security, scan_security, MODULE_FLAG_NONE},
     {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
     {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
     {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
@@ -140,6 +143,13 @@ void scan_os(gboolean reload)
 {
     SCAN_START();
     computer->os = computer_get_os();
+    SCAN_END();
+}
+
+void scan_security(gboolean reload)
+{
+    SCAN_START();
+    //nothing to do here yet
     SCAN_END();
 }
 
@@ -512,14 +522,23 @@ gchar *callback_os(void)
         info_field(_("Desktop Environment"), computer->os->desktop),
         info_field_last());
 
-    info_add_group(info, _("Security"),
-        info_field_update(_("Available entropy in /dev/random"), 1000),
-        info_field(_("ASLR"), idle_free(computer_get_aslr())),
-        info_field_last());
-
     info_add_group(info, _("Misc"),
         info_field_update(_("Uptime"), 1000),
         info_field_update(_("Load Average"), 10000),
+        info_field_last());
+
+    return info_flatten(info);
+}
+
+gchar *callback_security(void)
+{
+    struct Info *info = info_new();
+
+    info_add_group(info, _("Security"),
+        info_field(_("HardInfo running as"), (getuid() == 0) ? _("Superuser") : _("User")),
+        info_field_update(_("Available entropy in /dev/random"), 1000),
+        info_field(_("ASLR"), idle_free(computer_get_aslr())),
+        info_field(_("dmesg"), idle_free(computer_get_dmesg_status())),
         info_field_last());
 
     return info_flatten(info);
