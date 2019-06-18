@@ -490,3 +490,30 @@ computer_get_os(void)
 
     return os;
 }
+
+const gchar *
+computer_get_selinux(void)
+{
+    int r;
+    gboolean spawned = g_spawn_command_line_sync("selinuxenabled",
+                                                 NULL, NULL, &r, NULL);
+
+    if (!spawned)
+        return _("Not installed");
+
+    if (r == 0)
+        return _("Enabled");
+
+    return _("Disabled");
+}
+
+gchar *
+computer_get_lsm(void)
+{
+    gchar *contents;
+
+    if (!g_file_get_contents("/sys/kernel/security/lsm", &contents, NULL, NULL))
+        return g_strdup(_("Unknown"));
+
+    return contents;
+}

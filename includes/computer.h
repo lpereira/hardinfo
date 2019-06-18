@@ -145,6 +145,8 @@ gchar *computer_get_alsacards(Computer * computer);
 gchar *computer_get_entropy_avail(void);
 gchar *computer_get_aslr(void);
 gchar *computer_get_dmesg_status(void);
+const gchar *computer_get_selinux(void);
+gchar *computer_get_lsm(void);
 
 OperatingSystem *computer_get_os(void);
 AlsaInfo *computer_get_alsainfo(void);

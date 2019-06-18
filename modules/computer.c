@@ -534,11 +534,22 @@ gchar *callback_security(void)
 {
     struct Info *info = info_new();
 
-    info_add_group(info, _("Security"),
+    info_add_group(info, _("HardInfo"),
         info_field(_("HardInfo running as"), (getuid() == 0) ? _("Superuser") : _("User")),
+        info_field_last());
+
+    info_add_group(info, _("Health"),
         info_field_update(_("Available entropy in /dev/random"), 1000),
+        info_field_last());
+
+    info_add_group(info, _("Hardening Features"),
         info_field(_("ASLR"), idle_free(computer_get_aslr())),
         info_field(_("dmesg"), idle_free(computer_get_dmesg_status())),
+        info_field_last());
+
+    info_add_group(info, _("Linux Security Modules"),
+        info_field(_("Modules available"), idle_free(computer_get_lsm())),
+        info_field(_("SELinux status"), computer_get_selinux()),
         info_field_last());
 
     return info_flatten(info);
