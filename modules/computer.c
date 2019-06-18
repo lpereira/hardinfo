@@ -77,7 +77,7 @@ void scan_dev(gboolean reload);
 static ModuleEntry entries[] = {
     {N_("Summary"), "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
     {N_("Operating System"), "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
-    {N_("Security"), "os.png", callback_security, scan_security, MODULE_FLAG_NONE},
+    {N_("Security"), "security.png", callback_security, scan_security, MODULE_FLAG_NONE},
     {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
     {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
     {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
