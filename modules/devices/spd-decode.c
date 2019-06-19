@@ -1277,27 +1277,21 @@ static void decode_ddr3_module_size(unsigned char *bytes, int *size) {
 static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float *trp, float *tras,
                                        float *tcl) {
     float ctime;
-    float highest_cas = 0;
-    int i;
     float mtb = 0.125;
+    float taa;
 
     if (bytes[10] == 1 && bytes[11] == 8) mtb = 0.125;
     if (bytes[10] == 1 && bytes[11] == 15) mtb = 0.0625;
     ctime = mtb * bytes[12];
+    taa = bytes[16] * mtb;
 
-    switch (bytes[14]) {
-    case 6: highest_cas = 5; break;
-    case 4: highest_cas = 6; break;
-    case 0xc: highest_cas = 7; break;
-    case 0x1e: highest_cas = 8; break;
-    }
     if (trcd) { *trcd = bytes[18] * mtb; }
 
     if (trp) { *trp = bytes[20] * mtb; }
 
     if (tras) { *tras = (bytes[22] + bytes[21] & 0xf) * mtb; }
 
-    if (tcl) { *tcl = highest_cas; }
+    if (tcl) { *tcl = ceil(taa/ctime); }
 }
 
 static void decode_ddr3_module_type(unsigned char *bytes, const char **type) {
