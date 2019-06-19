@@ -1342,11 +1342,32 @@ static void decode_ddr3_part_number(unsigned char *bytes, char *part_number) {
     }
 }
 
-static void decode_ddr3_manufacturer(unsigned char *bytes, char **manufacturer) {
-    char *out = "Unknown";
 
-end:
-    if (manufacturer) { *manufacturer = out; }
+static void decode_ddr34_manufacturer(unsigned char count, unsigned char code, char **manufacturer) {
+    if (!manufacturer) return;
+
+    if (code == 0x00 || code == 0xFF) {
+        *manufacturer = _("Unknown");
+        return;
+    }
+
+    if (parity(count) != 1 || parity(code) != 1) {
+        *manufacturer = _("Invalid");
+        return;
+    }
+
+    int bank = count & 0x7f;
+    int pos = code & 0x7f;
+    if (bank >= VENDORS_BANKS || (bank == VENDORS_BANKS - 1 && pos > VENDORS_LAST_BANK_SIZE)) {
+        *manufacturer = _("Unknown");
+        return;
+    }
+
+    *manufacturer = (char *)vendors[bank][pos - 1];
+}
+
+static void decode_ddr3_manufacturer(unsigned char *bytes, char **manufacturer) {
+    decode_ddr34_manufacturer(bytes[117], bytes[118], (char **) manufacturer);
 }
 
 static void decode_module_manufacturer(unsigned char *bytes, char **manufacturer) {
@@ -1393,29 +1414,6 @@ static char *print_spd_timings(int speed, float cas, float trcd, float trp, floa
                                float ctime) {
     return g_strdup_printf("DDR4-%d=%.0f-%.0f-%.0f-%.0f\n", speed, cas, ceil(trcd / ctime - 0.025),
                            ceil(trp / ctime - 0.025), ceil(tras / ctime - 0.025));
-}
-
-static void decode_ddr4_manufacturer(unsigned char count, unsigned char code, char **manufacturer) {
-    if (!manufacturer) return;
-
-    if (code == 0x00 || code == 0xFF) {
-        *manufacturer = _("Unknown");
-        return;
-    }
-
-    if (parity(count) != 1 || parity(code) != 1) {
-        *manufacturer = _("Invalid");
-        return;
-    }
-
-    int bank = count & 0x7f;
-    int pos = code & 0x7f;
-    if (bank >= VENDORS_BANKS || (bank == VENDORS_BANKS - 1 && pos > VENDORS_LAST_BANK_SIZE)) {
-        *manufacturer = _("Unknown");
-        return;
-    }
-
-    *manufacturer = (char *)vendors[bank][pos - 1];
 }
 
 static void decode_ddr4_module_type(unsigned char *bytes, const char **type) {
@@ -1531,7 +1529,7 @@ static void decode_ddr4_dram_manufacturer(unsigned char *bytes, int spd_size,
         return;
     }
 
-    decode_ddr4_manufacturer(bytes[350], bytes[351], (char **) manufacturer);
+    decode_ddr34_manufacturer(bytes[350], bytes[351], (char **) manufacturer);
 }
 
 static void detect_ddr4_xmp(unsigned char *bytes, int spd_size, int *majv, int *minv) {
@@ -1652,7 +1650,7 @@ static void decode_ddr4_module_manufacturer(unsigned char *bytes, int spd_size,
         return;
     }
 
-    decode_ddr4_manufacturer(bytes[320], bytes[321], manufacturer);
+    decode_ddr34_manufacturer(bytes[320], bytes[321], manufacturer);
 }
 
 static int decode_ram_type(unsigned char *bytes) {
