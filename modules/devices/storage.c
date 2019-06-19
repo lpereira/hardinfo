@@ -89,7 +89,7 @@ gboolean __scan_udisks2_devices(void) {
             features = h_strdup_cprintf(", %s", features, _("Smart monitoring"));
         }
         if (disk->pm_supported) {
-            features = h_strdup_cprintf(", %s", features, _("Power Managment"));
+            features = h_strdup_cprintf(", %s", features, _("Power Management"));
         }
         if (disk->apm_supported) {
             features = h_strdup_cprintf(", %s", features, _("Advanced Power Management"));
