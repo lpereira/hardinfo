@@ -1266,7 +1266,12 @@ static void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int
 }
 
 static void decode_ddr3_module_size(unsigned char *bytes, int *size) {
-    *size = 512 << bytes[4];
+    unsigned int sdr_capacity = 256 << (bytes[4] & 0xF);
+    unsigned int sdr_width = 4 << (bytes[7] & 0x7);
+    unsigned int bus_width = 8 << (bytes[8] & 0x7);
+    unsigned int ranks = 1 + ((bytes[7] >> 3) & 0x7);
+
+    *size = sdr_capacity / 8 * bus_width / sdr_width * ranks;
 }
 
 static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float *trp, float *tras,
