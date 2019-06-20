@@ -652,7 +652,7 @@ static gchar *get_benchmark_results()
 
     gchar *machine = module_call_method("devices::getProcessorName");
     gchar *machineclock = module_call_method("devices::getProcessorFrequency");
-    gchar *machineram = module_call_method("devices::getMemoryTotal");
+    gchar *machineram = module_call_method("computer::getMemoryTotal");
     gchar *result = g_strdup_printf("[param]\n"
 				    "machine=%s\n"
 				    "machineclock=%s\n"

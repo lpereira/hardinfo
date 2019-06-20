@@ -29,7 +29,12 @@ void scan_memory_do(void)
 
     if (offset == -1) {
         /* gah. linux 2.4 adds three lines of data we don't need in
-           /proc/meminfo */
+         * /proc/meminfo.
+         * The lines look something like this:
+         *  total: used: free: shared: buffers: cached:
+         *  Mem: 3301101568 1523159040 1777942528 0 3514368 1450356736
+         *  Swap: 0 0 0
+         */
         gchar *os_kernel = module_call_method("computer::getOSKernel");
         if (os_kernel) {
             offset = strstr(os_kernel, "Linux 2.4") ? 3 : 0;

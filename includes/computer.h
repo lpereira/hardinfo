@@ -159,4 +159,9 @@ void scan_modules_do(void);
 void scan_filesystems(void);
 void scan_users_do(void);
 
+/* Memory Usage */
+extern GHashTable *memlabels;
+void init_memory_labels(void);
+void scan_memory_do(void);
+
 #endif				/* __COMPUTER_H__ */

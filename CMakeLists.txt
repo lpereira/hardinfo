@@ -135,6 +135,7 @@ set(MODULE_computer_SOURCES
 	modules/computer/languages.c
 	modules/computer/loadavg.c
 	modules/computer/memory.c
+	modules/computer/memory_usage.c
 	modules/computer/modules.c
 	modules/computer/os.c
 	modules/computer/uptime.c
@@ -146,7 +147,6 @@ set(MODULE_devices_SOURCES
 	modules/devices/${HARDINFO_ARCH}/processor.c
 	modules/devices/gpu.c
 	modules/devices/battery.c
-	modules/devices/devmemory.c
 	modules/devices/dmi.c
 	modules/devices/devicetree.c
 	modules/devices/inputdevices.c
