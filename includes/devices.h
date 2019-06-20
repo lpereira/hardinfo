@@ -48,10 +48,6 @@ gchar *processor_describe_default(GSList * processors);
 gchar *processor_describe_by_counting_names(GSList * processors);
 gchar *processor_frequency_desc(GSList *processors);
 
-/* Memory */
-void init_memory_labels(void);
-void scan_memory_do(void);
-
 /* Printers */
 void init_cups(void);
 
@@ -85,7 +81,6 @@ extern gchar *storage_icons;
 extern gchar *storage_list;
 extern gchar *usb_list;
 extern gchar *usb_icons;
-extern GHashTable *memlabels;
 extern GHashTable *_pci_devices;
 extern GHashTable *sensor_compute;
 extern GHashTable *sensor_labels;

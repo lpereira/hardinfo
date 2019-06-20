@@ -156,7 +156,7 @@ bench_machine *bench_machine_this() {
         m->cpu_config = module_call_method("devices::getProcessorFrequencyDesc");
         m->gpu_desc = module_call_method("devices::getGPUList");
         m->ogl_renderer = module_call_method("computer::getOGLRenderer");
-        tmp = module_call_method("devices::getMemoryTotal");
+        tmp = module_call_method("computer::getMemoryTotal");
         m->memory_kiB = atoi(tmp);
         free(tmp);
 

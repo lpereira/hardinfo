@@ -47,6 +47,7 @@ gchar *callback_security(void);
 gchar *callback_modules(void);
 gchar *callback_boots(void);
 gchar *callback_locales(void);
+gchar *callback_memory_usage();
 gchar *callback_fs(void);
 gchar *callback_display(void);
 gchar *callback_network(void);
@@ -65,6 +66,7 @@ void scan_modules(gboolean reload);
 void scan_boots(gboolean reload);
 void scan_locales(gboolean reload);
 void scan_fs(gboolean reload);
+void scan_memory_usage(gboolean reload);
 void scan_display(gboolean reload);
 void scan_network(gboolean reload);
 void scan_users(gboolean reload);
@@ -81,6 +83,7 @@ static ModuleEntry entries[] = {
     {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
     {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
     {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
+    {N_("Memory Usage"), "memory.png", callback_memory_usage, scan_memory_usage, MODULE_FLAG_NONE},
     {N_("Filesystems"), "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
     {N_("Display"), "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
     {N_("Environment Variables"), "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
@@ -92,9 +95,10 @@ static ModuleEntry entries[] = {
     {NULL},
 };
 
-
 gchar *module_list = NULL;
 Computer *computer = NULL;
+gchar *meminfo = NULL;
+gchar *lginterval = NULL;
 
 gchar *hi_more_info(gchar * entry)
 {
@@ -126,7 +130,11 @@ gchar *hi_get_field(gchar * field)
     } else if (g_str_equal(field, _("Available entropy in /dev/random"))) {
         tmp = computer_get_entropy_avail();
     } else {
-        tmp = g_strdup_printf("Unknown field: %s", field);
+        gchar *info = moreinfo_lookup_with_prefix("DEV", field);
+        if (info)
+            tmp = g_strdup(info);
+        else
+            tmp = g_strdup_printf("Unknown field: %s", field);
     }
     return tmp;
 }
@@ -179,6 +187,13 @@ void scan_fs(gboolean reload)
 {
     SCAN_START();
     scan_filesystems();
+    SCAN_END();
+}
+
+void scan_memory_usage(gboolean reload)
+{
+    SCAN_START();
+    scan_memory_do();
     SCAN_END();
 }
 
@@ -315,6 +330,23 @@ gchar *callback_dev(void)
                 dev_list);
 }
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
+
+gchar *callback_memory_usage()
+{
+    return g_strdup_printf("[Memory]\n"
+               "%s\n"
+               "[$ShellParam$]\n"
+               "ViewType=2\n"
+               "LoadGraphSuffix= kB\n"
+               "RescanInterval=2000\n"
+               "ColumnTitle$TextValue=%s\n"
+               "ColumnTitle$Extra1=%s\n"
+               "ColumnTitle$Value=%s\n"
+               "ShowColumnHeaders=true\n"
+               "%s\n", meminfo,
+               _("Field"), _("Description"), _("Value"), /* column labels */
+               lginterval);
+}
 
 static gchar *detect_machine_type(void)
 {
@@ -780,6 +812,12 @@ gchar *get_audio_cards(void)
     return computer_get_alsacards(computer);
 }
 
+gchar *get_memory_total(void)
+{
+    scan_memory_usage(FALSE);
+    return moreinfo_lookup ("DEV:MemTotal");
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
@@ -789,6 +827,7 @@ ShellModuleMethod *hi_exported_methods(void)
         {"getOGLRenderer", get_ogl_renderer},
         {"getAudioCards", get_audio_cards},
         {"getKernelModuleDescription", get_kernel_module_description},
+        {"getMemoryTotal", get_memory_total},
         {NULL}
     };
 
@@ -827,7 +866,7 @@ gchar *hi_module_get_summary(void)
                     "Method=devices::getProcessorNameAndDesc\n"
                     "[%s]\n"
                     "Icon=memory.png\n"
-                    "Method=devices::getMemoryTotal\n"
+                    "Method=computer::getMemoryTotal\n"
                     "[%s]\n"
                     "Icon=module.png\n"
                     "Method=devices::getMotherboard\n"
@@ -851,6 +890,8 @@ gchar *hi_module_get_summary(void)
 
 void hi_module_deinit(void)
 {
+    g_hash_table_destroy(memlabels);
+
     if (computer->os) {
         g_free(computer->os->kernel);
         g_free(computer->os->libc);
@@ -883,6 +924,7 @@ void hi_module_deinit(void)
 void hi_module_init(void)
 {
     computer = g_new0(Computer, 1);
+    init_memory_labels();
 }
 
 ModuleAbout *hi_module_get_about(void)

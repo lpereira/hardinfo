@@ -42,7 +42,6 @@
 
 gchar *callback_processors();
 gchar *callback_gpu();
-gchar *callback_memory();
 gchar *callback_battery();
 gchar *callback_pci();
 gchar *callback_sensors();
@@ -57,7 +56,6 @@ gchar *callback_device_resources();
 
 void scan_processors(gboolean reload);
 void scan_gpu(gboolean reload);
-void scan_memory(gboolean reload);
 void scan_battery(gboolean reload);
 void scan_pci(gboolean reload);
 void scan_sensors(gboolean reload);
@@ -78,7 +76,6 @@ gchar *hi_more_info(gchar *entry);
 enum {
     ENTRY_DTREE,
     ENTRY_PROCESSOR,
-    ENTRY_MEMORY,
     ENTRY_GPU,
     ENTRY_PCI,
     ENTRY_USB,
@@ -94,7 +91,6 @@ enum {
 
 static ModuleEntry entries[] = {
     [ENTRY_PROCESSOR] = {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
-    [ENTRY_MEMORY] = {N_("Memory"), "memory.png", callback_memory, scan_memory, MODULE_FLAG_NONE},
     [ENTRY_GPU] = {N_("Graphics Processors"), "devices.png", callback_gpu, scan_gpu, MODULE_FLAG_NONE},
     [ENTRY_PCI] = {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
     [ENTRY_USB] = {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
@@ -121,7 +117,6 @@ gchar *pci_list = NULL;
 gchar *input_list = NULL;
 gchar *storage_list = NULL;
 gchar *battery_list = NULL;
-gchar *meminfo = NULL;
 gchar *lginterval = NULL;
 
 #include <vendor.h>
@@ -343,12 +338,6 @@ gchar *get_processor_max_frequency(void)
     }
 }
 
-gchar *get_memory_total(void)
-{
-    scan_memory(FALSE);
-    return moreinfo_lookup ("DEV:MemTotal");
-}
-
 gchar *get_motherboard(void)
 {
     gchar *board_name, *board_vendor, *board_version;
@@ -501,7 +490,6 @@ ShellModuleMethod *hi_exported_methods(void)
 	{"getProcessorNameAndDesc", get_processor_name_and_desc},
 	{"getProcessorFrequency", get_processor_max_frequency},
 	{"getProcessorFrequencyDesc", get_processor_frequency_desc},
-	{"getMemoryTotal", get_memory_total},
 	{"getStorageDevices", get_storage_devices},
 	{"getPrinters", get_printers},
 	{"getInputDevices", get_input_devices},
@@ -525,11 +513,6 @@ gchar *hi_more_info(gchar * entry)
 
 gchar *hi_get_field(gchar * field)
 {
-    gchar *info = moreinfo_lookup_with_prefix("DEV", field);
-
-    if (info)
-	return g_strdup(info);
-
     return g_strdup(field);
 }
 
@@ -559,13 +542,6 @@ void scan_processors(gboolean reload)
     SCAN_START();
     if (!processors)
 	processors = processor_scan();
-    SCAN_END();
-}
-
-void scan_memory(gboolean reload)
-{
-    SCAN_START();
-    scan_memory_do();
     SCAN_END();
 }
 
@@ -651,23 +627,6 @@ gchar *callback_dtree()
     return g_strdup_printf("%s"
         "[$ShellParam$]\n"
         "ViewType=1\n", dtree_info);
-}
-
-gchar *callback_memory()
-{
-    return g_strdup_printf("[Memory]\n"
-               "%s\n"
-               "[$ShellParam$]\n"
-               "ViewType=2\n"
-               "LoadGraphSuffix= kB\n"
-               "RescanInterval=2000\n"
-               "ColumnTitle$TextValue=%s\n"
-               "ColumnTitle$Extra1=%s\n"
-               "ColumnTitle$Value=%s\n"
-               "ShowColumnHeaders=true\n"
-               "%s\n", meminfo,
-               _("Field"), _("Description"), _("Value"), /* column labels */
-               lginterval);
 }
 
 gchar *callback_battery()
@@ -782,7 +741,6 @@ void hi_module_init(void)
     }
 #endif	/* defined(ARCH_x86) */
 
-    init_memory_labels();
     init_cups();
     sensors_init();
     udisks2_init();
@@ -793,7 +751,6 @@ void hi_module_deinit(void)
     moreinfo_del_with_prefix("DEV");
     sensors_shutdown();
     udisks2_shutdown();
-    g_hash_table_destroy(memlabels);
     g_module_close(cups);
 }
 
