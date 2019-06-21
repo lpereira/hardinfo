@@ -31,6 +31,14 @@
 
 #include "uidefs.h"
 
+#ifndef GTK_STOCK_COPY
+#define GTK_STOCK_COPY "_Copy"
+#endif
+
+#ifndef GTK_STOCK_REFRESH
+#define GTK_STOCK_REFRESH "_Refresh"
+#endif
+
 static GtkActionEntry entries[] = {
     {"InformationMenuAction", NULL, N_("_Information")},	/* name, stock id, label */
     {"RemoteMenuAction", NULL, N_("_Remote")},
@@ -54,12 +62,12 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_sync_manager)},
 
-    {"CopyAction", "_Copy",
+    {"CopyAction", GTK_STOCK_COPY,
      N_("_Copy to Clipboard"), "<control>C",
      N_("Copy to clipboard"),
      G_CALLBACK(cb_copy_to_clipboard)},
 
-    {"RefreshAction", "_Refresh",
+    {"RefreshAction", GTK_STOCK_REFRESH,
      N_("_Refresh"), "F5",
      NULL,
      G_CALLBACK(cb_refresh)},
