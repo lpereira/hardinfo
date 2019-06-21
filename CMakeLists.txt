@@ -148,6 +148,7 @@ set(MODULE_devices_SOURCES
 	modules/devices/gpu.c
 	modules/devices/battery.c
 	modules/devices/dmi.c
+	modules/devices/dmi_memory.c
 	modules/devices/devicetree.c
 	modules/devices/inputdevices.c
 	modules/devices/pci.c
