@@ -747,7 +747,7 @@ static ShellModule *module_load(gchar * filename)
 
     tmp = g_build_filename(params.path_lib, "modules", filename, NULL);
     module->dll = g_module_open(tmp, G_MODULE_BIND_LAZY);
-    DEBUG("gmodule resource for ``%s'' is %p", tmp, module->dll);
+    DEBUG("gmodule resource for ``%s'' is %p (%s)", tmp, module->dll, g_module_error());
     g_free(tmp);
 
     if (module->dll) {
