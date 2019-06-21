@@ -115,6 +115,7 @@ gchar *printer_list = NULL;
 gchar *printer_icons = NULL;
 gchar *pci_list = NULL;
 gchar *input_list = NULL;
+gboolean storage_no_nvme = FALSE;
 gchar *storage_list = NULL;
 gchar *battery_list = NULL;
 gchar *lginterval = NULL;
@@ -585,8 +586,9 @@ void scan_storage(gboolean reload)
     SCAN_START();
     g_free(storage_list);
     storage_list = g_strdup("");
-
+    storage_no_nvme = FALSE;
     if (!__scan_udisks2_devices()) {
+        storage_no_nvme = TRUE;
         __scan_ide_devices();
         __scan_scsi_devices();
     }
@@ -779,6 +781,13 @@ const gchar *hi_note_func(gint entry)
     if (entry == ENTRY_RESOURCES) {
         if (root_required_for_resources()) {
             return g_strdup(_("Resource information requires superuser privileges"));
+        }
+    }
+    else if (entry == ENTRY_STORAGE){
+        if (storage_no_nvme) {
+            return g_strdup(
+                _("Any NVMe storage devices present are not listed.\n"
+                  "<b><i>udisksd</i></b> is required for NVMe devices."));
         }
     }
     else if (entry == ENTRY_SPD){
