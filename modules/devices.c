@@ -50,6 +50,7 @@ gchar *callback_storage();
 gchar *callback_input();
 gchar *callback_usb();
 gchar *callback_dmi();
+gchar *callback_dmi_mem();
 gchar *callback_spd();
 gchar *callback_dtree();
 gchar *callback_device_resources();
@@ -64,6 +65,7 @@ void scan_storage(gboolean reload);
 void scan_input(gboolean reload);
 void scan_usb(gboolean reload);
 void scan_dmi(gboolean reload);
+void scan_dmi_mem(gboolean reload);
 void scan_spd(gboolean reload);
 void scan_dtree(gboolean reload);
 void scan_device_resources(gboolean reload);
@@ -75,8 +77,11 @@ gchar *hi_more_info(gchar *entry);
 
 enum {
     ENTRY_DTREE,
+    ENTRY_DMI,
     ENTRY_PROCESSOR,
     ENTRY_GPU,
+    ENTRY_SPD,
+    ENTRY_DMI_MEM,
     ENTRY_PCI,
     ENTRY_USB,
     ENTRY_PRINTERS,
@@ -84,8 +89,6 @@ enum {
     ENTRY_SENSORS,
     ENTRY_INPUT,
     ENTRY_STORAGE,
-    ENTRY_DMI,
-    ENTRY_SPD,
     ENTRY_RESOURCES
 };
 
@@ -99,8 +102,9 @@ static ModuleEntry entries[] = {
     [ENTRY_SENSORS] = {N_("Sensors"), "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
     [ENTRY_INPUT] = {N_("Input Devices"), "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
     [ENTRY_STORAGE] = {N_("Storage"), "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
-    [ENTRY_DMI] = {N_("DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
+    [ENTRY_DMI] = {N_("System DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
     [ENTRY_SPD] = {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
+    [ENTRY_DMI_MEM] = {N_("Memory DMI"), "memory.png", callback_dmi_mem, scan_dmi_mem, MODULE_FLAG_NONE},
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     [ENTRY_DTREE] = {"#"},
 #else
@@ -119,6 +123,11 @@ gboolean storage_no_nvme = FALSE;
 gchar *storage_list = NULL;
 gchar *battery_list = NULL;
 gchar *lginterval = NULL;
+
+/* in dmi_memory.c */
+gchar *dmi_mem_socket_info();
+gboolean dmi_mem_show_hinote(const char **msg);
+gchar *dmi_mem_info = NULL;
 
 #include <vendor.h>
 
@@ -524,6 +533,15 @@ void scan_dmi(gboolean reload)
     SCAN_END();
 }
 
+void scan_dmi_mem(gboolean reload)
+{
+    SCAN_START();
+    if (dmi_mem_info)
+        g_free(dmi_mem_info);
+    dmi_mem_info = dmi_mem_socket_info();
+    SCAN_END();
+}
+
 void scan_spd(gboolean reload)
 {
     SCAN_START();
@@ -617,6 +635,11 @@ gchar *callback_processors()
 gchar *callback_dmi()
 {
     return g_strdup(dmi_info);
+}
+
+gchar *callback_dmi_mem()
+{
+    return g_strdup(dmi_mem_info);
 }
 
 gchar *callback_spd()
@@ -793,6 +816,12 @@ const gchar *hi_note_func(gint entry)
     else if (entry == ENTRY_SPD){
         const char *msg;
         if (spd_decode_show_hinote(&msg)) {
+            return msg;
+        }
+    }
+    else if (entry == ENTRY_DMI_MEM){
+        const char *msg;
+        if (dmi_mem_show_hinote(&msg)) {
             return msg;
         }
     }
