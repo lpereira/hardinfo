@@ -62,6 +62,12 @@ gchar *dmi_mem_socket_info() {
                     gchar *mfgr = dmidecode_match("Manufacturer", &dtm, &h);
                     gchar *partno = dmidecode_match("Part Number", &dtm, &h);
 
+                    if (g_str_has_prefix(mfgr, "<BAD INDEX>")) {
+                        /* the manufacturer code is unknown to dmidecode */
+                        g_free(mfgr);
+                        mfgr = NULL;
+                    }
+
                     gchar *vendor_str = NULL;
                     if (mfgr) {
                         const gchar *v_url = vendor_get_url(mfgr);
@@ -90,7 +96,7 @@ gchar *dmi_mem_socket_info() {
                                     _("Memory Socket"), i, locator,
                                     _("DMI Handle"), h,
                                     _("Form Factor"), UNKIFNULL2(form_factor),
-                                    _("Manufacturer"), UNKIFNULL2(mfgr), vendor_str,
+                                    _("Manufacturer"), UNKIFNULL2(mfgr), vendor_str ? vendor_str : "",
                                     _("Part Number"), UNKIFNULL2(partno),
                                     _("Type"), UNKIFNULL2(type), UNKIFNULL2(type_detail),
                                     _("Size"), UNKIFNULL2(size_str),
