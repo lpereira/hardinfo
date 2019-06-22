@@ -523,6 +523,10 @@ gchar *hi_more_info(gchar * entry)
 
 gchar *hi_get_field(gchar * field)
 {
+    gchar *info = moreinfo_lookup_with_prefix("DEV", field);
+    if (info)
+        return g_strdup(info);
+
     return g_strdup(field);
 }
 
