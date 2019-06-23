@@ -86,7 +86,7 @@ gboolean __scan_udisks2_devices(void) {
             features = h_strdup_cprintf(", %s", features, _("Ejectable"));
         }
         if (disk->smart_supported) {
-            features = h_strdup_cprintf(", %s", features, _("Smart monitoring"));
+            features = h_strdup_cprintf(", %s", features, _("S.M.A.R.T. monitoring"));
         }
         if (disk->pm_supported) {
             features = h_strdup_cprintf(", %s", features, _("Power Management"));
@@ -139,7 +139,7 @@ gboolean __scan_udisks2_devices(void) {
             moreinfo = h_strdup_cprintf(_("Connection bus=%s\n"), moreinfo, disk->connection_bus);
         }
         if (disk->smart_enabled) {
-            moreinfo = h_strdup_cprintf(_("[Smart monitoring]\n"
+            moreinfo = h_strdup_cprintf(_("[S.M.A.R.T. monitoring]\n"
                                         "Status=%s\n"
                                         "Bad Sectors=%ld\n"
                                         "Power on time=%d days %d hours\n"
