@@ -229,7 +229,7 @@ gchar *dmi_mem_socket_info() {
                             _("Part Number"), UNKIFNULL2(s->partno),
                             _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
                             _("Size"), UNKIFNULL2(s->size_str),
-                            _("Speed"), UNKIFNULL2(s->speed_str),
+                            _("Rated Speed"), UNKIFNULL2(s->speed_str),
                             _("Configured Speed"), UNKIFNULL2(s->configured_clock_str),
                             _("Data Width/Total Width"), UNKIFNULL2(s->data_width), UNKIFNULL2(s->total_width),
                             _("Minimum Voltage"), UNKIFNULL2(s->voltage_min_str),
