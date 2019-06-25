@@ -20,6 +20,7 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "vendor.h"
+#include <inttypes.h>
 
 gboolean no_handles = FALSE;
 
@@ -32,6 +33,55 @@ static const unsigned long dta = 16; /* array */
 static const unsigned long dtm = 17; /* socket */
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
+#define SEQ(s,m) (g_strcmp0(s, m) == 0)
+
+typedef struct {
+    unsigned long array_handle;
+    gchar *locator;
+    gchar *use;
+    gchar *ecc;
+    int devs;
+    int devs_populated;
+    long int size_MiB_max;
+    long int size_MiB_present;
+} dmi_mem_array;
+
+dmi_mem_array *dmi_mem_array_new(unsigned long h) {
+    dmi_mem_array *s = g_new0(dmi_mem_array, 1);
+    s->array_handle = h;
+    s->use = dmidecode_match("Use", &dta, &h);
+    s->ecc = dmidecode_match("Error Correction Type", &dta, &h);
+    s->locator = dmidecode_match("Location", &dta, &h);
+    if (g_str_has_prefix(s->locator, mobo_location)) {
+        g_free(s->locator);
+        s->locator = g_strdup(mobo_shorter);
+    }
+    gchar *array_max_size = dmidecode_match("Maximum Capacity", &dta, &h);
+    if (array_max_size) {
+        long int v = 0;
+        char l[3] = "";
+        int mc = sscanf(array_max_size, "%"PRId64" %2s", &v, l);
+        if (mc == 2) {
+            if (SEQ(l, "TB")) s->size_MiB_max = v * 1024 * 1024;
+            else if (SEQ(l, "GB")) s->size_MiB_max = v * 1024;
+            else if (SEQ(l, "MB")) s->size_MiB_max = v;
+        }
+        g_free(array_max_size);
+    }
+    gchar *array_devs = dmidecode_match("Number Of Devices", &dta, &h);
+    s->devs = strtol(array_devs, NULL, 10);
+    g_free(array_devs);
+    return s;
+}
+
+void dmi_mem_array_free(dmi_mem_array* s) {
+    if (s) {
+        g_free(s->locator);
+        g_free(s->use);
+        g_free(s->ecc);
+        g_free(s);
+    }
+}
 
 typedef struct {
     unsigned long handle;
@@ -40,6 +90,7 @@ typedef struct {
     gchar *locator;
     gchar *full_locator;
     gchar *size_str;
+    long int size_MiB;
 
     gchar *type;
     gchar *type_detail;
@@ -57,14 +108,28 @@ typedef struct {
     gchar *mfgr;
 
     const Vendor *vendor;
-    //TODO: gboolean spd_matched;
+} dmi_mem_socket;
+
+typedef struct {
+    GSList *arrays;
+    GSList *sockets;
 } dmi_mem;
 
-dmi_mem *dmi_mem_new(unsigned long h) {
-    dmi_mem *s = g_new0(dmi_mem, 1);
+dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
+    dmi_mem_socket *s = g_new0(dmi_mem_socket, 1);
     s->handle = h;
     s->locator = dmidecode_match("Locator", &dtm, &h);
     s->size_str = dmidecode_match("Size", &dtm, &h);
+    if (s->size_str) {
+        long int v = 0;
+        char l[3] = "";
+        int mc = sscanf(s->size_str, "%"PRId64" %2s", &v, l);
+        if (mc == 2) {
+            if (SEQ(l, "TB")) s->size_MiB = v * 1024 * 1024;
+            else if (SEQ(l, "GB")) s->size_MiB = v * 1024;
+            else if (SEQ(l, "MB")) s->size_MiB = v;
+        }
+    }
     s->bank_locator = dmidecode_match("Bank Locator", &dtm, &h);
     gchar *ah = dmidecode_match("Array Handle", &dtm, &h);
     if (ah) {
@@ -113,7 +178,7 @@ dmi_mem *dmi_mem_new(unsigned long h) {
     return s;
 }
 
-void dmi_mem_free(dmi_mem* s) {
+void dmi_mem_socket_free(dmi_mem_socket* s) {
     if (s) {
         g_free(s->locator);
         g_free(s->full_locator);
@@ -137,66 +202,98 @@ void dmi_mem_free(dmi_mem* s) {
     }
 }
 
-GSList *get_dmi_mem_list() {
-    GSList *ret = NULL;
-    dmi_handle_list *hlm = dmidecode_handles(&dtm);
-    if (hlm) {
-        unsigned long i = 0;
-        for(i = 0; i < hlm->count; i++) {
-            unsigned long h = hlm->handles[i];
-            ret = g_slist_append(ret, dmi_mem_new(h));
-        }
-        dmi_handle_list_free(hlm);
+dmi_mem_array *dmi_mem_find_array(dmi_mem *s, unsigned int handle) {
+    GSList *l = NULL;
+    for(l = s->arrays; l; l = l->next) {
+        dmi_mem_array *a = (dmi_mem_array*)l->data;
+        if (a->array_handle == handle)
+            return a;
     }
-    return ret;
+    return NULL;
 }
 
-gchar *dmi_mem_socket_info() {
-    gchar *ret = strdup("");
+dmi_mem *dmi_mem_new() {
+    dmi_mem *m = g_new0(dmi_mem, 1);
 
-    /* Arrays */
     dmi_handle_list *hla = dmidecode_handles(&dta);
     if (hla) {
         unsigned long i = 0;
         for(i = 0; i < hla->count; i++) {
             unsigned long h = hla->handles[i];
-            gchar *array_locator = dmidecode_match("Location", &dta, &h);
-            gchar *array_use = dmidecode_match("Use", &dta, &h);
-            gchar *array_ecc = dmidecode_match("Error Correction Type", &dta, &h);
-            gchar *array_devs = dmidecode_match("Number Of Devices", &dta, &h);
-            if (g_str_has_prefix(array_locator, mobo_location)) {
-                g_free(array_locator);
-                array_locator = g_strdup(mobo_shorter);
-            }
-            gchar *array_max_size = dmidecode_match("Maximum Capacity", &dta, &h);
-            ret = h_strdup_cprintf("[%s %s]\n"
-                            "%s=0x%x\n"
-                            "%s=%s\n"
-                            "%s=%s\n"
-                            "%s=%s\n"
-                            "%s=%s\n",
-                            ret,
-                            _("Memory Array"), array_locator ? array_locator : ".",
-                            _("Array DMI Handle"), h,
-                            _("Use"), UNKIFNULL2(array_use),
-                            _("Error Correction Type"), UNKIFNULL2(array_ecc),
-                            _("Max Size"), UNKIFNULL2(array_max_size),
-                            _("Devices (Sockets)"), UNKIFNULL2(array_devs)
-                            );
-            g_free(array_locator);
-            g_free(array_use);
-            g_free(array_ecc);
-            g_free(array_devs);
-            g_free(array_max_size);
+            m->arrays = g_slist_append(m->arrays, dmi_mem_array_new(h));
         }
         dmi_handle_list_free(hla);
     }
 
+    dmi_handle_list *hlm = dmidecode_handles(&dtm);
+    if (hlm) {
+        unsigned long i = 0;
+        for(i = 0; i < hlm->count; i++) {
+            unsigned long h = hlm->handles[i];
+            m->sockets = g_slist_append(m->sockets, dmi_mem_socket_new(h));
+        }
+        dmi_handle_list_free(hlm);
+    }
+
+    /* update array present devices/size */
+    GSList *l = NULL;
+    for(l = m->sockets; l; l = l->next) {
+        dmi_mem_socket *s = (dmi_mem_socket*)l->data;
+        dmi_mem_array *a = dmi_mem_find_array(m, s->array_handle);
+        if (a) {
+            a->size_MiB_present += s->size_MiB;
+            if (s->populated)
+                a->devs_populated++;
+        }
+    }
+
+    return m;
+}
+
+dmi_mem_free(dmi_mem* s) {
+    if (s) {
+        g_slist_free_full(s->arrays, (GDestroyNotify)dmi_mem_array_free);
+        g_slist_free_full(s->sockets, (GDestroyNotify)dmi_mem_socket_free);
+        g_free(s);
+    }
+}
+
+gchar *dmi_mem_socket_info() {
+    gchar *ret = strdup("");
+    GSList *l = NULL;
+
+    dmi_mem *mem = dmi_mem_new();
+
+    /* Arrays */
+    for(l = mem->arrays; l; l = l->next) {
+        dmi_mem_array *a = (dmi_mem_array*)l->data;
+        gchar *size_str = NULL;
+
+        if (a->size_MiB_max > 1024 && (a->size_MiB_max % 1024 == 0)
+            && a->size_MiB_present > 1024 && (a->size_MiB_present % 1024 == 0) )
+            size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present / 1024, a->size_MiB_max / 1024, _("GiB"));
+        else
+            size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present, a->size_MiB_max, _("MiB"));
+        ret = h_strdup_cprintf("[%s %s]\n"
+                        "%s=0x%x\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
+                        "%s=%d / %d\n",
+                        ret,
+                        _("Memory Array"), a->locator ? a->locator : ".",
+                        _("Array DMI Handle"), a->array_handle,
+                        _("Use"), UNKIFNULL2(a->use),
+                        _("Error Correction Type"), UNKIFNULL2(a->ecc),
+                        _("Size (Present / Max)"), size_str,
+                        _("Devices (Populated / Sockets)"), a->devs_populated, a->devs
+                        );
+        g_free(size_str);
+    }
+
     /* Sockets */
-    GSList *mems = get_dmi_mem_list();
-    GSList *l = mems;
-    for(; l; l = l->next) {
-        dmi_mem *s = (dmi_mem*)l->data;
+    for(l = mem->sockets; l; l = l->next) {
+        dmi_mem_socket *s = (dmi_mem_socket*)l->data;
 
         if (s->populated) {
             gchar *vendor_str = NULL;
@@ -253,7 +350,7 @@ gchar *dmi_mem_socket_info() {
     }
 
     no_handles = FALSE;
-    if(!mems) {
+    if(!mem) {
         no_handles = TRUE;
         ret = g_strdup_printf("[%s]\n%s=%s\n",
                 _("Socket Information"), _("Result"),
@@ -262,7 +359,7 @@ gchar *dmi_mem_socket_info() {
                 : _("(Not available; Perhaps try running HardInfo as root.)") );
     }
 
-    g_slist_free_full(mems, (GDestroyNotify)dmi_mem_free);
+    dmi_mem_free(mem);
     return ret;
 }
 
