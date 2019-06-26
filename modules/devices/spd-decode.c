@@ -1770,7 +1770,7 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) 
         if (!output)
             output = g_string_new("");
 
-        g_string_append_printf(output, "$MEM%d$%d=%s|%d MB|%s\n", count, count, part_number,
+        g_string_append_printf(output, "$!MEM%d$%d=%s|%d MB|%s\n", count, count, part_number,
                                module_size, manufacturer);
 
         g_free(spd_path);
