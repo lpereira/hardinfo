@@ -486,9 +486,10 @@ gchar *dmi_mem_socket_info_view1() {
                             _("Configured Voltage"), UNKIFNULL2(s->voltage_conf_str)
                             );
             moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+            const gchar *mfgr = s->mfgr ? vendor_get_shortest_name(s->mfgr) : NULL;
             ret = h_strdup_cprintf("$!%s$%s=%s|%s|%s\n",
                     ret,
-                    key, s->full_locator, UNKIFNULL2(s->partno), size_str, UNKIFNULL2(s->mfgr)
+                    key, s->full_locator, UNKIFNULL2(s->partno), size_str, UNKIFNULL2(mfgr)
                     );
             g_free(vendor_str);
             g_free(size_str);
