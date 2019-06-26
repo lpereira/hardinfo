@@ -111,6 +111,7 @@ typedef struct {
 } dmi_mem_socket;
 
 typedef struct {
+    gboolean empty;
     GSList *arrays;
     GSList *sockets;
 } dmi_mem;
@@ -235,6 +236,11 @@ dmi_mem *dmi_mem_new() {
         dmi_handle_list_free(hlm);
     }
 
+    if (!m->sockets && !m->arrays) {
+        m->empty = 1;
+        return m;
+    }
+
     /* update array present devices/size */
     GSList *l = NULL;
     for(l = m->sockets; l; l = l->next) {
@@ -350,9 +356,9 @@ gchar *dmi_mem_socket_info() {
     }
 
     no_handles = FALSE;
-    if(!mem) {
+    if(mem->empty) {
         no_handles = TRUE;
-        ret = g_strdup_printf("[%s]\n%s=%s\n",
+        ret = g_strdup_printf("[%s]\n%s=%s\n" "[$ShellParam$]\nViewType=0\n",
                 _("Socket Information"), _("Result"),
                 (getuid() == 0)
                 ? _("(Not available)")
