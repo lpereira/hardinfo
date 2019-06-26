@@ -858,6 +858,11 @@ gchar **hi_module_get_dependencies(void)
 
 gchar *hi_module_get_summary(void)
 {
+    gchar *virt = computer_get_virtualization();
+    gchar *machine_type = g_strdup_printf("%s (%s)",
+                                          _("Motherboard"),
+                                          idle_free(virt));
+
     return g_strdup_printf("[%s]\n"
                     "Icon=os.png\n"
                     "Method=computer::getOS\n"
@@ -883,7 +888,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=audio.png\n"
                     "Method=computer::getAudioCards\n",
                     _("Operating System"),
-                    _("CPU"), _("RAM"), _("Motherboard"), _("Graphics"),
+                    _("CPU"), _("RAM"), idle_free(machine_type), _("Graphics"),
                     _("Storage"), _("Printers"), _("Audio")
                     );
 }
