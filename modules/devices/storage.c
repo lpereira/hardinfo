@@ -139,7 +139,7 @@ gboolean __scan_udisks2_devices(void) {
             moreinfo = h_strdup_cprintf(_("Connection bus=%s\n"), moreinfo, disk->connection_bus);
         }
         if (disk->smart_enabled) {
-            moreinfo = h_strdup_cprintf(_("[S.M.A.R.T. monitoring]\n"
+            moreinfo = h_strdup_cprintf(_("[Self-monitoring (S.M.A.R.T.)]\n"
                                         "Status=%s\n"
                                         "Bad Sectors=%ld\n"
                                         "Power on time=%d days %d hours\n"
