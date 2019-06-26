@@ -199,6 +199,12 @@ set_source_files_properties(
 	COMPILE_FLAGS "-O0"
 )
 
+set_source_files_properties(
+	modules/devices/dmi_memory.c
+	PROPERTIES
+	COMPILE_FLAGS "-std=c99"
+)
+
 foreach (_module ${HARDINFO_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")

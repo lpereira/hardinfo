@@ -99,11 +99,11 @@ struct _ModuleAbout {
 };
 
 /* String utility functions */
-inline void  remove_quotes(gchar *str);
-inline char *strend(gchar *str, gchar chr);
-inline void  remove_linefeed(gchar *str);
-gchar       *strreplacechr(gchar *string, gchar *replace, gchar new_char);
-gchar       *strreplace(gchar *string, gchar *replace, gchar *replacement);
+void   remove_quotes(gchar *str);
+char  *strend(gchar *str, gchar chr);
+void   remove_linefeed(gchar *str);
+gchar *strreplacechr(gchar *string, gchar *replace, gchar new_char);
+gchar *strreplace(gchar *string, gchar *replace, gchar *replacement);
 
 /* Widget utility functions */
 void widget_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
@@ -125,7 +125,7 @@ gpointer __idle_free(gpointer ptr, gchar *f, gint l);
 #endif	/* RELEASE == 1 */
 
 gchar	     *find_program(gchar *program_name);
-inline gchar *size_human_readable(gfloat size);
+gchar      *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
 void          open_url(gchar *url);
 GSList	     *modules_get_list(void);
