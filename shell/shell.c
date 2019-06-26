@@ -362,12 +362,8 @@ static ShellNote *note_new(void)
     gtk_container_add(GTK_CONTAINER(note->event_box), border_box);
     gtk_widget_show(border_box);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-    /* TODO:GTK3 css-based style */
-#else
     gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
     gtk_widget_modify_bg(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
-#endif
 
     icon = icon_cache_get_image("close.png");
     gtk_widget_show(icon);
