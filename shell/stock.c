@@ -38,8 +38,6 @@ static GtkIconFactory *icon_factory;
 
 void stock_icon_register(gchar * filename, gchar * stock_id)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
-#else
     GtkIconSet *icon_set;
     GtkIconSource *icon_source;
 
@@ -54,13 +52,10 @@ void stock_icon_register(gchar * filename, gchar * stock_id)
     gtk_icon_factory_add(icon_factory, stock_id, icon_set);
 
     gtk_icon_set_unref(icon_set);
-#endif
 }
 
 void stock_icon_register_pixbuf(GdkPixbuf * pixbuf, gchar * stock_id)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
-#else
     GtkIconSet *icon_set;
     GtkIconSource *icon_source;
 
@@ -74,7 +69,6 @@ void stock_icon_register_pixbuf(GdkPixbuf * pixbuf, gchar * stock_id)
     gtk_icon_factory_add(icon_factory, stock_id, icon_set);
 
     gtk_icon_set_unref(icon_set);
-#endif
 }
 
 void stock_icons_init(void)
@@ -84,20 +78,14 @@ void stock_icons_init(void)
 
     DEBUG("initializing stock icons");
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-#else
     icon_factory = gtk_icon_factory_new();
-#endif
 
     for (i = 0; i < n_stock_icons; i++) {
 	stock_icon_register(stock_icons[i].filename,
 			    stock_icons[i].stock_id);
     }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-#else
     gtk_icon_factory_add_default(icon_factory);
-#endif
 
     g_object_unref(icon_factory);
 }
