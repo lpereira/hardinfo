@@ -86,7 +86,7 @@ gboolean __scan_udisks2_devices(void) {
             features = h_strdup_cprintf(", %s", features, _("Ejectable"));
         }
         if (disk->smart_supported) {
-            features = h_strdup_cprintf(", %s", features, _("S.M.A.R.T. monitoring"));
+            features = h_strdup_cprintf(", %s", features, _("Self-monitoring (S.M.A.R.T.)"));
         }
         if (disk->pm_supported) {
             features = h_strdup_cprintf(", %s", features, _("Power Management"));
