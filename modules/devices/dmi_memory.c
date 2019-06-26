@@ -23,6 +23,7 @@
 #include <inttypes.h>
 
 gboolean no_handles = FALSE;
+gboolean sketchy_info = FALSE;
 
 /* strings from dmidecode */
 static const char empty_mem_str[] = "No Module Installed";
@@ -34,6 +35,15 @@ static const unsigned long dtm = 17; /* socket */
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define SEQ(s,m) (g_strcmp0(s, m) == 0)
+
+const char *problem_marker() {
+    static const char as_markup[] = "<big><b>\u26A0</b></big>";
+    static const char as_text[] = "(!)";
+    if (params.markup_ok)
+        return as_markup;
+    else
+        return as_text;
+}
 
 typedef struct {
     unsigned long array_handle;
@@ -269,6 +279,7 @@ void dmi_mem_free(dmi_mem* s) {
 gchar *dmi_mem_socket_info_view0() {
     gchar *ret = g_strdup("[$ShellParam$]\nViewType=0\n");
     GSList *l = NULL;
+    sketchy_info = FALSE;
 
     dmi_mem *mem = dmi_mem_new();
 
@@ -282,6 +293,12 @@ gchar *dmi_mem_socket_info_view0() {
             size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present / 1024, a->size_MiB_max / 1024, _("GiB"));
         else
             size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present, a->size_MiB_max, _("MiB"));
+
+        if (a->size_MiB_max < a->size_MiB_present) {
+            sketchy_info = TRUE;
+            size_str = h_strdup_cprintf(" %s", size_str, problem_marker());
+        }
+
         ret = h_strdup_cprintf("[%s %s]\n"
                         "%s=0x%x\n"
                         "%s=%s\n"
@@ -395,6 +412,7 @@ gchar *dmi_mem_socket_info_view1() {
         _("Memory DMI")
         );
     GSList *l = NULL;
+    sketchy_info = FALSE;
     gchar key_prefix[] = "DEV";
 
     dmi_mem *mem = dmi_mem_new();
@@ -410,6 +428,12 @@ gchar *dmi_mem_socket_info_view1() {
             size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present / 1024, a->size_MiB_max / 1024, _("GiB"));
         else
             size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present, a->size_MiB_max, _("MiB"));
+
+        if (a->size_MiB_max < a->size_MiB_present) {
+            sketchy_info = TRUE;
+            size_str = h_strdup_cprintf(" %s", size_str, problem_marker());
+        }
+
         gchar *details = g_strdup_printf("[%s]\n"
                         "%s=0x%lx\n"
                         "%s=%s\n"
@@ -545,6 +569,12 @@ gboolean dmi_mem_show_hinote(const char **msg) {
                 _("To view DMI memory information the <b><i>dmidecode</i></b> utility must be\n"
                   "available, and HardInfo must be run with superuser privileges."));
         }
+        return TRUE;
+    }
+    if (sketchy_info) {
+        *msg = g_strdup(
+            _("\"More often than not, information contained in the DMI tables is inaccurate,\n"
+              "incomplete or simply wrong.\" -<i><b>dmidecode</b></i> manual page"));
         return TRUE;
     }
     return FALSE;
