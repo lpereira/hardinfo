@@ -120,6 +120,7 @@ typedef struct {
     gchar *mfgr;
 
     const Vendor *vendor;
+    spd_data *spd;
 } dmi_mem_socket;
 
 typedef struct {
@@ -258,15 +259,43 @@ dmi_mem *dmi_mem_new() {
         return m;
     }
 
-    /* update array present devices/size */
-    GSList *l = NULL;
+    GSList *l = NULL, *l2 = NULL;
     for(l = m->sockets; l; l = l->next) {
         dmi_mem_socket *s = (dmi_mem_socket*)l->data;
+
+        /* update array present devices/size */
         dmi_mem_array *a = dmi_mem_find_array(m, s->array_handle);
         if (a) {
             a->size_MiB_present += s->size_MiB;
             if (s->populated)
                 a->devs_populated++;
+        }
+
+        if (!s->populated) continue;
+
+        /* match SPD */
+        spd_data *best = NULL;
+        int best_score = 0;
+        for(l2 = m->spd; l2; l2 = l2->next) {
+            spd_data *e = (spd_data*)l2->data;
+            int score = 0;
+            if (!e->claimed_by_dmi) {
+                if (SEQ(s->partno, e->partno))
+                    score += 20;
+                if (s->size_MiB == e->size_MiB)
+                    score += 10;
+                if (s->vendor == e->vendor)
+                    score += 5;
+
+                //printf("s:%s vs e:%s -- score %d\n", s->full_locator, e->dev, score);
+
+                if (score > best_score)
+                    best = e;
+            }
+        }
+        if (best) {
+            s->spd = best;
+            best->claimed_by_dmi = 1;
         }
     }
 
@@ -402,6 +431,34 @@ gchar *dmi_mem_socket_info_view0() {
     return ret;
 }
 
+gchar *make_spd_section(spd_data *spd) {
+    gchar *ret = NULL;
+    if (spd) {
+        gchar *full_spd = NULL;
+        switch(spd->type) {
+            case DDR3_SDRAM:
+                full_spd = decode_ddr3_sdram(spd->bytes, NULL);
+                break;
+            case DDR4_SDRAM:
+                full_spd = decode_ddr4_sdram(spd->bytes, spd->spd_size, NULL);
+                break;
+            default:
+                fprintf(stderr, "blug for type: %d %s\n", spd->type, ram_types[spd->type]);
+        }
+        ret = g_strdup_printf("[%s]\n"
+                    "%s=%s\n"
+                    "%s=%d.%d\n"
+                    "%s",
+                    _("Serial Presence Detect (SPD)"),
+                    _("eeprom"), spd->dev,
+                    _("SPD Revision"), spd->spd_rev_major, spd->spd_rev_minor,
+                    full_spd ? full_spd : ""
+                    );
+        g_free(full_spd);
+    }
+    return ret;
+}
+
 gchar *dmi_mem_socket_info_view1() {
     gchar *ret = g_strdup_printf(
         "[$ShellParam$]\nViewType=1\n"
@@ -484,6 +541,8 @@ gchar *dmi_mem_socket_info_view1() {
             else
                 size_str = g_strdup_printf("%ld %s", s->size_MiB, _("MiB") );
 
+            gchar *spd = s->spd ? make_spd_section(s->spd) : NULL;
+
             gchar *details = g_strdup_printf("[%s]\n"
                             "%s=0x%lx, 0x%lx\n"
                             "%s=%s\n"
@@ -498,7 +557,8 @@ gchar *dmi_mem_socket_info_view1() {
                             "%s=%s / %s\n"
                             "%s=%s\n"
                             "%s=%s\n"
-                            "%s=%s\n",
+                            "%s=%s\n"
+                            "%s", /* spd */
                             _("Memory Socket"),
                             _("DMI Handles (Array, Socket)"), s->array_handle, s->handle,
                             _("Locator"), s->full_locator,
@@ -513,8 +573,10 @@ gchar *dmi_mem_socket_info_view1() {
                             _("Data Width/Total Width"), UNKIFNULL2(s->data_width), UNKIFNULL2(s->total_width),
                             _("Minimum Voltage"), UNKIFNULL2(s->voltage_min_str),
                             _("Maximum Voltage"), UNKIFNULL2(s->voltage_max_str),
-                            _("Configured Voltage"), UNKIFNULL2(s->voltage_conf_str)
+                            _("Configured Voltage"), UNKIFNULL2(s->voltage_conf_str),
+                            spd ? spd : ""
                             );
+            g_free(spd);
             moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
             const gchar *mfgr = s->mfgr ? vendor_get_shortest_name(s->mfgr) : NULL;
             ret = h_strdup_cprintf("$!%s$%s=%s|%s|%s\n",
@@ -547,6 +609,7 @@ gchar *dmi_mem_socket_info_view1() {
     /* Unmatched SPD */
     for(l = mem->spd; l; l = l->next) {
         spd_data *s = (spd_data*)l->data;
+        if (s->claimed_by_dmi) continue;
         gchar *key = g_strdup_printf("SPD:%s", s->dev);
         gchar *vendor_str = NULL;
         if (s->vendor) {
@@ -560,15 +623,7 @@ gchar *dmi_mem_socket_info_view1() {
         else
             size_str = g_strdup_printf("%d %s", s->size_MiB, _("MiB") );
 
-        gchar *details = g_strdup_printf("[%s]\n"
-                "%s=%s %s\n"
-                "%s=%s\n"
-                "%s=%s\n",
-                _("SPD"),
-                _("Vendor"), UNKIFNULL2(s->vendor_str), vendor_str ? vendor_str : "",
-                _("Part Number"), UNKIFNULL2(s->partno),
-                _("Size"), size_str
-                );
+        gchar *details = make_spd_section(s);
 
         moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
         const gchar *mfgr = s->vendor_str ? vendor_get_shortest_name(s->vendor_str) : NULL;
