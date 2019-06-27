@@ -54,6 +54,7 @@ BENCH_SCAN_SIMPLE(scan_cryptohash, benchmark_cryptohash, BENCHMARK_CRYPTOHASH);
 BENCH_SCAN_SIMPLE(scan_fib, benchmark_fib, BENCHMARK_FIB);
 BENCH_SCAN_SIMPLE(scan_zlib, benchmark_zlib, BENCHMARK_ZLIB);
 
+#if !GTK_CHECK_VERSION(3,0,0)
 void scan_gui(gboolean reload)
 {
     SCAN_START();
@@ -73,6 +74,7 @@ void scan_gui(gboolean reload)
     }
     SCAN_END();
 }
+#endif
 
 static ModuleEntry entries[] = {
     {N_("CPU Blowfish (Single-thread)"), "blowfish.png", callback_bfsh_single, scan_bfsh_single, MODULE_FLAG_NONE},
