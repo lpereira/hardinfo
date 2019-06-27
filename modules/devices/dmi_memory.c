@@ -132,6 +132,19 @@ typedef struct {
     GSList *spd;
 } dmi_mem;
 
+gboolean null_if_empty(gchar **str) {
+    if (str && *str) {
+        gchar *p = *str;
+        while(p && *p) {
+            if (isalnum(*p))
+                return FALSE;
+            p++;
+        }
+        *str = NULL;
+    }
+    return TRUE;
+}
+
 dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
     dmi_mem_socket *s = g_new0(dmi_mem_socket, 1);
     s->handle = h;
@@ -191,6 +204,9 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
             g_free(s->mfgr);
             s->mfgr = NULL;
         }
+
+        null_if_empty(&s->mfgr);
+        null_if_empty(&s->partno);
 
         s->vendor = vendor_match(s->mfgr, NULL);
     }
@@ -302,6 +318,9 @@ dmi_mem *dmi_mem_new() {
             if (!s->mfgr && s->spd->vendor_str) {
                 s->mfgr = g_strdup(s->spd->vendor_str);
                 s->vendor = s->spd->vendor;
+            }
+            if (!s->partno && s->spd->partno) {
+                s->partno = g_strdup(s->spd->partno);
             }
         }
 
