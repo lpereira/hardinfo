@@ -86,7 +86,6 @@ extern GHashTable *sensor_compute;
 extern GHashTable *sensor_labels;
 extern GModule *cups;
 
-extern gchar *spd_info;
 extern gchar *dmi_info;
 
 extern gchar *dtree_info;
