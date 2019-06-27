@@ -22,6 +22,8 @@
 #include "vendor.h"
 #include <inttypes.h>
 
+#include "spd-decode2.c"
+
 gboolean no_handles = FALSE;
 gboolean sketchy_info = FALSE;
 
@@ -124,6 +126,7 @@ typedef struct {
     gboolean empty;
     GSList *arrays;
     GSList *sockets;
+    GSList *spd;
 } dmi_mem;
 
 dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
@@ -179,7 +182,7 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         s->data_width = dmidecode_match("Data Width", &dtm, &h);
         s->total_width = dmidecode_match("Total Width", &dtm, &h);
 
-        s->mfgr = dmidecode_match("Manufacturer", &dtm, &h);
+        s->mfgr = dmidecode_match("Vendor", &dtm, &h);
         if (g_str_has_prefix(s->mfgr, unknown_mfgr_str)) {
             /* the manufacturer code is unknown to dmidecode */
             g_free(s->mfgr);
@@ -248,7 +251,9 @@ dmi_mem *dmi_mem_new() {
         dmi_handle_list_free(hlm);
     }
 
-    if (!m->sockets && !m->arrays) {
+    m->spd = spd_scan();
+
+    if (!m->sockets && !m->arrays && !m->spd) {
         m->empty = 1;
         return m;
     }
@@ -272,6 +277,7 @@ void dmi_mem_free(dmi_mem* s) {
     if (s) {
         g_slist_free_full(s->arrays, (GDestroyNotify)dmi_mem_array_free);
         g_slist_free_full(s->sockets, (GDestroyNotify)dmi_mem_socket_free);
+        g_slist_free_full(s->spd, (GDestroyNotify)spd_data_free);
         g_free(s);
     }
 }
@@ -354,7 +360,7 @@ gchar *dmi_mem_socket_info_view0() {
                             _("DMI Handles (Array, Socket)"), s->array_handle, s->handle,
                             _("Bank Locator"), UNKIFNULL2(s->bank_locator),
                             _("Form Factor"), UNKIFNULL2(s->form_factor),
-                            _("Manufacturer"), UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
+                            _("Vendor"), UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
                             _("Part Number"), UNKIFNULL2(s->partno),
                             _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
                             _("Size"), size_str,
@@ -401,13 +407,13 @@ gchar *dmi_mem_socket_info_view1() {
         "[$ShellParam$]\nViewType=1\n"
         "ColumnTitle$TextValue=%s\n" /* Locator */
         "ColumnTitle$Extra1=%s\n"  /* Size */
-        "ColumnTitle$Extra2=%s\n"  /* Manufacturer */
+        "ColumnTitle$Extra2=%s\n"  /* Vendor */
         "ColumnTitle$Value=%s\n"     /* Part */
         "ShowColumnHeaders=true\n"
         "[%s]\n",
         _("Locator"),
         _("Size"),
-        _("Manufacturer"),
+        _("Vendor"),
         _("Part"),
         _("Memory DMI")
         );
@@ -498,7 +504,7 @@ gchar *dmi_mem_socket_info_view1() {
                             _("Locator"), s->full_locator,
                             _("Bank Locator"), UNKIFNULL2(s->bank_locator),
                             _("Form Factor"), UNKIFNULL2(s->form_factor),
-                            _("Manufacturer"), UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
+                            _("Vendor"), UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
                             _("Part Number"), UNKIFNULL2(s->partno),
                             _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
                             _("Size"), size_str,
@@ -535,6 +541,43 @@ gchar *dmi_mem_socket_info_view1() {
                     key, s->full_locator, _("(Empty)")
                     );
         }
+        g_free(key);
+    }
+
+    /* Unmatched SPD */
+    for(l = mem->spd; l; l = l->next) {
+        spd_data *s = (spd_data*)l->data;
+        gchar *key = g_strdup_printf("SPD:%s", s->dev);
+        gchar *vendor_str = NULL;
+        if (s->vendor) {
+            if (s->vendor->url)
+                vendor_str = g_strdup_printf(" (%s, %s)",
+                    s->vendor->name, s->vendor->url );
+        }
+        gchar *size_str = NULL;
+        if (!s->size_MiB)
+            size_str = g_strdup(_("(Unknown)"));
+        else
+            size_str = g_strdup_printf("%d %s", s->size_MiB, _("MiB") );
+
+        gchar *details = g_strdup_printf("[%s]\n"
+                "%s=%s %s\n"
+                "%s=%s\n"
+                "%s=%s\n",
+                _("SPD"),
+                _("Vendor"), UNKIFNULL2(s->vendor_str), vendor_str ? vendor_str : "",
+                _("Part Number"), UNKIFNULL2(s->partno),
+                _("Size"), size_str
+                );
+
+        moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+        const gchar *mfgr = s->vendor_str ? vendor_get_shortest_name(s->vendor_str) : NULL;
+        ret = h_strdup_cprintf("$!%s$%s%s=%s|%s|%s\n",
+                ret,
+                key, key, problem_marker(), UNKIFNULL2(s->partno), size_str, UNKIFNULL2(mfgr)
+                );
+        g_free(vendor_str);
+        g_free(size_str);
         g_free(key);
     }
 
