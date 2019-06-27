@@ -22,6 +22,8 @@
 #include "vendor.h"
 #include <inttypes.h>
 
+#include "dt_util.h" /* for appf() */
+
 #include "spd-decode2.c"
 
 gboolean no_handles = FALSE;
@@ -540,24 +542,46 @@ gchar *dmi_mem_socket_info() {
     return ret;
 }
 
+static gchar *note_state = NULL;
+
 gboolean dmi_mem_show_hinote(const char **msg) {
-    if (no_handles) {
-        if (getuid() == 0) {
-            *msg = g_strdup(
-                _("To view DMI memory information the <b><i>dmidecode</i></b> utility must be\n"
-                  "available."));
-        } else {
-            *msg = g_strdup(
-                _("To view DMI memory information the <b><i>dmidecode</i></b> utility must be\n"
-                  "available, and HardInfo must be run with superuser privileges."));
-        }
+
+    gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available\n");
+    gchar *want_root   = _(" ... and HardInfo running with superuser privileges\n");
+    gchar *want_eeprom = _(" eeprom module loaded\n");
+    gchar *want_ee1004 = _(" ee1004 module loaded (DDR4)");
+
+    gboolean has_root = (getuid() == 0);
+    gboolean has_dmi = !no_handles;
+    gboolean has_eeprom = g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
+    gboolean has_ee1004 = g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_IS_DIR);
+
+    char *bullet_yes = "<big><b>\u2713</b></big>";
+    char *bullet_no = "<big><b>\u2022<tt> </tt></b></big>";
+
+    g_free(note_state);
+    note_state = g_strdup(_("Memory information requires <b>one or more</b> of the following:\n"));
+    note_state = appf(note_state, "<tt>1. </tt>%s%s", has_dmi ? bullet_yes : bullet_no, want_dmi);
+    note_state = appf(note_state, "<tt>   </tt>%s%s", has_root ? bullet_yes : bullet_no, want_root);
+    note_state = appf(note_state, "<tt>2. </tt>%s%s", has_eeprom ? bullet_yes : bullet_no, want_eeprom);
+    note_state = appf(note_state, "<tt>3. </tt>%s%s", has_ee1004 ? bullet_yes : bullet_no, want_ee1004);
+
+    gboolean best_state = FALSE;
+    if (has_dmi && has_root && has_eeprom
+        && (has_ee1004 || !spd_ddr4_partial_data) )
+        best_state = TRUE;
+
+    if (!best_state) {
+        *msg = note_state;
         return TRUE;
     }
+
     if (sketchy_info) {
         *msg = g_strdup(
             _("\"More often than not, information contained in the DMI tables is inaccurate,\n"
               "incomplete or simply wrong.\" -<i><b>dmidecode</b></i> manual page"));
         return TRUE;
     }
+
     return FALSE;
 }

@@ -1854,6 +1854,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             decode_ddr4_module_manufacturer(bytes, spd_size, (char**)&s->vendor_str);
             decode_ddr4_module_size(bytes, &s->size_MiB);
             s->ddr4_no_ee1004 = s->ddr4_no_ee1004 || (spd_size < 512);
+            spd_ddr4_partial_data = spd_ddr4_partial_data || s->ddr4_no_ee1004;
             break;
         default: fprintf(stderr, "Unsupported EEPROM type: %s for %s\n", ram_types[ram_type], spd_path); continue;
         }
