@@ -155,7 +155,7 @@ set(MODULE_devices_SOURCES
 	modules/devices/printers.c
 	modules/devices/resources.c
 	modules/devices/sensors.c
-	modules/devices/spd-decode.c
+#	modules/devices/spd-decode2.c
 	modules/devices/storage.c
 	modules/devices/usb.c
 )
@@ -201,8 +201,9 @@ set_source_files_properties(
 
 set_source_files_properties(
 	modules/devices/dmi_memory.c
+#	modules/devices/spd-decode2.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99"
+	COMPILE_FLAGS "-std=c99 -Wno-deprecated-declarations"
 )
 
 foreach (_module ${HARDINFO_MODULES})
