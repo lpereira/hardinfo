@@ -1256,19 +1256,20 @@ static gchar *decode_ddr2_sdram(unsigned char *bytes, int *size) {
     int pc2_speed;
 
     decode_ddr2_module_speed(bytes, &ddr_clock, &pc2_speed);
-    decode_ddr2_module_size(bytes, size);
+    if (size)
+        decode_ddr2_module_size(bytes, size);
     decode_ddr2_module_timings(bytes, &trcd, &trp, &tras, &tcl);
 
-    return g_strdup_printf("[Module Information]\n"
-                           "Module type=DDR2 %.2f MHz (PC2-%d)\n"
-                           "SPD revision=%d.%d\n"
-                           "[Timings]\n"
+    return g_strdup_printf("[%s]\n"
+                           "%s=DDR2-%.0f MHz (PC2-%d)\n"
+                           "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.2f\n"
                            "tRP=%.2f\n"
                            "tRAS=%.2f\n",
-                           ddr_clock, pc2_speed, bytes[62] >> 4, bytes[62] & 0xf, tcl, trcd, trp,
-                           tras);
+                           _("Module Information"),
+                           _("Module type"), ddr_clock, pc2_speed,
+                           _("Timings"), tcl, trcd, trp, tras);
 }
 
 static void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int *pc3_speed) {
@@ -1350,7 +1351,7 @@ static gchar *decode_ddr3_sdram(unsigned char *bytes, int *size) {
     decode_ddr3_module_type(bytes, &type);
 
     return g_strdup_printf("[%s]\n"
-                           "%s=DDR3-%.2f (PC3-%d)\n"
+                           "%s=DDR3-%.0f (PC3-%d)\n"
                            "%s=%s\n"
                            "[%s]\n"
                            "tCL=%.2f\n"
@@ -1359,7 +1360,7 @@ static gchar *decode_ddr3_sdram(unsigned char *bytes, int *size) {
                            "tRAS=%.3fns\n",
                            _("Module Information"),
                            _("Module type"), ddr_clock, pc3_speed,
-                           _("Type"), type,
+                           _("Form Factor"), type,
                            _("Timings"), tcl, trcd, trp, tras
                            );
 }
@@ -1633,7 +1634,7 @@ static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
     }
 
     out = g_strdup_printf("[%s]\n"
-                          "%s=DDR4 %.0f (PC4-%d)\n"
+                          "%s=DDR4-%.0f (PC4-%d)\n"
                           "%s=%s\n"
                           "%s=%s\n"
                           "%s=%s\n"
@@ -1642,8 +1643,9 @@ static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
                           "[%s]\n"
                           "%s\n"
                           "%s",
-                          _("Module Information"), _("Module type"), ddr_clock, pc4_speed,
-                          _("Type"), type,
+                          _("Module Information"),
+                          _("Module type"), ddr_clock, pc4_speed,
+                          _("Form Factor"), type,
                           _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("Unknown"),
                           _("Manufacturing Date"), manf_date, _("DRAM Manufacturer"), dram_manf,
                           _("XMP"), xmp, _("JEDEC Timings"), speed_timings,

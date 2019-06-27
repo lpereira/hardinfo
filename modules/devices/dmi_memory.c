@@ -183,7 +183,7 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         s->data_width = dmidecode_match("Data Width", &dtm, &h);
         s->total_width = dmidecode_match("Total Width", &dtm, &h);
 
-        s->mfgr = dmidecode_match("Vendor", &dtm, &h);
+        s->mfgr = dmidecode_match("Manufacturer", &dtm, &h);
         if (g_str_has_prefix(s->mfgr, unknown_mfgr_str)) {
             /* the manufacturer code is unknown to dmidecode */
             g_free(s->mfgr);
@@ -272,6 +272,7 @@ dmi_mem *dmi_mem_new() {
         }
 
         if (!s->populated) continue;
+        if (!m->spd) continue;
 
         /* match SPD */
         spd_data *best = NULL;
@@ -287,8 +288,6 @@ dmi_mem *dmi_mem_new() {
                 if (s->vendor == e->vendor)
                     score += 5;
 
-                //printf("s:%s vs e:%s -- score %d\n", s->full_locator, e->dev, score);
-
                 if (score > best_score)
                     best = e;
             }
@@ -296,7 +295,14 @@ dmi_mem *dmi_mem_new() {
         if (best) {
             s->spd = best;
             best->claimed_by_dmi = 1;
+
+            /* fill in missing from SPD */
+            if (!s->mfgr && s->spd->vendor_str) {
+                s->mfgr = g_strdup(s->spd->vendor_str);
+                s->vendor = s->spd->vendor;
+            }
         }
+
     }
 
     return m;
@@ -436,6 +442,9 @@ gchar *make_spd_section(spd_data *spd) {
     if (spd) {
         gchar *full_spd = NULL;
         switch(spd->type) {
+            case DDR2_SDRAM:
+                full_spd = decode_ddr2_sdram(spd->bytes, NULL);
+                break;
             case DDR3_SDRAM:
                 full_spd = decode_ddr3_sdram(spd->bytes, NULL);
                 break;
