@@ -870,6 +870,8 @@ typedef struct {
     const Vendor *vendor;
 
     char partno[32];
+    const char *form_factor;
+    char type_detail[256];
 
     int size_MiB;
 
@@ -1156,25 +1158,35 @@ static void decode_ddr_module_timings(unsigned char *bytes, float *tcl, float *t
     if (tcl) { *tcl = highest_cas; }
 }
 
+static void decode_ddr_module_detail(unsigned char *bytes, char *type_detail) {
+    float ddr_clock;
+    int pc_speed;
+    if (type_detail) {
+        decode_ddr_module_speed(bytes, &ddr_clock, &pc_speed);
+        snprintf(type_detail, 255, "DDR-%.0f (PC-%d)", ddr_clock, pc_speed);
+    }
+}
+
 static gchar *decode_ddr_sdram(unsigned char *bytes, int *size) {
     float ddr_clock;
     float tcl, trcd, trp, tras;
     int pc_speed;
 
     decode_ddr_module_speed(bytes, &ddr_clock, &pc_speed);
-    decode_ddr_module_size(bytes, size);
+    if (size)
+        decode_ddr_module_size(bytes, size);
     decode_ddr_module_timings(bytes, &tcl, &trcd, &trp, &tras);
 
-    return g_strdup_printf("[Module Information]\n"
-                           "Module type=DDR %.2fMHz (PC%d)\n"
-                           "SPD revision=%d.%d\n"
-                           "[Timings]\n"
+    return g_strdup_printf("[%s]\n"
+                           "%s=DDR-%.0f (PC-%d)\n"
+                           "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.2f\n"
                            "tRP=%.2f\n"
                            "tRAS=%.2f\n",
-                           ddr_clock, pc_speed, bytes[62] >> 4, bytes[62] & 0xf, tcl, trcd, trp,
-                           tras);
+                           _("Module Information"),
+                           _("Module type"), ddr_clock, pc_speed,
+                           _("Timings"), tcl, trcd, trp, tras);
 }
 
 static float decode_ddr2_module_ctime(unsigned char byte) {
@@ -1250,6 +1262,15 @@ static void decode_ddr2_module_timings(unsigned char *bytes, float *trcd, float 
     if (tcl) { *tcl = highest_cas; }
 }
 
+static void decode_ddr2_module_detail(unsigned char *bytes, char *type_detail) {
+    float ddr_clock;
+    int pc2_speed;
+    if (type_detail) {
+        decode_ddr2_module_speed(bytes, &ddr_clock, &pc2_speed);
+        snprintf(type_detail, 255, "DDR2-%.0f (PC2-%d)", ddr_clock, pc2_speed);
+    }
+}
+
 static gchar *decode_ddr2_sdram(unsigned char *bytes, int *size) {
     float ddr_clock;
     float trcd, trp, tras, tcl;
@@ -1261,7 +1282,7 @@ static gchar *decode_ddr2_sdram(unsigned char *bytes, int *size) {
     decode_ddr2_module_timings(bytes, &trcd, &trp, &tras, &tcl);
 
     return g_strdup_printf("[%s]\n"
-                           "%s=DDR2-%.0f MHz (PC2-%d)\n"
+                           "%s=DDR2-%.0f (PC2-%d)\n"
                            "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.2f\n"
@@ -1330,11 +1351,19 @@ static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float 
 
 static void decode_ddr3_module_type(unsigned char *bytes, const char **type) {
     switch (bytes[3]) {
-    case 0x00: *type = "Undefined"; break;
     case 0x01: *type = "RDIMM (Registered Long DIMM)"; break;
     case 0x02: *type = "UDIMM (Unbuffered Long DIMM)"; break;
     case 0x03: *type = "SODIMM (Small Outline DIMM)"; break;
-    default: *type = "Unknown";
+    default: *type = NULL;
+    }
+}
+
+static void decode_ddr3_module_detail(unsigned char *bytes, char *type_detail) {
+    float ddr_clock;
+    int pc3_speed;
+    if (type_detail) {
+        decode_ddr3_module_speed(bytes, &ddr_clock, &pc3_speed);
+        snprintf(type_detail, 255, "DDR3-%.0f (PC3-%d)", ddr_clock, pc3_speed);
     }
 }
 
@@ -1360,7 +1389,7 @@ static gchar *decode_ddr3_sdram(unsigned char *bytes, int *size) {
                            "tRAS=%.3fns\n",
                            _("Module Information"),
                            _("Module type"), ddr_clock, pc3_speed,
-                           _("Form Factor"), type,
+                           _("Form Factor"), type ? type : _("(Unknown)"),
                            _("Timings"), tcl, trcd, trp, tras
                            );
 }
@@ -1459,7 +1488,7 @@ static void decode_ddr4_module_type(unsigned char *bytes, const char **type) {
     case 0x09: *type = "72b-SO-UDIMM (Small Outline Unbuffered DIMM, 72-bit data bus)"; break;
     case 0x0c: *type = "16b-SO-UDIMM (Small Outline Unbuffered DIMM, 16-bit data bus)"; break;
     case 0x0d: *type = "32b-SO-UDIMM (Small Outline Unbuffered DIMM, 32-bit data bus)"; break;
-    default: *type = _("Unknown");
+    default: *type = NULL;
     }
 }
 
@@ -1604,6 +1633,14 @@ static void decode_ddr4_xmp(unsigned char *bytes, int spd_size, char **str) {
                print_spd_timings((int) ddrclk, ceil(taa/ctime - 0.025), trcd, trp, tras, ctime));
 }
 
+static void decode_ddr4_module_detail(unsigned char *bytes, char *type_detail) {
+    float ddr_clock;
+    int pc4_speed;
+    if (type_detail) {
+        decode_ddr4_module_speed(bytes, &ddr_clock, &pc4_speed);
+        snprintf(type_detail, 255, "DDR4-%.0f (PC4-%d)", ddr_clock, pc4_speed);
+    }
+}
 
 static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
     float ddr_clock;
@@ -1645,7 +1682,7 @@ static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
                           "%s",
                           _("Module Information"),
                           _("Module type"), ddr_clock, pc4_speed,
-                          _("Form Factor"), type,
+                          _("Form Factor"), type ? type : _("(Unknown)"),
                           _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("Unknown"),
                           _("Manufacturing Date"), manf_date, _("DRAM Manufacturer"), dram_manf,
                           _("XMP"), xmp, _("JEDEC Timings"), speed_timings,
@@ -1744,84 +1781,6 @@ static int read_spd(char *spd_path, int offset, size_t size, int use_sysfs,
     return data_size;
 }
 
-static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) {
-    GSList *dimm;
-    GString *output = NULL;
-    gint count = 0;
-    int spd_size = 0;
-    guchar *bytes;
-
-    bytes = malloc(sizeof(guchar) * max_size);
-
-    for (dimm = dimm_list; dimm; dimm = dimm->next, count++) {
-        gchar *spd_path = (gchar *)dimm->data;
-        gchar *manufacturer;
-        gchar *detailed_info;
-        gchar *moreinfo_key;
-        gchar part_number[32];
-        int module_size;
-        RamType ram_type;
-
-        shell_status_pulse();
-
-        spd_size = read_spd(spd_path, 0, max_size, use_sysfs, bytes);
-        ram_type = decode_ram_type(bytes);
-
-        switch (ram_type) {
-        case DDR2_SDRAM:
-            detailed_info = decode_ddr2_sdram(bytes, &module_size);
-            decode_module_part_number(bytes, part_number);
-            decode_module_manufacturer(bytes + 64, &manufacturer);
-            break;
-        case DDR3_SDRAM:
-            detailed_info = decode_ddr3_sdram(bytes, &module_size);
-            decode_ddr3_part_number(bytes, part_number);
-            decode_ddr3_manufacturer(bytes, &manufacturer);
-            break;
-        case DDR4_SDRAM:
-            detailed_info = decode_ddr4_sdram(bytes, spd_size, &module_size);
-            decode_ddr4_part_number(bytes, spd_size, part_number);
-            decode_ddr4_module_manufacturer(bytes, spd_size, &manufacturer);
-            spd_ddr4_partial_data = spd_ddr4_partial_data || (spd_size < 512);
-            break;
-        case DDR_SDRAM:
-            detailed_info = decode_ddr_sdram(bytes, &module_size);
-            decode_module_part_number(bytes, part_number);
-            decode_module_manufacturer(bytes + 64, &manufacturer);
-            break;
-        case SDR_SDRAM:
-            detailed_info = decode_sdr_sdram(bytes, &module_size);
-            decode_module_part_number(bytes, part_number);
-            decode_module_manufacturer(bytes + 64, &manufacturer);
-            break;
-        default: DEBUG("Unsupported EEPROM type: %s\n", ram_types[ram_type]); continue;
-        }
-
-        if (detailed_info) {
-            gchar *more_detailed_info = g_strdup_printf("%s[%s]\n%s=%s\n",
-                            detailed_info, _("Source"), _("Path"), spd_path);
-            gchar *key = g_strdup_printf("MEM%d", count);
-            moreinfo_add_with_prefix("DEV", key, more_detailed_info); /* moreinfo now owns *more_detailed_info */
-            g_free(key);
-        }
-
-        if (!output)
-            output = g_string_new("");
-
-        g_string_append_printf(output, "$MEM%d$%d=%s|%d MB|%s\n", count, count, part_number,
-                               module_size, manufacturer);
-
-        g_free(spd_path);
-        g_free(detailed_info);
-    }
-    g_free(bytes);
-
-    if (!output)
-        return NULL;
-
-    return g_string_free(output, FALSE);
-}
-
 static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_size) {
     GSList *eeprom, *dimm_list = NULL;
     int count = 0;
@@ -1840,12 +1799,35 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
         ram_type = decode_ram_type(bytes);
 
         switch (ram_type) {
+        /* case SDR_SDRAM:
+            detailed_info = decode_sdr_sdram(bytes, &module_size);
+            decode_module_part_number(bytes, part_number);
+            decode_module_manufacturer(bytes + 64, &manufacturer);
+            break; */
+        case DDR_SDRAM:
+            s = spd_data_new();
+            memcpy(s->bytes, bytes, 512);
+            decode_module_part_number(bytes, s->partno);
+            decode_module_manufacturer(bytes + 64, (char**)&s->vendor_str);
+            decode_ddr_module_size(bytes, &s->size_MiB);
+            decode_ddr_module_detail(bytes, s->type_detail);
+            break;
+        case DDR2_SDRAM:
+            s = spd_data_new();
+            memcpy(s->bytes, bytes, 512);
+            decode_module_part_number(bytes, s->partno);
+            decode_module_manufacturer(bytes + 64, (char**)&s->vendor_str);
+            decode_ddr2_module_size(bytes, &s->size_MiB);
+            decode_ddr2_module_detail(bytes, s->type_detail);
+            break;
         case DDR3_SDRAM:
             s = spd_data_new();
             memcpy(s->bytes, bytes, 512);
             decode_ddr3_part_number(bytes, s->partno);
             decode_ddr3_manufacturer(bytes, (char**)&s->vendor_str);
             decode_ddr3_module_size(bytes, &s->size_MiB);
+            decode_ddr3_module_type(bytes, &s->form_factor);
+            decode_ddr3_module_detail(bytes, s->type_detail);
             break;
         case DDR4_SDRAM:
             s = spd_data_new();
@@ -1853,6 +1835,8 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             decode_ddr4_part_number(bytes, spd_size, s->partno);
             decode_ddr4_module_manufacturer(bytes, spd_size, (char**)&s->vendor_str);
             decode_ddr4_module_size(bytes, &s->size_MiB);
+            decode_ddr4_module_type(bytes, &s->form_factor);
+            decode_ddr4_module_detail(bytes, s->type_detail);
             s->ddr4_no_ee1004 = s->ddr4_no_ee1004 || (spd_size < 512);
             spd_ddr4_partial_data = spd_ddr4_partial_data || s->ddr4_no_ee1004;
             break;

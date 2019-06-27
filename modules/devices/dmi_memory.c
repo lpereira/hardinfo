@@ -185,7 +185,10 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
 
         s->form_factor = dmidecode_match("Form Factor", &dtm, &h);
         s->type = dmidecode_match("Type", &dtm, &h);
+        if (SEQ(s->type, "Unknown")) *s->type = 0;
         s->type_detail = dmidecode_match("Type Detail", &dtm, &h);
+        if (SEQ(s->type_detail, "None")) *s->type_detail = 0;
+
         s->speed_str = dmidecode_match("Speed", &dtm, &h);
         s->configured_clock_str = dmidecode_match("Configured Clock Speed", &dtm, &h);
         if (!s->configured_clock_str)
@@ -205,6 +208,9 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
             s->mfgr = NULL;
         }
 
+        null_if_empty(&s->form_factor);
+        null_if_empty(&s->type);
+        null_if_empty(&s->type_detail);
         null_if_empty(&s->mfgr);
         null_if_empty(&s->partno);
 
@@ -319,11 +325,16 @@ dmi_mem *dmi_mem_new() {
                 s->mfgr = g_strdup(s->spd->vendor_str);
                 s->vendor = s->spd->vendor;
             }
-            if (!s->partno && s->spd->partno) {
-                s->partno = g_strdup(s->spd->partno);
-            }
-        }
 
+            if (!s->partno && s->spd->partno)
+                s->partno = g_strdup(s->spd->partno);
+
+            if (!s->form_factor && s->spd->form_factor)
+                s->form_factor = g_strdup(s->spd->form_factor);
+
+            if (!s->type_detail && s->spd->type_detail)
+                s->type_detail = g_strdup(s->spd->type_detail);
+        }
     }
 
     return m;
@@ -343,6 +354,8 @@ gchar *make_spd_section(spd_data *spd) {
     if (spd) {
         gchar *full_spd = NULL;
         switch(spd->type) {
+            case DDR_SDRAM:
+                full_spd = decode_ddr_sdram(spd->bytes, NULL);
             case DDR2_SDRAM:
                 full_spd = decode_ddr2_sdram(spd->bytes, NULL);
                 break;
