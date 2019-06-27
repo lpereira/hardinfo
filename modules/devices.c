@@ -80,7 +80,6 @@ enum {
     ENTRY_DMI,
     ENTRY_PROCESSOR,
     ENTRY_GPU,
-    ENTRY_SPD,
     ENTRY_DMI_MEM,
     ENTRY_PCI,
     ENTRY_USB,
@@ -103,8 +102,7 @@ static ModuleEntry entries[] = {
     [ENTRY_INPUT] = {N_("Input Devices"), "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
     [ENTRY_STORAGE] = {N_("Storage"), "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
     [ENTRY_DMI] = {N_("System DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
-    [ENTRY_SPD] = {N_("Memory SPD"), "memory.png", callback_spd, scan_spd, MODULE_FLAG_NONE},
-    [ENTRY_DMI_MEM] = {N_("Memory DMI"), "memory.png", callback_dmi_mem, scan_dmi_mem, MODULE_FLAG_NONE},
+    [ENTRY_DMI_MEM] = {N_("Memory Devices"), "memory.png", callback_dmi_mem, scan_dmi_mem, MODULE_FLAG_NONE},
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     [ENTRY_DTREE] = {"#"},
 #else
@@ -815,12 +813,6 @@ const gchar *hi_note_func(gint entry)
             return g_strdup(
                 _("Any NVMe storage devices present are not listed.\n"
                   "<b><i>udisksd</i></b> is required for NVMe devices."));
-        }
-    }
-    else if (entry == ENTRY_SPD){
-        const char *msg;
-        if (spd_decode_show_hinote(&msg)) {
-            return msg;
         }
     }
     else if (entry == ENTRY_DMI_MEM){
