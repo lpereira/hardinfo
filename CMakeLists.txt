@@ -170,7 +170,6 @@ set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark/blowfish.c
 	modules/benchmark/blowfish2.c
 	modules/benchmark/cryptohash.c
-	modules/benchmark/drawing.c
 	modules/benchmark/fbench.c
 	modules/benchmark/fftbench.c
 	modules/benchmark/fft.c
@@ -182,6 +181,7 @@ set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark/zlib.c
 )
 set(MODULE_benchmark_SOURCES_GTK2
+	modules/benchmark/drawing.c
 	modules/benchmark/guibench.c
 )
 if (HARDINFO_GTK3)
