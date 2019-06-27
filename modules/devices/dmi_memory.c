@@ -317,126 +317,6 @@ void dmi_mem_free(dmi_mem* s) {
     }
 }
 
-gchar *dmi_mem_socket_info_view0() {
-    gchar *ret = g_strdup("[$ShellParam$]\nViewType=0\n");
-    GSList *l = NULL;
-    sketchy_info = FALSE;
-
-    dmi_mem *mem = dmi_mem_new();
-
-    /* Arrays */
-    for(l = mem->arrays; l; l = l->next) {
-        dmi_mem_array *a = (dmi_mem_array*)l->data;
-        gchar *size_str = NULL;
-
-        if (a->size_MiB_max > 1024 && (a->size_MiB_max % 1024 == 0)
-            && a->size_MiB_present > 1024 && (a->size_MiB_present % 1024 == 0) )
-            size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present / 1024, a->size_MiB_max / 1024, _("GiB"));
-        else
-            size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present, a->size_MiB_max, _("MiB"));
-
-        if (a->size_MiB_max < a->size_MiB_present) {
-            sketchy_info = TRUE;
-            size_str = h_strdup_cprintf(" %s", size_str, problem_marker());
-        }
-
-        ret = h_strdup_cprintf("[%s %s]\n"
-                        "%s=0x%x\n"
-                        "%s=%s\n"
-                        "%s=%s\n"
-                        "%s=%s\n"
-                        "%s=%d / %d\n",
-                        ret,
-                        _("Memory Array"), a->locator ? a->locator : ".",
-                        _("Array DMI Handle"), a->array_handle,
-                        _("Use"), UNKIFNULL2(a->use),
-                        _("Error Correction Type"), UNKIFNULL2(a->ecc),
-                        _("Size (Present / Max)"), size_str,
-                        _("Devices (Populated / Sockets)"), a->devs_populated, a->devs
-                        );
-        g_free(size_str);
-    }
-
-    /* Sockets */
-    for(l = mem->sockets; l; l = l->next) {
-        dmi_mem_socket *s = (dmi_mem_socket*)l->data;
-
-        if (s->populated) {
-            gchar *vendor_str = NULL;
-            if (s->vendor) {
-                if (s->vendor->url)
-                    vendor_str = g_strdup_printf(" (%s, %s)",
-                        s->vendor->name, s->vendor->url );
-            }
-            gchar *size_str = NULL;
-            if (!s->size_str)
-                size_str = g_strdup(_("(Unknown)"));
-            else if (!s->size_MiB)
-                size_str = g_strdup(s->size_str);
-            else
-                size_str = g_strdup_printf("%ld %s", s->size_MiB, _("MiB") );
-
-            ret = h_strdup_cprintf("[%s %s]\n"
-                            "%s=0x%lx, 0x%lx\n"
-                            "%s=%s\n"
-                            "%s=%s\n"
-                            "%s=%s%s\n"
-                            "%s=%s\n"
-                            "%s=%s / %s\n"
-                            "%s=%s\n"
-                            "%s=%s\n"
-                            "%s=%s\n"
-                            "%s=%s / %s\n"
-                            "%s=%s\n"
-                            "%s=%s\n"
-                            "%s=%s\n",
-                            ret,
-                            _("Memory Socket"), s->full_locator,
-                            _("DMI Handles (Array, Socket)"), s->array_handle, s->handle,
-                            _("Bank Locator"), UNKIFNULL2(s->bank_locator),
-                            _("Form Factor"), UNKIFNULL2(s->form_factor),
-                            _("Vendor"), UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
-                            _("Part Number"), UNKIFNULL2(s->partno),
-                            _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
-                            _("Size"), size_str,
-                            _("Rated Speed"), UNKIFNULL2(s->speed_str),
-                            _("Configured Speed"), UNKIFNULL2(s->configured_clock_str),
-                            _("Data Width/Total Width"), UNKIFNULL2(s->data_width), UNKIFNULL2(s->total_width),
-                            _("Minimum Voltage"), UNKIFNULL2(s->voltage_min_str),
-                            _("Maximum Voltage"), UNKIFNULL2(s->voltage_max_str),
-                            _("Configured Voltage"), UNKIFNULL2(s->voltage_conf_str)
-                            );
-
-            g_free(vendor_str);
-            g_free(size_str);
-        } else {
-            ret = h_strdup_cprintf("[%s %s]\n"
-                            "%s=0x%x, 0x%x\n"
-                            "%s=%s\n"
-                            "%s=%s\n",
-                            ret,
-                            _("Memory Socket"), s->full_locator,
-                            _("DMI Handles (Array, Socket)"), s->array_handle, s->handle,
-                            _("Bank Locator"), UNKIFNULL2(s->bank_locator),
-                            _("Size"), _("(Empty)")
-                            );
-        }
-    }
-
-    no_handles = FALSE;
-    if(mem->empty) {
-        no_handles = TRUE;
-        ret = g_strdup_printf("[%s]\n%s=%s\n" "[$ShellParam$]\nViewType=0\n",
-                _("Socket Information"), _("Result"),
-                (getuid() == 0)
-                ? _("(Not available)")
-                : _("(Not available; Perhaps try running HardInfo as root.)") );
-    }
-
-    dmi_mem_free(mem);
-    return ret;
-}
-
 gchar *make_spd_section(spd_data *spd) {
     gchar *ret = NULL;
     if (spd) {
@@ -455,11 +335,12 @@ gchar *make_spd_section(spd_data *spd) {
                 fprintf(stderr, "blug for type: %d %s\n", spd->type, ram_types[spd->type]);
         }
         ret = g_strdup_printf("[%s]\n"
-                    "%s=%s\n"
+                    "%s=%s (%s)%s\n"
                     "%s=%d.%d\n"
                     "%s",
                     _("Serial Presence Detect (SPD)"),
-                    _("eeprom"), spd->dev,
+                    _("Source"), spd->dev, spd->spd_driver ? "ee1004" : "eeprom",
+                        (spd->type == DDR4_SDRAM && !spd->spd_driver) ? problem_marker() : "",
                     _("SPD Revision"), spd->spd_rev_major, spd->spd_rev_minor,
                     full_spd ? full_spd : ""
                     );
@@ -468,7 +349,7 @@ gchar *make_spd_section(spd_data *spd) {
     return ret;
 }
 
-gchar *dmi_mem_socket_info_view1() {
+gchar *dmi_mem_socket_info() {
     gchar *ret = g_strdup_printf(
         "[$ShellParam$]\nViewType=1\n"
         "ColumnTitle$TextValue=%s\n" /* Locator */
@@ -657,12 +538,6 @@ gchar *dmi_mem_socket_info_view1() {
 
     dmi_mem_free(mem);
     return ret;
-}
-
-gchar *dmi_mem_socket_info() {
-    // alternative shell view types
-    //return dmi_mem_socket_info_view0();
-    return dmi_mem_socket_info_view1();
 }
 
 gboolean dmi_mem_show_hinote(const char **msg) {

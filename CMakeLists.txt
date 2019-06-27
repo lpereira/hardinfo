@@ -202,7 +202,7 @@ set_source_files_properties(
 set_source_files_properties(
 	modules/devices/dmi_memory.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99"
+	COMPILE_FLAGS "-std=c99 -Wno-deprecated-declarations"
 )
 
 foreach (_module ${HARDINFO_MODULES})

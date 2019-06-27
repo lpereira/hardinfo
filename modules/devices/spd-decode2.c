@@ -31,10 +31,9 @@
 #include "devices.h"
 #include "hardinfo.h"
 
-static char *spd_info_local = NULL;
-static gboolean no_driver = FALSE;
-static gboolean no_support = FALSE;
-static gboolean ddr4_partial_data = FALSE;
+gboolean spd_no_driver = FALSE;
+gboolean spd_no_support = FALSE;
+gboolean spd_ddr4_partial_data = FALSE;
 
 typedef enum {
     UNKNOWN,
@@ -860,6 +859,7 @@ static const char **vendors[VENDORS_BANKS] = {vendors1, vendors2, vendors3, vend
 typedef struct {
     unsigned char bytes[512];
     unsigned char dev[8];  /* %1d-%04d\0 */
+    int spd_driver; /* 0 = eeprom, 1 = ee1004 */
     int spd_size;
 
     RamType type;
@@ -876,7 +876,7 @@ typedef struct {
     int spd_rev_major; // bytes[1] >> 4
     int spd_rev_minor; // bytes[1] & 0xf
 
-    gboolean ddr4_partial_data;
+    gboolean ddr4_no_ee1004;
     gboolean claimed_by_dmi;
 } spd_data;
 
@@ -1782,7 +1782,7 @@ static gchar *decode_dimms(GSList *dimm_list, gboolean use_sysfs, int max_size) 
             detailed_info = decode_ddr4_sdram(bytes, spd_size, &module_size);
             decode_ddr4_part_number(bytes, spd_size, part_number);
             decode_ddr4_module_manufacturer(bytes, spd_size, &manufacturer);
-            ddr4_partial_data = ddr4_partial_data || (spd_size < 512);
+            spd_ddr4_partial_data = spd_ddr4_partial_data || (spd_size < 512);
             break;
         case DDR_SDRAM:
             detailed_info = decode_ddr_sdram(bytes, &module_size);
@@ -1833,8 +1833,6 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
         gchar *spd_path = (gchar*)eeprom->data;
         s = NULL;
 
-        //gchar *detailed_info;
-        int module_size;
         RamType ram_type;
 
         memset(bytes, 0, 512);
@@ -1845,8 +1843,6 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
         case DDR3_SDRAM:
             s = spd_data_new();
             memcpy(s->bytes, bytes, 512);
-            strncpy(s->dev, g_basename(spd_path), 7);
-            //detailed_info = decode_ddr3_sdram(bytes, &module_size);
             decode_ddr3_part_number(bytes, s->partno);
             decode_ddr3_manufacturer(bytes, (char**)&s->vendor_str);
             decode_ddr3_module_size(bytes, &s->size_MiB);
@@ -1854,17 +1850,18 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
         case DDR4_SDRAM:
             s = spd_data_new();
             memcpy(s->bytes, bytes, 512);
-            strncpy(s->dev, g_basename(spd_path), 7);
-            //detailed_info = decode_ddr4_sdram(bytes, spd_size, &module_size);
             decode_ddr4_part_number(bytes, spd_size, s->partno);
             decode_ddr4_module_manufacturer(bytes, spd_size, (char**)&s->vendor_str);
             decode_ddr4_module_size(bytes, &s->size_MiB);
-            s->ddr4_partial_data = s->ddr4_partial_data || (spd_size < 512);
+            s->ddr4_no_ee1004 = s->ddr4_no_ee1004 || (spd_size < 512);
             break;
         default: fprintf(stderr, "Unsupported EEPROM type: %s for %s\n", ram_types[ram_type], spd_path); continue;
         }
 
         if (s) {
+            strncpy(s->dev, g_basename(spd_path), 7);
+            if (strstr(spd_path, "ee1004"))
+                s->spd_driver = 1;
             s->spd_size = spd_size;
             s->type = ram_type;
             s->spd_rev_major = bytes[1] >> 4;
@@ -1897,9 +1894,9 @@ GSList *spd_scan() {
     const struct SpdDriver *driver;
     gboolean driver_found = FALSE;
 
-    ddr4_partial_data = FALSE;
-    no_driver = FALSE;
-    no_support = FALSE;
+    spd_ddr4_partial_data = FALSE;
+    spd_no_driver = FALSE;
+    spd_no_support = FALSE;
 
     for (driver = spd_drivers; driver->dir_path; driver++) {
         if (g_file_test(driver->dir_path, G_FILE_TEST_EXISTS)) {
@@ -1927,76 +1924,13 @@ GSList *spd_scan() {
         }
     }
 
-    return dimm_list;
-}
-
-void scan_spd_do_local(void) {
-    GDir *dir = NULL;
-    GSList *dimm_list = NULL;
-    void *dimm_list_entry;
-    gchar *dir_entry, *list = NULL;
-    const struct SpdDriver *driver;
-    gboolean driver_found = FALSE;
-
-    ddr4_partial_data = FALSE;
-    no_driver = FALSE;
-    no_support = FALSE;
-
-    for (driver = spd_drivers; driver->dir_path; driver++) {
-        if (g_file_test(driver->dir_path, G_FILE_TEST_EXISTS)) {
-            dir = g_dir_open(driver->dir_path, 0, NULL);
-            if (!dir) continue;
-
-            driver_found = TRUE;
-            while ((dir_entry = (char *)g_dir_read_name(dir))) {
-                if ((driver->use_sysfs && isdigit(dir_entry[0])) ||
-                    g_str_has_prefix(dir_entry, "eeprom-")) {
-
-                    dimm_list_entry = g_strdup_printf("%s/%s", driver->dir_path, dir_entry);
-                    dimm_list = g_slist_prepend(dimm_list, dimm_list_entry);
-                }
-            }
-
-            g_dir_close(dir);
-
-            if (dimm_list) {
-                list = decode_dimms(dimm_list, driver->use_sysfs, driver->max_size);
-                g_slist_free(dimm_list);
-                dimm_list = NULL;
-            }
-            if (list) break;
-        }
-    }
-
     if (!driver_found) {
-        g_free(spd_info_local);
         if (!g_file_test("/sys/module/eeprom", G_FILE_TEST_EXISTS)) {
-            no_driver = TRUE; /* trigger hinote for no eeprom driver */
-            spd_info_local =
-                g_strdup("[$ShellParam$]\n"
-                         "ViewType=0\n"
-                         "ReloadInterval=500\n");
+            spd_no_driver = TRUE; /* trigger hinote for no eeprom driver */
         } else {
-            no_support = TRUE; /* trigger hinote for unsupported system */
-            spd_info_local =
-                g_strdup("[$ShellParam$]\n"
-                         "ViewType=0\n"
-                         "ReloadInterval=500\n");
+            spd_no_support = TRUE; /* trigger hinote for unsupported system */
         }
-
-        return;
     }
 
-    g_free(spd_info_local);
-    spd_info_local = g_strdup_printf("[%s]\n"
-                               "%s\n"
-                               "[$ShellParam$]\n"
-                               "ViewType=1\n"
-                               "ColumnTitle$TextValue=%s\n" /* Bank */
-                               "ColumnTitle$Extra1=%s\n"    /* Size */
-                               "ColumnTitle$Extra2=%s\n"    /* Manufacturer */
-                               "ColumnTitle$Value=%s\n"     /* Model */
-                               "ShowColumnHeaders=true\n",
-                               _("SPD"), list, _("Bank"), _("Size"), _("Manufacturer"), _("Model"));
-    g_free(list);
+    return dimm_list;
 }
