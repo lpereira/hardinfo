@@ -34,27 +34,31 @@
 gboolean spd_no_driver = FALSE;
 gboolean spd_no_support = FALSE;
 gboolean spd_ddr4_partial_data = FALSE;
+int spd_ram_types = 0; /* bits using enum RamType */
 
 typedef enum {
-    UNKNOWN,
-    DIRECT_RAMBUS,
-    RAMBUS,
-    FPM_DRAM,
-    EDO,
-    PIPELINED_NIBBLE,
-    SDR_SDRAM,
-    MULTIPLEXED_ROM,
-    DDR_SGRAM,
-    DDR_SDRAM,
-    DDR2_SDRAM,
-    DDR3_SDRAM,
-    DDR4_SDRAM
+    UNKNOWN           = 0,
+    DIRECT_RAMBUS     = 1,
+    RAMBUS            = 2,
+    FPM_DRAM          = 3,
+    EDO               = 4,
+    PIPELINED_NIBBLE  = 5,
+    SDR_SDRAM         = 6,
+    MULTIPLEXED_ROM   = 7,
+    DDR_SGRAM         = 8,
+    DDR_SDRAM         = 9,
+    DDR2_SDRAM        = 10,
+    DDR3_SDRAM        = 11,
+    DDR4_SDRAM        = 12,
+    N_RAM_TYPES       = 13
 } RamType;
 
 static const char *ram_types[] = {"Unknown",   "Direct Rambus",    "Rambus",     "FPM DRAM",
                                   "EDO",       "Pipelined Nibble", "SDR SDRAM",  "Multiplexed ROM",
                                   "DDR SGRAM", "DDR SDRAM",        "DDR2 SDRAM", "DDR3 SDRAM",
                                   "DDR4 SDRAM"};
+#define GET_RAM_TYPE_STR(rt) (ram_types[(rt < N_RAM_TYPES) ? rt : 0])
+
 
 static const char *vendors1[] = {"AMD",
                                  "AMI",
@@ -882,16 +886,8 @@ typedef struct {
     gboolean claimed_by_dmi;
 } spd_data;
 
-spd_data *spd_data_new() {
-    spd_data *s = g_new0(spd_data, 1);
-    return s;
-}
-
-void spd_data_free(spd_data *s) {
-    if (s) {
-        g_free(s);
-    }
-}
+#define spd_data_new() g_new0(spd_data, 1)
+void spd_data_free(spd_data *s) { g_free(s); }
 
 /*
  * We consider that no data was written to this area of the SPD EEPROM if
@@ -1812,7 +1808,13 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             s->ddr4_no_ee1004 = s->ddr4_no_ee1004 || (spd_size < 512);
             spd_ddr4_partial_data = spd_ddr4_partial_data || s->ddr4_no_ee1004;
             break;
-        default: DEBUG("Unsupported EEPROM type: %s for %s\n", ram_types[ram_type], spd_path); continue;
+        default:
+            DEBUG("Unsupported EEPROM type: %s for %s\n", GET_RAM_TYPE_STR(ram_type), spd_path); continue;
+            if (ram_type) {
+                /* some kind of RAM that we can't decode, but exists */
+                s = spd_data_new();
+                memcpy(s->bytes, bytes, 512);
+            }
         }
 
         if (s) {
@@ -1821,6 +1823,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
                 s->spd_driver = 1;
             s->spd_size = spd_size;
             s->type = ram_type;
+            spd_ram_types |= (1 << ram_type-1);
             if (ram_type == SDR_SDRAM) {
                 /* SDR */
                 s->spd_rev_major = 0;
