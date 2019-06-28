@@ -51,7 +51,6 @@ gchar *callback_input();
 gchar *callback_usb();
 gchar *callback_dmi();
 gchar *callback_dmi_mem();
-gchar *callback_spd();
 gchar *callback_dtree();
 gchar *callback_device_resources();
 
@@ -66,7 +65,6 @@ void scan_input(gboolean reload);
 void scan_usb(gboolean reload);
 void scan_dmi(gboolean reload);
 void scan_dmi_mem(gboolean reload);
-void scan_spd(gboolean reload);
 void scan_dtree(gboolean reload);
 void scan_device_resources(gboolean reload);
 
@@ -544,13 +542,6 @@ void scan_dmi_mem(gboolean reload)
     SCAN_END();
 }
 
-void scan_spd(gboolean reload)
-{
-    SCAN_START();
-    scan_spd_do();
-    SCAN_END();
-}
-
 void scan_dtree(gboolean reload)
 {
     SCAN_START();
@@ -642,11 +633,6 @@ gchar *callback_dmi()
 gchar *callback_dmi_mem()
 {
     return g_strdup(dmi_mem_info);
-}
-
-gchar *callback_spd()
-{
-    return g_strdup(spd_info);
 }
 
 gchar *callback_dtree()
