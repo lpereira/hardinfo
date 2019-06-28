@@ -326,6 +326,7 @@ gchar *callback_dev(void)
 {
     return g_strdup_printf(
                 "[$ShellParam$]\n"
+                "ViewType=0\n"
                 "ColumnTitle$TextValue=%s\n" /* Program */
                 "ColumnTitle$Value=%s\n" /* Version */
                 "ShowColumnHeaders=true\n"
