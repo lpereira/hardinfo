@@ -520,27 +520,6 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
        bench_image = icon_cache_get_image("benchmark.png");
        gtk_widget_show(bench_image);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-       GtkWidget *button;
-       GtkWidget *content_area;
-       GtkWidget *hbox;
-       GtkWidget *label;
-
-       bench_dialog = gtk_dialog_new_with_buttons("",
-                                                  NULL,
-                                                  GTK_DIALOG_MODAL,
-                                                  _("Cancel"),
-                                                  GTK_RESPONSE_ACCEPT,
-                                                  NULL);
-       content_area = gtk_dialog_get_content_area(GTK_DIALOG(bench_dialog));
-       label = gtk_label_new(_("Benchmarking. Please do not move your mouse " \
-                                             "or press any keys."));
-       hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-       gtk_box_pack_start(GTK_BOX(hbox), bench_image, TRUE, TRUE, 5);
-       gtk_box_pack_end(GTK_BOX(hbox), label, TRUE, TRUE, 5);
-       gtk_container_add(GTK_CONTAINER (content_area), hbox);
-       gtk_widget_show_all(bench_dialog);
-#else
        bench_dialog = gtk_message_dialog_new(GTK_WINDOW(shell_get_main_shell()->window),
                                              GTK_DIALOG_MODAL,
                                              GTK_MESSAGE_INFO,
@@ -549,8 +528,10 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
                                              "or press any keys."));
        gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog),
                               _("Cancel"), GTK_RESPONSE_ACCEPT, NULL);
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
        gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(bench_dialog), bench_image);
-#endif
+G_GNUC_END_IGNORE_DEPRECATIONS
 
        while (gtk_events_pending()) {
          gtk_main_iteration();
