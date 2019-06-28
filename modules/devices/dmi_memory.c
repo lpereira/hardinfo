@@ -29,6 +29,8 @@
 gboolean no_handles = FALSE;
 gboolean sketchy_info = FALSE;
 
+int dmi_ram_types = 0; /* bits using enum RamType */
+
 /* strings from dmidecode */
 static const char empty_mem_str[] = "No Module Installed";
 static const char unknown_mfgr_str[] = "<BAD INDEX>";
@@ -59,6 +61,7 @@ typedef struct {
     int devs_populated;
     long int size_MiB_max;
     long int size_MiB_present;
+    int ram_types; /* bits using enum RamType */
 } dmi_mem_array;
 
 dmi_mem_array *dmi_mem_array_new(unsigned long h) {
@@ -109,6 +112,7 @@ typedef struct {
 
     gchar *type;
     gchar *type_detail;
+    int ram_type; /* using enum RamType */
     gchar *array_locator;
     gchar *bank_locator;
     gchar *form_factor;
@@ -131,6 +135,8 @@ typedef struct {
     GSList *arrays;
     GSList *sockets;
     GSList *spd;
+    long int spd_size_MiB;
+    int spd_ram_types; /* bits using enum RamType */
 } dmi_mem;
 
 gboolean null_if_empty(gchar **str) {
@@ -189,6 +195,12 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         s->form_factor = dmidecode_match("Form Factor", &dtm, &h);
         s->type = dmidecode_match("Type", &dtm, &h);
         STR_IGNORE(s->type, "Unknown");
+        if (SEQ(s->type, "DDR")) s->ram_type = DDR_SDRAM;
+        if (SEQ(s->type, "DDR2")) s->ram_type = DDR2_SDRAM;
+        if (SEQ(s->type, "DDR3")) s->ram_type = DDR3_SDRAM;
+        if (SEQ(s->type, "DDR4")) s->ram_type = DDR4_SDRAM;
+        if (s->ram_type)
+            dmi_ram_types |= (1 << s->ram_type-1);
         s->type_detail = dmidecode_match("Type Detail", &dtm, &h);
         STR_IGNORE(s->type_detail, "None");
 
@@ -288,6 +300,15 @@ dmi_mem *dmi_mem_new() {
     }
 
     GSList *l = NULL, *l2 = NULL;
+
+    /* totals for SPD */
+    for(l2 = m->spd; l2; l2 = l2->next) {
+        spd_data *e = (spd_data*)l2->data;
+        m->spd_size_MiB += e->size_MiB;
+        if (e->type)
+            m->spd_ram_types |= (1 << e->type-1);
+    }
+
     for(l = m->sockets; l; l = l->next) {
         dmi_mem_socket *s = (dmi_mem_socket*)l->data;
 
@@ -297,6 +318,8 @@ dmi_mem *dmi_mem_new() {
             a->size_MiB_present += s->size_MiB;
             if (s->populated)
                 a->devs_populated++;
+            if (s->ram_type)
+                a->ram_types |= (1 << s->ram_type-1);
         }
 
         if (!s->populated) continue;
@@ -307,6 +330,7 @@ dmi_mem *dmi_mem_new() {
         int best_score = 0;
         for(l2 = m->spd; l2; l2 = l2->next) {
             spd_data *e = (spd_data*)l2->data;
+
             int score = 0;
             if (!e->claimed_by_dmi) {
                 if (SEQ(s->partno, e->partno))
@@ -453,28 +477,39 @@ gchar *dmi_mem_socket_info() {
             size_str = h_strdup_cprintf(" %s", size_str, problem_marker());
         }
 
+        gchar *types_str = NULL;
+        int i;
+        for(i = 1; i < N_RAM_TYPES; i++) {
+            int bit = 1 << (i-1);
+            if (a->ram_types & bit)
+                types_str = appf(types_str, "%s", GET_RAM_TYPE_STR(i));
+        }
+
         gchar *details = g_strdup_printf("[%s]\n"
                         "%s=0x%lx\n"
                         "%s=%s\n"
                         "%s=%s\n"
                         "%s=%s\n"
                         "%s=%s\n"
-                        "%s=%d / %d\n",
+                        "%s=%d / %d\n"
+                        "%s=[0x%x] %s\n",
                         _("Memory Array"),
                         _("DMI Handle"), a->array_handle,
                         _("Locator"), a->locator ? a->locator : ".",
                         _("Use"), UNKIFNULL2(a->use),
                         _("Error Correction Type"), UNKIFNULL2(a->ecc),
                         _("Size (Present / Max)"), size_str,
-                        _("Devices (Populated / Sockets)"), a->devs_populated, a->devs
+                        _("Devices (Populated / Sockets)"), a->devs_populated, a->devs,
+                        _("Types Present"), a->ram_types, types_str
                         );
         moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
-        ret = h_strdup_cprintf("$!%s$%s=|%s\n",
+        ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
                 ret,
-                key, a->locator, size_str
+                key, a->locator, UNKIFNULL2(types_str), size_str
                 );
-        g_free(size_str);
         g_free(key);
+        g_free(size_str);
+        g_free(types_str);
     }
 
     /* Sockets */
@@ -562,6 +597,43 @@ gchar *dmi_mem_socket_info() {
         g_free(key);
     }
 
+    /* No DMI Array, show SPD totals */
+    if (!mem->arrays && mem->spd) {
+        gchar *key = g_strdup("SPD:*");
+        gchar *types_str = NULL;
+        gchar *size_str = NULL;
+
+        if (mem->spd_size_MiB > 1024 && (mem->spd_size_MiB % 1024 == 0) )
+            size_str = g_strdup_printf("%"PRId64" %s", mem->spd_size_MiB / 1024, _("GiB"));
+        else
+            size_str = g_strdup_printf("%"PRId64" %s", mem->spd_size_MiB, _("MiB"));
+
+        int i;
+        for(i = 1; i < N_RAM_TYPES; i++) {
+            int bit = 1 << (i-1);
+            if (mem->spd_ram_types & bit)
+                types_str = appf(types_str, "%s", GET_RAM_TYPE_STR(i));
+        }
+
+        gchar *details = g_strdup_printf("[%s]\n"
+                        "%s=%s\n"
+                        "%s=%d\n"
+                        "%s=[0x%x] %s\n",
+                        _("Serial Presence Detect (SPD) Summary"),
+                        _("Size"), size_str,
+                        _("Devices"), g_slist_length(mem->spd),
+                        _("Types Present"), mem->spd_ram_types, types_str
+                        );
+        moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+        ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
+                ret,
+                key, key, UNKIFNULL2(types_str), size_str
+                );
+        g_free(key);
+        g_free(size_str);
+        g_free(types_str);
+    }
+
     /* Unmatched SPD */
     for(l = mem->spd; l; l = l->next) {
         spd_data *s = (spd_data*)l->data;
@@ -585,7 +657,7 @@ gchar *dmi_mem_socket_info() {
         const gchar *mfgr = s->vendor_str ? vendor_get_shortest_name(s->vendor_str) : NULL;
         ret = h_strdup_cprintf("$!%s$%s%s=%s|%s|%s\n",
                 ret,
-                key, key, problem_marker(), UNKIFNULL2(s->partno), size_str, UNKIFNULL2(mfgr)
+                key, key, problem_marker(), UNKIFEMPTY2(s->partno), size_str, UNKIFNULL2(mfgr)
                 );
         g_free(vendor_str);
         g_free(size_str);
@@ -630,10 +702,12 @@ gboolean dmi_mem_show_hinote(const char **msg) {
     note_state = appf(note_state, "<tt>2. </tt>%s%s", has_eeprom ? bullet_yes : bullet_no, want_eeprom);
     note_state = appf(note_state, "<tt>   </tt>%s%s", has_ee1004 ? bullet_yes : bullet_no, want_ee1004);
 
+    gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<DDR3_SDRAM)) && has_ee1004);
+
     gboolean best_state = FALSE;
     if (has_dmi && has_root &&
         ((has_eeprom && !spd_ddr4_partial_data)
-        || has_ee1004) )
+        || has_ee1004 && !ddr3_ee1004) )
         best_state = TRUE;
 
     if (!best_state) {
