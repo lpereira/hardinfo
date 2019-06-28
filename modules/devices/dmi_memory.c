@@ -184,19 +184,26 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
     if (!g_str_has_prefix(s->size_str, empty_mem_str)) {
         s->populated = 1;
 
+#define STR_IGNORE(str, ignore) if (SEQ(str, ignore)) { *str = 0; null_if_empty(&str); }
+
         s->form_factor = dmidecode_match("Form Factor", &dtm, &h);
         s->type = dmidecode_match("Type", &dtm, &h);
-        if (SEQ(s->type, "Unknown")) *s->type = 0;
+        STR_IGNORE(s->type, "Unknown");
         s->type_detail = dmidecode_match("Type Detail", &dtm, &h);
-        if (SEQ(s->type_detail, "None")) *s->type_detail = 0;
+        STR_IGNORE(s->type_detail, "None");
 
         s->speed_str = dmidecode_match("Speed", &dtm, &h);
         s->configured_clock_str = dmidecode_match("Configured Clock Speed", &dtm, &h);
         if (!s->configured_clock_str)
             s->configured_clock_str = dmidecode_match("Configured Memory Speed", &dtm, &h);
+
         s->voltage_min_str = dmidecode_match("Minimum Voltage", &dtm, &h);
         s->voltage_max_str = dmidecode_match("Maximum Voltage", &dtm, &h);
         s->voltage_conf_str = dmidecode_match("Configured Voltage", &dtm, &h);
+        STR_IGNORE(s->voltage_min_str, "Unknown");
+        STR_IGNORE(s->voltage_max_str, "Unknown");
+        STR_IGNORE(s->voltage_conf_str, "Unknown");
+
         s->partno = dmidecode_match("Part Number", &dtm, &h);
 
         s->data_width = dmidecode_match("Data Width", &dtm, &h);
@@ -208,10 +215,6 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
             g_free(s->mfgr);
             s->mfgr = NULL;
         }
-
-        null_if_empty(&s->form_factor);
-        null_if_empty(&s->type);
-        null_if_empty(&s->type_detail);
         null_if_empty(&s->mfgr);
         null_if_empty(&s->partno);
 
