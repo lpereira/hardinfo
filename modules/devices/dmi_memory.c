@@ -608,8 +608,8 @@ gboolean dmi_mem_show_hinote(const char **msg) {
 
     gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available\n");
     gchar *want_root   = _(" ... and HardInfo running with superuser privileges\n");
-    gchar *want_eeprom = _(" eeprom module loaded\n");
-    gchar *want_ee1004 = _(" ee1004 module loaded (DDR4)");
+    gchar *want_eeprom = _(" <b><i>eeprom</i></b> module loaded (for SDR, DDR, DDR2, DDR3)\n");
+    gchar *want_ee1004 = _(" <b><i>ee1004</i></b> module loaded <b>and configured!</b> (for DDR4)");
 
     gboolean has_root = (getuid() == 0);
     gboolean has_dmi = !no_handles;
