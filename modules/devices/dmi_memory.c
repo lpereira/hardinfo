@@ -611,9 +611,9 @@ static gchar *note_state = NULL;
 gboolean dmi_mem_show_hinote(const char **msg) {
 
     gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available\n");
-    gchar *want_root   = _(" ... and HardInfo running with superuser privileges\n");
+    gchar *want_root   = _(" ... <i>and</i> HardInfo running with superuser privileges\n");
     gchar *want_eeprom = _(" <b><i>eeprom</i></b> module loaded (for SDR, DDR, DDR2, DDR3)\n");
-    gchar *want_ee1004 = _(" <b><i>ee1004</i></b> module loaded <b>and configured!</b> (for DDR4)");
+    gchar *want_ee1004 = _(" ... <i>or</i> <b><i>ee1004</i></b> module loaded <b>and configured!</b> (for DDR4)");
 
     gboolean has_root = (getuid() == 0);
     gboolean has_dmi = !no_handles;
@@ -624,15 +624,16 @@ gboolean dmi_mem_show_hinote(const char **msg) {
     char *bullet_no = "<big><b>\u2022<tt> </tt></b></big>";
 
     g_free(note_state);
-    note_state = g_strdup(_("Memory information requires <b>one or more</b> of the following:\n"));
+    note_state = g_strdup(_("Memory information requires <b>one or both</b> of the following:\n"));
     note_state = appf(note_state, "<tt>1. </tt>%s%s", has_dmi ? bullet_yes : bullet_no, want_dmi);
     note_state = appf(note_state, "<tt>   </tt>%s%s", has_root ? bullet_yes : bullet_no, want_root);
     note_state = appf(note_state, "<tt>2. </tt>%s%s", has_eeprom ? bullet_yes : bullet_no, want_eeprom);
-    note_state = appf(note_state, "<tt>3. </tt>%s%s", has_ee1004 ? bullet_yes : bullet_no, want_ee1004);
+    note_state = appf(note_state, "<tt>   </tt>%s%s", has_ee1004 ? bullet_yes : bullet_no, want_ee1004);
 
     gboolean best_state = FALSE;
-    if (has_dmi && has_root && has_eeprom
-        && (has_ee1004 || !spd_ddr4_partial_data) )
+    if (has_dmi && has_root &&
+        ((has_eeprom && !spd_ddr4_partial_data)
+        || has_ee1004) )
         best_state = TRUE;
 
     if (!best_state) {
