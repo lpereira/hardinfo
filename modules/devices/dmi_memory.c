@@ -38,6 +38,7 @@ static const unsigned long dta = 16; /* array */
 static const unsigned long dtm = 17; /* socket */
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
+#define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
 #define SEQ(s,m) (g_strcmp0(s, m) == 0)
 
 const char *problem_marker() {
@@ -355,30 +356,54 @@ gchar *make_spd_section(spd_data *spd) {
         gchar *full_spd = NULL;
         switch(spd->type) {
             case DDR_SDRAM:
-                full_spd = decode_ddr_sdram(spd->bytes, NULL);
+                full_spd = decode_ddr_sdram_extra(spd->bytes);
             case DDR2_SDRAM:
-                full_spd = decode_ddr2_sdram(spd->bytes, NULL);
+                full_spd = decode_ddr2_sdram_extra(spd->bytes);
                 break;
             case DDR3_SDRAM:
-                full_spd = decode_ddr3_sdram(spd->bytes, NULL);
+                full_spd = decode_ddr3_sdram_extra(spd->bytes);
                 break;
             case DDR4_SDRAM:
-                full_spd = decode_ddr4_sdram(spd->bytes, spd->spd_size, NULL);
+                full_spd = decode_ddr4_sdram_extra(spd->bytes, spd->spd_size);
                 break;
             default:
                 fprintf(stderr, "blug for type: %d %s\n", spd->type, ram_types[spd->type]);
         }
+        gchar *vendor_str = NULL;
+        if (spd->vendor) {
+            if (spd->vendor->url)
+                vendor_str = g_strdup_printf(" (%s, %s)",
+                    spd->vendor->name, spd->vendor->url );
+        }
+        gchar *size_str = NULL;
+        if (!spd->size_MiB)
+            size_str = g_strdup(_("(Unknown)"));
+        else
+            size_str = g_strdup_printf("%d %s", spd->size_MiB, _("MiB") );
+
         ret = g_strdup_printf("[%s]\n"
                     "%s=%s (%s)%s\n"
                     "%s=%d.%d\n"
+                    "%s=%s\n"
+                    "%s=%s\n"
+                    "%s=%s%s\n" /* vendor */
+                    "%s=%s\n" /* part */
+                    "%s=%s\n" /* size */
                     "%s",
                     _("Serial Presence Detect (SPD)"),
                     _("Source"), spd->dev, spd->spd_driver ? "ee1004" : "eeprom",
                         (spd->type == DDR4_SDRAM && !spd->spd_driver) ? problem_marker() : "",
                     _("SPD Revision"), spd->spd_rev_major, spd->spd_rev_minor,
+                    _("Form Factor"), UNKIFNULL2(spd->form_factor),
+                    _("Type"), UNKIFEMPTY2(spd->type_detail),
+                    _("Vendor"), UNKIFNULL2(spd->vendor_str), vendor_str ? vendor_str : "",
+                    _("Part Number"), UNKIFEMPTY2(spd->partno),
+                    _("Size"), size_str,
                     full_spd ? full_spd : ""
                     );
         g_free(full_spd);
+        g_free(vendor_str);
+        g_free(size_str);
     }
     return ret;
 }
@@ -472,9 +497,9 @@ gchar *dmi_mem_socket_info() {
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
+                            "%s=%s / %s\n"
                             "%s=%s%s\n"
                             "%s=%s\n"
-                            "%s=%s / %s\n"
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
@@ -488,9 +513,9 @@ gchar *dmi_mem_socket_info() {
                             _("Locator"), s->full_locator,
                             _("Bank Locator"), UNKIFNULL2(s->bank_locator),
                             _("Form Factor"), UNKIFNULL2(s->form_factor),
+                            _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
                             _("Vendor"), UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
                             _("Part Number"), UNKIFNULL2(s->partno),
-                            _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
                             _("Size"), size_str,
                             _("Rated Speed"), UNKIFNULL2(s->speed_str),
                             _("Configured Speed"), UNKIFNULL2(s->configured_clock_str),

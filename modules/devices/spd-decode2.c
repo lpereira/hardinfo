@@ -1167,25 +1167,16 @@ static void decode_ddr_module_detail(unsigned char *bytes, char *type_detail) {
     }
 }
 
-static gchar *decode_ddr_sdram(unsigned char *bytes, int *size) {
-    float ddr_clock;
+static gchar *decode_ddr_sdram_extra(unsigned char *bytes) {
     float tcl, trcd, trp, tras;
-    int pc_speed;
 
-    decode_ddr_module_speed(bytes, &ddr_clock, &pc_speed);
-    if (size)
-        decode_ddr_module_size(bytes, size);
     decode_ddr_module_timings(bytes, &tcl, &trcd, &trp, &tras);
 
     return g_strdup_printf("[%s]\n"
-                           "%s=DDR-%.0f (PC-%d)\n"
-                           "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.2f\n"
                            "tRP=%.2f\n"
                            "tRAS=%.2f\n",
-                           _("Module Information"),
-                           _("Module type"), ddr_clock, pc_speed,
                            _("Timings"), tcl, trcd, trp, tras);
 }
 
@@ -1271,25 +1262,16 @@ static void decode_ddr2_module_detail(unsigned char *bytes, char *type_detail) {
     }
 }
 
-static gchar *decode_ddr2_sdram(unsigned char *bytes, int *size) {
-    float ddr_clock;
+static gchar *decode_ddr2_sdram_extra(unsigned char *bytes) {
     float trcd, trp, tras, tcl;
-    int pc2_speed;
 
-    decode_ddr2_module_speed(bytes, &ddr_clock, &pc2_speed);
-    if (size)
-        decode_ddr2_module_size(bytes, size);
     decode_ddr2_module_timings(bytes, &trcd, &trp, &tras, &tcl);
 
     return g_strdup_printf("[%s]\n"
-                           "%s=DDR2-%.0f (PC2-%d)\n"
-                           "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.2f\n"
                            "tRP=%.2f\n"
                            "tRAS=%.2f\n",
-                           _("Module Information"),
-                           _("Module type"), ddr_clock, pc2_speed,
                            _("Timings"), tcl, trcd, trp, tras);
 }
 
@@ -1367,29 +1349,16 @@ static void decode_ddr3_module_detail(unsigned char *bytes, char *type_detail) {
     }
 }
 
-static gchar *decode_ddr3_sdram(unsigned char *bytes, int *size) {
-    float ddr_clock;
+static gchar *decode_ddr3_sdram_extra(unsigned char *bytes) {
     float trcd, trp, tras, tcl;
-    int pc3_speed;
-    const char *type;
 
-    decode_ddr3_module_speed(bytes, &ddr_clock, &pc3_speed);
-    if (size)
-        decode_ddr3_module_size(bytes, size);
     decode_ddr3_module_timings(bytes, &trcd, &trp, &tras, &tcl);
-    decode_ddr3_module_type(bytes, &type);
 
     return g_strdup_printf("[%s]\n"
-                           "%s=DDR3-%.0f (PC3-%d)\n"
-                           "%s=%s\n"
-                           "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.3fns\n"
                            "tRP=%.3fns\n"
                            "tRAS=%.3fns\n",
-                           _("Module Information"),
-                           _("Module type"), ddr_clock, pc3_speed,
-                           _("Form Factor"), type ? type : _("(Unknown)"),
                            _("Timings"), tcl, trcd, trp, tras
                            );
 }
@@ -1568,13 +1537,13 @@ static void decode_ddr4_module_size(unsigned char *bytes, int *size) {
 
 static void decode_ddr4_module_date(unsigned char *bytes, int spd_size, char **str) {
     if (spd_size < 324) {
-        *str = g_strdup(_("Unknown (Missing data)"));
+        *str = NULL;
         return;
     }
 
     if (bytes[323] == 0x0 || bytes[323] == 0xffff ||
         bytes[324] == 0x0 || bytes[324] == 0xffff) {
-        *str = g_strdup(_("Unknown"));
+        *str = NULL;
         return;
     }
 
@@ -1585,7 +1554,7 @@ static void decode_ddr4_module_date(unsigned char *bytes, int spd_size, char **s
 static void decode_ddr4_dram_manufacturer(unsigned char *bytes, int spd_size,
                                             const char **manufacturer) {
     if (spd_size < 351) {
-        *manufacturer = _("Unknown (Missing data)");
+        *manufacturer = NULL;
         return;
     }
 
@@ -1642,27 +1611,24 @@ static void decode_ddr4_module_detail(unsigned char *bytes, char *type_detail) {
     }
 }
 
-static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
+static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
     float ddr_clock;
     int pc4_speed, xmp_majv = -1, xmp_minv = -1;
-    const char *type, *dram_manf;
+    const char *dram_manf;
     char *speed_timings = NULL, *xmp_profile = NULL, *xmp = NULL, *manf_date = NULL;
     static gchar *out;
 
     decode_ddr4_module_speed(bytes, &ddr_clock, &pc4_speed);
-    if (size)
-        decode_ddr4_module_size(bytes, size);
-    decode_ddr4_module_type(bytes, &type);
     decode_ddr4_module_spd_timings(bytes, ddr_clock, &speed_timings);
     decode_ddr4_module_date(bytes, spd_size, &manf_date);
-    decode_ddr4_dram_manufacturer(bytes, spd_size, &dram_manf);
     detect_ddr4_xmp(bytes, spd_size, &xmp_majv, &xmp_minv);
+    decode_ddr4_dram_manufacturer(bytes, spd_size, &dram_manf);
 
     if (xmp_majv == -1 && xmp_minv == -1) {
-        xmp = g_strdup(_("unknown"));
+        xmp = NULL;
     }
     else if (xmp_majv <= 0 && xmp_minv <= 0) {
-        xmp = g_strdup(_("no"));
+        xmp = g_strdup(_("No"));
     }
     else {
         xmp = g_strdup_printf("%s (revision %d.%d)", _("yes"), xmp_majv, xmp_minv);
@@ -1670,22 +1636,19 @@ static gchar *decode_ddr4_sdram(unsigned char *bytes, int spd_size, int *size) {
             decode_ddr4_xmp(bytes, spd_size, &xmp_profile);
     }
 
-    out = g_strdup_printf("[%s]\n"
-                          "%s=DDR4-%.0f (PC4-%d)\n"
-                          "%s=%s\n"
-                          "%s=%s\n"
+    /* expected to continue an [SPD] section */
+    out = g_strdup_printf("%s=%s\n"
                           "%s=%s\n"
                           "%s=%s\n"
                           "%s=%s\n"
                           "[%s]\n"
                           "%s\n"
                           "%s",
-                          _("Module Information"),
-                          _("Module type"), ddr_clock, pc4_speed,
-                          _("Form Factor"), type ? type : _("(Unknown)"),
-                          _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("Unknown"),
-                          _("Manufacturing Date"), manf_date, _("DRAM Manufacturer"), dram_manf,
-                          _("XMP"), xmp, _("JEDEC Timings"), speed_timings,
+                          _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("(Unknown)"),
+                          _("Manufacturing Date"), manf_date ? manf_date : _("(Unknown)"),
+                          _("DRAM Manufacturer"), dram_manf ? dram_manf : _("(Unknown)"),
+                          _("XMP"), xmp ? xmp : _("(Unknown)"),
+                          _("JEDEC Timings"), speed_timings,
                           xmp_profile ? xmp_profile: "");
 
     g_free(speed_timings);
@@ -1701,21 +1664,19 @@ static void decode_ddr4_part_number(unsigned char *bytes, int spd_size, char *pa
     if (!part_number) return;
 
     if (spd_size < 348) {
-        *part_number++ = '?';
-        *part_number++ = '?';
-        *part_number++ = '?';
         *part_number++ = '\0';
         return;
     }
 
-    for (i = 329; i <= 348; i++) *part_number++ = bytes[i];
+    for (i = 329; i <= 348; i++)
+        *part_number++ = bytes[i];
     *part_number = '\0';
 }
 
 static void decode_ddr4_module_manufacturer(unsigned char *bytes, int spd_size,
                                             char **manufacturer) {
     if (spd_size < 321) {
-        *manufacturer = _("Unknown (Missing data)");
+        *manufacturer = NULL;
         return;
     }
 
