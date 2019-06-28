@@ -1631,7 +1631,7 @@ static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
         xmp = g_strdup(_("No"));
     }
     else {
-        xmp = g_strdup_printf("%s (revision %d.%d)", _("yes"), xmp_majv, xmp_minv);
+        xmp = g_strdup_printf("%s (revision %d.%d)", _("Yes"), xmp_majv, xmp_minv);
         if (xmp_majv == 2 && xmp_minv == 0)
             decode_ddr4_xmp(bytes, spd_size, &xmp_profile);
     }
