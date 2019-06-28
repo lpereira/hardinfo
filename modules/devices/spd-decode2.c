@@ -858,7 +858,7 @@ static const char **vendors[VENDORS_BANKS] = {vendors1, vendors2, vendors3, vend
 
 typedef struct {
     unsigned char bytes[512];
-    unsigned char dev[8];  /* %1d-%04d\0 */
+    unsigned char dev[32];  /* %1d-%04d\0 */
     int spd_driver; /* 0 = eeprom, 1 = ee1004 */
     int spd_size;
 
@@ -1805,7 +1805,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
         }
 
         if (s) {
-            strncpy(s->dev, g_basename(spd_path), 7);
+            strncpy(s->dev, g_basename(spd_path), 31);
             if (strstr(spd_path, "ee1004"))
                 s->spd_driver = 1;
             s->spd_size = spd_size;
