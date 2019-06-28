@@ -358,8 +358,12 @@ gchar *make_spd_section(spd_data *spd) {
     if (spd) {
         gchar *full_spd = NULL;
         switch(spd->type) {
+            case SDR_SDRAM:
+                full_spd = decode_sdr_sdram_extra(spd->bytes);
+                break;
             case DDR_SDRAM:
                 full_spd = decode_ddr_sdram_extra(spd->bytes);
+                break;
             case DDR2_SDRAM:
                 full_spd = decode_ddr2_sdram_extra(spd->bytes);
                 break;
@@ -370,7 +374,7 @@ gchar *make_spd_section(spd_data *spd) {
                 full_spd = decode_ddr4_sdram_extra(spd->bytes, spd->spd_size);
                 break;
             default:
-                fprintf(stderr, "blug for type: %d %s\n", spd->type, ram_types[spd->type]);
+                DEBUG("blug for type: %d %s\n", spd->type, ram_types[spd->type]);
         }
         gchar *vendor_str = NULL;
         if (spd->vendor) {

@@ -954,7 +954,7 @@ static void decode_sdr_module_row_address_bits(unsigned char *bytes, char **bits
     case 3: temp = "3/18"; break;
     default:
         /* printf("%d\n", bytes[3]); */
-        temp = "Unknown";
+        temp = NULL;
     }
 
     if (bits) { *bits = temp; }
@@ -970,7 +970,7 @@ static void decode_sdr_module_col_address_bits(unsigned char *bytes, char **bits
     case 3: temp = "3/18"; break;
     default:
         /*printf("%d\n", bytes[4]); */
-        temp = "Unknown";
+        temp = NULL;
     }
 
     if (bits) { *bits = temp; }
@@ -1000,7 +1000,7 @@ static void decode_sdr_module_interface_signal_levels(unsigned char *bytes, char
     case 3: temp = "SSTL 3.3"; break;
     case 4: temp = "SSTL 2.5"; break;
     case 255: temp = "New Table"; break;
-    default: temp = "Undefined";
+    default: temp = NULL;
     }
 
     if (signal_levels) { *signal_levels = temp; }
@@ -1013,7 +1013,7 @@ static void decode_sdr_module_configuration_type(unsigned char *bytes, char **mo
     case 0: temp = "No parity"; break;
     case 1: temp = "Parity"; break;
     case 2: temp = "ECC"; break;
-    default: temp = "Undefined";
+    default: temp = NULL;
     }
 
     if (module_config_type) { *module_config_type = temp; }
@@ -1041,19 +1041,24 @@ static void decode_sdr_module_refresh_rate(unsigned char *bytes, char **refresh_
     case 3: temp = "Extended (31.3us)"; break;
     case 4: temp = "Extended (62.5us)"; break;
     case 5: temp = "Extended (125us)"; break;
-    default: temp = "Undefined";
+    default: temp = NULL;
     }
 
     if (refresh_rate) { *refresh_rate = temp; }
 }
 
-static gchar *decode_sdr_sdram(unsigned char *bytes, int *size) {
+static void decode_sdr_module_detail(unsigned char *bytes, char *type_detail) {
+    if (type_detail) {
+        snprintf(type_detail, 255, "SDR");
+    }
+}
+
+static gchar *decode_sdr_sdram_extra(unsigned char *bytes) {
     int rows, data_width;
     float tcl, trcd, trp, tras;
     char *row_address_bits, *col_address_bits, *signal_level;
     char *module_config_type, *refresh_type, *refresh_rate;
 
-    decode_sdr_module_size(bytes, size);
     decode_sdr_module_timings(bytes, &tcl, &trcd, &trp, &tras);
     decode_sdr_module_row_address_bits(bytes, &row_address_bits);
     decode_sdr_module_col_address_bits(bytes, &col_address_bits);
@@ -1076,24 +1081,27 @@ static gchar *decode_sdr_sdram(unsigned char *bytes, int *size) {
        - Other misc stuff
      */
 
-    return g_strdup_printf("[Module Information]\n"
-                           "Module type=SDR\n"
-                           "SPD revision=%d\n"
-                           "Row address bits=%s\n"
-                           "Column address bits=%s\n"
-                           "Number of rows=%d\n"
-                           "Data width=%d bits\n"
-                           "Interface signal levels=%s\n"
-                           "Configuration type=%s\n"
-                           "Refresh=%s (%s)\n"
-                           "[Timings]\n"
+    /* expected to continue an [SPD] section */
+    return g_strdup_printf("%s=%s\n"
+                           "%s=%s\n"
+                           "%s=%d\n"
+                           "%s=%d bits\n"
+                           "%s=%s\n"
+                           "%s=%s\n"
+                           "%s=%s (%s)\n"
+                           "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.2f\n"
                            "tRP=%.2f\n"
                            "tRAS=%.2f\n",
-                           bytes[62], row_address_bits, col_address_bits, rows, data_width,
-                           signal_level, module_config_type, refresh_type, refresh_rate, tcl, trcd,
-                           trp, tras);
+                           _("Row address bits"), row_address_bits ? row_address_bits : _("(Unknown)"),
+                           _("Column address bits"), col_address_bits ? col_address_bits : _("(Unknown)"),
+                           _("Number of rows"), rows,
+                           _("Data width"), data_width,
+                           _("Interface signal levels"), signal_level ? signal_level : _("(Unknown)"),
+                           _("Configuration type"), module_config_type ? module_config_type : _("(Unknown)"),
+                           _("Refresh"), refresh_type, refresh_rate ? refresh_rate : _("Unknown"),
+                           _("Timings"), tcl, trcd, trp, tras);
 }
 
 static void decode_ddr_module_speed(unsigned char *bytes, float *ddrclk, int *pcclk) {
@@ -1760,11 +1768,14 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
         ram_type = decode_ram_type(bytes);
 
         switch (ram_type) {
-        /* case SDR_SDRAM:
-            detailed_info = decode_sdr_sdram(bytes, &module_size);
-            decode_module_part_number(bytes, part_number);
-            decode_module_manufacturer(bytes + 64, &manufacturer);
-            break; */
+        case SDR_SDRAM:
+            s = spd_data_new();
+            memcpy(s->bytes, bytes, 512);
+            decode_module_part_number(bytes, s->partno);
+            decode_module_manufacturer(bytes + 64, (char**)&s->vendor_str);
+            decode_sdr_module_size(bytes, &s->size_MiB);
+            decode_sdr_module_detail(bytes, s->type_detail);
+            break;
         case DDR_SDRAM:
             s = spd_data_new();
             memcpy(s->bytes, bytes, 512);
@@ -1810,8 +1821,15 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
                 s->spd_driver = 1;
             s->spd_size = spd_size;
             s->type = ram_type;
-            s->spd_rev_major = bytes[1] >> 4;
-            s->spd_rev_minor = bytes[1] & 0xf;
+            if (ram_type == SDR_SDRAM) {
+                /* SDR */
+                s->spd_rev_major = 0;
+                s->spd_rev_minor = bytes[62];
+            } else {
+                /* DDR, DDR2, DDR3, DDR4 */
+                s->spd_rev_major = bytes[1] >> 4;
+                s->spd_rev_minor = bytes[1] & 0xf;
+            }
             dimm_list = g_slist_append(dimm_list, s);
             s->vendor = vendor_match(s->vendor_str, NULL);
         }
