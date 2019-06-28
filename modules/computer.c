@@ -245,6 +245,7 @@ void scan_dev(gboolean reload)
        { N_("Ruby"), "ruby --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Bash"), "bash --version", "\\d+\\.\\d+\\.\\S+", TRUE},
        { N_("JavaScript (Node.js)"), "node --version", "(?<=v)(\\d\\.?)+", TRUE },
+       { N_("awk"), "awk --version", "GNU Awk \\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Compilers"), NULL, FALSE },
        { N_("C (GCC)"), "gcc -v", "\\d+\\.\\d+\\.\\d+", FALSE },
        { N_("C (Clang)"), "clang -v", "\\d+\\.\\d+", FALSE },
@@ -268,6 +269,7 @@ void scan_dev(gboolean reload)
        { N_("CMake"), "cmake --version", "\\d+\\.\\d+\\.?\\d*", TRUE},
        { N_("Gambas3 IDE"), "gambas3 --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Radare2"), "radare2 -v", "(?<=radare2 )(\\d+\\.?)+(-git)?", TRUE },
+       { N_("ltrace"), "ltrace --version", "(?<=ltrace version )\\d+\\.\\d+\\.\\d+", TRUE },
     };
 
     g_free(dev_list);
