@@ -1439,7 +1439,6 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     GKeyFile *key_file = g_key_file_new();
     GtkTreeStore *store;
     gchar *key_data, **groups;
-    gboolean has_shell_param = FALSE;
     gint i;
     gsize ngroups;
 #if GTK_CHECK_VERSION(2, 14, 0)
@@ -1478,25 +1477,20 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
 	if (groups[i][0] == '$')
 	    ngroups--;
 
+    set_view_type(SHELL_VIEW_NORMAL, reload);
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
+
     for (i = 0; groups[i]; i++) {
 	gchar *group = groups[i];
 	gchar **keys = g_key_file_get_keys(key_file, group, NULL, NULL);
 
 	if (*group == '$') {
 	    group_handle_special(key_file, entry, group, keys, reload);
-	    has_shell_param = TRUE;
 	} else {
 	    group_handle_normal(key_file, entry, group, keys, ngroups);
 	}
 
 	g_strfreev(keys);
-    }
-
-    /* */
-    if (!has_shell_param) {
-        /* reset the view type to normal */
-        set_view_type(SHELL_VIEW_NORMAL, reload);
-        gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info->view), FALSE);
     }
 
     /* */
