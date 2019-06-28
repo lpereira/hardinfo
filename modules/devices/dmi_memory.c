@@ -421,7 +421,7 @@ gchar *dmi_mem_socket_info() {
         _("Size"),
         _("Vendor"),
         _("Part"),
-        _("Memory DMI")
+        _("Memory Device List")
         );
     GSList *l = NULL;
     sketchy_info = FALSE;
