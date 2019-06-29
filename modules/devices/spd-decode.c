@@ -567,11 +567,24 @@ static gchar *decode_ddr3_sdram_extra(unsigned char *bytes) {
 
     decode_ddr3_module_timings(bytes, &trcd, &trp, &tras, &tcl);
 
-    return g_strdup_printf("[%s]\n"
+    int ranks = 1 + ((bytes[7] >> 3) & 0x7);
+    int pins = 4 << (bytes[7] & 0x7);
+
+    /* expected to continue an [SPD] section */
+    return g_strdup_printf("%s=%d\n"
+                           "%s=%d\n"
+                           "%s=%s %s %s\n"
+                           "[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.3fns\n"
                            "tRP=%.3fns\n"
                            "tRAS=%.3fns\n",
+                           _("Ranks"), ranks,
+                           _("IO Pins per Chip"), pins,
+                           _("Supported Voltages"),
+                                (bytes[6] & 4) ? "1.25V" : "",
+                                (bytes[6] & 2) ? "1.35V" : "",
+                                (bytes[6] & 1) ? "" : "1.5V",
                            _("Timings"), tcl, trcd, trp, tras
                            );
 }
