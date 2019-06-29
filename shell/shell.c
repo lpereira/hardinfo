@@ -1148,7 +1148,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 	    } else if (g_str_equal(key, "ViewType")) {
 		set_view_type(g_key_file_get_integer(key_file, group,
 						     key, NULL), reload);
-	    } else if (g_str_has_prefix(key, "Icon")) {
+	    } else if (g_str_has_prefix(key, "Icon$")) {
 		GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
 							g_utf8_strchr(key,
 							       -1, '$') );
