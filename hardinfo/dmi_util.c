@@ -235,7 +235,7 @@ char *dmi_chassis_type_str(int chassis_type, gboolean with_val) {
 }
 
 /* TODO: something better maybe */
-char *dd_cache[128] = {};
+static char *dd_cache[128] = {};
 void dmidecode_cache_free()
 { int i; for(i = 0; i < 128; i++) g_free(dd_cache[i]); }
 
