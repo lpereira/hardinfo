@@ -39,7 +39,7 @@ static struct {
     { 0x6, "camera-photo"},     /* Still Imaging */
     { 0x7, "printer"},          /* Printer */
     { 0x8, "media-removable"},  /* Mass storage */
-    { 0x9, "module"},           /* Hub */
+    { 0x9, "usb"},              /* Hub */
     { 0xe, "camera-web"},       /* Video */
     {IARR_END, NULL}
 };
