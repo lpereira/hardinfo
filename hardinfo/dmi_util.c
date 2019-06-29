@@ -234,6 +234,11 @@ char *dmi_chassis_type_str(int chassis_type, gboolean with_val) {
     return NULL;
 }
 
+/* TODO: something better maybe */
+char *dd_cache[128] = {};
+void dmidecode_cache_free()
+{ int i; for(i = 0; i < 128; i++) g_free(dd_cache[i]); }
+
 char *dmidecode_read(const unsigned long *dmi_type) {
     gchar *ret = NULL;
     gchar full_path[PATH_MAX];
@@ -242,10 +247,15 @@ char *dmidecode_read(const unsigned long *dmi_type) {
 
     int i = 0;
 
-    if (dmi_type)
+    if (dmi_type) {
+        if (dd_cache[*dmi_type])
+            return g_strdup(dd_cache[*dmi_type]);
         snprintf(full_path, PATH_MAX, "dmidecode -t %lu", *dmi_type);
-    else
+    } else {
+        if (dd_cache[127])
+            return g_strdup(dd_cache[127]);
         snprintf(full_path, PATH_MAX, "dmidecode");
+    }
 
     spawned = g_spawn_command_line_sync(full_path,
             &out, &err, &i, NULL);
@@ -256,6 +266,13 @@ char *dmidecode_read(const unsigned long *dmi_type) {
             g_free(out);
 
         g_free(err);
+    }
+
+    if (ret) {
+        if (*dmi_type)
+            dd_cache[*dmi_type] = g_strdup(ret);
+        else
+            dd_cache[127] = g_strdup(ret);
     }
 
     return ret;
