@@ -75,6 +75,11 @@ typedef struct {
     const char *vendor_str;
     const Vendor *vendor;
 
+    int dram_vendor_bank;
+    int dram_vendor_index;
+    const char *dram_vendor_str;
+    const Vendor *dram_vendor;
+
     char partno[32];
     const char *form_factor;
     char type_detail[256];
@@ -577,7 +582,7 @@ static void decode_ddr3_part_number(unsigned char *bytes, char *part_number) {
     }
 }
 
-static void decode_ddr34_manufacturer(unsigned char count, unsigned char code, char **manufacturer) {
+static void decode_ddr34_manufacturer(unsigned char count, unsigned char code, char **manufacturer, int *bank, int *index) {
     if (!manufacturer) return;
 
     if (code == 0x00 || code == 0xFF) {
@@ -590,18 +595,18 @@ static void decode_ddr34_manufacturer(unsigned char count, unsigned char code, c
         return;
     }
 
-    int bank = count & 0x7f;
-    int pos = code & 0x7f;
-    if (bank >= VENDORS_BANKS) {
+    *bank = count & 0x7f;
+    *index = code & 0x7f;
+    if (*bank >= VENDORS_BANKS) {
         *manufacturer = NULL;
         return;
     }
 
-    *manufacturer = (char *)vendors[bank][pos - 1];
+    *manufacturer = (char *)vendors[*bank][*index - 1];
 }
 
-static void decode_ddr3_manufacturer(unsigned char *bytes, char **manufacturer) {
-    decode_ddr34_manufacturer(bytes[117], bytes[118], (char **) manufacturer);
+static void decode_ddr3_manufacturer(unsigned char *bytes, char **manufacturer, int *bank, int *index) {
+    decode_ddr34_manufacturer(bytes[117], bytes[118], (char **) manufacturer, bank, index);
 }
 
 static void decode_module_manufacturer(unsigned char *bytes, char **manufacturer) {
@@ -756,14 +761,19 @@ static void decode_ddr4_module_date(unsigned char *bytes, int spd_size, char **s
                            _("Week"), bytes[324], _("Year"), bytes[323]);
 }
 
+static void decode_ddr3_dram_manufacturer(unsigned char *bytes,
+                                            char **manufacturer, int *bank, int *index) {
+    decode_ddr34_manufacturer(bytes[94], bytes[95], (char **) manufacturer, bank, index);
+}
+
 static void decode_ddr4_dram_manufacturer(unsigned char *bytes, int spd_size,
-                                            const char **manufacturer) {
+                                            char **manufacturer, int *bank, int *index) {
     if (spd_size < 351) {
         *manufacturer = NULL;
         return;
     }
 
-    decode_ddr34_manufacturer(bytes[350], bytes[351], (char **) manufacturer);
+    decode_ddr34_manufacturer(bytes[350], bytes[351], (char **) manufacturer, bank, index);
 }
 
 static void detect_ddr4_xmp(unsigned char *bytes, int spd_size, int *majv, int *minv) {
@@ -827,7 +837,6 @@ static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
     decode_ddr4_module_spd_timings(bytes, ddr_clock, &speed_timings);
     decode_ddr4_module_date(bytes, spd_size, &manf_date);
     detect_ddr4_xmp(bytes, spd_size, &xmp_majv, &xmp_minv);
-    decode_ddr4_dram_manufacturer(bytes, spd_size, &dram_manf);
 
     if (xmp_majv == -1 && xmp_minv == -1) {
         xmp = NULL;
@@ -845,13 +854,11 @@ static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
     out = g_strdup_printf("%s=%s\n"
                           "%s=%s\n"
                           "%s=%s\n"
-                          "%s=%s\n"
                           "[%s]\n"
                           "%s\n"
                           "%s",
                           _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("(Unknown)"),
                           _("Manufacturing Date"), manf_date ? manf_date : _("(Unknown)"),
-                          _("DRAM Manufacturer"), dram_manf ? dram_manf : _("(Unknown)"),
                           _("XMP"), xmp ? xmp : _("(Unknown)"),
                           _("JEDEC Timings"), speed_timings,
                           xmp_profile ? xmp_profile: "");
@@ -879,13 +886,13 @@ static void decode_ddr4_part_number(unsigned char *bytes, int spd_size, char *pa
 }
 
 static void decode_ddr4_module_manufacturer(unsigned char *bytes, int spd_size,
-                                            char **manufacturer) {
+                                            char **manufacturer, int *bank, int *index) {
     if (spd_size < 321) {
         *manufacturer = NULL;
         return;
     }
 
-    decode_ddr34_manufacturer(bytes[320], bytes[321], manufacturer);
+    decode_ddr34_manufacturer(bytes[320], bytes[321], manufacturer, bank, index);
 }
 
 static int decode_ram_type(unsigned char *bytes) {
@@ -993,7 +1000,10 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             s = spd_data_new();
             memcpy(s->bytes, bytes, 512);
             decode_ddr3_part_number(bytes, s->partno);
-            decode_ddr3_manufacturer(bytes, (char**)&s->vendor_str);
+            decode_ddr3_manufacturer(bytes, (char**)&s->vendor_str,
+                &s->vendor_bank, &s->vendor_index);
+            decode_ddr3_dram_manufacturer(bytes, (char**)&s->dram_vendor_str,
+                &s->dram_vendor_bank, &s->dram_vendor_index);
             decode_ddr3_module_size(bytes, &s->size_MiB);
             decode_ddr3_module_type(bytes, &s->form_factor);
             decode_ddr3_module_detail(bytes, s->type_detail);
@@ -1002,7 +1012,10 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             s = spd_data_new();
             memcpy(s->bytes, bytes, 512);
             decode_ddr4_part_number(bytes, spd_size, s->partno);
-            decode_ddr4_module_manufacturer(bytes, spd_size, (char**)&s->vendor_str);
+            decode_ddr4_module_manufacturer(bytes, spd_size, (char**)&s->vendor_str,
+                &s->vendor_bank, &s->vendor_index);
+            decode_ddr4_dram_manufacturer(bytes, spd_size, (char**)&s->dram_vendor_str,
+                &s->dram_vendor_bank, &s->dram_vendor_index);
             decode_ddr4_module_size(bytes, &s->size_MiB);
             decode_ddr4_module_type(bytes, &s->form_factor);
             decode_ddr4_module_detail(bytes, s->type_detail);
@@ -1034,8 +1047,8 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
                 s->spd_rev_major = bytes[1] >> 4;
                 s->spd_rev_minor = bytes[1] & 0xf;
             }
+            s->dram_vendor = vendor_match(s->dram_vendor_str, NULL);
             dimm_list = g_slist_append(dimm_list, s);
-            s->vendor = vendor_match(s->vendor_str, NULL);
         }
     }
 

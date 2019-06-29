@@ -434,6 +434,12 @@ gchar *make_spd_section(spd_data *spd) {
                 vendor_str = g_strdup_printf(" (%s, %s)",
                     spd->vendor->name, spd->vendor->url );
         }
+        gchar *dram_vendor_str = NULL;
+        if (spd->dram_vendor) {
+            if (spd->dram_vendor->url)
+                dram_vendor_str = g_strdup_printf(" (%s, %s)",
+                    spd->dram_vendor->name, spd->dram_vendor->url );
+        }
         gchar *size_str = NULL;
         if (!spd->size_MiB)
             size_str = g_strdup(_("(Unknown)"));
@@ -445,7 +451,8 @@ gchar *make_spd_section(spd_data *spd) {
                     "%s=%d.%d\n"
                     "%s=%s\n"
                     "%s=%s\n"
-                    "%s=%s%s\n" /* vendor */
+                    "%s=[%02x%02x] %s%s\n" /* module vendor */
+                    "%s=[%02x%02x] %s%s\n" /* dram vendor */
                     "%s=%s\n" /* part */
                     "%s=%s\n" /* size */
                     "%s",
@@ -455,7 +462,10 @@ gchar *make_spd_section(spd_data *spd) {
                     _("SPD Revision"), spd->spd_rev_major, spd->spd_rev_minor,
                     _("Form Factor"), UNKIFNULL2(spd->form_factor),
                     _("Type"), UNKIFEMPTY2(spd->type_detail),
-                    _("Vendor"), UNKIFNULL2(spd->vendor_str), vendor_str ? vendor_str : "",
+                    _("Module Vendor"), spd->vendor_bank, spd->vendor_index,
+                        UNKIFNULL2(spd->vendor_str), vendor_str ? vendor_str : "",
+                    _("DRAM Vendor"), spd->dram_vendor_bank, spd->dram_vendor_index,
+                        UNKIFNULL2(spd->dram_vendor_str), dram_vendor_str ? dram_vendor_str : "",
                     _("Part Number"), UNKIFEMPTY2(spd->partno),
                     _("Size"), size_str,
                     full_spd ? full_spd : ""
