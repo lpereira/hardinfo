@@ -238,7 +238,7 @@ void udiskd_free(udiskd *u) {
         g_free(u->partition_table);
         g_free(u->partitions);
         g_free(u->media);
-        g_free(u->media_compatibility);
+        g_strfreev(u->media_compatibility);
         g_free(u);
     }
 }
@@ -283,7 +283,7 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusPr
     GVariantIter *iter;
     const gchar *str, *part;
     udiskd *u = NULL;
-
+    gsize n, i;
     u = udiskd_new();
     u->block_dev = g_strdup(blockdev);
 
@@ -333,14 +333,15 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusPr
     v = get_dbus_property(drive, UDISKS2_DRIVE_INTERFACE, "MediaCompatibility");
     if (v){
         g_variant_get(v, "as", &iter);
-        while (g_variant_iter_loop (iter, "s", &str)){
-            if (u->media_compatibility == NULL){
-                u->media_compatibility = g_strdup(str);
-            }
-            else{
-                u->media_compatibility = h_strdup_cprintf(", %s", u->media_compatibility, str);
-            }
+        n = g_variant_iter_n_children(iter);
+        u->media_compatibility = g_malloc0_n(n + 1, sizeof(gchar*));
+
+        i = 0;
+        while (g_variant_iter_loop (iter, "s", &str) && i < n){
+            u->media_compatibility[i] = g_strdup(str);
+            i++;
         }
+
         g_variant_iter_free (iter);
         g_variant_unref(v);
     }
