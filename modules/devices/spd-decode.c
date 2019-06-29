@@ -89,6 +89,8 @@ typedef struct {
     int spd_rev_major; // bytes[1] >> 4
     int spd_rev_minor; // bytes[1] & 0xf
 
+    int week, year;
+
     gboolean ddr4_no_ee1004;
     gboolean claimed_by_dmi;
 } spd_data;
@@ -745,20 +747,34 @@ static void decode_ddr4_module_size(unsigned char *bytes, int *size) {
     *size = sdrcap / 8 * buswidth / sdrwidth * lranks_per_dimm;
 }
 
-static void decode_ddr4_module_date(unsigned char *bytes, int spd_size, char **str) {
-    if (spd_size < 324) {
-        *str = NULL;
+static void decode_ddr3_module_date(unsigned char *bytes, int *week, int *year) {
+    if (bytes[120] == 0x0 || bytes[120] == 0xff ||
+        bytes[121] == 0x0 || bytes[121] == 0xff) {
         return;
     }
+    *week = (bytes[121]>>4) & 0xf;
+    *week *= 10;
+    *week += bytes[121] & 0xf;
+    *year = (bytes[120]>>4) & 0xf;
+    *year *= 10;
+    *year += bytes[120] & 0xf;
+    *year += 2000;
+}
 
-    if (bytes[323] == 0x0 || bytes[323] == 0xffff ||
-        bytes[324] == 0x0 || bytes[324] == 0xffff) {
-        *str = NULL;
+static void decode_ddr4_module_date(unsigned char *bytes, int spd_size, int *week, int *year) {
+    if (spd_size < 324)
+        return;
+    if (bytes[323] == 0x0 || bytes[323] == 0xff ||
+        bytes[324] == 0x0 || bytes[324] == 0xff) {
         return;
     }
-
-    *str = g_strdup_printf("%s %02X, %s 20%02X",
-                           _("Week"), bytes[324], _("Year"), bytes[323]);
+    *week = (bytes[324]>>4) & 0xf;
+    *week *= 10;
+    *week += bytes[324] & 0xf;
+    *year = (bytes[323]>>4) & 0xf;
+    *year *= 10;
+    *year += bytes[323] & 0xf;
+    *year += 2000;
 }
 
 static void decode_ddr3_dram_manufacturer(unsigned char *bytes,
@@ -835,7 +851,6 @@ static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
 
     decode_ddr4_module_speed(bytes, &ddr_clock, &pc4_speed);
     decode_ddr4_module_spd_timings(bytes, ddr_clock, &speed_timings);
-    decode_ddr4_module_date(bytes, spd_size, &manf_date);
     detect_ddr4_xmp(bytes, spd_size, &xmp_majv, &xmp_minv);
 
     if (xmp_majv == -1 && xmp_minv == -1) {
@@ -853,12 +868,10 @@ static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
     /* expected to continue an [SPD] section */
     out = g_strdup_printf("%s=%s\n"
                           "%s=%s\n"
-                          "%s=%s\n"
                           "[%s]\n"
                           "%s\n"
                           "%s",
                           _("Voltage"), bytes[11] & 0x01 ? "1.2 V": _("(Unknown)"),
-                          _("Manufacturing Date"), manf_date ? manf_date : _("(Unknown)"),
                           _("XMP"), xmp ? xmp : _("(Unknown)"),
                           _("JEDEC Timings"), speed_timings,
                           xmp_profile ? xmp_profile: "");
@@ -1007,6 +1020,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             decode_ddr3_module_size(bytes, &s->size_MiB);
             decode_ddr3_module_type(bytes, &s->form_factor);
             decode_ddr3_module_detail(bytes, s->type_detail);
+            decode_ddr3_module_date(bytes, &s->week, &s->year);
             break;
         case DDR4_SDRAM:
             s = spd_data_new();
@@ -1019,6 +1033,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             decode_ddr4_module_size(bytes, &s->size_MiB);
             decode_ddr4_module_type(bytes, &s->form_factor);
             decode_ddr4_module_detail(bytes, s->type_detail);
+            decode_ddr4_module_date(bytes, spd_size, &s->week, &s->year);
             s->ddr4_no_ee1004 = s->ddr4_no_ee1004 || (spd_size < 512);
             spd_ddr4_partial_data = spd_ddr4_partial_data || s->ddr4_no_ee1004;
             break;
