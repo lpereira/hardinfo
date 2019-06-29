@@ -446,6 +446,10 @@ gchar *make_spd_section(spd_data *spd) {
         else
             size_str = g_strdup_printf("%d %s", spd->size_MiB, _("MiB") );
 
+        gchar *mfg_date_str = NULL;
+        if (spd->year)
+            mfg_date_str = g_strdup_printf("%d / %d", spd->week, spd->year);
+
         ret = g_strdup_printf("[%s]\n"
                     "%s=%s (%s)%s\n"
                     "%s=%d.%d\n"
@@ -455,6 +459,7 @@ gchar *make_spd_section(spd_data *spd) {
                     "%s=[%02x%02x] %s%s\n" /* dram vendor */
                     "%s=%s\n" /* part */
                     "%s=%s\n" /* size */
+                    "%s=%s\n" /* mfg date */
                     "%s",
                     _("Serial Presence Detect (SPD)"),
                     _("Source"), spd->dev, spd->spd_driver ? "ee1004" : "eeprom",
@@ -468,11 +473,13 @@ gchar *make_spd_section(spd_data *spd) {
                         UNKIFNULL2(spd->dram_vendor_str), dram_vendor_str ? dram_vendor_str : "",
                     _("Part Number"), UNKIFEMPTY2(spd->partno),
                     _("Size"), size_str,
+                    _("Manufacturing Date (Week / Year)"), UNKIFNULL2(mfg_date_str),
                     full_spd ? full_spd : ""
                     );
         g_free(full_spd);
         g_free(vendor_str);
         g_free(size_str);
+        g_free(mfg_date_str);
     }
     return ret;
 }
