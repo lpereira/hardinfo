@@ -524,7 +524,7 @@ gchar *memory_devices_get_info() {
                         _("Error Correction Type"), UNKIFNULL2(a->ecc),
                         _("Size (Present / Max)"), size_str,
                         _("Devices (Populated / Sockets)"), a->devs_populated, a->devs,
-                        _("Types Present"), a->ram_types, types_str
+                        _("Types Present"), a->ram_types, UNKIFNULL2(types_str)
                         );
         moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
         ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
@@ -646,7 +646,7 @@ gchar *memory_devices_get_info() {
                         _("Serial Presence Detect (SPD) Summary"),
                         _("Size"), size_str,
                         _("Devices"), g_slist_length(mem->spd),
-                        _("Types Present"), mem->spd_ram_types, types_str
+                        _("Types Present"), mem->spd_ram_types, UNKIFNULL2(types_str)
                         );
         moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
         ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
