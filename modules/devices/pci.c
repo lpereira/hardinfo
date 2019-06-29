@@ -24,7 +24,42 @@
 
 #define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)");
 
-static void _pci_dev(const pcid *p) {
+static const struct {
+    const gchar *icon;
+    uint32_t class;
+} class2icon[] = {
+    { .class = 0x0200, .icon = "network-interface.png" },
+    { .class = 0x0c03, .icon = "usb.png" },
+    { .class = 0x0403, .icon = "audio.png" },
+    { .class = 0x0805, .icon = "usbfldisk.png" },
+    { .class = 0x0d11, .icon = "bluetooth.png" },
+    { .class = 0x0703, .icon = "modem.png" },
+    { .class = 0x01, .icon = "hdd.png" },
+    { .class = 0x02, .icon = "network.png" },
+    { .class = 0x03, .icon = "monitor.png" },
+    { .class = 0x05, .icon = "memory.png" },
+    { .class = 0x07, .icon = "network-connections.png" },
+    { .class = 0x09, .icon = "inputdevices.png" },
+    { .class = 0x10, .icon = "cryptohash.png" },
+};
+
+static const gchar *find_icon_for_class(uint32_t class)
+{
+    int i;
+
+    for (i = 0; i < G_N_ELEMENTS(class2icon); i++) {
+	if (class2icon[i].class <= 0xff) {
+		if ((class & 0xff00) == class2icon[i].class << 8)
+		    return class2icon[i].icon;
+	} else if (class == class2icon[i].class) {
+            return class2icon[i].icon;
+	}
+    }
+
+    return "devices.png";
+}
+
+static gchar *_pci_dev(const pcid *p, gchar *icons) {
     gchar *str;
     gchar *class, *vendor, *svendor, *v_str, *sv_str, *product, *sproduct;
     gchar *name, *key;
@@ -60,6 +95,7 @@ static void _pci_dev(const pcid *p) {
     key = g_strdup_printf("PCI%04x:%02x:%02x.%01x", p->domain, p->bus, p->device, p->function);
 
     pci_list = h_strdup_cprintf("$%s$%04x:%02x:%02x.%01x=%s\n", pci_list, key, p->domain, p->bus, p->device, p->function, name);
+    icons = h_strdup_cprintf("Icon$%s$%04x:%02x:%02x.%01x=%s\n", icons, key, p->domain, p->bus, p->device, p->function, find_icon_for_class(p->class));
 
     gchar *vendor_device_str;
     if (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id) {
@@ -132,6 +168,8 @@ static void _pci_dev(const pcid *p) {
     g_free(sv_str);
     g_free(name);
     g_free(key);
+
+    return icons;
 }
 
 void scan_pci_do(void) {
@@ -142,6 +180,8 @@ void scan_pci_do(void) {
     }
     pci_list = g_strdup_printf("[%s]\n", _("PCI Devices"));
 
+    gchar *pci_icons = g_strdup("");
+
     pcid *list = pci_get_device_list(0,0);
     pcid *curr = list;
 
@@ -149,17 +189,19 @@ void scan_pci_do(void) {
 
     if (c > 0) {
         while(curr) {
-            _pci_dev(curr);
+            pci_icons = _pci_dev(curr, pci_icons);
             curr=curr->next;
         }
 
         pcid_list_free(list);
     }
 
-    if (c)
-        pci_list = g_strconcat(pci_list, "[$ShellParam$]\n", "ViewType=1\n", NULL);
-    else  {
+    if (c) {
+        pci_list = g_strconcat(pci_list, "[$ShellParam$]\n", "ViewType=1\n", pci_icons, NULL);
+    } else  {
         /* NO PCI? */
         pci_list = g_strconcat(pci_list, _("No PCI devices found"), "=\n", NULL);
     }
+
+    g_free(pci_icons);
 }
