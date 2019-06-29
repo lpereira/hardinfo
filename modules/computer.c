@@ -825,6 +825,22 @@ gchar *get_memory_total(void)
     return moreinfo_lookup ("DEV:MemTotal");
 }
 
+gchar *memory_devices_get_system_memory_str(); /* in dmi_memory.c */
+gchar *memory_devices_get_system_memory_types_str();
+gchar *get_memory_desc(void)
+{
+    gchar *mem = memory_devices_get_system_memory_str();
+    if (mem) {
+        gchar *types = memory_devices_get_system_memory_types_str();
+        gchar *ret = g_strdup_printf("%s\n%s", mem, types);
+        g_free(mem);
+        g_free(types);
+        return ret;
+    }
+    scan_memory_usage(FALSE);
+    return moreinfo_lookup ("DEV:MemTotal");
+}
+
 ShellModuleMethod *hi_exported_methods(void)
 {
     static ShellModuleMethod m[] = {
@@ -835,6 +851,7 @@ ShellModuleMethod *hi_exported_methods(void)
         {"getAudioCards", get_audio_cards},
         {"getKernelModuleDescription", get_kernel_module_description},
         {"getMemoryTotal", get_memory_total},
+        {"getMemoryDesc", get_memory_desc},
         {NULL}
     };
 
@@ -878,7 +895,7 @@ gchar *hi_module_get_summary(void)
                     "Method=devices::getProcessorNameAndDesc\n"
                     "[%s]\n"
                     "Icon=memory.png\n"
-                    "Method=computer::getMemoryTotal\n"
+                    "Method=computer::getMemoryDesc\n"
                     "[%s]\n"
                     "Icon=module.png\n"
                     "Method=devices::getMotherboard\n"
