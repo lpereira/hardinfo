@@ -161,6 +161,7 @@ int main(int argc, char **argv)
 
     moreinfo_shutdown();
     vendor_cleanup();
+    dmidecode_cache_free();
 
     DEBUG("finished");
     return exit_code;

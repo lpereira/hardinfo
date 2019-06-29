@@ -51,4 +51,6 @@ dmi_handle_list *dmidecode_match_value(const char *name, const char *value, cons
 /* get the first value for name, limiting to optional dmi_type and/or optional handle */
 char *dmidecode_match(const char *name, const unsigned long *dmi_type, const unsigned long *handle);
 
+void dmidecode_cache_free();
+
 #endif
