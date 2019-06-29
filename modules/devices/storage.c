@@ -28,19 +28,50 @@ gboolean __scan_udisks2_devices(void) {
     GSList *node, *drives;
     udiskd *disk;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
-    gchar *devid, *label;
-    const gchar *url, *vendor_str, *icon;
-    int n = 0, i;
+    gchar *devid, *label, *media_comp = NULL;
+    const gchar *url, *vendor_str, *media_label, *icon, *media_curr = NULL;
+    int n = 0, i, j;
 
+    // http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Drive.html#gdbus-property-org-freedesktop-UDisks2-Drive.MediaCompatibility
     static struct {
-        char *media_prefix;
+        char *media;
+        char *label;
         char *icon;
-    } media2icon[] = {
-        { "thumb", "usbfldisk"},
-        { "flash", "usbfldisk"},
-        { "floppy", "media-floppy"},
-        { "optical", "cdrom"},
-        { NULL, NULL}
+    } media_info[] = {
+        { "thumb",                  "Thumb-drive",        "usbfldisk" },
+        { "flash",                  "Flash Card",         "usbfldisk" },
+        { "flash_cf",               "CompactFlash",       "usbfldisk" },
+        { "flash_ms",               "MemoryStick",        "usbfldisk" },
+        { "flash_sm",               "SmartMedia",         "usbfldisk" },
+        { "flash_sd",               "SD",                 "usbfldisk" },
+        { "flash_sdhc",             "SDHC",               "usbfldisk" },
+        { "flash_sdxc",             "SDXC",               "usbfldisk" },
+        { "flash_mmc",              "MMC",                "usbfldisk" },
+        { "floppy",                 "Floppy Disk",        "media-floppy" },
+        { "floppy_zip",             "Zip Disk",           "media-floppy" },
+        { "floppy_jaz",             "Jaz Disk",           "media-floppy" },
+        { "optical",                "Optical Disc",       "cdrom" },
+        { "optical_cd",             "CD-ROM",             "cdrom" },
+        { "optical_cd_r",           "CD-R",               "cdrom" },
+        { "optical_cd_rw",          "CD-RW",              "cdrom" },
+        { "optical_dvd",            "DVD-ROM",            "cdrom" },
+        { "optical_dvd_r",          "DVD-R",              "cdrom" },
+        { "optical_dvd_rw",         "DVD-RW",             "cdrom" },
+        { "optical_dvd_ram",        "DVD-RAM",            "cdrom" },
+        { "optical_dvd_plus_r",     "DVD+R" ,             "cdrom" },
+        { "optical_dvd_plus_rw",    "DVD+RW" ,            "cdrom" },
+        { "optical_dvd_plus_r_dl",  "DVD+R DL",           "cdrom" },
+        { "optical_dvd_plus_rw_dl", "DVD+RW DL",          "cdrom" },
+        { "optical_bd",             "BD-ROM",             "cdrom" },
+        { "optical_bd_r",           "BD-R",               "cdrom" },
+        { "optical_bd_re",          "BD-RE",              "cdrom" },
+        { "optical_hddvd",          "HD DVD-ROM",         "cdrom" },
+        { "optical_hddvd_r",        "HD DVD-R",           "cdrom" },
+        { "optical_hddvd_rw",       "HD DVD-RW",          "cdrom" },
+        { "optical_mo",             "MO Disc",            "cdrom" },
+        { "optical_mrw",            "MRW Media",          "cdrom" },
+        { "optical_mrw_w",          "MRW Media (write)",  "cdrom" },
+        { NULL, NULL }
     };
 
     moreinfo_del_with_prefix("DEV:UDISKS");
@@ -61,12 +92,35 @@ gboolean __scan_udisks2_devices(void) {
         }
 
         icon = NULL;
-        if (disk->media_compatibility){
-            for (i = 0; media2icon[i].media_prefix != NULL; i++) {
-                if (g_str_has_prefix(disk->media_compatibility,
-                                     media2icon[i].media_prefix)) {
-                    icon = media2icon[i].icon;
+
+        if (disk->media){
+            media_curr = disk->media_compatibility[i];
+            for (j = 0; media_info[j].media != NULL; j++) {
+                if (g_strcmp0(disk->media, media_info[j].media) == 0) {
+                    media_curr = media_info[j].label;
                     break;
+                }
+            }
+        }
+
+        if (disk->media_compatibility){
+            for (i = 0; disk->media_compatibility[i] != NULL; i++){
+                media_label = disk->media_compatibility[i];
+
+                for (j = 0; media_info[j].media != NULL; j++) {
+                    if (g_strcmp0(disk->media_compatibility[i], media_info[j].media) == 0) {
+                        media_label = media_info[j].label;
+                        if (icon == NULL)
+                            icon = media_info[j].icon;
+                        break;
+                    }
+                }
+
+                if (media_comp == NULL){
+                    media_comp = g_strdup(media_label);
+                }
+                else{
+                    media_comp = h_strdup_cprintf(", %s", media_comp, media_label);
                 }
             }
         }
@@ -128,12 +182,12 @@ gboolean __scan_udisks2_devices(void) {
         if (disk->rotation_rate > 0) {
             moreinfo = h_strdup_cprintf(_("Rotation Rate=%d\n"), moreinfo, disk->rotation_rate);
         }
-        if (disk->media_compatibility || disk->media) {
+        if (media_comp || media_curr) {
             moreinfo = h_strdup_cprintf(_("Media=%s\n"
                                         "Media compatibility=%s\n"),
                                         moreinfo,
-                                        disk->media ? disk->media : _("(None)"),
-                                        disk->media_compatibility ? disk->media_compatibility : _("(Unknown)"));
+                                        media_curr ? media_curr : _("(None)"),
+                                        media_comp ? media_comp : _("(Unknown)"));
         }
         if (disk->connection_bus && strlen(disk->connection_bus) > 0) {
             moreinfo = h_strdup_cprintf(_("Connection bus=%s\n"), moreinfo, disk->connection_bus);
@@ -163,6 +217,7 @@ gboolean __scan_udisks2_devices(void) {
         g_free(devid);
         g_free(features);
         g_free(label);
+        g_free(media_comp);
 
         features = NULL;
         moreinfo = NULL;

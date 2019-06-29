@@ -12,7 +12,7 @@ typedef struct udiskd {
     gint32 rotation_rate;
     gint64 size;
     gchar *media;
-    gchar *media_compatibility;
+    gchar **media_compatibility;
     gboolean pm_supported;
     gboolean aam_supported;
     gboolean apm_supported;
