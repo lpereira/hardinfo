@@ -895,7 +895,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=audio.png\n"
                     "Method=computer::getAudioCards\n",
                     _("Operating System"),
-                    _("CPU"), _("RAM"), (char*)idle_free(machine_type), _("Graphics"),
+                    _("Processor"), _("Memory"), (char*)idle_free(machine_type), _("Graphics"),
                     _("Storage"), _("Printers"), _("Audio")
                     );
 }
