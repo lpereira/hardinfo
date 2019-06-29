@@ -65,9 +65,6 @@ void scan_sensors_do(void);
 void sensors_init(void);
 void sensors_shutdown(void);
 
-/* SPD */
-void scan_spd_do(void);
-
 extern gchar *battery_list;
 extern gchar *input_icons;
 extern gchar *input_list;
@@ -87,7 +84,6 @@ extern GHashTable *sensor_labels;
 extern GModule *cups;
 
 extern gchar *dmi_info;
-
 extern gchar *dtree_info;
 extern gchar *gpu_list;
 extern gchar *gpu_summary;
