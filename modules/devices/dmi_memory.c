@@ -54,6 +54,7 @@ const char *problem_marker() {
 
 typedef struct {
     unsigned long array_handle;
+    gboolean is_main_memory;
     gchar *locator;
     gchar *use;
     gchar *ecc;
@@ -68,12 +69,16 @@ dmi_mem_array *dmi_mem_array_new(unsigned long h) {
     dmi_mem_array *s = g_new0(dmi_mem_array, 1);
     s->array_handle = h;
     s->use = dmidecode_match("Use", &dta, &h);
+    if (SEQ(s->use, "System Memory"))
+        s->is_main_memory = TRUE;
     s->ecc = dmidecode_match("Error Correction Type", &dta, &h);
     s->locator = dmidecode_match("Location", &dta, &h);
     if (SEQ(s->locator, mobo_location)) {
         g_free(s->locator);
         s->locator = g_strdup(mobo_shorter);
+        s->is_main_memory = TRUE;
     }
+
     gchar *array_max_size = dmidecode_match("Maximum Capacity", &dta, &h);
     if (array_max_size) {
         long int v = 0;
@@ -137,6 +142,9 @@ typedef struct {
     GSList *spd;
     long int spd_size_MiB;
     int spd_ram_types; /* bits using enum RamType */
+
+    int system_memory_ram_types; /* bits using enum RamType */
+    long int system_memory_MiB;
 } dmi_mem;
 
 gboolean null_if_empty(gchar **str) {
@@ -363,6 +371,22 @@ dmi_mem *dmi_mem_new() {
             if (!s->type_detail && s->spd->type_detail)
                 s->type_detail = g_strdup(s->spd->type_detail);
         }
+    }
+
+    /* Look for arrays with "System Memory" use,
+     * or Mainboard as locator */
+    for(l = m->arrays; l; l = l->next) {
+        dmi_mem_array *a = (dmi_mem_array*)l->data;
+        if (a->is_main_memory) {
+            m->system_memory_MiB += a->size_MiB_present;
+            m->system_memory_ram_types |= a->ram_types;
+        }
+    }
+
+    /* If no arrays, then try the SPD total */
+    if (!m->system_memory_MiB) {
+        m->system_memory_MiB = m->spd_size_MiB;
+        m->system_memory_ram_types |= m->spd_ram_types;
     }
 
     return m;
@@ -675,6 +699,43 @@ gchar *memory_devices_get_info() {
     }
 
     dmi_mem_free(mem);
+    return ret;
+}
+
+gchar *memory_devices_get_system_memory_types_str() {
+    gchar *ret = NULL, *types_str = NULL;
+    int i, rtypes;
+
+    dmi_mem *lmem = dmi_mem_new();
+    rtypes = lmem->system_memory_ram_types;
+    dmi_mem_free(lmem);
+
+    for(i = 1; i < N_RAM_TYPES; i++) {
+        int bit = 1 << (i-1);
+        if (rtypes & bit)
+            types_str = appf(types_str, "%s", GET_RAM_TYPE_STR(i));
+    }
+    ret = g_strdup(UNKIFNULL2(types_str));
+    g_free(types_str);
+    return ret;
+}
+
+long int memory_devices_get_system_memory_MiB() {
+    dmi_mem *mem = dmi_mem_new();
+    long int ret = mem->system_memory_MiB;
+    dmi_mem_free(mem);
+    return ret;
+}
+
+gchar *memory_devices_get_system_memory_str() {
+    gchar *ret = NULL;
+    long int m = memory_devices_get_system_memory_MiB();
+    if (m) {
+        if (m > 1024 && (m % 1024 == 0) )
+            ret = g_strdup_printf("%ld %s", m/1024, _("GiB"));
+        else
+            ret = g_strdup_printf("%ld %s", m, _("MiB"));
+    }
     return ret;
 }
 
