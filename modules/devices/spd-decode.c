@@ -1053,14 +1053,18 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             s->spd_size = spd_size;
             s->type = ram_type;
             spd_ram_types |= (1 << ram_type-1);
-            if (ram_type == SDR_SDRAM) {
-                /* SDR */
-                s->spd_rev_major = 0;
-                s->spd_rev_minor = bytes[62];
-            } else {
-                /* DDR, DDR2, DDR3, DDR4 */
+            switch (ram_type) {
+            case SDR_SDRAM:
+            case DDR_SDRAM:
+            case DDR2_SDRAM:
+                s->spd_rev_major = bytes[62] >> 4;
+                s->spd_rev_minor = bytes[62] & 0xf;
+                break;
+            case DDR3_SDRAM:
+            case DDR4_SDRAM:
                 s->spd_rev_major = bytes[1] >> 4;
                 s->spd_rev_minor = bytes[1] & 0xf;
+                break;
             }
             s->dram_vendor = vendor_match(s->dram_vendor_str, NULL);
             dimm_list = g_slist_append(dimm_list, s);
