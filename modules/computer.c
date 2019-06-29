@@ -819,6 +819,8 @@ gchar *get_audio_cards(void)
     return computer_get_alsacards(computer);
 }
 
+/* the returned string must stay in kB as it is used
+ * elsewhere with that expectation */
 gchar *get_memory_total(void)
 {
     scan_memory_usage(FALSE);
@@ -829,16 +831,30 @@ gchar *memory_devices_get_system_memory_str(); /* in dmi_memory.c */
 gchar *memory_devices_get_system_memory_types_str();
 gchar *get_memory_desc(void)
 {
+    scan_memory_usage(FALSE);
+    gchar *avail = moreinfo_lookup("DEV:MemTotal");
+    double k = avail ? (double)strtol(avail, NULL, 10) : 0;
+    g_free(avail);
+    avail = NULL;
+    if (k) {
+        const char *fmt = _(/*/ <value> <unit> "usable memory" */ "%0.1f %s available to Linux");
+        if (k > (2048 * 1024))
+            avail = g_strdup_printf(fmt, k / (1024*1024), _("GiB") );
+        else if (k > 2048)
+            avail = g_strdup_printf(fmt, k / 1024, _("MiB") );
+        else
+            avail = g_strdup_printf(fmt, k, _("KiB") );
+    }
     gchar *mem = memory_devices_get_system_memory_str();
     if (mem) {
         gchar *types = memory_devices_get_system_memory_types_str();
-        gchar *ret = g_strdup_printf("%s\n%s", mem, types);
+        gchar *ret = g_strdup_printf("%s %s\n%s", mem, types, avail ? avail : "");
+        g_free(avail);
         g_free(mem);
         g_free(types);
         return ret;
     }
-    scan_memory_usage(FALSE);
-    return moreinfo_lookup ("DEV:MemTotal");
+    return avail;
 }
 
 ShellModuleMethod *hi_exported_methods(void)
