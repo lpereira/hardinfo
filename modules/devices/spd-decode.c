@@ -569,22 +569,47 @@ static gchar *decode_ddr3_sdram_extra(unsigned char *bytes) {
 
     int ranks = 1 + ((bytes[7] >> 3) & 0x7);
     int pins = 4 << (bytes[7] & 0x7);
+    int die_count = (bytes[33] >> 4) & 0x7;
+    int ts = !!(bytes[32] & 0x80);
 
     /* expected to continue an [SPD] section */
     return g_strdup_printf("%s=%d\n"
                            "%s=%d\n"
-                           "%s=%s %s %s\n"
+                           "%s=%d %s\n"
+                           "%s=[%02x] %s\n"
+                           "%s=%s%s%s\n"
+                           "%s="
+                              "%s%s%s%s%s%s%s%s"
+                              "%s%s%s%s%s%s%s\n"
                            "[%s]\n"
-                           "tCL=%.2f\n"
+                           "tCL=%.0f\n"
                            "tRCD=%.3fns\n"
                            "tRP=%.3fns\n"
                            "tRAS=%.3fns\n",
                            _("Ranks"), ranks,
                            _("IO Pins per Chip"), pins,
+                           _("Die count"), die_count, die_count ? "" : _("(Unspecified)"),
+                           _("Thermal Sensor"), bytes[32], ts ? _("Present") : _("Not present"),
                            _("Supported Voltages"),
-                                (bytes[6] & 4) ? "1.25V" : "",
-                                (bytes[6] & 2) ? "1.35V" : "",
+                                (bytes[6] & 4) ? "1.25V " : "",
+                                (bytes[6] & 2) ? "1.35V " : "",
                                 (bytes[6] & 1) ? "" : "1.5V",
+                           _("Supported CAS Latencies"),
+                                (bytes[15] & 0x40) ? "18 " : "",
+                                (bytes[15] & 0x20) ? "17 " : "",
+                                (bytes[15] & 0x10) ? "16 " : "",
+                                (bytes[15] & 0x08) ? "15 " : "",
+                                (bytes[15] & 0x04) ? "14 " : "",
+                                (bytes[15] & 0x02) ? "13 " : "",
+                                (bytes[15] & 0x01) ? "12 " : "",
+                                (bytes[14] & 0x80) ? "11 " : "",
+                                (bytes[14] & 0x40) ? "10 " : "",
+                                (bytes[14] & 0x20) ? "9 " : "",
+                                (bytes[14] & 0x10) ? "8 " : "",
+                                (bytes[14] & 0x08) ? "7 " : "",
+                                (bytes[14] & 0x04) ? "6 " : "",
+                                (bytes[14] & 0x02) ? "5 " : "",
+                                (bytes[14] & 0x01) ? "4" : "",
                            _("Timings"), tcl, trcd, trp, tras
                            );
 }
