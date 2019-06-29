@@ -829,14 +829,17 @@ gchar *get_memory_total(void)
 
 gchar *memory_devices_get_system_memory_str(); /* in dmi_memory.c */
 gchar *memory_devices_get_system_memory_types_str();
-gchar *get_memory_desc(void)
+/* Note 1: moreinfo_lookup() results should not be freed because
+ *         they are pointers into a GHash.
+ *         module_call_method() g_strdup()s it's return value. */
+const gchar *get_memory_desc(void) // [1] const (as to say "don't free")
 {
     scan_memory_usage(FALSE);
-    gchar *avail = moreinfo_lookup("DEV:MemTotal");
+    gchar *avail = g_strdup(moreinfo_lookup("DEV:MemTotal")); // [1] g_strdup()
     double k = avail ? (double)strtol(avail, NULL, 10) : 0;
-    g_free(avail);
-    avail = NULL;
     if (k) {
+        g_free(avail);
+        avail = NULL;
         const char *fmt = _(/*/ <value> <unit> "usable memory" */ "%0.1f %s available to Linux");
         if (k > (2048 * 1024))
             avail = g_strdup_printf(fmt, k / (1024*1024), _("GiB") );
@@ -852,9 +855,9 @@ gchar *get_memory_desc(void)
         g_free(avail);
         g_free(mem);
         g_free(types);
-        return ret;
+        return (gchar*)idle_free(ret); // [1] idle_free()
     }
-    return avail;
+    return (gchar*)idle_free(avail); // [1] idle_free()
 }
 
 ShellModuleMethod *hi_exported_methods(void)
