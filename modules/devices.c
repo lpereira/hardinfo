@@ -121,9 +121,9 @@ gchar *battery_list = NULL;
 gchar *lginterval = NULL;
 
 /* in dmi_memory.c */
-gchar *dmi_mem_socket_info();
-gboolean dmi_mem_show_hinote(const char **msg);
-gchar *dmi_mem_info = NULL;
+gchar *memory_devices_get_info();
+gboolean memory_devices_hinote(const char **msg);
+gchar *memory_devices_info = NULL;
 
 #include <vendor.h>
 
@@ -536,9 +536,9 @@ void scan_dmi(gboolean reload)
 void scan_dmi_mem(gboolean reload)
 {
     SCAN_START();
-    if (dmi_mem_info)
-        g_free(dmi_mem_info);
-    dmi_mem_info = dmi_mem_socket_info();
+    if (memory_devices_info)
+        g_free(memory_devices_info);
+    memory_devices_info = memory_devices_get_info();
     SCAN_END();
 }
 
@@ -632,7 +632,7 @@ gchar *callback_dmi()
 
 gchar *callback_dmi_mem()
 {
-    return g_strdup(dmi_mem_info);
+    return g_strdup(memory_devices_info);
 }
 
 gchar *callback_dtree()
@@ -803,7 +803,7 @@ const gchar *hi_note_func(gint entry)
     }
     else if (entry == ENTRY_DMI_MEM){
         const char *msg;
-        if (dmi_mem_show_hinote(&msg)) {
+        if (memory_devices_hinote(&msg)) {
             return msg;
         }
     }

@@ -24,7 +24,7 @@
 
 #include "dt_util.h" /* for appf() */
 
-#include "spd-decode2.c"
+#include "spd-decode.c"
 
 gboolean no_handles = FALSE;
 gboolean sketchy_info = FALSE;
@@ -439,7 +439,7 @@ gchar *make_spd_section(spd_data *spd) {
     return ret;
 }
 
-gchar *dmi_mem_socket_info() {
+gchar *memory_devices_get_info() {
     gchar *ret = g_strdup_printf(
         "[$ShellParam$]\nViewType=1\n"
         "ColumnTitle$TextValue=%s\n" /* Locator */
@@ -680,7 +680,7 @@ gchar *dmi_mem_socket_info() {
 
 static gchar *note_state = NULL;
 
-gboolean dmi_mem_show_hinote(const char **msg) {
+gboolean memory_devices_hinote(const char **msg) {
 
     gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available\n");
     gchar *want_root   = _(" ... <i>and</i> HardInfo running with superuser privileges\n");
