@@ -120,6 +120,7 @@ typedef struct {
     int ram_type; /* using enum RamType */
     gchar *array_locator;
     gchar *bank_locator;
+    gchar *rank;
     gchar *form_factor;
     gchar *speed_str;
     gchar *configured_clock_str;
@@ -229,6 +230,8 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         s->data_width = dmidecode_match("Data Width", &dtm, &h);
         s->total_width = dmidecode_match("Total Width", &dtm, &h);
 
+        s->rank = dmidecode_match("Rank", &dtm, &h);
+
         s->mfgr = dmidecode_match("Manufacturer", &dtm, &h);
         if (g_str_has_prefix(s->mfgr, unknown_mfgr_str)) {
             /* the manufacturer code is unknown to dmidecode */
@@ -251,6 +254,7 @@ void dmi_mem_socket_free(dmi_mem_socket* s) {
         g_free(s->type);
         g_free(s->type_detail);
         g_free(s->bank_locator);
+        g_free(s->rank);
         g_free(s->array_locator);
         g_free(s->form_factor);
         g_free(s->speed_str);
@@ -573,6 +577,7 @@ gchar *memory_devices_get_info() {
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
+                            "%s=%s\n"
                             "%s", /* spd */
                             _("Memory Socket"),
                             _("DMI Handles (Array, Socket)"), s->array_handle, s->handle,
@@ -586,6 +591,7 @@ gchar *memory_devices_get_info() {
                             _("Rated Speed"), UNKIFNULL2(s->speed_str),
                             _("Configured Speed"), UNKIFNULL2(s->configured_clock_str),
                             _("Data Width/Total Width"), UNKIFNULL2(s->data_width), UNKIFNULL2(s->total_width),
+                            _("Rank"), UNKIFNULL2(s->rank),
                             _("Minimum Voltage"), UNKIFNULL2(s->voltage_min_str),
                             _("Maximum Voltage"), UNKIFNULL2(s->voltage_max_str),
                             _("Configured Voltage"), UNKIFNULL2(s->voltage_conf_str),
