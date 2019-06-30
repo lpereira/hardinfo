@@ -162,6 +162,7 @@ void cb_about()
         "Agney Lopes Roth Ferraz",
         "Andrey Esin",
         "Burt P.",
+        "Ondrej Čerman",
         "",
         _("Based on work by:"),
         _("MD5 implementation by Colin Plumb (see md5.c for details)"),
