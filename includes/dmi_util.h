@@ -21,6 +21,11 @@
 #ifndef __DMI_UTIL_H__
 #define __DMI_UTIL_H__
 
+#include <inttypes.h>
+
+typedef uint32_t dmi_handle;
+typedef uint32_t dmi_type;
+
 /* -1 = yes, but will be ignored
  *  0 = no
  *  1 = yes */
@@ -34,22 +39,22 @@ char *dmi_get_str_abs(const char *id_str); /* include nonsense */
 char *dmi_chassis_type_str(int chassis_type, gboolean with_val);
 
 typedef struct {
-    unsigned long count;
-    unsigned long *handles;
+    uint32_t count;
+    dmi_handle *handles;
 } dmi_handle_list;
 
 /* get a list of handles that match a dmi_type */
-dmi_handle_list *dmidecode_handles(const unsigned long *dmi_type);
+dmi_handle_list *dmidecode_handles(const dmi_type *type);
 void dmi_handle_list_free(dmi_handle_list *hl);
 
 /* get a list of handles which have a name, and/or optional value, and/or limit to an optional dmi_type
  * dmidecode_match_value("Name", NULL, NULL) : all dmi handles with an item called "Name"
  * dmidecode_match_value("Name", "Value", NULL) : all dmi_handles with an item called "Name" that has a value of "Value"
  * dmidecode_match_value("Name", "Value", &dt) : all dmi_handles with "Name: Value" that are of type stored in dt */
-dmi_handle_list *dmidecode_match_value(const char *name, const char *value, const unsigned long *dmi_type);
+dmi_handle_list *dmidecode_match_value(const char *name, const char *value, const dmi_type *type);
 
 /* get the first value for name, limiting to optional dmi_type and/or optional handle */
-char *dmidecode_match(const char *name, const unsigned long *dmi_type, const unsigned long *handle);
+char *dmidecode_match(const char *name, const dmi_type *type, const dmi_handle *handle);
 
 void dmidecode_cache_free();
 

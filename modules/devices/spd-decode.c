@@ -85,7 +85,7 @@ typedef struct {
     const char *form_factor;
     char type_detail[256];
 
-    int size_MiB;
+    dmi_mem_size size_MiB;
 
     int spd_rev_major; // bytes[1] >> 4
     int spd_rev_minor; // bytes[1] & 0xf
@@ -122,7 +122,7 @@ static int parity(int value) {
     return (0x6996 >> value) & 1;
 }
 
-static void decode_sdr_module_size(unsigned char *bytes, int *size) {
+static void decode_sdr_module_size(unsigned char *bytes, dmi_mem_size *size) {
     int i, k = 0;
 
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
@@ -331,7 +331,7 @@ static void decode_ddr_module_speed(unsigned char *bytes, float *ddrclk, int *pc
     if (pcclk) *pcclk = pc;
 }
 
-static void decode_ddr_module_size(unsigned char *bytes, int *size) {
+static void decode_ddr_module_size(unsigned char *bytes, dmi_mem_size *size) {
     int i, k;
 
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
@@ -435,7 +435,7 @@ static void decode_ddr2_module_speed(unsigned char *bytes, float *ddr_clock, int
     if (pc2_speed) { *pc2_speed = pcclk; }
 }
 
-static void decode_ddr2_module_size(unsigned char *bytes, int *size) {
+static void decode_ddr2_module_size(unsigned char *bytes, dmi_mem_size *size) {
     int i, k;
 
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
@@ -518,7 +518,7 @@ static void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int
     if (pc3_speed) { *pc3_speed = pcclk; }
 }
 
-static void decode_ddr3_module_size(unsigned char *bytes, int *size) {
+static void decode_ddr3_module_size(unsigned char *bytes, dmi_mem_size *size) {
     unsigned int sdr_capacity = 256 << (bytes[4] & 0xF);
     unsigned int sdr_width = 4 << (bytes[7] & 0x7);
     unsigned int bus_width = 8 << (bytes[8] & 0x7);
@@ -776,7 +776,7 @@ static void decode_ddr4_module_spd_timings(unsigned char *bytes, float speed, ch
     }
 }
 
-static void decode_ddr4_module_size(unsigned char *bytes, int *size) {
+static void decode_ddr4_module_size(unsigned char *bytes, dmi_mem_size *size) {
     int sdrcap = 256 << (bytes[4] & 15);
     int buswidth = 8 << (bytes[13] & 7);
     int sdrwidth = 4 << (bytes[12] & 7);
