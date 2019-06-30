@@ -203,6 +203,7 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
     null_if_empty(&s->bank_locator);
 
     gchar *ah = dmidecode_match("Array Handle", &dtm, &h);
+    STR_IGNORE(ah, "Unknown");
     if (ah) {
         s->array_handle = strtol(ah, NULL, 16);
         g_free(ah);
@@ -279,6 +280,27 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
                 s->has_jedec_mfg_id = TRUE;
                 s->mfgr = g_strdup(JEDEC_MFG_STR(s->mfgr_bank, s->mfgr_index));
             }
+        }
+
+        if (s->mfgr && !s->has_jedec_mfg_id && strlen(s->mfgr) == 4) {
+            /* Some BIOS put the code bytes into the mfgr string
+             * if they don't know the manufacturer.
+             * It's not always reliable, but what is lost
+             * by trying it? */
+            if (isxdigit(s->mfgr[0])
+                && isxdigit(s->mfgr[1])
+                && isxdigit(s->mfgr[2])
+                && isxdigit(s->mfgr[3]) ) {
+                    int codes = strtol(s->mfgr, NULL, 16);
+                    char *mstr = NULL;
+                    decode_ddr34_manufacturer(codes >> 8, codes & 0xff,
+                        &mstr, &s->mfgr_bank, &s->mfgr_index);
+                    s->has_jedec_mfg_id = TRUE;
+                    g_free(s->mfgr);
+                    s->mfgr = NULL;
+                    if (mstr)
+                        s->mfgr = g_strdup(mstr);
+                }
         }
 
         s->vendor = vendor_match(s->mfgr, NULL);
