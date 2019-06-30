@@ -591,6 +591,26 @@ gchar *callback_security(void)
         info_field(_("SELinux status"), computer_get_selinux()),
         info_field_last());
 
+    GDir *dir = g_dir_open("/sys/devices/system/cpu/vulnerabilities", 0, NULL);
+    if (dir) {
+        struct InfoGroup *vulns = info_add_group(info, _("CPU Vulnerabilities"),
+                                                 info_field_last());
+        const gchar *vuln;
+
+        while ((vuln = g_dir_read_name(dir))) {
+            gchar *contents = h_sysfs_read_string("/sys/devices/system/cpu/vulnerabilities",
+                                                  vuln);
+            if (!contents)
+                continue;
+
+            info_group_add_fields(vulns,
+                                  info_field(vuln, idle_free(contents)),
+                                  info_field_last());
+        }
+
+        g_dir_close(dir);
+    }
+
     return info_flatten(info);
 }
 
