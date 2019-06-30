@@ -23,6 +23,7 @@
 #include <inttypes.h>
 
 #include "dt_util.h" /* for appf() */
+#define dmi_spd_msg(...)  /* fprintf (stderr, __VA_ARGS__) */
 
 #include "spd-decode.c"
 
@@ -106,7 +107,7 @@ void dmi_mem_array_free(dmi_mem_array* s) {
     }
 }
 
-typedef struct {
+typedef struct dmi_mem_socket {
     unsigned long handle;
     unsigned long array_handle;
     gboolean populated;
@@ -144,8 +145,8 @@ typedef struct {
     long int spd_size_MiB;
     int spd_ram_types; /* bits using enum RamType */
 
-    int system_memory_ram_types; /* bits using enum RamType */
     long int system_memory_MiB;
+    int system_memory_ram_types; /* bits using enum RamType */
 } dmi_mem;
 
 gboolean null_if_empty(gchar **str) {
@@ -281,6 +282,37 @@ dmi_mem_array *dmi_mem_find_array(dmi_mem *s, unsigned int handle) {
     return NULL;
 }
 
+static int dmi_spd_match_score(dmi_mem_socket *s, spd_data *e) {
+    int score = 0;
+    if (SEQ(s->partno, e->partno))
+        score += 20;
+    if (s->size_MiB == e->size_MiB)
+        score += 10;
+    if (s->vendor == e->vendor)
+        score += 5;
+    return score;
+}
+
+/* fill in missing from SPD */
+static void dmi_fill_from_spd(dmi_mem_socket *s) {
+    if (!s->spd)
+        return;
+
+    if (!s->mfgr && s->spd->vendor_str) {
+        s->mfgr = g_strdup(s->spd->vendor_str);
+        s->vendor = s->spd->vendor;
+    }
+
+    if (!s->partno && s->spd->partno)
+        s->partno = g_strdup(s->spd->partno);
+
+    if (!s->form_factor && s->spd->form_factor)
+        s->form_factor = g_strdup(s->spd->form_factor);
+
+    if (!s->type_detail && s->spd->type_detail)
+        s->type_detail = g_strdup(s->spd->type_detail);
+}
+
 dmi_mem *dmi_mem_new() {
     dmi_mem *m = g_new0(dmi_mem, 1);
 
@@ -333,49 +365,65 @@ dmi_mem *dmi_mem_new() {
             if (s->ram_type)
                 a->ram_types |= (1 << s->ram_type-1);
         }
-
-        if (!s->populated) continue;
-        if (!m->spd) continue;
-
-        /* match SPD */
-        spd_data *best = NULL;
-        int best_score = 0;
-        for(l2 = m->spd; l2; l2 = l2->next) {
-            spd_data *e = (spd_data*)l2->data;
-
-            int score = 0;
-            if (!e->claimed_by_dmi) {
-                if (SEQ(s->partno, e->partno))
-                    score += 20;
-                if (s->size_MiB == e->size_MiB)
-                    score += 10;
-                if (s->vendor == e->vendor)
-                    score += 5;
-
-                if (score > best_score)
-                    best = e;
-            }
-        }
-        if (best) {
-            s->spd = best;
-            best->claimed_by_dmi = 1;
-
-            /* fill in missing from SPD */
-            if (!s->mfgr && s->spd->vendor_str) {
-                s->mfgr = g_strdup(s->spd->vendor_str);
-                s->vendor = s->spd->vendor;
-            }
-
-            if (!s->partno && s->spd->partno)
-                s->partno = g_strdup(s->spd->partno);
-
-            if (!s->form_factor && s->spd->form_factor)
-                s->form_factor = g_strdup(s->spd->form_factor);
-
-            if (!s->type_detail && s->spd->type_detail)
-                s->type_detail = g_strdup(s->spd->type_detail);
-        }
     }
+
+    if (m->sockets && m->spd) {
+        /* attempt to match DMI and SPD data */
+        GSList *sock_queue = g_slist_copy(m->sockets);
+        int loops = g_slist_length(sock_queue) * 4;
+        while(sock_queue) {
+            if (loops-- <= 0) break; /* something is wrong, give up */
+            dmi_spd_msg("match queue has %d\n", g_slist_length(sock_queue) );
+            spd_data *best = NULL;
+            int best_score = 0;
+            dmi_mem_socket *s = (dmi_mem_socket*)sock_queue->data;
+            /* pop that one off */
+            sock_queue = g_slist_delete_link(sock_queue, sock_queue);
+            if (!s->populated)
+                continue;
+            for(l2 = m->spd; l2; l2 = l2->next) {
+                spd_data *e = (spd_data*)l2->data;
+                int score = dmi_spd_match_score(s, e);
+                dmi_spd_msg("... s:%s vs e:%s%s = %d (best_score = %d)\n", s->full_locator, e->dev, e->dmi_socket ? "*" : "", score, best_score);
+                if (score > best_score) {
+                    if (score > e->match_score) {
+                        dmi_spd_msg("----- new best!\n");
+                        best = e;
+                        best_score = score;
+                    }
+                }
+            }
+            if (best) {
+                dmi_spd_msg("*** best for s:%s was e:%s with %d\n", s->full_locator, best->dev, best_score);
+                if (best->dmi_socket) {
+                    /* displace */
+                    dmi_mem_socket *old_sock = best->dmi_socket;
+                    old_sock->spd = NULL;
+                    sock_queue = g_slist_append(sock_queue, old_sock);
+
+                    best->dmi_socket = s;
+                    best->match_score = best_score;
+                    s->spd = best;
+                } else {
+                    dmi_spd_msg("*** no conflict!\n");
+                    best->dmi_socket = s;
+                    best->match_score = best_score;
+                    s->spd = best;
+                }
+            } else
+                dmi_spd_msg("no match!\n");
+        }
+
+        dmi_spd_msg("------- done matching.\n");
+
+        /* fill any missing data in DMI that is
+         * provided by the matched SPD */
+        for(l = m->sockets; l; l = l->next) {
+            dmi_mem_socket *s = (dmi_mem_socket*)l->data;
+            dmi_fill_from_spd(s);
+        }
+
+    } /* end if (m->sockets && m->spd) */
 
     /* Look for arrays with "System Memory" use,
      * or Mainboard as locator */
@@ -684,7 +732,7 @@ gchar *memory_devices_get_info() {
     /* Unmatched SPD */
     for(l = mem->spd; l; l = l->next) {
         spd_data *s = (spd_data*)l->data;
-        if (s->claimed_by_dmi) continue;
+        if (s->dmi_socket) continue; /* claimed by DMI */
         gchar *key = g_strdup_printf("SPD:%s", s->dev);
         gchar *vendor_str = NULL;
         if (s->vendor) {

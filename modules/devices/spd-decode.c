@@ -62,6 +62,7 @@ static const char *ram_types[] = {"Unknown",   "Direct Rambus",    "Rambus",    
 
 #include "spd-vendors.c"
 
+struct dmi_mem_socket;
 typedef struct {
     unsigned char bytes[512];
     unsigned char dev[32];  /* %1d-%04d\0 */
@@ -92,7 +93,9 @@ typedef struct {
     int week, year;
 
     gboolean ddr4_no_ee1004;
-    gboolean claimed_by_dmi;
+
+    struct dmi_mem_socket *dmi_socket;
+    int match_score;
 } spd_data;
 
 #define spd_data_new() g_new0(spd_data, 1)
@@ -1104,6 +1107,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
                 s->spd_rev_minor = bytes[1] & 0xf;
                 break;
             }
+            s->vendor = vendor_match(s->vendor_str, NULL);
             s->dram_vendor = vendor_match(s->dram_vendor_str, NULL);
             dimm_list = g_slist_append(dimm_list, s);
         }
