@@ -17,6 +17,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#define _GNU_SOURCE
+
 #include "hardinfo.h"
 #include "devices.h"
 #include "vendor.h"
@@ -200,6 +202,7 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
 
     s->bank_locator = dmidecode_match("Bank Locator", &dtm, &h);
     STR_IGNORE(s->bank_locator, "Unknown");
+    STR_IGNORE(s->bank_locator, "Not Specified");
     null_if_empty(&s->bank_locator);
 
     gchar *ah = dmidecode_match("Array Handle", &dtm, &h);
@@ -241,6 +244,8 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
         if (SEQ(s->type, "DDR2")) s->ram_type = DDR2_SDRAM;
         if (SEQ(s->type, "DDR3")) s->ram_type = DDR3_SDRAM;
         if (SEQ(s->type, "DDR4")) s->ram_type = DDR4_SDRAM;
+        if (strcasestr(s->type, "RAMBus")
+            || strcasestr(s->type, "RDRAM") ) s->ram_type = RAMBUS;
         if (s->ram_type)
             dmi_ram_types |= (1 << s->ram_type-1);
         s->type_detail = dmidecode_match("Type Detail", &dtm, &h);
