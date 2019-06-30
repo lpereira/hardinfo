@@ -1206,7 +1206,7 @@ h_hash_table_remove_all(GHashTable *hash_table)
 }
 
 gfloat
-h_sysfs_read_float(gchar *endpoint, gchar *entry)
+h_sysfs_read_float(const gchar *endpoint, const gchar *entry)
 {
 	gchar *tmp, *buffer;
 	gfloat return_value = 0.0f;
@@ -1222,7 +1222,7 @@ h_sysfs_read_float(gchar *endpoint, gchar *entry)
 }
 
 gint
-h_sysfs_read_int(gchar *endpoint, gchar *entry)
+h_sysfs_read_int(const gchar *endpoint, const gchar *entry)
 {
 	gchar *tmp, *buffer;
 	gint return_value = 0;
@@ -1238,7 +1238,7 @@ h_sysfs_read_int(gchar *endpoint, gchar *entry)
 }
 
 gchar *
-h_sysfs_read_string(gchar *endpoint, gchar *entry)
+h_sysfs_read_string(const gchar *endpoint, const gchar *entry)
 {
 	gchar *tmp, *return_value;
 
