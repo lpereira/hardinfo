@@ -15,6 +15,8 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -1149,9 +1151,17 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		set_view_type(g_key_file_get_integer(key_file, group,
 						     key, NULL), reload);
 	    } else if (g_str_has_prefix(key, "Icon$")) {
-		GtkTreeIter *iter = g_hash_table_lookup(update_tbl,
-							g_utf8_strchr(key,
-							       -1, '$') );
+		GtkTreeIter *iter;
+		const gchar *first_dollar = g_utf8_strchr(key, -1, '$');
+
+		iter = g_hash_table_lookup(update_tbl, first_dollar);
+		if (!iter && first_dollar) {
+		    const gchar *second_dollar = g_utf8_strchr(first_dollar + 1, -1, '$');
+		    if (second_dollar) {
+		        char *copy = strndupa(first_dollar, second_dollar - first_dollar + 1);
+		        iter = g_hash_table_lookup(update_tbl, copy);
+                    }
+                }
 
 		if (iter) {
 		    gchar *file =
@@ -1181,80 +1191,85 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
     }
 }
 
-static void
-group_handle_normal(GKeyFile * key_file, ShellModuleEntry * entry,
-		    gchar * group, gchar ** keys, gsize ngroups)
+static void group_handle_normal(GKeyFile* key_file, ShellModuleEntry* entry,
+    gchar* group, gchar** keys, gsize ngroups)
 {
     GtkTreeIter parent;
-    GtkTreeStore *store = GTK_TREE_STORE(shell->info->model);
-    gchar *tmp = g_strdup(group);
+    GtkTreeStore* store = GTK_TREE_STORE(shell->info->model);
+    gchar* tmp = g_strdup(group);
     gint i;
 
     if (ngroups > 1) {
-	gtk_tree_store_append(store, &parent, NULL);
+        gtk_tree_store_append(store, &parent, NULL);
 
-	strend(tmp, '#');
-	gtk_tree_store_set(store, &parent, INFO_TREE_COL_NAME, tmp, -1);
-	g_free(tmp);
+        strend(tmp, '#');
+        gtk_tree_store_set(store, &parent, INFO_TREE_COL_NAME, tmp, -1);
+        g_free(tmp);
     }
 
     for (i = 0; keys[i]; i++) {
-	gchar *key = keys[i];
-	gchar *value;
-	GtkTreeIter child;
+        gchar* key = keys[i];
+        gchar* value;
+        GtkTreeIter child;
 
-    value = g_key_file_get_value(key_file, group, key, NULL);
-    if (entry->fieldfunc && value && g_str_equal(value, "...")) {
-        g_free(value);
-        value = entry->fieldfunc(key);
-    }
-
-	if ((key && value) && g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-	    if (ngroups == 1) {
-		gtk_tree_store_append(store, &child, NULL);
-	    } else {
-		gtk_tree_store_append(store, &child, &parent);
-	    }
-
-	    /* FIXME: use g_key_file_get_string_list? */
-	    if (g_utf8_strchr(value, -1, '|')) {
-		gchar **columns = g_strsplit(value, "|", 0);
-
-		gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, columns[0], -1);
-		if (columns[1]) {
-			gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA1, columns[1], -1);
-			if (columns[2]) {
-				gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA2, columns[2], -1);
-			}
-		}
-
-		g_strfreev(columns);
-	    } else {
-	    	gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value, -1);
-	    }
-
-	    strend(key, '#');
-
-        if (key_is_flagged(key)) {
-            const gchar *name = key_get_name(key);
-            gchar *flags = g_strdup(key);
-            *(strchr(flags+1, '$')+1) = 0;
-
-            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME,
-                name, INFO_TREE_COL_DATA, flags, -1);
-
-            g_free(flags);
-        } else {
-            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
-                INFO_TREE_COL_DATA, NULL, -1);
+        value = g_key_file_get_value(key_file, group, key, NULL);
+        if (entry->fieldfunc && value && g_str_equal(value, "...")) {
+            g_free(value);
+            value = entry->fieldfunc(key);
         }
 
-	    g_hash_table_insert(update_tbl, g_strdup(key),
-				gtk_tree_iter_copy(&child));
+        if ((key && value) && g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
+            if (ngroups == 1) {
+                gtk_tree_store_append(store, &child, NULL);
+            } else {
+                gtk_tree_store_append(store, &child, &parent);
+            }
 
-	}
+            /* FIXME: use g_key_file_get_string_list? */
+            if (g_utf8_strchr(value, -1, '|')) {
+                gchar** columns = g_strsplit(value, "|", 0);
 
-	g_free(value);
+                gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, columns[0], -1);
+                if (columns[1]) {
+                    gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA1, columns[1],
+                        -1);
+                    if (columns[2]) {
+                        gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA2, columns[2],
+                            -1);
+                    }
+                }
+
+                g_strfreev(columns);
+            } else {
+                gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value, -1);
+            }
+
+            strend(key, '#');
+
+            if (key_is_flagged(key)) {
+                const gchar* name = key_get_name(key);
+                gchar* flags = g_strdup(key);
+                *(strchr(flags + 1, '$') + 1) = 0;
+
+                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, name,
+                    INFO_TREE_COL_DATA, flags, -1);
+
+                g_free(flags);
+            } else {
+                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
+                    INFO_TREE_COL_DATA, NULL, -1);
+            }
+
+            const gchar *first_dollar = g_utf8_strchr(key, -1, '$');
+            if (first_dollar) {
+                const gchar *second_dollar = g_utf8_strchr(first_dollar + 1, -1, '$');
+                gchar *key_copy = g_strndup(first_dollar, second_dollar - first_dollar + 1);
+
+                g_hash_table_insert(update_tbl, key_copy, gtk_tree_iter_copy(&child));
+            }
+        }
+
+        g_free(value);
     }
 }
 

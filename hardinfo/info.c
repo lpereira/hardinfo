@@ -160,7 +160,7 @@ void info_set_reload_interval(struct Info *info, int setting)
     info->reload_interval = setting;
 }
 
-static void flatten_group(GString *output, const struct InfoGroup *group)
+static void flatten_group(GString *output, const struct InfoGroup *group, guint group_count)
 {
     guint i;
 
@@ -173,7 +173,7 @@ static void flatten_group(GString *output, const struct InfoGroup *group)
 
             field = g_array_index(group->fields, struct InfoField, i);
 
-            g_string_append_printf(output, "%s=%s\n", field.name, field.value);
+            g_string_append_printf(output, "$ITEM%d-%d$%s=%s\n", group_count, i, field.name, field.value);
 
             if (field.free_value_on_flatten)
                 g_free((gchar *)field.value);
@@ -183,7 +183,7 @@ static void flatten_group(GString *output, const struct InfoGroup *group)
     }
 }
 
-static void flatten_shell_param(GString *output, const struct InfoGroup *group)
+static void flatten_shell_param(GString *output, const struct InfoGroup *group, guint group_count)
 {
     guint i;
 
@@ -198,6 +198,11 @@ static void flatten_shell_param(GString *output, const struct InfoGroup *group)
         if (field.update_interval) {
             g_string_append_printf(output, "UpdateInterval$%s=%d\n",
                 field.name, field.update_interval);
+        }
+
+        if (field.icon) {
+            g_string_append_printf(output, "Icon$ITEM%d-%d$=%s\n",
+                group_count, i, field.icon);
         }
     }
 }
@@ -247,8 +252,8 @@ gchar *info_flatten(struct Info *info)
             struct InfoGroup group =
                 g_array_index(info->groups, struct InfoGroup, i);
 
-            flatten_group(values, &group);
-            flatten_shell_param(shell_param, &group);
+            flatten_group(values, &group, i);
+            flatten_shell_param(shell_param, &group, i);
 
             if (group.fields)
                 g_array_free(group.fields, TRUE);

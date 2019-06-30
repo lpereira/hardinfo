@@ -47,6 +47,7 @@ struct InfoGroup {
 struct InfoField {
     const gchar *name;
     const gchar *value;
+    const gchar *icon;
 
     int update_interval;
 
@@ -66,6 +67,12 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
     __attribute__((format(printf, 2, 3)));
 struct InfoField info_field_update(const gchar *name, int update_interval);
 struct InfoField info_field_last(void);
+
+static inline struct InfoField info_field_with_icon(struct InfoField field, const gchar *icon)
+{
+    field.icon = icon;
+    return field;
+}
 
 void info_set_column_title(struct Info *info, const gchar *column, const gchar *title);
 void info_set_column_headers_visible(struct Info *info, gboolean setting);
