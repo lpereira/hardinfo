@@ -603,9 +603,11 @@ gchar *callback_security(void)
             if (!contents)
                 continue;
 
-            info_group_add_fields(vulns,
-                                  info_field(vuln, idle_free(contents)),
-                                  info_field_last());
+            struct InfoField field = info_field(vuln, idle_free(contents));
+            if (g_strstr_len(contents, -1, "Vulnerable"))
+                field = info_field_with_icon(field, "dialog-warning.png");
+
+            info_group_add_fields(vulns, field, info_field_last());
         }
 
         g_dir_close(dir);
