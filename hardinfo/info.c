@@ -173,7 +173,10 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
 
             field = g_array_index(group->fields, struct InfoField, i);
 
-            g_string_append_printf(output, "$ITEM%d-%d$%s=%s\n", group_count, i, field.name, field.value);
+            if (field.icon)
+                g_string_append_printf(output, "$ITEM%d-%d$", group_count, i);
+
+            g_string_append_printf(output, "%s=%s\n", field.name, field.value);
 
             if (field.free_value_on_flatten)
                 g_free((gchar *)field.value);
