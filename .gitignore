@@ -5,6 +5,7 @@ config.h
 *~
 arch/this
 build/
+build-*/
 test/build-*
 po/*.old
 
