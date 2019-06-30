@@ -244,8 +244,8 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
         if (SEQ(s->type, "DDR2")) s->ram_type = DDR2_SDRAM;
         if (SEQ(s->type, "DDR3")) s->ram_type = DDR3_SDRAM;
         if (SEQ(s->type, "DDR4")) s->ram_type = DDR4_SDRAM;
-        if (strcasestr(s->type, "RAMBus")
-            || strcasestr(s->type, "RDRAM") ) s->ram_type = RAMBUS;
+        if (SEQ(s->type, "DRDRAM")) s->ram_type = DIRECT_RAMBUS;
+        if (SEQ(s->type, "RDRAM")) s->ram_type = RAMBUS;
         if (s->ram_type)
             dmi_ram_types |= (1 << s->ram_type-1);
         s->type_detail = dmidecode_match("Type Detail", &dtm, &h);
