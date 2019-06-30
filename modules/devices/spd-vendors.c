@@ -35,7 +35,9 @@
  */
 
 #define VENDORS_BANKS 8
-static const char* vendors[VENDORS_BANKS][128] =
+#define VENDORS_ITEMS 128
+#define JEDEC_MFG_STR(b,i) ( (b >= 0 && b < VENDORS_BANKS && i < VENDORS_ITEMS) ? vendors[(b)][(i)] : NULL )
+static const char* vendors[VENDORS_BANKS][VENDORS_ITEMS] =
 {
 {"AMD", "AMI", "Fairchild", "Fujitsu",
  "GTE", "Harris", "Hitachi", "Inmos",
