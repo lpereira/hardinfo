@@ -234,11 +234,9 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         s->rank = dmidecode_match("Rank", &dtm, &h);
 
         s->mfgr = dmidecode_match("Manufacturer", &dtm, &h);
-        if (g_str_has_prefix(s->mfgr, unknown_mfgr_str)) {
-            /* the manufacturer code is unknown to dmidecode */
-            g_free(s->mfgr);
-            s->mfgr = NULL;
-        }
+        STR_IGNORE(s->mfgr, unknown_mfgr_str);
+        STR_IGNORE(s->mfgr, "Unknown");
+
         null_if_empty(&s->mfgr);
         null_if_empty(&s->partno);
 
