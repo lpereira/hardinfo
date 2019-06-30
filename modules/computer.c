@@ -555,6 +555,7 @@ gchar *callback_os(void)
 
     info_add_group(info, _("Version"),
         info_field(_("Kernel"), computer->os->kernel),
+        info_field(_("Command Line"), computer->os->kcmdline ? : _("Unknown")),
         info_field(_("Version"), computer->os->kernel_version),
         info_field(_("C Library"), computer->os->libc),
         distro,
@@ -971,6 +972,7 @@ void hi_module_deinit(void)
 
     if (computer->os) {
         g_free(computer->os->kernel);
+        g_free(computer->os->kcmdline);
         g_free(computer->os->libc);
         g_free(computer->os->distrocode);
         g_free(computer->os->distro);

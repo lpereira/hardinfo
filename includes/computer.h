@@ -92,6 +92,7 @@ struct _Computer {
 
 struct _OperatingSystem {
     gchar *kernel;
+    gchar *kcmdline;
     gchar *libc;
     gchar *distrocode;
     gchar *distro;

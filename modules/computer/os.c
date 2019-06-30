@@ -516,6 +516,7 @@ computer_get_os(void)
     os->kernel_version = g_strdup(utsbuf.version);
     os->kernel = g_strdup_printf("%s %s (%s)", utsbuf.sysname,
 				 utsbuf.release, utsbuf.machine);
+    os->kcmdline = h_sysfs_read_string("/proc", "cmdline");
     os->hostname = g_strdup(utsbuf.nodename);
     os->language = computer_get_language();
     os->homedir = g_strdup(g_get_home_dir());
