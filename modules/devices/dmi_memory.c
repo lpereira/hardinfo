@@ -43,6 +43,7 @@ static const unsigned long dtm = 17; /* socket */
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
 #define SEQ(s,m) (g_strcmp0(s, m) == 0)
+#define STR_IGNORE(str, ignore) if (SEQ(str, ignore)) { *str = 0; null_if_empty(&str); }
 
 const char *problem_marker() {
     static const char as_markup[] = "<big><b>\u26A0</b></big>";
@@ -113,6 +114,7 @@ typedef struct dmi_mem_socket {
     gboolean populated;
     gchar *locator;
     gchar *full_locator;
+    gchar *short_locator;
     gchar *size_str;
     long int size_MiB;
 
@@ -147,6 +149,9 @@ typedef struct {
 
     long int system_memory_MiB;
     int system_memory_ram_types; /* bits using enum RamType */
+
+    /* ->short_locator is unique among *sockets */
+    gboolean unique_short_locators;
 } dmi_mem;
 
 gboolean null_if_empty(gchar **str) {
@@ -178,6 +183,9 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         }
     }
     s->bank_locator = dmidecode_match("Bank Locator", &dtm, &h);
+    STR_IGNORE(s->bank_locator, "Unknown");
+    null_if_empty(&s->bank_locator);
+
     gchar *ah = dmidecode_match("Array Handle", &dtm, &h);
     if (ah) {
         s->array_handle = strtol(ah, NULL, 16);
@@ -191,16 +199,23 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
 
     gchar *ah_str = g_strdup_printf("0x%lx", s->array_handle);
     gchar *h_str = g_strdup_printf("0x%lx", s->handle);
-    s->full_locator = g_strdup_printf("%s \u27A4 %s",
+    s->short_locator = g_strdup_printf("%s \u27A4 %s",
             s->array_locator ? s->array_locator : ah_str,
             s->locator ? s->locator : h_str);
+
+    if (s->bank_locator)
+        s->full_locator = g_strdup_printf("%s \u27A4 %s \u27A4 %s",
+                s->array_locator ? s->array_locator : ah_str,
+                s->bank_locator,
+                s->locator ? s->locator : h_str);
+    else
+        s->full_locator = g_strdup(s->short_locator);
+
     g_free(ah_str);
     g_free(h_str);
 
     if (!g_str_has_prefix(s->size_str, empty_mem_str)) {
         s->populated = 1;
-
-#define STR_IGNORE(str, ignore) if (SEQ(str, ignore)) { *str = 0; null_if_empty(&str); }
 
         s->form_factor = dmidecode_match("Form Factor", &dtm, &h);
         s->type = dmidecode_match("Type", &dtm, &h);
@@ -249,6 +264,7 @@ void dmi_mem_socket_free(dmi_mem_socket* s) {
     if (s) {
         g_free(s->locator);
         g_free(s->full_locator);
+        g_free(s->short_locator);
         g_free(s->size_str);
         g_free(s->type);
         g_free(s->type_detail);
@@ -351,8 +367,21 @@ dmi_mem *dmi_mem_new() {
             m->spd_ram_types |= (1 << e->type-1);
     }
 
+    m->unique_short_locators = TRUE;
     for(l = m->sockets; l; l = l->next) {
         dmi_mem_socket *s = (dmi_mem_socket*)l->data;
+
+        /* check for duplicate short_locator */
+        if (m->unique_short_locators) {
+            gboolean has_duplicate = FALSE;
+            for(l2 = l->next; l2; l2 = l2->next) {
+                dmi_mem_socket *d = (dmi_mem_socket*)l2->data;
+                if (SEQ(s->short_locator, d->short_locator)) {
+                    m->unique_short_locators = FALSE;
+                    break;
+                }
+            }
+        }
 
         /* update array present devices/size */
         dmi_mem_array *a = dmi_mem_find_array(m, s->array_handle);
@@ -665,7 +694,9 @@ gchar *memory_devices_get_info() {
             const gchar *mfgr = s->mfgr ? vendor_get_shortest_name(s->mfgr) : NULL;
             ret = h_strdup_cprintf("$!%s$%s=%s|%s|%s\n",
                     ret,
-                    key, s->full_locator, UNKIFNULL2(s->partno), size_str, UNKIFNULL2(mfgr)
+                    key,
+                    mem->unique_short_locators ? s->short_locator : s->full_locator,
+                    UNKIFNULL2(s->partno), size_str, UNKIFNULL2(mfgr)
                     );
             g_free(vendor_str);
             g_free(size_str);
@@ -684,7 +715,9 @@ gchar *memory_devices_get_info() {
             moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
             ret = h_strdup_cprintf("$%s$%s=|%s\n",
                     ret,
-                    key, s->full_locator, _("(Empty)")
+                    key,
+                    mem->unique_short_locators ? s->short_locator : s->full_locator,
+                    _("(Empty)")
                     );
         }
         g_free(key);
