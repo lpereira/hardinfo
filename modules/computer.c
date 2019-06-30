@@ -545,12 +545,19 @@ gchar *callback_summary(void)
 gchar *callback_os(void)
 {
     struct Info *info = info_new();
+    struct InfoField distro = info_field(_("Distribution"), computer->os->distro);
+
+    if (computer->os->distrocode) {
+        distro = info_field_with_icon(distro,
+                                      idle_free(g_strdup_printf("distros/%s.png",
+                                                                computer->os->distrocode)));
+    }
 
     info_add_group(info, _("Version"),
         info_field(_("Kernel"), computer->os->kernel),
         info_field(_("Version"), computer->os->kernel_version),
         info_field(_("C Library"), computer->os->libc),
-        info_field(_("Distribution"), computer->os->distro),
+        distro,
         info_field_last());
 
     info_add_group(info, _("Current Session"),
