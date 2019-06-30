@@ -426,7 +426,7 @@ detect_distro(void)
         { DB_PREFIX "slackware-version", "slk" },
         { DB_PREFIX "mandrake-release", "mdk" },
         { DB_PREFIX "mandriva-release", "mdv" },
-        { DB_PREFIX "fedora-release", "fdra" },
+        { DB_PREFIX "fedora-release", "fedora" },
         { DB_PREFIX "coas", "coas" },
         { DB_PREFIX "environment.corel", "corel"},
         { DB_PREFIX "gentoo-release", "gnt" },
