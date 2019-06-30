@@ -1266,6 +1266,8 @@ static void group_handle_normal(GKeyFile* key_file, ShellModuleEntry* entry,
                 gchar *key_copy = g_strndup(first_dollar, second_dollar - first_dollar + 1);
 
                 g_hash_table_insert(update_tbl, key_copy, gtk_tree_iter_copy(&child));
+            } else {
+                g_hash_table_insert(update_tbl, g_strdup(key), gtk_tree_iter_copy(&child));
             }
         }
 
