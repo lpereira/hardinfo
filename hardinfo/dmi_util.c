@@ -239,7 +239,7 @@ static char *dd_cache[128] = {};
 void dmidecode_cache_free()
 { int i; for(i = 0; i < 128; i++) g_free(dd_cache[i]); }
 
-char *dmidecode_read(const unsigned long *dmi_type) {
+char *dmidecode_read(const dmi_type *type) {
     gchar *ret = NULL;
     gchar full_path[PATH_MAX];
     gboolean spawned;
@@ -247,10 +247,10 @@ char *dmidecode_read(const unsigned long *dmi_type) {
 
     int i = 0;
 
-    if (dmi_type) {
-        if (dd_cache[*dmi_type])
-            return g_strdup(dd_cache[*dmi_type]);
-        snprintf(full_path, PATH_MAX, "dmidecode -t %lu", *dmi_type);
+    if (type) {
+        if (dd_cache[*type])
+            return g_strdup(dd_cache[*type]);
+        snprintf(full_path, PATH_MAX, "dmidecode -t %"PRId32, *type);
     } else {
         if (dd_cache[127])
             return g_strdup(dd_cache[127]);
@@ -269,8 +269,8 @@ char *dmidecode_read(const unsigned long *dmi_type) {
     }
 
     if (ret) {
-        if (*dmi_type)
-            dd_cache[*dmi_type] = g_strdup(ret);
+        if (*type)
+            dd_cache[*type] = g_strdup(ret);
         else
             dd_cache[127] = g_strdup(ret);
     }
@@ -278,25 +278,25 @@ char *dmidecode_read(const unsigned long *dmi_type) {
     return ret;
 }
 
-dmi_handle_list *dmi_handle_list_add(dmi_handle_list *hl, unsigned int new_handle) {
+dmi_handle_list *dmi_handle_list_add(dmi_handle_list *hl, dmi_handle new_handle) {
     if (!hl) {
         hl = malloc(sizeof(dmi_handle_list));
         hl->count = 1;
-        hl->handles = malloc(sizeof(unsigned long) * hl->count);
+        hl->handles = malloc(sizeof(dmi_handle) * hl->count);
     } else {
         hl->count++;
-        hl->handles = realloc(hl->handles, sizeof(unsigned long) * hl->count);
+        hl->handles = realloc(hl->handles, sizeof(dmi_handle) * hl->count);
     }
     hl->handles[hl->count - 1] = new_handle;
     return hl;
 }
 
-dmi_handle_list *dmidecode_handles(const unsigned long *dmi_type) {
+dmi_handle_list *dmidecode_handles(const dmi_type *type) {
     gchar *full = NULL, *p = NULL, *next_nl = NULL;
     dmi_handle_list *hl = NULL;
     unsigned int ch = 0;
 
-    full = dmidecode_read(dmi_type);
+    full = dmidecode_read(type);
     if (full) {
         p = full;
         while(next_nl = strchr(p, '\n')) {
@@ -317,7 +317,7 @@ void dmi_handle_list_free(dmi_handle_list *hl) {
     free(hl);
 }
 
-char *dmidecode_match(const char *name, const unsigned long *dmi_type, const unsigned long *handle) {
+char *dmidecode_match(const char *name, const dmi_type *type, const dmi_handle *handle) {
     gchar *ret = NULL, *full = NULL, *p = NULL, *next_nl = NULL;
     unsigned int ch = 0;
     int ln = 0;
@@ -325,7 +325,7 @@ char *dmidecode_match(const char *name, const unsigned long *dmi_type, const uns
     if (!name) return NULL;
     ln = strlen(name);
 
-    full = dmidecode_read(dmi_type);
+    full = dmidecode_read(type);
     if (full) {
         p = full;
         while(next_nl = strchr(p, '\n')) {
@@ -351,7 +351,7 @@ char *dmidecode_match(const char *name, const unsigned long *dmi_type, const uns
     return ret;
 }
 
-dmi_handle_list *dmidecode_match_value(const char *name, const char *value, const unsigned long *dmi_type) {
+dmi_handle_list *dmidecode_match_value(const char *name, const char *value, const dmi_type *type) {
     dmi_handle_list *hl = NULL;
     gchar *full = NULL, *p = NULL, *next_nl = NULL;
     unsigned int ch = 0;
@@ -361,7 +361,7 @@ dmi_handle_list *dmidecode_match_value(const char *name, const char *value, cons
     ln = strlen(name);
     lnv = (value) ? strlen(value) : 0;
 
-    full = dmidecode_read(dmi_type);
+    full = dmidecode_read(type);
     if (full) {
         p = full;
         while(next_nl = strchr(p, '\n')) {

@@ -25,6 +25,8 @@
 #include "dt_util.h" /* for appf() */
 #define dmi_spd_msg(...)  /* fprintf (stderr, __VA_ARGS__) */
 
+typedef uint64_t dmi_mem_size;
+
 #include "spd-decode.c"
 
 gboolean no_handles = FALSE;
@@ -37,8 +39,8 @@ static const char empty_mem_str[] = "No Module Installed";
 static const char unknown_mfgr_str[] = "<BAD INDEX>";
 static const char mobo_location[] = "System Board Or Motherboard";
 static const char mobo_shorter[] = "Mainboard";
-static const unsigned long dta = 16; /* array */
-static const unsigned long dtm = 17; /* socket */
+static const dmi_type dta = 16; /* array */
+static const dmi_type dtm = 17; /* socket */
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
@@ -54,20 +56,46 @@ const char *problem_marker() {
         return as_text;
 }
 
+dmi_mem_size dmi_read_memory_str_to_MiB(const char *memstr) {
+    dmi_mem_size ret = 0, v = 0;
+    char l[6] = "";
+    /* dmidecode units: "bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB" */
+    int mc = sscanf(memstr, "%"PRId64" %6s", &v, l);
+    if (mc == 2) {
+        if (SEQ(l, "ZB")) ret = v * 1024 * 1024 * 1024 * 1024 * 1024;
+        else if (SEQ(l, "EB")) ret = v * 1024 * 1024 * 1024 * 1024;
+        else if (SEQ(l, "PB")) ret = v * 1024 * 1024 * 1024;
+        else if (SEQ(l, "TB")) ret = v * 1024 * 1024;
+        else if (SEQ(l, "GB")) ret = v * 1024;
+        else if (SEQ(l, "MB")) ret = v;
+        else if (SEQ(l, "kB")) {
+            /* should never appear */
+            if (v % 1024) dmi_spd_msg("OMG kB!");
+            ret = v / 1024;
+        }
+        else if (SEQ(l, "bytes")) {
+            /* should never appear */
+            if (v % 1024) dmi_spd_msg("OMG bytes!");
+            ret = v / (1024 * 1024);
+        }
+    }
+    return ret;
+}
+
 typedef struct {
-    unsigned long array_handle;
+    dmi_handle array_handle;
     gboolean is_main_memory;
     gchar *locator;
     gchar *use;
     gchar *ecc;
     int devs;
     int devs_populated;
-    long int size_MiB_max;
-    long int size_MiB_present;
+    dmi_mem_size size_MiB_max;
+    dmi_mem_size size_MiB_present;
     int ram_types; /* bits using enum RamType */
 } dmi_mem_array;
 
-dmi_mem_array *dmi_mem_array_new(unsigned long h) {
+dmi_mem_array *dmi_mem_array_new(dmi_handle h) {
     dmi_mem_array *s = g_new0(dmi_mem_array, 1);
     s->array_handle = h;
     s->use = dmidecode_match("Use", &dta, &h);
@@ -83,14 +111,7 @@ dmi_mem_array *dmi_mem_array_new(unsigned long h) {
 
     gchar *array_max_size = dmidecode_match("Maximum Capacity", &dta, &h);
     if (array_max_size) {
-        long int v = 0;
-        char l[3] = "";
-        int mc = sscanf(array_max_size, "%"PRId64" %2s", &v, l);
-        if (mc == 2) {
-            if (SEQ(l, "TB")) s->size_MiB_max = v * 1024 * 1024;
-            else if (SEQ(l, "GB")) s->size_MiB_max = v * 1024;
-            else if (SEQ(l, "MB")) s->size_MiB_max = v;
-        }
+        s->size_MiB_max = dmi_read_memory_str_to_MiB(array_max_size);
         g_free(array_max_size);
     }
     gchar *array_devs = dmidecode_match("Number Of Devices", &dta, &h);
@@ -109,14 +130,14 @@ void dmi_mem_array_free(dmi_mem_array* s) {
 }
 
 typedef struct dmi_mem_socket {
-    unsigned long handle;
-    unsigned long array_handle;
+    dmi_handle handle;
+    dmi_handle array_handle;
     gboolean populated;
     gchar *locator;
     gchar *full_locator;
     gchar *short_locator;
     gchar *size_str;
-    long int size_MiB;
+    dmi_mem_size size_MiB;
 
     gchar *type;
     gchar *type_detail;
@@ -146,10 +167,10 @@ typedef struct {
     GSList *arrays;
     GSList *sockets;
     GSList *spd;
-    long int spd_size_MiB;
+    dmi_mem_size spd_size_MiB;
     int spd_ram_types; /* bits using enum RamType */
 
-    long int system_memory_MiB;
+    dmi_mem_size system_memory_MiB;
     int system_memory_ram_types; /* bits using enum RamType */
 
     /* ->short_locator is unique among *sockets */
@@ -169,35 +190,14 @@ gboolean null_if_empty(gchar **str) {
     return TRUE;
 }
 
-dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
+dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
     dmi_mem_socket *s = g_new0(dmi_mem_socket, 1);
     s->handle = h;
     s->locator = dmidecode_match("Locator", &dtm, &h);
     s->size_str = dmidecode_match("Size", &dtm, &h);
-    if (s->size_str) {
-        long int v = 0;
-        char l[3] = "";
-        /* dmidecode units: "bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB" */
-        int mc = sscanf(s->size_str, "%"PRId64" %2s", &v, l);
-        if (mc == 2) {
-            if (SEQ(l, "ZB")) s->size_MiB = v * 1024 * 1024 * 1024 * 1024 * 1024;
-            else if (SEQ(l, "EB")) s->size_MiB = v * 1024 * 1024 * 1024 * 1024;
-            else if (SEQ(l, "PB")) s->size_MiB = v * 1024 * 1024 * 1024;
-            else if (SEQ(l, "TB")) s->size_MiB = v * 1024 * 1024;
-            else if (SEQ(l, "GB")) s->size_MiB = v * 1024;
-            else if (SEQ(l, "MB")) s->size_MiB = v;
-            else if (SEQ(l, "kB")) {
-                /* should never appear */
-                if (v % 1024) dmi_spd_msg("OMG kB!");
-                s->size_MiB = v / 1024;
-            }
-            else if (SEQ(l, "by")) {
-                /* should never appear */
-                if (v % 1024) dmi_spd_msg("OMG bytes!");
-                s->size_MiB = v / (1024 * 1024);
-            }
-        }
-    }
+    if (s->size_str)
+        s->size_MiB = dmi_read_memory_str_to_MiB(s->size_str);
+
     s->bank_locator = dmidecode_match("Bank Locator", &dtm, &h);
     STR_IGNORE(s->bank_locator, "Unknown");
     null_if_empty(&s->bank_locator);
@@ -214,8 +214,8 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         }
     }
 
-    gchar *ah_str = g_strdup_printf("0x%lx", s->array_handle);
-    gchar *h_str = g_strdup_printf("0x%lx", s->handle);
+    gchar *ah_str = g_strdup_printf("0x%"PRIx32, s->array_handle);
+    gchar *h_str = g_strdup_printf("0x%"PRIx32, s->handle);
     s->short_locator = g_strdup_printf("%s \u27A4 %s",
             s->array_locator ? s->array_locator : ah_str,
             s->locator ? s->locator : h_str);
@@ -385,9 +385,9 @@ dmi_mem *dmi_mem_new() {
 
     dmi_handle_list *hla = dmidecode_handles(&dta);
     if (hla) {
-        unsigned long i = 0;
+        int i = 0;
         for(i = 0; i < hla->count; i++) {
-            unsigned long h = hla->handles[i];
+            dmi_handle h = hla->handles[i];
             m->arrays = g_slist_append(m->arrays, dmi_mem_array_new(h));
         }
         dmi_handle_list_free(hla);
@@ -395,9 +395,9 @@ dmi_mem *dmi_mem_new() {
 
     dmi_handle_list *hlm = dmidecode_handles(&dtm);
     if (hlm) {
-        unsigned long i = 0;
+        int i = 0;
         for(i = 0; i < hlm->count; i++) {
-            unsigned long h = hlm->handles[i];
+            dmi_handle h = hlm->handles[i];
             m->sockets = g_slist_append(m->sockets, dmi_mem_socket_new(h));
         }
         dmi_handle_list_free(hlm);
@@ -572,7 +572,7 @@ gchar *make_spd_section(spd_data *spd) {
         if (!spd->size_MiB)
             size_str = g_strdup(_("(Unknown)"));
         else
-            size_str = g_strdup_printf("%d %s", spd->size_MiB, _("MiB") );
+            size_str = g_strdup_printf("%"PRId64" %s", spd->size_MiB, _("MiB") );
 
         gchar *mfg_date_str = NULL;
         if (spd->year)
@@ -659,7 +659,7 @@ gchar *memory_devices_get_info() {
         }
 
         gchar *details = g_strdup_printf("[%s]\n"
-                        "%s=0x%lx\n"
+                        "%s=0x%"PRIx32"\n"
                         "%s=%s\n"
                         "%s=%s\n"
                         "%s=%s\n"
@@ -703,12 +703,12 @@ gchar *memory_devices_get_info() {
             else if (!s->size_MiB)
                 size_str = g_strdup(s->size_str);
             else
-                size_str = g_strdup_printf("%ld %s", s->size_MiB, _("MiB") );
+                size_str = g_strdup_printf("%"PRId64" %s", s->size_MiB, _("MiB") );
 
             gchar *spd = s->spd ? make_spd_section(s->spd) : NULL;
 
             gchar *details = g_strdup_printf("[%s]\n"
-                            "%s=0x%lx, 0x%lx\n"
+                            "%s=0x%"PRIx32", 0x%"PRIx32"\n"
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
@@ -757,7 +757,7 @@ gchar *memory_devices_get_info() {
             g_free(size_str);
         } else {
             gchar *details = g_strdup_printf("[%s]\n"
-                            "%s=0x%lx, 0x%lx\n"
+                            "%s=0x%"PRIx32", 0x%"PRIx32"\n"
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n",
@@ -830,7 +830,7 @@ gchar *memory_devices_get_info() {
         if (!s->size_MiB)
             size_str = g_strdup(_("(Unknown)"));
         else
-            size_str = g_strdup_printf("%d %s", s->size_MiB, _("MiB") );
+            size_str = g_strdup_printf("%"PRId64" %s", s->size_MiB, _("MiB") );
 
         gchar *details = make_spd_section(s);
 
@@ -877,21 +877,21 @@ gchar *memory_devices_get_system_memory_types_str() {
     return ret;
 }
 
-long int memory_devices_get_system_memory_MiB() {
+int memory_devices_get_system_memory_MiB() {
     dmi_mem *mem = dmi_mem_new();
-    long int ret = mem->system_memory_MiB;
+    int ret = (int)mem->system_memory_MiB;
     dmi_mem_free(mem);
     return ret;
 }
 
 gchar *memory_devices_get_system_memory_str() {
     gchar *ret = NULL;
-    long int m = memory_devices_get_system_memory_MiB();
+    dmi_mem_size m = memory_devices_get_system_memory_MiB();
     if (m) {
         if (m > 1024 && (m % 1024 == 0) )
-            ret = g_strdup_printf("%ld %s", m/1024, _("GiB"));
+            ret = g_strdup_printf("%"PRId64" %s", m/1024, _("GiB"));
         else
-            ret = g_strdup_printf("%ld %s", m, _("MiB"));
+            ret = g_strdup_printf("%"PRId64" %s", m, _("MiB"));
     }
     return ret;
 }
