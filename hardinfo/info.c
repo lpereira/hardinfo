@@ -35,7 +35,27 @@ struct Info *info_new(void)
     return info;
 }
 
-void info_add_group(struct Info *info, const gchar *group_name, ...)
+void info_group_add_fieldsv(struct InfoGroup *group, va_list ap)
+{
+    while (1) {
+        struct InfoField field = va_arg(ap, struct InfoField);
+
+        if (!field.name)
+            break;
+        g_array_append_val(group->fields, field);
+    }
+}
+
+void info_group_add_fields(struct InfoGroup *group, ...)
+{
+    va_list ap;
+
+    va_start(ap, group);
+    info_group_add_fieldsv(group, ap);
+    va_end(ap);
+}
+
+struct InfoGroup *info_add_group(struct Info *info, const gchar *group_name, ...)
 {
     struct InfoGroup group = {
         .name = group_name,
@@ -44,16 +64,12 @@ void info_add_group(struct Info *info, const gchar *group_name, ...)
     va_list ap;
 
     va_start(ap, group_name);
-    while (1) {
-        struct InfoField field = va_arg(ap, struct InfoField );
-
-        if (!field.name)
-            break;
-        g_array_append_val(group.fields, field);
-    }
+    info_group_add_fieldsv(&group, ap);
     va_end(ap);
 
     g_array_append_val(info->groups, group);
+
+    return &g_array_index(info->groups, struct InfoGroup, info->groups->len - 1);
 }
 
 struct InfoField info_field(const gchar *name, const gchar *value)

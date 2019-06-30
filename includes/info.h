@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <stdarg.h>
 #include <glib.h>
 
 struct Info {
@@ -54,8 +55,11 @@ struct InfoField {
 
 struct Info *info_new(void);
 
-void info_add_group(struct Info *info, const gchar *group_name, ...);
+struct InfoGroup *info_add_group(struct Info *info, const gchar *group_name, ...);
 void info_add_computed_group(struct Info *info, const gchar *name, const gchar *value);
+
+void info_group_add_fields(struct InfoGroup *group, ...);
+void info_group_add_fieldsv(struct InfoGroup *group, va_list ap);
 
 struct InfoField info_field(const gchar *name, const gchar *value);
 struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
