@@ -134,6 +134,8 @@ typedef struct dmi_mem_socket {
     gchar *data_width;
     gchar *total_width;
     gchar *mfgr;
+    gboolean has_jedec_mfg_id;
+    int mfgr_bank, mfgr_index;
 
     const Vendor *vendor;
     spd_data *spd;
@@ -175,11 +177,25 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
     if (s->size_str) {
         long int v = 0;
         char l[3] = "";
+        /* dmidecode units: "bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB" */
         int mc = sscanf(s->size_str, "%"PRId64" %2s", &v, l);
         if (mc == 2) {
-            if (SEQ(l, "TB")) s->size_MiB = v * 1024 * 1024;
+            if (SEQ(l, "ZB")) s->size_MiB = v * 1024 * 1024 * 1024 * 1024 * 1024;
+            else if (SEQ(l, "EB")) s->size_MiB = v * 1024 * 1024 * 1024 * 1024;
+            else if (SEQ(l, "PB")) s->size_MiB = v * 1024 * 1024 * 1024;
+            else if (SEQ(l, "TB")) s->size_MiB = v * 1024 * 1024;
             else if (SEQ(l, "GB")) s->size_MiB = v * 1024;
             else if (SEQ(l, "MB")) s->size_MiB = v;
+            else if (SEQ(l, "kB")) {
+                /* should never appear */
+                if (v % 1024) dmi_spd_msg("OMG kB!");
+                s->size_MiB = v / 1024;
+            }
+            else if (SEQ(l, "by")) {
+                /* should never appear */
+                if (v % 1024) dmi_spd_msg("OMG bytes!");
+                s->size_MiB = v / (1024 * 1024);
+            }
         }
     }
     s->bank_locator = dmidecode_match("Bank Locator", &dtm, &h);
@@ -242,6 +258,7 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         STR_IGNORE(s->voltage_conf_str, "Unknown");
 
         s->partno = dmidecode_match("Part Number", &dtm, &h);
+        null_if_empty(&s->partno);
 
         s->data_width = dmidecode_match("Data Width", &dtm, &h);
         s->total_width = dmidecode_match("Total Width", &dtm, &h);
@@ -251,9 +268,18 @@ dmi_mem_socket *dmi_mem_socket_new(unsigned long h) {
         s->mfgr = dmidecode_match("Manufacturer", &dtm, &h);
         STR_IGNORE(s->mfgr, unknown_mfgr_str);
         STR_IGNORE(s->mfgr, "Unknown");
-
         null_if_empty(&s->mfgr);
-        null_if_empty(&s->partno);
+
+        gchar *mfgr_id_str = dmidecode_match("Module Manufacturer ID", &dtm, &h);
+        STR_IGNORE(mfgr_id_str, "Unknown");
+        if (mfgr_id_str) {
+            static const char dmi_mfg_id_fmt[] = "Bank %d, Hex 0x%02X";  /* from dmidecode.c */
+            int mc = sscanf(strstr(mfgr_id_str, "Bank"), dmi_mfg_id_fmt, &s->mfgr_bank, &s->mfgr_index);
+            if (mc > 0 && !s->mfgr) {
+                s->has_jedec_mfg_id = TRUE;
+                s->mfgr = g_strdup(JEDEC_MFG_STR(s->mfgr_bank, s->mfgr_index));
+            }
+        }
 
         s->vendor = vendor_match(s->mfgr, NULL);
     }
@@ -315,6 +341,11 @@ static void dmi_fill_from_spd(dmi_mem_socket *s) {
     if (!s->mfgr && s->spd->vendor_str) {
         s->mfgr = g_strdup(s->spd->vendor_str);
         s->vendor = s->spd->vendor;
+    }
+    if (!s->has_jedec_mfg_id) {
+        s->mfgr_bank = s->spd->vendor_bank;
+        s->mfgr_index = s->spd->vendor_index;
+        s->has_jedec_mfg_id = TRUE;
     }
 
     if (!s->partno && s->spd->partno)
@@ -660,7 +691,7 @@ gchar *memory_devices_get_info() {
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s / %s\n"
-                            "%s=%s%s\n"
+                            "%s=[%02x%02x] %s%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
@@ -677,7 +708,9 @@ gchar *memory_devices_get_info() {
                             _("Bank Locator"), UNKIFNULL2(s->bank_locator),
                             _("Form Factor"), UNKIFNULL2(s->form_factor),
                             _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
-                            _("Vendor"), UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
+                            _("Vendor"),
+                                s->mfgr_bank, s->mfgr_index,
+                                UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
                             _("Part Number"), UNKIFNULL2(s->partno),
                             _("Size"), size_str,
                             _("Rated Speed"), UNKIFNULL2(s->speed_str),

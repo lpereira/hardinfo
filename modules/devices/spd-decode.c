@@ -645,7 +645,7 @@ static void decode_ddr34_manufacturer(unsigned char count, unsigned char code, c
         return;
     }
 
-    *manufacturer = (char *)vendors[*bank][*index - 1];
+    *manufacturer = (char *)JEDEC_MFG_STR(*bank, *index - 1);
 }
 
 static void decode_ddr3_manufacturer(unsigned char *bytes, char **manufacturer, int *bank, int *index) {
@@ -677,7 +677,7 @@ static void decode_module_manufacturer(unsigned char *bytes, char **manufacturer
         goto end;
     }
 
-    out = (char *)vendors[ai - 1][(first & 0x7f) - 1];
+    out = (char*)JEDEC_MFG_STR(ai - 1, (first & 0x7f) - 1);
 
 end:
     if (manufacturer) { *manufacturer = out; }
