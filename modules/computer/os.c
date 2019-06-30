@@ -435,7 +435,6 @@ detect_distro(void)
         { DB_PREFIX "turbolinux-release", "tl" },
         { DB_PREFIX "yellowdog-release", "yd" },
         { DB_PREFIX "sabayon-release", "sbn" },
-        { DB_PREFIX "arch-release", "arch" },
         { DB_PREFIX "enlisy-release", "enlsy" },
         { DB_PREFIX "SuSE-release", "suse" },
         { DB_PREFIX "sun-release", "sun" },
