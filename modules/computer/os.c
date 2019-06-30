@@ -347,34 +347,71 @@ computer_get_language(void)
     return ret;
 }
 
-static gchar *
+static Distro
 parse_os_release(void)
 {
     gchar *pretty_name = NULL;
+    gchar *id = NULL;
     gchar **split, *contents, **line;
 
     if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
-        return NULL;
+        return (Distro) {};
 
     split = g_strsplit(idle_free(contents), "\n", 0);
     if (!split)
-        return NULL;
+        return (Distro) {};
 
     for (line = split; *line; line++) {
-        if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
+        if (!strncmp(*line, "ID=", sizeof("ID=") - 1)) {
+            id = g_strdup(*line + strlen("ID="));
+        } else if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
             pretty_name = g_strdup(*line +
-                                   strlen("PRETTY_NAME=") + 1);
+                                   strlen("PRETTY_NAME=\""));
             strend(pretty_name, '"');
-            break;
         }
     }
 
     g_strfreev(split);
 
-    return pretty_name;
+    if (pretty_name)
+        return (Distro) { .distro = pretty_name, .codename = id };
+
+    g_free(id);
+    return (Distro) {};
 }
 
-static gchar *
+static Distro
+parse_lsb_release(void)
+{
+    gchar *pretty_name = NULL;
+    gchar *id = NULL;
+    gchar **split, *contents, **line;
+
+    if (!g_spawn_command_line_sync("/usr/bin/lsb_release -di", &contents, NULL, NULL, NULL))
+        return (Distro) {};
+
+    split = g_strsplit(idle_free(contents), "\n", 0);
+    if (!split)
+        return (Distro) {};
+
+    for (line = split; *line; line++) {
+        if (!strncmp(*line, "Distributor ID:\t", sizeof("Distributor ID:\t") - 1)) {
+            id = g_utf8_strdown(*line + strlen("Distributor ID:\t"), -1);
+        } else if (!strncmp(*line, "Description:\t", sizeof("Description:\t") - 1)) {
+            pretty_name = g_strdup(*line + strlen("Description:\t"));
+        }
+    }
+
+    g_strfreev(split);
+
+    if (pretty_name)
+        return (Distro) { .distro = pretty_name, .codename = id };
+
+    g_free(id);
+    return (Distro) {};
+}
+
+static Distro
 detect_distro(void)
 {
     static const struct {
@@ -417,21 +454,17 @@ detect_distro(void)
 #undef DB_PREFIX
         { NULL, NULL }
     };
+    Distro distro;
     gchar *contents;
     int i;
 
-    if (g_file_test("/usr/lib/os-release", G_FILE_TEST_EXISTS)) {
-        contents = parse_os_release();
-        if (contents)
-            return contents;
-    }
+    distro = parse_os_release();
+    if (distro.distro)
+        return distro;
 
-    if (g_spawn_command_line_sync("lsb_release -d", &contents, NULL, NULL, NULL)) {
-        gchar *tmp = strstr(idle_free(contents), "Description:\t");
-
-        if (tmp)
-            return g_strdup(tmp + strlen("Description:\t"));
-    }
+    distro = parse_lsb_release();
+    if (distro.distro)
+        return distro;
 
     for (i = 0; distro_db[i].file; i++) {
         if (!g_file_get_contents(distro_db[i].file, &contents, NULL, NULL))
@@ -439,23 +472,31 @@ detect_distro(void)
 
         if (distro_db[i].override) {
             g_free(contents);
-            return g_strdup(distro_db[i].override);
+            return (Distro) { .distro = g_strdup(distro_db[i].override),
+                              .codename = g_strdup(distro_db[i].codename) };
         }
 
         if (g_str_equal(distro_db[i].codename, "deb")) {
             /* HACK: Some Debian systems doesn't include the distribuition
              * name in /etc/debian_release, so add them here. */
             if (isdigit(contents[0]) || contents[0] != 'D')
-                return g_strdup_printf("Debian GNU/Linux %s", (char*)idle_free(contents));
+                return (Distro) {
+                    .distro = g_strdup_printf("Debian GNU/Linux %s", (char*)idle_free(contents)),
+                    .codename = g_strdup(distro_db[i].codename)
+                };
         }
 
-        if (g_str_equal(distro_db[i].codename, "fatdog"))
-            return g_strdup_printf("Fatdog64 [%.10s]", (char*)idle_free(contents));
+        if (g_str_equal(distro_db[i].codename, "fatdog")) {
+            return (Distro) {
+                .distro = g_strdup_printf("Fatdog64 [%.10s]", (char*)idle_free(contents)),
+                .codename = g_strdup(distro_db[i].codename)
+            };
+        }
 
-        return contents;
+        return (Distro) { .distro = contents, .codename = g_strdup(distro_db[i].codename) };
     }
 
-    return g_strdup(_("Unknown"));
+    return (Distro) { .distro = g_strdup(_("Unknown")) };
 }
 
 OperatingSystem *
@@ -467,7 +508,9 @@ computer_get_os(void)
 
     os = g_new0(OperatingSystem, 1);
 
-    os->distro = g_strstrip(detect_distro());
+    Distro distro = detect_distro();
+    os->distro = g_strstrip(distro.distro);
+    os->distrocode = distro.codename;
 
     /* Kernel and hostname info */
     uname(&utsbuf);

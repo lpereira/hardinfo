@@ -27,6 +27,7 @@ typedef struct _MemoryInfo	MemoryInfo;
 typedef struct _UptimeInfo	UptimeInfo;
 typedef struct _LoadInfo	LoadInfo;
 typedef struct _DisplayInfo	DisplayInfo;
+typedef struct _Distro		Distro;
 
 typedef struct _AlsaInfo	AlsaInfo;
 typedef struct _AlsaCard	AlsaCard;
@@ -92,7 +93,8 @@ struct _Computer {
 struct _OperatingSystem {
     gchar *kernel;
     gchar *libc;
-    gchar *distrocode, *distro;
+    gchar *distrocode;
+    gchar *distro;
     gchar *hostname;
     gchar *language;
     gchar *homedir;
@@ -111,6 +113,11 @@ struct _OperatingSystem {
 struct _MemoryInfo {
     gint total, used, free, cached;
     gfloat ratio;
+};
+
+struct _Distro {
+    gchar *distro;
+    gchar *codename;
 };
 
 #define get_str(field_name,ptr)               \
