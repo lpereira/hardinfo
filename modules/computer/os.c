@@ -422,7 +422,7 @@ detect_distro(void)
 #define DB_PREFIX "/etc/"
         { DB_PREFIX "arch-release", "arch", "Arch Linux" },
         { DB_PREFIX "fatdog-version", "fatdog" },
-        { DB_PREFIX "debian_version", "deb" },
+        { DB_PREFIX "debian_version", "debian" },
         { DB_PREFIX "slackware-version", "slk" },
         { DB_PREFIX "mandrake-release", "mdk" },
         { DB_PREFIX "mandriva-release", "mdv" },
@@ -475,7 +475,7 @@ detect_distro(void)
                               .codename = g_strdup(distro_db[i].codename) };
         }
 
-        if (g_str_equal(distro_db[i].codename, "deb")) {
+        if (g_str_equal(distro_db[i].codename, "debian")) {
             /* HACK: Some Debian systems doesn't include the distribuition
              * name in /etc/debian_release, so add them here. */
             if (isdigit(contents[0]) || contents[0] != 'D')
