@@ -170,16 +170,27 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {
             struct InfoField field;
+            gchar tag[256] = "";
 
             field = g_array_index(group->fields, struct InfoField, i);
 
-            if (field.icon)
-                g_string_append_printf(output, "$ITEM%d-%d$", group_count, i);
+            if (field.tag)
+                strncpy(tag, field.tag, 255);
+            else
+                snprintf(tag, 255, "ITEM%d-%d", group_count, i);
+
+            if (*tag != 0 || field.flags)
+                g_string_append_printf(output, "$%s%s%s$",
+                    field.flags & INFO_FIELD_SELECTED ? "*" : "",
+                    field.flags & INFO_FIELD_SELECTED ? "!" : "",
+                    tag);
 
             g_string_append_printf(output, "%s=%s\n", field.name, field.value);
 
             if (field.free_value_on_flatten)
                 g_free((gchar *)field.value);
+
+            g_free(field.tag);
         }
     } else if (group->computed) {
         g_string_append_printf(output, "%s\n", group->computed);
