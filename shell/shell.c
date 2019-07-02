@@ -1073,7 +1073,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 
 static void
 group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
-		     gchar * group, gchar ** keys, gboolean reload)
+		     const gchar * group, gchar ** keys, gboolean reload)
 {
     if (g_str_equal(group, "$ShellParam$")) {
         gboolean headers_visible = FALSE;
@@ -1191,7 +1191,7 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 }
 
 static void group_handle_normal(GKeyFile* key_file, ShellModuleEntry* entry,
-    gchar* group, gchar** keys, gsize ngroups)
+    const gchar* group, gchar** keys, gsize ngroups)
 {
     GtkTreeIter parent;
     GtkTreeStore* store = GTK_TREE_STORE(shell->info_tree->model);
@@ -1450,60 +1450,34 @@ select_marked_or_first_item(gpointer data)
 }
 
 static void
-module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
+module_selected_show_info_list(GKeyFile *key_file,
+                               ShellModuleEntry *entry,
+                               gchar **groups,
+                               gsize ngroups,
+                               gboolean reload)
 {
-    GKeyFile *key_file = g_key_file_new();
-    GtkTreeStore *store;
-    gchar *key_data, **groups;
+    GtkTreeStore *store = GTK_TREE_STORE(shell->info_tree->model);
     gint i;
-    gsize ngroups;
-#if GTK_CHECK_VERSION(2, 14, 0)
-    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info_tree->view));
-#endif
 
-    module_entry_scan(entry);
-    key_data = module_entry_function(entry);
-
-    /* */
-#if GTK_CHECK_VERSION(2, 14, 0)
-	gdk_window_freeze_updates(gdk_window);
-#else
-    gdk_window_freeze_updates(shell->info_tree->view->window);
-#endif
+    gtk_tree_store_clear(store);
 
     g_object_ref(shell->info_tree->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info_tree->view), NULL);
 
-    if (!reload) {
-        /* recreate the iter hash table */
-        h_hash_table_remove_all(update_tbl);
-    }
-
-    shell_clear_field_updates();
-
-    store = GTK_TREE_STORE(shell->info_tree->model);
-
-    gtk_tree_store_clear(store);
-
-    g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0,
-			      NULL);
-    groups = g_key_file_get_groups(key_file, &ngroups);
-
-    for (i = 0; groups[i]; i++)
+    for (i = 0; groups[i]; i++) {
 	if (groups[i][0] == '$')
 	    ngroups--;
+    }
 
-    set_view_type(SHELL_VIEW_NORMAL, reload);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info_tree->view), FALSE);
 
     for (i = 0; groups[i]; i++) {
-	gchar *group = groups[i];
-	gchar **keys = g_key_file_get_keys(key_file, group, NULL, NULL);
+	gchar **keys = g_key_file_get_keys(key_file, groups[i], NULL, NULL);
 
-	if (*group == '$') {
-	    group_handle_special(key_file, entry, group, keys, reload);
+	if (groups[i][0] == '$') {
+	    group_handle_special(key_file, entry, groups[i], keys, reload);
 	} else {
-	    group_handle_normal(key_file, entry, group, keys, ngroups);
+	    group_handle_normal(key_file, entry, groups[i], keys, ngroups);
 	}
 
 	g_strfreev(keys);
@@ -1514,18 +1488,6 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info_tree->view), shell->info_tree->model);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info_tree->view));
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-	gdk_window_thaw_updates(gdk_window);
-#else
-    gdk_window_thaw_updates(shell->info_tree->view->window);
-#endif
-    shell_set_note_from_entry(entry);
-
-    if (shell->view_type == SHELL_VIEW_PROGRESS || shell->view_type == SHELL_VIEW_PROGRESS_DUAL) {
-	update_progress();
-    }
-
-#if GTK_CHECK_VERSION(2,12,0)
     if (ngroups == 1) {
         gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info_tree->view),
                                          FALSE);
@@ -1533,11 +1495,45 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
         gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info_tree->view),
                                          TRUE);
     }
-#endif
+}
+
+static void
+module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
+{
+    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info_tree->view));
+    gsize ngroups;
+    gint i;
+
+    gdk_window_freeze_updates(gdk_window);
+
+    module_entry_scan(entry);
+    if (!reload) {
+        /* recreate the iter hash table */
+        h_hash_table_remove_all(update_tbl);
+    }
+    shell_clear_field_updates();
+
+    GKeyFile *key_file = g_key_file_new();
+    gchar *key_data = module_entry_function(entry);
+
+    g_key_file_load_from_data(key_file, key_data, strlen(key_data), 0, NULL);
+    set_view_type(g_key_file_get_integer(key_file, "$ShellParam$",
+                                         "ViewType", NULL), reload);
+
+    gchar **groups = g_key_file_get_groups(key_file, &ngroups);
+
+    module_selected_show_info_list(key_file, entry, groups, ngroups, reload);
 
     g_strfreev(groups);
     g_key_file_free(key_file);
     g_free(key_data);
+
+    switch (shell->view_type) {
+    case SHELL_VIEW_PROGRESS_DUAL:
+    case SHELL_VIEW_PROGRESS:
+        update_progress();
+        break;
+    }
 
     if (!reload) {
         switch (shell->view_type) {
@@ -1547,6 +1543,9 @@ module_selected_show_info(ShellModuleEntry * entry, gboolean reload)
             g_idle_add(select_marked_or_first_item, NULL);
         }
     }
+    shell_set_note_from_entry(entry);
+
+    gdk_window_thaw_updates(gdk_window);
 }
 
 static void info_selected_show_extra(const gchar *tag)
