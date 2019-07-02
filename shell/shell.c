@@ -1151,17 +1151,16 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		set_view_type(g_key_file_get_integer(key_file, group,
 						     key, NULL), reload);
 	    } else if (g_str_has_prefix(key, "Icon$")) {
-		GtkTreeIter *iter;
-		const gchar *first_dollar = g_utf8_strchr(key, -1, '$');
 
-		iter = g_hash_table_lookup(update_tbl, first_dollar);
-		if (!iter && first_dollar) {
-		    const gchar *second_dollar = g_utf8_strchr(first_dollar + 1, -1, '$');
-		    if (second_dollar) {
-		        char *copy = strndupa(first_dollar, second_dollar - first_dollar + 1);
-		        iter = g_hash_table_lookup(update_tbl, copy);
-                    }
-                }
+        GtkTreeIter *iter;
+        const gchar *ikey = g_utf8_strchr(key, -1, '$');
+        if (key_is_flagged(ikey)) {
+            gchar *tag = key_mi_tag(ikey);
+            iter = g_hash_table_lookup(update_tbl, tag);
+            g_free(tag);
+        } else {
+            iter = g_hash_table_lookup(update_tbl, ikey);
+        }
 
 		if (iter) {
 		    gchar *file =
@@ -1248,25 +1247,17 @@ static void group_handle_normal(GKeyFile* key_file, ShellModuleEntry* entry,
 
             if (key_is_flagged(key)) {
                 const gchar* name = key_get_name(key);
+                gchar *tag = key_mi_tag(key);
                 gchar* flags = g_strdup(key);
                 *(strchr(flags + 1, '$') + 1) = 0;
 
                 gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, name,
                     INFO_TREE_COL_DATA, flags, -1);
-
+                g_hash_table_insert(update_tbl, tag, gtk_tree_iter_copy(&child));
                 g_free(flags);
             } else {
                 gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
                     INFO_TREE_COL_DATA, NULL, -1);
-            }
-
-            const gchar *first_dollar = g_utf8_strchr(key, -1, '$');
-            if (first_dollar) {
-                const gchar *second_dollar = g_utf8_strchr(first_dollar + 1, -1, '$');
-                gchar *key_copy = g_strndup(first_dollar, second_dollar - first_dollar + 1);
-
-                g_hash_table_insert(update_tbl, key_copy, gtk_tree_iter_copy(&child));
-            } else {
                 g_hash_table_insert(update_tbl, g_strdup(key), gtk_tree_iter_copy(&child));
             }
         }
@@ -2058,11 +2049,11 @@ static ShellTree *tree_new()
     return shelltree;
 }
 
-gboolean key_is_flagged(gchar *key) {
+gboolean key_is_flagged(const gchar *key) {
     return (key && *key == '$' && strchr(key+1, '$')) ? TRUE : FALSE;
 }
 
-gboolean key_is_highlighted(gchar *key) {
+gboolean key_is_highlighted(const gchar *key) {
     if (key_is_flagged(key)) {
         if (strchr(key, '*'))
             return TRUE;
@@ -2070,7 +2061,7 @@ gboolean key_is_highlighted(gchar *key) {
     return FALSE;
 }
 
-gboolean key_wants_details(gchar *key) {
+gboolean key_wants_details(const gchar *key) {
     if (key_is_flagged(key)) {
         if (strchr(key, '!'))
             return TRUE;
@@ -2078,8 +2069,8 @@ gboolean key_wants_details(gchar *key) {
     return FALSE;
 }
 
-gchar *key_mi_tag(gchar *key) {
-    gchar *p = key, *l, *t;
+gchar *key_mi_tag(const gchar *key) {
+    gchar *p = (gchar*)key, *l, *t;
 
     if (key_is_flagged(key)) {
         l = strchr(key+1, '$');
@@ -2095,7 +2086,7 @@ gchar *key_mi_tag(gchar *key) {
     return NULL;
 }
 
-const gchar *key_get_name(gchar *key) {
+const gchar *key_get_name(const gchar *key) {
     if (key_is_flagged(key))
         return strchr(key+1, '$')+1;
     return key;
