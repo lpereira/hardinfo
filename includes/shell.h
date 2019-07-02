@@ -84,7 +84,7 @@ struct _Shell {
     GtkWidget		*hbox, *vpaned;
 
     ShellTree		*tree;
-    ShellInfoTree	*info, *moreinfo;
+    ShellInfoTree	*info_tree, *moreinfo_tree;
     ShellModule		*selected_module;
     ShellModuleEntry	*selected;
     ShellNote		*note;
