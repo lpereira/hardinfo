@@ -667,33 +667,33 @@ static void __tree_iter_destroy(gpointer data)
     gtk_tree_iter_free((GtkTreeIter *) data);
 }
 
-ShellSummary *summary_new(void)
+DetailView *detail_view_new(void)
 {
-    ShellSummary *summary;
+    DetailView *detail_view;
 
-    summary = g_new0(ShellSummary, 1);
-    summary->scroll = gtk_scrolled_window_new(NULL, NULL);
+    detail_view = g_new0(DetailView, 1);
+    detail_view->scroll = gtk_scrolled_window_new(NULL, NULL);
 #if GTK_CHECK_VERSION(3, 0, 0)
-    summary->view = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    detail_view->view = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 #else
-    summary->view = gtk_vbox_new(FALSE, 5);
+    detail_view->view = gtk_vbox_new(FALSE, 5);
 #endif
-    summary->items = NULL;
+    detail_view->items = NULL;
 
-    gtk_container_set_border_width(GTK_CONTAINER(summary->view), 6);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(summary->scroll),
+    gtk_container_set_border_width(GTK_CONTAINER(detail_view->view), 6);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(detail_view->scroll),
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_container_add(GTK_CONTAINER(summary->scroll),
-                                          summary->view);
+    gtk_container_add(GTK_CONTAINER(detail_view->scroll),
+                                          detail_view->view);
 #else
-    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(summary->scroll),
-                                          summary->view);
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(detail_view->scroll),
+                                          detail_view->view);
 #endif
-    gtk_widget_show_all(summary->scroll);
+    gtk_widget_show_all(detail_view->scroll);
 
-    return summary;
+    return detail_view;
 }
 
 static gboolean
@@ -728,7 +728,7 @@ void shell_init(GSList * modules)
     shell->info_tree = info_tree_new(FALSE);
     shell->moreinfo_tree = info_tree_new(TRUE);
     shell->loadgraph = load_graph_new(75);
-    shell->summary = summary_new();
+    shell->detail_view = detail_view_new();
 
     update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
                                        g_free, __tree_iter_destroy);
@@ -744,7 +744,7 @@ void shell_init(GSList * modules)
 			     load_graph_get_framed(shell->loadgraph),
 			     NULL);
     gtk_notebook_append_page(GTK_NOTEBOOK(shell->notebook),
-                             shell->summary->scroll, NULL);
+                             shell->detail_view->scroll, NULL);
 
     gtk_notebook_set_show_tabs(GTK_NOTEBOOK(shell->notebook), FALSE);
     gtk_notebook_set_show_border(GTK_NOTEBOOK(shell->notebook), FALSE);
@@ -1062,7 +1062,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 	if (viewtype == SHELL_VIEW_PROGRESS)
 		gtk_widget_hide(shell->notebook);
 	break;
-    case SHELL_VIEW_SUMMARY:
+    case SHELL_VIEW_DETAIL:
         gtk_notebook_set_current_page(GTK_NOTEBOOK(shell->notebook), 2);
 
         gtk_widget_show(shell->notebook);
@@ -1585,7 +1585,7 @@ static void info_selected_show_extra(const gchar *tag)
     }
 }
 
-static gchar *shell_summary_clear_value(gchar *value)
+static gchar *detail_view_clear_value(gchar *value)
 {
      GKeyFile *keyfile;
      gchar *return_value;
@@ -1635,7 +1635,7 @@ static gchar *shell_summary_clear_value(gchar *value)
      return g_strstrip(return_value);
 }
 
-static void shell_summary_add_item(ShellSummary *summary,
+static void detail_view_add_item(DetailView *detail_view,
                                    gchar *icon,
                                    gchar *name,
                                    gchar *value)
@@ -1648,7 +1648,7 @@ static void shell_summary_add_item(ShellSummary *summary,
      GtkWidget *alignment;
      gchar *temp;
 
-     temp = shell_summary_clear_value(value);
+     temp = detail_view_clear_value(value);
 
      /* creates the frame */
      frame = gtk_frame_new(NULL);
@@ -1688,30 +1688,30 @@ static void shell_summary_add_item(ShellSummary *summary,
 
      gtk_frame_set_label_widget(GTK_FRAME(frame), frame_label_box);
 
-     /* pack the item on the summary screen */
-     gtk_box_pack_start(GTK_BOX(shell->summary->view), frame, FALSE, FALSE, 4);
+     /* pack the item on the detail_view screen */
+     gtk_box_pack_start(GTK_BOX(shell->detail_view->view), frame, FALSE, FALSE, 4);
 
-     /* add the item to the list of summary items */
-     summary->items = g_slist_prepend(summary->items, frame);
+     /* add the item to the list of detail_view items */
+     detail_view->items = g_slist_prepend(detail_view->items, frame);
 
      g_free(temp);
 }
 
-static void shell_summary_clear(ShellSummary *summary)
+static void detail_view_clear(DetailView *detail_view)
 {
      GSList *item;
 
-     for (item = summary->items; item; item = item->next) {
+     for (item = detail_view->items; item; item = item->next) {
          gtk_widget_destroy(GTK_WIDGET(item->data));
      }
 
-     g_slist_free(summary->items);
-     summary->items = NULL;
+     g_slist_free(detail_view->items);
+     detail_view->items = NULL;
 
-     if (summary->header) gtk_widget_destroy(summary->header);
-     summary->header = NULL;
+     if (detail_view->header) gtk_widget_destroy(detail_view->header);
+     detail_view->header = NULL;
 }
-static void shell_summary_create_header(ShellSummary *summary,
+static void detail_view_create_header(DetailView *detail_view,
                                         gchar *title)
 {
     GtkWidget *header, *label;
@@ -1726,27 +1726,27 @@ static void shell_summary_create_header(ShellSummary *summary,
     label = gtk_bin_get_child(GTK_BIN(header));
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
 
-    gtk_box_pack_start(GTK_BOX(shell->summary->view), header, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(shell->detail_view->view), header, FALSE, FALSE, 4);
 
-    summary->header = header;
+    detail_view->header = header;
 
     g_free(temp);
 }
 
-static void shell_show_summary(void)
+static void shell_show_detail_view(void)
 {
     GKeyFile *keyfile;
-    gchar *summary;
+    gchar *detail;
 
-    set_view_type(SHELL_VIEW_SUMMARY, FALSE);
-    shell_summary_clear(shell->summary);
-    shell_summary_create_header(shell->summary, shell->selected_module->name);
+    set_view_type(SHELL_VIEW_DETAIL, FALSE);
+    detail_view_clear(shell->detail_view);
+    detail_view_create_header(shell->detail_view, shell->selected_module->name);
 
     keyfile = g_key_file_new();
-    summary = shell->selected_module->summaryfunc();
+    detail = shell->selected_module->summaryfunc();
 
-    if (g_key_file_load_from_data(keyfile, summary,
-                                  strlen(summary), 0, NULL)) {
+    if (g_key_file_load_from_data(keyfile, detail,
+                                  strlen(detail), 0, NULL)) {
          gchar **groups;
          gint group;
 
@@ -1765,7 +1765,7 @@ static void shell_show_summary(void)
                   method_result = g_strdup("N/A");
              }
 
-             shell_summary_add_item(shell->summary,
+             detail_view_add_item(shell->detail_view,
                                     icon, groups[group], method_result);
              shell_status_pulse();
 
@@ -1776,11 +1776,11 @@ static void shell_show_summary(void)
 
          g_strfreev(groups);
     } else {
-         DEBUG("error while parsing summary");
+         DEBUG("error while parsing detail_view");
          set_view_type(SHELL_VIEW_NORMAL, FALSE);
     }
 
-    g_free(summary);
+    g_free(detail);
     g_key_file_free(keyfile);
 
     shell_view_set_enabled(TRUE);
@@ -1863,7 +1863,7 @@ static void module_selected(gpointer data)
 	set_view_type(SHELL_VIEW_NORMAL, FALSE);
 
         if (shell->selected_module->summaryfunc) {
-           shell_show_summary();
+           shell_show_detail_view();
         }
     }
 
