@@ -27,7 +27,7 @@ typedef struct _Shell			Shell;
 typedef struct _ShellTree		ShellTree;
 typedef struct _ShellInfoTree		ShellInfoTree;
 typedef struct _ShellNote		ShellNote;
-typedef struct _ShellSummary		ShellSummary;
+typedef struct _DetailView		DetailView;
 
 typedef struct _ShellModule		ShellModule;
 typedef struct _ShellModuleMethod	ShellModuleMethod;
@@ -52,7 +52,7 @@ typedef enum {
     SHELL_VIEW_LOAD_GRAPH,
     SHELL_VIEW_PROGRESS,
     SHELL_VIEW_PROGRESS_DUAL,
-    SHELL_VIEW_SUMMARY,
+    SHELL_VIEW_DETAIL,
     SHELL_VIEW_N_VIEWS
 } ShellViewType;
 
@@ -88,7 +88,7 @@ struct _Shell {
     ShellModule		*selected_module;
     ShellModuleEntry	*selected;
     ShellNote		*note;
-    ShellSummary	*summary;
+    DetailView		*detail_view;
     LoadGraph		*loadgraph;
 
     GtkActionGroup	*action_group;
@@ -105,7 +105,7 @@ struct _Shell {
     HelpViewer		*help_viewer;
 };
 
-struct _ShellSummary {
+struct _DetailView {
     GtkWidget		*header;
     GtkWidget		*scroll;
     GtkWidget		*view;
