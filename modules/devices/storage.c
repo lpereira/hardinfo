@@ -218,6 +218,7 @@ gboolean __scan_udisks2_devices(void) {
         g_free(features);
         g_free(label);
         g_free(media_comp);
+        media_comp = NULL;
 
         features = NULL;
         moreinfo = NULL;
