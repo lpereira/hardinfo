@@ -81,7 +81,7 @@ struct _Shell {
     GtkWidget		*status, *progress;
     GtkWidget		*remote_label;
     GtkWidget		*notebook;
-    GtkWidget		*hpaned, *vpaned;
+    GtkWidget		*hbox, *vpaned;
 
     ShellTree		*tree;
     ShellInfoTree	*info, *moreinfo;

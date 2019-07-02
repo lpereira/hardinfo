@@ -279,7 +279,7 @@ void shell_view_set_enabled(gboolean setting)
 	widget_set_cursor(shell->window, GDK_WATCH);
     }
 
-    gtk_widget_set_sensitive(shell->hpaned, setting);
+    gtk_widget_set_sensitive(shell->hbox, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
     shell_action_set_enabled("ConnectToAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
@@ -453,13 +453,12 @@ static void create_window(void)
     gtk_box_pack_start(GTK_BOX(hbox), shell->status, FALSE, FALSE, 5);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-    shell->hpaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+    shell->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 #else
-    shell->hpaned = gtk_hpaned_new();
+    shell->hbox = gtk_hbox_new(FALSE, 5);
 #endif
-    gtk_widget_show(shell->hpaned);
-    gtk_box_pack_end(GTK_BOX(vbox), shell->hpaned, TRUE, TRUE, 0);
-    gtk_paned_set_position(GTK_PANED(shell->hpaned), 210);
+    gtk_widget_show(shell->hbox);
+    gtk_box_pack_end(GTK_BOX(vbox), shell->hbox, TRUE, TRUE, 0);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -467,7 +466,7 @@ static void create_window(void)
     vbox = gtk_vbox_new(FALSE, 5);
 #endif
     gtk_widget_show(vbox);
-    gtk_paned_add2(GTK_PANED(shell->hpaned), vbox);
+    gtk_box_pack_end(GTK_BOX(shell->hbox), vbox, TRUE, TRUE, 0);
 
     shell->note = note_new();
     gtk_box_pack_end(GTK_BOX(vbox), shell->note->event_box, FALSE, FALSE, 0);
@@ -734,8 +733,8 @@ void shell_init(GSList * modules)
     update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
                                        g_free, __tree_iter_destroy);
 
-    gtk_paned_pack1(GTK_PANED(shell->hpaned), shell->tree->scroll,
-		    SHELL_PACK_RESIZE, SHELL_PACK_SHRINK);
+    gtk_box_pack_start(GTK_BOX(shell->hbox), shell->tree->scroll,
+                       FALSE, FALSE, 0);
     gtk_paned_pack1(GTK_PANED(shell->vpaned), shell->info->scroll,
 		    SHELL_PACK_RESIZE, SHELL_PACK_SHRINK);
 
@@ -758,7 +757,7 @@ void shell_init(GSList * modules)
     g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
 
-    gtk_widget_show_all(shell->hpaned);
+    gtk_widget_show_all(shell->hbox);
 
     load_graph_configure_expose(shell->loadgraph);
     gtk_widget_hide(shell->notebook);
@@ -1017,12 +1016,12 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         if (type_changed) {
 #if GTK_CHECK_VERSION(2, 18, 0)
             alloc = g_new(GtkAllocation, 1);
-            gtk_widget_get_allocation(shell->hpaned, alloc);
+            gtk_widget_get_allocation(shell->hbox, alloc);
             gtk_paned_set_position(GTK_PANED(shell->vpaned), alloc->height / 2);
             g_free(alloc);
 #else
             gtk_paned_set_position(GTK_PANED(shell->vpaned),
-                            shell->hpaned->allocation.height / 2);
+                            shell->hbox->allocation.height / 2);
 #endif
         }
         break;
@@ -1035,13 +1034,13 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         if (type_changed) {
 #if GTK_CHECK_VERSION(2, 18, 0)
             alloc = g_new(GtkAllocation, 1);
-            gtk_widget_get_allocation(shell->hpaned, alloc);
+            gtk_widget_get_allocation(shell->hbox, alloc);
             gtk_paned_set_position(GTK_PANED(shell->vpaned),
                     alloc->height - load_graph_get_height(shell->loadgraph) - 16);
             g_free(alloc);
 #else
             gtk_paned_set_position(GTK_PANED(shell->vpaned),
-                           shell->hpaned->allocation.height -
+                           shell->hbox->allocation.height -
                            load_graph_get_height(shell->loadgraph) - 16);
 #endif
         }
