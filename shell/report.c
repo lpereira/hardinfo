@@ -87,26 +87,45 @@ gint report_get_visible_columns(ReportContext *ctx)
     return columns;
 }
 
-gchar *make_icon_html(const gchar *file, const gchar *alt_text) {
-    if (!file)
+gchar *icon_name_css_id(const gchar *file) {
+    gchar *safe = g_strdup_printf("icon-%s", file);
+    gchar *p = safe;
+    while(*p) {
+        if (!isalnum(*p))
+            *p = '-';
+        p++;
+    }
+    return safe;
+}
+
+gchar *make_icon_css(const gchar *file) {
+    if (!file || *file == 0)
         return;
+    gchar *ret = NULL;
     gchar *path = g_build_filename(params.path_data, "pixmaps", file, NULL);
     gchar *contents = NULL;
     gsize length = 0;
-    //printf("make_icon_html(%s, %s): %d bytes\n", file, alt_text, (int)length);
     if ( g_file_get_contents(path, &contents, &length, NULL) ) {
+        gchar *css_class = icon_name_css_id(file);
         const char ctype[] = "image/png";
         gchar *b64data = g_base64_encode(contents, length);
-        gchar *ret = g_strdup_printf(
-            "<img src=\"data:%s;base64,%s\" alt=\"%s\">",
-            ctype, b64data,
-            alt_text ? alt_text : "");
+        ret = g_strdup_printf(
+            ".%s\n"
+            "{ background: url(data:%s;base64,%s) no-repeat;\n"
+            "  background-size: cover; }\n",
+            css_class ? css_class : "",
+            ctype, b64data );
         g_free(b64data);
-        g_free(contents);
-        g_free(path);
-        return ret;
+        g_free(css_class);
     }
-    return "";
+    g_free(contents);
+    g_free(path);
+    return ret ? ret : g_strdup("");
+}
+
+void cache_icon(ReportContext *ctx, const gchar *file) {
+    if (!g_hash_table_lookup(ctx->icon_data, file) )
+        g_hash_table_insert(ctx->icon_data, g_strdup(file), make_icon_css(file));
 }
 
 void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
@@ -114,11 +133,11 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
     gchar **keys;
     const gchar *group = "$ShellParam$";
 
-    if (ctx->icons) {
-        g_hash_table_remove_all(ctx->icons);
-        ctx->icons = NULL;
+    if (ctx->icon_refs) {
+        g_hash_table_remove_all(ctx->icon_refs);
+        ctx->icon_refs = NULL;
     }
-    ctx->icons = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL); //g_free
+    ctx->icon_refs = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
     keys = g_key_file_get_keys(keyfile, group, NULL, NULL);
     if (keys) {
@@ -166,9 +185,8 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
             gchar *ikey = g_utf8_strchr(key, -1, '$');
             gchar *tag = key_mi_tag(ikey);
             gchar *icon = g_key_file_get_value(keyfile, group, key, NULL);
-            gchar *icon_html = make_icon_html(icon, tag);
-            g_hash_table_insert(ctx->icons, tag, icon_html);
-            g_free(icon);
+            cache_icon(ctx, icon);
+            g_hash_table_insert(ctx->icon_refs, tag, icon);
         }
       }
 
@@ -400,16 +418,27 @@ static void report_html_header(ReportContext * ctx)
 	 "    .value  { font: 80%% sans-serif; color: #505050 }\n"
 	 "    .hilight  { font: bold 110%% sans-serif; color: #000000; background: #ffff66 }\n"
 	 "    table.details { margin-left: 50px; }\n"
-	 "    td.icon { width: 2.4em; }\n"
-	 "    .icon img  { width: 1.2em; padding-left: 1.2em; }\n"
+	 "    td.icon { width: 1.2em; padding-left: 1.2em; }\n"
+	 "    td.icon img  { width: 1.2em; }\n"
+	 "    td.icon div { display: block; box-sizing: border-box; -moz-box-sizing: border-box;\n"
+	 "        width: 1.2em; height: 1.2em; background-position: right; }\n"
 	 "</style>\n" "</head><body>\n",
 	 VERSION);
 }
 
 static void report_html_footer(ReportContext * ctx)
 {
-    ctx->output = h_strconcat(ctx->output,
-			      "</table></html>", NULL);
+    ctx->output = h_strconcat(ctx->output, "</table>", NULL);
+    ctx->output = h_strconcat(ctx->output, "<style>\n", NULL);
+    GList *l = NULL, *keys = g_hash_table_get_keys(ctx->icon_data);
+    for(l = keys; l; l = l->next) {
+        gchar *data = g_hash_table_lookup(ctx->icon_data, (gchar*)l->data);
+        if (data)
+            ctx->output = h_strconcat(ctx->output, data, NULL);
+    }
+    g_list_free(keys);
+    ctx->output = h_strconcat(ctx->output, "</style>\n", NULL);
+    ctx->output = h_strconcat(ctx->output, "</html>", NULL);
 }
 
 static void report_html_title(ReportContext * ctx, gchar * text)
@@ -458,9 +487,15 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 
     gboolean highlight = key_is_highlighted(key);
     gchar *tag = key_mi_tag(key);
-    const gchar *icon_html = tag ? g_hash_table_lookup(ctx->icons, tag) : NULL;
+    gchar *icon = tag ? (gchar*)g_hash_table_lookup(ctx->icon_refs, tag) : NULL;
     g_free(tag);
-    if (!icon_html) icon_html = "";
+    /* icon from the table is const, so can be re-used without free */
+    if (icon) {
+        gchar *icon_class = icon_name_css_id(icon);
+        icon = g_strdup_printf("<div class=\"%s\"></div>", icon_class);
+        g_free(icon_class);
+    } else
+        icon = g_strdup("");
 
     gchar *name = (gchar*)key_get_name(key);
 
@@ -469,12 +504,12 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
                                     "<td class=\"value\">%s</td></tr>\n",
                                     ctx->output,
                                     highlight ? " class=\"hilight\"" : "",
-                                    icon_html, name, value);
+                                    icon, name, value);
     } else {
       values = g_strsplit(value, "|", columns);
       mc = g_strv_length(values) - 1;
 
-      ctx->output = h_strdup_cprintf("\n<tr%s>\n<td class=\"icon\">%s</td><td class=\"field\">%s</td>", ctx->output, highlight ? " class=\"hilight\"" : "", icon_html, name);
+      ctx->output = h_strdup_cprintf("\n<tr%s>\n<td class=\"icon\">%s</td><td class=\"field\">%s</td>", ctx->output, highlight ? " class=\"hilight\"" : "", icon, name);
 
       for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
@@ -486,6 +521,7 @@ report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 
       g_strfreev(values);
     }
+    g_free(icon);
 }
 
 static void report_text_header(ReportContext * ctx)
@@ -720,6 +756,8 @@ ReportContext *report_context_html_new()
                                                g_free, g_free);
     ctx->first_table = TRUE;
 
+    ctx->icon_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
     return ctx;
 }
 
@@ -776,8 +814,10 @@ ReportContext *report_context_shell_new()
 void report_context_free(ReportContext * ctx)
 {
     g_hash_table_destroy(ctx->column_titles);
-    if(ctx->icons)
-        g_hash_table_destroy(ctx->icons);
+    if(ctx->icon_refs)
+        g_hash_table_destroy(ctx->icon_refs);
+    if(ctx->icon_data)
+        g_hash_table_destroy(ctx->icon_data);
     g_free(ctx->output);
     g_free(ctx);
 }
