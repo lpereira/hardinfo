@@ -63,7 +63,8 @@ struct _ReportContext {
   gboolean		show_column_headers;
   guint			columns, parent_columns;
   GHashTable		*column_titles;
-  GHashTable *icons;
+  GHashTable *icon_refs;
+  GHashTable *icon_data;
 };
 
 struct _ReportDialog {
