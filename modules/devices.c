@@ -627,7 +627,10 @@ gchar *callback_processors()
 
 gchar *callback_dmi()
 {
-    return g_strdup(dmi_info);
+    return g_strdup_printf("%s"
+                           "[$ShellParam$]\n"
+                           "ViewType=5\n",
+                           dmi_info);
 }
 
 gchar *callback_dmi_mem()
@@ -646,6 +649,7 @@ gchar *callback_battery()
 {
     return g_strdup_printf("%s\n"
 			   "[$ShellParam$]\n"
+			   "ViewType=5\n"
 			   "ReloadInterval=4000\n", battery_list);
 }
 

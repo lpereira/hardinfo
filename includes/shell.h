@@ -84,7 +84,7 @@ struct _Shell {
     GtkWidget		*hbox, *vpaned;
 
     ShellTree		*tree;
-    ShellInfoTree	*info_tree, *moreinfo_tree;
+    ShellInfoTree	*info_tree;
     ShellModule		*selected_module;
     ShellModuleEntry	*selected;
     ShellNote		*note;
@@ -106,11 +106,9 @@ struct _Shell {
 };
 
 struct _DetailView {
-    GtkWidget		*header;
     GtkWidget		*scroll;
     GtkWidget		*view;
-
-    GSList		*items;
+    GtkWidget		*detail_box;
 };
 
 struct _ShellTree {
