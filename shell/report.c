@@ -51,17 +51,17 @@ void report_subtitle(ReportContext * ctx, gchar * text)
 void report_subsubtitle(ReportContext * ctx, gchar * text)
 { ctx->subsubtitle(ctx, text); }
 
-void report_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean highlight)
-{ ctx->keyvalue(ctx, key, value, highlight); }
+void report_key_value(ReportContext * ctx, gchar * key, gchar * value)
+{ ctx->keyvalue(ctx, key, value); }
 
-void report_details_start(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight)
-{ ctx->details_start(ctx, key, value, highlight); }
+void report_details_start(ReportContext *ctx, gchar *key, gchar *value)
+{ ctx->details_start(ctx, key, value); }
 
 void report_details_section(ReportContext *ctx, gchar *label)
 { ctx->details_section(ctx, label); }
 
-void report_details_keyvalue(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight)
-{ ctx->details_keyvalue(ctx, key, value, highlight); }
+void report_details_keyvalue(ReportContext *ctx, gchar *key, gchar *value)
+{ ctx->details_keyvalue(ctx, key, value); }
 
 void report_details_end(ReportContext *ctx)
 { ctx->details_end(ctx); }
@@ -87,22 +87,38 @@ gint report_get_visible_columns(ReportContext *ctx)
     return columns;
 }
 
+gchar *make_icon_html(const gchar *file, const gchar *alt_text) {
+    if (!file)
+        return;
+    gchar *path = g_build_filename(params.path_data, "pixmaps", file, NULL);
+    gchar *contents = NULL;
+    gsize length = 0;
+    //printf("make_icon_html(%s, %s): %d bytes\n", file, alt_text, (int)length);
+    if ( g_file_get_contents(path, &contents, &length, NULL) ) {
+        const char ctype[] = "image/png";
+        gchar *b64data = g_base64_encode(contents, length);
+        gchar *ret = g_strdup_printf(
+            "<img src=\"data:%s;base64,%s\" alt=\"%s\">",
+            ctype, b64data,
+            alt_text ? alt_text : "");
+        g_free(b64data);
+        g_free(contents);
+        g_free(path);
+        return ret;
+    }
+    return "";
+}
+
 void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 {
     gchar **keys;
     const gchar *group = "$ShellParam$";
 
-    /* FIXME: sometime in the future we'll save images in the report. this
-       flag will be set if we should support that.
-
-       so i don't forget how to encode the images inside the html files:
-       https://en.wikipedia.org/wiki/Data:_URI_scheme */
-
-    ctx->is_image_enabled = (g_key_file_get_boolean(keyfile,
-						    group,
-						    "ViewType",
-						    NULL) == SHELL_VIEW_PROGRESS);
-
+    if (ctx->icons) {
+        g_hash_table_remove_all(ctx->icons);
+        ctx->icons = NULL;
+    }
+    ctx->icons = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL); //g_free
 
     keys = g_key_file_get_keys(keyfile, group, NULL, NULL);
     if (keys) {
@@ -146,6 +162,13 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
             ctx->columns &= ~REPORT_COL_VALUE;
             ctx->columns |= REPORT_COL_PROGRESS;
           }
+        } else if (g_str_has_prefix(key, "Icon$")) {
+            gchar *ikey = g_utf8_strchr(key, -1, '$');
+            gchar *tag = key_mi_tag(ikey);
+            gchar *icon = g_key_file_get_value(keyfile, group, key, NULL);
+            gchar *icon_html = make_icon_html(icon, tag);
+            g_hash_table_insert(ctx->icons, tag, icon_html);
+            g_free(icon);
         }
       }
 
@@ -154,9 +177,9 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 
 }
 
-static void report_html_details_start(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight) {
+static void report_html_details_start(ReportContext *ctx, gchar *key, gchar *value) {
     guint cols = report_get_visible_columns(ctx);
-    report_key_value(ctx, key, value, highlight);
+    report_key_value(ctx, key, value);
     ctx->parent_columns = ctx->columns;
     ctx->columns = REPORT_COL_VALUE;
     ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\"><table class=\"details\">\n", ctx->output, cols);
@@ -168,13 +191,13 @@ static void report_html_details_end(ReportContext *ctx) {
     ctx->parent_columns = 0;
 }
 
-void report_details(ReportContext *ctx, gchar *key, gchar *value, gboolean highlight, gchar *details)
+void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details)
 {
     GKeyFile *key_file = g_key_file_new();
     gchar **groups;
     gint i;
 
-    report_details_start(ctx, key, value, highlight);
+    report_details_start(ctx, key, value);
     ctx->in_details = TRUE;
 
     g_key_file_load_from_data(key_file, details, strlen(details), 0, NULL);
@@ -213,14 +236,7 @@ void report_details(ReportContext *ctx, gchar *key, gchar *value, gboolean highl
                     }
                 }
 
-                if ( key_is_flagged(key) ) {
-                    if (key_wants_details(key)) {
-                        /* huh? */
-                    }
-                    report_key_value(ctx, strchr(key + 1, '$') + 1, value, key_is_highlighted(key) );
-                } else {
-                    report_key_value(ctx, key, value, FALSE);
-                }
+                report_key_value(ctx, key, value);
 
             }
 
@@ -319,54 +335,47 @@ void report_table(ReportContext * ctx, gchar * text)
 
         report_subsubtitle(ctx, group);
 
-#if 0
-        if (ctx->is_image_enabled) {
-            report_embed_image(ctx, key_file, group);
-        } else {
-#endif
-            keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
-            for (j = 0; keys[j]; j++) {
-                gchar *key = keys[j];
-                gchar *value;
+        keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
+        for (j = 0; keys[j]; j++) {
+            gchar *key = keys[j];
+            gchar *value;
 
-                value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+            value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
 
-                if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
-                    strend(key, '#');
+            if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
+                strend(key, '#');
 
-                    if (g_str_equal(value, "...")) {
-                        g_free(value);
-                        if (!(value = ctx->entry->fieldfunc(key))) {
-                            value = g_strdup("...");
-                        }
+                if (g_str_equal(value, "...")) {
+                    g_free(value);
+                    if (!(value = ctx->entry->fieldfunc(key))) {
+                        value = g_strdup("...");
                     }
-
-                    if ( key_is_flagged(key) ) {
-                        gchar *mi_tag = key_mi_tag(key);
-                        gchar *mi_data = NULL; /*const*/
-
-                        if (key_wants_details(key) || params.force_all_details)
-                            mi_data = ctx->entry->morefunc(mi_tag);
-
-                        if (mi_data)
-                            report_details(ctx, (gchar*)key_get_name(key), value, key_is_highlighted(key), mi_data);
-                        else
-                            report_key_value(ctx, (gchar*)key_get_name(key), value, key_is_highlighted(key) );
-
-                        g_free(mi_tag);
-                    } else {
-                        report_key_value(ctx, key, value, FALSE);
-                    }
-
                 }
 
-                g_free(value);
+                if ( key_is_flagged(key) ) {
+                    gchar *mi_tag = key_mi_tag(key);
+                    gchar *mi_data = NULL; /*const*/
+
+                    if (key_wants_details(key) || params.force_all_details)
+                        mi_data = ctx->entry->morefunc(mi_tag);
+
+                    if (mi_data)
+                        report_details(ctx, key, value, mi_data);
+                    else
+                        report_key_value(ctx, key, value);
+
+                    g_free(mi_tag);
+                } else {
+                    report_key_value(ctx, key, value);
+                }
+
             }
 
-            g_strfreev(keys);
-#if 0
+            g_free(value);
         }
-#endif
+
+        g_strfreev(keys);
+
         g_free(tmpgroup);
     }
 
@@ -387,10 +396,12 @@ static void report_html_header(ReportContext * ctx)
 	 "    .title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n"
 	 "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n"
 	 "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n"
-	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; padding-left: 30px }\n"
+	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; }\n"
 	 "    .value  { font: 80%% sans-serif; color: #505050 }\n"
 	 "    .hilight  { font: bold 110%% sans-serif; color: #000000; background: #ffff66 }\n"
 	 "    table.details { margin-left: 50px; }\n"
+	 "    td.icon { width: 2.4em; }\n"
+	 "    .icon img  { width: 1.2em; padding-left: 1.2em; }\n"
 	 "</style>\n" "</head><body>\n",
 	 VERSION);
 }
@@ -423,7 +434,7 @@ static void report_html_subtitle(ReportContext * ctx, gchar * text)
     ctx->output = h_strdup_cprintf("<table><tr><td colspan=\"%d\" class=\"stit"
 				  "le\">%s</td></tr>\n",
 				  ctx->output,
-				  columns,
+				  columns+1,
 				  text);
 }
 
@@ -434,28 +445,36 @@ static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
     ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\" class=\"ssti"
 				  "tle\">%s</td></tr>\n",
 				  ctx->output,
-				  columns,
+				  columns+1,
 				  text);
 }
 
 static void
-report_html_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean highlight)
+report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
     gint i, mc;
 
+    gboolean highlight = key_is_highlighted(key);
+    gchar *tag = key_mi_tag(key);
+    const gchar *icon_html = tag ? g_hash_table_lookup(ctx->icons, tag) : NULL;
+    g_free(tag);
+    if (!icon_html) icon_html = "";
+
+    gchar *name = (gchar*)key_get_name(key);
+
     if (columns == 2) {
-      ctx->output = h_strdup_cprintf("<tr%s><td class=\"field\">%s</td>"
+      ctx->output = h_strdup_cprintf("<tr%s><td class=\"icon\">%s</td><td class=\"field\">%s</td>"
                                     "<td class=\"value\">%s</td></tr>\n",
                                     ctx->output,
                                     highlight ? " class=\"hilight\"" : "",
-                                    key, value);
+                                    icon_html, name, value);
     } else {
       values = g_strsplit(value, "|", columns);
       mc = g_strv_length(values) - 1;
 
-      ctx->output = h_strdup_cprintf("\n<tr%s>\n<td class=\"field\">%s</td>", ctx->output, highlight ? " class=\"hilight\"" : "", key);
+      ctx->output = h_strdup_cprintf("\n<tr%s>\n<td class=\"icon\">%s</td><td class=\"field\">%s</td>", ctx->output, highlight ? " class=\"hilight\"" : "", icon_html, name);
 
       for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
@@ -515,7 +534,7 @@ static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
 }
 
 static void
-report_text_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean highlight)
+report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
@@ -524,16 +543,19 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value, gboolean 
     if (!ctx->in_details)
         indent[0] = 0;
 
+    gboolean highlight = key_is_highlighted(key);
+    gchar *name = (gchar*)key_get_name(key);
+
     if (columns == 2 || ctx->in_details) {
       if (strlen(value))
-          ctx->output = h_strdup_cprintf("%s%s%s\t\t: %s\n", ctx->output, indent, highlight ? "* " : "", key, value);
+          ctx->output = h_strdup_cprintf("%s%s%s\t\t: %s\n", ctx->output, indent, highlight ? "* " : "", name, value);
       else
-          ctx->output = h_strdup_cprintf("%s%s%s\n", ctx->output, indent, highlight ? "* " : "", key);
+          ctx->output = h_strdup_cprintf("%s%s%s\n", ctx->output, indent, highlight ? "* " : "", name);
     } else {
       values = g_strsplit(value, "|", columns);
       mc = g_strv_length(values) - 1;
 
-      ctx->output = h_strdup_cprintf("%s%s%s", ctx->output, indent, highlight ? "* " : "", key);
+      ctx->output = h_strdup_cprintf("%s%s%s", ctx->output, indent, highlight ? "* " : "", name);
 
       for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("\t%s",
@@ -754,6 +776,8 @@ ReportContext *report_context_shell_new()
 void report_context_free(ReportContext * ctx)
 {
     g_hash_table_destroy(ctx->column_titles);
+    if(ctx->icons)
+        g_hash_table_destroy(ctx->icons);
     g_free(ctx->output);
     g_free(ctx);
 }
