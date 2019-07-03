@@ -512,8 +512,10 @@ gchar *callback_summary(void)
 {
     struct Info *info = info_new();
 
+    info_set_view_type(info, SHELL_VIEW_DETAIL);
+
     info_add_group(info, _("Computer"),
-        info_field_printf(_("Processor"), "%s",
+        info_field_printf(_("Processor"), "<a href=\"some/proc\">%s</a>",
             module_call_method("devices::getProcessorName")),
         info_field_update(_("Memory"), 1000),
         info_field_printf(_("Machine Type"), "%s",
@@ -546,6 +548,8 @@ gchar *callback_os(void)
 {
     struct Info *info = info_new();
     struct InfoField distro = info_field(_("Distribution"), computer->os->distro);
+
+    info_set_view_type(info, SHELL_VIEW_DETAIL);
 
     if (computer->os->distrocode) {
         distro = info_field_with_icon(distro,
@@ -580,6 +584,8 @@ gchar *callback_os(void)
 gchar *callback_security(void)
 {
     struct Info *info = info_new();
+
+    info_set_view_type(info, SHELL_VIEW_DETAIL);
 
     info_add_group(info, _("HardInfo"),
         info_field(_("HardInfo running as"), (getuid() == 0) ? _("Superuser") : _("User")),

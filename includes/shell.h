@@ -109,6 +109,7 @@ struct _DetailView {
     GtkWidget		*header;
     GtkWidget		*scroll;
     GtkWidget		*view;
+    GtkWidget		*detail_box;
 
     GSList		*items;
 };

@@ -674,9 +674,9 @@ DetailView *detail_view_new(void)
     detail_view = g_new0(DetailView, 1);
     detail_view->scroll = gtk_scrolled_window_new(NULL, NULL);
 #if GTK_CHECK_VERSION(3, 0, 0)
-    detail_view->view = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    detail_view->view = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 #else
-    detail_view->view = gtk_vbox_new(FALSE, 5);
+    detail_view->view = gtk_vbox_new(FALSE, 0);
 #endif
     detail_view->items = NULL;
 
@@ -1073,7 +1073,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 
 static void
 group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
-		     const gchar * group, gchar ** keys, gboolean reload)
+		     const gchar * group, gchar ** keys)
 {
     if (g_str_equal(group, "$ShellParam$")) {
         gboolean headers_visible = FALSE;
@@ -1146,9 +1146,6 @@ group_handle_special(GKeyFile * key_file, ShellModuleEntry * entry,
 		shell->_order_type = g_key_file_get_integer(key_file,
 							    group,
 							    key, NULL);
-	    } else if (g_str_equal(key, "ViewType")) {
-		set_view_type(g_key_file_get_integer(key_file, group,
-						     key, NULL), reload);
 	    } else if (g_str_has_prefix(key, "Icon$")) {
 		GtkTreeIter *iter;
 		const gchar *first_dollar = g_utf8_strchr(key, -1, '$');
@@ -1195,12 +1192,12 @@ static void group_handle_normal(GKeyFile* key_file, ShellModuleEntry* entry,
 {
     GtkTreeIter parent;
     GtkTreeStore* store = GTK_TREE_STORE(shell->info_tree->model);
-    gchar* tmp = g_strdup(group);
     gint i;
 
     if (ngroups > 1) {
         gtk_tree_store_append(store, &parent, NULL);
 
+        gchar* tmp = g_strdup(group);
         strend(tmp, '#');
         gtk_tree_store_set(store, &parent, INFO_TREE_COL_NAME, tmp, -1);
         g_free(tmp);
@@ -1453,8 +1450,7 @@ static void
 module_selected_show_info_list(GKeyFile *key_file,
                                ShellModuleEntry *entry,
                                gchar **groups,
-                               gsize ngroups,
-                               gboolean reload)
+                               gsize ngroups)
 {
     GtkTreeStore *store = GTK_TREE_STORE(shell->info_tree->model);
     gint i;
@@ -1464,18 +1460,13 @@ module_selected_show_info_list(GKeyFile *key_file,
     g_object_ref(shell->info_tree->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info_tree->view), NULL);
 
-    for (i = 0; groups[i]; i++) {
-	if (groups[i][0] == '$')
-	    ngroups--;
-    }
-
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info_tree->view), FALSE);
 
     for (i = 0; groups[i]; i++) {
 	gchar **keys = g_key_file_get_keys(key_file, groups[i], NULL, NULL);
 
 	if (groups[i][0] == '$') {
-	    group_handle_special(key_file, entry, groups[i], keys, reload);
+	    group_handle_special(key_file, entry, groups[i], keys);
 	} else {
 	    group_handle_normal(key_file, entry, groups[i], keys, ngroups);
 	}
@@ -1495,6 +1486,108 @@ module_selected_show_info_list(GKeyFile *key_file,
         gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info_tree->view),
                                          TRUE);
     }
+}
+
+static void
+destroy_widget(GtkWidget *widget, gpointer user_data)
+{
+    gtk_widget_destroy(widget);
+}
+
+static void
+module_selected_show_info_detail(GKeyFile *key_file,
+                                 ShellModuleEntry *entry,
+                                 gchar **groups,
+                                 gint ngroups)
+{
+    gint i;
+
+    gtk_container_forall(GTK_CONTAINER(shell->detail_view->view),
+                         destroy_widget, NULL);
+
+    for (i = 0; groups[i]; i++) {
+        gsize nkeys;
+	gchar **keys = g_key_file_get_keys(key_file, groups[i], &nkeys, NULL);
+
+	if (groups[i][0] == '$') {
+	    group_handle_special(key_file, entry, groups[i], keys);
+	} else {
+	    if (ngroups > 1) {
+	        gchar *group = g_strdup(groups[i]);
+	        GtkWidget *label = gtk_label_new(NULL);
+
+                strend(group, '#');
+	        gchar *tmp = g_strdup_printf("<b>%s</b>", group);
+	        gtk_label_set_markup(GTK_LABEL(label), tmp);
+	        g_free(tmp);
+	        g_free(group);
+
+	        gtk_misc_set_alignment(GTK_MISC(label), 0.0f, 1.0f);
+
+	        gtk_box_pack_start(GTK_BOX(shell->detail_view->view),
+                                   label, FALSE, FALSE, 6);
+	    }
+
+	    GtkWidget *table = gtk_table_new(nkeys, 2, FALSE);
+	    gtk_box_pack_start(GTK_BOX(shell->detail_view->view),
+                               table, FALSE, FALSE, 6);
+
+            gint j;
+            for (j = 0; keys[j]; j++) {
+                gchar *key;
+                gchar *key_markup;
+                gchar *value = g_key_file_get_value(key_file, groups[i], keys[j], NULL);
+
+                if (entry->fieldfunc && value && g_str_equal(value, "...")) {
+                    g_free(value);
+                    value = entry->fieldfunc(keys[j]);
+                }
+
+                if (key_is_flagged(keys[j])) {
+                    key = g_strdup(key_get_name(keys[j]));
+                } else {
+                    key = g_strdup(keys[j]);
+                }
+                strend(key, '#');
+
+                key_markup = g_strdup_printf("<span color=\"#666\">%s</span>", key);
+
+                GtkWidget *key_label = gtk_label_new(key_markup);
+                GtkWidget *value_label = gtk_label_new(value);
+
+                gtk_label_set_use_markup(GTK_LABEL(key_label), TRUE);
+                gtk_label_set_use_markup(GTK_LABEL(value_label), TRUE);
+                gtk_label_set_selectable(GTK_LABEL(value_label), TRUE);
+                gtk_label_set_single_line_mode(GTK_LABEL(value_label), TRUE);
+                gtk_misc_set_alignment(GTK_MISC(value_label), 0.0f, 0.5f);
+                gtk_misc_set_alignment(GTK_MISC(key_label), 1.0f, 0.5f);
+
+                gtk_table_attach(GTK_TABLE(table),
+                                 key_label,
+                                 0, 1,
+                                 j, j + 1,
+                                 GTK_FILL,
+                                 GTK_FILL,
+                                 12, 4);
+
+                gtk_table_attach(GTK_TABLE(table),
+                                 value_label,
+                                 1, 2,
+                                 j, j + 1,
+                                 GTK_FILL,
+                                 GTK_FILL,
+                                 0, 4);
+
+                g_free(value);
+                g_free(key);
+                g_free(key_markup);
+            }
+            
+            gtk_widget_show_all(shell->detail_view->view);
+	}
+
+	g_strfreev(keys);
+    }    
 }
 
 static void
@@ -1522,7 +1615,16 @@ module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
 
     gchar **groups = g_key_file_get_groups(key_file, &ngroups);
 
-    module_selected_show_info_list(key_file, entry, groups, ngroups, reload);
+    for (i = 0; groups[i]; i++) {
+	if (groups[i][0] == '$')
+	    ngroups--;
+    }
+
+    if (shell->view_type == SHELL_VIEW_DETAIL) {
+        module_selected_show_info_detail(key_file, entry, groups, ngroups);
+    } else {
+        module_selected_show_info_list(key_file, entry, groups, ngroups);
+    }
 
     g_strfreev(groups);
     g_key_file_free(key_file);
