@@ -40,7 +40,7 @@ void info_group_add_fieldsv(struct InfoGroup *group, va_list ap)
     while (1) {
         struct InfoField field = va_arg(ap, struct InfoField);
 
-        if (!field.name)
+        if (field.magic == INFO_LAST_MARKER)
             break;
         g_array_append_val(group->fields, field);
     }
@@ -72,23 +72,6 @@ struct InfoGroup *info_add_group(struct Info *info, const gchar *group_name, ...
     return &g_array_index(info->groups, struct InfoGroup, info->groups->len - 1);
 }
 
-struct InfoField info_field(const gchar *name, const gchar *value)
-{
-    return (struct InfoField) {
-        .name = name,
-        .value = value,
-    };
-}
-
-struct InfoField info_field_update(const gchar *name, int update_interval)
-{
-    return (struct InfoField) {
-        .name = name,
-        .value = "...",
-        .update_interval = update_interval,
-    };
-}
-
 struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
 {
     gchar *value;
@@ -103,11 +86,6 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
         .value = value,
         .free_value_on_flatten = TRUE,
     };
-}
-
-struct InfoField info_field_last(void)
-{
-    return (struct InfoField) {};
 }
 
 void info_add_computed_group(struct Info *info, const gchar *name, const gchar *value)

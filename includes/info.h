@@ -61,6 +61,7 @@ struct InfoField {
     unsigned int flags;
 
     gboolean free_value_on_flatten;
+    int magic;
 };
 
 struct Info *info_new(void);
@@ -71,11 +72,17 @@ void info_add_computed_group(struct Info *info, const gchar *name, const gchar *
 void info_group_add_fields(struct InfoGroup *group, ...);
 void info_group_add_fieldsv(struct InfoGroup *group, va_list ap);
 
-struct InfoField info_field(const gchar *name, const gchar *value);
 struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
     __attribute__((format(printf, 2, 3)));
-struct InfoField info_field_update(const gchar *name, int update_interval);
-struct InfoField info_field_last(void);
+
+#define INFO_LAST_MARKER 102
+#define info_field_full(...) (struct InfoField) { \
+    .magic = 3, \
+    __VA_ARGS__ \
+}
+#define info_field(n, v) info_field_full(.name = (n), .value = (v))
+#define info_field_update(n, ui) info_field_full(.name = (n), .value = "...", .update_interval = (ui))
+#define info_field_last() (struct InfoField){.magic = INFO_LAST_MARKER}
 
 static inline struct InfoField info_field_with_icon(struct InfoField field, const gchar *icon)
 {
