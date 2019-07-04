@@ -43,6 +43,9 @@ static const char mobo_location[] = "System Board Or Motherboard";
 static const char mobo_shorter[] = "Mainboard";
 static const dmi_type dta = 16; /* array */
 static const dmi_type dtm = 17; /* socket */
+static const char mem_icon[] = "memory.png";
+static const char array_icon[] = "devices.png";
+static const char empty_icon[] = "";
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
@@ -617,32 +620,43 @@ gchar *make_spd_section(spd_data *spd) {
     return ret;
 }
 
+gchar *tag_make_safe_inplace(gchar *tag) {
+    if (!tag)
+        return tag;
+    if (!g_utf8_validate(tag, -1, NULL))
+        return tag; //TODO: reconsider
+    gchar *p = tag, *pd = tag;
+    while(*p) {
+        gchar *np = g_utf8_next_char(p);
+        gunichar c = g_utf8_get_char_validated(p, -1);
+        int l = g_unichar_to_utf8(c, NULL);
+        if (l == 1 && g_unichar_isalnum(c)) {
+            g_unichar_to_utf8(c, pd);
+        } else {
+            *pd = '_';
+        }
+        p = np;
+        pd++;
+    }
+    return tag;
+}
+
 gchar *memory_devices_get_info() {
-    gchar *ret = g_strdup_printf(
-        "[$ShellParam$]\nViewType=1\n"
-        "ColumnTitle$TextValue=%s\n" /* Locator */
-        "ColumnTitle$Extra1=%s\n"  /* Size */
-        "ColumnTitle$Extra2=%s\n"  /* Vendor */
-        "ColumnTitle$Value=%s\n"     /* Part */
-        "ShowColumnHeaders=true\n"
-        "[%s]\n",
-        _("Locator"),
-        _("Size"),
-        _("Vendor"),
-        _("Part"),
-        _("Memory Device List")
-        );
+    gchar *icons = g_strdup("");
+    gchar *ret = g_strdup_printf("[%s]\n", _("Memory Device List"));
     GSList *l = NULL;
     sketchy_info = FALSE;
-    gchar key_prefix[] = "DEV";
+    gchar tag_prefix[] = "DEV";
 
     dmi_mem *mem = dmi_mem_new();
 
     /* Arrays */
     for(l = mem->arrays; l; l = l->next) {
         dmi_mem_array *a = (dmi_mem_array*)l->data;
-        gchar *key = g_strdup_printf("%s", a->locator);
+        gchar *tag = g_strdup_printf("%s", a->locator);
         gchar *size_str = NULL;
+
+        tag_make_safe_inplace(tag);
 
         if (a->size_MiB_max > 1024 && (a->size_MiB_max % 1024 == 0)
             && a->size_MiB_present > 1024 && (a->size_MiB_present % 1024 == 0) )
@@ -680,12 +694,13 @@ gchar *memory_devices_get_info() {
                         _("Devices (Populated / Sockets)"), a->devs_populated, a->devs,
                         _("Types Present"), a->ram_types, UNKIFNULL2(types_str)
                         );
-        moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+        moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
         ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
                 ret,
-                key, a->locator, UNKIFNULL2(types_str), size_str
+                tag, a->locator, UNKIFNULL2(types_str), size_str
                 );
-        g_free(key);
+        icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, array_icon);
+        g_free(tag);
         g_free(size_str);
         g_free(types_str);
     }
@@ -693,7 +708,8 @@ gchar *memory_devices_get_info() {
     /* Sockets */
     for(l = mem->sockets; l; l = l->next) {
         dmi_mem_socket *s = (dmi_mem_socket*)l->data;
-        gchar *key = g_strdup_printf("%s", s->full_locator);
+        gchar *tag = g_strdup_printf("%s", s->full_locator);
+        tag_make_safe_inplace(tag);
 
         if (s->populated) {
             gchar *vendor_str = NULL;
@@ -750,14 +766,15 @@ gchar *memory_devices_get_info() {
                             spd ? spd : ""
                             );
             g_free(spd);
-            moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+            moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
             const gchar *mfgr = s->mfgr ? vendor_get_shortest_name(s->mfgr) : NULL;
             ret = h_strdup_cprintf("$!%s$%s=%s|%s|%s\n",
                     ret,
-                    key,
+                    tag,
                     mem->unique_short_locators ? s->short_locator : s->full_locator,
                     UNKIFNULL2(s->partno), size_str, UNKIFNULL2(mfgr)
                     );
+            icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, mem_icon);
             g_free(vendor_str);
             g_free(size_str);
         } else {
@@ -772,20 +789,23 @@ gchar *memory_devices_get_info() {
                             _("Bank Locator"), UNKIFNULL2(s->bank_locator),
                             _("Size"), _("(Empty)")
                             );
-            moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+            moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
             ret = h_strdup_cprintf("$%s$%s=|%s\n",
                     ret,
-                    key,
+                    tag,
                     mem->unique_short_locators ? s->short_locator : s->full_locator,
                     _("(Empty)")
                     );
+            icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, empty_icon);
         }
-        g_free(key);
+        g_free(tag);
     }
 
     /* No DMI Array, show SPD totals */
     if (!mem->arrays && mem->spd) {
         gchar *key = g_strdup("SPD:*");
+        gchar *tag = g_strdup(key);
+        tag_make_safe_inplace(tag);
         gchar *types_str = NULL;
         gchar *size_str = NULL;
 
@@ -810,12 +830,14 @@ gchar *memory_devices_get_info() {
                         _("Devices"), g_slist_length(mem->spd),
                         _("Types Present"), mem->spd_ram_types, UNKIFNULL2(types_str)
                         );
-        moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+        moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
         ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
                 ret,
-                key, key, UNKIFNULL2(types_str), size_str
+                tag, key, UNKIFNULL2(types_str), size_str
                 );
+        icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, array_icon);
         g_free(key);
+        g_free(tag);
         g_free(size_str);
         g_free(types_str);
     }
@@ -825,6 +847,9 @@ gchar *memory_devices_get_info() {
         spd_data *s = (spd_data*)l->data;
         if (s->dmi_socket) continue; /* claimed by DMI */
         gchar *key = g_strdup_printf("SPD:%s", s->dev);
+        gchar *tag = g_strdup(key);
+        tag_make_safe_inplace(tag);
+
         gchar *vendor_str = NULL;
         if (s->vendor) {
             if (s->vendor->url)
@@ -839,27 +864,47 @@ gchar *memory_devices_get_info() {
 
         gchar *details = make_spd_section(s);
 
-        moreinfo_add_with_prefix(key_prefix, key, details); /* moreinfo now owns *details */
+        moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
         const gchar *mfgr = s->vendor_str ? vendor_get_shortest_name(s->vendor_str) : NULL;
         ret = h_strdup_cprintf("$!%s$%s%s=%s|%s|%s\n",
                 ret,
-                key, key, problem_marker(), UNKIFEMPTY2(s->partno), size_str, UNKIFNULL2(mfgr)
+                tag, key, problem_marker(), UNKIFEMPTY2(s->partno), size_str, UNKIFNULL2(mfgr)
                 );
+        icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, mem_icon);
         g_free(vendor_str);
         g_free(size_str);
         g_free(key);
+        g_free(tag);
     }
 
     no_handles = FALSE;
     if(mem->empty) {
         no_handles = TRUE;
+        g_free(ret);
         ret = g_strdup_printf("[%s]\n%s=%s\n" "[$ShellParam$]\nViewType=0\n",
-                _("Socket Information"), _("Result"),
+                _("Memory Device List"), _("Result"),
                 (getuid() == 0)
                 ? _("(Not available)")
                 : _("(Not available; Perhaps try running HardInfo as root.)") );
+    } else {
+        ret = h_strdup_cprintf(
+            "[$ShellParam$]\nViewType=1\n"
+            "ColumnTitle$TextValue=%s\n" /* Locator */
+            "ColumnTitle$Extra1=%s\n"  /* Size */
+            "ColumnTitle$Extra2=%s\n"  /* Vendor */
+            "ColumnTitle$Value=%s\n"     /* Part */
+            "ShowColumnHeaders=true\n"
+            "%s",
+            ret,
+            _("Locator"),
+            _("Size"),
+            _("Vendor"),
+            _("Part"),
+            icons
+            );
     }
 
+    g_free(icons);
     dmi_mem_free(mem);
     return ret;
 }
