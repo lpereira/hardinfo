@@ -75,12 +75,12 @@ dmi_mem_size dmi_read_memory_str_to_MiB(const char *memstr) {
         else if (SEQ(l, "MB")) ret = v;
         else if (SEQ(l, "kB")) {
             /* should never appear */
-            if (v % 1024) dmi_spd_msg("OMG kB!");
+            if (v % 1024) { dmi_spd_msg("OMG kB!"); }
             ret = v / 1024;
         }
         else if (SEQ(l, "bytes")) {
             /* should never appear */
-            if (v % 1024) dmi_spd_msg("OMG bytes!");
+            if (v % 1024) { dmi_spd_msg("OMG bytes!"); }
             ret = v / (1024 * 1024);
         }
     }
@@ -250,7 +250,7 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
         if (SEQ(s->type, "DRDRAM")) s->ram_type = DIRECT_RAMBUS;
         if (SEQ(s->type, "RDRAM")) s->ram_type = RAMBUS;
         if (s->ram_type)
-            dmi_ram_types |= (1 << s->ram_type-1);
+            dmi_ram_types |= (1 << (s->ram_type-1));
         s->type_detail = dmidecode_match("Type Detail", &dtm, &h);
         STR_IGNORE(s->type_detail, "None");
 
@@ -393,7 +393,7 @@ dmi_mem *dmi_mem_new() {
 
     dmi_handle_list *hla = dmidecode_handles(&dta);
     if (hla) {
-        int i = 0;
+        unsigned int i = 0;
         for(i = 0; i < hla->count; i++) {
             dmi_handle h = hla->handles[i];
             m->arrays = g_slist_append(m->arrays, dmi_mem_array_new(h));
@@ -403,7 +403,7 @@ dmi_mem *dmi_mem_new() {
 
     dmi_handle_list *hlm = dmidecode_handles(&dtm);
     if (hlm) {
-        int i = 0;
+        unsigned int i = 0;
         for(i = 0; i < hlm->count; i++) {
             dmi_handle h = hlm->handles[i];
             m->sockets = g_slist_append(m->sockets, dmi_mem_socket_new(h));
@@ -425,7 +425,7 @@ dmi_mem *dmi_mem_new() {
         spd_data *e = (spd_data*)l2->data;
         m->spd_size_MiB += e->size_MiB;
         if (e->type)
-            m->spd_ram_types |= (1 << e->type-1);
+            m->spd_ram_types |= (1 << (e->type-1));
     }
 
     m->unique_short_locators = TRUE;
@@ -434,7 +434,6 @@ dmi_mem *dmi_mem_new() {
 
         /* check for duplicate short_locator */
         if (m->unique_short_locators) {
-            gboolean has_duplicate = FALSE;
             for(l2 = l->next; l2; l2 = l2->next) {
                 dmi_mem_socket *d = (dmi_mem_socket*)l2->data;
                 if (SEQ(s->short_locator, d->short_locator)) {
@@ -451,7 +450,7 @@ dmi_mem *dmi_mem_new() {
             if (s->populated)
                 a->devs_populated++;
             if (s->ram_type)
-                a->ram_types |= (1 << s->ram_type-1);
+                a->ram_types |= (1 << (s->ram_type-1));
         }
     }
 
@@ -461,7 +460,6 @@ dmi_mem *dmi_mem_new() {
         int loops = g_slist_length(sock_queue) * 4;
         while(sock_queue) {
             if (loops-- <= 0) break; /* something is wrong, give up */
-            dmi_spd_msg("match queue has %d\n", g_slist_length(sock_queue) );
             spd_data *best = NULL;
             int best_score = 0;
             dmi_mem_socket *s = (dmi_mem_socket*)sock_queue->data;
@@ -472,17 +470,14 @@ dmi_mem *dmi_mem_new() {
             for(l2 = m->spd; l2; l2 = l2->next) {
                 spd_data *e = (spd_data*)l2->data;
                 int score = dmi_spd_match_score(s, e);
-                dmi_spd_msg("... s:%s vs e:%s%s = %d (best_score = %d)\n", s->full_locator, e->dev, e->dmi_socket ? "*" : "", score, best_score);
                 if (score > best_score) {
                     if (score > e->match_score) {
-                        dmi_spd_msg("----- new best!\n");
                         best = e;
                         best_score = score;
                     }
                 }
             }
             if (best) {
-                dmi_spd_msg("*** best for s:%s was e:%s with %d\n", s->full_locator, best->dev, best_score);
                 if (best->dmi_socket) {
                     /* displace */
                     dmi_mem_socket *old_sock = best->dmi_socket;
@@ -493,16 +488,12 @@ dmi_mem *dmi_mem_new() {
                     best->match_score = best_score;
                     s->spd = best;
                 } else {
-                    dmi_spd_msg("*** no conflict!\n");
                     best->dmi_socket = s;
                     best->match_score = best_score;
                     s->spd = best;
                 }
-            } else
-                dmi_spd_msg("no match!\n");
+            }
         }
-
-        dmi_spd_msg("------- done matching.\n");
 
         /* fill any missing data in DMI that is
          * provided by the matched SPD */
@@ -975,7 +966,7 @@ gboolean memory_devices_hinote(const char **msg) {
     gboolean best_state = FALSE;
     if (has_dmi && has_root &&
         ((has_eeprom && !spd_ddr4_partial_data)
-        || has_ee1004 && !ddr3_ee1004) )
+        || (has_ee1004 && !ddr3_ee1004) ) )
         best_state = TRUE;
 
     if (!best_state) {
