@@ -203,7 +203,7 @@ set_source_files_properties(
 	modules/devices/dmi_memory.c
 #	modules/devices/spd-decode.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99 -Wno-deprecated-declarations"
+	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-deprecated-declarations -Wno-switch"
 )
 
 foreach (_module ${HARDINFO_MODULES})
