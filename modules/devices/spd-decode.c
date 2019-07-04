@@ -65,7 +65,7 @@ static const char *ram_types[] = {"Unknown",   "Direct Rambus",    "Rambus",    
 struct dmi_mem_socket;
 typedef struct {
     unsigned char bytes[512];
-    unsigned char dev[32];  /* %1d-%04d\0 */
+    char dev[32];  /* %1d-%04d\0 */
     int spd_driver; /* 0 = eeprom, 1 = ee1004 */
     int spd_size;
 
@@ -256,6 +256,7 @@ static void decode_sdr_module_refresh_rate(unsigned char *bytes, char **refresh_
 }
 
 static void decode_sdr_module_detail(unsigned char *bytes, char *type_detail) {
+    bytes = bytes; /* silence unused warning */
     if (type_detail) {
         snprintf(type_detail, 255, "SDR");
     }
@@ -657,7 +658,6 @@ static void decode_module_manufacturer(unsigned char *bytes, char **manufacturer
     unsigned char first;
     int ai = 0;
     int len = 8;
-    unsigned char *initial = bytes;
 
     if (!spd_written(bytes, 8)) {
         out = "Undefined";
@@ -886,7 +886,6 @@ static void decode_ddr4_module_detail(unsigned char *bytes, char *type_detail) {
 static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
     float ddr_clock;
     int pc4_speed, xmp_majv = -1, xmp_minv = -1;
-    const char *dram_manf;
     char *speed_timings = NULL, *xmp_profile = NULL, *xmp = NULL, *manf_date = NULL;
     static gchar *out;
 
@@ -1021,7 +1020,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
 
         RamType ram_type;
 
-        memset(bytes, 0, 512);
+        memset(bytes, 0, 512); /* clear */
         spd_size = read_spd(spd_path, 0, max_size, use_sysfs, bytes);
         ram_type = decode_ram_type(bytes);
 
@@ -1078,6 +1077,8 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
             s->ddr4_no_ee1004 = s->ddr4_no_ee1004 || (spd_size < 512);
             spd_ddr4_partial_data = spd_ddr4_partial_data || s->ddr4_no_ee1004;
             break;
+        case UNKNOWN:
+            break;
         default:
             DEBUG("Unsupported EEPROM type: %s for %s\n", GET_RAM_TYPE_STR(ram_type), spd_path); continue;
             if (ram_type) {
@@ -1093,7 +1094,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
                 s->spd_driver = 1;
             s->spd_size = spd_size;
             s->type = ram_type;
-            spd_ram_types |= (1 << ram_type-1);
+            spd_ram_types |= (1 << (ram_type-1));
             switch (ram_type) {
             case SDR_SDRAM:
             case DDR_SDRAM:
@@ -1132,7 +1133,7 @@ static const struct SpdDriver spd_drivers[] = {
 GSList *spd_scan() {
     GDir *dir = NULL;
     GSList *eeprom_list = NULL, *dimm_list = NULL;
-    gchar *dimm_list_entry, *dir_entry, *list = NULL;
+    gchar *dimm_list_entry, *dir_entry;
     const struct SpdDriver *driver;
     gboolean driver_found = FALSE;
 
