@@ -679,10 +679,11 @@ gchar *processor_describe(GSList * processors) {
 }
 
 gchar *dmi_socket_info() {
-    gchar *ret = strdup("");
+    gchar *ret;
     dmi_type dt = 4;
     int i;
     dmi_handle_list *hl = dmidecode_handles(&dt);
+
     if (!hl) {
         ret = g_strdup_printf("[%s]\n%s=%s\n",
                 _("Socket Information"), _("Result"),
@@ -690,6 +691,7 @@ gchar *dmi_socket_info() {
                 ? _("(Not available)")
                 : _("(Not available; Perhaps try running HardInfo as root.)") );
     } else {
+        ret = g_strdup("");
         for(i = 0; i < hl->count; i++) {
             dmi_handle h = hl->handles[i];
             gchar *upgrade = dmidecode_match("Upgrade", &dt, &h);
