@@ -694,6 +694,8 @@ DetailView *detail_view_new(void)
     detail_view->view = gtk_vbox_new(FALSE, 0);
 #endif
 
+    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(detail_view->scroll),
+                                        GTK_SHADOW_IN);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(detail_view->scroll),
                                    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -1525,7 +1527,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
             gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
             g_free(tmp);
 
-            gtk_container_set_border_width(GTK_CONTAINER(frame), 4);
+            gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
             gtk_box_pack_start(GTK_BOX(shell->detail_view->view), frame, FALSE,
                                FALSE, 0);
 
