@@ -269,5 +269,7 @@ gchar *info_flatten(struct Info *info)
     g_string_append_printf(values, "[$ShellParam$]\n%s", shell_param->str);
 
     g_string_free(shell_param, TRUE);
+    g_free(info);
+
     return g_string_free(values, FALSE);
 }
