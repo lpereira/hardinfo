@@ -915,9 +915,12 @@ static gboolean reload_section(gpointer data)
             /* TODO:GTK3 */
 #else
             RANGE_SET_VALUE(info_tree, vscrollbar, pos_info_scroll);
-            RANGE_SET_VALUE(detail_view, vscrollbar, pos_detail_scroll);
 #endif
         }
+
+#if !GTK_CHECK_VERSION(3, 0, 0)
+        RANGE_SET_VALUE(detail_view, vscrollbar, pos_detail_scroll);
+#endif
 
         /* make the window drawable again */
 #if GTK_CHECK_VERSION(2, 14, 0)
