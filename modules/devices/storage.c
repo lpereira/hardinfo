@@ -93,8 +93,8 @@ gboolean __scan_udisks2_devices(void) {
 
         icon = NULL;
 
+        media_curr = disk->media;
         if (disk->media){
-            media_curr = disk->media_compatibility[i];
             for (j = 0; media_info[j].media != NULL; j++) {
                 if (g_strcmp0(disk->media, media_info[j].media) == 0) {
                     media_curr = media_info[j].label;
