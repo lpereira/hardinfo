@@ -2149,11 +2149,11 @@ static ShellTree *tree_new()
     return shelltree;
 }
 
-gboolean key_is_flagged(gchar *key) {
+gboolean key_is_flagged(const gchar *key) {
     return (key && *key == '$' && strchr(key+1, '$')) ? TRUE : FALSE;
 }
 
-gboolean key_is_highlighted(gchar *key) {
+gboolean key_is_highlighted(const gchar *key) {
     if (key_is_flagged(key)) {
         if (strchr(key, '*'))
             return TRUE;
@@ -2161,7 +2161,7 @@ gboolean key_is_highlighted(gchar *key) {
     return FALSE;
 }
 
-gboolean key_wants_details(gchar *key) {
+gboolean key_wants_details(const gchar *key) {
     if (key_is_flagged(key)) {
         if (strchr(key, '!'))
             return TRUE;
@@ -2169,8 +2169,8 @@ gboolean key_wants_details(gchar *key) {
     return FALSE;
 }
 
-gchar *key_mi_tag(gchar *key) {
-    gchar *p = key, *l, *t;
+gchar *key_mi_tag(const gchar *key) {
+    gchar *p = (gchar*)key, *l, *t;
 
     if (key_is_flagged(key)) {
         l = strchr(key+1, '$');
@@ -2186,7 +2186,7 @@ gchar *key_mi_tag(gchar *key) {
     return NULL;
 }
 
-const gchar *key_get_name(gchar *key) {
+const gchar *key_get_name(const gchar *key) {
     if (key_is_flagged(key))
         return strchr(key+1, '$')+1;
     return key;
