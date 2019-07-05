@@ -1171,18 +1171,17 @@ static void group_handle_special(GKeyFile *key_file,
                 g_key_file_get_integer(key_file, group, key, NULL);
         } else if (g_str_has_prefix(key, "Icon$")) {
             struct UpdateTableItem *item;
-            const gchar *first_dollar = g_utf8_strchr(key, -1, '$');
 
-            item = g_hash_table_lookup(update_tbl, first_dollar);
-            if (!item && first_dollar) {
-                const gchar *second_dollar =
-                    g_utf8_strchr(first_dollar + 1, -1, '$');
-                if (second_dollar) {
-                    char *copy = strndupa(first_dollar,
-                                          second_dollar - first_dollar + 1);
-                    item = g_hash_table_lookup(update_tbl, copy);
-                }
-            }
+            const gchar *ikey = g_utf8_strchr(key, -1, '$');
+            gchar *tag, *name;
+            key_get_components(ikey, NULL, &tag, &name, NULL, NULL, TRUE);
+
+            if (tag)
+                item = g_hash_table_lookup(update_tbl, tag);
+             else
+                item = g_hash_table_lookup(update_tbl, name);
+            g_free(name);
+            g_free(tag);
 
             if (item) {
                 gchar *file = g_key_file_get_value(key_file, group, key, NULL);
@@ -1276,35 +1275,25 @@ static void group_handle_normal(GKeyFile *key_file,
 
             strend(key, '#');
 
-            if (key_is_flagged(key)) {
-                const gchar *name = key_get_name(key);
-                gchar *flags = g_strdup(key);
-                *(strchr(flags + 1, '$') + 1) = 0;
-
-                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, name,
-                                   INFO_TREE_COL_DATA, flags, -1);
-
-                g_free(flags);
-            } else {
-                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
-                                   INFO_TREE_COL_DATA, NULL, -1);
-            }
-
             struct UpdateTableItem *item = g_new0(struct UpdateTableItem, 1);
             item->is_iter = TRUE;
             item->iter = gtk_tree_iter_copy(&child);
+            gchar *flags, *tag, *name;
+            key_get_components(key, &flags, &tag, &name, NULL, NULL, TRUE);
 
-            const gchar *first_dollar = g_utf8_strchr(key, -1, '$');
-            if (first_dollar) {
-                const gchar *second_dollar =
-                    g_utf8_strchr(first_dollar + 1, -1, '$');
-                gchar *key_copy =
-                    g_strndup(first_dollar, second_dollar - first_dollar + 1);
-
-                g_hash_table_insert(update_tbl, key_copy, item);
+            if (flags) {
+                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, name,
+                                   INFO_TREE_COL_DATA, flags, -1);
+                g_hash_table_insert(update_tbl, tag, item);
+                g_free(name);
             } else {
-                g_hash_table_insert(update_tbl, g_strdup(key), item);
+                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
+                                   INFO_TREE_COL_DATA, NULL, -1);
+                g_hash_table_insert(update_tbl, name, item);
+                g_free(tag);
             }
+            g_free(flags);
+
         }
 
         g_free(value);
@@ -1540,25 +1529,20 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
 
             gint j;
             for (j = 0; keys[j]; j++) {
-                gchar *key;
                 gchar *key_markup;
-                gchar *value =
-                    g_key_file_get_value(key_file, groups[i], keys[j], NULL);
+                gchar *value;
+                gchar *name = NULL, *label = NULL, *tag = NULL;
+                key_get_components(keys[j], NULL, &tag, &name, &label, NULL, TRUE);
+
+                value = g_key_file_get_value(key_file, groups[i], keys[j], NULL);
 
                 if (entry && entry->fieldfunc && value && g_str_equal(value, "...")) {
                     g_free(value);
-                    value = entry->fieldfunc(keys[j]);
+                    value = entry->fieldfunc(name);
                 }
-
-                if (key_is_flagged(keys[j])) {
-                    key = g_strdup(key_get_name(keys[j]));
-                } else {
-                    key = g_strdup(keys[j]);
-                }
-                strend(key, '#');
 
                 key_markup =
-                    g_strdup_printf("<span color=\"#666\">%s</span>", key);
+                    g_strdup_printf("<span color=\"#666\">%s</span>", label);
 
                 GtkWidget *key_label = gtk_label_new(key_markup);
                 gtk_label_set_use_markup(GTK_LABEL(key_label), TRUE);
@@ -1591,22 +1575,17 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 item->is_iter = FALSE;
                 item->widget = g_object_ref(value_box);
 
-                const gchar *first_dollar = g_utf8_strchr(keys[j], -1, '$');
-
-                if (first_dollar) {
-                    const gchar *second_dollar =
-                        g_utf8_strchr(first_dollar + 1, -1, '$');
-                    gchar *key_copy =
-                        g_strndup(first_dollar, second_dollar - first_dollar + 1);
-
-                    g_hash_table_insert(update_tbl, key_copy, item);
+                if (tag) {
+                    g_hash_table_insert(update_tbl, tag, item);
+                    g_free(name);
                 } else {
-                    g_hash_table_insert(update_tbl, g_strdup(key), item);
+                    g_hash_table_insert(update_tbl, name, item);
+                    g_free(tag);
                 }
 
                 g_free(value);
-                g_free(key);
                 g_free(key_markup);
+                g_free(label);
             }
 
             gtk_widget_show(table);
@@ -2190,4 +2169,53 @@ const gchar *key_get_name(const gchar *key) {
     if (key_is_flagged(key))
         return strchr(key+1, '$')+1;
     return key;
+}
+
+/* key syntax:
+ *  [$[<flags>][<tag>]$]<name>[#[<dis>]]
+ *
+ * example for key = "$*!Foo$Bar#7":
+ * flags = "$*!Foo$"  // key_is/wants_*() still works on flags
+ * tag = "Foo"        // the moreinfo/icon tag
+ * name = "Bar#7"     // the full unique name
+ * label = "Bar"      // the label displayed
+ * dis = "7"
+ */
+void key_get_components(const gchar *key,
+    gchar **flags, gchar **tag, gchar **name, gchar **label, gchar **dis,
+    gboolean null_empty) {
+
+    if (!key || !*key)
+        return;
+
+    if (null_empty) {
+#define K_NULL_EMPTY(f) if (f && *f) { *f = NULL; }
+        K_NULL_EMPTY(flags);
+        K_NULL_EMPTY(tag);
+        K_NULL_EMPTY(name);
+        K_NULL_EMPTY(label);
+        K_NULL_EMPTY(dis);
+    }
+
+    const gchar *np = g_utf8_strchr(key+1, -1, '$') + 1;
+    if (*key == '$' && np) {
+        /* is flagged */
+        gchar *f = g_strdup(key);
+        *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
+        if (flags)
+            *flags = g_strdup(f);
+        if (tag)
+            *tag = key_mi_tag(f);
+        g_free(f);
+    } else
+        np = key;
+
+    if (name)
+        *name = g_strdup(np);
+    if (label) {
+        *label = g_strdup(np);
+        gchar *lbp = g_utf8_strchr(*label, -1, '#');
+        if (lbp && dis)
+            *dis = g_strdup(lbp + 1);
+    }
 }

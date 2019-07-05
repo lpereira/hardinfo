@@ -218,12 +218,31 @@ void		shell_update_remote_menu(void);
 
 void		shell_set_remote_label(Shell *shell, gchar *label);
 
-/* decode special information in keys */
+/* decode special information in keys
+ *
+ * key syntax:
+ *  [$[<flags>][<tag>]$]<name>[#[<dis>]]
+ * flags:
+ *  [[!][*]]
+ *  ! = show details (moreinfo) in reports
+ *  * = highlight/select this row
+ */
 gboolean    key_is_flagged(const gchar *key);       /* has $[<flags>][<tag>]$ at the start of the key */
 gboolean    key_is_highlighted(const gchar *key);   /* flag '*' = select/highlight */
 gboolean    key_wants_details(const gchar *key);    /* flag '!' = report should include the "moreinfo" */
 gchar       *key_mi_tag(const gchar *key);          /* moreinfo lookup tag */
 const gchar *key_get_name(const gchar *key);        /* get the key's name, flagged or not */
+/*
+ * example for key = "$*!Foo$Bar#7":
+ * flags = "$*!Foo$"  // key_is/wants_*() still works on flags
+ * tag = "Foo"        // the moreinfo/icon tag
+ * name = "Bar#7"     // the full unique name
+ * label = "Bar"      // the label displayed
+ * dis = "7"
+ */
+void key_get_components(const gchar *key,
+    gchar **flags, gchar **tag, gchar **name, gchar **label, gchar **dis,
+    gboolean null_empty);
 
 #endif				/* __SHELL_H__ */
 
