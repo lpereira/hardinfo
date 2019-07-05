@@ -618,7 +618,8 @@ gchar *callback_security(void)
                 continue;
 
             struct InfoField field = info_field(vuln, idle_free(contents));
-            if (g_strstr_len(contents, -1, "Vulnerable"))
+            if (g_strstr_len(contents, -1, "Vulnerable") ||
+                g_strstr_len(contents, -1, "vulnerable"))
                 field = info_field_with_icon(field, "dialog-warning.png");
 
             info_group_add_fields(vulns, field, info_field_last());
