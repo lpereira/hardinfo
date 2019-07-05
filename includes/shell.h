@@ -219,11 +219,11 @@ void		shell_update_remote_menu(void);
 void		shell_set_remote_label(Shell *shell, gchar *label);
 
 /* decode special information in keys */
-gboolean    key_is_flagged(gchar *key);       /* has $[<flags>][<tag>]$ at the start of the key */
-gboolean    key_is_highlighted(gchar *key);   /* flag '*' = select/highlight */
-gboolean    key_wants_details(gchar *key);    /* flag '!' = report should include the "moreinfo" */
-gchar       *key_mi_tag(gchar *key);          /* moreinfo lookup tag */
-const gchar *key_get_name(gchar *key);        /* get the key's name, flagged or not */
+gboolean    key_is_flagged(const gchar *key);       /* has $[<flags>][<tag>]$ at the start of the key */
+gboolean    key_is_highlighted(const gchar *key);   /* flag '*' = select/highlight */
+gboolean    key_wants_details(const gchar *key);    /* flag '!' = report should include the "moreinfo" */
+gchar       *key_mi_tag(const gchar *key);          /* moreinfo lookup tag */
+const gchar *key_get_name(const gchar *key);        /* get the key's name, flagged or not */
 
 #endif				/* __SHELL_H__ */
 
