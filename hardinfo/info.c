@@ -217,6 +217,8 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
 
             if (field.free_value_on_flatten)
                 g_free((gchar *)field.value);
+            if (field.free_name_on_flatten)
+                g_free((gchar *)field.name);
 
             g_free(field.tag);
         }
