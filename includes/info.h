@@ -21,6 +21,16 @@
 #include <stdarg.h>
 #include <glib.h>
 
+enum {
+    INFO_GROUP_SORT_NONE,
+    INFO_GROUP_SORT_NAME_ASCENDING,
+    INFO_GROUP_SORT_NAME_DESCENDING,
+    INFO_GROUP_SORT_VALUE_ASCENDING,
+    INFO_GROUP_SORT_VALUE_DESCENDING,
+    INFO_GROUP_SORT_TAG_ASCENDING,
+    INFO_GROUP_SORT_TAG_DESCENDING,
+};
+
 struct Info {
     GArray *groups;
 
@@ -37,6 +47,7 @@ struct Info {
 
 struct InfoGroup {
     const gchar *name;
+    int sort;
 
     GArray *fields;
 
@@ -55,7 +66,7 @@ struct InfoField {
     gboolean report_details; /* show moreinfo() in report (flag:!) */
 
     gboolean free_value_on_flatten;
-    int magic;
+    int some_member_with_default_value;
 };
 
 struct Info *info_new(void);
@@ -69,14 +80,13 @@ void info_group_add_fieldsv(struct InfoGroup *group, va_list ap);
 struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
     __attribute__((format(printf, 2, 3)));
 
-#define INFO_LAST_MARKER 102
 #define info_field_full(...) (struct InfoField) { \
-    .magic = 3, \
+    .some_member_with_default_value = 3, \
     __VA_ARGS__ \
 }
 #define info_field(n, v) info_field_full(.name = (n), .value = (v))
 #define info_field_update(n, ui) info_field_full(.name = (n), .value = "...", .update_interval = (ui))
-#define info_field_last() (struct InfoField){.magic = INFO_LAST_MARKER}
+#define info_field_last() (struct InfoField) {}
 
 static inline struct InfoField info_field_with_icon(struct InfoField field, const gchar *icon)
 {
