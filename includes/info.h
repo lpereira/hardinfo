@@ -94,12 +94,6 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
 #define info_field_last()                                                      \
     (struct InfoField) {}
 
-static inline struct InfoField info_field_with_icon(struct InfoField field, const gchar *icon)
-{
-    field.icon = icon;
-    return field;
-}
-
 void info_set_column_title(struct Info *info, const gchar *column, const gchar *title);
 void info_set_column_headers_visible(struct Info *info, gboolean setting);
 void info_set_zebra_visible(struct Info *info, gboolean setting);

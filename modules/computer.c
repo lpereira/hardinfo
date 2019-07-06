@@ -547,36 +547,35 @@ gchar *callback_summary(void)
 gchar *callback_os(void)
 {
     struct Info *info = info_new();
-    struct InfoField distro = info_field(_("Distribution"), computer->os->distro);
+    gchar *distro_icon;
 
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
-    if (computer->os->distrocode) {
-        distro = info_field_with_icon(distro,
-                                      idle_free(g_strdup_printf("distros/%s.png",
-                                                                computer->os->distrocode)));
-    }
+    distro_icon = computer->os->distrocode
+                      ? idle_free(g_strdup_printf("distros/%s.png",
+                                                  computer->os->distrocode))
+                      : NULL;
 
-    info_add_group(info, _("Version"),
-        info_field(_("Kernel"), computer->os->kernel),
-        info_field(_("Command Line"), computer->os->kcmdline ? : _("Unknown")),
+    info_add_group(
+        info, _("Version"), info_field(_("Kernel"), computer->os->kernel),
+        info_field(_("Command Line"), computer->os->kcmdline ?: _("Unknown")),
         info_field(_("Version"), computer->os->kernel_version),
         info_field(_("C Library"), computer->os->libc),
-        distro,
+        info_field(_("Distribution"), computer->os->distro,
+                   .icon = distro_icon),
         info_field_last());
 
     info_add_group(info, _("Current Session"),
-        info_field(_("Computer Name"), computer->os->hostname),
-        info_field(_("User Name"), computer->os->username),
-        info_field(_("Language"), computer->os->language),
-        info_field(_("Home Directory"), computer->os->homedir),
-        info_field(_("Desktop Environment"), computer->os->desktop),
-        info_field_last());
+                   info_field(_("Computer Name"), computer->os->hostname),
+                   info_field(_("User Name"), computer->os->username),
+                   info_field(_("Language"), computer->os->language),
+                   info_field(_("Home Directory"), computer->os->homedir),
+                   info_field(_("Desktop Environment"), computer->os->desktop),
+                   info_field_last());
 
-    info_add_group(info, _("Misc"),
-        info_field_update(_("Uptime"), 1000),
-        info_field_update(_("Load Average"), 10000),
-        info_field_last());
+    info_add_group(info, _("Misc"), info_field_update(_("Uptime"), 1000),
+                   info_field_update(_("Load Average"), 10000),
+                   info_field_last());
 
     return info_flatten(info);
 }
@@ -622,14 +621,16 @@ gchar *callback_security(void)
             if (!contents)
                 continue;
 
-            struct InfoField field =
-                info_field(g_strdup(vuln), idle_free(contents),
-                           .free_name_on_flatten = TRUE);
+            const gchar *icon = NULL;
             if (g_strstr_len(contents, -1, "Vulnerable") ||
                 g_strstr_len(contents, -1, "vulnerable"))
-                field = info_field_with_icon(field, "dialog-warning.png");
+                icon = "dialog-warning.png";
 
-            info_group_add_fields(vulns, field, info_field_last());
+            info_group_add_fields(vulns,
+                                  info_field(g_strdup(vuln),
+                                             idle_free(contents), .icon = icon,
+                                             .free_name_on_flatten = TRUE),
+                                  info_field_last());
         }
 
         g_dir_close(dir);
