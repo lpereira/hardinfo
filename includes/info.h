@@ -67,7 +67,6 @@ struct InfoField {
     gboolean report_details; /* show moreinfo() in report (flag:!) */
 
     gboolean free_value_on_flatten;
-    int some_member_with_default_value;
 };
 
 struct Info *info_new(void);
@@ -81,10 +80,7 @@ void info_group_add_fieldsv(struct InfoGroup *group, va_list ap);
 struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
     __attribute__((format(printf, 2, 3)));
 
-#define info_field_full(...) (struct InfoField) { \
-    .some_member_with_default_value = 3, \
-    __VA_ARGS__ \
-}
+#define info_field_full(...) (struct InfoField) { __VA_ARGS__ }
 #define info_field(n, v) info_field_full(.name = (n), .value = (v))
 #define info_field_update(n, ui) info_field_full(.name = (n), .value = "...", .update_interval = (ui))
 #define info_field_last() (struct InfoField) {}
