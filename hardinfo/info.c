@@ -138,24 +138,51 @@ void info_set_reload_interval(struct Info *info, int setting)
     info->reload_interval = setting;
 }
 
-int _info_field_sort_name_ascending(const struct InfoField *a, const struct InfoField *b) {
-    return g_strcmp0(a->name, b->name);
+static int info_field_cmp_name_ascending(const void *a, const void *b)
+{
+    const struct InfoField *aa = a, *bb = b;
+    return g_strcmp0(aa->name, bb->name);
 }
-int _info_field_sort_name_descending(const struct InfoField *a, const struct InfoField *b) {
-    return g_strcmp0(b->name, a->name);
+
+static int info_field_cmp_name_descending(const void *a, const void *b)
+{
+    const struct InfoField *aa = a, *bb = b;
+    return g_strcmp0(bb->name, aa->name);
 }
-int _info_field_sort_value_ascending(const struct InfoField *a, const struct InfoField *b) {
-    return g_strcmp0(a->value, b->value);
+
+static int info_field_cmp_value_ascending(const void *a, const void *b)
+{
+    const struct InfoField *aa = a, *bb = b;
+    return g_strcmp0(aa->value, bb->value);
 }
-int _info_field_sort_value_descending(const struct InfoField *a, const struct InfoField *b) {
-    return g_strcmp0(b->value, a->value);
+
+static int info_field_cmp_value_descending(const void *a, const void *b)
+{
+    const struct InfoField *aa = a, *bb = b;
+    return g_strcmp0(bb->value, aa->value);
 }
-int _info_field_sort_tag_ascending(const struct InfoField *a, const struct InfoField *b) {
-    return g_strcmp0(a->tag, b->tag);
+
+static int info_field_cmp_tag_ascending(const void *a, const void *b)
+{
+    const struct InfoField *aa = a, *bb = b;
+    return g_strcmp0(aa->tag, bb->tag);
 }
-int _info_field_sort_tag_descending(const struct InfoField *a, const struct InfoField *b) {
-    return g_strcmp0(b->tag, a->tag);
+
+static int info_field_cmp_tag_descending(const void *a, const void *b)
+{
+    const struct InfoField *aa = a, *bb = b;
+    return g_strcmp0(bb->tag, aa->tag);
 }
+
+static const GCompareFunc sort_functions[INFO_GROUP_SORT_MAX] = {
+    [INFO_GROUP_SORT_NONE] = NULL,
+    [INFO_GROUP_SORT_NAME_ASCENDING] = info_field_cmp_name_ascending,
+    [INFO_GROUP_SORT_NAME_DESCENDING] = info_field_cmp_name_descending,
+    [INFO_GROUP_SORT_VALUE_ASCENDING] = info_field_cmp_value_ascending,
+    [INFO_GROUP_SORT_VALUE_DESCENDING] = info_field_cmp_value_descending,
+    [INFO_GROUP_SORT_TAG_ASCENDING] = info_field_cmp_tag_ascending,
+    [INFO_GROUP_SORT_TAG_DESCENDING] = info_field_cmp_tag_descending,
+};
 
 static void flatten_group(GString *output, const struct InfoGroup *group, guint group_count)
 {
@@ -164,27 +191,8 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
     if (group->name != NULL)
         g_string_append_printf(output, "[%s]\n", group->name);
 
-    switch(group->sort) {
-        case INFO_GROUP_SORT_NAME_ASCENDING:
-            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_name_ascending);
-            break;
-        case INFO_GROUP_SORT_NAME_DESCENDING:
-            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_name_descending);
-            break;
-        case INFO_GROUP_SORT_VALUE_ASCENDING:
-            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_value_ascending);
-            break;
-        case INFO_GROUP_SORT_VALUE_DESCENDING:
-            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_value_descending);
-            break;
-        case INFO_GROUP_SORT_TAG_ASCENDING:
-            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_tag_ascending);
-            break;
-        case INFO_GROUP_SORT_TAG_DESCENDING:
-            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_tag_descending);
-            break;
-        default:
-            break;
+    if (group->sort != INFO_GROUP_SORT_NONE) {
+        g_array_sort(group->fields, sort_functions[group->sort]);
     }
 
     if (group->fields) {

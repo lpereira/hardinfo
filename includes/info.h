@@ -21,7 +21,7 @@
 #include <stdarg.h>
 #include <glib.h>
 
-enum {
+enum InfoGroupSort {
     INFO_GROUP_SORT_NONE,
     INFO_GROUP_SORT_NAME_ASCENDING,
     INFO_GROUP_SORT_NAME_DESCENDING,
@@ -29,6 +29,7 @@ enum {
     INFO_GROUP_SORT_VALUE_DESCENDING,
     INFO_GROUP_SORT_TAG_ASCENDING,
     INFO_GROUP_SORT_TAG_DESCENDING,
+    INFO_GROUP_SORT_MAX,
 };
 
 struct Info {
@@ -47,7 +48,7 @@ struct Info {
 
 struct InfoGroup {
     const gchar *name;
-    int sort;
+    enum InfoGroupSort sort;
 
     GArray *fields;
 
