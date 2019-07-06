@@ -144,7 +144,7 @@ static void decode_sdr_module_timings(unsigned char *bytes, float *tcl, float *t
         if (bytes[18] & 1 << j) { cas[i++] = j + 1; }
     }
 
-    ctime = (bytes[9] >> 4 + bytes[9] & 0xf) * 0.1;
+    ctime = ((bytes[9] >> 4) + (bytes[9] & 0xf)) * 0.1;
 
     if (trcd) { *trcd = ceil(bytes[29] / ctime); }
     if (trp) { *trp = ceil(bytes[27] / ctime); }
@@ -543,7 +543,7 @@ static void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float 
 
     if (trp) { *trp = bytes[20] * mtb; }
 
-    if (tras) { *tras = (bytes[22] + bytes[21] & 0xf) * mtb; }
+    if (tras) { *tras = (bytes[22] + (bytes[21] & 0xf)) * mtb; }
 
     if (tcl) { *tcl = ceil(taa/ctime); }
 }
