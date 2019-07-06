@@ -21,13 +21,6 @@
 #include <stdarg.h>
 #include <glib.h>
 
-enum {
-    INFO_NONE           = 0,
-    INFO_FIELD_SELECTED = 1,     /* '*' */
-    INFO_FIELD_REPORT_DETAILS
-                        = 1<<1,  /* '!' */
-};
-
 struct Info {
     GArray *groups;
 
@@ -58,7 +51,8 @@ struct InfoField {
           gchar *tag; /* moreinfo() lookup tag */
 
     int update_interval;
-    unsigned int flags;
+    gboolean highlight;      /* select in GUI, highlight in report (flag:*) */
+    gboolean report_details; /* show moreinfo() in report (flag:!) */
 
     gboolean free_value_on_flatten;
     int magic;
@@ -87,18 +81,6 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
 static inline struct InfoField info_field_with_icon(struct InfoField field, const gchar *icon)
 {
     field.icon = icon;
-    return field;
-}
-static inline struct InfoField info_field_set_flags(struct InfoField field, int flags)
-{
-    field.flags |= flags;
-    return field;
-}
-#define info_field_selected(field, INFO_FIELD_SELECTED);
-#define info_field_report_details(field, INFO_FIELD_REPORT_DETAILS);
-static inline struct InfoField info_field_with_tag(struct InfoField field, const gchar *tag)
-{
-    field.tag = g_strdup(tag);
     return field;
 }
 

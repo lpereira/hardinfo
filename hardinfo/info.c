@@ -157,10 +157,10 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
             else
                 snprintf(tag, 255, "ITEM%d-%d", group_count, i);
 
-            if (*tag != 0 || field.flags)
+            if (*tag != 0 || field.highlight || field.report_details)
                 g_string_append_printf(output, "$%s%s%s$",
-                    field.flags & INFO_FIELD_SELECTED ? "*" : "",
-                    field.flags & INFO_FIELD_SELECTED ? "!" : "",
+                    field.highlight ? "*" : "",
+                    field.report_details ? "!" : "",
                     tag);
 
             g_string_append_printf(output, "%s=%s\n", field.name, field.value);
