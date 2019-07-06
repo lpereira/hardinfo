@@ -863,6 +863,20 @@ static gboolean update_field(gpointer data)
     gtk_range_get_value(                                                       \
         GTK_RANGE(GTK_SCROLLED_WINDOW(shell->tree->scroll)->scrollbar))
 
+static void
+destroy_widget(GtkWidget *widget, gpointer user_data)
+{
+    gtk_widget_destroy(widget);
+}
+
+static void detail_view_clear(DetailView *detail_view)
+{
+    gtk_container_forall(GTK_CONTAINER(shell->detail_view->view),
+                         destroy_widget, NULL);
+    RANGE_SET_VALUE(detail_view, vscrollbar, 0.0);
+    RANGE_SET_VALUE(detail_view, hscrollbar, 0.0);
+}
+
 static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *)data;
@@ -900,7 +914,7 @@ static gboolean reload_section(gpointer data)
 
         /* update the information, clear the treeview and populate it again */
         module_entry_reload(entry);
-        info_selected_show_extra(NULL); /* clears the more info store */
+        detail_view_clear(shell->detail_view);
         module_selected_show_info(entry, TRUE);
 
         /* if there was a selection, reselect it */
@@ -1481,21 +1495,6 @@ static void module_selected_show_info_list(GKeyFile *key_file,
     gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info_tree->view),
                                      ngroups > 1);
 }
-
-static void
-destroy_widget(GtkWidget *widget, gpointer user_data)
-{
-    gtk_widget_destroy(widget);
-}
-
-static void detail_view_clear(DetailView *detail_view)
-{
-    gtk_container_forall(GTK_CONTAINER(shell->detail_view->view),
-                         destroy_widget, NULL);
-    RANGE_SET_VALUE(detail_view, vscrollbar, 0.0);
-    RANGE_SET_VALUE(detail_view, hscrollbar, 0.0);
-}
-
 static void module_selected_show_info_detail(GKeyFile *key_file,
                                              ShellModuleEntry *entry,
                                              gchar **groups)
@@ -1905,7 +1904,6 @@ static void module_selected(gpointer data)
         shell->selected = entry;
         module_selected_show_info(entry, FALSE);
 
-        info_selected_show_extra(NULL); /* clears the more info store */
         gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->info_tree->view));
 
         /* urgh. why don't GTK do this when the model is cleared? */
