@@ -181,6 +181,7 @@ void cb_about()
         _("Tango Project"),
         _("The GNOME Project"),
         _("VMWare, Inc. (USB icon from VMWare Workstation 6)"),
+        _("Roundicons (https://roundicons.com)"),
         NULL
     };
 
