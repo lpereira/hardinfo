@@ -609,6 +609,7 @@ gchar *callback_security(void)
     if (dir) {
         struct InfoGroup *vulns = info_add_group(info, _("CPU Vulnerabilities"),
                                                  info_field_last());
+        vulns->sort = INFO_GROUP_SORT_NAME_ASCENDING;
         const gchar *vuln;
 
         while ((vuln = g_dir_read_name(dir))) {

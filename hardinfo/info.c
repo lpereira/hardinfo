@@ -40,7 +40,7 @@ void info_group_add_fieldsv(struct InfoGroup *group, va_list ap)
     while (1) {
         struct InfoField field = va_arg(ap, struct InfoField);
 
-        if (field.magic == INFO_LAST_MARKER)
+        if (!field.name)
             break;
         g_array_append_val(group->fields, field);
     }
@@ -138,12 +138,54 @@ void info_set_reload_interval(struct Info *info, int setting)
     info->reload_interval = setting;
 }
 
+int _info_field_sort_name_ascending(const struct InfoField *a, const struct InfoField *b) {
+    return g_strcmp0(a->name, b->name);
+}
+int _info_field_sort_name_descending(const struct InfoField *a, const struct InfoField *b) {
+    return g_strcmp0(b->name, a->name);
+}
+int _info_field_sort_value_ascending(const struct InfoField *a, const struct InfoField *b) {
+    return g_strcmp0(a->value, b->value);
+}
+int _info_field_sort_value_descending(const struct InfoField *a, const struct InfoField *b) {
+    return g_strcmp0(b->value, a->value);
+}
+int _info_field_sort_tag_ascending(const struct InfoField *a, const struct InfoField *b) {
+    return g_strcmp0(a->tag, b->tag);
+}
+int _info_field_sort_tag_descending(const struct InfoField *a, const struct InfoField *b) {
+    return g_strcmp0(b->tag, a->tag);
+}
+
 static void flatten_group(GString *output, const struct InfoGroup *group, guint group_count)
 {
     guint i;
 
     if (group->name != NULL)
         g_string_append_printf(output, "[%s]\n", group->name);
+
+    switch(group->sort) {
+        case INFO_GROUP_SORT_NAME_ASCENDING:
+            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_name_ascending);
+            break;
+        case INFO_GROUP_SORT_NAME_DESCENDING:
+            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_name_descending);
+            break;
+        case INFO_GROUP_SORT_VALUE_ASCENDING:
+            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_value_ascending);
+            break;
+        case INFO_GROUP_SORT_VALUE_DESCENDING:
+            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_value_descending);
+            break;
+        case INFO_GROUP_SORT_TAG_ASCENDING:
+            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_tag_ascending);
+            break;
+        case INFO_GROUP_SORT_TAG_DESCENDING:
+            g_array_sort(group->fields, (GCompareFunc)_info_field_sort_tag_descending);
+            break;
+        default:
+            break;
+    }
 
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {
