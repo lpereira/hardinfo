@@ -556,6 +556,7 @@ gchar *callback_os(void)
                                                   computer->os->distrocode))
                       : NULL;
 
+    struct InfoGroup *version_group =
     info_add_group(
         info, _("Version"), info_field(_("Kernel"), computer->os->kernel),
         info_field(_("Command Line"), computer->os->kcmdline ?: _("Unknown")),
@@ -565,13 +566,19 @@ gchar *callback_os(void)
                    .icon = distro_icon),
         info_field_last());
 
+    if (computer->os->ubuntu_flavor) {
+        info_group_add_field(version_group,
+            info_field(_("Spin/Flavor"), computer->os->ubuntu_flavor->name,
+                .icon = computer->os->ubuntu_flavor->icon) );
+    }
+
     info_add_group(info, _("Current Session"),
-                   info_field(_("Computer Name"), computer->os->hostname),
-                   info_field(_("User Name"), computer->os->username),
-                   info_field(_("Language"), computer->os->language),
-                   info_field(_("Home Directory"), computer->os->homedir),
-                   info_field(_("Desktop Environment"), computer->os->desktop),
-                   info_field_last());
+        info_field(_("Computer Name"), computer->os->hostname),
+        info_field(_("User Name"), computer->os->username),
+        info_field(_("Language"), computer->os->language),
+        info_field(_("Home Directory"), computer->os->homedir),
+        info_field(_("Desktop Environment"), computer->os->desktop),
+        info_field_last());
 
     info_add_group(info, _("Misc"), info_field_update(_("Uptime"), 1000),
                    info_field_update(_("Load Average"), 10000),

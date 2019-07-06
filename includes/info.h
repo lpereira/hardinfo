@@ -75,6 +75,7 @@ struct Info *info_new(void);
 struct InfoGroup *info_add_group(struct Info *info, const gchar *group_name, ...);
 void info_add_computed_group(struct Info *info, const gchar *name, const gchar *value);
 
+void info_group_add_field(struct InfoGroup *group, struct InfoField field);
 void info_group_add_fields(struct InfoGroup *group, ...);
 void info_group_add_fieldsv(struct InfoGroup *group, va_list ap);
 
