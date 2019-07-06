@@ -35,13 +35,27 @@ struct Info *info_new(void)
     return info;
 }
 
+void info_group_add_field(struct InfoGroup *group, struct InfoField field)
+{
+    if (!group)
+        return;
+
+    /* info_field_last() */
+    if (!field.name)
+        return;
+
+    g_array_append_val(group->fields, field);
+}
+
 void info_group_add_fieldsv(struct InfoGroup *group, va_list ap)
 {
     while (1) {
         struct InfoField field = va_arg(ap, struct InfoField);
 
+        /* info_field_last() */
         if (!field.name)
             break;
+
         g_array_append_val(group->fields, field);
     }
 }
