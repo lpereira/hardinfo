@@ -588,37 +588,43 @@ gchar *callback_security(void)
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
     info_add_group(info, _("HardInfo"),
-        info_field(_("HardInfo running as"), (getuid() == 0) ? _("Superuser") : _("User")),
-        info_field_last());
+                   info_field(_("HardInfo running as"),
+                              (getuid() == 0) ? _("Superuser") : _("User")),
+                   info_field_last());
 
-    info_add_group(info, _("Health"),
+    info_add_group(
+        info, _("Health"),
         info_field_update(_("Available entropy in /dev/random"), 1000),
         info_field_last());
 
-    info_add_group(info, _("Hardening Features"),
+    info_add_group(
+        info, _("Hardening Features"),
         info_field(_("ASLR"), idle_free(computer_get_aslr())),
         info_field(_("dmesg"), idle_free(computer_get_dmesg_status())),
         info_field_last());
 
-    info_add_group(info, _("Linux Security Modules"),
+    info_add_group(
+        info, _("Linux Security Modules"),
         info_field(_("Modules available"), idle_free(computer_get_lsm())),
         info_field(_("SELinux status"), computer_get_selinux()),
         info_field_last());
 
     GDir *dir = g_dir_open("/sys/devices/system/cpu/vulnerabilities", 0, NULL);
     if (dir) {
-        struct InfoGroup *vulns = info_add_group(info, _("CPU Vulnerabilities"),
-                                                 info_field_last());
+        struct InfoGroup *vulns =
+            info_add_group(info, _("CPU Vulnerabilities"), info_field_last());
         vulns->sort = INFO_GROUP_SORT_NAME_ASCENDING;
         const gchar *vuln;
 
         while ((vuln = g_dir_read_name(dir))) {
-            gchar *contents = h_sysfs_read_string("/sys/devices/system/cpu/vulnerabilities",
-                                                  vuln);
+            gchar *contents = h_sysfs_read_string(
+                "/sys/devices/system/cpu/vulnerabilities", vuln);
             if (!contents)
                 continue;
 
-            struct InfoField field = info_field(vuln, idle_free(contents));
+            struct InfoField field =
+                info_field(g_strdup(vuln), idle_free(contents),
+                           .free_name_on_flatten = TRUE);
             if (g_strstr_len(contents, -1, "Vulnerable") ||
                 g_strstr_len(contents, -1, "vulnerable"))
                 field = info_field_with_icon(field, "dialog-warning.png");
