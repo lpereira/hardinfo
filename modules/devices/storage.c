@@ -1,6 +1,7 @@
 /*
  *    HardInfo - Displays System Information
  *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    modified by Ondrej Čerman (2019)
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ gboolean __scan_udisks2_devices(void) {
     udiskd *disk;
     udiskp *part;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
-    gchar *devid, *label, *tmp = NULL, *media_comp = NULL;
+    gchar *devid, *label, *size, *tmp = NULL, *media_comp = NULL;
     const gchar *url, *vendor_str, *media_label, *icon, *media_curr = NULL;
     int n = 0, i, j;
 
@@ -168,6 +169,7 @@ gboolean __scan_udisks2_devices(void) {
                                          vendor_get_name(vendor_str));
         }
 
+        size = size_human_readable((gfloat) disk->size);
         moreinfo = h_strdup_cprintf(_("Revision=%s\n"
                                     "Block Device=%s\n"
                                     "Serial=%s\n"
@@ -177,11 +179,12 @@ gboolean __scan_udisks2_devices(void) {
                                     disk->revision,
                                     disk->block_dev,
                                     disk->serial,
-                                    size_human_readable((gfloat) disk->size),
+                                    size,
                                     features);
+        g_free(size);
 
         if (disk->rotation_rate > 0) {
-            moreinfo = h_strdup_cprintf(_("Rotation Rate=%d\n"), moreinfo, disk->rotation_rate);
+            moreinfo = h_strdup_cprintf(_("Rotation Rate=%d RPM\n"), moreinfo, disk->rotation_rate);
         }
         if (media_comp || media_curr) {
             moreinfo = h_strdup_cprintf(_("Media=%s\n"
