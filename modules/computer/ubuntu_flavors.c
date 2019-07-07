@@ -18,27 +18,31 @@
  */
 
 #include <hardinfo.h>
-#include "ubuntu_flavors.h"
+#include "distro_flavors.h"
 
 #include "dt_util.h" /* for appf() */
 #define SEQ(s,m) (g_strcmp0(s, m) == 0)
 
 static const UbuntuFlavor ubuntu_flavors[] = {
-    { "ubuntu-server", "Vanilla Server", "distros/ubuntu.png", "https://ubuntu.org/" },
-    { "ubuntu-desktop", "Ubuntu GNOME", "distros/ubuntu.png", "https://ubuntu.org/"  },
-    { "xubuntu-desktop", "Xubuntu", "distros/xubuntu.svg", "https://xubuntu.org/"  },
-    { "kubuntu-desktop", "Kubuntu", "distros/kubuntu.png", "https://kubuntu.org/" },
-    { "lubuntu-desktop", "Lubuntu", "distros/lubuntu.png", "https://lubuntu.me/" }, /* formerly or also lubuntu.net? */
-    { "ubuntu-mate-desktop", "Ubuntu MATE", "distros/ubuntu-mate.png", "https://ubuntu-mate.org/" },
-    { "ubuntu-budgie-desktop", "Ubuntu Budgie", "distros/ubuntu-budgie.png", "https://ubuntubudgie.org/" },
-    { "ubuntukylin-desktop", "UbuntuKylin (做最有中国味的操作系统)", "distros/ubuntu-kylin.png", "https://www.ubuntukylin.com" },
-    { "ubuntustudio-desktop", "UbuntuStudio", "distros/ubuntu-studio.png", "https://ubuntustudio.org/"},
+    { "Vanilla Server", "distros/ubuntu.png", "https://ubuntu.org", "ubuntu-server" },
+    { "Vanilla Desktop", "distros/ubuntu.png", "https://ubuntu.org", "ubuntu-desktop" },
+    { "Xubuntu", "distros/xubuntu.svg", "https://xubuntu.org", "xubuntu-desktop" },
+    { "Kubuntu", "distros/kubuntu.png", "https://kubuntu.org", "kubuntu-desktop" },
+    { "Lubuntu", "distros/lubuntu.png", "https://lubuntu.me", "lubuntu-desktop" }, /* formerly or also lubuntu.net? */
+    { "Ubuntu MATE", "distros/ubuntu-mate.png", "https://ubuntu-mate.org", "ubuntu-mate-desktop" },
+    { "Ubuntu Budgie", "distros/ubuntu-budgie.png", "https://ubuntubudgie.org", "ubuntu-budgie-desktop" },
+    { "UbuntuKylin (做最有中国味的操作系统)", "distros/ubuntu-kylin.png", "https://www.ubuntukylin.com", "ubuntukylin-desktop" },
+    { "UbuntuStudio", "distros/ubuntu-studio.png", "https://ubuntustudio.org", "ubuntustudio-desktop" },
+    /* Deprecated flavors */
+    { "Ubuntu GNOME", "distros/ubuntu-gnome.png", "https://ubuntugnome.org", "ubuntu-gnome-desktop" },
+    // Edubuntu
+    // Mythbuntu
     { NULL }
 };
 
 static const UbuntuFlavor *_find_flavor(const gchar *pkg) {
     int i = 0;
-    for(; ubuntu_flavors[i].name; i++) {
+    for(; ubuntu_flavors[i].base.name; i++) {
         if (SEQ(ubuntu_flavors[i].package, pkg))
             return &ubuntu_flavors[i];
     }
@@ -54,7 +58,7 @@ GSList *ubuntu_flavors_scan(void) {
     const UbuntuFlavor *f = NULL;
     gchar *cmd_line = g_strdup("apt-cache policy");
     int i;
-    for(i = 0; ubuntu_flavors[i].name; i++) {
+    for(i = 0; ubuntu_flavors[i].base.name; i++) {
         cmd_line = appf(cmd_line, "%s", ubuntu_flavors[i].package);
     }
     if (!i)
