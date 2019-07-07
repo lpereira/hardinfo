@@ -57,17 +57,18 @@ struct InfoGroup {
 };
 
 struct InfoField {
-    const gchar *name;
-    const gchar *value;
-    const gchar *icon;
-          gchar *tag; /* moreinfo() lookup tag */
+          gchar *name;
+    const gchar *name_const;
+          gchar *value;
+    const gchar *value_const;
+          gchar *icon;
+    const gchar *icon_const;
+          gchar *tag;
+    const gchar *tag_const;
 
     int update_interval;
     gboolean highlight;      /* select in GUI, highlight in report (flag:*) */
     gboolean report_details; /* show moreinfo() in report (flag:!) */
-
-    gboolean free_name_on_flatten;
-    gboolean free_value_on_flatten;
 };
 
 struct Info *info_new(void);
@@ -88,11 +89,16 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
     info_field_full(.name = (n), .value = (v), __VA_ARGS__)
 
 #define info_field_update(n, ui, ...)                                          \
-    info_field_full(.name = (n), .value = "...", .update_interval = (ui),      \
+    info_field_full(.name = (n), .value_const = "...", .update_interval = (ui),      \
                     __VA_ARGS__)
 
 #define info_field_last()                                                      \
     (struct InfoField) {}
+
+#define info_field_get_name(fp) ((fp)->name ? (fp)->name : (fp)->name_const)
+#define info_field_get_value(fp) ((fp)->value ? (fp)->value : (fp)->value_const)
+#define info_field_get_tag(fp) ((fp)->tag ? (fp)->tag : (fp)->tag_const)
+#define info_field_get_icon(fp) ((fp)->icon ? (fp)->icon : (fp)->icon_const)
 
 void info_set_column_title(struct Info *info, const gchar *column, const gchar *title);
 void info_set_column_headers_visible(struct Info *info, gboolean setting);
