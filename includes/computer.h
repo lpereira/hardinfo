@@ -90,7 +90,7 @@ struct _Computer {
     gchar *date_time;
 };
 
-#include "ubuntu_flavors.h"
+#include "distro_flavors.h"
 
 struct _OperatingSystem {
     gchar *kernel;
@@ -112,9 +112,7 @@ struct _OperatingSystem {
 
     gchar *entropy_avail;
 
-    /* perhaps this could union with a flavors/spins
-     * pointer for other distro families */
-    const UbuntuFlavor* ubuntu_flavor;
+    const DistroFlavor* distro_flavor;
 };
 
 struct _MemoryInfo {

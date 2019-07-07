@@ -17,14 +17,18 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef __UBUNTU_FLAVORS_H__
-#define __UBUNTU_FLAVORS_H__
+#ifndef __DISTRO_FLAVORS_H__
+#define __DISTRO_FLAVORS_H__
 
-typedef struct UbuntuFlavor {
-    const char *package;
+typedef struct {
     const char *name;
     const char *icon;
     const char *url;
+} DistroFlavor;
+
+typedef struct UbuntuFlavor {
+    const DistroFlavor base;
+    const char *package;
 } UbuntuFlavor;
 
 /* items are const; free with g_slist_free() */

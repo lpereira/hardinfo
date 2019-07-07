@@ -21,7 +21,7 @@
 #include <sys/utsname.h>
 #include "hardinfo.h"
 #include "computer.h"
-#include "ubuntu_flavors.h"
+#include "distro_flavors.h"
 
 static gchar *
 get_libc_version(void)
@@ -536,7 +536,7 @@ computer_get_os(void)
         GSList *flavs = ubuntu_flavors_scan();
         if (flavs) {
             /* just use the first one */
-            os->ubuntu_flavor = (UbuntuFlavor*)flavs->data;
+            os->distro_flavor = (DistroFlavor*)flavs->data;
         }
         g_slist_free(flavs);
     }
