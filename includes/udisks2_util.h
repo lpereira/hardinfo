@@ -19,7 +19,7 @@ typedef struct udiskd {
     gboolean ejectable;
     gboolean removable;
     gint32 rotation_rate;
-    gint64 size;
+    guint64 size;
     gchar *media;
     gchar **media_compatibility;
     gboolean pm_supported;
