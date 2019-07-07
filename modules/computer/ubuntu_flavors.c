@@ -24,8 +24,8 @@
 #define SEQ(s,m) (g_strcmp0(s, m) == 0)
 
 static const UbuntuFlavor ubuntu_flavors[] = {
-    { "Vanilla Server", "distros/ubuntu.png", "https://ubuntu.org", "ubuntu-server" },
-    { "Vanilla Desktop", "distros/ubuntu.png", "https://ubuntu.org", "ubuntu-desktop" },
+    { "Vanilla Server", "distros/ubuntu.svg", "https://ubuntu.org", "ubuntu-server" },
+    { "Vanilla Desktop", "distros/ubuntu.svg", "https://ubuntu.org", "ubuntu-desktop" },
     { "Xubuntu", "distros/xubuntu.svg", "https://xubuntu.org", "xubuntu-desktop" },
     { "Kubuntu", "distros/kubuntu.png", "https://kubuntu.org", "kubuntu-desktop" },
     { "Lubuntu", "distros/lubuntu.png", "https://lubuntu.me", "lubuntu-desktop" }, /* formerly or also lubuntu.net? */
