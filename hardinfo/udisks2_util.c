@@ -14,6 +14,8 @@
 #define UDISKS2_MANAGER_OBJ_PATH     "/org/freedesktop/UDisks2/Manager"
 #define UDISKS2_BLOCK_DEVICES_PATH   "/org/freedesktop/UDisks2/block_devices"
 
+#define STRDUP_IF_NOT_EMPTY(S) (g_strcmp0(S, "") == 0) ? NULL: g_strdup(S);
+
 GDBusConnection* udisks2_conn = NULL;
 
 GVariant* get_dbus_property(GDBusProxy* proxy, const gchar *interface,
@@ -216,6 +218,10 @@ udiskt* udiskt_new() {
     return g_new0(udiskt, 1);
 }
 
+udiskp* udiskp_new() {
+    return g_new0(udiskp, 1);
+}
+
 udiskd* udiskd_new() {
     return g_new0(udiskd, 1);
 }
@@ -223,6 +229,17 @@ udiskd* udiskd_new() {
 void udiskt_free(udiskt *u) {
     if (u) {
         g_free(u->drive);
+        g_free(u);
+    }
+}
+
+void udiskp_free(udiskp *u) {
+    if (u) {
+        g_free(u->block);
+        g_free(u->type);
+        g_free(u->version);
+        g_free(u->label);
+        udiskp_free(u->next);
         g_free(u);
     }
 }
@@ -236,11 +253,61 @@ void udiskd_free(udiskd *u) {
         g_free(u->serial);
         g_free(u->connection_bus);
         g_free(u->partition_table);
-        g_free(u->partitions);
+        udiskp_free(u->partitions);
         g_free(u->media);
         g_strfreev(u->media_compatibility);
         g_free(u);
     }
+}
+
+udiskp* get_udisks2_partition_info(const gchar *part_path) {
+    GVariant *v;
+    GDBusProxy *proxy;
+    GError *error = NULL;
+    udiskp* partition;
+    const gchar *str;
+
+    if (!g_str_has_prefix(part_path, UDISKS2_BLOCK_DEVICES_PATH)) {
+        return NULL;
+    }
+
+    partition = udiskp_new();
+    partition->block = g_strdup(part_path + strlen(UDISKS2_BLOCK_DEVICES_PATH) + 1);
+
+    proxy = g_dbus_proxy_new_sync(udisks2_conn, G_DBUS_PROXY_FLAGS_NONE,
+                                      NULL, UDISKS2_INTERFACE, part_path,
+                                      DBUS_PROPERTIES_INTERFACE, NULL, &error);
+    if (error == NULL) {
+        v = get_dbus_property(proxy, UDISKS2_BLOCK_INTERFACE, "IdLabel");
+        if (v) {
+            str = g_variant_get_string(v, NULL);
+            partition->label = STRDUP_IF_NOT_EMPTY(str);
+            g_variant_unref(v);
+        }
+        v = get_dbus_property(proxy, UDISKS2_BLOCK_INTERFACE, "IdType");
+        if (v) {
+            str = g_variant_dup_string(v, NULL);
+            partition->type = STRDUP_IF_NOT_EMPTY(str);
+            g_variant_unref(v);
+        }
+        v = get_dbus_property(proxy, UDISKS2_BLOCK_INTERFACE, "IdVersion");
+        if (v) {
+            str = g_variant_dup_string(v, NULL);
+            partition->version = STRDUP_IF_NOT_EMPTY(str);
+            g_variant_unref(v);
+        }
+        v = get_dbus_property(proxy, UDISKS2_BLOCK_INTERFACE, "Size");
+        if (v) {
+            partition->size = g_variant_get_uint64(v);
+            g_variant_unref(v);
+        }
+    }
+    else{
+        g_error_free(error);
+    }
+
+    g_object_unref(proxy);
+    return partition;
 }
 
 gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *block, GDBusProxy *drive){
@@ -283,6 +350,7 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusPr
     GVariantIter *iter;
     const gchar *str, *part;
     udiskd *u = NULL;
+    udiskp **p = NULL;
     gsize n, i;
     u = udiskd_new();
     u->block_dev = g_strdup(blockdev);
@@ -412,17 +480,15 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusPr
     v = get_dbus_property(block, UDISKS2_PART_TABLE_INTERFACE, "Partitions");
     if (v){
         g_variant_get(v, "ao", &iter);
-        while (g_variant_iter_loop (iter, "o", &str)){
-            if (g_str_has_prefix(str, UDISKS2_BLOCK_DEVICES_PATH)){
-                part = str + strlen(UDISKS2_BLOCK_DEVICES_PATH) + 1;
-                if (u->partitions == NULL){
-                    u->partitions = g_strdup(part);
-                }
-                else{
-                    u->partitions = h_strdup_cprintf(", %s", u->partitions, part);
-                }
+
+        p = &(u->partitions);
+        while (g_variant_iter_loop (iter, "o", &str)) {
+            *p = get_udisks2_partition_info(str);
+            if (*p != NULL){
+                p = &((*p)->next);
             }
         }
+
         g_variant_iter_free (iter);
         g_variant_unref(v);
     }
