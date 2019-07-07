@@ -54,6 +54,8 @@ DisplayInfo *computer_get_display(void) {
     } else
     if (strcmp(di->session_type, "mir") == 0 ) {
         di->display_server = g_strdup("Mir");
+    } else {
+        di->display_server = g_strdup(_("(Unknown)"));
     }
 
     di->xi = xi;
