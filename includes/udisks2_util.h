@@ -1,3 +1,12 @@
+typedef struct udiskp {
+    gchar *block;
+    gchar *type;
+    gchar *version;
+    gchar *label;
+    guint64 size;
+    struct udiskp* next;
+} udiskp;
+
 typedef struct udiskd {
     gchar *model;
     gchar *vendor;
@@ -6,7 +15,7 @@ typedef struct udiskd {
     gchar *serial;
     gchar *connection_bus;
     gchar *partition_table;
-    gchar *partitions;
+    udiskp *partitions;
     gboolean ejectable;
     gboolean removable;
     gint32 rotation_rate;

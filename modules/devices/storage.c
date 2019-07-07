@@ -27,8 +27,9 @@ gchar *storage_icons = NULL;
 gboolean __scan_udisks2_devices(void) {
     GSList *node, *drives;
     udiskd *disk;
+    udiskp *part;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
-    gchar *devid, *label, *media_comp = NULL;
+    gchar *devid, *label, *tmp = NULL, *media_comp = NULL;
     const gchar *url, *vendor_str, *media_label, *icon, *media_curr = NULL;
     int n = 0, i, j;
 
@@ -206,11 +207,31 @@ gboolean __scan_udisks2_devices(void) {
         }
         if (disk->partition_table || disk->partitions) {
             moreinfo = h_strdup_cprintf(_("[Partition table]\n"
-                                        "Type=%s\n"
-                                        "Partitions=%s\n"),
+                                        "Type=%s\n"),
                                         moreinfo,
-                                        disk->partition_table ? disk->partition_table : _("(Unknown)"),
-                                        disk->partitions ? disk->partitions : _("(Unknown)"));
+                                        disk->partition_table ? disk->partition_table : _("(Unknown)"));
+
+            if (disk->partitions != NULL) {
+                part = disk->partitions;
+                while (part != NULL){
+
+                    tmp = size_human_readable((gfloat) part->size);
+                    if (part->label) {
+                        tmp = h_strdup_cprintf(" - %s", tmp, part->label);
+                    }
+                    if (part->type && part->version) {
+                        tmp = h_strdup_cprintf(" (%s %s)", tmp, part->type, part->version);
+                    }
+                    else if (part->type) {
+                        tmp = h_strdup_cprintf(" (%s)", tmp, part->type);
+                    }
+                    moreinfo = h_strdup_cprintf(_("Partition %s=%s\n"),
+                                                moreinfo,
+                                                part->block, tmp);
+                    g_free(tmp);
+                    part = part->next;
+                }
+            }
         }
 
         moreinfo_add_with_prefix("DEV", devid, moreinfo);
