@@ -40,7 +40,7 @@ void info_group_add_fieldsv(struct InfoGroup *group, va_list ap)
     while (1) {
         struct InfoField field = va_arg(ap, struct InfoField);
 
-        if (!field.name)
+        if (!info_field_get_name(&field))
             break;
         g_array_append_val(group->fields, field);
     }
@@ -83,8 +83,7 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
 
     return (struct InfoField) {
         .name = name,
-        .value = value,
-        .free_value_on_flatten = TRUE,
+        .value = value
     };
 }
 
@@ -201,25 +200,24 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
             gchar tag[256] = "";
 
             field = g_array_index(group->fields, struct InfoField, i);
+            const gchar *tp = info_field_get_tag(&field);
+            gboolean tagged = !!tp;
 
-            if (field.tag)
-                strncpy(tag, field.tag, 255);
-            else
+            if (!tp) {
                 snprintf(tag, 255, "ITEM%d-%d", group_count, i);
+                tp = tag;
+            }
 
-            if (*tag != 0 || field.highlight || field.report_details)
+            if (tagged || field.highlight || field.report_details)
                 g_string_append_printf(output, "$%s%s%s$",
                     field.highlight ? "*" : "",
                     field.report_details ? "!" : "",
-                    tag);
+                    tp);
 
-            g_string_append_printf(output, "%s=%s\n", field.name, field.value);
+            g_string_append_printf(output, "%s=%s\n", info_field_get_name(&field), info_field_get_value(&field));
 
-            if (field.free_value_on_flatten)
-                g_free((gchar *)field.value);
-            if (field.free_name_on_flatten)
-                g_free((gchar *)field.name);
-
+            g_free(field.name);
+            g_free(field.value);
             g_free(field.tag);
         }
     } else if (group->computed) {
@@ -245,8 +243,14 @@ static void flatten_shell_param(GString *output, const struct InfoGroup *group, 
         }
 
         if (field.icon) {
-            g_string_append_printf(output, "Icon$ITEM%d-%d$=%s\n",
-                group_count, i, field.icon);
+            gchar tag[256] = "";
+            const gchar *tp = info_field_get_tag(&field);
+            if (!tp) {
+                snprintf(tag, 255, "ITEM%d-%d", group_count, i);
+                tp = tag;
+            }
+            g_string_append_printf(output, "Icon$%s$=%s\n",
+                tp, info_field_get_icon(&field) );
         }
     }
 }
