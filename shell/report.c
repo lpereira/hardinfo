@@ -107,7 +107,9 @@ gchar *make_icon_css(const gchar *file) {
     gsize length = 0;
     if ( g_file_get_contents(path, &contents, &length, NULL) ) {
         gchar *css_class = icon_name_css_id(file);
-        const char ctype[] = "image/png";
+        const char *ctype = "image/png";
+        if (g_str_has_suffix(file, ".svg") )
+            ctype = "image/svg+xml";
         gchar *b64data = g_base64_encode(contents, length);
         ret = g_strdup_printf(
             ".%s\n"

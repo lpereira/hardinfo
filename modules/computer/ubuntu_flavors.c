@@ -26,7 +26,7 @@
 static const UbuntuFlavor ubuntu_flavors[] = {
     { "ubuntu-server", "Vanilla Server", "distros/ubuntu.png", "https://ubuntu.org/" },
     { "ubuntu-desktop", "Ubuntu GNOME", "distros/ubuntu.png", "https://ubuntu.org/"  },
-    { "xubuntu-desktop", "Xubuntu", "distros/xubuntu.png", "https://xubuntu.org/"  },
+    { "xubuntu-desktop", "Xubuntu", "distros/xubuntu.svg", "https://xubuntu.org/"  },
     { "kubuntu-desktop", "Kubuntu", "distros/kubuntu.png", "https://kubuntu.org/" },
     { "lubuntu-desktop", "Lubuntu", "distros/lubuntu.png", "https://lubuntu.me/" }, /* formerly or also lubuntu.net? */
     { "ubuntu-mate-desktop", "Ubuntu MATE", "distros/ubuntu-mate.png", "https://ubuntu-mate.org/" },
