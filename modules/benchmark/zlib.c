@@ -93,6 +93,8 @@ benchmark_zlib(void)
 
     r = benchmark_crunch_for(CRUNCH_TIME, 0, zlib_for, data);
     r.result /= 100;
+    r.revision = 2;
+    snprintf(r.extra, 255, "zlib %s (built against: %s)", zlib_version, ZLIB_VERSION);
     bench_results[BENCHMARK_ZLIB] = r;
 
     g_free(data);

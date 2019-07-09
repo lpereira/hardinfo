@@ -44,19 +44,26 @@ static gchar *benchmark_include_results(bench_value result, const gchar * benchm
 static gboolean sending_benchmark_results = FALSE;
 
 char *bench_value_to_str(bench_value r) {
-    return g_strdup_printf("%lf; %lf; %d", r.result, r.elapsed_time, r.threads_used);
+    return g_strdup_printf("%lf; %lf; %d; %d; %s", r.result, r.elapsed_time, r.threads_used, r.revision, r.extra);
 }
 
 bench_value bench_value_from_str(const char* str) {
     bench_value ret = EMPTY_BENCH_VALUE;
     double r, e;
-    int t, c;
+    int t, c, v;
+    char extra[256];
     if (str) {
-        c = sscanf(str, "%lf; %lf; %d", &r, &e, &t);
+        c = sscanf(str, "%lf; %lf; %d; %d; %255[^\r\n;|]", &r, &e, &t, &v, extra);
         if (c >= 3) {
             ret.result = r;
             ret.elapsed_time = e;
             ret.threads_used = t;
+        }
+        if (c >= 4) {
+            ret.revision = v;
+        }
+        if (c >= 5) {
+            strcpy(ret.extra, extra);
         }
     }
     return ret;

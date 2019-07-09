@@ -374,10 +374,15 @@ static char *bench_result_more_info_less(bench_result *b) {
         (b->machine->memory_kiB > 0)
         ? g_strdup_printf("%d %s", b->machine->memory_kiB, _("kiB") )
         : g_strdup(_(unk) );
+    char bench_str[256] = "";
+    if (b->bvalue.revision >= 0)
+        snprintf(bench_str, 127, "%d", b->bvalue.revision);
 
     char *ret = g_strdup_printf("[%s]\n"
         /* threads */   "%s=%d\n"
         /* elapsed */   "%s=%0.4f %s\n"
+                        "%s=%s\n"
+                        "%s=%s\n"
         /* legacy */    "%s=%s\n"
                         "[%s]\n"
         /* board */     "%s=%s\n"
@@ -391,6 +396,8 @@ static char *bench_result_more_info_less(bench_result *b) {
                         _("Benchmark Result"),
                         _("Threads"), b->bvalue.threads_used,
                         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
+                        *bench_str ? _("Revision") : _("#Revision"), bench_str,
+                        *b->bvalue.extra ? _("Extra Information") : _("#Extra"), b->bvalue.extra,
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
@@ -408,11 +415,17 @@ static char *bench_result_more_info_less(bench_result *b) {
 }
 
 static char *bench_result_more_info_complete(bench_result *b) {
+    char bench_str[256] = "";
+    strncpy(bench_str, b->name, 127);
+    if (b->bvalue.revision >= 0)
+        snprintf(bench_str + strlen(bench_str), 127, " (r%d)", b->bvalue.revision);
+
     return g_strdup_printf("[%s]\n"
         /* bench name */"%s=%s\n"
         /* threads */   "%s=%d\n"
         /* result */    "%s=%0.2f\n"
         /* elapsed */   "%s=%0.4f %s\n"
+                        "%s=%s\n"
         /* legacy */    "%s=%s\n"
                         "[%s]\n"
         /* board */     "%s=%s\n"
@@ -427,10 +440,11 @@ static char *bench_result_more_info_complete(bench_result *b) {
         /* mid */       "%s=%s\n"
         /* cfg_val */   "%s=%.2f\n",
                         _("Benchmark Result"),
-                        _("Benchmark"), b->name,
+                        _("Benchmark"), bench_str,
                         _("Threads"), b->bvalue.threads_used,
                         _("Result"), b->bvalue.result,
                         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
+                        *b->bvalue.extra ? _("Extra Information") : _("#Extra"), b->bvalue.extra,
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
