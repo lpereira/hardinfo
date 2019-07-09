@@ -100,7 +100,7 @@ gchar *icon_name_css_id(const gchar *file) {
 
 gchar *make_icon_css(const gchar *file) {
     if (!file || *file == 0)
-        return;
+        return g_strdup("");
     gchar *ret = NULL;
     gchar *path = g_build_filename(params.path_data, "pixmaps", file, NULL);
     gchar *contents = NULL;
