@@ -1119,7 +1119,7 @@ static void group_handle_special(GKeyFile *key_file,
     for (i = 0; keys[i]; i++) {
         gchar *key = keys[i];
 
-        if (g_str_has_prefix(key, "UpdateInterval")) {
+        if (g_str_has_prefix(key, "UpdateInterval$")) {
             ShellFieldUpdate *fu = g_new0(ShellFieldUpdate, 1);
             ShellFieldUpdateSource *sfutbl;
             gint ms;
