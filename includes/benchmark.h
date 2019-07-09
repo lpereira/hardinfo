@@ -35,9 +35,11 @@ typedef struct {
     double result;
     double elapsed_time;
     int threads_used;
+    int revision;
+    char extra[256]; /* no \n, ; or | */
 } bench_value;
 
-#define EMPTY_BENCH_VALUE {-1.0f,0,0}
+#define EMPTY_BENCH_VALUE {-1.0f,0,0,-1,""}
 
 char *bench_value_to_str(bench_value r);
 bench_value bench_value_from_str(const char* str);
