@@ -52,7 +52,7 @@ struct InfoGroup {
 
     GArray *fields;
 
-     /* scaffolding fields */
+    /* scaffolding fields */
     const gchar *computed;
 };
 
@@ -60,7 +60,6 @@ struct InfoField {
     const gchar *name;
     const gchar *value;
     const gchar *icon;
-          gchar *tag; /* moreinfo() lookup tag */
 
     int update_interval;
     gboolean highlight;      /* select in GUI, highlight in report (flag:*) */
@@ -68,6 +67,9 @@ struct InfoField {
 
     gboolean free_name_on_flatten;
     gboolean free_value_on_flatten;
+
+    /* scaffolding fields */
+    gchar *tag; /* moreinfo() lookup tag */
 };
 
 struct Info *info_new(void);
