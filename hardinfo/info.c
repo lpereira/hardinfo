@@ -211,30 +211,28 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
 
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {
-            struct InfoField field;
+            struct InfoField *field = &g_array_index(group->fields, struct InfoField, i);
             gchar tag[256] = "";
 
-            field = g_array_index(group->fields, struct InfoField, i);
-
-            if (field.tag)
-                strncpy(tag, field.tag, 255);
+            if (field->tag)
+                strncpy(tag, field->tag, 255);
             else
                 snprintf(tag, 255, "ITEM%d-%d", group_count, i);
 
-            if (*tag != 0 || field.highlight || field.report_details)
+            if (*tag != 0 || field->highlight || field->report_details)
                 g_string_append_printf(output, "$%s%s%s$",
-                    field.highlight ? "*" : "",
-                    field.report_details ? "!" : "",
+                    field->highlight ? "*" : "",
+                    field->report_details ? "!" : "",
                     tag);
 
-            g_string_append_printf(output, "%s=%s\n", field.name, field.value);
+            g_string_append_printf(output, "%s=%s\n", field->name, field->value);
 
-            if (field.free_value_on_flatten)
-                g_free((gchar *)field.value);
-            if (field.free_name_on_flatten)
-                g_free((gchar *)field.name);
+            if (field->free_value_on_flatten)
+                g_free((gchar *)field->value);
+            if (field->free_name_on_flatten)
+                g_free((gchar *)field->name);
 
-            g_free(field.tag);
+            g_free(field->tag);
         }
     } else if (group->computed) {
         g_string_append_printf(output, "%s\n", group->computed);
@@ -249,18 +247,17 @@ static void flatten_shell_param(GString *output, const struct InfoGroup *group, 
         return;
 
     for (i = 0; i < group->fields->len; i++) {
-        struct InfoField field;
+        struct InfoField *field = &g_array_index(group->fields, struct InfoField, i);
 
-        field = g_array_index(group->fields, struct InfoField, i);
 
-        if (field.update_interval) {
+        if (field->update_interval) {
             g_string_append_printf(output, "UpdateInterval$%s=%d\n",
-                field.name, field.update_interval);
+                field->name, field->update_interval);
         }
 
-        if (field.icon) {
+        if (field->icon) {
             g_string_append_printf(output, "Icon$ITEM%d-%d$=%s\n",
-                group_count, i, field.icon);
+                group_count, i, field->icon);
         }
     }
 }
@@ -307,14 +304,14 @@ gchar *info_flatten(struct Info *info)
 
     if (info->groups) {
         for (i = 0; i < info->groups->len; i++) {
-            struct InfoGroup group =
-                g_array_index(info->groups, struct InfoGroup, i);
+            struct InfoGroup *group =
+                &g_array_index(info->groups, struct InfoGroup, i);
 
-            flatten_group(values, &group, i);
-            flatten_shell_param(shell_param, &group, i);
+            flatten_group(values, group, i);
+            flatten_shell_param(shell_param, group, i);
 
-            if (group.fields)
-                g_array_free(group.fields, TRUE);
+            if (group->fields)
+                g_array_free(group->fields, TRUE);
         }
 
         g_array_free(info->groups, TRUE);
