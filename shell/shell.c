@@ -1126,7 +1126,13 @@ static void group_handle_special(GKeyFile *key_file,
 
             ms = g_key_file_get_integer(key_file, group, key, NULL);
 
-            fu->field_name = g_strdup(g_utf8_strchr(key, -1, '$') + 1);
+            /* Old style used just the label which has to be checked by translating it,
+             * and potentially could by ambiguous.
+             * New style can use tag or label. If new style including a tag,
+             * send both tag and label and let the hi_get_field() function use
+             * key_get_components() to split it. */
+            const gchar *chk = g_utf8_strchr(key, -1, '$');
+            fu->field_name = g_strdup(key_is_flagged(chk) ? chk : chk + 1);
             fu->entry = entry;
 
             sfutbl = g_new0(ShellFieldUpdateSource, 1);
@@ -1537,7 +1543,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
 
                 if (entry && entry->fieldfunc && value && g_str_equal(value, "...")) {
                     g_free(value);
-                    value = entry->fieldfunc(name);
+                    value = entry->fieldfunc(keys[j]);
                 }
 
                 key_markup =

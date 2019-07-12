@@ -198,6 +198,29 @@ static const GCompareFunc sort_functions[INFO_GROUP_SORT_MAX] = {
     [INFO_GROUP_SORT_TAG_DESCENDING] = info_field_cmp_tag_descending,
 };
 
+static void _field_free_strings(struct InfoField *field)
+{
+    if (field) {
+        if (field->free_value_on_flatten)
+            g_free((gchar *)field->value);
+        if (field->free_name_on_flatten)
+            g_free((gchar *)field->name);
+        g_free(field->tag);
+    }
+}
+
+static void _group_free_field_strings(struct InfoGroup *group)
+{
+    guint i;
+    if (group && group->fields) {
+        for (i = 0; i < group->fields->len; i++) {
+            struct InfoField field;
+            field = g_array_index(group->fields, struct InfoField, i);
+            _field_free_strings(&field);
+        }
+    }
+}
+
 static void flatten_group(GString *output, const struct InfoGroup *group, guint group_count)
 {
     guint i;
@@ -212,27 +235,23 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {
             struct InfoField *field = &g_array_index(group->fields, struct InfoField, i);
-            gchar tag[256] = "";
+            gchar tmp_tag[256] = ""; /* for generated tag */
 
-            if (field->tag)
-                strncpy(tag, field->tag, 255);
-            else
-                snprintf(tag, 255, "ITEM%d-%d", group_count, i);
+            const gchar *tp = field->tag;
+            gboolean tagged = !!tp;
+            gboolean flagged = field->highlight || field->report_details;
+            if (!tp) {
+                snprintf(tmp_tag, 255, "ITEM%d-%d", group_count, i);
+                tp = tmp_tag;
+            }
 
-            if (*tag != 0 || field->highlight || field->report_details)
+            if (tagged || flagged || field->icon)
                 g_string_append_printf(output, "$%s%s%s$",
                     field->highlight ? "*" : "",
                     field->report_details ? "!" : "",
-                    tag);
+                    tp);
 
             g_string_append_printf(output, "%s=%s\n", field->name, field->value);
-
-            if (field->free_value_on_flatten)
-                g_free((gchar *)field->value);
-            if (field->free_name_on_flatten)
-                g_free((gchar *)field->name);
-
-            g_free(field->tag);
         }
     } else if (group->computed) {
         g_string_append_printf(output, "%s\n", group->computed);
@@ -248,16 +267,25 @@ static void flatten_shell_param(GString *output, const struct InfoGroup *group, 
 
     for (i = 0; i < group->fields->len; i++) {
         struct InfoField *field = &g_array_index(group->fields, struct InfoField, i);
+        gchar tmp_tag[256] = ""; /* for generated tag */
 
+        const gchar *tp = field->tag;
+        gboolean tagged = !!tp;
+        if (!tp) {
+            snprintf(tmp_tag, 255, "ITEM%d-%d", group_count, i);
+            tp = tmp_tag;
+        }
 
         if (field->update_interval) {
-            g_string_append_printf(output, "UpdateInterval$%s=%d\n",
-                field->name, field->update_interval);
+            g_string_append_printf(output, "UpdateInterval$%s%s%s=%d\n",
+                tagged ? tp : "", tagged ? "$" : "", /* tag and close or nothing */
+                field->name,
+                field->update_interval);
         }
 
         if (field->icon) {
-            g_string_append_printf(output, "Icon$ITEM%d-%d$=%s\n",
-                group_count, i, field->icon);
+            g_string_append_printf(output, "Icon$%s$=%s\n",
+                tp, field->icon);
         }
     }
 }
@@ -309,6 +337,8 @@ gchar *info_flatten(struct Info *info)
 
             flatten_group(values, group, i);
             flatten_shell_param(shell_param, group, i);
+
+            _group_free_field_strings(group);
 
             if (group->fields)
                 g_array_free(group->fields, TRUE);

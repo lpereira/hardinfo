@@ -110,31 +110,42 @@ gchar *hi_more_info(gchar * entry)
     return g_strdup_printf("[%s]", entry);
 }
 
+/* a g_str_equal() where either may be null */
+#define g_str_equal0(a,b) (g_strcmp0(a,b) == 0)
+
 gchar *hi_get_field(gchar * field)
 {
+    gchar *tag, *label;
+    key_get_components(field, NULL, &tag, NULL, &label, NULL, TRUE);
+
     gchar *tmp;
 
-    if (g_str_equal(field, _("Memory"))) {
+    if (g_str_equal0(label, _("Memory"))) {
         MemoryInfo *mi = computer_get_memory();
         tmp = g_strdup_printf(_("%dMB (%dMB used)"), mi->total, mi->used);
         g_free(mi);
-    } else if (g_str_equal(field, _("Uptime"))) {
+    } else if (g_str_equal0(label, _("Uptime"))) {
         tmp = computer_get_formatted_uptime();
-    } else if (g_str_equal(field, _("Date/Time"))) {
+    } else if (g_str_equal0(label, _("Date/Time"))) {
         time_t t = time(NULL);
 
         tmp = g_new0(gchar, 64);
         strftime(tmp, 64, "%c", localtime(&t));
-    } else if (g_str_equal(field, _("Load Average"))) {
+    } else if (g_str_equal0(label, _("Load Average"))) {
         tmp = computer_get_formatted_loadavg();
-    } else if (g_str_equal(field, _("Available entropy in /dev/random"))) {
+    } else if (g_str_equal0(tag, "entropy")) {
         tmp = computer_get_entropy_avail();
     } else {
-        gchar *info = moreinfo_lookup_with_prefix("DEV", field);
+        gchar *info = NULL;
+        if (tag)
+            info = moreinfo_lookup_with_prefix("DEV", tag);
+        else if (label)
+            info = moreinfo_lookup_with_prefix("DEV", label);
+
         if (info)
             tmp = g_strdup(info);
         else
-            tmp = g_strdup_printf("Unknown field: %s", field);
+            tmp = g_strdup_printf("Unknown field: [tag: %s] label: %s", tag ? tag : "(none)", label ? label : "(empty)");
     }
     return tmp;
 }
@@ -600,7 +611,7 @@ gchar *callback_security(void)
 
     info_add_group(
         info, _("Health"),
-        info_field_update(_("Available entropy in /dev/random"), 1000),
+        info_field_update(_("Available entropy in /dev/random"), 1000, .tag = g_strdup("entropy") ),
         info_field_last());
 
     info_add_group(
