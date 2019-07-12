@@ -107,12 +107,27 @@ void info_add_computed_group(struct Info *info, const gchar *name, const gchar *
     /* This is a scaffolding method: HardInfo should move away from pre-computing
      * the strings in favor of storing InfoGroups instead; while modules are not
      * fully converted, use this instead. */
-    struct InfoGroup group = {
-        .name = name,
-        .computed = value,
-    };
+    struct Info *tmp_info = NULL;
+    struct InfoGroup donor = {};
+    gchar *tmp_str = NULL;
 
-    g_array_append_val(info->groups, group);
+    if (name)
+        tmp_str = g_strdup_printf("[%s]\n%s", name, value);
+    else
+        tmp_str = g_strdup(value);
+
+    tmp_info = info_unflatten(tmp_str);
+    if (tmp_info->groups->len != 1) {
+        fprintf(stderr,
+            "info_add_computed_group(): expected only one group in value! (actual: %d)\n",
+            tmp_info->groups->len);
+    } else {
+        donor = g_array_index(tmp_info->groups, struct InfoGroup, 0);
+        g_array_append_val(info->groups, donor);
+    }
+
+    g_free(tmp_info); // TODO: doesn't do enough
+    g_free(tmp_str);
 }
 
 void info_set_column_title(struct Info *info, const gchar *column, const gchar *title)
