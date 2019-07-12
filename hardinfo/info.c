@@ -198,26 +198,27 @@ static const GCompareFunc sort_functions[INFO_GROUP_SORT_MAX] = {
     [INFO_GROUP_SORT_TAG_DESCENDING] = info_field_cmp_tag_descending,
 };
 
-static void _field_free_strings(struct InfoField *field)
+static void field_free_strings(struct InfoField *field)
 {
-    if (field) {
-        if (field->free_value_on_flatten)
-            g_free((gchar *)field->value);
-        if (field->free_name_on_flatten)
-            g_free((gchar *)field->name);
-        g_free(field->tag);
-    }
+    if (field->free_value_on_flatten)
+        g_free((gchar *)field->value);
+    if (field->free_name_on_flatten)
+        g_free((gchar *)field->name);
+    g_free(field->tag);
 }
 
-static void _group_free_field_strings(struct InfoGroup *group)
+static void free_group_fields(struct InfoGroup *group)
 {
-    guint i;
     if (group && group->fields) {
+        guint i;
+
         for (i = 0; i < group->fields->len; i++) {
-            struct InfoField field;
-            field = g_array_index(group->fields, struct InfoField, i);
-            _field_free_strings(&field);
+            struct InfoField *field =
+                &g_array_index(group->fields, struct InfoField, i);
+            field_free_strings(field);
         }
+
+        g_array_free(group->fields, TRUE);
     }
 }
 
@@ -228,9 +229,8 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
     if (group->name != NULL)
         g_string_append_printf(output, "[%s]\n", group->name);
 
-    if (group->sort != INFO_GROUP_SORT_NONE) {
+    if (group->sort != INFO_GROUP_SORT_NONE)
         g_array_sort(group->fields, sort_functions[group->sort]);
-    }
 
     if (group->fields) {
         for (i = 0; i < group->fields->len; i++) {
@@ -245,11 +245,12 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
                 tp = tmp_tag;
             }
 
-            if (tagged || flagged || field->icon)
+            if (tagged || flagged || field->icon) {
                 g_string_append_printf(output, "$%s%s%s$",
                     field->highlight ? "*" : "",
                     field->report_details ? "!" : "",
                     tp);
+            }
 
             g_string_append_printf(output, "%s=%s\n", field->name, field->value);
         }
@@ -338,10 +339,7 @@ gchar *info_flatten(struct Info *info)
             flatten_group(values, group, i);
             flatten_shell_param(shell_param, group, i);
 
-            _group_free_field_strings(group);
-
-            if (group->fields)
-                g_array_free(group->fields, TRUE);
+            free_group_fields(group);
         }
 
         g_array_free(info->groups, TRUE);
