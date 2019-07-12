@@ -165,12 +165,9 @@ __scan_battery_acpi(void)
           
           fclose(f);
 
-	 const gchar *url = vendor_get_url(manufacturer);
-	 if (url) {
-	   char *tmp = g_strdup_printf("%s (%s)", vendor_get_name(manufacturer), url);
-	   g_free(manufacturer);
-	   manufacturer = tmp;    
-	 }
+         gchar *tmp = vendor_get_link(manufacturer);
+         g_free(manufacturer);
+         manufacturer = tmp;
           
           if (g_str_equal(present, "yes")) {
             if (remaining && capacity)

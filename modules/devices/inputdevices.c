@@ -95,13 +95,7 @@ __scan_input_devices(void)
                       tmp, name,
                       input_devices[d].icon);
 
-        const gchar *v_url = (gchar*)vendor_get_url(name);
-        const gchar *v_name = (gchar*)vendor_get_name(name);
-        gchar *v_str = NULL;
-        if (v_url != NULL)
-            v_str = g_strdup_printf("[0x%x] %s (%s)", vendor, v_name, v_url);
-        else
-            v_str = g_strdup_printf("0x%x", vendor);
+        gchar *v_str = vendor_get_link(name);
         v_str = hardinfo_clean_value(v_str, 1);
         name = hardinfo_clean_value(name, 1);
 
@@ -109,14 +103,14 @@ __scan_input_devices(void)
                 /* Name */   "%s=%s\n"
                 /* Type */   "%s=%s\n"
                 /* Bus */    "%s=0x%x\n"
-                /* Vendor */ "%s=%s\n"
+                /* Vendor */ "%s=[0x%x] %s\n"
                 /* Product */"%s=0x%x\n"
                 /* Version */"%s=0x%x\n",
                         _("Device Information"),
                         _("Name"), name,
                         _("Type"), input_devices[d].name,
                         _("Bus"), bus,
-                        _("Vendor"), v_str,
+                        _("Vendor"), vendor, v_str,
                         _("Product"), product,
                         _("Version"), version );
 
@@ -130,9 +124,9 @@ __scan_input_devices(void)
 
         moreinfo_add_with_prefix("DEV", tmp, strhash);
         g_free(tmp);
-        g_free(v_str);
         g_free(phys);
         g_free(name);
+        g_free(v_str);
     }
     }
 

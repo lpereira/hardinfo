@@ -118,13 +118,7 @@ static void _usb_dev(const usbd *u) {
     usb_list = h_strdup_cprintf("$%s$%s=%s\n", usb_list, key, label, name);
     usb_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", usb_icons, key, label, icon ? icon: "usb");
 
-    const gchar *v_url = vendor_get_url(vendor);
-    const gchar *v_name = vendor_get_name(vendor);
-    if (v_url != NULL) {
-        v_str = g_strdup_printf("%s (%s)", v_name, v_url);
-    } else {
-        v_str = g_strdup_printf("%s", vendor );
-    }
+    v_str = vendor_get_link(vendor);
 
     if (u->if_list != NULL) {
         i = u->if_list;

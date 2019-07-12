@@ -1501,6 +1501,7 @@ static void module_selected_show_info_list(GKeyFile *key_file,
     gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info_tree->view),
                                      ngroups > 1);
 }
+
 static void module_selected_show_info_detail(GKeyFile *key_file,
                                              ShellModuleEntry *entry,
                                              gchar **groups)

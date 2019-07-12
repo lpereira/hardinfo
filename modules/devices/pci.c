@@ -70,26 +70,8 @@ static gchar *_pci_dev(const pcid *p, gchar *icons) {
     product = UNKIFNULL_AC(p->device_id_str);
     sproduct = UNKIFNULL_AC(p->sub_device_id_str);
 
-#define USE_HARDINFO_VENDOR_THING 1
-    if (USE_HARDINFO_VENDOR_THING) {
-        const gchar *v_url = vendor_get_url(vendor);
-        const gchar *v_name = vendor_get_name(vendor);
-        if (v_url != NULL) {
-            v_str = g_strdup_printf("%s (%s)", v_name, v_url);
-        } else {
-            v_str = g_strdup(vendor);
-        }
-        v_url = vendor_get_url(svendor);
-        v_name = vendor_get_name(svendor);
-        if (v_url != NULL) {
-            sv_str = g_strdup_printf("%s (%s)", v_name, v_url);
-        } else {
-            sv_str = g_strdup(svendor);
-        }
-    } else {
-            v_str = g_strdup(vendor);
-            sv_str = g_strdup(svendor);
-    }
+    v_str = vendor_get_link(vendor);
+    sv_str = vendor_get_link(svendor);
 
     name = g_strdup_printf("%s %s", vendor, product);
     key = g_strdup_printf("PCI%04x:%02x:%02x.%01x", p->domain, p->bus, p->device, p->function);

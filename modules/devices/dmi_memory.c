@@ -557,15 +557,11 @@ gchar *make_spd_section(spd_data *spd) {
         }
         gchar *vendor_str = NULL;
         if (spd->vendor) {
-            if (spd->vendor->url)
-                vendor_str = g_strdup_printf(" (%s, %s)",
-                    spd->vendor->name, spd->vendor->url );
+            vendor_str = vendor_get_link_from_vendor(spd->vendor);
         }
         gchar *dram_vendor_str = NULL;
         if (spd->dram_vendor) {
-            if (spd->dram_vendor->url)
-                dram_vendor_str = g_strdup_printf(" (%s, %s)",
-                    spd->dram_vendor->name, spd->dram_vendor->url );
+            dram_vendor_str = vendor_get_link_from_vendor(spd->dram_vendor);
         }
         gchar *size_str = NULL;
         if (!spd->size_MiB)
@@ -705,9 +701,7 @@ gchar *memory_devices_get_info() {
         if (s->populated) {
             gchar *vendor_str = NULL;
             if (s->vendor) {
-                if (s->vendor->url)
-                    vendor_str = g_strdup_printf(" (%s, %s)",
-                        s->vendor->name, s->vendor->url );
+                vendor_str = vendor_get_link_from_vendor(s->vendor);
             }
             gchar *size_str = NULL;
             if (!s->size_str)
@@ -843,9 +837,7 @@ gchar *memory_devices_get_info() {
 
         gchar *vendor_str = NULL;
         if (s->vendor) {
-            if (s->vendor->url)
-                vendor_str = g_strdup_printf(" (%s, %s)",
-                    s->vendor->name, s->vendor->url );
+            vendor_str = vendor_get_link_from_vendor(s->vendor);
         }
         gchar *size_str = NULL;
         if (!s->size_MiB)

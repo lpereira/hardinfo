@@ -57,26 +57,8 @@ static void _gpu_pci_dev(gpud* gpu) {
     else
         drm_path = g_strdup(_("(Unknown)"));
 
-#define USE_HARDINFO_VENDOR_THING 1
-    if (USE_HARDINFO_VENDOR_THING) {
-        const gchar *v_url = vendor_get_url(vendor);
-        const gchar *v_name = vendor_get_name(vendor);
-        if (v_url != NULL) {
-            v_str = g_strdup_printf("%s (%s)", v_name, v_url);
-        } else {
-            v_str = g_strdup(vendor);
-        }
-        v_url = vendor_get_url(svendor);
-        v_name = vendor_get_name(svendor);
-        if (v_url != NULL) {
-            sv_str = g_strdup_printf("%s (%s)", v_name, v_url);
-        } else {
-            sv_str = g_strdup(svendor);
-        }
-    } else {
-            v_str = g_strdup(vendor);
-            sv_str = g_strdup(svendor);
-    }
+    v_str = vendor_get_link(vendor);
+    sv_str = vendor_get_link(svendor);
 
     name = g_strdup_printf("%s %s", vendor, product);
     key = g_strdup_printf("GPU%s", gpu->id);

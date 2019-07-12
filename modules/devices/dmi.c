@@ -66,84 +66,83 @@ static void add_to_moreinfo(const char *group, const char *key, char *value)
   moreinfo_add_with_prefix("DEV", new_key, g_strdup(g_strstrip(value)));
 }
 
-gboolean dmi_get_info()
+gboolean dmi_get_info(void)
 {
-  const gchar *group = NULL;
-  DMIInfo *info;
-  gboolean dmi_succeeded = FALSE;
-  gint i;
-  gchar *value;
-  const gchar *url, *vendor;
+    const gchar *group = NULL;
+    DMIInfo *info;
+    gboolean dmi_succeeded = FALSE;
+    gint i;
+    gchar *value;
+    const gchar *vendor;
 
-  if (dmi_info) {
-    g_free(dmi_info);
-    dmi_info = NULL;
-  }
-
-  for (i = 0; i < G_N_ELEMENTS(dmi_info_table); i++) {
-    info = &dmi_info_table[i];
-
-    if (info->group) {
-      group = info->name;
-      dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, _(info->name) );
-    } else if (group && info->id_str) {
-      int state = 3;
-
-      if (strcmp(info->id_str, "chassis-type") == 0)
-        value = dmi_chassis_type_str(-1, 1);
-      else {
-        switch ( dmi_str_status(info->id_str) ) {
-          case 0:
-            value = NULL;
-            state = (getuid() == 0) ? 0 : 1;
-            break;
-          case -1:
-            state = 2;
-          case 1:
-            value = dmi_get_str_abs(info->id_str);
-            break;
-        }
-      }
-
-      switch(state) {
-        case 0: /* no value, root */
-          dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info,
-                        _(info->name), _("(Not available)") );
-          break;
-        case 1: /* no value, no root */
-          dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info,
-                        _(info->name), _("(Not available; Perhaps try running HardInfo as root.)") );
-          break;
-        case 2: /* ignored value */
-          if (params.markup_ok)
-            dmi_info = h_strdup_cprintf("%s=<s>%s</s>\n", dmi_info,
-                        _(info->name), value);
-          else
-            dmi_info = h_strdup_cprintf("%s=[X]\"%s\"\n", dmi_info,
-                        _(info->name), value);
-          break;
-        case 3: /* good value */
-          url = vendor_get_url(value);
-          if (url) {
-            vendor = vendor_get_name(value);
-            dmi_info = h_strdup_cprintf("%s=%s (%s, %s)\n", dmi_info,
-                        _(info->name), value, vendor, url);
-          } else
-            dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info,
-                        _(info->name), value);
-          add_to_moreinfo(group, info->name, value);
-          dmi_succeeded = TRUE;
-          break;
-      }
+    if (dmi_info) {
+        g_free(dmi_info);
+        dmi_info = NULL;
     }
-  }
 
-  if (!dmi_succeeded) {
-    g_free(dmi_info);
-    dmi_info = NULL;
-  }
+    for (i = 0; i < G_N_ELEMENTS(dmi_info_table); i++) {
+        info = &dmi_info_table[i];
 
-  return dmi_succeeded;
+        if (info->group) {
+            group = info->name;
+            dmi_info = h_strdup_cprintf("[%s]\n", dmi_info, _(info->name));
+        } else if (group && info->id_str) {
+            int state = 3;
+
+            if (strcmp(info->id_str, "chassis-type") == 0)
+                value = dmi_chassis_type_str(-1, 1);
+            else {
+                switch (dmi_str_status(info->id_str)) {
+                case 0:
+                    value = NULL;
+                    state = (getuid() == 0) ? 0 : 1;
+                    break;
+                case -1:
+                    state = 2;
+                case 1:
+                    value = dmi_get_str_abs(info->id_str);
+                    break;
+                }
+            }
+
+            switch (state) {
+            case 0: /* no value, root */
+                dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info, _(info->name),
+                                            _("(Not available)"));
+                break;
+            case 1: /* no value, no root */
+                dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info, _(info->name),
+                                            _("(Not available; Perhaps try "
+                                              "running HardInfo as root.)"));
+                break;
+            case 2: /* ignored value */
+                if (params.markup_ok)
+                    dmi_info = h_strdup_cprintf("%s=<s>%s</s>\n", dmi_info,
+                                                _(info->name), value);
+                else
+                    dmi_info = h_strdup_cprintf("%s=[X]\"%s\"\n", dmi_info,
+                                                _(info->name), value);
+                break;
+            case 3: /* good value */
+            {
+                gchar *link = vendor_get_link(value);
+                dmi_info =
+                    h_strdup_cprintf("%s=%s\n", dmi_info, _(info->name), link);
+                g_free(link);
+                add_to_moreinfo(group, info->name, value);
+                dmi_succeeded = TRUE;
+                break;
+            }
+            }
+        }
+    }
+
+    if (!dmi_succeeded) {
+        g_free(dmi_info);
+        dmi_info = NULL;
+    }
+
+    return dmi_succeeded;
 }
 
 void __scan_dmi()

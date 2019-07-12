@@ -133,7 +133,6 @@ gboolean __scan_udisks2_devices(void) {
             icon = "hdd";
         }
 
-        url = vendor_get_url(vendor_str);
         udisks2_storage_list = h_strdup_cprintf("$%s$%s=\n", udisks2_storage_list, devid, label);
         storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, label, icon);
         features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
@@ -157,17 +156,10 @@ gboolean __scan_udisks2_devices(void) {
         moreinfo = g_strdup_printf(_("[Drive Information]\n"
                                    "Model=%s\n"),
                                    label);
-        if (url) {
-            moreinfo = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
-                                         moreinfo,
-                                         vendor_get_name(vendor_str),
-                                         url);
-        }
-        else {
-            moreinfo = h_strdup_cprintf(_("Vendor=%s\n"),
-                                         moreinfo,
-                                         vendor_get_name(vendor_str));
-        }
+
+        moreinfo = h_strdup_cprintf(_("Vendor=%s\n"),
+                                     moreinfo,
+                                     idle_free(vendor_get_link(vendor_str)));
 
         size = size_human_readable((gfloat) disk->size);
         moreinfo = h_strdup_cprintf(_("Revision=%s\n"
@@ -352,17 +344,9 @@ void __scan_scsi_devices(void)
                 gchar *strhash = g_strdup_printf(_("[Device Information]\n"
                                                  "Model=%s\n"), model);
 
-                const gchar *url = vendor_get_url(model);
-                if (url) {
-                  strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"),
-                                             strhash,
-                                             vendor_get_name(model),
-                                             url);
-                } else {
-                  strhash = h_strdup_cprintf(_("Vendor=%s\n"),
-                                             strhash,
-                                             vendor_get_name(model));
-                }
+                strhash = h_strdup_cprintf(_("Vendor=%s\n"),
+                                           strhash,
+                                           idle_free(vendor_get_link(model)));
 
                 strhash = h_strdup_cprintf(_("Type=%s\n"
                                            "Revision=%s\n"
@@ -559,13 +543,7 @@ void __scan_ide_devices(void)
 	    gchar *strhash = g_strdup_printf(_("[Device Information]\n" "Model=%s\n"),
 					     model);
 
-	    const gchar *url = vendor_get_url(model);
-
-	    if (url) {
-		strhash = h_strdup_cprintf(_("Vendor=%s (%s)\n"), strhash, vendor_get_name(model), url);
-	    } else {
-		strhash = h_strdup_cprintf(_("Vendor=%s\n"), strhash, vendor_get_name(model));
-	    }
+            strhash = h_strdup_cprintf(_("Vendor=%s\n"), strhash, idle_free(vendor_get_link(model)));
 
 	    strhash = h_strdup_cprintf(_("Device Name=hd%c\n"
 					 "Media=%s\n" "Cache=%dkb\n"), strhash, iface, media, cache);

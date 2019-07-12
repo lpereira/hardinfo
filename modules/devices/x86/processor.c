@@ -648,7 +648,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                    processor->model,
                    processor->stepping,
                    processor->strmodel,
-                   _("Vendor"), vendor_get_name(processor->vendor_id),
+                   _("Vendor"), idle_free(vendor_get_link(processor->vendor_id)),
                    _("Microcode Version"), processor->microcode,
                    _("Configuration"),
                    _("Cache Size"), processor->cache_size, _("kb"),
