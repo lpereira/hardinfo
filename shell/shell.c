@@ -1525,7 +1525,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
             gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
             g_free(tmp);
 
-            gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
+            gtk_container_set_border_width(GTK_CONTAINER(frame), 6);
             gtk_box_pack_start(GTK_BOX(shell->detail_view->view), frame, FALSE,
                                FALSE, 0);
 
