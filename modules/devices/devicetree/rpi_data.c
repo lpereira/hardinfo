@@ -61,6 +61,11 @@ static struct {
   { "a32082",    "Q4 2016",    "3 Model B",           "1.2",    "1GB",      "Sony Japan",    NULL  },
   { "a020d3",    "Q1 2018",    "3 Model B+",          "1.3",    "1GB",      "Sony",          "BCM2837" },
   { "9020e0",    "Q4 2018",    "3 Model A+",          "1.0",    "512MB",    "Sony",          "BCM2837" },
+
+  { "a03111",    "Q2 2019",    "4 Model B",           "1.0",    "1GB",      "Sony",          "BCM2838" },
+  { "b03111",    "Q2 2019",    "4 Model B",           "1.0",    "2GB",      "Sony",          "BCM2838" },
+  //{ "c?03111",    "Q2 2019",    "4 Model B",           "1.0",    "4GB",      "Sony",          "BCM2838" },
+
   { NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
