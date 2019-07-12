@@ -35,6 +35,8 @@ const Vendor *vendor_match(const gchar *id_str, ...); /* end list of strings wit
 const gchar *vendor_get_name(const gchar *id_str);
 const gchar *vendor_get_shortest_name(const gchar *id_str);
 const gchar *vendor_get_url(const gchar *id_str);
+gchar *vendor_get_link(const gchar *id_str);
+gchar *vendor_get_link_from_vendor(const Vendor *v);
 void vendor_free(Vendor *v);
 
 #endif	/* __VENDOR_H__ */

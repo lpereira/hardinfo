@@ -371,3 +371,40 @@ const gchar *vendor_get_url(const gchar * id_str) {
 
     return NULL;
 }
+
+gchar *vendor_get_link(const gchar *id_str)
+{
+    const Vendor *v = vendor_match(id_str, NULL);
+
+    if (!v) {
+        return g_strdup(id_str);
+    }
+
+    return vendor_get_link_from_vendor(v);
+}
+
+gchar *vendor_get_link_from_vendor(const Vendor *v)
+{
+    if (!v) {
+        return g_strdup(_("Unknown"));
+    }
+
+    if (!v->url) {
+        return g_strdup(v->name);
+    }
+
+    if (params.markup_ok) {
+        const gchar *prefix;
+
+        if (!strncmp(v->url, "http://", sizeof("http://") - 1) ||
+            !strncmp(v->url, "https://", sizeof("https://") - 1)) {
+            prefix = "";
+        } else {
+            prefix = "http://";
+        }
+
+        return g_strdup_printf("<a href=\"%s%s\">%s</a>", prefix, v->url, v->name);
+    }
+
+    return g_strdup_printf("%s (%s)", v->name, v->url);
+}
