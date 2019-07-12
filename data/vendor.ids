@@ -555,6 +555,11 @@ name Elitegroup Computer Systems
     ansi_color 0;36;41
     match_string_case ECS
 
+name SANYO
+    name_short SANYO
+    url www.sanyo.com
+    match_string SANYO
+
 #
 # BIOS manufacturers
 #
@@ -582,6 +587,11 @@ name Insyde Software
     url www.insyde.com
     ansi_color 0;30;42
     match_string Insyde
+
+name Coreboot Project
+    name_short Coreboot
+    url www.coreboot.org
+    match_string coreboot
 
 #
 # Linux
