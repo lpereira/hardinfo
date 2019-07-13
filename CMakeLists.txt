@@ -98,6 +98,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/includes/${HARDINFO_ARCH}
 	${CMAKE_SOURCE_DIR}/deps/uber-graph
 	${CMAKE_SOURCE_DIR}/deps/sysobj_early/include
+	${CMAKE_SOURCE_DIR}/deps/sysobj_early/gui
 	${CMAKE_BINARY_DIR}
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
@@ -216,6 +217,7 @@ endforeach()
 add_library(sysobj_early STATIC
 	deps/sysobj_early/src/gg_slist.c
 	deps/sysobj_early/src/strstr_word.c
+	deps/sysobj_early/gui/uri_handler.c
 )
 set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function")
 
