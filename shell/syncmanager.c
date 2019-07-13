@@ -667,11 +667,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
-#if GTK_CHECK_VERSION(2, 14, 0)
     dialog1_vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-#else
-    dialog1_vbox = GTK_DIALOG(dialog)->vbox;
-#endif
     gtk_box_set_spacing(GTK_BOX(dialog1_vbox), 5);
     gtk_container_set_border_width(GTK_CONTAINER(dialog1_vbox), 4);
     gtk_widget_show(dialog1_vbox);
@@ -736,11 +732,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 
     populate_store(store);
 
-#if GTK_CHECK_VERSION(2, 14, 0)
     dialog1_action_area = gtk_dialog_get_action_area(GTK_DIALOG(dialog));
-#else
-    dialog1_action_area = GTK_DIALOG(dialog)->action_area;
-#endif
     gtk_widget_show(dialog1_action_area);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
 			      GTK_BUTTONBOX_END);
@@ -749,30 +741,18 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     gtk_widget_show(button8);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button8,
 				 GTK_RESPONSE_CANCEL);
-#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_set_can_default(button8, TRUE);
-#else
-    GTK_WIDGET_SET_FLAGS(button8, GTK_CAN_DEFAULT);
-#endif
     button7 = gtk_button_new_with_mnemonic(_("_Synchronize"));
     gtk_widget_show(button7);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button7,
 				 GTK_RESPONSE_ACCEPT);
-#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_set_can_default(button7, TRUE);
-#else
-    GTK_WIDGET_SET_FLAGS(button7, GTK_CAN_DEFAULT);
-#endif
     button6 = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
     g_signal_connect(G_OBJECT(button6), "clicked",
 		     (GCallback) close_clicked, NULL);
     gtk_dialog_add_action_widget(GTK_DIALOG(dialog), button6,
 				 GTK_RESPONSE_ACCEPT);
-#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_widget_set_can_default(button6, TRUE);
-#else
-    GTK_WIDGET_SET_FLAGS(button6, GTK_CAN_DEFAULT);
-#endif
 
     sd->dialog = dialog;
     sd->button_sync = button7;

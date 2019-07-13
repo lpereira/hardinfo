@@ -115,11 +115,7 @@ void cb_about_module(GtkAction * action)
 	    gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(shell->window));
 
 	    text = g_strdup(sm->name);
-#if GTK_CHECK_VERSION(2, 12, 0)
 	    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), text);
-#else
-	    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), text);
-#endif
 	    g_free(text);
 
 	    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about),
@@ -187,11 +183,7 @@ void cb_about()
     about = gtk_about_dialog_new();
     gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(shell->window));
 
-#if GTK_CHECK_VERSION(2, 12, 0)
     gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), "HardInfo");
-#else
-    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
-#endif
 
     copyright = g_strdup_printf("Copyright \302\251 2003-%d Leandro A. F. Pereira", HARDINFO_COPYRIGHT_LATEST_YEAR);
 

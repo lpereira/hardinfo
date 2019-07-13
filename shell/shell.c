@@ -129,7 +129,6 @@ void shell_action_set_property(const gchar * action_name,
 
 void shell_action_set_label(const gchar * action_name, gchar * label)
 {
-#if GTK_CHECK_VERSION(2,16,0)
     if (params.gui_running && shell->action_group) {
 	GtkAction *action;
 
@@ -139,7 +138,6 @@ void shell_action_set_label(const gchar * action_name, gchar * label)
 	    gtk_action_set_label(action, label);
 	}
     }
-#endif
 }
 
 void shell_action_set_enabled(const gchar * action_name, gboolean setting)
@@ -880,9 +878,7 @@ static void detail_view_clear(DetailView *detail_view)
 static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *)data;
-#if GTK_CHECK_VERSION(2, 14, 0)
     GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->window));
-#endif
 
     /* if the entry is still selected, update it */
     if (entry->selected) {
@@ -900,11 +896,7 @@ static gboolean reload_section(gpointer data)
 #endif
 
         /* avoid drawing the window while we reload */
-#if GTK_CHECK_VERSION(2, 14, 0)
         gdk_window_freeze_updates(gdk_window);
-#else
-        gdk_window_freeze_updates(shell->window->window);
-#endif
 
         /* gets the current selected path */
         if (gtk_tree_selection_get_selected(shell->info_tree->selection,
@@ -937,11 +929,7 @@ static gboolean reload_section(gpointer data)
 #endif
 
         /* make the window drawable again */
-#if GTK_CHECK_VERSION(2, 14, 0)
         gdk_window_thaw_updates(gdk_window);
-#else
-        gdk_window_thaw_updates(shell->window->window);
-#endif
     }
 
     /* destroy the timeout: it'll be set up again */
@@ -993,9 +981,7 @@ info_tree_compare_val_func(GtkTreeModel * model,
 
 static void set_view_type(ShellViewType viewtype, gboolean reload)
 {
-#if GTK_CHECK_VERSION(2, 18, 0)
     GtkAllocation* alloc;
-#endif
     gboolean type_changed = FALSE;
     if (viewtype != shell->view_type)
         type_changed = TRUE;
@@ -1048,15 +1034,10 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         gtk_widget_show(shell->notebook);
 
         if (type_changed) {
-#if GTK_CHECK_VERSION(2, 18, 0)
             alloc = g_new(GtkAllocation, 1);
             gtk_widget_get_allocation(shell->hbox, alloc);
             gtk_paned_set_position(GTK_PANED(shell->vpaned), alloc->height / 2);
             g_free(alloc);
-#else
-            gtk_paned_set_position(GTK_PANED(shell->vpaned),
-                            shell->hbox->allocation.height / 2);
-#endif
         }
         break;
     case SHELL_VIEW_LOAD_GRAPH:
@@ -1066,17 +1047,11 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
         load_graph_clear(shell->loadgraph);
 
         if (type_changed) {
-#if GTK_CHECK_VERSION(2, 18, 0)
             alloc = g_new(GtkAllocation, 1);
             gtk_widget_get_allocation(shell->hbox, alloc);
             gtk_paned_set_position(GTK_PANED(shell->vpaned),
                     alloc->height - load_graph_get_height(shell->loadgraph) - 16);
             g_free(alloc);
-#else
-            gtk_paned_set_position(GTK_PANED(shell->vpaned),
-                           shell->hbox->allocation.height -
-                           load_graph_get_height(shell->loadgraph) - 16);
-#endif
         }
         break;
     case SHELL_VIEW_PROGRESS_DUAL:
@@ -2098,10 +2073,8 @@ static ShellTree *tree_new()
     treeview = gtk_tree_view_new_with_model(model);
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
 
-#if GTK_CHECK_VERSION(2,12,0)
     gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(treeview), FALSE);
     gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(treeview), 24);
-#endif
 
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
