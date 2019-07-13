@@ -97,6 +97,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/includes
 	${CMAKE_SOURCE_DIR}/includes/${HARDINFO_ARCH}
 	${CMAKE_SOURCE_DIR}/deps/uber-graph
+	${CMAKE_SOURCE_DIR}/deps/sysobj_early/include
 	${CMAKE_BINARY_DIR}
 	${GTK_INCLUDE_DIRS}
 	${LIBSOUP_INCLUDE_DIRS}
@@ -212,6 +213,12 @@ foreach (_module ${HARDINFO_MODULES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
 endforeach()
 
+add_library(sysobj_early STATIC
+	deps/sysobj_early/src/gg_slist.c
+	deps/sysobj_early/src/strstr_word.c
+)
+set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function")
+
 if (HARDINFO_GTK3)
 add_library(uber-graph STATIC
 	deps/uber-graph/g-ring.c
@@ -267,6 +274,7 @@ add_executable(hardinfo
 	shell/loadgraph-uber.c
 )
 target_link_libraries(hardinfo
+	sysobj_early
 	uber-graph
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
@@ -302,6 +310,7 @@ add_executable(hardinfo
 	shell/loadgraph.c
 )
 target_link_libraries(hardinfo
+	sysobj_early
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
 	m

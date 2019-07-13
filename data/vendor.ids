@@ -6,6 +6,8 @@
 #    name_short <shorter name>
 #    url <url>
 #    url_support <url>
+#    wikipedia [language:]<article title>[#section]
+#    note <short note>
 #    ansi_color n[;n][...]
 #    [match_string|match_string_case|match_string_exact] <match>
 #    ...
@@ -21,14 +23,16 @@ name Lenovo Group
     name_short Lenovo
     url www.lenovo.com
     url_support support.lenovo.com
+    wikipedia Lenovo
     ansi_color 0;97;41
     match_string lenovo
-# EDID vendor code: LEN
+    note EDID vendor: LEN
     match_string_exact LEN
 
 name ASUSTeK Computer
     name_short ASUS
     url www.asus.com
+    wikipedia Asus
     ansi_color 0;30;47
     match_string ASUSTek
     match_string ASUS
@@ -37,6 +41,7 @@ name ASUSTeK Computer
 name Advanced Micro Devices
     name_short AMD
     url www.amd.com
+    wikipedia Advanced Micro Devices
     ansi_color 0;97;41
     match_string Advanced Micro Devices
     match_string_case AMD
@@ -45,6 +50,7 @@ name Advanced Micro Devices
 name Advanced Micro Devices (formerly ATI)
     name_short AMD/ATI
     url www.amd.com
+    wikipedia ATI Technologies
     ansi_color 0;97;41
     match_string ATI Technologies
     match_string Advanced Micro Devices, Inc. [AMD/ATI]
@@ -54,23 +60,36 @@ name Advanced Micro Devices (formerly ATI)
 name nVidia Corporation
     name_short nVidia
     url www.nvidia.com
+    wikipedia Nvidia
     ansi_color 0;97;42
     match_string nVidia
 
 name G.Skill International Enterprise
     name_short G.Skill
     url www.gskill.com
+    wikipedia G.Skill
     ansi_color 0;31;107
     match_string G.Skill
     match_string G-Skill
+    match_string G Skill
+
+name XFX Pine Group
+    name_short XFX
+    url www.xfxforce.com
+    wikipedia XFX
+    ansi_color 0;30;42
+    match_string_case XFX
 
 name 3Com
     url www.3com.com
+    wikipedia 3Com
+    ansi_color 0;97;40
     match_string 3Com
 
 name Intel Corporation
     name_short Intel
     url www.intel.com
+    wikipedia Intel Corporation
     ansi_color 0;97;44
     match_string Intel
 
@@ -88,7 +107,7 @@ name NEC Corporation
     name_short NEC
     url www.nec.com
     ansi_color 0;94;107
-# EDID vendor code: NEC
+    note EDID vendor: NEC
     match_string_case NEC
 
 name Realtek Semiconductor
@@ -103,22 +122,25 @@ name Toshiba Corporation
     url www.toshiba.com
     ansi_color 0;91;47
     match_string Toshiba
-# EDID vendor code: TSB
+    note EDID vendor: TSB
     match_string_exact TSB
 
 name Vizio
-# EDID vendor code: VIZ
+    name_short VIZIO
+    ansi_color 0;30;107
+    note EDID vendor: VIZ
     match_string_exact VIZ
 
 name ViewSonic Corporation
     name_short ViewSonic
     url www.viewsonic.com
     ansi_color 0;35;103
-# EDID vendor code: VSC
+    note EDID vendor: VSC
     match_string_exact VSC
 
 name LITE-ON
     url www.liteonit.com
+    ansi_color 0;97;104
     match_string_case LITE-ON
 
 name Maxtor
@@ -129,13 +151,13 @@ name Samsung
     url www.samsung.com
     ansi_color 0;47;30
     match_string Samsung
-# EDID vendor code: SAM
+    note EDID vendor: SAM
     match_string_exact SAM
 
 name Pioneer
     url www.pioneer-eur.com
     match_string Pioneer
-# EDID vendor code: PIO
+    note EDID vendor: PIO
     match_string_exact PIO
 
 name Plextor
@@ -155,13 +177,19 @@ name LG Electronics
     match_string Lucky-Goldstar
     match_string_case LG
 
+name LG Electronics (formerly Goldstar)
+    name_short LG (Goldstar)
+    url www.lge.com
+    ansi_color 0;97;41
+    match_string Goldstar
+
 name LG Display
     name_short LG Display
     url www.lgdisplay.com
     ansi_color 0;97;41
     match_string LG Display
     match_string LG.Philips
-# EDID vendor code: LGD
+    note EDID vendor: LGD
     match_string_exact LGD
 
 name Hitachi-LG Data Storage
@@ -169,12 +197,18 @@ name Hitachi-LG Data Storage
     url http://hlds.co.kr
     match_string_case HL-DT-ST
 
+name Hitachi Global Storage Technologies
+    name_short HGST
+    url hgst.com
+    ansi_color 0;97;40
+    match_string_case HGST
+
 name Hitachi
     name_short HITACHI
     url www.hitachi.com
     ansi_color 0;30;47
     match_string Hitachi
-# EDID vendor code: HTC
+    note EDID vendor: HTC
     match_string_exact HTC
 
 name Lexmark
@@ -185,9 +219,46 @@ name Creative Labs
     url www.creative.com
     match_string Creative Labs
 
-name Conexant
-    url www.brooktree.com
+name NXP Semiconductors
+    name_short NXP
+    url www.nxp.com
+    match_string_case NXP
+
+name Synaptics (formerly Brooktree)
+    name_short Synaptics (Brooktree)
+    url www.synaptics.com
     match_string Brooktree
+
+name Synaptics (formerly Conexant Systems)
+    name_short Synaptics (Conexant)
+    url www.synaptics.com
+    match_string Conexant
+
+name Synaptics
+    url www.synaptics.com
+    match_string Synaptics
+
+name TDK-Micronas
+    url www.micronas.com
+    match_string Micronas
+
+name Apacer Technology
+    name_short Apacer
+    match_string Apacer
+
+name Bright Micron Technology
+    name_short BMT
+    match_string Bright Micron
+
+name HT Micron
+    match_string HT Micron
+
+name Intellitech
+    match_string Intellitech
+
+name Harmony Semiconductor
+    name_short Harmony
+    match_string Harmony
 
 name Atheros Communications
     url www.atheros.com
@@ -198,7 +269,7 @@ name Panasonic Industry Company
     url www.panasonic.com
     ansi_color 0;30;107
     match_string MATSHITA
-# EDID vendor code: MEI
+    note EDID vendor: MEI
     match_string_exact MEI
 
 name Silicon Image
@@ -217,7 +288,7 @@ name Apple Computer
     url www.apple.com
     ansi_color 0;97;100
     match_string Apple
-# EDID vendor code: APP
+    note EDID vendor: APP
     match_string_exact APP
 
 name International Business Machines Corporation
@@ -233,7 +304,7 @@ name Dell Computer
     match_string Dell
 # Dell PowerEdge/PowerVault controller SCSI vendor
     match_string PE/PV
-# EDID vendor code: DEL
+    note EDID vendor: DEL
     match_string_exact DEL
 
 name Logitech International
@@ -243,7 +314,9 @@ name Logitech International
     match_string Logitech
 
 name Fujitsu
+    name_short FUJITSU
     url www.fujitsu.com
+    ansi_color 0;31;107
     match_string FUJITSU
 
 name Sony
@@ -252,7 +325,7 @@ name Sony
     ansi_color 0;30;107
     match_string Sony
 #   match_string_case CDU
-# EDID vendor code: SNY
+    note EDID vendor: SNY
     match_string_exact SNY
 
 name SanDisk
@@ -306,14 +379,16 @@ name Koninklijke Philips
     name_short PHILIPS
     url www.philips.com
     match_string Philips
-# EDID vendor code: PHL
+    ansi_color 0;30;107
+    match_string Philips
+    note EDID vendor: PHL
     match_string_exact PHL
 
 name Sharp Corporation
     name_short SHARP
     ansi_color 0;31;107
     match_string Sharp
-# EDID vendor code: SHP
+    note EDID vendor: SHP
     match_string_exact SHP
 
 name Ralink Technology
@@ -332,9 +407,11 @@ name Hewlett-Packard
     url www.hp.com
     ansi_color 0;97;46
     match_string Hewlett-Packard
-# EDID vendor code: HWP
-    match_string_exact HWP
     match_string_case HP
+    note EDID vendor: HWP
+    match_string_exact HWP
+    note SCSI vendor: hp
+    match_string_exact hp
 
 name TEAC Corporation
     name_short TEAC
@@ -363,9 +440,13 @@ name Canon
 
 name A4tech
     url www.a4tech.com
+    wikipedia A4Tech
+    ansi_color 0;33;40
     match_string A4Tech
 
-name Alcor
+name Alcor Life Extension Foundation
+# Makes devices?
+    name_short Alcor
     url www.alcor.org
     match_string ALCOR
 
@@ -379,14 +460,21 @@ name Ours Technology
 
 name BenQ
     url www.benq.com
+    ansi_color 0;35;107
     match_string BENQ
+
+name Holtek Semiconductor
+    name_short Holtek
+    url www.holtek.com
+    ansi_color 0;34;107
+    match_string Holtek
 
 name Acer
     name_short acer
     url www.acer.com
     ansi_color 0;32;107
     match_string Acer
-# EDID vendor code: ACR
+    note EDID vendor: ACR
     match_string_exact ACR
 
 name Quantum
@@ -402,6 +490,20 @@ name Kingston Technology
 name Chicony
     url www.chicony.com.tw
     match_string Chicony
+
+name Phison Electronics Corporation
+    name_short Phison
+    url www.phison.com
+    wikipedia Phison
+    ansi_color 0;33;44
+    match_string Phison
+
+name Corsair Components
+    name_short Corsair
+    url www.corsair.com
+    wikipedia Corsair Components
+    ansi_color 0;30;43
+    match_string Corsair
 
 name Genius
     url www.genius.ru
@@ -434,6 +536,8 @@ name Crucial (Micron)
 name Toshiba Samsung Storage Technology
     name_short TSST
     url www.tsst.co.kr
+    wikipedia Toshiba Samsung Storage Technology
+    ansi_color 0;34;107
     match_string_case TSST
 
 name Seagate Technology
@@ -505,7 +609,7 @@ name Synopsys
     match_string Synopsys
 
 name Raspberry Pi Foundation
-    name_short RaspberryPi
+    name_short Raspberry Pi
     url www.raspberrypi.org
     ansi_color 0;97;42
     match_string RaspberryPi
@@ -517,11 +621,41 @@ name Embest Technology
     ansi_color 0;96;44
     match_string Embest
 
+# JEDEC mfgr [1][78]
 name Transcend Information
     name_short Transcend
     url transcend-info.com
     ansi_color 0;31;47
+    match_string Transcend Information
+    # More likely this one is T. Information than T. Technology
     match_string Transcend
+
+# JEDEC mfgr [7][105]
+name Transcend Technology
+    name_short Transcend
+    match_string Transcend Technology
+
+# JEDEC mfgr [0][64]
+name Infineon Technologies
+    name_short infineon
+    url www.infineon.com
+    wikipedia Infineon Technologies
+    ansi_color 0;34;107
+    match_string Infineon
+
+name Cypress Semiconductor
+    name_short Cypress
+    url cypress.com
+    wikipedia Cypress Semiconductor
+    ansi_color 0;36;107
+    match_string Cypress
+
+name Renesas Electronics
+    name_short Renesas
+    url www.renesas.com
+    wikipedia Renesas Electronics
+    ansi_color 0;97;44
+    match_string Renesas
 
 name ADATA Technology
     name_short ADATA
@@ -555,10 +689,38 @@ name Elitegroup Computer Systems
     ansi_color 0;36;41
     match_string_case ECS
 
-name SANYO
+
+name Sanyo Electric
     name_short SANYO
     url www.sanyo.com
     match_string SANYO
+
+name Cambridge Silicon Radio
+    name_short CSR
+    url www.csr.com
+    wikipedia Cambridge Silicon Radio
+    ansi_color 0;34;107
+    match_string Cambridge Silicon Radio
+
+name Suprema
+    url www.supremainc.com
+    ansi_color 0;31;107
+    match_string suprema
+
+name Patriot Memory
+    name_short Patriot
+    url www.patriotmemory.com
+    wikipedia Patriot Memory
+    ansi_color 0;97;44
+    match_string Patriot Memory
+
+name SK Hynix
+    name_short SK hynix
+    url www.skhynix.com
+    wikipedia SK Hynix
+    ansi_color 0;31;43
+    match_string Hynix
+    match_string Hyundai
 
 #
 # BIOS manufacturers
@@ -614,6 +776,7 @@ name Canonical
 
 name Ubuntu
     url www.ubuntu.com
+    url_support www.ubuntu.com/support/community-support
     ansi_color 0;97;45
     match_string ubuntu
 
@@ -623,6 +786,46 @@ name Arch Linux
     ansi_color 0;36;107
     match_string arch linux
 
+name Red Hat
+    url www.redhat.com
+    ansi_color 0;31;40
+    match_string Red Hat
+
+name Sun Microsystems
+    name_short Sun
+    wikipedia Sun Microsystems
+    match_string Sun Microsystems
+
+name Oracle Corporation
+    name_short Oracle
+    url www.oracle.com
+    ansi_color 0;97;41
+    match_string Oracle
+
+name Oracle Corporation (formerly InnoTek Systemberatung)
+    name_short Oracle (InnoTek)
+    url www.virtualbox.org/wiki/innotek
+    url_support www.virtualbox.org
+    ansi_color 0;97;41
+    match_string InnoTek
+    match_string VirtualBox
+    match_string_case VBOX
+
+name Slackware
+    url www.slackware.com
+    ansi_color 0;30;107
+    match_string Slackware
+
+name KDE
+    url www.kde.org
+    wikipedia KDE
+    ansi_color 0;97;104
+    match_string_case KDE
+
+name CDEmu
+    url cdemu.sourceforge.io
+    match_string CDEmu
+
 #
 # x86 vendor strings
 #
@@ -630,7 +833,9 @@ name Arch Linux
 name Advanced Micro Devices
     name_short AMD
     url www.amd.com
+    wikipedia Advanced Micro Devices
     ansi_color 0;97;41
+    note x86 processor vendor ID
     match_string AMDisbetter!
     match_string AuthenticAMD
 
@@ -639,56 +844,83 @@ name Intel Corporation
     url www.intel.com
     url_support ark.intel.com
     ansi_color 0;97;44
+    note x86 processor vendor ID
     match_string GenuineIntel
+
+name Chengdu Haiguang Integrated Circuit Design
+    name_short Hygon
+    ansi_color 0;97;104
+    match_string Hygon
+    match_string Higon
+    note x86 processor vendor ID
+    match_string HygonGenuine
 
 name VIA Technologies
     name_short VIA
     url www.via.tw
     ansi_color 0;36;107
+    note x86 processor vendor ID
     match_string VIA VIA VIA
 
 name VIA (formerly Centaur Technology)
     name_short VIA (Centaur)
     url www.via.tw
     ansi_color 0;36;107
+    note x86 processor vendor ID
     match_string CentaurHauls
 
 name VIA (formerly Cyrix)
     name_short VIA (Cyrix)
     url www.via.tw
     ansi_color 0;36;107
+    note x86 processor vendor ID
     match_string CyrixInstead
 
 name Transmeta Corporation
     name_short Transmeta
+    note x86 processor vendor ID
     match_string TransmetaCPU
     match_string GenuineTMx86
 
 name National Semiconductor
     name_short NSC
+    note x86 processor vendor ID
     match_string Geode by NSC
 
 name NexGen
+    note x86 processor vendor ID
     match_string NexGenDriven
 
 name Rise Technology
     name_short Rise
+    note x86 processor vendor ID
     match_string RiseRiseRise
 
 name Silicon Integrated Systems
     name_short SIS
+    note x86 processor vendor ID
     match_string SiS SiS SiS
 
 name United Microelectronics Corporation
     name_short UMC
+    note x86 processor vendor ID
     match_string UMC UMC UMC
 
 name DMP Electronics
+    note x86 processor vendor ID
     match_string Vortex86 SoC
 
 #
 # x86 VM vendor strings
 #
+
+name VMware
+    url www.vmware.com
+    wikipedia VMware
+    ansi_color 0;90;47
+    match_string VMware
+    note x86 VM vendor string
+    match_string VMwareVMware
 
 name KVM
     url www.linux-kvm.org
@@ -701,10 +933,6 @@ name Microsoft Hyper-V
 name Parallels
     url www.parallels.com
     match_string lrpepyh vr
-
-name VMware
-    url www.vmware.com
-    match_string VMwareVMware
 
 name Xen HVM
     url www.xenproject.org
