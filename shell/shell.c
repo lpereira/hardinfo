@@ -1537,7 +1537,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
             for (j = 0; keys[j]; j++) {
                 gchar *key_markup;
                 gchar *value;
-                gchar *name = NULL, *label = NULL, *tag = NULL;
+                gchar *name, *label, *tag;
                 key_get_components(keys[j], NULL, &tag, &name, &label, NULL, TRUE);
 
                 value = g_key_file_get_value(key_file, groups[i], keys[j], NULL);
@@ -2220,6 +2220,8 @@ void key_get_components(const gchar *key,
     if (label) {
         *label = g_strdup(np);
         gchar *lbp = g_utf8_strchr(*label, -1, '#');
+        if (lbp)
+            *lbp = 0;
         if (lbp && dis)
             *dis = g_strdup(lbp + 1);
     }
