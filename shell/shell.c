@@ -720,6 +720,22 @@ select_first_tree_item(gpointer data)
     return FALSE;
 }
 
+gboolean hardinfo_link(const gchar *uri) {
+    /* Clicked link events pass through here on their
+     * way to the default handler (xdg-open).
+     *
+     * TODO: In the future, links could be used to
+     * jump to different pages in hardinfo.
+     *
+     * if (g_str_has_prefix(uri, "hardinfo:")) {
+     *       hardinfo_navigate(g_utf8_strchr(uri, strlen("hardinfo"), ':') + 1);
+     *       return TRUE;
+     * }
+     */
+
+    return FALSE; /* didn't handle it */
+}
+
 void shell_init(GSList * modules)
 {
     if (shell) {
@@ -728,6 +744,8 @@ void shell_init(GSList * modules)
     }
 
     DEBUG("initializing shell");
+
+    uri_set_function(hardinfo_link);
 
     create_window();
 
@@ -1502,6 +1520,10 @@ static void module_selected_show_info_list(GKeyFile *key_file,
                                      ngroups > 1);
 }
 
+static gboolean detail_activate_link (GtkLabel *label, gchar *uri, gpointer user_data) {
+    return uri_open(uri);
+}
+
 static void module_selected_show_info_detail(GKeyFile *key_file,
                                              ShellModuleEntry *entry,
                                              gchar **groups)
@@ -1569,6 +1591,9 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 GtkWidget *value_box = gtk_hbox_new(FALSE, 4);
                 gtk_box_pack_start(GTK_BOX(value_box), value_icon, FALSE, FALSE, 0);
                 gtk_box_pack_start(GTK_BOX(value_box), value_label, TRUE, TRUE, 0);
+
+                g_signal_connect(key_label, "activate-link", G_CALLBACK(detail_activate_link), NULL);
+                g_signal_connect(value_label, "activate-link", G_CALLBACK(detail_activate_link), NULL);
 
                 gtk_widget_show(key_label);
                 gtk_widget_show(value_box);
