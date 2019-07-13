@@ -25,9 +25,13 @@
 #include "syncmanager.h"
 #include "config.h"
 #include "hardinfo.h"
+#include "strstr_word.h"
 
-/* { match_string, match_case, name, url } */
-static Vendor vendors[] = {
+#include "dt_util.h" /* for appf() */
+#define SEQ(a,b) (g_strcmp0(a,b) == 0)
+
+/* { match_string, match_rule, name, url } */
+static Vendor vendors_builtin[] = {
     /* BIOS manufacturers */
     { "American Megatrends", 0, "American Megatrends", "www.ami.com"},
     { "Award", 0, "Award Software International", "www.award-bios.com"},
@@ -55,12 +59,15 @@ static Vendor vendors[] = {
     { "XenVMMXenVMM", 0, "Xen HVM", "" },
 };
 
-static GSList *vendor_list = NULL;
+#define ven_msg(msg, ...)  fprintf (stderr, "[%s] " msg "\n", __FUNCTION__, ##__VA_ARGS__) /**/
+#define ven_msg_debug(msg, ...)  DEBUG(msg, __VA_ARGS__)
+
+static vendor_list vendors = NULL;
+const vendor_list get_vendors_list() { return vendors; }
 
 /* sort the vendor list by length of match_string,
  * LONGEST first */
-gint vendor_sort (gconstpointer a, gconstpointer b) {
-    const Vendor *ap = a, *bp = b;
+int vendor_sort (const Vendor *ap, const Vendor *bp) {
     int la = 0, lb = 0;
     if (ap && ap->match_string) la = strlen(ap->match_string);
     if (bp && bp->match_string) lb = strlen(bp->match_string);
@@ -70,34 +77,34 @@ gint vendor_sort (gconstpointer a, gconstpointer b) {
 }
 
 static int read_from_vendor_conf(const char *path) {
-      GKeyFile *vendors;
+      GKeyFile *vendors_file;
       gchar *tmp;
       gint num_vendors, i, count = 0; /* num_vendors is file-reported, count is actual */
 
       DEBUG("using vendor.conf format loader for %s", path);
 
-      vendors = g_key_file_new();
-      if (g_key_file_load_from_file(vendors, path, 0, NULL)) {
-        num_vendors = g_key_file_get_integer(vendors, "vendors", "number", NULL);
+      vendors_file = g_key_file_new();
+      if (g_key_file_load_from_file(vendors_file, path, 0, NULL)) {
+        num_vendors = g_key_file_get_integer(vendors_file, "vendors", "number", NULL);
 
         for (i = num_vendors - 1; i >= 0; i--) {
           Vendor *v = g_new0(Vendor, 1);
 
           tmp = g_strdup_printf("vendor%d", i);
 
-          v->match_string = g_key_file_get_string(vendors, tmp, "match_string", NULL);
+          v->match_string = g_key_file_get_string(vendors_file, tmp, "match_string", NULL);
           if (v->match_string == NULL) {
               /* try old name */
-              v->match_string = g_key_file_get_string(vendors, tmp, "id", NULL);
+              v->match_string = g_key_file_get_string(vendors_file, tmp, "id", NULL);
           }
           if (v->match_string) {
-              v->match_case = g_key_file_get_integer(vendors, tmp, "match_case", NULL);
-              v->name = g_key_file_get_string(vendors, tmp, "name", NULL);
-              v->name_short = g_key_file_get_string(vendors, tmp, "name_short", NULL);
-              v->url  = g_key_file_get_string(vendors, tmp, "url", NULL);
-              v->url_support  = g_key_file_get_string(vendors, tmp, "url_support", NULL);
+              v->match_rule = g_key_file_get_integer(vendors_file, tmp, "match_case", NULL);
+              v->name = g_key_file_get_string(vendors_file, tmp, "name", NULL);
+              v->name_short = g_key_file_get_string(vendors_file, tmp, "name_short", NULL);
+              v->url  = g_key_file_get_string(vendors_file, tmp, "url", NULL);
+              v->url_support  = g_key_file_get_string(vendors_file, tmp, "url_support", NULL);
 
-              vendor_list = g_slist_prepend(vendor_list, v);
+              vendors = g_slist_prepend(vendors, v);
               count++;
           } else {
               /* don't add if match_string is null */
@@ -106,36 +113,52 @@ static int read_from_vendor_conf(const char *path) {
 
           g_free(tmp);
         }
-        g_key_file_free(vendors);
+        g_key_file_free(vendors_file);
         DEBUG("... found %d match strings", count);
         return count;
     }
-    g_key_file_free(vendors);
+    g_key_file_free(vendors_file);
     return 0;
 }
 
 static int read_from_vendor_ids(const char *path) {
 #define VEN_BUFF_SIZE 128
 #define VEN_FFWD() while(isspace((unsigned char)*p)) p++;
-#define VEN_CHK(TOK) (strncmp(p, TOK, tl = strlen(TOK)) == 0)
+#define VEN_CHK(TOK) (strncmp(p, TOK, tl = strlen(TOK)) == 0 && (ok = 1))
     char buff[VEN_BUFF_SIZE] = "";
-    char name[VEN_BUFF_SIZE] = "";
-    char name_short[VEN_BUFF_SIZE] = "";
-    char url[VEN_BUFF_SIZE] = "";
-    char url_support[VEN_BUFF_SIZE] = "";
+
+    char vars[7][VEN_BUFF_SIZE];
+    char *name = vars[0];
+    char *name_short = vars[1];
+    char *url = vars[2];
+    char *url_support = vars[3];
+    char *wikipedia = vars[4];
+    char *note = vars[5];
+    char *ansi_color = vars[6];
+
     int count = 0;
     FILE *fd;
     char *p, *b;
-    int tl;
+    int tl, line = -1, ok = 0;
 
-    DEBUG("using vendor.ids format loader for %s", path);
+    ven_msg_debug("using vendor.ids format loader for %s", path);
 
     fd = fopen(path, "r");
     if (!fd) return 0;
 
     while (fgets(buff, VEN_BUFF_SIZE, fd)) {
+        ok = 0;
+        line++;
+
         b = strchr(buff, '\n');
-        if (b) *b = 0;
+        if (b)
+            *b = 0;
+        else
+            ven_msg("%s:%d: line longer than VEN_BUFF_SIZE (%lu)", path, line, (unsigned long)VEN_BUFF_SIZE);
+
+        b = strchr(buff, '#');
+        if (b) *b = 0; /* line ends at comment */
+
         p = buff;
         VEN_FFWD();
         if (VEN_CHK("name ")) {
@@ -143,6 +166,9 @@ static int read_from_vendor_ids(const char *path) {
             strcpy(name_short, "");
             strcpy(url, "");
             strcpy(url_support, "");
+            strcpy(wikipedia, "");
+            strcpy(note, "");
+            strcpy(ansi_color, "");
         }
         if (VEN_CHK("name_short "))
             strncpy(name_short, p + tl, VEN_BUFF_SIZE - 1);
@@ -150,39 +176,77 @@ static int read_from_vendor_ids(const char *path) {
             strncpy(url, p + tl, VEN_BUFF_SIZE - 1);
         if (VEN_CHK("url_support "))
             strncpy(url_support, p + tl, VEN_BUFF_SIZE - 1);
+        if (VEN_CHK("wikipedia "))
+            strncpy(wikipedia, p + tl, VEN_BUFF_SIZE - 1);
+        if (VEN_CHK("note "))
+            strncpy(note, p + tl, VEN_BUFF_SIZE - 1);
+        if (VEN_CHK("ansi_color "))
+            strncpy(ansi_color, p + tl, VEN_BUFF_SIZE - 1);
+
+#define dup_if_not_empty(s) (strlen(s) ? g_strdup(s) : NULL)
 
         if (VEN_CHK("match_string ")) {
             Vendor *v = g_new0(Vendor, 1);
-            v->match_string = strdup(p+tl);
-            v->match_case = 0;
-            v->name = strdup(name);
-            v->name_short = strdup(name_short);
-            v->url = strdup(url);
-            v->url_support = strdup(url_support);
-            vendor_list = g_slist_prepend(vendor_list, v);
+            v->file_line = line;
+            v->match_string = g_strdup(p+tl);
+            v->ms_length = strlen(v->match_string);
+            v->match_rule = 0;
+            v->name = g_strdup(name);
+            v->name_short = dup_if_not_empty(name_short);
+            v->url = dup_if_not_empty(url);
+            v->url_support = dup_if_not_empty(url_support);
+            v->wikipedia = dup_if_not_empty(wikipedia);
+            v->note = dup_if_not_empty(note);
+            v->ansi_color = dup_if_not_empty(ansi_color);
+            vendors = g_slist_prepend(vendors, v);
             count++;
         }
 
         if (VEN_CHK("match_string_case ")) {
             Vendor *v = g_new0(Vendor, 1);
-            v->match_string = strdup(p+tl);
-            v->match_case = 1;
-            v->name = strdup(name);
-            v->name_short = strdup(name_short);
-            v->url = strdup(url);
-            v->url_support = strdup(url_support);
-            vendor_list = g_slist_prepend(vendor_list, v);
+            v->file_line = line;
+            v->match_string = g_strdup(p+tl);
+            v->ms_length = strlen(v->match_string);
+            v->match_rule = 1;
+            v->name = g_strdup(name);
+            v->name_short = dup_if_not_empty(name_short);
+            v->url = dup_if_not_empty(url);
+            v->url_support = dup_if_not_empty(url_support);
+            v->wikipedia = dup_if_not_empty(wikipedia);
+            v->note = dup_if_not_empty(note);
+            v->ansi_color = dup_if_not_empty(ansi_color);
+            vendors = g_slist_prepend(vendors, v);
             count++;
         }
+
+        if (VEN_CHK("match_string_exact ")) {
+            Vendor *v = g_new0(Vendor, 1);
+            v->file_line = line;
+            v->match_string = g_strdup(p+tl);
+            v->ms_length = strlen(v->match_string);
+            v->match_rule = 2;
+            v->name = g_strdup(name);
+            v->name_short = dup_if_not_empty(name_short);
+            v->url = dup_if_not_empty(url);
+            v->url_support = dup_if_not_empty(url_support);
+            v->wikipedia = dup_if_not_empty(wikipedia);
+            v->note = dup_if_not_empty(note);
+            v->ansi_color = dup_if_not_empty(ansi_color);
+            vendors = g_slist_prepend(vendors, v);
+            count++;
+        }
+
+        g_strstrip(buff);
+        if (!ok && *buff != 0)
+            ven_msg("unrecognised item at %s:%d, %s", path, line, p);
     }
 
     fclose(fd);
 
-    DEBUG("... found %d match strings", count);
+    ven_msg_debug("... found %d match strings", count);
 
     return count;
 }
-
 
 void vendor_init(void)
 {
@@ -195,7 +259,7 @@ void vendor_init(void)
     };
 
     /* already initialized */
-    if (vendor_list) return;
+    if (vendors) return;
 
     DEBUG("initializing vendor list");
     sync_manager_add_entry(&se);
@@ -239,15 +303,15 @@ void vendor_init(void)
 
         DEBUG("vendor data not found, using internal database");
 
-        for (i = G_N_ELEMENTS(vendors) - 1; i >= 0; i--) {
-            vendor_list = g_slist_prepend(vendor_list, (gpointer) &vendors[i]);
+        for (i = G_N_ELEMENTS(vendors_builtin) - 1; i >= 0; i--) {
+            vendors = g_slist_prepend(vendors, (gpointer) &vendors_builtin[i]);
         }
     }
 
     /* sort the vendor list by length of match string so that short strings are
      * less likely to incorrectly match.
      * example: ST matches ASUSTeK but SEAGATE is not ASUS */
-    vendor_list = g_slist_sort(vendor_list, &vendor_sort);
+    vendors = g_slist_sort(vendors, (GCompareFunc)vendor_sort);
 
     /* free search location strings */
     n = 0;
@@ -258,43 +322,39 @@ void vendor_init(void)
 }
 
 void vendor_cleanup() {
-    DEBUG("cleanup vendor list");
-    g_slist_free_full(vendor_list, (void (*)(void *))&vendor_free);
+    ven_msg_debug("cleanup vendor list");
+    g_slist_free_full(vendors, (GDestroyNotify)vendor_free);
 }
 
 void vendor_free(Vendor *v) {
     if (v) {
-        free(v->name);
-        free(v->name_short);
-        free(v->url);
-        free(v->url_support);
-        free(v->match_string);
-        free(v);
+        g_free(v->name);
+        g_free(v->name_short);
+        g_free(v->url);
+        g_free(v->url_support);
+        g_free(v->ansi_color);
+        g_free(v->match_string);
+        g_free(v);
     }
 }
 
 const Vendor *vendor_match(const gchar *id_str, ...) {
+    Vendor *ret = NULL;
     va_list ap, ap2;
-    GSList *vlp;
     gchar *tmp = NULL, *p = NULL;
     int tl = 0, c = 0;
-    Vendor *ret = NULL;
 
     if (id_str) {
         c++;
         tl += strlen(id_str);
-        tmp = g_malloc0(tl + c + 1);
-        strcat(tmp, id_str);
-        strcat(tmp, " ");
+        tmp = appf(tmp, "%s", id_str);
 
         va_start(ap, id_str);
         p = va_arg(ap, gchar*);
         while(p) {
             c++;
             tl += strlen(p);
-            tmp = g_realloc(tmp, tl + c + 1); /* strings, spaces, null */
-            strcat(tmp, p);
-            strcat(tmp, " ");
+            tmp = appf(tmp, "%s", p);
             p = va_arg(ap, gchar*);
         }
         va_end(ap);
@@ -302,31 +362,11 @@ const Vendor *vendor_match(const gchar *id_str, ...) {
     if (!c || tl == 0)
         return NULL;
 
-    DEBUG("full id_str: %s", tmp);
-
-    for (vlp = vendor_list; vlp; vlp = vlp->next) {
-        Vendor *v = (Vendor *)vlp->data;
-
-        if (v)
-            if (v->match_case) {
-                if (v->match_string && strstr(tmp, v->match_string)) {
-                    ret = v;
-                    break;
-                }
-            } else {
-                if (v->match_string && strcasestr(tmp, v->match_string)) {
-                    ret = v;
-                    break;
-                }
-            }
+    vendor_list vl = vendors_match_core(tmp, 1);
+    if (vl) {
+        ret = (Vendor*)vl->data;
+        vendor_list_free(vl);
     }
-
-    if (ret)
-        DEBUG("ret: match_string: %s -- case: %s -- name: %s", ret->match_string, (ret->match_case ? "yes" : "no"), ret->name);
-    else
-        DEBUG("ret: not found");
-
-    g_free(tmp);
     return ret;
 }
 
@@ -407,4 +447,145 @@ gchar *vendor_get_link_from_vendor(const Vendor *v)
     }
 
     return g_strdup_printf("%s (%s)", v->name, v->url);
+}
+
+vendor_list vendor_list_concat_va(int count, vendor_list vl, ...) {
+    vendor_list ret = vl, p = NULL;
+    va_list ap;
+    va_start(ap, vl);
+    if (count > 0) {
+        count--; /* includes vl */
+        while (count) {
+            p = va_arg(ap, vendor_list);
+            ret = g_slist_concat(ret, p);
+            count--;
+        }
+    } else {
+        p = va_arg(ap, vendor_list);
+        while (p) {
+            ret = g_slist_concat(ret, p);
+            p = va_arg(ap, vendor_list);
+        }
+    }
+    va_end(ap);
+    return ret;
+}
+
+vendor_list vendor_list_remove_duplicates_deep(vendor_list vl) {
+    /* vendor_list is GSList* */
+    GSList *tvl = vl;
+    GSList *evl = NULL;
+    while(tvl) {
+        const Vendor *tv = tvl->data;
+        evl = tvl->next;
+        while(evl) {
+            const Vendor *ev = evl->data;
+            if ( SEQ(ev->name, tv->name)
+                 && SEQ(ev->name_short, tv->name_short)
+                 && SEQ(ev->ansi_color, tv->ansi_color)
+                 && SEQ(ev->url, tv->url)
+                 && SEQ(ev->url_support, tv->url_support)
+                 && SEQ(ev->wikipedia, tv->wikipedia)
+                 ) {
+                GSList *next = evl->next;
+                vl = g_slist_delete_link(vl, evl);
+                evl = next;
+            } else
+                evl = evl->next;
+        }
+        tvl = tvl->next;
+    }
+    return vl;
+}
+
+vendor_list vendors_match(const gchar *id_str, ...) {
+    va_list ap, ap2;
+    gchar *tmp = NULL, *p = NULL;
+    int tl = 0, c = 0;
+
+    if (id_str) {
+        c++;
+        tl += strlen(id_str);
+        tmp = appf(tmp, "%s", id_str);
+
+        va_start(ap, id_str);
+        p = va_arg(ap, gchar*);
+        while(p) {
+            c++;
+            tl += strlen(p);
+            tmp = appf(tmp, "%s", p);
+            p = va_arg(ap, gchar*);
+        }
+        va_end(ap);
+    }
+    if (!c || tl == 0)
+        return NULL;
+
+    return vendors_match_core(tmp, -1);
+}
+
+vendor_list vendors_match_core(const gchar *str, int limit) {
+    gchar *p = NULL;
+    GSList *vlp;
+    int found = 0;
+    vendor_list ret = NULL;
+
+    /* first pass (passes[1]): ignore text in (),
+     *     like (formerly ...) or (nee ...)
+     * second pass (passes[0]): full text */
+    gchar *passes[2] = { g_strdup(str), g_strdup(str) };
+    int pass = 1; p = passes[1];
+    while(p = strchr(p, '(') ) {
+        pass = 2; p++;
+        while(*p && *p != ')') { *p = ' '; p++; }
+    }
+
+    for (; pass > 0; pass--) {
+        for (vlp = vendors; vlp; vlp = vlp->next) {
+            //sysobj_stats.ven_iter++;
+            Vendor *v = (Vendor *)vlp->data;
+            char *m = NULL, *s = NULL;
+
+            if (!v) continue;
+            if (!v->match_string) continue;
+
+            switch(v->match_rule) {
+                case 0:
+                    if (m = strcasestr_word(passes[pass-1], v->match_string) ) {
+                        /* clear so it doesn't match again */
+                        for(s = m; s < m + v->ms_length; s++) *s = ' ';
+                        /* add to return list */
+                        ret = vendor_list_append(ret, v);
+                        found++;
+                        if (limit > 0 && found >= limit)
+                            goto vendors_match_core_finish;
+                    }
+                    break;
+                case 1: /* match case */
+                    if (m = strstr_word(passes[pass-1], v->match_string) ) {
+                        /* clear so it doesn't match again */
+                        for(s = m; s < m + v->ms_length; s++) *s = ' ';
+                        /* add to return list */
+                        ret = vendor_list_append(ret, v);
+                        found++;
+                        if (limit > 0 && found >= limit)
+                            goto vendors_match_core_finish;
+                    }
+                    break;
+                case 2: /* match exact */
+                    if (SEQ(passes[pass-1], v->match_string) ) {
+                        ret = vendor_list_append(ret, v);
+                        found++;
+                        goto vendors_match_core_finish; /* no way for any other match to happen */
+                    }
+                    break;
+            }
+        }
+    }
+
+vendors_match_core_finish:
+
+    g_free(passes[0]);
+    g_free(passes[1]);
+    return ret;
 }
