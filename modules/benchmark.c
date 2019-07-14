@@ -82,7 +82,7 @@ static gpointer benchmark_crunch_for_dispatcher(gpointer data)
 {
     ParallelBenchTask 	*pbt = (ParallelBenchTask *)data;
     gpointer (*callback)(void *data, gint thread_number);
-    gpointer return_value = g_malloc(sizeof(int));
+    gpointer return_value = g_malloc(sizeof(double));
     int count = 0;
 
     if ((callback = pbt->callback)) {
