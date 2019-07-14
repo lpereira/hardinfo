@@ -701,15 +701,21 @@ void fbench()
 	    s[i + 1][j + 1] = testcase[i][j];
 
     for (itercount = 0; itercount < niter; itercount++) {
-	for (paraxial = 0; paraxial <= 1; paraxial++) {
+        /* Do main trace in D light */
 
-	    /* Do main trace in D light */
+        paraxial = FALSE;
 
-	    trace_line(4, clear_aperture / 2.0);
-	    od_sa[paraxial][0] = object_distance;
-	    od_sa[paraxial][1] = axis_slope_angle;
-	}
-	paraxial = FALSE;
+        trace_line(4, clear_aperture / 2.0);
+        od_sa[0][0] = object_distance;
+        od_sa[0][1] = axis_slope_angle;
+
+        paraxial = TRUE;
+
+        trace_line(4, clear_aperture / 2.0);
+        od_sa[1][0] = object_distance;
+        od_sa[1][1] = axis_slope_angle;
+
+        paraxial = FALSE;
 
 	/* Trace marginal ray in C */
 
