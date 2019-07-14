@@ -24,6 +24,8 @@
 #include "vendor.h"
 #include <inttypes.h>
 
+extern const char *dtree_mem_str; /* in devicetree.c */
+
 #include "dt_util.h" /* for appf() */
 #define dmi_spd_msg(...)  /* fprintf (stderr, __VA_ARGS__) */
 
@@ -415,7 +417,7 @@ dmi_mem *dmi_mem_new() {
 
     if (!m->sockets && !m->arrays && !m->spd) {
         m->empty = 1;
-        return m;
+        goto dmi_mem_new_last_chance;
     }
 
     GSList *l = NULL, *l2 = NULL;
@@ -518,6 +520,23 @@ dmi_mem *dmi_mem_new() {
     if (!m->system_memory_MiB) {
         m->system_memory_MiB = m->spd_size_MiB;
         m->system_memory_ram_types |= m->spd_ram_types;
+    }
+
+dmi_mem_new_last_chance:
+    if (m->empty) {
+        /* reach */
+        if (dtree_mem_str) {
+            int rt = 0;
+            m->system_memory_MiB = dmi_read_memory_str_to_MiB(dtree_mem_str);
+            if (strstr(dtree_mem_str, "DDR4"))        rt = DDR4_SDRAM;
+            else if (strstr(dtree_mem_str, "DDR3"))   rt = DDR3_SDRAM;
+            else if (strstr(dtree_mem_str, "DDR2"))   rt = DDR2_SDRAM;
+            else if (strstr(dtree_mem_str, "DDR"))    rt = DDR_SDRAM;
+            else if (strstr(dtree_mem_str, "DRDRAM")) rt = DIRECT_RAMBUS;
+            else if (strstr(dtree_mem_str, "RDRAM"))  rt = RAMBUS;
+            if (rt)
+                m->system_memory_ram_types |= (1 << (rt-1));
+        }
     }
 
     return m;

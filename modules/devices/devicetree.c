@@ -29,14 +29,15 @@
 #include "cpu_util.h"
 #include "dt_util.h"
 
+gchar *dtree_info = NULL;
+const char *dtree_mem_str = NULL; /* used by memory devices when nothing else is available */
+
 /* These should really go into CMakeLists.txt */
 #if defined(__arm__)
 #include "devicetree/rpi_data.c"
 #elif defined(__powerpc__)
 #include "devicetree/pmac_data.c"
 #endif
-
-gchar *dtree_info = NULL;
 
 static gchar *get_node(dtr *dt, char *np) {
     gchar *nodes = NULL, *props = NULL, *ret = NULL;
