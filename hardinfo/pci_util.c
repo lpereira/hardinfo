@@ -99,6 +99,8 @@ static gboolean pci_fill_details(pcid *s) {
     gchar *pci_loc = pci_address_str(s->domain, s->bus, s->device, s->function);
     gchar *lspci_cmd = g_strdup_printf("lspci -D -s %s -vvv", pci_loc);
 
+    shell_status_pulse();
+
     spawned = g_spawn_command_line_sync(lspci_cmd,
             &out, &err, NULL, NULL);
     g_free(lspci_cmd);
@@ -210,6 +212,8 @@ static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, u
     s->bus = bus;
     s->device = dev;
     s->function = func;
+
+    shell_status_pulse();
 
     spawned = g_spawn_command_line_sync(lspci_cmd,
             &out, &err, NULL, NULL);
