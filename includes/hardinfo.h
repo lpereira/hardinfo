@@ -193,4 +193,12 @@ gchar *hardinfo_clean_label(const gchar *v, int replacing);
 /* hardinfo uses the values as {ht,x}ml, apparently */
 gchar *hardinfo_clean_value(const gchar *v, int replacing);
 
+/* Same as hardinfo_spawn_command_line_sync(), but calls shell_status_pulse()
+ * before. */
+gboolean hardinfo_spawn_command_line_sync(const gchar *command_line,
+                                          gchar **standard_output,
+                                          gchar **standard_error,
+                                          gint *exit_status,
+                                          GError **error);
+
 #endif				/* __HARDINFO_H__ */

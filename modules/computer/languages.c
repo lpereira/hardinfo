@@ -124,7 +124,7 @@ scan_languages(OperatingSystem * os)
     locale_info *curr = NULL;
     int last = 0;
 
-    spawned = g_spawn_command_line_sync("locale -va",
+    spawned = hardinfo_spawn_command_line_sync("locale -va",
             &out, &err, NULL, NULL);
     if (spawned) {
         ret = g_strdup("");

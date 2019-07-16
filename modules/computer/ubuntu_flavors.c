@@ -62,7 +62,7 @@ GSList *ubuntu_flavors_scan(void) {
     if (!i)
         return NULL;
 
-    spawned = g_spawn_command_line_sync(cmd_line,
+    spawned = hardinfo_spawn_command_line_sync(cmd_line,
             &out, &err, &exit_status, NULL);
     if (spawned) {
         p = out;

@@ -301,9 +301,9 @@ void scan_dev(gboolean reload)
        }
 
        if (detect_lang[i].stdout) {
-            found = g_spawn_command_line_sync(detect_lang[i].version_command, &output, &ignored, NULL, NULL);
+            found = hardinfo_spawn_command_line_sync(detect_lang[i].version_command, &output, &ignored, NULL, NULL);
        } else {
-            found = g_spawn_command_line_sync(detect_lang[i].version_command, &ignored, &output, NULL, NULL);
+            found = hardinfo_spawn_command_line_sync(detect_lang[i].version_command, &ignored, &output, NULL, NULL);
        }
        g_free(ignored);
 
