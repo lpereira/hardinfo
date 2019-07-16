@@ -173,7 +173,7 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
     s->bus = bus;
     s->dev = dev;
 
-    spawned = g_spawn_command_line_sync(lsusb_cmd,
+    spawned = hardinfo_spawn_command_line_sync(lsusb_cmd,
             &out, &err, NULL, NULL);
     g_free(lsusb_cmd);
     if (spawned) {
@@ -447,7 +447,7 @@ static usbd *usb_get_device_list_lsusb() {
     usbd *head = NULL, *nd;
     int bus, dev, vend, prod, ec;
 
-    spawned = g_spawn_command_line_sync("lsusb",
+    spawned = hardinfo_spawn_command_line_sync("lsusb",
             &out, &err, NULL, NULL);
     if (spawned) {
         p = out;

@@ -60,7 +60,7 @@ gboolean fill_glx_info(glx_info *glx) {
 #define GLX_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { glx->struct_member = g_strdup(l); goto glx_next_line; }
 
-    spawned = g_spawn_command_line_sync(glx_cmd,
+    spawned = hardinfo_spawn_command_line_sync(glx_cmd,
             &out, &err, NULL, NULL);
     g_free(glx_cmd);
     if (spawned) {
@@ -124,7 +124,7 @@ gboolean fill_xinfo(xinfo *xi) {
 #define XI_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { xi->struct_member = g_strdup(l); goto xi_next_line; }
 
-    spawned = g_spawn_command_line_sync(xi_cmd,
+    spawned = hardinfo_spawn_command_line_sync(xi_cmd,
             &out, &err, NULL, NULL);
     g_free(xi_cmd);
     if (spawned) {
@@ -166,7 +166,7 @@ gboolean fill_xrr_info(xrr_info *xrr) {
     memset(status, 0, 128);
     memset(alist, 0, 128);
 
-    spawned = g_spawn_command_line_sync(xrr_cmd,
+    spawned = hardinfo_spawn_command_line_sync(xrr_cmd,
             &out, &err, NULL, NULL);
     g_free(xrr_cmd);
     if (spawned) {

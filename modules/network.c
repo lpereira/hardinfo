@@ -161,7 +161,6 @@ void scan_dns(gboolean reload)
               __nameservers = h_strdup_cprintf("%s=%s\n",
                                                __nameservers,
                                                ip, hbuf);
-
           }
 
           shell_status_pulse();

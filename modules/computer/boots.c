@@ -35,7 +35,7 @@ scan_boots_real(void)
     else
       return;
 
-    spawned = g_spawn_command_line_sync("last",
+    spawned = hardinfo_spawn_command_line_sync("last",
             &out, &err, NULL, NULL);
     if (spawned && out != NULL) {
         p = out;

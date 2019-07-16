@@ -202,7 +202,7 @@ char *dmi_get_str_abs(const char *id_str) {
 
     /* try dmidecode, but may require root */
     snprintf(full_path, PATH_MAX, "dmidecode -s %s", id_str);
-    spawned = g_spawn_command_line_sync(full_path,
+    spawned = hardinfo_spawn_command_line_sync(full_path,
             &out, &err, &i, NULL);
     if (spawned) {
         if (i == 0)
@@ -303,7 +303,7 @@ char *dmidecode_read(const dmi_type *type) {
         snprintf(full_path, PATH_MAX, "dmidecode");
     }
 
-    spawned = g_spawn_command_line_sync(full_path,
+    spawned = hardinfo_spawn_command_line_sync(full_path,
             &out, &err, &i, NULL);
     if (spawned) {
         if (i == 0)

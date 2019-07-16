@@ -47,7 +47,7 @@ get_libc_version(void)
         gboolean spawned;
         gchar *out, *err, *p;
 
-        spawned = g_spawn_command_line_sync(libs[i].test_cmd,
+        spawned = hardinfo_spawn_command_line_sync(libs[i].test_cmd,
             &out, &err, NULL, NULL);
         if (!spawned)
             continue;
@@ -92,7 +92,7 @@ static gchar *detect_kde_version(void)
         cmd = "kcontrol --version";
     }
 
-    spawned = g_spawn_command_line_sync(cmd, &out, NULL, NULL, NULL);
+    spawned = hardinfo_spawn_command_line_sync(cmd, &out, NULL, NULL, NULL);
     if (!spawned)
         return NULL;
 
@@ -107,7 +107,7 @@ detect_gnome_version(void)
     gchar *out;
     gboolean spawned;
 
-    spawned = g_spawn_command_line_sync(
+    spawned = hardinfo_spawn_command_line_sync(
         "gnome-shell --version", &out, NULL, NULL, NULL);
     if (spawned) {
         tmp = strstr(idle_free(out), _("GNOME Shell "));
@@ -118,7 +118,7 @@ detect_gnome_version(void)
         }
     }
 
-    spawned = g_spawn_command_line_sync(
+    spawned = hardinfo_spawn_command_line_sync(
         "gnome-about --gnome-version", &out, NULL, NULL, NULL);
     if (spawned) {
         tmp = strstr(idle_free(out), _("Version: "));
@@ -140,7 +140,7 @@ detect_mate_version(void)
     gchar *out;
     gboolean spawned;
 
-    spawned = g_spawn_command_line_sync(
+    spawned = hardinfo_spawn_command_line_sync(
         "mate-about --version", &out, NULL, NULL, NULL);
     if (spawned) {
         tmp = strstr(idle_free(out), _("MATE Desktop Environment "));
@@ -268,7 +268,7 @@ computer_get_dmesg_status(void)
 {
     gchar *out = NULL, *err = NULL;
     int ex = 1, result = 0;
-    g_spawn_command_line_sync("dmesg", &out, &err, &ex, NULL);
+    hardinfo_spawn_command_line_sync("dmesg", &out, &err, &ex, NULL);
     g_free(out);
     g_free(err);
     result += (getuid() == 0) ? 2 : 0;
@@ -388,7 +388,7 @@ parse_lsb_release(void)
     gchar *id = NULL;
     gchar **split, *contents, **line;
 
-    if (!g_spawn_command_line_sync("/usr/bin/lsb_release -di", &contents, NULL, NULL, NULL))
+    if (!hardinfo_spawn_command_line_sync("/usr/bin/lsb_release -di", &contents, NULL, NULL, NULL))
         return (Distro) {};
 
     split = g_strsplit(idle_free(contents), "\n", 0);
@@ -548,7 +548,7 @@ const gchar *
 computer_get_selinux(void)
 {
     int r;
-    gboolean spawned = g_spawn_command_line_sync("selinuxenabled",
+    gboolean spawned = hardinfo_spawn_command_line_sync("selinuxenabled",
                                                  NULL, NULL, &r, NULL);
 
     if (!spawned)

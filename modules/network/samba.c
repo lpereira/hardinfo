@@ -57,7 +57,7 @@ scan_samba_usershares(void)
     gchar *usershare, *cmdline;
     gsize length;
 
-    spawned = g_spawn_command_line_sync("net usershare list",
+    spawned = hardinfo_spawn_command_line_sync("net usershare list",
             &out, &err, &status, NULL);
 
     if (spawned && status == 0 && out != NULL) {
@@ -66,7 +66,7 @@ scan_samba_usershares(void)
         while(next_nl = strchr(p, '\n')) {
             cmdline = g_strdup_printf("net usershare info '%s'",
                                       strend(p, '\n'));
-            if (g_spawn_command_line_sync(cmdline,
+            if (hardinfo_spawn_command_line_sync(cmdline,
                         &usershare, NULL, NULL, NULL)) {
                 length = strlen(usershare);
                 scan_samba_from_string(usershare, length);
@@ -74,7 +74,6 @@ scan_samba_usershares(void)
             }
             g_free(cmdline);
 
-            shell_status_pulse();
             p = next_nl + 1;
         }
         g_free(out);
@@ -105,8 +104,6 @@ scan_samba_from_string(gchar *str, gsize length)
 
     groups = g_key_file_get_groups(keyfile, NULL);
     while (groups[i]) {
-        shell_status_pulse();
-
         if (g_key_file_has_key(keyfile, groups[i], "path", NULL)) {
             gchar *path = g_key_file_get_string(keyfile, groups[i], "path", NULL);
             smb_shares_list = h_strdup_cprintf("%s=%s\n",
