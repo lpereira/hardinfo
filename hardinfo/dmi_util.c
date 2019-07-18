@@ -21,6 +21,52 @@
 #include "hardinfo.h"
 #include "dmi_util.h"
 
+static const char *dmi_type_strings[] = {
+    [0] = N_("BIOS Information"),
+    [1] = N_("System"),
+    [2] = N_("Base Board"),
+    [3] = N_("Chassis"),
+    [4] = N_("Processor"),
+    [5] = N_("Memory Controller"),
+    [6] = N_("Memory Module"),
+    [7] = N_("Cache"),
+    [8] = N_("Port Connector"),
+    [9] = N_("System Slots"),
+    [10] = N_("On Board Devices"),
+    [11] = N_("OEM Strings"),
+    [12] = N_("System Configuration Options"),
+    [13] = N_("BIOS Language"),
+    [14] = N_("Group Associations"),
+    [15] = N_("System Event Log"),
+    [16] = N_("Physical Memory Array"),
+    [17] = N_("Memory Device"),
+    [18] = N_("32-bit Memory Error"),
+    [19] = N_("Memory Array Mapped Address"),
+    [20] = N_("Memory Device Mapped Address"),
+    [21] = N_("Built-in Pointing Device"),
+    [22] = N_("Portable Battery"),
+    [23] = N_("System Reset"),
+    [24] = N_("Hardware Security"),
+    [25] = N_("System Power Controls"),
+    [26] = N_("Voltage Probe"),
+    [27] = N_("Cooling Device"),
+    [28] = N_("Temperature Probe"),
+    [29] = N_("Electrical Current Probe"),
+    [30] = N_("Out-of-band Remote Access"),
+    [31] = N_("Boot Integrity Services"),
+    [32] = N_("System Boot"),
+    [33] = N_("64-bit Memory Error"),
+    [34] = N_("Management Device"),
+    [35] = N_("Management Device Component"),
+    [36] = N_("Management Device Threshold Data"),
+    [37] = N_("Memory Channel"),
+    [38] = N_("IPMI Device"),
+    [39] = N_("Power Supply"),
+    [40] = N_("Additional Information"),
+    [41] = N_("Onboard Device"),
+    //127 = End of Table
+};
+
 /* frees the string and sets it NULL if it is to be ignored
  * returns -1 if error, 0 if ok, 1 if ignored */
 static int ignore_placeholder_strings(gchar **pstr) {
@@ -269,7 +315,7 @@ char *dmidecode_read(const dmi_type *type) {
     }
 
     if (ret) {
-        if (*type)
+        if (type)
             dd_cache[*type] = g_strdup(ret);
         else
             dd_cache[127] = g_strdup(ret);
@@ -278,31 +324,40 @@ char *dmidecode_read(const dmi_type *type) {
     return ret;
 }
 
-dmi_handle_list *dmi_handle_list_add(dmi_handle_list *hl, dmi_handle new_handle) {
+dmi_handle_list *dmi_handle_list_add(dmi_handle_list *hl, dmi_handle_ext new_handle_ext) {
+    if (new_handle_ext.type < G_N_ELEMENTS(dmi_type_strings) )
+        new_handle_ext.type_str = dmi_type_strings[new_handle_ext.type];
     if (!hl) {
         hl = malloc(sizeof(dmi_handle_list));
         hl->count = 1;
         hl->handles = malloc(sizeof(dmi_handle) * hl->count);
+        hl->handles_ext = malloc(sizeof(dmi_handle_ext) * hl->count);
     } else {
         hl->count++;
         hl->handles = realloc(hl->handles, sizeof(dmi_handle) * hl->count);
+        hl->handles_ext = realloc(hl->handles_ext, sizeof(dmi_handle_ext) * hl->count);
     }
-    hl->handles[hl->count - 1] = new_handle;
+    hl->handles_ext[hl->count - 1] = new_handle_ext;
+    hl->handles[hl->count - 1] = new_handle_ext.id;
+
     return hl;
 }
 
 dmi_handle_list *dmidecode_handles(const dmi_type *type) {
     gchar *full = NULL, *p = NULL, *next_nl = NULL;
     dmi_handle_list *hl = NULL;
-    unsigned int ch = 0;
+
+    // Handle 0x003B, DMI type 9, 17 bytes
 
     full = dmidecode_read(type);
     if (full) {
         p = full;
         while(next_nl = strchr(p, '\n')) {
+            unsigned int ch = 0, ct = 0, cb = 0;
             strend(p, '\n');
-            if (sscanf(p, "Handle 0x%X", &ch) > 0) {
-                hl = dmi_handle_list_add(hl, ch);
+            if (sscanf(p, "Handle 0x%X, DMI type %u, %u bytes", &ch, &ct, &cb) > 0) {
+                if (type && !ct) ct = *type;
+                hl = dmi_handle_list_add(hl, (dmi_handle_ext){.id = ch, .type = ct, .size = cb});
             }
             p = next_nl + 1;
         }
@@ -312,8 +367,10 @@ dmi_handle_list *dmidecode_handles(const dmi_type *type) {
 }
 
 void dmi_handle_list_free(dmi_handle_list *hl) {
-    if (hl)
+    if (hl) {
         free(hl->handles);
+        free(hl->handles_ext);
+    }
     free(hl);
 }
 
@@ -354,7 +411,7 @@ char *dmidecode_match(const char *name, const dmi_type *type, const dmi_handle *
 dmi_handle_list *dmidecode_match_value(const char *name, const char *value, const dmi_type *type) {
     dmi_handle_list *hl = NULL;
     gchar *full = NULL, *p = NULL, *next_nl = NULL;
-    unsigned int ch = 0;
+    unsigned int ch = 0, ct = 0, cb = 0;
     int ln = 0, lnv = 0;
 
     if (!name) return NULL;
@@ -366,14 +423,14 @@ dmi_handle_list *dmidecode_match_value(const char *name, const char *value, cons
         p = full;
         while(next_nl = strchr(p, '\n')) {
             strend(p, '\n');
-            if (!(sscanf(p, "Handle 0x%X", &ch) > 0) ) {
+            if (!(sscanf(p, "Handle 0x%X, DMI type %u, %u bytes", &ch, &ct, &cb) > 0)) {
                 while(*p == '\t') p++;
                 if (strncmp(p, name, ln) == 0) {
                     if (*(p + ln) == ':') {
                         p = p + ln + 1;
                         while(*p == ' ') p++;
                         if (!value || strncmp(p, value, lnv) == 0)
-                            hl = dmi_handle_list_add(hl, ch);
+                            hl = dmi_handle_list_add(hl, (dmi_handle_ext){.id = ch, .type = ct, .size = cb});
                     }
                 }
             }

@@ -39,8 +39,16 @@ char *dmi_get_str_abs(const char *id_str); /* include nonsense */
 char *dmi_chassis_type_str(int chassis_type, gboolean with_val);
 
 typedef struct {
+    dmi_handle id;
+    uint32_t size;
+    dmi_type type;
+    const char *type_str; /* untranslated, use _() for translation */
+} dmi_handle_ext;
+
+typedef struct {
     uint32_t count;
     dmi_handle *handles;
+    dmi_handle_ext *handles_ext;
 } dmi_handle_list;
 
 /* get a list of handles that match a dmi_type */

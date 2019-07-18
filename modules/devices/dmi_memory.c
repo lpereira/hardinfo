@@ -63,7 +63,7 @@ const char *problem_marker() {
 
 dmi_mem_size dmi_read_memory_str_to_MiB(const char *memstr) {
     dmi_mem_size ret = 0, v = 0;
-    char l[6] = "";
+    char l[7] = "";
     /* dmidecode units: "bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB" */
     int mc = sscanf(memstr, "%"PRId64" %6s", &v, l);
     if (mc == 2) {
@@ -120,8 +120,10 @@ dmi_mem_array *dmi_mem_array_new(dmi_handle h) {
         g_free(array_max_size);
     }
     gchar *array_devs = dmidecode_match("Number Of Devices", &dta, &h);
-    s->devs = strtol(array_devs, NULL, 10);
-    g_free(array_devs);
+    if (array_devs) {
+        s->devs = strtol(array_devs, NULL, 10);
+        g_free(array_devs);
+    }
     return s;
 }
 
