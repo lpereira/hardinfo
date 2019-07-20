@@ -163,6 +163,7 @@ gchar           *module_call_method_param(gchar * method, gchar * parameter);
 /* Sysfs stuff */
 gfloat		h_sysfs_read_float(const gchar *endpoint, const gchar *entry);
 gint		h_sysfs_read_int(const gchar *endpoint, const gchar *entry);
+gint		h_sysfs_read_hex(const gchar *endpoint, const gchar *entry);
 gchar	       *h_sysfs_read_string(const gchar *endpoint, const gchar *entry);
 
 #define SCAN_START()  static gboolean scanned = FALSE; if (reload) scanned = FALSE; if (scanned) return;

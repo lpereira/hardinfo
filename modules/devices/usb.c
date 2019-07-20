@@ -98,19 +98,22 @@ static const char* get_usbdev_icon(const usbd *u) {
 }
 
 static void _usb_dev(const usbd *u) {
-    gchar *name, *key, *v_str, *label, *str;
+    gchar *name, *key, *v_str, *label, *str, *speed;
     gchar *product, *vendor, *dev_class_str, *dev_subclass_str; /* don't free */
-    gchar *if_class_str, *if_subclass_str, *if_protocol_str;    /* don't free */
+    gchar *manufacturer, *device, *if_driver, *if_class_str;    /* don't free */
+    gchar *if_subclass_str, *if_protocol_str;                   /* don't free */
     gchar *interfaces = strdup("");
     usbi *i;
     const char* icon;
 
     vendor = UNKIFNULL_AC(u->vendor);
     product = UNKIFNULL_AC(u->product);
+    manufacturer = UNKIFNULL_AC(u->manufacturer);
+    device = UNKIFNULL_AC(u->device);
     dev_class_str = UNKIFNULL_AC(u->dev_class_str);
     dev_subclass_str = UNKIFNULL_AC(u->dev_subclass_str);
 
-    name = g_strdup_printf("%s %s", vendor, product);
+    name = g_strdup_printf("%s %s", u->vendor? vendor: manufacturer, u->product? product: device);
     key = g_strdup_printf("USB%03d:%03d:%03d", u->bus, u->dev, 0);
     label = g_strdup_printf("%03d:%03d", u->bus, u->dev);
     icon = get_usbdev_icon(u);
@@ -126,26 +129,39 @@ static void _usb_dev(const usbd *u) {
             if_class_str = UNKIFNULL_AC(i->if_class_str);
             if_subclass_str = UNKIFNULL_AC(i->if_subclass_str);
             if_protocol_str = UNKIFNULL_AC(i->if_protocol_str);
+            if_driver = UNKIFNULL_AC(i->driver);
 
             interfaces = h_strdup_cprintf("[%s %d]\n"
                 /* Class */       "%s=[%d] %s\n"
                 /* Sub-class */   "%s=[%d] %s\n"
-                /* Protocol */    "%s=[%d] %s\n",
+                /* Protocol */    "%s=[%d] %s\n"
+                /* Driver */      "%s=%s\n",
                     interfaces,
                     _("Interface"), i->if_number,
                     _("Class"), i->if_class, if_class_str,
                     _("Sub-class"), i->if_subclass, if_subclass_str,
-                    _("Protocol"), i->if_protocol, if_protocol_str
+                    _("Protocol"), i->if_protocol, if_protocol_str,
+                    _("Driver"), if_driver
                 );
             i = i->next;
         }
     }
 
+    if (u->speed_mbs > 0){
+        speed = g_strdup_printf("%d %s", u->speed_mbs, _("Mb/s"));
+    }
+    else{
+        speed = g_strdup(_("Unknown"));
+    }
+
     str = g_strdup_printf("[%s]\n"
              /* Product */      "%s=[0x%04x] %s\n"
-             /* Manufacturer */ "%s=[0x%04x] %s\n"
+             /* Vendor */       "%s=[0x%04x] %s\n"
+             /* Device */       "%s=%s\n"
+             /* Manufacturer */ "%s=%s\n"
              /* Max Current */  "%s=%d %s\n"
              /* USB Version */ "%s=%s\n"
+             /* Speed */       "%s=%s\n"
              /* Class */       "%s=[%d] %s\n"
              /* Sub-class */   "%s=[%d] %s\n"
              /* Dev Version */ "%s=%s\n"
@@ -156,8 +172,11 @@ static void _usb_dev(const usbd *u) {
                 _("Device Information"),
                 _("Product"), u->product_id, product,
                 _("Vendor"), u->vendor_id, v_str,
+                _("Device"), device,
+                _("Manufacturer"), manufacturer,
                 _("Max Current"), u->max_curr_ma, _("mA"),
                 _("USB Version"), u->usb_version,
+                _("Speed"), speed,
                 _("Class"), u->dev_class, dev_class_str,
                 _("Sub-class"), u->dev_subclass, dev_subclass_str,
                 _("Device Version"), u->device_version,
@@ -169,6 +188,7 @@ static void _usb_dev(const usbd *u) {
 
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
 
+    g_free(speed);
     g_free(v_str);
     g_free(name);
     g_free(key);
