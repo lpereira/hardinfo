@@ -3,6 +3,7 @@
  *    Copyright (C) 2003-2017 Leandro A. F. Pereira <leandro@hardinfo.org>
  *    This file
  *    Copyright (C) 2017 Burt P. <pburt0@gmail.com>
+ *    Copyright (C) 2019 Ondrej Čerman
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@
 #include "hardinfo.h"
 #include "usb_util.h"
 
+#define SYSFS_DIR_USB_DEVICES "/sys/bus/usb/devices"
+
 usbi *usbi_new() {
     return g_new0(usbi, 1);
 }
@@ -30,6 +33,7 @@ void usbi_free(usbi *s) {
         g_free(s->if_class_str);
         g_free(s->if_subclass_str);
         g_free(s->if_protocol_str);
+        g_free(s->driver);
         g_free(s);
     }
 }
@@ -52,6 +56,8 @@ void usbd_free(usbd *s) {
         usbi_list_free(s->if_list);
         g_free(s->vendor);
         g_free(s->product);
+        g_free(s->manufacturer);
+        g_free(s->device);
         g_free(s->usb_version);
         g_free(s->device_version);
         g_free(s->dev_class_str);
@@ -182,8 +188,6 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
                 }
             }
 
-            /* TODO: speed_mbs, improve interfaces
-             * WISHLIST: drivers */
             p = next_nl + 1;
         }
         g_free(out);
@@ -193,14 +197,91 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
     return FALSE;
 }
 
-usbd *usb_get_device(int bus, int dev) {
+static gboolean usb_get_interface_sysfs(int conf, int number,
+                                        const char* devpath, usbi *intf){
+    gchar *ifpath, *drvpath, *tmp;
+
+    ifpath = g_strdup_printf("%s:%d.%d", devpath, conf, number);
+    if (!g_file_test(ifpath, G_FILE_TEST_EXISTS)){
+        return FALSE;
+    }
+
+    tmp = g_strdup_printf("%s/driver", ifpath);
+    drvpath = g_file_read_link(tmp, NULL);
+    g_free(tmp);
+    if (drvpath){
+        intf->driver = g_path_get_basename(drvpath);
+        g_free(drvpath);
+    }
+    else{
+        intf->driver = g_strdup(_("(None)"));
+    }
+
+    intf->if_number = number;
+    intf->if_class = h_sysfs_read_hex(ifpath, "bInterfaceClass");
+    intf->if_subclass = h_sysfs_read_hex(ifpath, "bInterfaceSubClass");
+    intf->if_protocol = h_sysfs_read_hex(ifpath, "bInterfaceProtocol");
+
+    g_free(ifpath);
+    return TRUE;
+}
+
+static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, usbd *s) {
+    usbi *intf;
+    gboolean ok;
+    int i, if_count = 0, conf = 0;
+    if (sysfspath == NULL)
+        return FALSE;
+
+    s->bus = bus;
+    s->dev = dev;
+    s->dev_class = h_sysfs_read_hex(sysfspath, "bDeviceClass");
+    s->vendor_id = h_sysfs_read_hex(sysfspath, "idVendor");
+    s->product_id = h_sysfs_read_hex(sysfspath, "idProduct");
+    s->manufacturer = h_sysfs_read_string(sysfspath, "manufacturer");
+    s->device = h_sysfs_read_string(sysfspath, "product");
+    s->max_curr_ma = h_sysfs_read_int(sysfspath, "bMaxPower");
+    s->dev_class = h_sysfs_read_hex(sysfspath, "bDeviceClass");
+    s->dev_subclass = h_sysfs_read_hex(sysfspath, "bDeviceSubClass");
+    s->speed_mbs = h_sysfs_read_int(sysfspath, "speed");
+
+    conf = h_sysfs_read_hex(sysfspath, "bConfigurationValue");
+
+    if (s->usb_version == NULL)
+        s->usb_version = h_sysfs_read_string(sysfspath, "version");
+
+    if (s->if_list == NULL){ // create interfaces list
+        if_count = h_sysfs_read_int(sysfspath, "bNumInterfaces");
+        for (i = 0; i <= if_count; i++){
+            intf = usbi_new();
+            ok = usb_get_interface_sysfs(conf, i, sysfspath, intf);
+            if (ok){
+                usbd_append_interface(s, intf);
+            }
+            else{
+                usbi_free(intf);
+            }
+        }
+    }
+    else{ // improve existing list
+        intf = s->if_list;
+        while (intf){
+            usb_get_interface_sysfs(conf, intf->if_number, sysfspath, intf);
+            intf = intf->next;
+        }
+    }
+
+    return TRUE;
+}
+
+usbd *usb_get_device(int bus, int dev, const gchar* sysfspath) {
     usbd *s = usbd_new();
     int ok = 0;
     if (s) {
         /* try lsusb */
         ok = usb_get_device_lsusb(bus, dev, s);
-
-        /* TODO: other methods */
+        /* try sysfs */
+        ok |= usb_get_device_sysfs(bus, dev, sysfspath, s);
 
         if (!ok) {
             usbd_free(s);
@@ -224,7 +305,7 @@ static usbd *usb_get_device_list_lsusb() {
             strend(p, '\n');
             ec = sscanf(p, "Bus %d Device %d: ID %x:%x", &bus, &dev, &vend, &prod);
             if (ec == 4) {
-                nd = usb_get_device(bus, dev);
+                nd = usb_get_device(bus, dev, NULL);
                 if (head == NULL) {
                     head = nd;
                 } else {
@@ -239,9 +320,58 @@ static usbd *usb_get_device_list_lsusb() {
     return head;
 }
 
-usbd *usb_get_device_list() {
-    /* try lsusb */
-    return usb_get_device_list_lsusb();
+static usbd *usb_get_device_list_sysfs() {
+    GDir *dir;
+    GRegex *regex;
+    GMatchInfo *match_info;
+    usbd *head = NULL, *nd;
+    gchar *devpath;
+    const char *entry;
+    int bus, dev;
 
-    /* TODO: other methods */
+    regex = g_regex_new("^([0-9]+-[0-9]+([.][0-9]+)*)|(usb[0-9]+)$", 0, 0, NULL);
+    if (!regex){
+        return NULL;
+    }
+
+    dir = g_dir_open(SYSFS_DIR_USB_DEVICES, 0, NULL);
+    if (!dir){
+        return NULL;
+    }
+
+    while ((entry = g_dir_read_name(dir))) {
+        g_regex_match(regex, entry, 0, &match_info);
+
+        if (g_match_info_matches(match_info)) {
+            devpath = g_build_filename(SYSFS_DIR_USB_DEVICES, entry, NULL);
+            bus = h_sysfs_read_int(devpath, "busnum");
+            dev = h_sysfs_read_int(devpath, "devnum");
+
+            if (bus > 0 && dev > 0){
+                nd = usb_get_device(bus, dev, devpath);
+                if (head == NULL) {
+                    head = nd;
+                } else {
+                    usbd_list_append(head, nd);
+                }
+            }
+            g_free(devpath);
+        }
+        g_match_info_free(match_info);
+    }
+
+    g_dir_close(dir);
+    g_regex_unref(regex);
+
+    return head;
+}
+
+usbd *usb_get_device_list() {
+    usbd *lst;
+
+    lst = usb_get_device_list_sysfs();
+    if (lst == NULL)
+        lst = usb_get_device_list_lsusb();
+
+    return lst;
 }

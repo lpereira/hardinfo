@@ -1237,6 +1237,22 @@ h_sysfs_read_int(const gchar *endpoint, const gchar *entry)
 	return return_value;
 }
 
+gint
+h_sysfs_read_hex(const gchar *endpoint, const gchar *entry)
+{
+	gchar *tmp, *buffer;
+	gint return_value = 0;
+
+	tmp = g_build_filename(endpoint, entry, NULL);
+	if (g_file_get_contents(tmp, &buffer, NULL, NULL))
+		return_value = (gint) strtoll(buffer, NULL, 16);
+
+	g_free(tmp);
+	g_free(buffer);
+
+	return return_value;
+}
+
 gchar *
 h_sysfs_read_string(const gchar *endpoint, const gchar *entry)
 {

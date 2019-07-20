@@ -25,6 +25,8 @@ typedef struct usbd {
     int vendor_id, product_id;
     char *vendor;
     char *product;
+    char *manufacturer;
+    char *device;
 
     int dev_class;
     int dev_subclass;
@@ -36,7 +38,7 @@ typedef struct usbd {
 
     int max_curr_ma;
 
-    int speed_mbs; /* TODO: */
+    int speed_mbs;
 
     gboolean user_scan; /* not scanned as root */
     struct usbi *if_list;
@@ -53,6 +55,7 @@ typedef struct usbi {
     char *if_class_str;
     char *if_subclass_str;
     char *if_protocol_str;
+    char *driver;
 
     struct usbi *next;
 } usbi;
@@ -61,7 +64,7 @@ usbd *usb_get_device_list();
 int usbd_list_count(usbd *);
 void usbd_list_free(usbd *);
 
-usbd *usb_get_device(int bus, int dev);
+usbd *usb_get_device(int bus, int dev, const gchar* sysfspath);
 void usbd_free(usbd *);
 
 #endif
