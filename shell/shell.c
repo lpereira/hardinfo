@@ -1253,70 +1253,68 @@ static void group_handle_normal(GKeyFile *key_file,
         g_free(tmp);
     }
 
+    g_key_file_set_list_separator(key_file, '|');
+
     for (i = 0; keys[i]; i++) {
         gchar *key = keys[i];
-        gchar *value;
+        gchar **values;
+        gsize vcount = 0;
         GtkTreeIter child;
 
-        value = g_key_file_get_value(key_file, group, key, NULL);
-        if (entry->fieldfunc && value && g_str_equal(value, "...")) {
-            g_free(value);
-            value = entry->fieldfunc(key);
+        values = g_key_file_get_string_list(key_file, group, key, &vcount, NULL);
+        if (!vcount) {
+            /* Check for empty value */
+            values = g_new0(gchar*, 2);
+            values[0] = g_key_file_get_string(key_file, group, key, NULL);
+            if (values[0]) {
+                vcount = 1;
+            } else {
+                g_strfreev(values);
+                continue;
+            }
         }
 
-        if ((key && value) && g_utf8_validate(key, -1, NULL) &&
-            g_utf8_validate(value, -1, NULL)) {
-            if (ngroups == 1) {
-                gtk_tree_store_append(store, &child, NULL);
-            } else {
-                gtk_tree_store_append(store, &child, &parent);
-            }
-
-            /* FIXME: use g_key_file_get_string_list? */
-            if (g_utf8_strchr(value, -1, '|')) {
-                gchar **columns = g_strsplit(value, "|", 0);
-
-                gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE,
-                                   columns[0], -1);
-                if (columns[1]) {
-                    gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA1,
-                                       columns[1], -1);
-                    if (columns[2]) {
-                        gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA2,
-                                           columns[2], -1);
-                    }
-                }
-
-                g_strfreev(columns);
-            } else {
-                gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE, value,
-                                   -1);
-            }
-
-            strend(key, '#');
-
-            struct UpdateTableItem *item = g_new0(struct UpdateTableItem, 1);
-            item->is_iter = TRUE;
-            item->iter = gtk_tree_iter_copy(&child);
-            gchar *flags, *tag, *name;
-            key_get_components(key, &flags, &tag, &name, NULL, NULL, TRUE);
-
-            if (flags) {
-                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, name,
-                                   INFO_TREE_COL_DATA, flags, -1);
-                g_hash_table_insert(update_tbl, tag, item);
-                g_free(name);
-            } else {
-                gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
-                                   INFO_TREE_COL_DATA, NULL, -1);
-                g_hash_table_insert(update_tbl, name, item);
-                g_free(tag);
-            }
-            g_free(flags);
-
+        if (entry->fieldfunc && values[0] && g_str_equal(values[0], "...")) {
+            g_free(values[0]);
+            values[0] = entry->fieldfunc(key);
         }
 
-        g_free(value);
+        if (ngroups == 1) {
+            gtk_tree_store_append(store, &child, NULL);
+        } else {
+            gtk_tree_store_append(store, &child, &parent);
+        }
+
+        if (vcount > 0)
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_VALUE,
+                               values[0], -1);
+        if (vcount > 1)
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA1,
+                               values[1], -1);
+        if (vcount > 2)
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_EXTRA2,
+                               values[2], -1);
+
+        struct UpdateTableItem *item = g_new0(struct UpdateTableItem, 1);
+        item->is_iter = TRUE;
+        item->iter = gtk_tree_iter_copy(&child);
+        gchar *flags, *tag, *name;
+        key_get_components(key, &flags, &tag, &name, NULL, NULL, TRUE);
+
+        if (flags) {
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, name,
+                               INFO_TREE_COL_DATA, flags, -1);
+            g_hash_table_insert(update_tbl, tag, item);
+            g_free(name);
+        } else {
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
+                               INFO_TREE_COL_DATA, NULL, -1);
+            g_hash_table_insert(update_tbl, name, item);
+            g_free(tag);
+        }
+        g_free(flags);
+
+        g_strfreev(values);
     }
 }
 
@@ -1540,7 +1538,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 gchar *name = NULL, *label = NULL, *tag = NULL;
                 key_get_components(keys[j], NULL, &tag, &name, &label, NULL, TRUE);
 
-                value = g_key_file_get_value(key_file, groups[i], keys[j], NULL);
+                value = g_key_file_get_string(key_file, groups[i], keys[j], NULL);
 
                 if (entry && entry->fieldfunc && value && g_str_equal(value, "...")) {
                     g_free(value);
