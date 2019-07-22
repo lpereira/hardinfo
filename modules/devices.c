@@ -51,6 +51,7 @@ gchar *callback_input();
 gchar *callback_usb();
 gchar *callback_dmi();
 gchar *callback_dmi_mem();
+gchar *callback_firmware();
 gchar *callback_dtree();
 gchar *callback_device_resources();
 
@@ -65,6 +66,7 @@ void scan_input(gboolean reload);
 void scan_usb(gboolean reload);
 void scan_dmi(gboolean reload);
 void scan_dmi_mem(gboolean reload);
+void scan_firmware(gboolean reload);
 void scan_dtree(gboolean reload);
 void scan_device_resources(gboolean reload);
 
@@ -81,6 +83,7 @@ enum {
     ENTRY_DMI_MEM,
     ENTRY_PCI,
     ENTRY_USB,
+    ENTRY_FW,
     ENTRY_PRINTERS,
     ENTRY_BATTERY,
     ENTRY_SENSORS,
@@ -94,6 +97,7 @@ static ModuleEntry entries[] = {
     [ENTRY_GPU] = {N_("Graphics Processors"), "devices.png", callback_gpu, scan_gpu, MODULE_FLAG_NONE},
     [ENTRY_PCI] = {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
     [ENTRY_USB] = {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
+    [ENTRY_FW] = {N_("Firmware"), "processor.png", callback_firmware, scan_firmware, MODULE_FLAG_NONE},
     [ENTRY_PRINTERS] = {N_("Printers"), "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
     [ENTRY_BATTERY] = {N_("Battery"), "battery.png", callback_battery, scan_battery, MODULE_FLAG_NONE},
     [ENTRY_SENSORS] = {N_("Sensors"), "therm.png", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
@@ -124,6 +128,11 @@ gchar *lginterval = NULL;
 gchar *memory_devices_get_info();
 gboolean memory_devices_hinote(const char **msg);
 gchar *memory_devices_info = NULL;
+
+/* in firmware.c */
+gchar *firmware_get_info();
+gboolean firmware_hinote(const char **msg);
+gchar *firmware_info = NULL;
 
 #include <vendor.h>
 
@@ -542,6 +551,15 @@ void scan_dmi_mem(gboolean reload)
     SCAN_END();
 }
 
+void scan_firmware(gboolean reload)
+{
+    SCAN_START();
+    if (firmware_info)
+        g_free(firmware_info);
+    firmware_info = firmware_get_info();
+    SCAN_END();
+}
+
 void scan_dtree(gboolean reload)
 {
     SCAN_START();
@@ -636,6 +654,11 @@ gchar *callback_dmi()
 gchar *callback_dmi_mem()
 {
     return g_strdup(memory_devices_info);
+}
+
+gchar *callback_firmware()
+{
+    return g_strdup(firmware_info);
 }
 
 gchar *callback_dtree()
@@ -808,6 +831,12 @@ const gchar *hi_note_func(gint entry)
     else if (entry == ENTRY_DMI_MEM){
         const char *msg;
         if (memory_devices_hinote(&msg)) {
+            return msg;
+        }
+    }
+    else if (entry == ENTRY_FW) {
+        const char *msg;
+        if (firmware_hinote(&msg)) {
             return msg;
         }
     }

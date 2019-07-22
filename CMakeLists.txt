@@ -155,6 +155,7 @@ set(MODULE_devices_SOURCES
 	modules/devices/battery.c
 	modules/devices/dmi.c
 	modules/devices/dmi_memory.c
+	modules/devices/firmware.c
 	modules/devices/devicetree.c
 	modules/devices/inputdevices.c
 	modules/devices/pci.c
