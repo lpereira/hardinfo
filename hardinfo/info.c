@@ -242,7 +242,7 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
     guint i;
 
     if (group->name != NULL)
-        g_string_append_printf(output, "[%s]\n", group->name);
+        g_string_append_printf(output, "[%s#%d]\n", group->name, group_count);
 
     if (group->sort != INFO_GROUP_SORT_NONE)
         g_array_sort(group->fields, sort_functions[group->sort]);
