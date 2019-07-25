@@ -47,26 +47,26 @@ static const RaspberryPiBoard rpi_boardinfo[] = {
   { "0013",      "Q1 2015",    "B+",                  "1.2",    "512 MB",    unk,             NULL },
   { "0014",      "Q2 2014",    "Compute Module 1",    "1.0",    "512 MB",    "Embest",        NULL },
   { "0015",      unk,          "A+",                  "1.1",    "256 MB/512 MB",    "Embest",      NULL  },
-  { "a01040",    unk,          "2 Model B",           "1.0",    "1 GB DDR2",      "Sony",          "BCM2836" },
-  { "a01041",    "Q1 2015",    "2 Model B",           "1.1",    "1 GB DDR2",      "Sony",          "BCM2836" },
-  { "a21041",    "Q1 2015",    "2 Model B",           "1.1",    "1 GB DDR2",      "Embest",        "BCM2836" },
-  { "a22042",    "Q3 2016",    "2 Model B",           "1.2",    "1 GB DDR2",      "Embest",        "BCM2837" },  /* (with BCM2837) */
+  { "a01040",    unk,          "2 Model B",           "1.0",    "1024 MB DDR2",      "Sony",          "BCM2836" },
+  { "a01041",    "Q1 2015",    "2 Model B",           "1.1",    "1024 MB DDR2",      "Sony",          "BCM2836" },
+  { "a21041",    "Q1 2015",    "2 Model B",           "1.1",    "1024 MB DDR2",      "Embest",        "BCM2836" },
+  { "a22042",    "Q3 2016",    "2 Model B",           "1.2",    "1024 MB DDR2",      "Embest",        "BCM2837" },  /* (with BCM2837) */
   { "900021",    "Q3 2016",    "A+",                  "1.1",    "512 MB",    "Sony",          NULL },
   { "900032",    "Q2 2016?",    "B+",                 "1.2",    "512 MB",    "Sony",          NULL },
   { "900092",    "Q4 2015",    "Zero",                "1.2",    "512 MB",    "Sony",          NULL },
   { "900093",    "Q2 2016",    "Zero",                "1.3",    "512 MB",    "Sony",          NULL },
   { "920093",    "Q4 2016?",   "Zero",                "1.3",    "512 MB",    "Embest",        NULL },
   { "9000c1",    "Q1 2017",    "Zero W",              "1.1",    "512 MB",    "Sony",          NULL },
-  { "a02082",    "Q1 2016",    "3 Model B",           "1.2",    "1 GB DDR2",      "Sony",          "BCM2837" },
-  { "a020a0",    "Q1 2017",    "Compute Module 3 or CM3 Lite",  "1.0",    "1 GB DDR2",    "Sony",          NULL },
-  { "a22082",    "Q1 2016",    "3 Model B",           "1.2",    "1 GB DDR2",      "Embest",        "BCM2837" },
-  { "a32082",    "Q4 2016",    "3 Model B",           "1.2",    "1 GB DDR2",      "Sony Japan",    NULL  },
-  { "a020d3",    "Q1 2018",    "3 Model B+",          "1.3",    "1 GB DDR2",      "Sony",          "BCM2837" },
+  { "a02082",    "Q1 2016",    "3 Model B",           "1.2",    "1024 MB DDR2",      "Sony",          "BCM2837" },
+  { "a020a0",    "Q1 2017",    "Compute Module 3 or CM3 Lite",  "1.0",    "1024 MB DDR2",    "Sony",          NULL },
+  { "a22082",    "Q1 2016",    "3 Model B",           "1.2",    "1024 MB DDR2",      "Embest",        "BCM2837" },
+  { "a32082",    "Q4 2016",    "3 Model B",           "1.2",    "1024 MB DDR2",      "Sony Japan",    NULL  },
+  { "a020d3",    "Q1 2018",    "3 Model B+",          "1.3",    "1024 MB DDR2",      "Sony",          "BCM2837" },
   { "9020e0",    "Q4 2018",    "3 Model A+",          "1.0",    "512 MB DDR2",    "Sony",          "BCM2837" },
 
-  { "a03111",    "Q2 2019",    "4 Model B",           "1.0",    "1 GB DDR4",      "Sony",          "BCM2838" },
-  { "b03111",    "Q2 2019",    "4 Model B",           "1.0",    "2 GB DDR4",      "Sony",          "BCM2838" },
-  //{ "c?03111",    "Q2 2019",    "4 Model B",           "1.0",    "4 GB DDR4",      "Sony",          "BCM2838" },
+  { "a03111",    "Q2 2019",    "4 Model B",           "1.0",    "1024 MB DDR4",      "Sony",          "BCM2838" },
+  { "b03111",    "Q2 2019",    "4 Model B",           "1.0",    "2048 MB DDR4",      "Sony",          "BCM2838" },
+  { "c03111",    "Q2 2019",    "4 Model B",           "1.1",    "4096 MB DDR4",      "Sony",          "BCM2838" },
 
   { NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
