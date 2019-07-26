@@ -126,18 +126,24 @@ static usbd *usbd_list_append_sorted(usbd *l, usbd *n) {
     return t;
 }
 
-void usbd_append_interface(usbd *dev, usbi *new_if){
+gboolean usbd_append_interface(usbd *dev, usbi *new_if){
     usbi *curr_if;
     if (dev->if_list == NULL){
         dev->if_list = new_if;
-    return;
+        return TRUE;
     }
+
+    if (dev->if_list->if_number == new_if->if_number)
+        return FALSE;
 
     curr_if = dev->if_list;
     while(curr_if->next != NULL) {
         curr_if = curr_if->next;
+        if (curr_if->if_number == new_if->if_number)
+            return FALSE;
     }
     curr_if->next = new_if;
+    return TRUE;
 }
 
 int usbd_list_count(usbd *s) {
@@ -201,7 +207,15 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
             } else if (l = lsusb_line_value(p, "bInterfaceNumber")) {
                 curr_if = usbi_new();
                 curr_if->if_number = atoi(l);
-                usbd_append_interface(s, curr_if);
+
+                // This may parse same interface multiple times when there
+                // are multiple Configuration descriptors per device
+                // As a workaround usbd_append_interface appends interface
+                // with same if_number only once
+                if (!usbd_append_interface(s, curr_if)){
+                    usbi_free(curr_if);
+                    curr_if = NULL;
+                }
             } else if (l = lsusb_line_value(p, "bInterfaceClass")) {
                 if (curr_if != NULL){
                     curr_if->if_class = atoi(l);
@@ -290,7 +304,9 @@ static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, us
             intf = usbi_new();
             ok = usb_get_interface_sysfs(conf, i, sysfspath, intf);
             if (ok){
-                usbd_append_interface(s, intf);
+                if (!usbd_append_interface(s, intf)){
+                    usbi_free(intf);
+                }
             }
             else{
                 usbi_free(intf);
