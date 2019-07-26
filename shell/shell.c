@@ -1513,11 +1513,13 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
     for (i = 0; groups[i]; i++) {
         gsize nkeys;
         gchar **keys = g_key_file_get_keys(key_file, groups[i], &nkeys, NULL);
+        gchar *group_label = g_strdup(groups[i]);
+        strend(group_label, '#');
 
         if (entry && groups[i][0] == '$') {
             group_handle_special(key_file, entry, groups[i], keys);
         } else {
-            gchar *tmp = g_strdup_printf("<b>%s</b>", groups[i]);
+            gchar *tmp = g_strdup_printf("<b>%s</b>", group_label);
             GtkWidget *label = gtk_label_new(tmp);
             gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
             GtkWidget *frame = gtk_frame_new(NULL);
@@ -1600,6 +1602,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
         }
 
         g_strfreev(keys);
+        g_free(group_label);
     }
 }
 
