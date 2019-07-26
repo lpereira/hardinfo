@@ -1031,28 +1031,6 @@ gint tree_view_get_visible_height(GtkTreeView * tv)
     return nrows * rect.height;
 }
 
-static gboolean __idle_free_do(gpointer ptr)
-{
-    g_free(ptr);
-
-    return FALSE;
-}
-
-#if RELEASE == 1
-gpointer idle_free(gpointer ptr)
-#else
-gpointer __idle_free(gpointer ptr, gchar * f, gint l)
-#endif
-{
-    DEBUG("file: %s, line: %d, ptr %p", f, l, ptr);
-
-    if (ptr) {
-	g_timeout_add(10000, __idle_free_do, ptr);
-    }
-
-    return ptr;
-}
-
 void module_entry_scan_all_except(ModuleEntry * entries, gint except_entry)
 {
     ModuleEntry entry;
