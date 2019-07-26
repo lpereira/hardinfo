@@ -217,6 +217,7 @@ endforeach()
 add_library(sysobj_early STATIC
 	deps/sysobj_early/src/gg_slist.c
 	deps/sysobj_early/src/strstr_word.c
+	deps/sysobj_early/src/auto_free.c
 	deps/sysobj_early/gui/uri_handler.c
 )
 set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function")

@@ -162,6 +162,7 @@ int main(int argc, char **argv)
     moreinfo_shutdown();
     vendor_cleanup();
     dmidecode_cache_free();
+    free_auto_free_final();
 
     DEBUG("finished");
     return exit_code;

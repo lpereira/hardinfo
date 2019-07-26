@@ -117,12 +117,11 @@ gchar    *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
 gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 
 /* Misc utility functions */
-#if RELEASE == 1
-gpointer idle_free(gpointer ptr);
-#else
-gpointer __idle_free(gpointer ptr, gchar *f, gint l);
-#define  idle_free(p) __idle_free(p, __FILE__, __LINE__)
-#endif	/* RELEASE == 1 */
+#if !(RELEASE == 1)
+#define DEBUG_AUTO_FREE 2
+#endif
+#include "auto_free.h"
+#define idle_free(ptr) auto_free(ptr)
 
 gchar	     *find_program(gchar *program_name);
 gchar      *size_human_readable(gfloat size);
