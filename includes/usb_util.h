@@ -52,6 +52,7 @@ typedef struct usbi {
     int if_class;
     int if_subclass;
     int if_protocol;
+    char *if_label;
     char *if_class_str;
     char *if_subclass_str;
     char *if_protocol_str;

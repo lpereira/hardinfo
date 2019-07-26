@@ -30,6 +30,7 @@ usbi *usbi_new() {
 
 void usbi_free(usbi *s) {
     if (s) {
+        g_free(s->if_label);
         g_free(s->if_class_str);
         g_free(s->if_subclass_str);
         g_free(s->if_protocol_str);
@@ -234,6 +235,11 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
                     if (t = strchr(l, ' '))
                         curr_if->if_protocol_str = g_strdup(t + 1);
                 }
+            } else if (l = lsusb_line_value(p, "iInterface")) {
+                if (curr_if != NULL){
+                    if (t = strchr(l, ' '))
+                        curr_if->if_label = g_strdup(t + 1);
+                }
             }
 
             p = next_nl + 1;
@@ -269,6 +275,9 @@ static gboolean usb_get_interface_sysfs(int conf, int number,
     intf->if_class = h_sysfs_read_hex(ifpath, "bInterfaceClass");
     intf->if_subclass = h_sysfs_read_hex(ifpath, "bInterfaceSubClass");
     intf->if_protocol = h_sysfs_read_hex(ifpath, "bInterfaceProtocol");
+
+    if (intf->if_label == NULL)
+        intf->if_label = h_sysfs_read_string(ifpath, "interface");
 
     g_free(ifpath);
     return TRUE;
