@@ -131,13 +131,13 @@ static void _usb_dev(const usbd *u) {
             if_protocol_str = UNKIFNULL_AC(i->if_protocol_str);
             if_driver = UNKIFNULL_AC(i->driver);
 
-            interfaces = h_strdup_cprintf("[%s %d]\n"
+            interfaces = h_strdup_cprintf("[%s %d %s]\n"
                 /* Class */       "%s=[%d] %s\n"
                 /* Sub-class */   "%s=[%d] %s\n"
                 /* Protocol */    "%s=[%d] %s\n"
                 /* Driver */      "%s=%s\n",
                     interfaces,
-                    _("Interface"), i->if_number,
+                    _("Interface"), i->if_number, i->if_label? i->if_label: "",
                     _("Class"), i->if_class, if_class_str,
                     _("Sub-class"), i->if_subclass, if_subclass_str,
                     _("Protocol"), i->if_protocol, if_protocol_str,
