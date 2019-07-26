@@ -92,6 +92,40 @@ static int usbd_list_append(usbd *l, usbd *n) {
     return c;
 }
 
+/* returns new top of the list */
+static usbd *usbd_list_append_sorted(usbd *l, usbd *n) {
+    usbd *b = NULL;
+    usbd *t = l;
+
+    if (n == NULL)
+        return l;
+
+    while(l != NULL) {
+        if ((n->bus > l->bus) ||
+            ((n->bus == l->bus) && (n->dev >= l->dev))) {
+            if (l->next == NULL) {
+                l->next = n;
+                break;
+            }
+            b = l;
+            l = l->next;
+        }
+        else {
+            if (b == NULL) {
+                t = n;
+                n->next = l;
+            }
+            else {
+                b->next = n;
+                n->next = l;
+            }
+            break;
+        }
+    }
+
+    return t;
+}
+
 void usbd_append_interface(usbd *dev, usbi *new_if){
     usbi *curr_if;
     if (dev->if_list == NULL){
@@ -352,7 +386,7 @@ static usbd *usb_get_device_list_sysfs() {
                 if (head == NULL) {
                     head = nd;
                 } else {
-                    usbd_list_append(head, nd);
+                    head = usbd_list_append_sorted(head, nd);
                 }
             }
             g_free(devpath);
