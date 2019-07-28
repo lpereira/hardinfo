@@ -1,6 +1,7 @@
 #include <gio/gio.h>
 #include "udisks2_util.h"
 #include "hardinfo.h"
+#include "util_ids.h"
 
 #define UDISKS2_INTERFACE            "org.freedesktop.UDisks2"
 #define UDISKS2_MANAGER_INTERFACE    "org.freedesktop.UDisks2.Manager"
@@ -17,6 +18,109 @@
 #define STRDUP_IF_NOT_EMPTY(S) (g_strcmp0(S, "") == 0) ? NULL: g_strdup(S);
 
 GDBusConnection* udisks2_conn = NULL;
+
+gchar *sdcard_ids_file = NULL;
+
+void find_sdcard_ids_file() {
+    if (sdcard_ids_file) return;
+    char *file_search_order[] = {
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "sdcard.ids", NULL),
+        g_build_filename(params.path_data, "sdcard.ids", NULL),
+        NULL
+    };
+    int n;
+    for(n = 0; file_search_order[n]; n++) {
+        if (!access(file_search_order[n], R_OK))
+            sdcard_ids_file = file_search_order[n];
+        else
+            g_free(file_search_order[n]);
+    }
+}
+
+void check_sdcard_vendor(udiskd *d) {
+    if (!d) return;
+    if (!d->media) return;
+    if (! (g_str_has_prefix(d->media, "flash_sd")
+            || g_str_has_prefix(d->media, "flash_mmc") )) return;
+    if (d->vendor && d->vendor[0]) return;
+    if (!d->block_dev) return;
+
+    if (!sdcard_ids_file)
+        find_sdcard_ids_file();
+
+    gchar *qpath = NULL;
+    ids_query_result result = {};
+
+    gchar *oemid_path = g_strdup_printf("/sys/block/%s/device/oemid", d->block_dev);
+    gchar *manfid_path = g_strdup_printf("/sys/block/%s/device/manfid", d->block_dev);
+    gchar *oemid = NULL, *manfid = NULL;
+    g_file_get_contents(oemid_path, &oemid, NULL, NULL);
+    g_file_get_contents(manfid_path, &manfid, NULL, NULL);
+
+    unsigned int id = strtol(oemid, NULL, 16);
+    char c2 = id & 0xff, c1 = (id >> 8) & 0xff;
+
+    qpath = g_strdup_printf("OEMID %02x%02x", (unsigned int)c1, (unsigned int)c2);
+    scan_ids_file(sdcard_ids_file, qpath, &result, -1);
+    g_free(oemid);
+    if (result.results[0])
+        oemid = g_strdup(result.results[0]);
+    else
+        oemid = g_strdup_printf("OEM %02x%02x \"%c%c\"",
+            (unsigned int)c1, (unsigned int)c2,
+            isprint(c1) ? c1 : '.', isprint(c2) ? c2 : '.');
+    g_free(qpath);
+
+    id = strtol(manfid, NULL, 16);
+    qpath = g_strdup_printf("MANFID %06x", id);
+    scan_ids_file(sdcard_ids_file, qpath, &result, -1);
+    g_free(manfid);
+    if (result.results[0])
+        manfid = g_strdup(result.results[0]);
+    else
+        manfid = g_strdup_printf("MANF %06x", id);
+    g_free(qpath);
+
+    vendor_list vl = NULL;
+    const Vendor *v = NULL;
+    v = vendor_match(oemid, NULL);
+    if (v) vl = vendor_list_append(vl, v);
+    v = vendor_match(manfid, NULL);
+    if (v) vl = vendor_list_append(vl, v);
+    vl = vendor_list_remove_duplicates_deep(vl);
+    d->vendors = vendor_list_concat(d->vendors, vl);
+
+    g_free(d->vendor);
+    if (g_strcmp0(oemid, manfid) == 0)
+        d->vendor = g_strdup(oemid);
+    else
+        d->vendor = g_strdup_printf("%s / %s", oemid, manfid);
+
+    g_free(oemid);
+    g_free(manfid);
+    g_free(oemid_path);
+    g_free(manfid_path);
+
+    if (d->revision && d->revision[0]) return;
+
+    /* bonus: revision */
+    gchar *fwrev_path = g_strdup_printf("/sys/block/%s/device/fwrev", d->block_dev);
+    gchar *hwrev_path = g_strdup_printf("/sys/block/%s/device/hwrev", d->block_dev);
+    gchar *fwrev = NULL, *hwrev = NULL;
+    g_file_get_contents(fwrev_path, &fwrev, NULL, NULL);
+    g_file_get_contents(hwrev_path, &hwrev, NULL, NULL);
+
+    unsigned int fw = fwrev ? strtol(fwrev, NULL, 16) : 0;
+    unsigned int hw = hwrev ? strtol(hwrev, NULL, 16) : 0;
+    g_free(d->revision);
+    d->revision = g_strdup_printf("%02x.%02x", hw, fw);
+
+    g_free(fwrev);
+    g_free(hwrev);
+    g_free(fwrev_path);
+    g_free(hwrev_path);
+
+}
 
 GVariant* get_dbus_property(GDBusProxy* proxy, const gchar *interface,
                             const gchar *property) {
@@ -493,6 +597,15 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusPr
         g_variant_unref(v);
     }
 
+    check_sdcard_vendor(u);
+
+    if (!u->vendors) {
+        const Vendor *v = NULL;
+        v = vendor_match(u->vendor, NULL);
+        if (v)
+            u->vendors = vendor_list_append(u->vendors, v);
+    }
+
     return u;
 }
 
@@ -515,4 +628,5 @@ void udisks2_shutdown(){
         g_object_unref(udisks2_conn);
         udisks2_conn = NULL;
     }
+    g_free(sdcard_ids_file);
 }

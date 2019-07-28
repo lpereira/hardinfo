@@ -1,3 +1,5 @@
+#include "vendor.h"
+
 typedef struct udiskp {
     gchar *block;
     gchar *type;
@@ -31,6 +33,7 @@ typedef struct udiskd {
     guint64 smart_poweron;
     gint64 smart_bad_sectors;
     gint32 smart_temperature;
+    vendor_list vendors;
 } udiskd;
 
 typedef struct udiskt {
