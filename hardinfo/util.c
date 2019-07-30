@@ -539,38 +539,6 @@ gboolean ui_init(int *argc, char ***argv)
     return gtk_init_check(argc, argv);
 }
 
-void open_url(gchar * url)
-{
-    const gchar *browsers[] = {
-	"xdg-open", "gnome-open", "kfmclient openURL",
-	"sensible-browser", "firefox", "epiphany",
-	"iceweasel", "seamonkey", "galeon", "mozilla",
-	"opera", "konqueror", "netscape", "links -g",
-	NULL
-    };
-    gint i = 0;
-    gchar *browser = (gchar *)g_getenv("BROWSER");
-
-    if (!browser || *browser == '\0') {
-    	browser = (gchar *)browsers[i++];
-    }
-
-    do {
-	gchar *cmdline = g_strdup_printf("%s '%s'", browser, url);
-
-	if (g_spawn_command_line_async(cmdline, NULL)) {
-	    g_free(cmdline);
-	    return;
-	}
-
-	g_free(cmdline);
-
-    	browser = (gchar *)browsers[i++];
-    } while (browser);
-
-    g_warning(_("Couldn't find a Web browser to open URL %s."), url);
-}
-
 /* Copyright: Jens Låås, SLU 2002 */
 gchar *strreplacechr(gchar * string, gchar * replace, gchar new_char)
 {

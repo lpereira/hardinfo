@@ -39,12 +39,12 @@ void cb_sync_manager()
 
 void cb_open_web_page()
 {
-    open_url("http://www.hardinfo.org");
+    uri_open("http://www.hardinfo.org");
 }
 
 void cb_report_bug()
 {
-    open_url("https://github.com/lpereira/hardinfo");
+    uri_open("https://github.com/lpereira/hardinfo");
 }
 
 void cb_refresh()

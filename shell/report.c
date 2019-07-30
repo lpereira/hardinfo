@@ -910,7 +910,7 @@ static gboolean report_generate(ReportDialog * rd)
 	    gchar *temp;
 
 	    temp = g_strdup_printf("file://%s", file);
-	    open_url(temp);
+	    uri_open(temp);
 
 	    g_free(temp);
         }
