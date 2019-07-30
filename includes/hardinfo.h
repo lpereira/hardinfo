@@ -126,7 +126,6 @@ gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 gchar	     *find_program(gchar *program_name);
 gchar      *size_human_readable(gfloat size);
 void          nonblock_sleep(guint msec);
-void          open_url(gchar *url);
 GSList	     *modules_get_list(void);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
