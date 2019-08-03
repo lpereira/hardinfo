@@ -311,10 +311,10 @@ gchar *clocks_summary(GSList * processors)
 gchar *
 processor_get_detailed_info(Processor *processor)
 {
-    gchar *tmp_flags, *tmp_imp, *tmp_part, *tmp_arch, *tmp_cpufreq, *tmp_topology, *ret;
+    gchar *tmp_flags, *tmp_imp = NULL, *tmp_part = NULL,
+        *tmp_arch, *tmp_cpufreq, *tmp_topology, *ret;
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
-    tmp_imp = (char*)arm_implementer(processor->cpu_implementer);
-    tmp_part = (char*)arm_part(processor->cpu_implementer, processor->cpu_part);
+    arm_part(processor->cpu_implementer, processor->cpu_part, &tmp_imp, &tmp_part);
     tmp_arch = (char*)arm_arch_more(processor->cpu_architecture);
 
     tmp_topology = cputopo_section_str(processor->cputopo);
