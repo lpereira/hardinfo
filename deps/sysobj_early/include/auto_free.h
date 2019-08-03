@@ -36,20 +36,29 @@
 /* the minimum time between auto_free(p) and free(p) */
 #define AF_DELAY_SECONDS 10
 
-#if (DEBUG_AUTO_FREE > 0)
-#define auto_free(p) auto_free_(p, __FILE__, __LINE__, __FUNCTION__)
-#define auto_free_ex(p, f) auto_free_ex_(p, f, __FILE__, __LINE__, __FUNCTION__)
-#else
-#define auto_free(p) auto_free_(p, NULL, 0, NULL)
-#define auto_free_ex(p, f) auto_free_ex_(p, f, NULL, 0, NULL)
-#endif
-gpointer auto_free_(gpointer p, const char *file, int line, const char *func);
-gpointer auto_free_ex_(gpointer p, GDestroyNotify f, const char *file, int line, const char *func);
+#define AF_USE_SYSOBJ 0
 
-/* free all the auto_free marked items in the current thread */
+#if (DEBUG_AUTO_FREE > 0)
+#define auto_free(p) auto_free_ex_(p, (GDestroyNotify)g_free, __FILE__, __LINE__, __FUNCTION__)
+#define auto_free_ex(p, f) auto_free_ex_(p, f, __FILE__, __LINE__, __FUNCTION__)
+#define auto_free_on_exit(p) auto_free_on_exit_ex_(p, (GDestroyNotify)g_free, __FILE__, __LINE__, __FUNCTION__)
+#define auto_free_on_exit_ex(p, f) auto_free_on_exit_ex_(p, f, __FILE__, __LINE__, __FUNCTION__)
+#else
+#define auto_free(p) auto_free_ex_(p, (GDestroyNotify)g_free, NULL, 0, NULL)
+#define auto_free_ex(p, f) auto_free_ex_(p, f, NULL, 0, NULL)
+#define auto_free_on_exit(p) auto_free_on_exit_ex_(p, (GDestroyNotify)g_free, NULL, 0, NULL)
+#define auto_free_on_exit_ex(p, f) auto_free_on_exit_ex_(p, f, NULL, 0, NULL)
+#endif
+gpointer auto_free_ex_(gpointer p, GDestroyNotify f, const char *file, int line, const char *func);
+gpointer auto_free_on_exit_ex_(gpointer p, GDestroyNotify f, const char *file, int line, const char *func);
+
+/* free all the auto_free marked items in the
+ * current thread with age > AF_DELAY_SECONDS */
 void free_auto_free();
 
-/* call at thread termination */
+/* call at thread termination:
+ * free all the auto_free marked items in the
+ * current thread regardless of age */
 void free_auto_free_thread_final();
 
 /* call at program termination */
