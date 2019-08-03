@@ -120,7 +120,7 @@ set(HARDINFO_MODULES
 set(HARDINFO_RESOURCES
 	"data/benchmark.conf"
 	"data/benchmark.data"
-	"data/vendor.ids"
+	"deps/sysobj_early/data/vendor.ids"
 	"deps/sysobj_early/data/sdcard.ids"
 )
 
