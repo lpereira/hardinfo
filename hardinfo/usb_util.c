@@ -427,10 +427,12 @@ usbd *usb_get_device(int bus, int dev, const gchar* sysfspath) {
     usbd *s = usbd_new();
     int ok = 0;
     if (s) {
-        /* try lsusb */
-        ok = usb_get_device_lsusb(bus, dev, s);
         /* try sysfs */
-        ok |= usb_get_device_sysfs(bus, dev, sysfspath, s);
+        ok = usb_get_device_sysfs(bus, dev, sysfspath, s);
+        if (!ok) {
+            /* try lsusb */
+            ok = usb_get_device_lsusb(bus, dev, s);
+        }
         if (!ok) {
             usbd_free(s);
             s = NULL;
