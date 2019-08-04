@@ -21,8 +21,11 @@
 
 #include "hardinfo.h"
 #include "usb_util.h"
+#include "util_ids.h"
 
 #define SYSFS_DIR_USB_DEVICES "/sys/bus/usb/devices"
+
+gchar *usb_ids_file = NULL;
 
 usbi *usbi_new() {
     return g_new0(usbi, 1);
@@ -254,6 +257,7 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
 static gboolean usb_get_interface_sysfs(int conf, int number,
                                         const char* devpath, usbi *intf){
     gchar *ifpath, *drvpath, *tmp;
+    ids_query_result result = {};
 
     ifpath = g_strdup_printf("%s:%d.%d", devpath, conf, number);
     if (!g_file_test(ifpath, G_FILE_TEST_EXISTS)){
@@ -279,16 +283,52 @@ static gboolean usb_get_interface_sysfs(int conf, int number,
     if (intf->if_label == NULL)
         intf->if_label = h_sysfs_read_string(ifpath, "interface");
 
+    if (intf->if_class_str == NULL && intf->if_subclass_str == NULL
+                                   && intf->if_protocol_str == NULL) {
+        tmp = g_strdup_printf("C %02x/%02x/%02x", intf->if_class,
+                               intf->if_subclass, intf->if_protocol);
+        scan_ids_file(usb_ids_file, tmp, &result, -1);
+        if (result.results[0])
+            intf->if_class_str = g_strdup(result.results[0]);
+        if (result.results[1])
+            intf->if_subclass_str = g_strdup(result.results[1]);
+        if (result.results[2])
+            intf->if_protocol_str = g_strdup(result.results[2]);
+        g_free(tmp);
+    }
+
     g_free(ifpath);
     return TRUE;
+}
+
+void find_usb_ids_file() {
+    if (usb_ids_file) return;
+    char *file_search_order[] = {
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "usb.ids", NULL),
+        g_build_filename(params.path_data, "usb.ids", NULL),
+        NULL
+    };
+    int n;
+    for(n = 0; file_search_order[n]; n++) {
+        if (!access(file_search_order[n], R_OK))
+            usb_ids_file = file_search_order[n];
+        else
+            g_free(file_search_order[n]);
+    }
 }
 
 static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, usbd *s) {
     usbi *intf;
     gboolean ok;
-    int i, if_count = 0, conf = 0;
+    int i, if_count = 0, conf = 0, ver;
+    ids_query_result result = {};
+    gchar *qpath;
+
     if (sysfspath == NULL)
         return FALSE;
+
+    if (!usb_ids_file)
+        find_usb_ids_file();
 
     s->bus = bus;
     s->dev = dev;
@@ -300,7 +340,28 @@ static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, us
     s->max_curr_ma = h_sysfs_read_int(sysfspath, "bMaxPower");
     s->dev_class = h_sysfs_read_hex(sysfspath, "bDeviceClass");
     s->dev_subclass = h_sysfs_read_hex(sysfspath, "bDeviceSubClass");
+    s->dev_protocol = h_sysfs_read_hex(sysfspath, "bDeviceProtocol");
     s->speed_mbs = h_sysfs_read_int(sysfspath, "speed");
+
+    if (s->product == NULL && s->vendor == NULL) {
+        qpath = g_strdup_printf("%04x/%04x", s->vendor_id, s->product_id);
+        scan_ids_file(usb_ids_file, qpath, &result, -1);
+        if (result.results[0])
+            s->vendor = g_strdup(result.results[0]);
+        if (result.results[1])
+            s->product = g_strdup(result.results[1]);
+        g_free(qpath);
+    }
+
+    if (s->dev_class_str == NULL && s->dev_subclass_str == NULL) {
+        qpath = g_strdup_printf("C %02x/%02x", s->dev_class, s->dev_subclass);
+        scan_ids_file(usb_ids_file, qpath, &result, -1);
+        if (result.results[0])
+            s->dev_class_str = g_strdup(result.results[0]);
+        if (result.results[1])
+            s->dev_subclass_str = g_strdup(result.results[1]);
+        g_free(qpath);
+    }
 
     conf = h_sysfs_read_hex(sysfspath, "bConfigurationValue");
 

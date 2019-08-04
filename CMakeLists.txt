@@ -122,6 +122,7 @@ set(HARDINFO_RESOURCES
 	"data/benchmark.data"
 	"data/vendor.ids"
 	"deps/sysobj_early/data/sdcard.ids"
+	"deps/sysobj_early/data/usb.ids"
 )
 
 set(HARDINFO_MANPAGES
