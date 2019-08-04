@@ -27,11 +27,14 @@ typedef struct usbd {
     char *product;
     char *manufacturer;
     char *device;
+    char *serial;
 
     int dev_class;
     int dev_subclass;
+    int dev_protocol;
     char *dev_class_str;
     char *dev_subclass_str;
+    char *dev_protocol_str;
 
     char *usb_version;
     char *device_version; /* bcdDevice */

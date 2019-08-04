@@ -64,8 +64,10 @@ void usbd_free(usbd *s) {
         g_free(s->device);
         g_free(s->usb_version);
         g_free(s->device_version);
+        g_free(s->serial);
         g_free(s->dev_class_str);
         g_free(s->dev_subclass_str);
+        g_free(s->dev_protocol_str);
         g_free(s);
     }
 }
@@ -206,6 +208,19 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
                 s->dev_subclass = atoi(l);
                 if (t = strchr(l, ' '))
                     s->dev_subclass_str = g_strdup(t + 1);
+            } else if (l = lsusb_line_value(p, "bDeviceProtocol")) {
+                s->dev_protocol = atoi(l);
+                if (t = strchr(l, ' '))
+                    s->dev_protocol_str = g_strdup(t + 1);
+            } else if (l = lsusb_line_value(p, "iManufacturer")) {
+                if (t = strchr(l, ' '))
+                    s->manufacturer = g_strdup(t + 1);
+            } else if (l = lsusb_line_value(p, "iProduct")) {
+                if (t = strchr(l, ' '))
+                    s->device = g_strdup(t + 1);
+            } else if (l = lsusb_line_value(p, "iSerial")) {
+                if (t = strchr(l, ' '))
+                    s->serial = g_strdup(t + 1);
 
             // interface info
             } else if (l = lsusb_line_value(p, "bInterfaceNumber")) {
@@ -353,13 +368,17 @@ static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, us
         g_free(qpath);
     }
 
-    if (s->dev_class_str == NULL && s->dev_subclass_str == NULL) {
-        qpath = g_strdup_printf("C %02x/%02x", s->dev_class, s->dev_subclass);
+    if (s->dev_class_str == NULL && s->dev_subclass_str == NULL
+                                 && s->dev_protocol_str == NULL) {
+        qpath = g_strdup_printf("C %02x/%02x/%02x", s->dev_class,
+                                   s->dev_subclass, s->dev_protocol);
         scan_ids_file(usb_ids_file, qpath, &result, -1);
         if (result.results[0])
             s->dev_class_str = g_strdup(result.results[0]);
         if (result.results[1])
             s->dev_subclass_str = g_strdup(result.results[1]);
+        if (result.results[2])
+            s->dev_protocol_str = g_strdup(result.results[2]);
         g_free(qpath);
     }
 
@@ -367,6 +386,16 @@ static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, us
 
     if (s->usb_version == NULL)
         s->usb_version = h_sysfs_read_string(sysfspath, "version");
+
+    if (s->serial == NULL)
+        s->serial = h_sysfs_read_string(sysfspath, "serial");
+
+    if (s->device_version == NULL) {
+        ver = h_sysfs_read_int(sysfspath, "bcdDevice");
+        if (ver > 0){
+            s->device_version = g_strdup_printf("%d.%02d", ver/100, ver%100);
+        }
+    }
 
     if (s->if_list == NULL){ // create interfaces list
         if_count = h_sysfs_read_int(sysfspath, "bNumInterfaces");
@@ -402,7 +431,6 @@ usbd *usb_get_device(int bus, int dev, const gchar* sysfspath) {
         ok = usb_get_device_lsusb(bus, dev, s);
         /* try sysfs */
         ok |= usb_get_device_sysfs(bus, dev, sysfspath, s);
-
         if (!ok) {
             usbd_free(s);
             s = NULL;
