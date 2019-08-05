@@ -1049,6 +1049,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
 #endif
 
     close_note(NULL, NULL);
+    detail_view_clear(shell->detail_view);
 
     switch (viewtype) {
     default:
