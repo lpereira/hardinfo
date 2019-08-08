@@ -322,10 +322,11 @@ gchar *hi_get_field(gchar * field)
 }
 
 static void br_mi_add(char **results_list, bench_result *b, gboolean select) {
+    static unsigned int ri = 0; /* to ensure key is unique */
     gchar *ckey, *rkey;
 
     ckey = hardinfo_clean_label(b->machine->cpu_name, 0);
-    rkey = strdup(b->machine->mid);
+    rkey = g_strdup_printf("%s__%d", b->machine->mid, ri++);
 
     *results_list = h_strdup_cprintf("$%s%s$%s=%.2f|%s\n", *results_list,
         select ? "*" : "", rkey, ckey,
