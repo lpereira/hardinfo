@@ -98,7 +98,7 @@ static const char* get_usbdev_icon(const usbd *u) {
 }
 
 static void _usb_dev(const usbd *u) {
-    gchar *name, *key, *v_str, *label, *str, *speed;
+    gchar *name, *key, *v_str, *mv_str, *label, *str, *speed;
     gchar *product, *vendor, *manufacturer, *device;  /* don't free */
     gchar *interfaces = strdup("");
     usbi *i;
@@ -118,6 +118,7 @@ static void _usb_dev(const usbd *u) {
     usb_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", usb_icons, key, label, icon ? icon: "usb");
 
     v_str = vendor_get_link(vendor);
+    mv_str = vendor_get_link(manufacturer);
 
     if (u->if_list != NULL) {
         i = u->if_list;
@@ -166,7 +167,7 @@ static void _usb_dev(const usbd *u) {
                 _("Product"), u->product_id, product,
                 _("Vendor"), u->vendor_id, v_str,
                 _("Device"), device,
-                _("Manufacturer"), manufacturer,
+                _("Manufacturer"), mv_str,
                 _("Max Current"), u->max_curr_ma, _("mA"),
                 _("USB Version"), u->usb_version,
                 _("Speed"), speed,
@@ -185,6 +186,7 @@ static void _usb_dev(const usbd *u) {
 
     g_free(speed);
     g_free(v_str);
+    g_free(mv_str);
     g_free(name);
     g_free(key);
     g_free(label);
