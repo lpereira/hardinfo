@@ -19,9 +19,7 @@
 
 #include <hardinfo.h>
 #include "distro_flavors.h"
-
-#include "dt_util.h" /* for appf() */
-#define SEQ(s,m) (g_strcmp0(s, m) == 0)
+#include "util_sysobj.h" /* for appfsp() */
 
 static const UbuntuFlavor ubuntu_flavors[] = {
     { "Vanilla Server", "distros/ubuntu.svg", "https://ubuntu.org", "ubuntu-server" },
@@ -59,7 +57,7 @@ GSList *ubuntu_flavors_scan(void) {
     gchar *cmd_line = g_strdup("apt-cache policy");
     int i;
     for(i = 0; ubuntu_flavors[i].base.name; i++) {
-        cmd_line = appf(cmd_line, "%s", ubuntu_flavors[i].package);
+        cmd_line = appfsp(cmd_line, "%s", ubuntu_flavors[i].package);
     }
     if (!i)
         return NULL;

@@ -17,6 +17,7 @@
  */
 
 #include "hardinfo.h"
+#include "util_sysobj.h" /* for SEQ() */
 
 /* Using a slightly modified gg_key_file_parse_string_as_value()
  * from GLib in flatten(), to escape characters and the separator.
@@ -376,8 +377,6 @@ gchar *info_flatten(struct Info *info)
 
     return g_string_free(values, FALSE);
 }
-
-#define SEQ(a,b) (g_strcmp0(a,b) == 0)
 
 struct InfoField *info_find_field(struct Info *info, const gchar *tag, const gchar *name) {
     struct InfoGroup *group;

@@ -20,7 +20,7 @@
 
 #include "hardinfo.h"
 #include "gpu_util.h"
-
+#include "nice_name.h"
 #include "cpu_util.h" /* for EMPIFNULL() */
 
 nvgpu *nvgpu_new() {
@@ -229,14 +229,12 @@ static void make_nice_name(gpud *s) {
     /* try and a get a "short name" for the vendor */
     vendor_str = vendor_get_shortest_name(vendor_str);
 
-    /* These two former special cases are currently handled by the vendor_get_shortest_name()
-     * function well enough, but the notes are preserved here. */
-        /* nvidia PCI strings are pretty nice already,
-         * just shorten the company name */
-        // s->nice_name = g_strdup_printf("%s %s", "nVidia", device_str);
-        /* Intel Graphics may have very long names, like "Intel Corporation Seventh Generation Something Core Something Something Integrated Graphics Processor Revision Ninety-four"
-         * but for now at least shorten "Intel Corporation" to just "Intel" */
-        // s->nice_name = g_strdup_printf("%s %s", "Intel", device_str);
+    if (strstr(vendor_str, "Intel")) {
+        gchar *device_str_clean = strdup(device_str);
+        nice_name_intel_gpu_device(device_str_clean);
+        s->nice_name = g_strdup_printf("%s %s", vendor_str, device_str_clean);
+        g_free(device_str_clean);
+    }
 
     if (strstr(vendor_str, "AMD")) {
         /* AMD PCI strings are crazy stupid because they use the exact same
