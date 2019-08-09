@@ -26,7 +26,7 @@
 
 extern const char *dtree_mem_str; /* in devicetree.c */
 
-#include "dt_util.h" /* for appf() */
+#include "util_sysobj.h" /* for appfsp() */
 #define dmi_spd_msg(...)  /* fprintf (stderr, __VA_ARGS__) */
 
 typedef uint64_t dmi_mem_size;
@@ -51,7 +51,6 @@ static const char empty_icon[] = "module.png";
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
-#define SEQ(s,m) (g_strcmp0(s, m) == 0)
 #define STR_IGNORE(str, ignore) if (SEQ(str, ignore)) { *str = 0; null_if_empty(&str); }
 
 const char *problem_marker() {
@@ -682,7 +681,7 @@ gchar *memory_devices_get_info() {
         for(i = 1; i < N_RAM_TYPES; i++) {
             int bit = 1 << (i-1);
             if (a->ram_types & bit)
-                types_str = appf(types_str, "%s", GET_RAM_TYPE_STR(i));
+                types_str = appfsp(types_str, "%s", GET_RAM_TYPE_STR(i));
         }
 
         gchar *details = g_strdup_printf("[%s]\n"
@@ -824,7 +823,7 @@ gchar *memory_devices_get_info() {
         for(i = 1; i < N_RAM_TYPES; i++) {
             int bit = 1 << (i-1);
             if (mem->spd_ram_types & bit)
-                types_str = appf(types_str, "%s", GET_RAM_TYPE_STR(i));
+                types_str = appfsp(types_str, "%s", GET_RAM_TYPE_STR(i));
         }
 
         gchar *details = g_strdup_printf("[%s]\n"
@@ -924,7 +923,7 @@ gchar *memory_devices_get_system_memory_types_str() {
     for(i = 1; i < N_RAM_TYPES; i++) {
         int bit = 1 << (i-1);
         if (rtypes & bit)
-            types_str = appf(types_str, "%s", GET_RAM_TYPE_STR(i));
+            types_str = appfsp(types_str, "%s", GET_RAM_TYPE_STR(i));
     }
     ret = g_strdup(UNKIFNULL2(types_str));
     g_free(types_str);
@@ -954,9 +953,9 @@ static gchar *note_state = NULL;
 
 gboolean memory_devices_hinote(const char **msg) {
 
-    gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available\n");
-    gchar *want_root   = _(" ... <i>and</i> HardInfo running with superuser privileges\n");
-    gchar *want_eeprom = _(" <b><i>eeprom</i></b> module loaded (for SDR, DDR, DDR2, DDR3)\n");
+    gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available");
+    gchar *want_root   = _(" ... <i>and</i> HardInfo running with superuser privileges");
+    gchar *want_eeprom = _(" <b><i>eeprom</i></b> module loaded (for SDR, DDR, DDR2, DDR3)");
     gchar *want_ee1004 = _(" ... <i>or</i> <b><i>ee1004</i></b> module loaded <b>and configured!</b> (for DDR4)");
 
     gboolean has_root = (getuid() == 0);
@@ -968,11 +967,11 @@ gboolean memory_devices_hinote(const char **msg) {
     char *bullet_no = "<big><b>\u2022<tt> </tt></b></big>";
 
     g_free(note_state);
-    note_state = g_strdup(_("Memory information requires <b>one or both</b> of the following:\n"));
-    note_state = appf(note_state, "<tt>1. </tt>%s%s", has_dmi ? bullet_yes : bullet_no, want_dmi);
-    note_state = appf(note_state, "<tt>   </tt>%s%s", has_root ? bullet_yes : bullet_no, want_root);
-    note_state = appf(note_state, "<tt>2. </tt>%s%s", has_eeprom ? bullet_yes : bullet_no, want_eeprom);
-    note_state = appf(note_state, "<tt>   </tt>%s%s", has_ee1004 ? bullet_yes : bullet_no, want_ee1004);
+    note_state = g_strdup(_("Memory information requires <b>one or both</b> of the following:"));
+    note_state = appfnl(note_state, "<tt>1. </tt>%s%s", has_dmi ? bullet_yes : bullet_no, want_dmi);
+    note_state = appfnl(note_state, "<tt>   </tt>%s%s", has_root ? bullet_yes : bullet_no, want_root);
+    note_state = appfnl(note_state, "<tt>2. </tt>%s%s", has_eeprom ? bullet_yes : bullet_no, want_eeprom);
+    note_state = appfnl(note_state, "<tt>   </tt>%s%s", has_ee1004 ? bullet_yes : bullet_no, want_ee1004);
 
     gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<DDR3_SDRAM)) && has_ee1004);
 

@@ -27,6 +27,7 @@
 #include <endian.h>
 #include "hardinfo.h"
 #include "dt_util.h"
+#include "appf.h"
 
 static struct {
     char *name; int type;
@@ -682,14 +683,14 @@ char *dtr_list_override(dtr_obj *obj) {
         src += 4; consumed += 4;
         l = strlen(src) + 1; /* consume the null */
         str = dtr_list_str0(src, l);
-        ret = appf(ret, "<%s -> %s>", ph, str);
+        ret = appfsp(ret, "<%s -> %s>", ph, str);
         src += l; consumed += l;
         free(ph);
         free(str);
     }
     if (consumed < obj->length) {
         str = dtr_list_byte((uint8_t*)src, obj->length - consumed);
-        ret = appf(ret, "%s", str);
+        ret = appfsp(ret, "%s", str);
         free(str);
     }
     return ret;
@@ -720,7 +721,7 @@ char *dtr_list_phref(dtr_obj *obj, char *ext_cell_prop) {
         ph = dtr_elem_phref(obj->dt, obj->data_int[i], 0, NULL); i++;
         if (ext_cells > count - i) ext_cells = count - i;
         ext = dtr_list_hex((obj->data_int + i), ext_cells); i+=ext_cells;
-        ret = appf(ret, "<%s%s%s>",
+        ret = appfsp(ret, "<%s%s%s>",
             ph, (ext_cells) ? " " : "", ext);
         g_free(ph);
         g_free(ext);
@@ -748,7 +749,7 @@ char *dtr_list_interrupts(dtr_obj *obj) {
     while (i < count) {
         icells = UMIN(icells, count - i);
         ext = dtr_list_hex((obj->data_int + i), icells); i+=icells;
-        ret = appf(ret, "<%s>", ext);
+        ret = appfsp(ret, "<%s>", ext);
     }
     return ret;
 
@@ -782,7 +783,7 @@ char *dtr_list_reg(dtr_obj *obj) {
     consumed = 0;
     while (consumed + (tup_len * 4) <= obj->length) {
         tup_str = dtr_list_hex(next, tup_len);
-        ret = appf(ret, "<%s>", tup_str);
+        ret = appfsp(ret, "<%s>", tup_str);
         free(tup_str);
         consumed += (tup_len * 4);
         next += tup_len;
@@ -1184,22 +1185,3 @@ char *dtr_maps_info(dtr *s) {
     g_free(sy_map);
     return ret;
 }
-
-char *appf(char *src, char *fmt, ...) {
-    gchar *buf, *ret;
-    va_list args;
-
-    va_start(args, fmt);
-    buf = g_strdup_vprintf(fmt, args);
-    va_end(args);
-
-    if (src != NULL) {
-        ret = g_strdup_printf("%s%s%s", src, sp_sep(src), buf);
-        g_free(buf);
-        g_free(src);
-    } else
-        ret = buf;
-
-    return ret;
-}
-

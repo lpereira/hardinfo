@@ -17,6 +17,7 @@
  */
 
 #include "hardinfo.h"
+#include "util_sysobj.h" /* for SEQ() */
 
 static const gchar *info_column_titles[] = {
     "TextValue", "Value", "Progress", "Extra1", "Extra2"
@@ -368,8 +369,6 @@ gchar *info_flatten(struct Info *info)
 
     return g_string_free(values, FALSE);
 }
-
-#define SEQ(a,b) (g_strcmp0(a,b) == 0)
 
 struct InfoField *info_find_field(struct Info *info, const gchar *tag, const gchar *name) {
     struct InfoGroup *group;

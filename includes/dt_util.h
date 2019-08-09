@@ -86,12 +86,6 @@ const char *dtr_find_device_tree_root(void);
 /* write to the message log */
 void dtr_msg(dtr *s, char *fmt, ...);
 
-#define sp_sep(STR) (strlen(STR) ? " " : "")
-/* appends an element to a string, adding a space if
- * the string is not empty.
- * ex: ret = appf(ret, "%s=%s\n", name, value); */
-char *appf(char *src, char *fmt, ...);
-
 /* operating-points v0,v1,v2 */
 typedef struct {
     uint32_t version; /* opp version, 0 = clock-frequency only */
