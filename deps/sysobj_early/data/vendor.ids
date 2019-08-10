@@ -260,8 +260,12 @@ name Harmony Semiconductor
     name_short Harmony
     match_string Harmony
 
-name Atheros Communications
-    url www.atheros.com
+name Qualcomm (formerly Atheros)
+    name_short Qualcomm (Atheros)
+    url www.qualcomm.com
+    wikipedia Qualcomm Atheros
+    ansi_color 0;94;47
+    match_string Qualcomm Atheros
     match_string Atheros
 
 name Panasonic Industry Company
@@ -521,6 +525,78 @@ name STMicroelectronics
     match_string STMicroelectronics
     match_string ST Micro
 
+name ST-Ericsson
+    wikipedia ST-Ericsson
+    ansi_color 0;97;43
+    match_string ST-Ericsson
+    match_string ST Ericsson
+    match_string STEricsson
+
+name Telefonaktiebolaget LM Ericsson
+    name_short Ericsson
+    url ericsson.com
+    wikipedia Ericsson
+    ansi_color 0;94;107
+    match_string Ericsson
+
+name Socket Mobile
+    url www.socketmobile.com
+    match_string Socket Communications
+    match_string Socket Mobile
+    match_string Socket
+
+name GCT Semiconductor
+    name_short GCT
+    url www.gctsemi.com
+    match_string GCT Semiconductor
+    match_string_case GCT
+
+name Murata Manufacturing
+    name_short Murata
+    url www.murata.com
+    wikipedia Murata Manufacturing
+    ansi_color 0;31;107
+    match_string Murata
+
+name Murata Manufacturing (formerly SyChip Electronic Technology)
+    name_short Murata (SyChip)
+    ansi_color 0;31;107
+    match_string SyChip
+
+name Spectec Computer
+    name_short Spectec
+    url spectec.com.tw
+    match_string Spectec
+
+name Siano Mobile Silicon
+    match_string Siano Mobile Silicon
+
+# NOT Globalsat Group
+name Globalsat Technology
+    match_string Globalsat Technology
+
+name C-guys
+    url www.c-guys.net
+    match_string C-guys
+
+name Ricoh
+    url www.ricoh.com
+    wikipedia Ricoh
+    ansi_color 0;91;107
+    match_string Ricoh
+
+name Brother Industries
+    name_short Brother
+    url www.brother.com
+    wikipedia Brother Industries
+    ansi_color 0;34;107
+    match_string Brother
+
+name AboCom Systems
+    url www.abocom.com.tw
+    match_string AboCom Systems
+    match_string AboCom
+
 name Micron Technology
     name_short Micron
     url www.micron.com
@@ -538,6 +614,7 @@ name Toshiba Samsung Storage Technology
     url www.tsst.co.kr
     wikipedia Toshiba Samsung Storage Technology
     ansi_color 0;34;107
+    match_string TSSTcorp
     match_string_case TSST
 
 name Seagate Technology
@@ -689,6 +766,21 @@ name Elitegroup Computer Systems
     ansi_color 0;36;41
     match_string_case ECS
 
+name JMicron Technology
+    name_short JMicron
+    url www.jmicron.com
+    wikipedia JMicron
+    ansi_color 0;34;107
+    match_string JMicron Technology
+    match_string JMicron USA Technology
+    match_string JMicron
+
+name Sabrent
+    url www.sabrent.com
+    wikipedia Sabrent
+    ansi_color 0;30;44
+    match_string Sabrent
+    match_string Arkview
 
 name Sanyo Electric
     name_short SANYO
@@ -790,6 +882,7 @@ name Red Hat
     url www.redhat.com
     ansi_color 0;31;40
     match_string Red Hat
+    match_string RedHat
 
 name Sun Microsystems
     name_short Sun
@@ -909,6 +1002,70 @@ name United Microelectronics Corporation
 name DMP Electronics
     note x86 processor vendor ID
     match_string Vortex86 SoC
+
+name Digital Equipment Corporation
+    name_short DEC
+    note Dead; various parts to Intel, Compaq, HP
+    match_string_case DEC
+    match_string Digital Equipment
+    match_string Digital
+
+name Marvell Technology Group
+    name_short Marvell
+    url www.marvell.com
+    wikipedia Marvell Technology Group
+    ansi_color 0;97;41
+    match_string Marvell
+
+name Marvell (formerly Cavium)
+    name_short Marvell (Cavium)
+    url cavium.com
+    wikipedia Cavium
+    ansi_color 0;97;41
+    match_string Cavium
+
+name Applied Micro Circuits
+    name_short APM
+    wikipedia Applied Micro Circuits Corporation
+    match_string Applied Micro Circuits
+    match_string AppliedMicro
+    match_string_case APM
+    match_string_case AMCC
+
+name Faraday Technology
+    name_short Faraday
+    url www.faraday-tech.com
+    wikipedia Faraday Technology
+    match_string Faraday Technology
+    match_string Faraday
+
+name Texas Instruments
+    name_short TI
+    url ti.com
+    wikipedia Texas Instruments
+    ansi_color 0;97;40
+    match_string Texas Instruments
+    match_string_case TI
+
+name Allwinner Technology
+    name_short AllWinner
+    url www.allwinnertech.com
+    wikipedia Allwinner Technology
+    ansi_color 0;97;44
+    match_string AllWinner
+
+name Amlogic
+    name_short AMLogic
+    url www.amlogic.com
+    wikipedia Amlogic
+    ansi_color 0;94;107
+    match_string Amlogic
+
+name MediaTek
+    url www.mediatek.com
+    wikipedia MediaTek
+    ansi_color 0;97;43
+    match_string MediaTek
 
 #
 # x86 VM vendor strings

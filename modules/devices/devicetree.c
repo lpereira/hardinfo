@@ -28,6 +28,7 @@
 #include "devices.h"
 #include "cpu_util.h"
 #include "dt_util.h"
+#include "appf.h"
 
 gchar *dtree_info = NULL;
 const char *dtree_mem_str = NULL; /* used by memory devices when nothing else is available */
@@ -267,12 +268,12 @@ static void add_keys(dtr *dt, char *np) {
 static char *msg_section(dtr *dt, int dump) {
     gchar *aslbl = NULL;
     gchar *messages = dtr_messages(dt);
-    gchar *ret = g_strdup_printf("[%s]\n", _("Messages"));
+    gchar *ret = g_strdup_printf("[%s]", _("Messages"));
     gchar **lines = g_strsplit(messages, "\n", 0);
     int i = 0;
     while(lines[i] != NULL) {
         aslbl = hardinfo_clean_label(lines[i], 0);
-        ret = appf(ret, "%s=\n", aslbl);
+        ret = appfnl(ret, "%s=", aslbl);
         g_free(aslbl);
         i++;
     }

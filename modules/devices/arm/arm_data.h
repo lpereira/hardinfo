@@ -22,13 +22,12 @@
 #define _ARMDATA_H_
 
 /* table lookups */
-const char *arm_implementer(const char *code);
-const char *arm_part(const char *imp_code, const char *part_code);
+void arm_part(const char *imp_code, const char *part_code, char **imp, char **part);
 const char *arm_arch(const char *cpuinfo_arch_str);
 const char *arm_arch_more(const char *cpuinfo_arch_str);
 
 /* cpu_implementer, cpu_part, cpu_variant, cpu_revision, cpu_architecture from /proc/cpuinfo
- * model_name is returned as a fallback if not enough data is known */
+ * strdup(model_name) is returned as a fallback if not enough data is known */
 char *arm_decoded_name(
     const char *imp, const char *part, const char *var, const char *rev,
     const char *arch, const char *model_name);

@@ -26,9 +26,7 @@
 #include "config.h"
 #include "hardinfo.h"
 #include "strstr_word.h"
-
-#include "dt_util.h" /* for appf() */
-#define SEQ(a,b) (g_strcmp0(a,b) == 0)
+#include "util_sysobj.h" /* for appfsp() and SEQ() */
 
 /* { match_string, match_rule, name, url } */
 static Vendor vendors_builtin[] = {
@@ -347,14 +345,14 @@ const Vendor *vendor_match(const gchar *id_str, ...) {
     if (id_str) {
         c++;
         tl += strlen(id_str);
-        tmp = appf(tmp, "%s", id_str);
+        tmp = appfsp(tmp, "%s", id_str);
 
         va_start(ap, id_str);
         p = va_arg(ap, gchar*);
         while(p) {
             c++;
             tl += strlen(p);
-            tmp = appf(tmp, "%s", p);
+            tmp = appfsp(tmp, "%s", p);
             p = va_arg(ap, gchar*);
         }
         va_end(ap);
@@ -425,6 +423,11 @@ gchar *vendor_get_link(const gchar *id_str)
 
 gchar *vendor_get_link_from_vendor(const Vendor *v)
 {
+    gboolean label_link_ok = FALSE;
+#if GTK_CHECK_VERSION(2, 18, 0)
+    label_link_ok = TRUE;
+#endif
+
     if (!v) {
         return g_strdup(_("Unknown"));
     }
@@ -433,7 +436,7 @@ gchar *vendor_get_link_from_vendor(const Vendor *v)
         return g_strdup(v->name);
     }
 
-    if (params.markup_ok) {
+    if (params.markup_ok && label_link_ok) {
         const gchar *prefix;
 
         if (!strncmp(v->url, "http://", sizeof("http://") - 1) ||
@@ -506,14 +509,14 @@ vendor_list vendors_match(const gchar *id_str, ...) {
     if (id_str) {
         c++;
         tl += strlen(id_str);
-        tmp = appf(tmp, "%s", id_str);
+        tmp = appfsp(tmp, "%s", id_str);
 
         va_start(ap, id_str);
         p = va_arg(ap, gchar*);
         while(p) {
             c++;
             tl += strlen(p);
-            tmp = appf(tmp, "%s", p);
+            tmp = appfsp(tmp, "%s", p);
             p = va_arg(ap, gchar*);
         }
         va_end(ap);

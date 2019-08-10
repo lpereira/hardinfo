@@ -17,6 +17,13 @@
  */
 
 #include "hardinfo.h"
+#include "util_sysobj.h" /* for SEQ() */
+
+/* Using a slightly modified gg_key_file_parse_string_as_value()
+ * from GLib in flatten(), to escape characters and the separator.
+ * The function is not public in GLib and we don't have a GKeyFile
+ * to pass it anyway. */
+#include "gg_key_file_parse_string_as_value.c"
 
 static const gchar *info_column_titles[] = {
     "TextValue", "Value", "Progress", "Extra1", "Extra2"
@@ -267,7 +274,9 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
                     tp);
             }
 
-            g_string_append_printf(output, "%s=%s\n", field->name, field->value);
+            gchar *escaped_value = gg_key_file_parse_string_as_value(field->value, '|');
+            g_string_append_printf(output, "%s=%s\n", field->name, escaped_value);
+            g_free(escaped_value);
         }
     } else if (group->computed) {
         g_string_append_printf(output, "%s\n", group->computed);
@@ -368,8 +377,6 @@ gchar *info_flatten(struct Info *info)
 
     return g_string_free(values, FALSE);
 }
-
-#define SEQ(a,b) (g_strcmp0(a,b) == 0)
 
 struct InfoField *info_find_field(struct Info *info, const gchar *tag, const gchar *name) {
     struct InfoGroup *group;

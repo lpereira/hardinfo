@@ -19,7 +19,7 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "cpu_util.h"
-
+#include "nice_name.h"
 #include "x86_data.h"
 #include "x86_data.c"
 
@@ -567,6 +567,8 @@ GSList *processor_scan(void)
 
         if (processor->cpufreq->cpukhz_max)
             processor->cpu_mhz = processor->cpufreq->cpukhz_max / 1000;
+
+        nice_name_x86_cpuid_model_string(processor->model_name);
     }
 
     return procs;
@@ -648,7 +650,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                    processor->model,
                    processor->stepping,
                    processor->strmodel,
-                   _("Vendor"), idle_free(vendor_get_link(processor->vendor_id)),
+                   _("Vendor"), (char*)idle_free(vendor_get_link(processor->vendor_id)),
                    _("Microcode Version"), processor->microcode,
                    _("Configuration"),
                    _("Cache Size"), processor->cache_size, _("kb"),
