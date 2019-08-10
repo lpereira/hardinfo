@@ -96,7 +96,8 @@ __scan_input_devices(void)
                       input_devices[d].icon);
 
         gchar *v_str = vendor_get_link(name);
-        v_str = hardinfo_clean_value(v_str, 1);
+        if (g_strcmp0(v_str, name) == 0)
+            v_str = hardinfo_clean_value(v_str, 1);
         name = hardinfo_clean_value(name, 1);
 
         gchar *strhash = g_strdup_printf("[%s]\n"
