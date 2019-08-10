@@ -234,9 +234,7 @@ static void make_nice_name(gpud *s) {
         nice_name_intel_gpu_device(device_str_clean);
         s->nice_name = g_strdup_printf("%s %s", vendor_str, device_str_clean);
         g_free(device_str_clean);
-    }
-
-    if (strstr(vendor_str, "AMD")) {
+    } else if (strstr(vendor_str, "AMD")) {
         /* AMD PCI strings are crazy stupid because they use the exact same
          * chip and device id for a zillion "different products" */
         char *full_name = strdup(device_str);
