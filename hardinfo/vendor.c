@@ -58,7 +58,6 @@ static Vendor vendors_builtin[] = {
 };
 
 #define ven_msg(msg, ...)  fprintf (stderr, "[%s] " msg "\n", __FUNCTION__, ##__VA_ARGS__) /**/
-#define ven_msg_debug(msg, ...)  DEBUG(msg, __VA_ARGS__)
 
 static vendor_list vendors = NULL;
 const vendor_list get_vendors_list() { return vendors; }
@@ -139,7 +138,7 @@ static int read_from_vendor_ids(const char *path) {
     char *p, *b;
     int tl, line = -1, ok = 0;
 
-    ven_msg_debug("using vendor.ids format loader for %s", path);
+    DEBUG("using vendor.ids format loader for %s", path);
 
     fd = fopen(path, "r");
     if (!fd) return 0;
@@ -241,7 +240,7 @@ static int read_from_vendor_ids(const char *path) {
 
     fclose(fd);
 
-    ven_msg_debug("... found %d match strings", count);
+    DEBUG("... found %d match strings", count);
 
     return count;
 }
@@ -320,7 +319,7 @@ void vendor_init(void)
 }
 
 void vendor_cleanup() {
-    ven_msg_debug("cleanup vendor list");
+    DEBUG("cleanup vendor list");
     g_slist_free_full(vendors, (GDestroyNotify)vendor_free);
 }
 
