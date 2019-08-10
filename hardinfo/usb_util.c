@@ -325,7 +325,7 @@ void find_usb_ids_file() {
     };
     int n;
     for(n = 0; file_search_order[n]; n++) {
-        if (!access(file_search_order[n], R_OK))
+        if (!usb_ids_file && !access(file_search_order[n], R_OK))
             usb_ids_file = file_search_order[n];
         else
             g_free(file_search_order[n]);
