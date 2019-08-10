@@ -25,7 +25,7 @@
 gchar *usb_list = NULL;
 gchar *usb_icons = NULL;
 
-#define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)");
+#define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)")
 #define IARR_END -2
 #define IARR_ANY -1
 
@@ -98,10 +98,8 @@ static const char* get_usbdev_icon(const usbd *u) {
 }
 
 static void _usb_dev(const usbd *u) {
-    gchar *name, *key, *v_str, *label, *str, *speed;
-    gchar *product, *vendor, *dev_class_str, *dev_subclass_str; /* don't free */
-    gchar *manufacturer, *device, *if_driver, *if_class_str;    /* don't free */
-    gchar *if_subclass_str, *if_protocol_str;                   /* don't free */
+    gchar *name, *key, *v_str, *mv_str, *label, *str, *speed;
+    gchar *product, *vendor, *manufacturer, *device;  /* don't free */
     gchar *interfaces = strdup("");
     usbi *i;
     const char* icon;
@@ -110,8 +108,6 @@ static void _usb_dev(const usbd *u) {
     product = UNKIFNULL_AC(u->product);
     manufacturer = UNKIFNULL_AC(u->manufacturer);
     device = UNKIFNULL_AC(u->device);
-    dev_class_str = UNKIFNULL_AC(u->dev_class_str);
-    dev_subclass_str = UNKIFNULL_AC(u->dev_subclass_str);
 
     name = g_strdup_printf("%s %s", u->vendor? vendor: manufacturer, u->product? product: device);
     key = g_strdup_printf("USB%03d:%03d:%03d", u->bus, u->dev, 0);
@@ -122,15 +118,11 @@ static void _usb_dev(const usbd *u) {
     usb_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", usb_icons, key, label, icon ? icon: "usb");
 
     v_str = vendor_get_link(vendor);
+    mv_str = vendor_get_link(manufacturer);
 
     if (u->if_list != NULL) {
         i = u->if_list;
         while (i != NULL){
-            if_class_str = UNKIFNULL_AC(i->if_class_str);
-            if_subclass_str = UNKIFNULL_AC(i->if_subclass_str);
-            if_protocol_str = UNKIFNULL_AC(i->if_protocol_str);
-            if_driver = UNKIFNULL_AC(i->driver);
-
             interfaces = h_strdup_cprintf("[%s %d %s]\n"
                 /* Class */       "%s=[%d] %s\n"
                 /* Sub-class */   "%s=[%d] %s\n"
@@ -138,10 +130,10 @@ static void _usb_dev(const usbd *u) {
                 /* Driver */      "%s=%s\n",
                     interfaces,
                     _("Interface"), i->if_number, i->if_label? i->if_label: "",
-                    _("Class"), i->if_class, if_class_str,
-                    _("Sub-class"), i->if_subclass, if_subclass_str,
-                    _("Protocol"), i->if_protocol, if_protocol_str,
-                    _("Driver"), if_driver
+                    _("Class"), i->if_class, UNKIFNULL_AC(i->if_class_str),
+                    _("Sub-class"), i->if_subclass, UNKIFNULL_AC(i->if_subclass_str),
+                    _("Protocol"), i->if_protocol, UNKIFNULL_AC(i->if_protocol_str),
+                    _("Driver"), UNKIFNULL_AC(i->driver)
                 );
             i = i->next;
         }
@@ -164,7 +156,9 @@ static void _usb_dev(const usbd *u) {
              /* Speed */       "%s=%s\n"
              /* Class */       "%s=[%d] %s\n"
              /* Sub-class */   "%s=[%d] %s\n"
+             /* Protocol */    "%s=[%d] %s\n"
              /* Dev Version */ "%s=%s\n"
+             /* Serial */      "%s=%s\n"
                             "[%s]\n"
              /* Bus */         "%s=%03d\n"
              /* Device */      "%s=%03d\n"
@@ -173,13 +167,15 @@ static void _usb_dev(const usbd *u) {
                 _("Product"), u->product_id, product,
                 _("Vendor"), u->vendor_id, v_str,
                 _("Device"), device,
-                _("Manufacturer"), manufacturer,
+                _("Manufacturer"), mv_str,
                 _("Max Current"), u->max_curr_ma, _("mA"),
                 _("USB Version"), u->usb_version,
                 _("Speed"), speed,
-                _("Class"), u->dev_class, dev_class_str,
-                _("Sub-class"), u->dev_subclass, dev_subclass_str,
-                _("Device Version"), u->device_version,
+                _("Class"), u->dev_class, UNKIFNULL_AC(u->dev_class_str),
+                _("Sub-class"), u->dev_subclass, UNKIFNULL_AC(u->dev_subclass_str),
+                _("Protocol"), u->dev_protocol, UNKIFNULL_AC(u->dev_protocol_str),
+                _("Device Version"), UNKIFNULL_AC(u->device_version),
+                _("Serial Number"), UNKIFNULL_AC(u->serial),
                 _("Connection"),
                 _("Bus"), u->bus,
                 _("Device"), u->dev,
@@ -190,6 +186,7 @@ static void _usb_dev(const usbd *u) {
 
     g_free(speed);
     g_free(v_str);
+    g_free(mv_str);
     g_free(name);
     g_free(key);
     g_free(label);
