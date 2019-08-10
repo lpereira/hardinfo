@@ -423,6 +423,11 @@ gchar *vendor_get_link(const gchar *id_str)
 
 gchar *vendor_get_link_from_vendor(const Vendor *v)
 {
+    gboolean label_link_ok = FALSE;
+#if GTK_CHECK_VERSION(2, 18, 0)
+    label_link_ok = TRUE;
+#endif
+
     if (!v) {
         return g_strdup(_("Unknown"));
     }
@@ -431,7 +436,7 @@ gchar *vendor_get_link_from_vendor(const Vendor *v)
         return g_strdup(v->name);
     }
 
-    if (params.markup_ok) {
+    if (params.markup_ok && label_link_ok) {
         const gchar *prefix;
 
         if (!strncmp(v->url, "http://", sizeof("http://") - 1) ||
