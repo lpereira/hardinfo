@@ -29,6 +29,7 @@
 #include <signal.h>
 
 #include "benchmark.h"
+#include "appf.h"
 
 #include "benchmark/bench_results.c"
 
@@ -44,7 +45,12 @@ static gchar *benchmark_include_results(bench_value result, const gchar * benchm
 static gboolean sending_benchmark_results = FALSE;
 
 char *bench_value_to_str(bench_value r) {
-    return g_strdup_printf("%lf; %lf; %d; %d; %s", r.result, r.elapsed_time, r.threads_used, r.revision, r.extra);
+    char *ret = g_strdup_printf("%lf; %lf; %d", r.result, r.elapsed_time, r.threads_used);
+    if (r.revision >= 0)
+        ret = appf(ret, "; ", "%d", r.revision);
+    if (r.extra && *r.extra != 0)
+        ret = appf(ret, "; ", "%s", r.extra);
+    return ret;
 }
 
 bench_value bench_value_from_str(const char* str) {
