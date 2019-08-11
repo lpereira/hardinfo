@@ -9,29 +9,29 @@
 #include "hardinfo.h"
 #include "benchmark.h"
 
+/* if anything changes in this block, increment revision */
+#define BENCH_REVISION 0
 #define QUEENS 11
 
 int row[QUEENS];
 
-bool safe(int x, int y)
-{
+bool safe(int x, int y) {
     int i;
     for (i = 1; i <= y; i++)
-	if (row[y - i] == x || row[y - i] == x - i || row[y - i] == x + i)
-	    return false;
+        if (row[y - i] == x || row[y - i] == x - i || row[y - i] == x + i)
+            return false;
     return true;
 }
 
-int nqueens(int y)
-{
+int nqueens(int y) {
     int x;
 
     for (x = 0; x < QUEENS; x++) {
-	if (safe((row[y - 1] = x), y - 1)) {
-	    if (y < QUEENS) {
-		nqueens(y + 1);
-	    } else {
-	        break;
+        if (safe((row[y - 1] = x), y - 1)) {
+            if (y < QUEENS) {
+                nqueens(y + 1);
+            } else {
+                break;
             }
         }
     }
@@ -60,6 +60,8 @@ benchmark_nqueens(void)
 
     r = benchmark_parallel_for(0, 0, 10, nqueens_for, NULL);
     r.result = r.elapsed_time;
+    r.revision = BENCH_REVISION;
+    snprintf(r.extra, 255, "q:%d", QUEENS);
 
     bench_results[BENCHMARK_NQUEENS] = r;
 }

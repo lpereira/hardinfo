@@ -20,15 +20,17 @@
 #include "benchmark.h"
 #include "blowfish.h"
 
+/* if anything changes in this block, increment revision */
+#define BENCH_REVISION 1
 #define CRUNCH_TIME 7
-
-/* must be less than or equal to
- * file size of ( params.path_data + "benchmark.data" ) */
 #define BENCH_DATA_SIZE 65536
+#define BENCH_DATA_MD5 "c25cf5c889f7bead2ff39788eedae37b"
+#define BLOW_KEY "Has my shampoo arrived?"
+#define BLOW_KEY_MD5 "6eac709cca51a228bfa70150c9c5a7c4"
 
-static gpointer bfish_exec(void *in_data, gint thread_number)
+static gpointer bfish_exec(const void *in_data, gint thread_number)
 {
-    unsigned char key[] = "Has my shampoo arrived?";
+    unsigned char key[] = BLOW_KEY;
     unsigned char *data = NULL;
     unsigned long data_len = BENCH_DATA_SIZE, i = 0;
     BLOWFISH_CTX ctx;
@@ -48,37 +50,32 @@ static gpointer bfish_exec(void *in_data, gint thread_number)
     return NULL;
 }
 
-static gchar *get_data()
-{
-    gchar *tmpsrc, *bdata_path;
-    gsize length;
-
-    bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
-    if (!g_file_get_contents(bdata_path, &tmpsrc, &length, NULL)) {
-        g_free(bdata_path);
-        return NULL;
-    }
-    if (length < BENCH_DATA_SIZE) {
-        g_free(tmpsrc);
-        return NULL;
-    }
-
-    return tmpsrc;
-}
-
 void benchmark_bfish_do(int threads, int entry, const char *status)
 {
     bench_value r = EMPTY_BENCH_VALUE;
-    gchar *test_data = get_data();
+    gchar *test_data = get_test_data(BENCH_DATA_SIZE);
+    if (!test_data) return;
 
     shell_view_set_enabled(FALSE);
     shell_status_update(status);
 
+    gchar *k = md5_digest_str(BLOW_KEY, strlen(BLOW_KEY));
+    if (!SEQ(k, BLOW_KEY_MD5))
+        bench_msg("test key has different md5sum: expected %s, actual %s", BLOW_KEY_MD5, k);
+    gchar *d = md5_digest_str(test_data, BENCH_DATA_SIZE);
+    if (!SEQ(d, BENCH_DATA_MD5))
+        bench_msg("test data has different md5sum: expected %s, actual %s", BENCH_DATA_MD5, d);
+
     r = benchmark_crunch_for(CRUNCH_TIME, threads, bfish_exec, test_data);
     r.result /= 100;
-    bench_results[entry] = r;
+    r.revision = BENCH_REVISION;
+    snprintf(r.extra, 255, "%0.1fs, k:%s, d:%s", (double)CRUNCH_TIME, k, d);
 
     g_free(test_data);
+    g_free(k);
+    g_free(d);
+
+    bench_results[entry] = r;
 }
 
 void benchmark_bfish_threads(void) { benchmark_bfish_do(0, BENCHMARK_BLOWFISH_THREADS, "Performing Blowfish benchmark (multi-thread)..."); }

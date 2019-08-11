@@ -334,6 +334,15 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             /* old results only give threads */
             b->machine->processors = -1;
             b->machine->cores = -1;
+
+            /* clean the old result's CPU model name
+             * if it was probably an x86 */
+            if (strstr(b->machine->cpu_name, "Intel")
+                || strstr(b->machine->cpu_name, "AMD")
+                || strstr(b->machine->cpu_name, "VIA")
+                || strstr(b->machine->cpu_name, "Cyrix") ) {
+                nice_name_x86_cpuid_model_string(b->machine->cpu_name);
+            }
         }
 
         b->machine->cpu_config = cpu_config_retranslate(b->machine->cpu_config, 0, 1);
@@ -383,7 +392,8 @@ static char *bench_result_more_info_less(bench_result *b) {
         /* elapsed */   "%s=%0.4f %s\n"
                         "%s=%s\n"
                         "%s=%s\n"
-        /* legacy */    "%s=%s\n"
+                        "%s=%s\n"
+        /* legacy */    "%s%s=%s\n"
                         "[%s]\n"
         /* board */     "%s=%s\n"
         /* cpu   */     "%s=%s\n"
@@ -398,6 +408,8 @@ static char *bench_result_more_info_less(bench_result *b) {
                         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
                         *bench_str ? _("Revision") : _("#Revision"), bench_str,
                         *b->bvalue.extra ? _("Extra Information") : _("#Extra"), b->bvalue.extra,
+                        *b->bvalue.user_note ? _("User Note") : _("#User Note"), b->bvalue.user_note,
+                        b->legacy ? problem_marker() : "",
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),
@@ -426,7 +438,8 @@ static char *bench_result_more_info_complete(bench_result *b) {
         /* result */    "%s=%0.2f\n"
         /* elapsed */   "%s=%0.4f %s\n"
                         "%s=%s\n"
-        /* legacy */    "%s=%s\n"
+                        "%s=%s\n"
+        /* legacy */    "%s%s=%s\n"
                         "[%s]\n"
         /* board */     "%s=%s\n"
         /* cpu   */     "%s=%s\n"
@@ -445,6 +458,8 @@ static char *bench_result_more_info_complete(bench_result *b) {
                         _("Result"), b->bvalue.result,
                         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
                         *b->bvalue.extra ? _("Extra Information") : _("#Extra"), b->bvalue.extra,
+                        *b->bvalue.user_note ? _("User Note") : _("#User Note"), b->bvalue.user_note,
+                        b->legacy ? problem_marker() : "",
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
                         _("Machine"),

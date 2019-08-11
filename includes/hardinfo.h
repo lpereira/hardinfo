@@ -70,6 +70,7 @@ struct _ProgramParameters {
 
   gchar  **use_modules;
   gchar   *run_benchmark;
+  gchar   *bench_user_note;
   gchar   *result_format;
   gchar   *path_lib;
   gchar   *path_data;
@@ -185,6 +186,10 @@ gchar *moreinfo_lookup(gchar *key);
 gboolean g_strv_contains(const gchar * const * strv, const gchar *str);
 #endif
 
+/* in gg_key_file_parse_string_as_value.c */
+gchar *
+gg_key_file_parse_string_as_value (const gchar *string, const gchar list_separator);
+
 /* Hardinfo labels that have # are truncated and/or hidden.
  * Labels can't have $ because that is the delimiter in
  * moreinfo.
@@ -200,5 +205,8 @@ gboolean hardinfo_spawn_command_line_sync(const gchar *command_line,
                                           gchar **standard_error,
                                           gint *exit_status,
                                           GError **error);
+
+/* a marker in text to point out problems, using markup where possible */
+const char *problem_marker();
 
 #endif				/* __HARDINFO_H__ */

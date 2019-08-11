@@ -53,15 +53,6 @@ static const char empty_icon[] = "module.png";
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
 #define STR_IGNORE(str, ignore) if (SEQ(str, ignore)) { *str = 0; null_if_empty(&str); }
 
-const char *problem_marker() {
-    static const char as_markup[] = "<big><b>\u26A0</b></big>";
-    static const char as_text[] = "(!)";
-    if (params.markup_ok)
-        return as_markup;
-    else
-        return as_text;
-}
-
 dmi_mem_size dmi_read_memory_str_to_MiB(const char *memstr) {
     dmi_mem_size ret = 0, v = 0;
     char l[7] = "";

@@ -393,6 +393,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gchar *report_format = NULL;
     static gchar *run_benchmark = NULL;
     static gchar *result_format = NULL;
+    static gchar *bench_user_note = NULL;
     static gchar **use_modules = NULL;
     static gint max_bench_results = 10;
 
@@ -415,6 +416,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &run_benchmark,
 	 .description = N_("run benchmark; requires benchmark.so to be loaded")},
+	{
+	 .long_name = "user-note",
+	 .short_name = 'u',
+	 .arg = G_OPTION_ARG_STRING,
+	 .arg_data = &bench_user_note,
+	 .description = N_("note attached to benchmark results")},
 	{
 	 .long_name = "result-format",
 	 .short_name = 'g',
@@ -511,6 +518,14 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
             param->report_format = REPORT_FORMAT_SHELL;
     }
 
+    /* clean user note */
+    if (bench_user_note) {
+        char *p = NULL;
+        while(p = strchr(bench_user_note, ';'))  { *p = ','; }
+        param->bench_user_note =
+            gg_key_file_parse_string_as_value(bench_user_note, '|');
+    }
+
     /* html ok?
      * gui: yes
      * report html: yes
@@ -522,7 +537,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 
     gchar *confdir = g_build_filename(g_get_user_config_dir(), "hardinfo", NULL);
     if (!g_file_test(confdir, G_FILE_TEST_EXISTS)) {
-	mkdir(confdir, 0744);
+        mkdir(confdir, 0744);
     }
     g_free(confdir);
 }

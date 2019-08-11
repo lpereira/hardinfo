@@ -21,7 +21,9 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-static gchar *
+#include <glib.h>
+
+gchar *
 gg_key_file_parse_string_as_value (const gchar *string, const gchar list_separator)
 {
   gchar *value, *p, *q;

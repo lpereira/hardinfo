@@ -18,6 +18,10 @@
 
 #include "benchmark.h"
 
+/* if anything changes in this block, increment revision */
+#define BENCH_REVISION 0
+#define ANSWER 42
+
 gulong fib(gulong n)
 {
     if (n == 0)
@@ -39,7 +43,7 @@ benchmark_fib(void)
     g_timer_reset(timer);
     g_timer_start(timer);
 
-    fib(42);
+    fib(ANSWER);
 
     g_timer_stop(timer);
     r.elapsed_time = g_timer_elapsed(timer, NULL);
@@ -47,6 +51,9 @@ benchmark_fib(void)
 
     r.threads_used = 1;
     r.result = r.elapsed_time;
+
+    r.revision = BENCH_REVISION;
+    snprintf(r.extra, 255, "a:%d", ANSWER);
 
     bench_results[BENCHMARK_FIB] = r;
 }

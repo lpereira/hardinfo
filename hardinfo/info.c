@@ -23,7 +23,7 @@
  * from GLib in flatten(), to escape characters and the separator.
  * The function is not public in GLib and we don't have a GKeyFile
  * to pass it anyway. */
-#include "gg_key_file_parse_string_as_value.c"
+/* Now in hardinfo.h -- #include "gg_key_file_parse_string_as_value.c" */
 
 static const gchar *info_column_titles[] = {
     "TextValue", "Value", "Progress", "Extra1", "Extra2"
