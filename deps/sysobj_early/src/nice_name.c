@@ -44,9 +44,26 @@ gboolean str_shorten(gchar *str, const gchar *find, const gchar *replace) {
     return FALSE;
 }
 
+gboolean str_shorten_anycase(gchar *str, const gchar *find, const gchar *replace) {
+    if (!str || !find || !replace) return FALSE;
+    long unsigned lf = strlen(find);
+    long unsigned lr = strlen(replace);
+    gchar *p = strcasestr(str, find);
+    if (p) {
+        if (lr > lf) lr = lf;
+        gchar *buff = g_strnfill(lf, ' ');
+        strncpy(buff, replace, lr);
+        strncpy(p, buff, lf);
+        g_free(buff);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 void nice_name_x86_cpuid_model_string(char *cpuid_model_string) {
     static gboolean move_vendor_to_front = TRUE;
-    static gboolean remove_amd_compute_cores = FALSE;
+    static gboolean remove_long_core_count = TRUE;
+    static gboolean remove_amd_compute_cores = TRUE;
     static gboolean remove_amd_xn_ncore_redundancy = TRUE;
     static gboolean remove_processor_cpu_apu_etc = TRUE;
     static gboolean remove_mhz_ghz = TRUE;
@@ -55,12 +72,9 @@ void nice_name_x86_cpuid_model_string(char *cpuid_model_string) {
     g_strstrip(cpuid_model_string);
 
     while(str_shorten(cpuid_model_string, "Genuine Intel", "Intel")) {};
-    while(str_shorten(cpuid_model_string, "(R)", "")) {};
-    while(str_shorten(cpuid_model_string, "(r)", "")) {};
-    while(str_shorten(cpuid_model_string, "(TM)", "")) {};
-    while(str_shorten(cpuid_model_string, "(tm)", "")) {};
-    while(str_shorten(cpuid_model_string, "(c)", "")) {};
-    while(str_shorten(cpuid_model_string, "(C)", "")) {};
+    while(str_shorten_anycase(cpuid_model_string, "(R)", "")) {};
+    while(str_shorten_anycase(cpuid_model_string, "(TM)", "")) {};
+    while(str_shorten_anycase(cpuid_model_string, "(C)", "")) {};
     while(str_shorten(cpuid_model_string, "@", "")) {};
 
     if (move_vendor_to_front) {
@@ -109,15 +123,15 @@ void nice_name_x86_cpuid_model_string(char *cpuid_model_string) {
     }
 
     if (g_str_has_prefix(cpuid_model_string, "Cyrix")) {
+        /* ex: Cyrix MediaGXtm MMXtm Enhanced */
         while(str_shorten(cpuid_model_string, "tm ", "")) {};
     }
 
     if (remove_processor_cpu_apu_etc) {
         while(str_shorten(cpuid_model_string, " CPU", "")) {};
         while(str_shorten(cpuid_model_string, " APU", "")) {};
-        while(str_shorten(cpuid_model_string, " Integrated Processor", "")) {};
-        while(str_shorten(cpuid_model_string, " Processor", "")) {};
-        while(str_shorten(cpuid_model_string, " processor", "")) {};
+        while(str_shorten_anycase(cpuid_model_string, " Integrated Processor", "")) {};
+        while(str_shorten_anycase(cpuid_model_string, " Processor", "")) {};
     } else {
         while(str_shorten(cpuid_model_string, " processor", " Processor")) {};
     }
@@ -135,6 +149,30 @@ void nice_name_x86_cpuid_model_string(char *cpuid_model_string) {
         }
     }
 
+    if (remove_long_core_count) {
+        /* note: "Intel Core 2 Duo" and "Intel Core 2 Quad"
+         * are the marketing names, don't remove those. */
+        static char *count_strings[] = {
+            "Dual", "Triple", "Quad", "Six",
+            "Eight", "Octal", "Twelve", "Sixteen",
+            "8", "16", "24", "32", "48", "56", "64",
+        };
+        char buffer[] = "Enough room for the longest... -Core";
+        char *dash = strchr(buffer, '-');
+        char *m = NULL;
+
+        unsigned int i = 0;
+        for(; i < G_N_ELEMENTS(count_strings); i++) {
+            int l = strlen(count_strings[i]);
+            m = dash-l;
+            memcpy(m, count_strings[i], l);
+            *dash = '-';
+            while(str_shorten_anycase(cpuid_model_string, m, "")) {};
+            *dash = ' ';
+            while(str_shorten_anycase(cpuid_model_string, m, "")) {};
+        }
+    }
+
     /* finalize */
     util_compress_space(cpuid_model_string);
     g_strstrip(cpuid_model_string);
@@ -143,7 +181,7 @@ void nice_name_x86_cpuid_model_string(char *cpuid_model_string) {
 /* Intel Graphics may have very long names,
  * like "Intel Corporation Seventh Generation Something Core Something Something Integrated Graphics Processor Revision Ninety-four" */
 void nice_name_intel_gpu_device(char *pci_ids_device_string) {
-    while(str_shorten(pci_ids_device_string, "(R)", "")) {}; /* Intel(R) -> Intel */
+    while(str_shorten_anycase(pci_ids_device_string, "(R)", "")) {}; /* Intel(R) -> Intel */
     str_shorten(pci_ids_device_string, "Graphics Controller", "Graphics");
     str_shorten(pci_ids_device_string, "Graphics Device", "Graphics");
     str_shorten(pci_ids_device_string, "Generation", "Gen");
