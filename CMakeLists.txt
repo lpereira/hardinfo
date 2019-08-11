@@ -173,6 +173,7 @@ set(MODULE_network_SOURCES
 )
 set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark.c
+	modules/benchmark/bench_util.c
 	modules/benchmark/blowfish.c
 	modules/benchmark/blowfish2.c
 	modules/benchmark/cryptohash.c
@@ -208,6 +209,7 @@ set_source_files_properties(
 set_source_files_properties(
 	modules/devices/dmi_memory.c
 #	modules/devices/spd-decode.c
+	hardinfo/problem_marker.c
 	PROPERTIES
 	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-deprecated-declarations -Wno-switch"
 )
@@ -266,6 +268,8 @@ add_executable(hardinfo
         hardinfo/hardinfo.c
 	hardinfo/socket.c
 	hardinfo/util.c
+	hardinfo/gg_key_file_parse_string_as_value.c
+	hardinfo/problem_marker.c
 	hardinfo/vendor.c
 	hardinfo/info.c
 	hardinfo/cpu_util.c
@@ -302,6 +306,8 @@ add_executable(hardinfo
         hardinfo/hardinfo.c
 	hardinfo/socket.c
 	hardinfo/util.c
+	hardinfo/gg_key_file_parse_string_as_value.c
+	hardinfo/problem_marker.c
 	hardinfo/vendor.c
 	hardinfo/info.c
 	hardinfo/cpu_util.c

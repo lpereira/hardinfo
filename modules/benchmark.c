@@ -29,6 +29,7 @@
 #include <signal.h>
 
 #include "benchmark.h"
+#include "appf.h"
 
 #include "benchmark/bench_results.c"
 
@@ -44,16 +45,26 @@ static gchar *benchmark_include_results(bench_value result, const gchar * benchm
 static gboolean sending_benchmark_results = FALSE;
 
 char *bench_value_to_str(bench_value r) {
-    return g_strdup_printf("%lf; %lf; %d; %d; %s", r.result, r.elapsed_time, r.threads_used, r.revision, r.extra);
+    gboolean has_rev = r.revision >= 0;
+    gboolean has_extra = r.extra && *r.extra != 0;
+    gboolean has_user_note = r.user_note && *r.user_note != 0;
+    char *ret = g_strdup_printf("%lf; %lf; %d", r.result, r.elapsed_time, r.threads_used);
+    if (has_rev || has_extra || has_user_note)
+        ret = appf(ret, "; ", "%d", r.revision);
+    if (has_extra || has_user_note)
+        ret = appf(ret, "; ", "%s", r.extra);
+    if (has_user_note)
+        ret = appf(ret, "; ", "%s", r.user_note);
+    return ret;
 }
 
 bench_value bench_value_from_str(const char* str) {
     bench_value ret = EMPTY_BENCH_VALUE;
     double r, e;
     int t, c, v;
-    char extra[256];
+    char extra[256], user_note[256];
     if (str) {
-        c = sscanf(str, "%lf; %lf; %d; %d; %255[^\r\n;|]", &r, &e, &t, &v, extra);
+        c = sscanf(str, "%lf; %lf; %d; %d; %255[^\r\n;|]; %255[^\r\n;|]", &r, &e, &t, &v, extra, user_note);
         if (c >= 3) {
             ret.result = r;
             ret.elapsed_time = e;
@@ -64,6 +75,9 @@ bench_value bench_value_from_str(const char* str) {
         }
         if (c >= 5) {
             strcpy(ret.extra, extra);
+        }
+        if (c >= 6) {
+            strcpy(ret.user_note, user_note);
         }
     }
     return ret;
@@ -279,32 +293,6 @@ bench_value benchmark_parallel_for(gint n_threads, guint start, guint end,
     return ret;
 }
 
-static gchar *clean_cpuname(gchar *cpuname)
-{
-    gchar *ret = NULL, *tmp;
-    gchar *remove[] = {
-        "(R)", "(r)", "(TM)", "(tm)", "Processor",
-        "Technology", "processor", "CPU",
-        "cpu", "Genuine", "Authentic", NULL
-    };
-    gint i;
-
-    ret = g_strdup(cpuname);
-    for (i = 0; remove[i]; i++) {
-      tmp = strreplace(ret, remove[i], "");
-      g_free(ret);
-      ret = tmp;
-    }
-
-    ret = strend(ret, '@');
-    ret = g_strstrip(ret);
-
-    tmp = g_strdup(ret);
-    g_free(ret);
-
-    return tmp;
-}
-
 gchar *hi_more_info(gchar * entry)
 {
     gchar *info = moreinfo_lookup_with_prefix("BENCH", entry);
@@ -328,8 +316,9 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select) {
     ckey = hardinfo_clean_label(b->machine->cpu_name, 0);
     rkey = g_strdup_printf("%s__%d", b->machine->mid, ri++);
 
-    *results_list = h_strdup_cprintf("$%s%s$%s=%.2f|%s\n", *results_list,
+    *results_list = h_strdup_cprintf("$%s%s$%s%s=%.2f|%s\n", *results_list,
         select ? "*" : "", rkey, ckey,
+        b->legacy ? problem_marker() : "",
         b->bvalue.result, b->machine->cpu_config);
 
     moreinfo_add_with_prefix("BENCH", rkey, bench_result_more_info(b) );
@@ -490,6 +479,9 @@ static gboolean do_benchmark_handler(GIOChannel *source,
     }
 
     r = bench_value_from_str(result);
+    /* attach a user note */
+    if (params.bench_user_note)
+        strncpy(r.user_note, params.bench_user_note, 255);
     bench_dialog->r = r;
 
     gtk_widget_destroy(bench_dialog->dialog);
@@ -695,6 +687,10 @@ static gchar *run_benchmark(gchar *name)
 #define CHK_RESULT_FORMAT(F) (params.result_format && strcmp(params.result_format, F) == 0)
 
           if (params.run_benchmark) {
+            /* attach the user note */
+            if (params.bench_user_note)
+                strncpy(bench_results[i].user_note, params.bench_user_note, 255);
+
             if (CHK_RESULT_FORMAT("conf") ) {
                bench_result *b = bench_result_this_machine(name, bench_results[i]);
                char *temp = bench_result_benchmarkconf_line(b);
@@ -706,7 +702,7 @@ static gchar *run_benchmark(gchar *name)
                bench_result_free(b);
                return temp;
             }
-            /* defaults to "short" which is below*/
+            /* defaults to "short" which is below */
           }
 
           return bench_value_to_str(bench_results[i]);

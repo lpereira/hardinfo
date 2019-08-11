@@ -18,6 +18,10 @@
 
 #include "benchmark.h"
 
+/* if anything changes in this block, increment revision */
+#define BENCH_REVISION 0
+#define STEPS 1000
+
 void fbench();	/* fbench.c */
 
 static gpointer
@@ -40,8 +44,10 @@ benchmark_raytrace(void)
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing John Walker's FBENCH...");
 
-    r = benchmark_parallel_for(0, 0, 1000, parallel_raytrace, NULL);
+    r = benchmark_parallel_for(0, 0, STEPS, parallel_raytrace, NULL);
     r.result = r.elapsed_time;
+    r.revision = BENCH_REVISION;
+    snprintf(r.extra, 255, "r:%d", STEPS);
 
     bench_results[BENCHMARK_RAYTRACE] = r;
 }

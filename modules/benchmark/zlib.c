@@ -24,8 +24,15 @@
 
 /* zip/unzip 256KB blocks for 7 seconds
  * result is number of full completions / 100 */
+
+/* if anything changes in this block, increment revision */
+#define BENCH_REVISION 3
 #define BENCH_DATA_SIZE 262144
+#define BENCH_DATA_MD5 "3753b649c4fa9ea4576fc8f89a773de2"
 #define CRUNCH_TIME 7
+#define VERIFY_RESULT 1
+
+static unsigned int zlib_errors = 0;
 
 static gpointer zlib_for(void *in_data, gint thread_number) {
     char *compressed;
@@ -42,60 +49,40 @@ static gpointer zlib_for(void *in_data, gint thread_number) {
 
     compress(compressed, &compressedBound, in_data, BENCH_DATA_SIZE);
     uncompress(uncompressed, &destBound, compressed, compressedBound);
+    if (VERIFY_RESULT) {
+        int cr = memcmp(in_data, uncompressed, BENCH_DATA_SIZE);
+        if (!!cr) {
+            zlib_errors++;
+            bench_msg("zlib error: uncompressed != original");
+        }
+    }
 
     free(compressed);
 
     return NULL;
 }
 
-static gchar *get_test_data(gsize min_size) {
-    gchar *bdata_path, *data;
-    gsize data_size;
-
-    gchar *exp_data, *p;
-    gsize sz;
-
-    bdata_path = g_build_filename(params.path_data, "benchmark.data", NULL);
-    if (!g_file_get_contents(bdata_path, &data, &data_size, NULL)) {
-        g_free(bdata_path);
-        return NULL;
-    }
-
-    if (data_size < min_size) {
-        DEBUG("expanding %lu bytes of test data to %lu bytes", data_size, min_size);
-        exp_data = g_malloc(min_size + 1);
-        memcpy(exp_data, data, data_size);
-        p = exp_data + data_size;
-        sz = data_size;
-        while (sz < (min_size - data_size) ) {
-            memcpy(p, data, data_size);
-            p += data_size;
-            sz += data_size;
-        }
-        strncpy(p, data, min_size - sz);
-        g_free(data);
-        data = exp_data;
-    }
-    g_free(bdata_path);
-    return data;
-}
-
 void
 benchmark_zlib(void)
 {
     bench_value r = EMPTY_BENCH_VALUE;
-    gchar *data = get_test_data(BENCH_DATA_SIZE);
-    if (!data)
+    gchar *test_data = get_test_data(BENCH_DATA_SIZE);
+    if (!test_data)
         return;
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Running Zlib benchmark...");
 
-    r = benchmark_crunch_for(CRUNCH_TIME, 0, zlib_for, data);
+    gchar *d = md5_digest_str(test_data, BENCH_DATA_SIZE);
+    if (!SEQ(d, BENCH_DATA_MD5))
+        bench_msg("test data has different md5sum: expected %s, actual %s", BENCH_DATA_MD5, d);
+
+    r = benchmark_crunch_for(CRUNCH_TIME, 0, zlib_for, test_data);
     r.result /= 100;
-    r.revision = 2;
-    snprintf(r.extra, 255, "zlib %s (built against: %s)", zlib_version, ZLIB_VERSION);
+    r.revision = BENCH_REVISION;
+    snprintf(r.extra, 255, "zlib %s (built against: %s), d:%s, e:%d", zlib_version, ZLIB_VERSION, d, zlib_errors);
     bench_results[BENCHMARK_ZLIB] = r;
 
-    g_free(data);
+    g_free(test_data);
+    g_free(d);
 }

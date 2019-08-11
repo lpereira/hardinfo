@@ -2,6 +2,7 @@
 #define __BENCHMARK_H__
 
 #include "hardinfo.h"
+#include "util_sysobj.h" /* for SEQ() */
 
 extern ProgramParameters params;
 
@@ -37,6 +38,7 @@ typedef struct {
     int threads_used;
     int revision;
     char extra[256]; /* no \n, ; or | */
+    char user_note[256]; /* no \n, ; or | */
 } bench_value;
 
 #define EMPTY_BENCH_VALUE {-1.0f,0,0,-1,""}
@@ -57,5 +59,13 @@ bench_value benchmark_crunch_for(float seconds, gint n_threads,
                                gpointer callback, gpointer callback_data);
 
 extern bench_value bench_results[BENCHMARK_N_ENTRIES];
+
+/* in bench_util.c */
+
+/* guarantee a minimum size of data
+ * or return null */
+gchar *get_test_data(gsize min_size);
+char *md5_digest_str(const char *data, unsigned int len);
+#define bench_msg(msg, ...)  fprintf (stderr, "[%s] " msg "\n", __FUNCTION__, ##__VA_ARGS__)
 
 #endif /* __BENCHMARK_H__ */

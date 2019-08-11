@@ -26,16 +26,18 @@ gchar *CN() { \
         return benchmark_include_results(bench_results[BID], BN); \
 }
 
-BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
-BENCH_CALLBACK(callback_fft, "FPU FFT", BENCHMARK_FFT, 0);
+/* lower is better R = 0 */
+BENCH_CALLBACK(callback_fib, "CPU Fibonacci", BENCHMARK_FIB, 0);
 BENCH_CALLBACK(callback_nqueens, "CPU N-Queens", BENCHMARK_NQUEENS, 0);
+BENCH_CALLBACK(callback_fft, "FPU FFT", BENCHMARK_FFT, 0);
 BENCH_CALLBACK(callback_raytr, "FPU Raytracing", BENCHMARK_RAYTRACE, 0);
+/* higher is better R = 1 */
 BENCH_CALLBACK(callback_bfsh_single, "CPU Blowfish (Single-thread)", BENCHMARK_BLOWFISH_SINGLE, 1);
 BENCH_CALLBACK(callback_bfsh_threads, "CPU Blowfish (Multi-thread)", BENCHMARK_BLOWFISH_THREADS, 1);
 BENCH_CALLBACK(callback_bfsh_cores, "CPU Blowfish (Multi-core)", BENCHMARK_BLOWFISH_CORES, 1);
 BENCH_CALLBACK(callback_cryptohash, "CPU CryptoHash", BENCHMARK_CRYPTOHASH, 1);
-BENCH_CALLBACK(callback_fib, "CPU Fibonacci", BENCHMARK_FIB, 0);
-BENCH_CALLBACK(callback_zlib, "CPU Zlib", BENCHMARK_ZLIB, 0);
+BENCH_CALLBACK(callback_zlib, "CPU Zlib", BENCHMARK_ZLIB, 1);
+BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
 
 #define BENCH_SCAN_SIMPLE(SN, BF, BID) \
 void SN(gboolean reload) { \
