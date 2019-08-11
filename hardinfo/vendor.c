@@ -422,33 +422,47 @@ gchar *vendor_get_link(const gchar *id_str)
 
 gchar *vendor_get_link_from_vendor(const Vendor *v)
 {
-    gboolean label_link_ok = FALSE;
 #if GTK_CHECK_VERSION(2, 18, 0)
-    label_link_ok = TRUE;
+    gboolean gtk_label_link_ok = TRUE;
+#else
+    gboolean gtk_label_link_ok = FALSE;
 #endif
+    gboolean link_ok = params.markup_ok && gtk_label_link_ok;
+    /* If using a real link, and wikipedia is available,
+     * target that instead of url. There's usually much more
+     * information there, plus easily click through to company url. */
+    gboolean link_wikipedia = TRUE;
 
-    if (!v) {
+    if (!v)
         return g_strdup(_("Unknown"));
-    }
 
-    if (!v->url) {
+    gchar *url = NULL;
+
+    if (link_ok && link_wikipedia && v->wikipedia
+        || v->wikipedia && !v->url)
+        url = g_strdup_printf("http://wikipedia.com/wiki/%s", v->wikipedia);
+    else if (v->url)
+        url = g_strdup(v->url);
+
+    if (!url)
         return g_strdup(v->name);
-    }
 
-    if (params.markup_ok && label_link_ok) {
+    auto_free(url);
+
+    if (link_ok) {
         const gchar *prefix;
 
-        if (!strncmp(v->url, "http://", sizeof("http://") - 1) ||
-            !strncmp(v->url, "https://", sizeof("https://") - 1)) {
+        if (!strncmp(url, "http://", sizeof("http://") - 1) ||
+            !strncmp(url, "https://", sizeof("https://") - 1)) {
             prefix = "";
         } else {
             prefix = "http://";
         }
 
-        return g_strdup_printf("<a href=\"%s%s\">%s</a>", prefix, v->url, v->name);
+        return g_strdup_printf("<a href=\"%s%s\">%s</a>", prefix, url, v->name);
     }
 
-    return g_strdup_printf("%s (%s)", v->name, v->url);
+    return g_strdup_printf("%s (%s)", v->name, url);
 }
 
 vendor_list vendor_list_concat_va(int count, vendor_list vl, ...) {
