@@ -26,25 +26,6 @@ gchar *CN() { \
         return benchmark_include_results(bench_results[BID], BN); \
 }
 
-/* lower is better R = 0 */
-BENCH_CALLBACK(callback_fib, "CPU Fibonacci", BENCHMARK_FIB, 0);
-BENCH_CALLBACK(callback_nqueens, "CPU N-Queens", BENCHMARK_NQUEENS, 0);
-BENCH_CALLBACK(callback_fft, "FPU FFT", BENCHMARK_FFT, 0);
-BENCH_CALLBACK(callback_raytr, "FPU Raytracing", BENCHMARK_RAYTRACE, 0);
-/* higher is better R = 1 */
-BENCH_CALLBACK(callback_bfsh_single, "CPU Blowfish (Single-thread)", BENCHMARK_BLOWFISH_SINGLE, 1);
-BENCH_CALLBACK(callback_bfsh_threads, "CPU Blowfish (Multi-thread)", BENCHMARK_BLOWFISH_THREADS, 1);
-BENCH_CALLBACK(callback_bfsh_cores, "CPU Blowfish (Multi-core)", BENCHMARK_BLOWFISH_CORES, 1);
-BENCH_CALLBACK(callback_sbcpu_single, "SysBench CPU (Single-thread)", BENCHMARK_SBCPU_SINGLE, 1);
-BENCH_CALLBACK(callback_sbcpu_all, "SysBench CPU (Multi-thread)", BENCHMARK_SBCPU_ALL, 1);
-BENCH_CALLBACK(callback_sbcpu_quad, "SysBench CPU (Four threads)", BENCHMARK_SBCPU_QUAD, 1);
-BENCH_CALLBACK(callback_memory_single, "SysBench Memory (Single-thread)", BENCHMARK_MEMORY_SINGLE, 1);
-BENCH_CALLBACK(callback_memory_dual, "SysBench Memory (Two threads)", BENCHMARK_MEMORY_DUAL, 1);
-BENCH_CALLBACK(callback_memory_quad, "SysBench Memory (Four threads)", BENCHMARK_MEMORY_QUAD, 1);
-BENCH_CALLBACK(callback_cryptohash, "CPU CryptoHash", BENCHMARK_CRYPTOHASH, 1);
-BENCH_CALLBACK(callback_zlib, "CPU Zlib", BENCHMARK_ZLIB, 1);
-BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
-
 #define BENCH_SCAN_SIMPLE(SN, BF, BID) \
 void SN(gboolean reload) { \
     SCAN_START(); \
@@ -52,23 +33,29 @@ void SN(gboolean reload) { \
     SCAN_END(); \
 }
 
-BENCH_SCAN_SIMPLE(scan_fft, benchmark_fft, BENCHMARK_FFT);
-BENCH_SCAN_SIMPLE(scan_nqueens, benchmark_nqueens, BENCHMARK_NQUEENS);
-BENCH_SCAN_SIMPLE(scan_raytr, benchmark_raytrace, BENCHMARK_RAYTRACE);
-BENCH_SCAN_SIMPLE(scan_bfsh_single, benchmark_bfish_single, BENCHMARK_BLOWFISH_SINGLE);
-BENCH_SCAN_SIMPLE(scan_bfsh_threads, benchmark_bfish_threads, BENCHMARK_BLOWFISH_THREADS);
-BENCH_SCAN_SIMPLE(scan_bfsh_cores, benchmark_bfish_cores, BENCHMARK_BLOWFISH_CORES);
-BENCH_SCAN_SIMPLE(scan_sbcpu_single, benchmark_sbcpu_single, BENCHMARK_SBCPU_SINGLE);
-BENCH_SCAN_SIMPLE(scan_sbcpu_quad, benchmark_sbcpu_quad, BENCHMARK_SBCPU_QUAD);
-BENCH_SCAN_SIMPLE(scan_sbcpu_all, benchmark_sbcpu_all, BENCHMARK_SBCPU_ALL);
-BENCH_SCAN_SIMPLE(scan_memory_single, benchmark_memory_single, BENCHMARK_MEMORY_SINGLE);
-BENCH_SCAN_SIMPLE(scan_memory_dual, benchmark_memory_dual, BENCHMARK_MEMORY_DUAL);
-BENCH_SCAN_SIMPLE(scan_memory_quad, benchmark_memory_quad, BENCHMARK_MEMORY_QUAD);
-BENCH_SCAN_SIMPLE(scan_cryptohash, benchmark_cryptohash, BENCHMARK_CRYPTOHASH);
-BENCH_SCAN_SIMPLE(scan_fib, benchmark_fib, BENCHMARK_FIB);
-BENCH_SCAN_SIMPLE(scan_zlib, benchmark_zlib, BENCHMARK_ZLIB);
+#define BENCH_SIMPLE(BID, BN, BF, R) \
+    BENCH_CALLBACK(callback_##BF, BN, BID, R); \
+    BENCH_SCAN_SIMPLE(scan_##BF, BF, BID);
+
+// ID, NAME, FUNCTION, R (0 = lower is better, 1 = higher is better)
+BENCH_SIMPLE(BENCHMARK_FIB, "CPU Fibonacci", benchmark_fib, 0);
+BENCH_SIMPLE(BENCHMARK_NQUEENS, "CPU N-Queens", benchmark_nqueens, 0);
+BENCH_SIMPLE(BENCHMARK_FFT, "FPU FFT", benchmark_fft, 0);
+BENCH_SIMPLE(BENCHMARK_RAYTRACE, "FPU Raytracing", benchmark_raytrace, 0);
+BENCH_SIMPLE(BENCHMARK_BLOWFISH_SINGLE, "CPU Blowfish (Single-thread)", benchmark_bfish_single, 1);
+BENCH_SIMPLE(BENCHMARK_BLOWFISH_THREADS, "CPU Blowfish (Multi-thread)", benchmark_bfish_threads, 1);
+BENCH_SIMPLE(BENCHMARK_BLOWFISH_CORES, "CPU Blowfish (Multi-core)", benchmark_bfish_cores, 1);
+BENCH_SIMPLE(BENCHMARK_ZLIB, "CPU Zlib", benchmark_zlib, 1);
+BENCH_SIMPLE(BENCHMARK_CRYPTOHASH, "CPU CryptoHash", benchmark_cryptohash, 1);
+BENCH_SIMPLE(BENCHMARK_SBCPU_SINGLE, "SysBench CPU (Single-thread)", benchmark_sbcpu_single, 1);
+BENCH_SIMPLE(BENCHMARK_SBCPU_ALL, "SysBench CPU (Multi-thread)", benchmark_sbcpu_all, 1);
+BENCH_SIMPLE(BENCHMARK_SBCPU_QUAD, "SysBench CPU (Four threads)", benchmark_sbcpu_quad, 1);
+BENCH_SIMPLE(BENCHMARK_MEMORY_SINGLE, "SysBench Memory (Single-thread)", benchmark_memory_single, 1);
+BENCH_SIMPLE(BENCHMARK_MEMORY_DUAL, "SysBench Memory (Two threads)", benchmark_memory_dual, 1);
+BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory (Four threads)", benchmark_memory_quad, 1);
 
 #if !GTK_CHECK_VERSION(3,0,0)
+BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
 void scan_gui(gboolean reload)
 {
     SCAN_START();
@@ -91,25 +78,43 @@ void scan_gui(gboolean reload)
 #endif
 
 static ModuleEntry entries[] = {
-    {N_("CPU Blowfish (Single-thread)"), "blowfish.png", callback_bfsh_single, scan_bfsh_single, MODULE_FLAG_NONE},
-    {N_("CPU Blowfish (Multi-thread)"), "blowfish.png", callback_bfsh_threads, scan_bfsh_threads, MODULE_FLAG_NONE},
-    {N_("CPU Blowfish (Multi-core)"), "blowfish.png", callback_bfsh_cores, scan_bfsh_cores, MODULE_FLAG_NONE},
-    {N_("CPU Zlib"), "file-roller.png", callback_zlib, scan_zlib, MODULE_FLAG_NONE},
-    {N_("CPU CryptoHash"), "cryptohash.png", callback_cryptohash, scan_cryptohash, MODULE_FLAG_NONE},
-    {N_("CPU Fibonacci"), "nautilus.png", callback_fib, scan_fib, MODULE_FLAG_NONE},
-    {N_("CPU N-Queens"), "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NONE},
-    {N_("FPU FFT"), "fft.png", callback_fft, scan_fft, MODULE_FLAG_NONE},
-    {N_("FPU Raytracing"), "raytrace.png", callback_raytr, scan_raytr, MODULE_FLAG_NONE},
-    {N_("SysBench CPU (Single-thread)"), "processor.png", callback_sbcpu_single, scan_sbcpu_single, MODULE_FLAG_NONE},
-    {N_("SysBench CPU (Multi-thread)"), "processor.png", callback_sbcpu_all, scan_sbcpu_all, MODULE_FLAG_NONE},
-    {N_("SysBench CPU (Four threads)"), "processor.png", callback_sbcpu_quad, scan_sbcpu_quad, MODULE_FLAG_NONE},
-    {N_("SysBench Memory (Single-thread)"), "memory.png", callback_memory_single, scan_memory_single, MODULE_FLAG_NONE},
-    {N_("SysBench Memory (Two threads)"), "memory.png", callback_memory_dual, scan_memory_dual, MODULE_FLAG_NONE},
-    {N_("SysBench Memory (Four threads)"), "memory.png", callback_memory_quad, scan_memory_quad, MODULE_FLAG_NONE},
+    [BENCHMARK_BLOWFISH_SINGLE] =
+    {N_("CPU Blowfish (Single-thread)"), "blowfish.png", callback_benchmark_bfish_single, scan_benchmark_bfish_single, MODULE_FLAG_NONE},
+    [BENCHMARK_BLOWFISH_THREADS] =
+    {N_("CPU Blowfish (Multi-thread)"), "blowfish.png", callback_benchmark_bfish_threads, scan_benchmark_bfish_threads, MODULE_FLAG_NONE},
+    [BENCHMARK_BLOWFISH_CORES] =
+    {N_("CPU Blowfish (Multi-core)"), "blowfish.png", callback_benchmark_bfish_cores, scan_benchmark_bfish_cores, MODULE_FLAG_NONE},
+    [BENCHMARK_ZLIB] =
+    {N_("CPU Zlib"), "file-roller.png", callback_benchmark_zlib, scan_benchmark_zlib, MODULE_FLAG_NONE},
+    [BENCHMARK_CRYPTOHASH] =
+    {N_("CPU CryptoHash"), "cryptohash.png", callback_benchmark_cryptohash, scan_benchmark_cryptohash, MODULE_FLAG_NONE},
+    [BENCHMARK_FIB] =
+    {N_("CPU Fibonacci"), "nautilus.png", callback_benchmark_fib, scan_benchmark_fib, MODULE_FLAG_NONE},
+    [BENCHMARK_NQUEENS] =
+    {N_("CPU N-Queens"), "nqueens.png", callback_benchmark_nqueens, scan_benchmark_nqueens, MODULE_FLAG_NONE},
+    [BENCHMARK_FFT] =
+    {N_("FPU FFT"), "fft.png", callback_benchmark_fft, scan_benchmark_fft, MODULE_FLAG_NONE},
+    [BENCHMARK_RAYTRACE] =
+    {N_("FPU Raytracing"), "raytrace.png", callback_benchmark_raytrace, scan_benchmark_raytrace, MODULE_FLAG_NONE},
+    [BENCHMARK_SBCPU_SINGLE] =
+    {N_("SysBench CPU (Single-thread)"), "processor.png", callback_benchmark_sbcpu_single, scan_benchmark_sbcpu_single, MODULE_FLAG_NONE},
+    [BENCHMARK_SBCPU_ALL] =
+    {N_("SysBench CPU (Multi-thread)"), "processor.png", callback_benchmark_sbcpu_all, scan_benchmark_sbcpu_all, MODULE_FLAG_NONE},
+    [BENCHMARK_SBCPU_QUAD] =
+    {N_("SysBench CPU (Four threads)"), "processor.png", callback_benchmark_sbcpu_quad, scan_benchmark_sbcpu_quad, MODULE_FLAG_NONE},
+    [BENCHMARK_MEMORY_SINGLE] =
+    {N_("SysBench Memory (Single-thread)"), "memory.png", callback_benchmark_memory_single, scan_benchmark_memory_single, MODULE_FLAG_NONE},
+    [BENCHMARK_MEMORY_DUAL] =
+    {N_("SysBench Memory (Two threads)"), "memory.png", callback_benchmark_memory_dual, scan_benchmark_memory_dual, MODULE_FLAG_NONE},
+    [BENCHMARK_MEMORY_QUAD] =
+    {N_("SysBench Memory (Four threads)"), "memory.png", callback_benchmark_memory_quad, scan_benchmark_memory_quad, MODULE_FLAG_NONE},
 #if !GTK_CHECK_VERSION(3,0,0)
+    [BENCHMARK_GUI] =
     {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
+#else
+    [BENCHMARK_GUI] = { "#" },
 #endif
-    {NULL}
+    { NULL }
 };
 
 const gchar *hi_note_func(gint entry)
