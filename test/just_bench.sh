@@ -23,6 +23,15 @@ do_hi_bench() {
     fi
 }
 
+if [ ! -z `which sysbench` ]; then
+    do_hi_bench "SysBench CPU (Single-thread)"
+    do_hi_bench "SysBench CPU (Multi-thread)"
+    do_hi_bench "SysBench CPU (Four threads)"
+    do_hi_bench "SysBench Memory (Single-thread)"
+    do_hi_bench "SysBench Memory (Two threads)"
+    do_hi_bench "SysBench Memory (Four threads)"
+fi
+
 do_hi_bench "CPU Blowfish (Single-thread)"
 do_hi_bench "CPU Blowfish (Multi-thread)"
 do_hi_bench "CPU Blowfish (Multi-core)"
@@ -33,12 +42,3 @@ do_hi_bench "CPU Zlib"
 do_hi_bench "FPU FFT"
 do_hi_bench "FPU Raytracing"
 #do_hi_bench "GPU Drawing"
-
-if [ -n `which sysbench` ]; then
-    do_hi_bench "SysBench CPU (Single-thread)"
-    do_hi_bench "SysBench CPU (Multi-thread)"
-    do_hi_bench "SysBench CPU (Four threads)"
-    do_hi_bench "SysBench Memory (Single-thread)"
-    do_hi_bench "SysBench Memory (Two threads)"
-    do_hi_bench "SysBench Memory (Four threads)"
-fi
