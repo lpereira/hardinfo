@@ -365,18 +365,21 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 char *bench_result_benchmarkconf_line(bench_result *b) {
     char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
     char *bv = bench_value_to_str(b->bvalue);
+
+#define prep_str(s) (s ? (char*)auto_free(gg_key_file_parse_string_as_value(s, '|')) : "")
     char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s|%s|%d\n",
             b->machine->mid, bv, b->bvalue.threads_used,
-            (b->machine->board != NULL) ? b->machine->board : "",
-            b->machine->cpu_name,
-            (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : "",
-            cpu_config,
+            prep_str(b->machine->board),
+            prep_str(b->machine->cpu_name),
+            prep_str(b->machine->cpu_desc),
+            prep_str(cpu_config),
             b->machine->memory_kiB,
             b->machine->processors, b->machine->cores, b->machine->threads,
-            (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : "",
-            (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : "",
+            prep_str(b->machine->ogl_renderer),
+            prep_str(b->machine->gpu_desc),
             b->machine->machine_data_version // [12]
             );
+
     free(cpu_config);
     free(bv);
     return ret;
