@@ -186,6 +186,7 @@ set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark/raytrace.c
 	modules/benchmark/sha1.c
 	modules/benchmark/zlib.c
+	modules/benchmark/sysbench.c
 )
 set(MODULE_benchmark_SOURCES_GTK2
 	modules/benchmark/drawing.c
