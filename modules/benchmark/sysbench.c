@@ -68,6 +68,13 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx) {
                     ctx->r.result = strtof(pp, NULL);
                 }
             }
+            if (SEQ(ctx->test, "cpu") ) {
+                //  events per second:  1674.97
+                if (pp = strstr(p, " events per second:")) {
+                    pp = strchr(pp, ':') + 1;
+                    ctx->r.result = strtof(pp, NULL);
+                }
+            }
 
             p = next_nl + 1;
         }
@@ -140,4 +147,53 @@ void benchmark_memory_quad(void)
 
     sysbench_run(&ctx);
     bench_results[BENCHMARK_MEMORY_QUAD] = ctx.r;
+}
+
+void benchmark_sbcpu_single(void) {
+    struct sysbench_ctx ctx = {
+        .test = "cpu",
+        .parms = "--threads=1 --time=7"
+           " --cpu-max-prime=10000",
+        .r = EMPTY_BENCH_VALUE};
+    ctx.r.threads_used = 1;
+
+    shell_view_set_enabled(FALSE);
+    shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (single thread)...");
+
+    sysbench_run(&ctx);
+    bench_results[BENCHMARK_SBCPU_SINGLE] = ctx.r;
+}
+
+void benchmark_sbcpu_all(void) {
+    int cpu_procs, cpu_cores, cpu_threads;
+    cpu_procs_cores_threads(&cpu_procs, &cpu_cores, &cpu_threads);
+
+    gchar *parms = g_strdup_printf("--threads=%d --time=7 --cpu-max-prime=10000", cpu_threads);
+    struct sysbench_ctx ctx = {
+        .test = "cpu",
+        .parms = parms,
+        .r = EMPTY_BENCH_VALUE};
+    ctx.r.threads_used = cpu_threads;
+
+    shell_view_set_enabled(FALSE);
+    shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (Multi-thread)...");
+
+    sysbench_run(&ctx);
+    bench_results[BENCHMARK_SBCPU_ALL] = ctx.r;
+    g_free(parms);
+}
+
+void benchmark_sbcpu_quad(void) {
+    struct sysbench_ctx ctx = {
+        .test = "cpu",
+        .parms = "--threads=4 --time=7"
+           " --cpu-max-prime=10000",
+        .r = EMPTY_BENCH_VALUE};
+    ctx.r.threads_used = 4;
+
+    shell_view_set_enabled(FALSE);
+    shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (Four thread)...");
+
+    sysbench_run(&ctx);
+    bench_results[BENCHMARK_SBCPU_QUAD] = ctx.r;
 }
