@@ -20,11 +20,47 @@
 #include "hardinfo.h"
 #include "benchmark.h"
 
+/* known to work with:
+ * sysbench 0.4.12 --> r:4012
+ * sysbench 1.0.15 --> r:1000015
+ */
+
 struct sysbench_ctx {
     char *test;
-    char *parms;
+    int threads;
+    int max_time;
+    char *parms_test;
     bench_value r;
 };
+
+int sysboj_version() {
+    int ret = -1;
+    int v1 = 0, v2 = 0, v3 = 0, mc = 0;
+    gboolean spawned;
+    gchar *out, *err, *p, *next_nl;
+
+    spawned = g_spawn_command_line_sync("sysbench --version",
+            &out, &err, NULL, NULL);
+    if (spawned) {
+        ret = 0;
+        p = out;
+        while(next_nl = strchr(p, '\n')) {
+            *next_nl = 0;
+            /* version */
+            mc = sscanf(p, "sysbench %d.%d.%d", &v1, &v2, &v3);
+            if (mc >= 1) {
+                ret += v1 * 1000000;
+                ret += v2 * 1000;
+                ret += v3;
+                break;
+            }
+            p = next_nl + 1;
+        }
+        g_free(out);
+        g_free(err);
+    }
+    return ret;
+}
 
 static gboolean sysbench_run(struct sysbench_ctx *ctx) {
     gboolean spawned;
@@ -35,15 +71,37 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx) {
 
     if (!ctx) return FALSE;
     if (!ctx->test) return FALSE;
-    if (!ctx->parms) return FALSE;
-    snprintf(ctx->r.extra, 255, "%s", ctx->parms);
-    gchar *cmd_line = g_strdup_printf("sysbench %s %s run", ctx->parms, ctx->test);
+    if (!ctx->parms_test) return FALSE;
+    if (!ctx->threads) ctx->threads = 1;
+    ctx->r.threads_used = ctx->threads;
+    if (!ctx->max_time) ctx->max_time = 7;
+
+    gchar *cmd_line = NULL;
+    snprintf(ctx->r.extra, 255, "--time=%d %s", ctx->max_time, ctx->parms_test);
+    util_compress_space(ctx->r.extra);
+
+    int expecting = sysboj_version();
+    if (expecting < 1000000) {
+        /* sysbench [general-options]... --test=<test-name> [test-options]... command */
+        cmd_line = g_strdup_printf("sysbench --num-threads=%d --max-time=%d --test=%s %s run", ctx->threads, ctx->max_time, ctx->test, ctx->parms_test);
+    } else {
+        /* sysbench [options]... [testname] [command] */
+        cmd_line = g_strdup_printf("sysbench --threads=%d --time=%d %s %s run", ctx->threads, ctx->max_time, ctx->parms_test, ctx->test);
+    }
+    //bench_msg("\ncmd_line: %s", cmd_line);
+
     spawned = g_spawn_command_line_sync(cmd_line,
             &out, &err, NULL, NULL);
+    g_free(cmd_line);
     if (spawned) {
         p = out;
         while(next_nl = strchr(p, '\n')) {
             *next_nl = 0;
+
+            if (strstr(p, "Usage:")) {
+                /* We're hosed */
+                goto sysbench_failed;
+            }
 
             /* version */
             mc = sscanf(p, "sysbench %d.%d.%d", &v1, &v2, &v3);
@@ -69,10 +127,25 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx) {
                 }
             }
             if (SEQ(ctx->test, "cpu") ) {
-                //  events per second:  1674.97
-                if (pp = strstr(p, " events per second:")) {
-                    pp = strchr(pp, ':') + 1;
-                    ctx->r.result = strtof(pp, NULL);
+                if (ctx->r.revision < 1000000) {
+                    // there is not a nice result line
+                    // to grab in version 0.x...
+                    // total time:                          7.0016s
+                    // total number of events:              873
+
+                    /* should already have "total time:" */
+                    if (pp = strstr(p, " total number of events:")) {
+                        pp = strchr(pp, ':') + 1;
+                        ctx->r.result = strtof(pp, NULL);
+                        ctx->r.result /= ctx->r.elapsed_time;
+                    }
+                }
+                if (ctx->r.revision >= 1000000) {
+                    //  events per second:  1674.97
+                    if (pp = strstr(p, " events per second:")) {
+                        pp = strchr(pp, ':') + 1;
+                        ctx->r.result = strtof(pp, NULL);
+                    }
                 }
             }
 
@@ -80,25 +153,36 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx) {
         }
         g_free(out);
         g_free(err);
+    } else {
+        bench_msg("\nfailed to spawn sysbench");
+        sleep(5);
     }
 
-    g_free(cmd_line);
+    if (ctx->r.result == -1)
+        goto sysbench_failed;
+
     return spawned;
+
+sysbench_failed:
+    bench_msg("\nfailed to configure sysbench");
+    g_free(out);
+    g_free(err);
+    return 0;
 }
 
 void benchmark_memory_single(void)
 {
     struct sysbench_ctx ctx = {
         .test = "memory",
-        .parms = "--threads=1 --time=7"
+        .threads = 1,
+        .parms_test =
            " --memory-block-size=1K"
-           " --memory-total-size=100G"
+           " --memory-total-size=3056M"
            " --memory-scope=global"
            " --memory-hugetlb=off"
            " --memory-oper=write"
            " --memory-access-mode=seq",
         .r = EMPTY_BENCH_VALUE};
-    ctx.r.threads_used = 1;
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Alexey Kopytov's sysbench memory benchmark (single thread)...");
@@ -111,15 +195,15 @@ void benchmark_memory_dual(void)
 {
     struct sysbench_ctx ctx = {
         .test = "memory",
-        .parms = "--threads=2 --time=7"
+        .threads = 2,
+        .parms_test =
            " --memory-block-size=1K"
-           " --memory-total-size=100G"
+           " --memory-total-size=3056M"
            " --memory-scope=global"
            " --memory-hugetlb=off"
            " --memory-oper=write"
            " --memory-access-mode=seq",
         .r = EMPTY_BENCH_VALUE};
-    ctx.r.threads_used = 2;
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Alexey Kopytov's sysbench memory benchmark (two threads)...");
@@ -132,15 +216,15 @@ void benchmark_memory_quad(void)
 {
     struct sysbench_ctx ctx = {
         .test = "memory",
-        .parms = "--threads=4 --time=7"
+        .threads = 4,
+        .parms_test =
            " --memory-block-size=1K"
-           " --memory-total-size=100G"
+           " --memory-total-size=3056M"
            " --memory-scope=global"
            " --memory-hugetlb=off"
            " --memory-oper=write"
            " --memory-access-mode=seq",
         .r = EMPTY_BENCH_VALUE};
-    ctx.r.threads_used = 4;
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Alexey Kopytov's sysbench memory benchmark (four threads)...");
@@ -152,10 +236,10 @@ void benchmark_memory_quad(void)
 void benchmark_sbcpu_single(void) {
     struct sysbench_ctx ctx = {
         .test = "cpu",
-        .parms = "--threads=1 --time=7"
-           " --cpu-max-prime=10000",
+        .threads = 1,
+        .parms_test =
+           "--cpu-max-prime=10000",
         .r = EMPTY_BENCH_VALUE};
-    ctx.r.threads_used = 1;
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (single thread)...");
@@ -167,29 +251,27 @@ void benchmark_sbcpu_single(void) {
 void benchmark_sbcpu_all(void) {
     int cpu_procs, cpu_cores, cpu_threads;
     cpu_procs_cores_threads(&cpu_procs, &cpu_cores, &cpu_threads);
-
-    gchar *parms = g_strdup_printf("--threads=%d --time=7 --cpu-max-prime=10000", cpu_threads);
     struct sysbench_ctx ctx = {
         .test = "cpu",
-        .parms = parms,
+        .threads = cpu_threads,
+        .parms_test =
+           "--cpu-max-prime=10000",
         .r = EMPTY_BENCH_VALUE};
-    ctx.r.threads_used = cpu_threads;
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (Multi-thread)...");
 
     sysbench_run(&ctx);
     bench_results[BENCHMARK_SBCPU_ALL] = ctx.r;
-    g_free(parms);
 }
 
 void benchmark_sbcpu_quad(void) {
     struct sysbench_ctx ctx = {
         .test = "cpu",
-        .parms = "--threads=4 --time=7"
-           " --cpu-max-prime=10000",
+        .threads = 4,
+        .parms_test =
+           "--cpu-max-prime=10000",
         .r = EMPTY_BENCH_VALUE};
-    ctx.r.threads_used = 4;
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (Four thread)...");
