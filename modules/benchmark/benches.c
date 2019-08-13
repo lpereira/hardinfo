@@ -35,6 +35,9 @@ BENCH_CALLBACK(callback_raytr, "FPU Raytracing", BENCHMARK_RAYTRACE, 0);
 BENCH_CALLBACK(callback_bfsh_single, "CPU Blowfish (Single-thread)", BENCHMARK_BLOWFISH_SINGLE, 1);
 BENCH_CALLBACK(callback_bfsh_threads, "CPU Blowfish (Multi-thread)", BENCHMARK_BLOWFISH_THREADS, 1);
 BENCH_CALLBACK(callback_bfsh_cores, "CPU Blowfish (Multi-core)", BENCHMARK_BLOWFISH_CORES, 1);
+BENCH_CALLBACK(callback_sbcpu_single, "CPU SysBench (Single)", BENCHMARK_SBCPU_SINGLE, 1);
+BENCH_CALLBACK(callback_sbcpu_all, "CPU SysBench (Multi)", BENCHMARK_SBCPU_ALL, 1);
+BENCH_CALLBACK(callback_sbcpu_quad, "CPU SysBench (Quad)", BENCHMARK_SBCPU_QUAD, 1);
 BENCH_CALLBACK(callback_memory_single, "Memory (Single)", BENCHMARK_MEMORY_SINGLE, 1);
 BENCH_CALLBACK(callback_memory_dual, "Memory (Double)", BENCHMARK_MEMORY_DUAL, 1);
 BENCH_CALLBACK(callback_memory_quad, "Memory (Quad)", BENCHMARK_MEMORY_QUAD, 1);
@@ -55,6 +58,9 @@ BENCH_SCAN_SIMPLE(scan_raytr, benchmark_raytrace, BENCHMARK_RAYTRACE);
 BENCH_SCAN_SIMPLE(scan_bfsh_single, benchmark_bfish_single, BENCHMARK_BLOWFISH_SINGLE);
 BENCH_SCAN_SIMPLE(scan_bfsh_threads, benchmark_bfish_threads, BENCHMARK_BLOWFISH_THREADS);
 BENCH_SCAN_SIMPLE(scan_bfsh_cores, benchmark_bfish_cores, BENCHMARK_BLOWFISH_CORES);
+BENCH_SCAN_SIMPLE(scan_sbcpu_single, benchmark_sbcpu_single, BENCHMARK_SBCPU_SINGLE);
+BENCH_SCAN_SIMPLE(scan_sbcpu_quad, benchmark_sbcpu_quad, BENCHMARK_SBCPU_QUAD);
+BENCH_SCAN_SIMPLE(scan_sbcpu_all, benchmark_sbcpu_all, BENCHMARK_SBCPU_ALL);
 BENCH_SCAN_SIMPLE(scan_memory_single, benchmark_memory_single, BENCHMARK_MEMORY_SINGLE);
 BENCH_SCAN_SIMPLE(scan_memory_dual, benchmark_memory_dual, BENCHMARK_MEMORY_DUAL);
 BENCH_SCAN_SIMPLE(scan_memory_quad, benchmark_memory_quad, BENCHMARK_MEMORY_QUAD);
@@ -94,6 +100,9 @@ static ModuleEntry entries[] = {
     {N_("CPU N-Queens"), "nqueens.png", callback_nqueens, scan_nqueens, MODULE_FLAG_NONE},
     {N_("FPU FFT"), "fft.png", callback_fft, scan_fft, MODULE_FLAG_NONE},
     {N_("FPU Raytracing"), "raytrace.png", callback_raytr, scan_raytr, MODULE_FLAG_NONE},
+    {N_("SysBench CPU (Single-thread)"), "processor.png", callback_sbcpu_single, scan_sbcpu_single, MODULE_FLAG_NONE},
+    {N_("SysBench CPU (Multi-thread)"), "processor.png", callback_sbcpu_all, scan_sbcpu_all, MODULE_FLAG_NONE},
+    {N_("SysBench CPU (Four threads)"), "processor.png", callback_sbcpu_quad, scan_sbcpu_quad, MODULE_FLAG_NONE},
     {N_("SysBench Memory (Single-thread)"), "memory.png", callback_memory_single, scan_memory_single, MODULE_FLAG_NONE},
     {N_("SysBench Memory (Two threads)"), "memory.png", callback_memory_dual, scan_memory_dual, MODULE_FLAG_NONE},
     {N_("SysBench Memory (Four threads)"), "memory.png", callback_memory_quad, scan_memory_quad, MODULE_FLAG_NONE},
@@ -106,6 +115,12 @@ static ModuleEntry entries[] = {
 const gchar *hi_note_func(gint entry)
 {
     switch (entry) {
+    case BENCHMARK_SBCPU_SINGLE:
+    case BENCHMARK_SBCPU_QUAD:
+    case BENCHMARK_SBCPU_ALL:
+        return _("Alexey Kopytov's <i><b>sysbench</b></i> is required.\n"
+                 "Results in events/second. Higher is better.");
+
     case BENCHMARK_MEMORY_SINGLE:
     case BENCHMARK_MEMORY_DUAL:
     case BENCHMARK_MEMORY_QUAD:
