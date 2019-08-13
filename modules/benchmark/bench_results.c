@@ -33,6 +33,7 @@ typedef struct {
     int cores;
     int threads;
     char *mid;
+    int machine_data_version;
 } bench_machine;
 
 typedef struct {
@@ -275,6 +276,8 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
                 b->machine->ogl_renderer = strdup(values[10]);
             if (vl >= 12)
                 b->machine->gpu_desc = strdup(values[11]);
+            if (vl >= 13)
+                b->machine->machine_data_version = atoi(values[12]);
             b->legacy = 0;
         } else if (vl >= 2) {
             b->bvalue.result = atof(values[0]);
@@ -362,7 +365,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
 char *bench_result_benchmarkconf_line(bench_result *b) {
     char *cpu_config = cpu_config_retranslate(b->machine->cpu_config, 1, 0);
     char *bv = bench_value_to_str(b->bvalue);
-    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s|%s\n",
+    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s|%s|%d\n",
             b->machine->mid, bv, b->bvalue.threads_used,
             (b->machine->board != NULL) ? b->machine->board : "",
             b->machine->cpu_name,
@@ -371,7 +374,8 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
             b->machine->memory_kiB,
             b->machine->processors, b->machine->cores, b->machine->threads,
             (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : "",
-            (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : ""
+            (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : "",
+            b->machine->machine_data_version // [12]
             );
     free(cpu_config);
     free(bv);
@@ -449,6 +453,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
         /* gpu desc */  "%s=%s\n"
         /* ogl rend */  "%s=%s\n"
         /* mem */       "%s=%d %s\n"
+                        "%s=%d\n"
                         "[%s]\n"
         /* mid */       "%s=%s\n"
         /* cfg_val */   "%s=%.2f\n",
@@ -471,6 +476,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
                         _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
                         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
                         _("Memory"), b->machine->memory_kiB, _("kiB"),
+                        ".machine_data_version", b->machine->machine_data_version,
                         _("Handles"),
                         _("mid"), b->machine->mid,
                         _("cfg_val"), cpu_config_val(b->machine->cpu_config)
