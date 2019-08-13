@@ -52,7 +52,7 @@ BENCH_SIMPLE(BENCHMARK_SBCPU_ALL, "SysBench CPU (Multi-thread)", benchmark_sbcpu
 BENCH_SIMPLE(BENCHMARK_SBCPU_QUAD, "SysBench CPU (Four threads)", benchmark_sbcpu_quad, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_SINGLE, "SysBench Memory (Single-thread)", benchmark_memory_single, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_DUAL, "SysBench Memory (Two threads)", benchmark_memory_dual, 1);
-BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory (Four threads)", benchmark_memory_quad, 1);
+BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory", benchmark_memory_quad, 1);
 
 #if !GTK_CHECK_VERSION(3,0,0)
 BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
@@ -101,13 +101,13 @@ static ModuleEntry entries[] = {
     [BENCHMARK_SBCPU_ALL] =
     {N_("SysBench CPU (Multi-thread)"), "processor.png", callback_benchmark_sbcpu_all, scan_benchmark_sbcpu_all, MODULE_FLAG_NONE},
     [BENCHMARK_SBCPU_QUAD] =
-    {N_("SysBench CPU (Four threads)"), "processor.png", callback_benchmark_sbcpu_quad, scan_benchmark_sbcpu_quad, MODULE_FLAG_NONE},
+    {N_("#SysBench CPU (Four threads)"), "processor.png", callback_benchmark_sbcpu_quad, scan_benchmark_sbcpu_quad, MODULE_FLAG_NONE},
     [BENCHMARK_MEMORY_SINGLE] =
-    {N_("SysBench Memory (Single-thread)"), "memory.png", callback_benchmark_memory_single, scan_benchmark_memory_single, MODULE_FLAG_NONE},
+    {N_("#SysBench Memory (Single-thread)"), "memory.png", callback_benchmark_memory_single, scan_benchmark_memory_single, MODULE_FLAG_NONE},
     [BENCHMARK_MEMORY_DUAL] =
-    {N_("SysBench Memory (Two threads)"), "memory.png", callback_benchmark_memory_dual, scan_benchmark_memory_dual, MODULE_FLAG_NONE},
+    {N_("#SysBench Memory (Two threads)"), "memory.png", callback_benchmark_memory_dual, scan_benchmark_memory_dual, MODULE_FLAG_NONE},
     [BENCHMARK_MEMORY_QUAD] =
-    {N_("SysBench Memory (Four threads)"), "memory.png", callback_benchmark_memory_quad, scan_benchmark_memory_quad, MODULE_FLAG_NONE},
+    {N_("SysBench Memory"), "memory.png", callback_benchmark_memory_quad, scan_benchmark_memory_quad, MODULE_FLAG_NONE},
 #if !GTK_CHECK_VERSION(3,0,0)
     [BENCHMARK_GUI] =
     {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
