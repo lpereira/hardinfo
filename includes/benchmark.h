@@ -10,12 +10,15 @@ enum {
     BENCHMARK_BLOWFISH_SINGLE,
     BENCHMARK_BLOWFISH_THREADS,
     BENCHMARK_BLOWFISH_CORES,
+    BENCHMARK_ZLIB,
     BENCHMARK_CRYPTOHASH,
     BENCHMARK_FIB,
     BENCHMARK_NQUEENS,
-    BENCHMARK_ZLIB,
     BENCHMARK_FFT,
     BENCHMARK_RAYTRACE,
+    BENCHMARK_MEMORY_SINGLE,
+    BENCHMARK_MEMORY_DUAL,
+    BENCHMARK_MEMORY_QUAD,
     BENCHMARK_GUI,
     BENCHMARK_N_ENTRIES
 } BenchmarkEntries;
@@ -23,6 +26,9 @@ enum {
 void benchmark_bfish_single(void);
 void benchmark_bfish_threads(void);
 void benchmark_bfish_cores(void);
+void benchmark_memory_single(void);
+void benchmark_memory_dual(void);
+void benchmark_memory_quad(void);
 void benchmark_cryptohash(void);
 void benchmark_fft(void);
 void benchmark_fib(void);
