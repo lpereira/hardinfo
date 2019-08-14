@@ -414,7 +414,7 @@ static void report_html_header(ReportContext * ctx)
 	 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
 	 "<style>\n" "    body    { background: #fff }\n"
 	 "    .title  { font: bold 130%% serif; color: #0066FF; padding: 30px 0 10px 0 }\n"
-	 "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 30px 0 10px 0 }\n"
+	 "    .stitle { font: bold 100%% sans-serif; color: #0044DD; padding: 0 0 0 0; }\n"
 	 "    .sstitle{ font: bold 80%% serif; color: #000000; background: #efefef }\n"
 	 "    .field  { font: 80%% sans-serif; color: #000000; padding: 2px; }\n"
 	 "    .value  { font: 80%% sans-serif; color: #505050 }\n"
@@ -424,6 +424,8 @@ static void report_html_header(ReportContext * ctx)
 	 "    td.icon img  { width: 1.2em; }\n"
 	 "    td.icon div { display: block; box-sizing: border-box; -moz-box-sizing: border-box;\n"
 	 "        width: 1.2em; height: 1.2em; background-position: right; }\n"
+	 "    td.icon_subtitle div { display: block; box-sizing: border-box; -moz-box-sizing: border-box;\n"
+	 "        width: 1.8em; height: 1.8em; background-position: right; }\n"
 	 "</style>\n" "</head><body>\n",
 	 VERSION);
 }
@@ -462,11 +464,22 @@ static void report_html_subtitle(ReportContext * ctx, gchar * text)
       ctx->first_table = FALSE;
     }
 
-    ctx->output = h_strdup_cprintf("<table><tr><td colspan=\"%d\" class=\"stit"
+    gchar *icon = NULL;
+    if (ctx->entry->icon_file) {
+        gchar *icon_class = icon_name_css_id(ctx->entry->icon_file);
+        icon = g_strdup_printf("<div class=\"%s\"></div>", icon_class);
+        g_free(icon_class);
+    } else {
+        icon = g_strdup("");
+    }
+
+    ctx->output = h_strdup_cprintf("<table><tr><td class=\"icon_subtitle\">%s</td><td colspan=\"%d\" class=\"stit"
 				  "le\">%s</td></tr>\n",
 				  ctx->output,
-				  columns+1,
+                  icon,
+				  columns,
 				  text);
+    g_free(icon);
 }
 
 static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
@@ -675,6 +688,9 @@ report_create_inner_from_module_list(ReportContext * ctx, GSList * modules)
 	    if (!params.gui_running)
 		fprintf(stderr, "\033[2K\033[40;32;1m %s\033[0m\n",
 			entry->name);
+
+        if (entry->icon_file)
+            cache_icon(ctx, entry->icon_file);
 
 	    ctx->entry = entry;
 	    report_subtitle(ctx, entry->name);
