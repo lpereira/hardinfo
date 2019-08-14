@@ -30,7 +30,7 @@
 #include "gettext.h"
 #include "info.h"
 
-#define HARDINFO_COPYRIGHT_LATEST_YEAR 2017
+#define HARDINFO_COPYRIGHT_LATEST_YEAR 2019
 
 #ifndef LOCALEDIR
 #define LOCALEDIR "/usr/share/locale"
