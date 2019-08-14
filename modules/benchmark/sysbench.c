@@ -22,6 +22,7 @@
 
 /* known to work with:
  * sysbench 0.4.12 --> r:4012
+ * sysbench 1.0.11 --> r:1000011
  * sysbench 1.0.15 --> r:1000015
  */
 
@@ -33,7 +34,7 @@ struct sysbench_ctx {
     bench_value r;
 };
 
-int sysboj_version() {
+int sysbench_version() {
     int ret = -1;
     int v1 = 0, v2 = 0, v3 = 0, mc = 0;
     gboolean spawned;
@@ -80,12 +81,12 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx) {
     snprintf(ctx->r.extra, 255, "--time=%d %s", ctx->max_time, ctx->parms_test);
     util_compress_space(ctx->r.extra);
 
-    int expecting = sysboj_version();
+    int expecting = sysbench_version();
     if (expecting < 1000000) {
-        /* sysbench [general-options]... --test=<test-name> [test-options]... command */
+        /* v0.x.x: sysbench [general-options]... --test=<test-name> [test-options]... command */
         cmd_line = g_strdup_printf("sysbench --num-threads=%d --max-time=%d --test=%s %s run", ctx->threads, ctx->max_time, ctx->test, ctx->parms_test);
     } else {
-        /* sysbench [options]... [testname] [command] */
+        /* v1.x.x: sysbench [options]... [testname] [command] */
         cmd_line = g_strdup_printf("sysbench --threads=%d --time=%d %s %s run", ctx->threads, ctx->max_time, ctx->parms_test, ctx->test);
     }
     //bench_msg("\ncmd_line: %s", cmd_line);
@@ -170,8 +171,7 @@ sysbench_failed:
     return 0;
 }
 
-void benchmark_memory_single(void)
-{
+void benchmark_memory_single(void) {
     struct sysbench_ctx ctx = {
         .test = "memory",
         .threads = 1,
@@ -191,8 +191,7 @@ void benchmark_memory_single(void)
     bench_results[BENCHMARK_MEMORY_SINGLE] = ctx.r;
 }
 
-void benchmark_memory_dual(void)
-{
+void benchmark_memory_dual(void) {
     struct sysbench_ctx ctx = {
         .test = "memory",
         .threads = 2,
@@ -212,8 +211,7 @@ void benchmark_memory_dual(void)
     bench_results[BENCHMARK_MEMORY_DUAL] = ctx.r;
 }
 
-void benchmark_memory_quad(void)
-{
+void benchmark_memory_quad(void) {
     struct sysbench_ctx ctx = {
         .test = "memory",
         .threads = 4,
