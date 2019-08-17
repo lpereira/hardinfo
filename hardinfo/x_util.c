@@ -151,7 +151,7 @@ gboolean fill_xinfo(xinfo *xi) {
 gboolean fill_xrr_info(xrr_info *xrr) {
     gboolean spawned;
     gchar *out, *err, *p, *next_nl;
-    gchar *xrr_cmd = g_strdup("xrandr");
+    gchar *xrr_cmd = g_strdup("xrandr --prop");
     int ec;
 
     x_screen ts;
@@ -191,7 +191,6 @@ gboolean fill_xrr_info(xrr_info *xrr) {
                 memset(&ts, 0, sizeof(x_screen)); /* clear the temp */
                 goto xrr_next_line;
             }
-
 
             /* looking for:
              * <output_id> (connected|disconnected|unknown connection) (primary|?) <%dx%d+%d+%d> (attribute_list) mm x mm

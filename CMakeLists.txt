@@ -124,6 +124,7 @@ set(HARDINFO_RESOURCES
 	"deps/sysobj_early/data/sdcard.ids"
 	"deps/sysobj_early/data/usb.ids"
 	"deps/sysobj_early/data/arm.ids"
+	"deps/sysobj_early/data/edid.ids"
 )
 
 set(HARDINFO_MANPAGES
@@ -152,6 +153,7 @@ set(MODULE_devices_SOURCES
 	modules/devices.c
 	modules/devices/${HARDINFO_ARCH}/processor.c
 	modules/devices/gpu.c
+	modules/devices/monitors.c
 	modules/devices/battery.c
 	modules/devices/dmi.c
 	modules/devices/dmi_memory.c
@@ -209,6 +211,7 @@ set_source_files_properties(
 )
 
 set_source_files_properties(
+	modules/devices/monitors.c
 	modules/devices/dmi_memory.c
 #	modules/devices/spd-decode.c
 	hardinfo/problem_marker.c
@@ -230,8 +233,10 @@ add_library(sysobj_early STATIC
 	deps/sysobj_early/src/appf.c
 	deps/sysobj_early/src/nice_name.c
 	deps/sysobj_early/gui/uri_handler.c
+	deps/sysobj_early/src/util_edid.c
 )
 set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function")
+target_link_libraries(sysobj_early m)
 
 if (HARDINFO_GTK3)
 add_library(uber-graph STATIC

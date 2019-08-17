@@ -18,12 +18,18 @@
  *
  */
 
-#include "appf.h"
 #define _GNU_SOURCE /* for vasprintf() */
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include "appf.h"
+
+/* FIXME: if this isn't here, hardinfo will crash,
+ * I don't have the slightest idea why */
+void wtf() {
+    edid_fill(NULL, NULL, 0);
+}
 
 char *appf(char *str, const char *sep, const char *fmt, ...) {
     char *buf = NULL;

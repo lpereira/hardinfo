@@ -1,0 +1,98 @@
+#
+# https://github.com/bp0/verbose-spork/blob/master/data/edid.ids
+#
+# List of known/observed EDID three-letter vendor codes
+# See http://edid.tv/manufacturer
+# These codes are also the three-letter "EISA" or "PNP" codes.
+# See http://uefi.org/sites/default/files/resources/PNPID_List.pdf
+#
+# Syntax:
+# VEN Vendor Name
+#
+# Please keep sorted.
+#
+
+AAA Avolites
+ACI Ancor Communications
+ACR Acer Technologies
+ADA Addi-Data GmbH
+AGO AlgolTek
+AOC AOC International
+APP Apple Computer
+ATO ASTRO DESIGN
+AUO AU Optronics
+AVT Avtek
+BMD Blackmagic Design
+BNO Bang & Olufsen
+BNQ BenQ
+BOE BOE
+CMN Chimei Innolux Corporation
+CMO Chi Mei Optoelectronics
+CRO Extraordinary Technologies
+CUK Calibre UK
+DEL Dell
+DGC Data General Corporation
+DON DENON
+ENC Eizo Nanao Corporation
+EPH Epiphan Systems
+EXP Data Export Corporation
+FNI Funai Electric
+FUS Fujitsu Siemens Computers
+GSM Goldstar Company
+HIQ Kaohsiung Opto Electronics Americas
+HPN Hewlett-Packard Company
+HSD HannStar Display Corporation
+HTC Hitachi
+HWP Hewlett-Packard Company
+IBM International Business Machines
+INO Innolab Pte Ltd
+INT Interphase Corporation
+INX Communications Supply Corporation (A division of WESCO)
+ITE Integrated Tech Express
+IVM Iiyama North America
+JVC Victor Company of Japan (JVC)
+KTC Kingston Tech Corporation
+LEN Lenovo Group
+LGD LG Display
+LNX The Linux Foundation
+LWR Lightware Visual Engineering
+MAX Rogen Tech Distribution
+MEG Abeam Tech
+MEI Panasonic Industry Company
+MGW Magewell
+MST MS Telematica
+MTC Mars-Tech Corporation
+MTX Matrox
+NEC NEC Corporation
+NEX Nexgen Mediatech
+ONK ONKYO Corporation
+ORN ORION ELECTRIC
+OTM Optoma Corporation
+OVR Oculus VR
+PHL Koninklijke Philips
+PIO Pioneer Electronic Corporation
+PLN Planar
+PNR Planar Systems
+QDS Quanta Display
+RAT Rent-A-Tech
+REN Renesas Technology Corporation
+SAM Samsung Electric Company
+SAN Sanyo Electric Company
+SEC Seiko Epson Corporation
+SHP Sharp Corporation
+SII Silicon Image
+SNY Sony
+STD STD Computer
+SVS AMX (Harman, SVSI)
+SYN Synaptics
+TCL Technical Concepts
+TDC Teradici
+TOP Orion Communications Company
+TSB Toshiba Corporation
+TST Transtream
+VES Vestel Elektronik Sanayi ve Ticaret A. S.
+VIT Visitech
+VIZ Vizio
+VSC ViewSonic Corporation
+WDE Westinghouse Digital Electronics
+YMH Yamaha Corporation
