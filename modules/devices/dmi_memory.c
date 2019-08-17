@@ -618,7 +618,7 @@ gchar *make_spd_section(spd_data *spd) {
     return ret;
 }
 
-gchar *tag_make_safe_inplace(gchar *tag) {
+static gchar *tag_make_safe_inplace(gchar *tag) {
     if (!tag)
         return tag;
     if (!g_utf8_validate(tag, -1, NULL))

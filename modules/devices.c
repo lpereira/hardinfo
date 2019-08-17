@@ -42,6 +42,7 @@
 
 gchar *callback_processors();
 gchar *callback_gpu();
+gchar *callback_monitors();
 gchar *callback_battery();
 gchar *callback_pci();
 gchar *callback_sensors();
@@ -57,6 +58,7 @@ gchar *callback_device_resources();
 
 void scan_processors(gboolean reload);
 void scan_gpu(gboolean reload);
+void scan_monitors(gboolean reload);
 void scan_battery(gboolean reload);
 void scan_pci(gboolean reload);
 void scan_sensors(gboolean reload);
@@ -80,6 +82,7 @@ enum {
     ENTRY_DMI,
     ENTRY_PROCESSOR,
     ENTRY_GPU,
+    ENTRY_MONITORS,
     ENTRY_DMI_MEM,
     ENTRY_PCI,
     ENTRY_USB,
@@ -95,6 +98,7 @@ enum {
 static ModuleEntry entries[] = {
     [ENTRY_PROCESSOR] = {N_("Processor"), "processor.png", callback_processors, scan_processors, MODULE_FLAG_NONE},
     [ENTRY_GPU] = {N_("Graphics Processors"), "devices.png", callback_gpu, scan_gpu, MODULE_FLAG_NONE},
+    [ENTRY_MONITORS] = {N_("Monitors"), "monitor.png", callback_monitors, scan_monitors, MODULE_FLAG_NONE},
     [ENTRY_PCI] = {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
     [ENTRY_USB] = {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
     [ENTRY_FW] = {N_("Firmware"), "processor.png", callback_firmware, scan_firmware, MODULE_FLAG_NONE},
@@ -133,6 +137,11 @@ gchar *memory_devices_info = NULL;
 gchar *firmware_get_info();
 gboolean firmware_hinote(const char **msg);
 gchar *firmware_info = NULL;
+
+/* in monitors.c */
+gchar *monitors_get_info();
+gboolean monitors_hinote(const char **msg);
+gchar *monitors_info = NULL;
 
 #include <vendor.h>
 
@@ -551,6 +560,15 @@ void scan_dmi_mem(gboolean reload)
     SCAN_END();
 }
 
+void scan_monitors(gboolean reload)
+{
+    SCAN_START();
+    if (monitors_info)
+        g_free(monitors_info);
+    monitors_info = monitors_get_info();
+    SCAN_END();
+}
+
 void scan_firmware(gboolean reload)
 {
     SCAN_START();
@@ -654,6 +672,11 @@ gchar *callback_dmi()
 gchar *callback_dmi_mem()
 {
     return g_strdup(memory_devices_info);
+}
+
+gchar *callback_monitors()
+{
+    return g_strdup(monitors_info);
 }
 
 gchar *callback_firmware()
