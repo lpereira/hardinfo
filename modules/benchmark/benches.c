@@ -101,16 +101,16 @@ static ModuleEntry entries[] = {
     [BENCHMARK_SBCPU_ALL] =
     {N_("SysBench CPU (Multi-thread)"), "processor.png", callback_benchmark_sbcpu_all, scan_benchmark_sbcpu_all, MODULE_FLAG_NONE},
     [BENCHMARK_SBCPU_QUAD] =
-    {N_("#SysBench CPU (Four threads)"), "processor.png", callback_benchmark_sbcpu_quad, scan_benchmark_sbcpu_quad, MODULE_FLAG_NONE},
+    {N_("#SysBench CPU (Four threads)"), "processor.png", callback_benchmark_sbcpu_quad, scan_benchmark_sbcpu_quad, MODULE_FLAG_HIDE},
     [BENCHMARK_MEMORY_SINGLE] =
-    {N_("#SysBench Memory (Single-thread)"), "memory.png", callback_benchmark_memory_single, scan_benchmark_memory_single, MODULE_FLAG_NONE},
+    {N_("#SysBench Memory (Single-thread)"), "memory.png", callback_benchmark_memory_single, scan_benchmark_memory_single, MODULE_FLAG_HIDE},
     [BENCHMARK_MEMORY_DUAL] =
-    {N_("#SysBench Memory (Two threads)"), "memory.png", callback_benchmark_memory_dual, scan_benchmark_memory_dual, MODULE_FLAG_NONE},
+    {N_("#SysBench Memory (Two threads)"), "memory.png", callback_benchmark_memory_dual, scan_benchmark_memory_dual, MODULE_FLAG_HIDE},
     [BENCHMARK_MEMORY_QUAD] =
     {N_("SysBench Memory"), "memory.png", callback_benchmark_memory_quad, scan_benchmark_memory_quad, MODULE_FLAG_NONE},
 #if !GTK_CHECK_VERSION(3,0,0)
     [BENCHMARK_GUI] =
-    {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE},
+    {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE | MODULE_FLAG_HIDE},
 #else
     [BENCHMARK_GUI] = { "#" },
 #endif
