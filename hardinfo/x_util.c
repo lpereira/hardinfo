@@ -162,9 +162,9 @@ gboolean fill_xrr_info(xrr_info *xrr) {
 
     memset(&ts, 0, sizeof(x_screen));
     memset(&to, 0, sizeof(x_output));
-    memset(output_id, 0, 128);
-    memset(status, 0, 128);
-    memset(alist, 0, 128);
+    memset(output_id, 0, sizeof(output_id));
+    memset(status, 0, sizeof(status));
+    memset(alist, 0, sizeof(alist));
 
     spawned = hardinfo_spawn_command_line_sync(xrr_cmd,
             &out, &err, NULL, NULL);
@@ -195,7 +195,7 @@ gboolean fill_xrr_info(xrr_info *xrr) {
             /* looking for:
              * <output_id> (connected|disconnected|unknown connection) (primary|?) <%dx%d+%d+%d> (attribute_list) mm x mm
              */
-            ec = sscanf(p, "%s %[^(](%[^)]", output_id, status, alist);
+            ec = sscanf(p, "%127s %127[^(](%511[^)]", output_id, status, alist);
             if (ec == 3) {
                 int is_output = 0, found_rect = 0, n = 0;
                 gchar **ot = g_strsplit(status, " ", 0);
