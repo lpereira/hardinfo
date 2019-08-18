@@ -23,11 +23,21 @@
 
 #include <stdint.h>  /* for *int*_t types */
 
+typedef struct {
+    float horiz_cm, vert_cm;
+    float diag_cm, diag_in;
+    int horiz_pixels, vert_lines, vert_pixels;
+    int is_interlaced;
+    int stereo_mode;
+    int pixel_clock_khz;
+    int src; /* 0: edid, 1: dtd, 2: cea-dtd, ... */
+    char class_inch[6];
+} edid_output;
+
 struct edid_dtd {
     uint8_t *ptr;
-    int pixel_clock_khz;
-    int horiz_pixels;
-    int vert_lines;
+    int cea_ext;
+    edid_output out;
 };
 
 struct edid_cea_header {
@@ -96,13 +106,13 @@ typedef struct {
     char *ut2;
 
     int a_or_d; /* 0 = analog, 1 = digital */
-    int bpc;
+    int interface; /* digital interface */
+    int bpc;       /* digital bpc */
     uint16_t product;
     uint32_t n_serial;
     int week, year;
-    int horiz_cm, vert_cm;
-    float diag_cm, diag_in;
-
+    edid_output img;
+    edid_output img_max;
 } edid;
 edid *edid_new(const char *data, unsigned int len);
 edid *edid_new_from_hex(const char *hex_string);
@@ -110,12 +120,15 @@ void edid_free(edid *e);
 char *edid_dump_hex(edid *e, int tabs, int breaks);
 
 const char *edid_standard(int type);
+const char *edid_output_src(int src);
+const char *edid_interface(int type);
 const char *edid_descriptor_type(int type);
 const char *edid_ext_block_type(int type);
 const char *edid_cea_block_type(int type);
 const char *edid_cea_audio_type(int type);
 
-char *edid_dtd_describe(struct edid_dtd *dtd);
+char *edid_output_describe(edid_output *out);
+char *edid_dtd_describe(struct edid_dtd *dtd, int dump_bytes);
 char *edid_cea_block_describe(struct edid_cea_block *blk);
 
 char *edid_dump2(edid *e);

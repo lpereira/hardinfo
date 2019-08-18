@@ -26,6 +26,7 @@ static const char monitor_icon[] = "monitor.png";
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
+#define UNSPECIFNULL2(f) ((f) ? f : _("(Unspecified)"))
 
 gboolean no_monitors = FALSE;
 
@@ -99,24 +100,22 @@ const gchar *monitor_vendor_str(monitor *m) {
 gchar *monitor_name(monitor *m, gboolean include_vendor) {
     if (!m) return NULL;
     gchar *desc = NULL;
+    edid *e = m->e;
 
     if (include_vendor) {
-        if (*m->e->ven)
+        if (*e->ven)
             desc = appfsp(desc, "%s", vendor_get_shortest_name(monitor_vendor_str(m)));
         else
             desc = appfsp(desc, "%s", "Unknown");
     }
 
-    if (m->e->diag_in) {
-        gchar *din = util_strchomp_float(g_strdup_printf("%0.1f", m->e->diag_in));
-        desc = appfsp(desc, "%s\"", din);
-        g_free(din);
-    }
+    if (e->img_max.diag_in)
+        desc = appfsp(desc, "%s\"", e->img_max.class_inch);
 
-    if (m->e->name)
-        desc = appfsp(desc, "%s", m->e->name);
+    if (e->name)
+        desc = appfsp(desc, "%s", e->name);
     else
-        desc = appfsp(desc, "%s %s", m->e->a_or_d ? "Digital" : "Analog", "Display");
+        desc = appfsp(desc, "%s %s", e->a_or_d ? "Digital" : "Analog", "Display");
 
     return desc;
 }
@@ -158,58 +157,119 @@ static gchar *tag_make_safe_inplace(gchar *tag) {
 }
 
 static gchar *make_edid_section(monitor *m) {
-    if (m->e->len) {
+    int i;
+    edid *e = m->e;
+    if (e->len) {
         const gchar *vstr = monitor_vendor_str(m);
 
         gchar *dom = NULL;
-        if (m->e->week && m->e->year)
-            dom = g_strdup_printf(_("Week %d of %d"), m->e->week, m->e->year);
-        else if (m->e->year)
-            dom = g_strdup_printf("%d", m->e->year);
+        if (e->week && e->year)
+            dom = g_strdup_printf(_("Week %d of %d"), e->week, e->year);
+        else if (e->year)
+            dom = g_strdup_printf("%d", e->year);
 
         gchar *bpcc = NULL;
-        if (m->e->bpc)
-            bpcc = g_strdup_printf("%d", m->e->bpc);
+        if (e->bpc)
+            bpcc = g_strdup_printf("%d", e->bpc);
 
-        gchar *scr_size = NULL;
-        if (m->e->horiz_cm && m->e->vert_cm)
-            scr_size = g_strdup_printf("%d cm × %d cm", m->e->horiz_cm, m->e->vert_cm);
-
-        int aok = m->e->checksum_ok;
-        if (m->e->ext_blocks_fail) aok = 0;
+        int aok = e->checksum_ok;
+        if (e->ext_blocks_fail) aok = 0;
         gchar *csum = aok ? _("Ok") : _("Fail");
 
-        gchar *ret = g_strdup_printf("[%s]\n"
+        const gchar *iface = e->interface ? _(edid_interface(e->interface)) : _("(Unspecified)");
+
+        gchar *d_list, *ext_list, *dtd_list, *cea_list;
+
+        d_list = g_strdup("");
+        for(i = 0; i < 4; i++)
+            d_list = appfnl(d_list, "descriptor%d = ([%02x] %s): %s", i, e->d_type[i], _(edid_descriptor_type(e->d_type[i])), *e->d_text[i] ? e->d_text[i] : "{...}");
+
+        ext_list = g_strdup("");
+        for(i = 0; i < e->ext_blocks; i++) {
+            int type = e->u8[(i+1)*128];
+            int version = e->u8[(i+1)*128 + 1];
+            ext_list = appfnl(ext_list, "ext%d = ([%02x:v%02x] %s) %s", i,
+                type, version, _(edid_ext_block_type(type)),
+                e->ext_ok[i] ? "ok" : "fail"
+            );
+        }
+
+        dtd_list = g_strdup("");
+        for(i = 0; i < e->dtd_count; i++) {
+            char *desc = edid_dtd_describe(&e->dtds[i], 0);
+            dtd_list = appfnl(dtd_list, "dtd%d = %s", i, desc);
+            free(desc);
+        }
+
+        cea_list = g_strdup("");
+        for(i = 0; i < e->cea_block_count; i++) {
+            char *desc = edid_cea_block_describe(&e->cea_blocks[i]);
+            cea_list = appfnl(cea_list, "cea_block%d = %s", i, desc);
+        }
+
+        gchar *hex = edid_dump_hex(e, 0, 1);
+        gchar *hex_esc = gg_key_file_parse_string_as_value(hex, '|');
+        g_free(hex);
+        if (params.markup_ok)
+            hex = g_strdup_printf("<tt>%s</tt>", hex_esc);
+        else
+            hex = g_strdup(hex_esc);
+        g_free(hex_esc);
+
+        gchar *ret = g_strdup_printf(
+            /* extending "Connection" section */
+            "%s=%s\n" /* sig type */
+            "%s=[%x] %s\n" /* interface */
+            "%s=%s\n" /* bpcc */
+            "[%s]\n"
+            "%s=%s\n" /* base out */
+            "%s=%s\n" /* ext out */
+            "[%s]\n"
+            "%s=%s\n" /* vendor */
+            "%s=%s\n" /* name */
+            "%s=%s\n" /* dom */
+            "[%s]\n"
             "%s=%d %s\n" /* size */
             "%s=%d.%d\n" /* version */
             "%s=%d\n" /* ext block */
             "%s=%s\n" /* ext to */
             "%s=%s %s\n" /* checksum */
-            "[%s]\n"
-            "%s=%s\n" /* vendor */
-            "%s=%s\n" /* name */
-            "%s=%s\n" /* dom */
-            "%s=%s\n" /* size */
-            "%s=%s\n" /* sig type */
-            "%s=%s\n" /* bpcc */
+            "[%s]\n%s\n"
+            "[%s]\n%s\n"
+            "[%s]\n%s\n"
+            "[%s]\n%s\n"
+            "[%s]\n%s=%s\n"
             ,
-            _("EDID Meta"),
-            _("Data Size"), m->e->len, _("bytes"),
-            _("Version"), (int)m->e->ver_major, (int)m->e->ver_minor,
-            _("Extension Blocks"), m->e->ext_blocks,
-            _("Extended to"), _(edid_standard(m->e->std)),
-            _("Checksum"), csum, aok ? "" : problem_marker(),
+            _("Signal Type"), e->a_or_d ? _("Digital") : _("Analog"),
+            _("Interface"), e->interface, iface,
+            _("Bits per Color Channel"), UNSPECIFNULL2(bpcc),
+            _("Output (Max)"),
+            edid_output_src(e->img.src), edid_output_describe(&e->img),
+            edid_output_src(e->img_max.src), edid_output_describe(&e->img_max),
             _("EDID Device"),
             _("Vendor"), vstr,
-            _("Name"), m->e->name,
+            _("Name"), e->name,
             _("Manufacture Date"), UNKIFNULL2(dom),
-            _("Screen Size"), UNKIFNULL2(scr_size),
-            _("Signal Type"), m->e->a_or_d ? _("Digital") : _("Analog"),
-            _("Bits per Color Channel"), UNKIFNULL2(bpcc)
+            _("EDID Meta"),
+            _("Data Size"), e->len, _("bytes"),
+            _("Version"), (int)e->ver_major, (int)e->ver_minor,
+            _("Extension Blocks"), e->ext_blocks,
+            _("Extended to"), e->std ? _(edid_standard(e->std)) : _("(None)"),
+            _("Checksum"), csum, aok ? "" : problem_marker(),
+            _("EDID Descriptors"), d_list,
+            _("Detailed Timing Descriptors (DTD)"), dtd_list,
+            _("E-EDID Extension Blocks"), ext_list,
+            _("EIA/CEA-861 Data Blocks"), cea_list,
+            _("Hex Dump"), _("Data"), hex
             );
-        g_free(scr_size);
         g_free(bpcc);
         g_free(dom);
+
+        g_free(d_list);
+        g_free(ext_list);
+        g_free(dtd_list);
+        g_free(cea_list);
+        g_free(hex);
         //printf("ret: %s\n", ret);
         return ret;
     } else
@@ -217,7 +277,6 @@ static gchar *make_edid_section(monitor *m) {
 }
 
 gchar *monitors_get_info() {
-
     gchar *icons = g_strdup("");
     gchar *ret = g_strdup_printf("[%s]\n", _("Monitors"));
     gchar tag_prefix[] = "DEV";
@@ -228,8 +287,9 @@ gchar *monitors_get_info() {
     for(i = 0; edid_files[i]; i++) {
         monitor *m = monitor_new_from_sysfs(edid_files[i]);
         if (m) {
+            edid *e = m->e;
             found++;
-            if (m->e && m->e->checksum_ok && m->drm_connection) {
+            if (e && e->checksum_ok && m->drm_connection) {
                 gchar *tag = g_strdup_printf("%d-%s", found, m->drm_connection);
                 tag_make_safe_inplace(tag);
                 gchar *desc = monitor_name(m, TRUE);
