@@ -80,6 +80,22 @@ static void cea_block_decode(struct edid_cea_block *blk) {
     }
 }
 
+static void edid_output_fill(edid_output *out) {
+    out->diag_cm =
+        sqrt( (out->horiz_cm * out->horiz_cm)
+         + (out->vert_cm * out->vert_cm) );
+    out->diag_in = out->diag_cm / 2.54;
+
+    if (out->is_interlaced)
+        out->vert_pixels = out->vert_lines * 2;
+    else
+        out->vert_pixels = out->vert_lines;
+
+    static const char *inlbl = "\""; /* TODO: unicode */
+    sprintf(out->class_inch, "%0.1f%s", out->diag_in, inlbl);
+    util_strchomp_float(out->class_inch);
+}
+
 edid *edid_new(const char *data, unsigned int len) {
     if (len < 128) return NULL;
 
@@ -94,6 +110,8 @@ edid *edid_new(const char *data, unsigned int len) {
 
     e->dtds = malloc(sizeof(struct edid_dtd) * 1000);
     e->cea_blocks = malloc(sizeof(struct edid_cea_block) * 1000);
+    memset(e->dtds, 0, sizeof(struct edid_dtd) * 1000);
+    memset(e->cea_blocks, 0, sizeof(struct edid_cea_block) * 1000);
 
     uint16_t vid = be16toh(e->u16[4]); /* bytes 8-9 */
     e->ven[2] = 64 + (vid & 0x1f);
@@ -118,15 +136,14 @@ edid *edid_new(const char *data, unsigned int len) {
             case 0x5: e->bpc = 14; break;
             case 0x6: e->bpc = 16; break;
         }
+        e->interface = e->u8[20] & 0xf;
     }
 
     if (e->u8[21] && e->u8[22]) {
-        e->horiz_cm = e->u8[21];
-        e->vert_cm = e->u8[22];
-        e->diag_cm =
-            sqrt( (e->horiz_cm * e->horiz_cm)
-             + (e->vert_cm * e->vert_cm) );
-        e->diag_in = e->diag_cm / 2.54;
+        e->img.horiz_cm = e->u8[21];
+        e->img.vert_cm = e->u8[22];
+        edid_output_fill(&e->img);
+        e->img_max = e->img;
     }
 
     uint16_t dh, dl;
@@ -191,6 +208,7 @@ edid *edid_new(const char *data, unsigned int len) {
                         if (u8[b]) {
                             //printf("DTD: %s\n", hex_bytes(&u8[b], 18));
                             e->dtds[e->dtd_count].ptr = &u8[b];
+                            e->dtds[e->dtd_count].cea_ext = 1;
                             e->dtd_count++;
                         }
                         b += 18;
@@ -236,11 +254,29 @@ edid *edid_new(const char *data, unsigned int len) {
     /* dtds */
     for(i = 0; i < e->dtd_count; i++) {
         uint8_t *u8 = e->dtds[i].ptr;
-        e->dtds[i].pixel_clock_khz = u8[0] * 10;
-        e->dtds[i].horiz_pixels =
+        edid_output *out = &e->dtds[i].out;
+        if (e->dtds[i].cea_ext) out->src = 2;
+        else out->src = 1;
+        out->pixel_clock_khz = u8[0] * 10;
+        out->horiz_pixels =
             ((u8[4] & 0xf0) << 4) + u8[2];
-        e->dtds[i].vert_lines =
+        out->vert_lines =
             ((u8[7] & 0xf0) << 4) + u8[5];
+        out->horiz_cm =
+            ((u8[14] & 0xf0) << 4) + u8[12];
+        out->horiz_cm /= 10;
+        out->vert_cm =
+            ((u8[14] & 0x0f) << 8) + u8[13];
+        out->vert_cm /= 10;
+        out->is_interlaced = (u8[17] & 0x80) >> 7;
+        out->stereo_mode = (u8[17] & 0x60) >> 4;
+        out->stereo_mode += u8[17] & 0x01;
+        edid_output_fill(out);
+    }
+
+    if (e->dtd_count) {
+        /* first DTD replaces the basic EDID size */
+        e->img_max = e->dtds[0].out;
     }
 
     /* squeeze lists */
@@ -331,6 +367,26 @@ const char *edid_standard(int std) {
         case 0: return N_("VESA EDID");
         case 1: return N_("EIA/CEA-861");
         case 2: return N_("VESA DisplayID");
+    };
+    return N_("unknown");
+}
+
+const char *edid_output_src(int src) {
+    switch(src) {
+        case 0: return N_("VESA EDID");
+        case 1: return N_("VESA EDID DTD");
+        case 2: return N_("EIA/CEA-861 DTD");
+    };
+    return N_("unknown");
+}
+
+const char *edid_interface(int type) {
+    switch(type) {
+        case 0: return N_("undefined");
+        case 0x2: return N_("HDMIa");
+        case 0x3: return N_("HDMIb");
+        case 0x4: return N_("MDDI");
+        case 0x5: return N_("DisplayPort");
     };
     return N_("unknown");
 }
@@ -503,13 +559,31 @@ char *edid_cea_block_describe(struct edid_cea_block *blk) {
     return ret;
 }
 
-char *edid_dtd_describe(struct edid_dtd *dtd) {
+char *edid_output_describe(edid_output *out) {
+    gchar *ret = NULL;
+    if (out) {
+        ret = g_strdup_printf("%dx%d, %0.2fx%0.2f%s (%0.1f\") %s %s",
+            out->horiz_pixels, out->vert_pixels,
+            out->horiz_cm, out->vert_cm, _("cm"), out->diag_in,
+            out->is_interlaced ? "interlaced" : "non-interlaced",
+            out->stereo_mode ? "stereo" : "normal");
+    }
+    return ret;
+}
+
+char *edid_dtd_describe(struct edid_dtd *dtd, int dump_bytes) {
     gchar *ret = NULL;
     if (dtd) {
+        edid_output *out = &dtd->out;
         char *hb = hex_bytes(dtd->ptr, 18);
-        ret = g_strdup_printf("%dx%d %s",
-            dtd->horiz_pixels, dtd->vert_lines,
-            hb);
+        ret = g_strdup_printf("%dx%d, %0.2fx%0.2f%s (%0.1f\") %s %s (%s)%s%s",
+            out->horiz_pixels, out->vert_lines,
+            out->horiz_cm, out->vert_cm, _("cm"), out->diag_in,
+            out->is_interlaced ? "interlaced" : "non-interlaced",
+            out->stereo_mode ? "stereo" : "normal",
+            _(edid_output_src(out->src)),
+            dump_bytes ? " -- " : "",
+            dump_bytes ? hb : "");
         free(hb);
     }
     return ret;
@@ -520,8 +594,8 @@ char *edid_dump2(edid *e) {
     int i;
     if (!e) return NULL;
 
-    ret = appfnl(ret, "edid_version: %d.%d (%d bytes)", e->ver_major, e->ver_minor, e->len);
-    ret = appfnl(ret, "standard: %s", _(edid_standard(e->std)) );
+    ret = appfnl(ret, "edid version: %d.%d (%d bytes)", e->ver_major, e->ver_minor, e->len);
+    ret = appfnl(ret, "extended to: %s", _(edid_standard(e->std)) );
 
     ret = appfnl(ret, "mfg: %s, model: %u, n_serial: %u", e->ven, e->product, e->n_serial);
     if (e->week && e->year)
@@ -532,11 +606,15 @@ char *edid_dump2(edid *e) {
     ret = appfnl(ret, "type: %s", e->a_or_d ? "digital" : "analog");
     if (e->bpc)
         ret = appfnl(ret, "bits per color channel: %d", e->bpc);
+    if (e->interface)
+        ret = appfnl(ret, "interface: %s", _(edid_interface(e->interface)));
 
-    if (e->horiz_cm && e->vert_cm)
-        ret = appfnl(ret, "size: %d cm × %d cm", e->horiz_cm, e->vert_cm);
-    if (e->diag_cm)
-        ret = appfnl(ret, "diagonal: %0.2f cm (%0.2f in)", e->diag_cm, e->diag_in);
+    char *desc = edid_output_describe(&e->img);
+    char *desc_max = edid_output_describe(&e->img_max);
+    ret = appfnl(ret, "base(%s): %s", _(edid_output_src(e->img.src)), desc);
+    ret = appfnl(ret, "ext(%s): %s", _(edid_output_src(e->img_max.src)), desc_max);
+    g_free(desc);
+    g_free(desc_max);
 
     ret = appfnl(ret, "checksum %s", e->checksum_ok ? "ok" : "failed!");
     if (e->ext_blocks_ok || e->ext_blocks_fail)
@@ -555,7 +633,7 @@ char *edid_dump2(edid *e) {
     }
 
     for(i = 0; i < e->dtd_count; i++) {
-        char *desc = edid_dtd_describe(&e->dtds[i]);
+        char *desc = edid_dtd_describe(&e->dtds[i], 0);
         ret = appfnl(ret, "dtd[%d] %s", i, desc);
         free(desc);
     }
