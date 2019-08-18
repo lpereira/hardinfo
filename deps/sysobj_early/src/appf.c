@@ -28,7 +28,7 @@
 /* FIXME: if this isn't here, hardinfo will crash,
  * I don't have the slightest idea why */
 void wtf() {
-    edid_fill(NULL, NULL, 0);
+    void *e = edid_new(NULL, 0);
 }
 
 char *appf(char *str, const char *sep, const char *fmt, ...) {

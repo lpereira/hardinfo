@@ -50,20 +50,19 @@ void find_edid_ids_file() {
 
 typedef struct {
     gchar *drm_connection;
-    uint8_t *edid_bin;
-    gsize edid_len;
-    struct edid id;
+    edid *e;
     gchar *_vstr; /* use monitor_vendor_str() */
 } monitor;
 #define monitor_new() g_new0(monitor, 1)
 
 monitor *monitor_new_from_sysfs(const gchar *sysfs_edid_file) {
+    gchar *edid_bin = NULL;
+    gsize edid_len = 0;
     monitor *m = monitor_new();
-    g_file_get_contents(sysfs_edid_file, (gchar**)&(m->edid_bin), &m->edid_len, NULL);
-    if (m->edid_len) {
-        edid_fill(&m->id, (void*)(m->edid_bin), m->edid_len);
+    g_file_get_contents(sysfs_edid_file, &edid_bin, &edid_len, NULL);
+    if (edid_len) {
+        m->e = edid_new(edid_bin, edid_len);
     }
-
     gchar *pd = g_path_get_dirname(sysfs_edid_file);
     m->drm_connection = g_path_get_basename(pd);
     g_free(pd);
@@ -75,7 +74,7 @@ void monitor_free(monitor *m) {
     if (m) {
         g_free(m->_vstr);
         g_free(m->drm_connection);
-        g_free(m->edid_bin);
+        edid_free(m->e);
         g_free(m);
     }
 }
@@ -89,12 +88,12 @@ const gchar *monitor_vendor_str(monitor *m) {
     if (!edid_ids_file)
         find_edid_ids_file();
 
-    scan_ids_file(edid_ids_file, m->id.ven, &result, -1);
+    scan_ids_file(edid_ids_file, m->e->ven, &result, -1);
     if (result.results[0]) {
         m->_vstr = g_strdup(result.results[0]);
         return m->_vstr;
     }
-    return g_strdup(m->id.ven);
+    return g_strdup(m->e->ven);
 }
 
 gchar *monitor_name(monitor *m, gboolean include_vendor) {
@@ -102,22 +101,22 @@ gchar *monitor_name(monitor *m, gboolean include_vendor) {
     gchar *desc = NULL;
 
     if (include_vendor) {
-        if (*m->id.ven)
+        if (*m->e->ven)
             desc = appfsp(desc, "%s", vendor_get_shortest_name(monitor_vendor_str(m)));
         else
             desc = appfsp(desc, "%s", "Unknown");
     }
 
-    if (m->id.diag_in) {
-        gchar *din = util_strchomp_float(g_strdup_printf("%0.1f", m->id.diag_in));
+    if (m->e->diag_in) {
+        gchar *din = util_strchomp_float(g_strdup_printf("%0.1f", m->e->diag_in));
         desc = appfsp(desc, "%s\"", din);
         g_free(din);
     }
 
-    if (m->id.name)
-        desc = appfsp(desc, "%s", m->id.name);
+    if (m->e->name)
+        desc = appfsp(desc, "%s", m->e->name);
     else
-        desc = appfsp(desc, "%s %s", m->id.a_or_d ? "Digital" : "Analog", "Display");
+        desc = appfsp(desc, "%s %s", m->e->a_or_d ? "Digital" : "Analog", "Display");
 
     return desc;
 }
@@ -159,31 +158,32 @@ static gchar *tag_make_safe_inplace(gchar *tag) {
 }
 
 static gchar *make_edid_section(monitor *m) {
-    if (m->edid_len) {
+    if (m->e->len) {
         const gchar *vstr = monitor_vendor_str(m);
 
         gchar *dom = NULL;
-        if (m->id.week && m->id.year)
-            dom = g_strdup_printf(_("Week %d of %d"), m->id.week, m->id.year);
-        else if (m->id.year)
-            dom = g_strdup_printf("%d", m->id.year);
+        if (m->e->week && m->e->year)
+            dom = g_strdup_printf(_("Week %d of %d"), m->e->week, m->e->year);
+        else if (m->e->year)
+            dom = g_strdup_printf("%d", m->e->year);
 
         gchar *bpcc = NULL;
-        if (m->id.bpc)
-            bpcc = g_strdup_printf("%d", m->id.bpc);
+        if (m->e->bpc)
+            bpcc = g_strdup_printf("%d", m->e->bpc);
 
         gchar *scr_size = NULL;
-        if (m->id.horiz_cm && m->id.vert_cm)
-            scr_size = g_strdup_printf("%d cm × %d cm", m->id.horiz_cm, m->id.vert_cm);
+        if (m->e->horiz_cm && m->e->vert_cm)
+            scr_size = g_strdup_printf("%d cm × %d cm", m->e->horiz_cm, m->e->vert_cm);
 
-        int aok = m->id.checksum_ok;
-        if (m->id.ext_blocks_fail) aok = 0;
+        int aok = m->e->checksum_ok;
+        if (m->e->ext_blocks_fail) aok = 0;
         gchar *csum = aok ? _("Ok") : _("Fail");
 
         gchar *ret = g_strdup_printf("[%s]\n"
-            "%s=%d.%d\n" /* version */
             "%s=%d %s\n" /* size */
+            "%s=%d.%d\n" /* version */
             "%s=%d\n" /* ext block */
+            "%s=%s\n" /* ext to */
             "%s=%s %s\n" /* checksum */
             "[%s]\n"
             "%s=%s\n" /* vendor */
@@ -194,16 +194,17 @@ static gchar *make_edid_section(monitor *m) {
             "%s=%s\n" /* bpcc */
             ,
             _("EDID Meta"),
-            _("Version"), (int)m->id.ver_major, (int)m->id.ver_minor,
-            _("Data Size"), m->id.size, _("bytes"),
-            _("Extension Blocks"), m->id.ext_blocks,
+            _("Data Size"), m->e->len, _("bytes"),
+            _("Version"), (int)m->e->ver_major, (int)m->e->ver_minor,
+            _("Extension Blocks"), m->e->ext_blocks,
+            _("Extended to"), _(edid_standard(m->e->std)),
             _("Checksum"), csum, aok ? "" : problem_marker(),
             _("EDID Device"),
             _("Vendor"), vstr,
-            _("Name"), m->id.name,
+            _("Name"), m->e->name,
             _("Manufacture Date"), UNKIFNULL2(dom),
             _("Screen Size"), UNKIFNULL2(scr_size),
-            _("Signal Type"), m->id.a_or_d ? _("Digital") : _("Analog"),
+            _("Signal Type"), m->e->a_or_d ? _("Digital") : _("Analog"),
             _("Bits per Color Channel"), UNKIFNULL2(bpcc)
             );
         g_free(scr_size);
@@ -228,7 +229,7 @@ gchar *monitors_get_info() {
         monitor *m = monitor_new_from_sysfs(edid_files[i]);
         if (m) {
             found++;
-            if (m->id.checksum_ok && m->drm_connection) {
+            if (m->e && m->e->checksum_ok && m->drm_connection) {
                 gchar *tag = g_strdup_printf("%d-%s", found, m->drm_connection);
                 tag_make_safe_inplace(tag);
                 gchar *desc = monitor_name(m, TRUE);
