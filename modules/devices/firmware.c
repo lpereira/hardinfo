@@ -152,6 +152,7 @@ gchar *fwupdmgr_get_devices_info() {
     struct InfoGroup *this_group = NULL;
     gboolean has_vendor_field = FALSE;
     const Vendor *gv = NULL;
+    int gc = 0;
 
     fail_no_fwupdmgr = FALSE;
     spawned = g_spawn_command_line_sync("fwupdmgr get-devices",
@@ -199,6 +200,7 @@ gchar *fwupdmgr_get_devices_info() {
                             *ar = 0;
                         info_group_add_field(this_group,
                             info_field(find_translation(p), g_strdup(col+1),
+                            .tag = g_strdup_printf("guid%d", gc++),
                             .free_value_on_flatten = TRUE) );
                     } else if (SEQ(p, "Flags")) {
                         gchar **flags = g_strsplit(col+1, "|", 0);
