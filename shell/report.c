@@ -126,6 +126,7 @@ gchar *make_icon_css(const gchar *file) {
 }
 
 void cache_icon(ReportContext *ctx, const gchar *file) {
+    if (!ctx->icon_data) return;
     if (!g_hash_table_lookup(ctx->icon_data, file) )
         g_hash_table_insert(ctx->icon_data, g_strdup(file), make_icon_css(file));
 }
@@ -684,6 +685,7 @@ report_create_inner_from_module_list(ReportContext * ctx, GSList * modules)
 
 	for (entries = module->entries; entries; entries = entries->next) {
 	    ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
+        if (entry->flags & MODULE_FLAG_HIDE) continue;
 
 	    if (!params.gui_running)
 		fprintf(stderr, "\033[2K\033[40;32;1m %s\033[0m\n",

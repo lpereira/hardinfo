@@ -648,6 +648,7 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 	for (p = module->entries; p; p = g_slist_next(p)) {
 	    GtkTreeIter child;
 	    entry = (ShellModuleEntry *) p->data;
+        if (entry->flags & MODULE_FLAG_HIDE) continue;
 
 	    gtk_tree_store_append(store, &child, &parent);
 	    gtk_tree_store_set(store, &child, TREE_COL_NAME, entry->name,
@@ -2165,17 +2166,21 @@ gboolean key_is_flagged(const gchar *key) {
 }
 
 gboolean key_is_highlighted(const gchar *key) {
-    if (key_is_flagged(key)) {
-        if (strchr(key, '*'))
-            return TRUE;
+    gchar *flags;
+    key_get_components(key, &flags, NULL, NULL, NULL, NULL, TRUE);
+    if (flags && strchr(flags, '*')) {
+        g_free(flags);
+        return TRUE;
     }
     return FALSE;
 }
 
 gboolean key_wants_details(const gchar *key) {
-    if (key_is_flagged(key)) {
-        if (strchr(key, '!'))
-            return TRUE;
+    gchar *flags;
+    key_get_components(key, &flags, NULL, NULL, NULL, NULL, TRUE);
+    if (flags && strchr(flags, '!')) {
+        g_free(flags);
+        return TRUE;
     }
     return FALSE;
 }
@@ -2217,17 +2222,17 @@ void key_get_components(const gchar *key,
     gchar **flags, gchar **tag, gchar **name, gchar **label, gchar **dis,
     gboolean null_empty) {
 
-    if (!key || !*key)
-        return;
-
     if (null_empty) {
-#define K_NULL_EMPTY(f) if (f && *f) { *f = NULL; }
+#define K_NULL_EMPTY(f) if (f) { *f = NULL; }
         K_NULL_EMPTY(flags);
         K_NULL_EMPTY(tag);
         K_NULL_EMPTY(name);
         K_NULL_EMPTY(label);
         K_NULL_EMPTY(dis);
     }
+
+    if (!key || !*key)
+        return;
 
     const gchar *np = g_utf8_strchr(key+1, -1, '$') + 1;
     if (*key == '$' && np) {
