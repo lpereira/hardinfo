@@ -295,7 +295,7 @@ add_executable(hardinfo
 	shell/loadgraph-uber.c
 )
 target_link_libraries(hardinfo
-	sysobj_early
+	-Wl,-whole-archive sysobj_early -Wl,-no-whole-archive
 	uber-graph
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
@@ -333,7 +333,7 @@ add_executable(hardinfo
 	shell/loadgraph.c
 )
 target_link_libraries(hardinfo
-	sysobj_early
+	-Wl,-whole-archive sysobj_early -Wl,-no-whole-archive
 	${GTK_LIBRARIES}
 	${LIBSOUP_LIBRARIES}
 	m

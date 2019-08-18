@@ -25,12 +25,6 @@
 #include <string.h>
 #include "appf.h"
 
-/* FIXME: if this isn't here, hardinfo will crash,
- * I don't have the slightest idea why */
-void wtf() {
-    void *e = edid_new(NULL, 0);
-}
-
 char *appf(char *str, const char *sep, const char *fmt, ...) {
     char *buf = NULL;
     int inlen, seplen, len;
