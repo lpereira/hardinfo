@@ -50,7 +50,10 @@ void find_edid_ids_file() {
 }
 
 typedef struct {
+    gchar *drm_path;
     gchar *drm_connection;
+    gchar *drm_status;
+    gchar *drm_enabled;
     edid *e;
     gchar *_vstr; /* use monitor_vendor_str() */
 } monitor;
@@ -59,15 +62,21 @@ typedef struct {
 monitor *monitor_new_from_sysfs(const gchar *sysfs_edid_file) {
     gchar *edid_bin = NULL;
     gsize edid_len = 0;
+    if (!sysfs_edid_file || !*sysfs_edid_file) return NULL;
     monitor *m = monitor_new();
+    m->drm_path = g_path_get_dirname(sysfs_edid_file);
+    m->drm_connection = g_path_get_basename(m->drm_path);
+    gchar *drm_enabled_file = g_strdup_printf("%s/%s", m->drm_path, "enabled");
+    gchar *drm_status_file = g_strdup_printf("%s/%s", m->drm_path, "status");
+    g_file_get_contents(drm_enabled_file, &m->drm_enabled, NULL, NULL);
+    if (m->drm_enabled) g_strstrip(m->drm_enabled);
+    g_file_get_contents(drm_status_file, &m->drm_status, NULL, NULL);
+    if (m->drm_status) g_strstrip(m->drm_status);
     g_file_get_contents(sysfs_edid_file, &edid_bin, &edid_len, NULL);
-    if (edid_len) {
+    if (edid_len)
         m->e = edid_new(edid_bin, edid_len);
-    }
-    gchar *pd = g_path_get_dirname(sysfs_edid_file);
-    m->drm_connection = g_path_get_basename(pd);
-    g_free(pd);
-
+    g_free(drm_enabled_file);
+    g_free(drm_status_file);
     return m;
 }
 
@@ -101,6 +110,8 @@ gchar *monitor_name(monitor *m, gboolean include_vendor) {
     if (!m) return NULL;
     gchar *desc = NULL;
     edid *e = m->e;
+    if (!e)
+        return g_strdup(_("(Unknown)"));
 
     if (include_vendor) {
         if (*e->ven)
@@ -347,32 +358,37 @@ gchar *monitors_get_info() {
     int i, found = 0;
     for(i = 0; edid_files[i]; i++) {
         monitor *m = monitor_new_from_sysfs(edid_files[i]);
-        if (m) {
+        if (m && !SEQ(m->drm_status, "disconnected")) {
+            gchar *tag = g_strdup_printf("%d-%s", found, m->drm_connection);
+            tag_make_safe_inplace(tag);
+            gchar *desc = monitor_name(m, TRUE);
+            gchar *edid_section = NULL;
             edid *e = m->e;
-            found++;
-            if (e && e->checksum_ok && m->drm_connection) {
-                gchar *tag = g_strdup_printf("%d-%s", found, m->drm_connection);
-                tag_make_safe_inplace(tag);
-                gchar *desc = monitor_name(m, TRUE);
-                gchar *edid_section = make_edid_section(m);
-                gchar *details = g_strdup_printf("[%s]\n"
+            if (e && e->checksum_ok)
+                 edid_section = make_edid_section(m);
+
+            gchar *details = g_strdup_printf("[%s]\n"
                                 "%s=%s\n"
+                                //"%s=%s\n"
+                                "%s=%s %s\n"
                                 "%s\n",
                                 _("Connection"),
                                 _("DRM"), m->drm_connection,
-                                edid_section
+                                //_("DRM Path"), m->drm_path,
+                                _("Status"), m->drm_status, m->drm_enabled,
+                                edid_section ? edid_section : ""
                                 );
-                moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
-                ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
-                        ret,
-                        tag, m->drm_connection, desc
-                        );
-                icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, monitor_icon);
-                g_free(desc);
-                g_free(edid_section);
-            }
-            monitor_free(m);
+            moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
+            ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
+                                    ret,
+                                    tag, m->drm_connection, desc
+                                    );
+            icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, monitor_icon);
+            g_free(desc);
+            g_free(edid_section);
+            found++;
         }
+        monitor_free(m);
     }
 
     no_monitors = FALSE;
