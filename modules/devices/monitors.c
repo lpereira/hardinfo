@@ -179,7 +179,7 @@ static gchar *make_edid_section(monitor *m) {
         const gchar *iface = e->interface ? _(edid_interface(e->interface)) : _("(Unspecified)");
 
         gchar *d_list, *ext_list, *dtd_list, *cea_list,
-            *etb_list, *std_list, *svd_list;
+            *etb_list, *std_list, *svd_list, *sad_list;
 
         etb_list = NULL;
         for(i = 0; i < e->etb_count; i++) {
@@ -236,6 +236,20 @@ static gchar *make_edid_section(monitor *m) {
         }
         if (!svd_list) svd_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
+        sad_list = NULL;
+        for(i = 0; i < e->sad_count; i++) {
+            char *desc = edid_cea_audio_describe(&e->sads[i]);
+            sad_list = appfnl(sad_list, "sad%d=%s", i, desc);
+            g_free(desc);
+        }
+        if (!sad_list) sad_list = g_strdup_printf("%s=\n", _("(Empty List)"));
+
+        gchar *speakers = NULL;
+        if (e->speaker_alloc_bits)
+            speakers = edid_cea_speaker_allocation_describe(e->speaker_alloc_bits, 0);
+        else
+            speakers = g_strdup(_("(Unspecified)"));
+
         gchar *hex = edid_dump_hex(e, 0, 1);
         gchar *hex_esc = gg_key_file_parse_string_as_value(hex, '|');
         g_free(hex);
@@ -250,6 +264,7 @@ static gchar *make_edid_section(monitor *m) {
             "%s=%s\n" /* sig type */
             "%s=[%x] %s\n" /* interface */
             "%s=%s\n" /* bpcc */
+            "%s=%s\n" /* speakers */
             "[%s]\n"
             "%s=%s\n" /* base out */
             "%s=%s\n" /* ext out */
@@ -272,11 +287,13 @@ static gchar *make_edid_section(monitor *m) {
             "[%s]\n%s\n"
             "[%s]\n%s\n"
             "[%s]\n%s\n"
+            "[%s]\n%s\n"
             "[%s]\n%s=%s\n"
             ,
             _("Signal Type"), e->a_or_d ? _("Digital") : _("Analog"),
             _("Interface"), e->interface, iface,
             _("Bits per Color Channel"), UNSPECIFNULL2(bpcc),
+            _("Speaker Allocation"), speakers,
             _("Output (Max)"),
             edid_output_src(e->img.src), edid_output_describe(&e->img),
             edid_output_src(e->img_max.src), edid_output_describe(&e->img_max),
@@ -298,6 +315,7 @@ static gchar *make_edid_section(monitor *m) {
             _("Standard Timings (STD)"), std_list,
             _("E-EDID Extension Blocks"), ext_list,
             _("EIA/CEA-861 Data Blocks"), cea_list,
+            _("EIA/CEA-861 Short Audio Descriptors"), sad_list,
             _("EIA/CEA-861 Short Video Descriptors"), svd_list,
             _("Hex Dump"), _("Data"), hex
             );
@@ -310,6 +328,7 @@ static gchar *make_edid_section(monitor *m) {
         g_free(std_list);
         g_free(dtd_list);
         g_free(cea_list);
+        g_free(sad_list);
         g_free(svd_list);
         g_free(hex);
         //printf("ret: %s\n", ret);
