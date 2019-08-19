@@ -26,13 +26,21 @@
 typedef struct {
     float horiz_cm, vert_cm;
     float diag_cm, diag_in;
+    int horiz_blanking, vert_blanking;
     int horiz_pixels, vert_lines, vert_pixels;
+    float vert_freq_hz;
     int is_interlaced;
     int stereo_mode;
     int pixel_clock_khz;
-    int src; /* 0: edid, 1: dtd, 2: cea-dtd, ... */
+    int src; /* 0: edid, 1: etb, 2: std, 3: dtd, 4: cea-dtd, ... */
+    uint64_t pixels; /* h*v: easier to compare */
     char class_inch[6];
 } edid_output;
+
+struct edid_std {
+    uint8_t *ptr;
+    edid_output out;
+};
 
 struct edid_dtd {
     uint8_t *ptr;
@@ -89,6 +97,12 @@ typedef struct {
     int checksum_ok; /* first 128-byte block only */
     int ext_blocks, ext_blocks_ok, ext_blocks_fail;
     uint8_t *ext_ok;
+
+    int etb_count;
+    edid_output etbs[24];
+
+    int std_count;
+    struct edid_std stds[8];
 
     int dtd_count;
     struct edid_dtd *dtds;
