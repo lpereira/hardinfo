@@ -86,10 +86,28 @@ static void edid_output_fill(edid_output *out) {
          + (out->vert_cm * out->vert_cm) );
     out->diag_in = out->diag_cm / 2.54;
 
-    if (out->is_interlaced)
-        out->vert_pixels = out->vert_lines * 2;
-    else
-        out->vert_pixels = out->vert_lines;
+    if (out->is_interlaced) {
+        if (out->vert_lines)
+            out->vert_pixels = out->vert_lines * 2;
+        else
+            out->vert_lines = out->vert_pixels / 2;
+    } else {
+        if (out->vert_lines)
+            out->vert_pixels = out->vert_lines;
+        else
+            out->vert_lines = out->vert_pixels;
+    }
+
+    if (!out->vert_freq_hz && out->pixel_clock_khz) {
+        uint64_t h = out->horiz_pixels + out->horiz_blanking;
+        uint64_t v = out->vert_lines + out->vert_blanking;
+        uint64_t work = out->pixel_clock_khz * 1000;
+        work /= (h*v);
+        out->vert_freq_hz = work;
+    }
+
+    out->pixels = out->horiz_pixels;
+    out->pixels *= out->vert_pixels;
 
     static const char *inlbl = "\""; /* TODO: unicode */
     sprintf(out->class_inch, "%0.1f%s", out->diag_in, inlbl);
@@ -144,6 +162,71 @@ edid *edid_new(const char *data, unsigned int len) {
         e->img.vert_cm = e->u8[22];
         edid_output_fill(&e->img);
         e->img_max = e->img;
+    }
+
+    /* established timing bitmap */
+#define ETB_CHECK(byte, bit, h, v, f, i)         \
+    if (byte & (1<<bit)) {                       \
+        e->etbs[e->etb_count] = e->img;          \
+        e->etbs[e->etb_count].horiz_pixels = h;  \
+        e->etbs[e->etb_count].vert_pixels = v;   \
+        e->etbs[e->etb_count].vert_freq_hz = f;  \
+        e->etbs[e->etb_count].is_interlaced = i; \
+        e->etbs[e->etb_count].src = 1;           \
+        edid_output_fill(&e->etbs[e->etb_count]);\
+        e->etb_count++; };
+    ETB_CHECK(35, 7, 720, 400, 70, 0); //(VGA)
+    ETB_CHECK(35, 6, 720, 400, 88, 0); //(XGA)
+    ETB_CHECK(35, 5, 640, 480, 60, 0); //(VGA)
+    ETB_CHECK(35, 4, 640, 480, 67, 0); //(Apple Macintosh II)
+    ETB_CHECK(35, 3, 640, 480, 72, 0);
+    ETB_CHECK(35, 2, 640, 480, 75, 0);
+    ETB_CHECK(35, 1, 800, 600, 56, 0);
+    ETB_CHECK(35, 0, 800, 600, 60, 0);
+    ETB_CHECK(36, 7, 800, 600, 72, 0);
+    ETB_CHECK(36, 6, 800, 600, 75, 0);
+    ETB_CHECK(36, 5, 832, 624, 75, 0); //(Apple Macintosh II)
+    ETB_CHECK(36, 4, 1024, 768, 87, 1); //(1024×768i)
+    ETB_CHECK(36, 3, 1024, 768, 60, 0);
+    ETB_CHECK(36, 2, 1024, 768, 70, 0);
+    ETB_CHECK(36, 1, 1024, 768, 75, 0);
+    ETB_CHECK(36, 0, 1280, 1024, 75, 0);
+    ETB_CHECK(35, 7, 1152, 870, 75, 0); //(Apple Macintosh II)
+
+    /* standard timings */
+    for(i = 38; i < 53; i+=2) {
+        /* 0101 is unused */
+        if (e->u8[i] == 0x01 && e->u8[i] == 0x01)
+            continue;
+        double xres = (e->u8[i] + 31) * 8;
+        double yres = 0;
+        int iar = (e->u8[i+1] >> 6) & 0x3;
+        int vf = (e->u8[i+1] & 0x3f) + 60;
+        switch(iar) {
+            case 0: /* 16:10 (v<1.3 1:1) */
+                if (e->ver_major == 1 && e->ver_minor < 3)
+                    yres = xres;
+                else
+                    yres = xres*10/16;
+                break;
+            case 0x1: /* 4:3 */
+                yres = xres*4/3;
+                break;
+            case 0x2: /* 5:4 */
+                yres = xres*4/5;
+                break;
+            case 0x3: /* 16:9 */
+                yres = xres*9/16;
+                break;
+        }
+        e->stds[e->std_count].ptr = &e->u8[i];
+        e->stds[e->std_count].out = e->img; /* inherit */
+        e->stds[e->std_count].out.horiz_pixels = xres;
+        e->stds[e->std_count].out.vert_pixels = yres;
+        e->stds[e->std_count].out.vert_freq_hz = vf;
+        e->stds[e->std_count].out.src = 2;
+        edid_output_fill(&e->stds[e->std_count].out);
+        e->std_count++;
     }
 
     uint16_t dh, dl;
@@ -251,17 +334,40 @@ edid *edid_new(const char *data, unsigned int len) {
         }
     }
 
+    /* largest in ETB */
+    for (i = 0; i < e->etb_count; i++) {
+        if (e->etbs[i].pixels > e->img.pixels)
+            e->img = e->etbs[i];
+        if (e->etbs[i].pixels > e->img_max.pixels)
+            e->img_max = e->etbs[i];
+    }
+
+    /* largest in STDs */
+    for (i = 0; i < e->std_count; i++) {
+        if (e->stds[i].out.pixels > e->img.pixels)
+            e->img = e->stds[i].out;
+        if (e->stds[i].out.pixels > e->img_max.pixels)
+            e->img_max = e->stds[i].out;
+    }
+
     /* dtds */
     for(i = 0; i < e->dtd_count; i++) {
         uint8_t *u8 = e->dtds[i].ptr;
+        uint16_t *u16 = (uint16_t*)e->dtds[i].ptr;
         edid_output *out = &e->dtds[i].out;
-        if (e->dtds[i].cea_ext) out->src = 2;
-        else out->src = 1;
-        out->pixel_clock_khz = u8[0] * 10;
+        if (e->dtds[i].cea_ext) out->src = 4;
+        else out->src = 3;
+        out->pixel_clock_khz = le16toh(u16[0]) * 10;
         out->horiz_pixels =
             ((u8[4] & 0xf0) << 4) + u8[2];
         out->vert_lines =
             ((u8[7] & 0xf0) << 4) + u8[5];
+
+        out->horiz_blanking =
+            ((u8[4] & 0x0f) << 8) + u8[3];
+        out->vert_blanking =
+            ((u8[7] & 0x0f) << 8) + u8[6];
+
         out->horiz_cm =
             ((u8[14] & 0xf0) << 4) + u8[12];
         out->horiz_cm /= 10;
@@ -275,7 +381,7 @@ edid *edid_new(const char *data, unsigned int len) {
     }
 
     if (e->dtd_count) {
-        /* first DTD replaces the basic EDID size */
+        /* first DTD is "preferred" */
         e->img_max = e->dtds[0].out;
     }
 
@@ -374,8 +480,10 @@ const char *edid_standard(int std) {
 const char *edid_output_src(int src) {
     switch(src) {
         case 0: return N_("VESA EDID");
-        case 1: return N_("VESA EDID DTD");
-        case 2: return N_("EIA/CEA-861 DTD");
+        case 1: return N_("VESA EDID ETB");
+        case 2: return N_("VESA EDID STD");
+        case 3: return N_("VESA EDID DTD");
+        case 4: return N_("EIA/CEA-861 DTD");
     };
     return N_("unknown");
 }
@@ -562,10 +670,10 @@ char *edid_cea_block_describe(struct edid_cea_block *blk) {
 char *edid_output_describe(edid_output *out) {
     gchar *ret = NULL;
     if (out) {
-        ret = g_strdup_printf("%dx%d, %0.2fx%0.2f%s (%0.1f\") %s %s",
-            out->horiz_pixels, out->vert_pixels,
+        ret = g_strdup_printf("%dx%d@%.0f%s, %0.1fx%0.1f%s (%0.1f\") %s %s",
+            out->horiz_pixels, out->vert_pixels, out->vert_freq_hz, _("Hz"),
             out->horiz_cm, out->vert_cm, _("cm"), out->diag_in,
-            out->is_interlaced ? "interlaced" : "non-interlaced",
+            out->is_interlaced ? "interlaced" : "progressive",
             out->stereo_mode ? "stereo" : "normal");
     }
     return ret;
@@ -576,10 +684,10 @@ char *edid_dtd_describe(struct edid_dtd *dtd, int dump_bytes) {
     if (dtd) {
         edid_output *out = &dtd->out;
         char *hb = hex_bytes(dtd->ptr, 18);
-        ret = g_strdup_printf("%dx%d, %0.2fx%0.2f%s (%0.1f\") %s %s (%s)%s%s",
-            out->horiz_pixels, out->vert_lines,
+        ret = g_strdup_printf("%dx%d@%.0f%s, %0.1fx%0.1f%s (%0.1f\") %s %s (%s)%s%s",
+            out->horiz_pixels, out->vert_lines, out->vert_freq_hz, _("Hz"),
             out->horiz_cm, out->vert_cm, _("cm"), out->diag_in,
-            out->is_interlaced ? "interlaced" : "non-interlaced",
+            out->is_interlaced ? "interlaced" : "progressive",
             out->stereo_mode ? "stereo" : "normal",
             _(edid_output_src(out->src)),
             dump_bytes ? " -- " : "",
@@ -597,7 +705,7 @@ char *edid_dump2(edid *e) {
     ret = appfnl(ret, "edid version: %d.%d (%d bytes)", e->ver_major, e->ver_minor, e->len);
     ret = appfnl(ret, "extended to: %s", _(edid_standard(e->std)) );
 
-    ret = appfnl(ret, "mfg: %s, model: %u, n_serial: %u", e->ven, e->product, e->n_serial);
+    ret = appfnl(ret, "mfg: %s, model: [%04x-%08x] %u-%u", e->ven, e->product, e->n_serial, e->product, e->n_serial);
     if (e->week && e->year)
         ret = appf(ret, "", ", dom: week %d of %d", e->week, e->year);
     else if (e->year)
@@ -615,6 +723,18 @@ char *edid_dump2(edid *e) {
     ret = appfnl(ret, "ext(%s): %s", _(edid_output_src(e->img_max.src)), desc_max);
     g_free(desc);
     g_free(desc_max);
+
+    for(i = 0; i < e->etb_count; i++) {
+        char *desc = edid_output_describe(&e->etbs[i]);
+        ret = appfnl(ret, "etb[%d]: %s", i, desc);
+        g_free(desc);
+    }
+
+    for(i = 0; i < e->std_count; i++) {
+        char *desc = edid_output_describe(&e->stds[i].out);
+        ret = appfnl(ret, "std[%d]: %s", i, desc);
+        g_free(desc);
+    }
 
     ret = appfnl(ret, "checksum %s", e->checksum_ok ? "ok" : "failed!");
     if (e->ext_blocks_ok || e->ext_blocks_fail)
@@ -637,6 +757,7 @@ char *edid_dump2(edid *e) {
         ret = appfnl(ret, "dtd[%d] %s", i, desc);
         free(desc);
     }
+
     for(i = 0; i < e->cea_block_count; i++) {
         char *desc = edid_cea_block_describe(&e->cea_blocks[i]);
         ret = appfnl(ret, "cea_block[%d] %s", i, desc);

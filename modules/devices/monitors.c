@@ -178,13 +178,31 @@ static gchar *make_edid_section(monitor *m) {
 
         const gchar *iface = e->interface ? _(edid_interface(e->interface)) : _("(Unspecified)");
 
-        gchar *d_list, *ext_list, *dtd_list, *cea_list;
+        gchar *d_list, *ext_list, *dtd_list, *cea_list,
+            *etb_list, *std_list;
 
-        d_list = g_strdup("");
+        etb_list = NULL;
+        for(i = 0; i < e->etb_count; i++) {
+            char *desc = edid_output_describe(&e->etbs[i]);
+            etb_list = appfnl(etb_list, "etb%d=%s", i, desc);
+            g_free(desc);
+        }
+        if (!etb_list) etb_list = g_strdup_printf("%s=\n", _("(Empty List)"));
+
+        std_list = NULL;
+        for(i = 0; i < e->std_count; i++) {
+            char *desc = edid_output_describe(&e->stds[i].out);
+            std_list = appfnl(std_list, "std%d=%s", i, desc);
+            g_free(desc);
+        }
+        if (!std_list) std_list = g_strdup_printf("%s=\n", _("(Empty List)"));
+
+        d_list = NULL;
         for(i = 0; i < 4; i++)
             d_list = appfnl(d_list, "descriptor%d = ([%02x] %s): %s", i, e->d_type[i], _(edid_descriptor_type(e->d_type[i])), *e->d_text[i] ? e->d_text[i] : "{...}");
+        if (!d_list) d_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
-        ext_list = g_strdup("");
+        ext_list = NULL;
         for(i = 0; i < e->ext_blocks; i++) {
             int type = e->u8[(i+1)*128];
             int version = e->u8[(i+1)*128 + 1];
@@ -193,19 +211,22 @@ static gchar *make_edid_section(monitor *m) {
                 e->ext_ok[i] ? "ok" : "fail"
             );
         }
+        if (!ext_list) ext_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
-        dtd_list = g_strdup("");
+        dtd_list = NULL;
         for(i = 0; i < e->dtd_count; i++) {
             char *desc = edid_dtd_describe(&e->dtds[i], 0);
             dtd_list = appfnl(dtd_list, "dtd%d = %s", i, desc);
             free(desc);
         }
+        if (!dtd_list) dtd_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
-        cea_list = g_strdup("");
+        cea_list = NULL;
         for(i = 0; i < e->cea_block_count; i++) {
             char *desc = edid_cea_block_describe(&e->cea_blocks[i]);
             cea_list = appfnl(cea_list, "cea_block%d = %s", i, desc);
         }
+        if (!cea_list) cea_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
         gchar *hex = edid_dump_hex(e, 0, 1);
         gchar *hex_esc = gg_key_file_parse_string_as_value(hex, '|');
@@ -227,6 +248,8 @@ static gchar *make_edid_section(monitor *m) {
             "[%s]\n"
             "%s=%s\n" /* vendor */
             "%s=%s\n" /* name */
+            "%s=[%04x-%08x] %u-%u\n" /* model, n_serial */
+            "%s=%s\n" /* serial */
             "%s=%s\n" /* dom */
             "[%s]\n"
             "%s=%d %s\n" /* size */
@@ -234,6 +257,8 @@ static gchar *make_edid_section(monitor *m) {
             "%s=%d\n" /* ext block */
             "%s=%s\n" /* ext to */
             "%s=%s %s\n" /* checksum */
+            "[%s]\n%s\n"
+            "[%s]\n%s\n"
             "[%s]\n%s\n"
             "[%s]\n%s\n"
             "[%s]\n%s\n"
@@ -249,6 +274,8 @@ static gchar *make_edid_section(monitor *m) {
             _("EDID Device"),
             _("Vendor"), vstr,
             _("Name"), e->name,
+            _("Model"), e->product, e->n_serial, e->product, e->n_serial,
+            _("Serial"), UNKIFNULL2(e->serial),
             _("Manufacture Date"), UNKIFNULL2(dom),
             _("EDID Meta"),
             _("Data Size"), e->len, _("bytes"),
@@ -258,6 +285,8 @@ static gchar *make_edid_section(monitor *m) {
             _("Checksum"), csum, aok ? "" : problem_marker(),
             _("EDID Descriptors"), d_list,
             _("Detailed Timing Descriptors (DTD)"), dtd_list,
+            _("Established Timings Bitmap (ETB)"), etb_list,
+            _("Standard Timings (STD)"), std_list,
             _("E-EDID Extension Blocks"), ext_list,
             _("EIA/CEA-861 Data Blocks"), cea_list,
             _("Hex Dump"), _("Data"), hex
@@ -267,6 +296,8 @@ static gchar *make_edid_section(monitor *m) {
 
         g_free(d_list);
         g_free(ext_list);
+        g_free(etb_list);
+        g_free(std_list);
         g_free(dtd_list);
         g_free(cea_list);
         g_free(hex);
