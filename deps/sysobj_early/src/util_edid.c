@@ -53,28 +53,37 @@ char *hex_bytes(uint8_t *bytes, int count) {
     return buffer;
 }
 
-static void cea_block_decode(struct edid_cea_block *blk) {
-    struct edid_cea_audio *blk_audio = (void*)blk;
-    struct edid_cea_speaker *blk_speaker = (void*)blk;
-    //struct edid_cea_vendor_spec *blk_vendor_spec = (void*)blk;
+static void cea_block_decode(struct edid_cea_block *blk, edid *e) {
+    int i;
     if (blk) {
         switch(blk->header.type) {
-            case 0x1:
-                blk_audio->format = (blk->header.ptr[1] & 0x78) >> 3;
-                blk_audio->channels = 1 + blk->header.ptr[1] & 0x7;
-                blk_audio->freq_bits = blk->header.ptr[2];
-                if (blk_audio->format == 1) {
-                    blk_audio->depth_bits = blk->header.ptr[3];
-                } else if (blk_audio->format >= 2
-                        && blk_audio->format <= 8) {
-                    blk_audio->max_kbps = blk->header.ptr[3] * 8;
+            case 0x1: /* SADS */
+                for(i = 1; i <= blk->header.len; i+=3) {
+                    struct edid_sad *sad = &e->sads[e->sad_count];
+                    sad->v[0] = blk->header.ptr[i];
+                    sad->v[1] = blk->header.ptr[i+1];
+                    sad->v[2] = blk->header.ptr[i+2];
+                    sad->format = (sad->v[0] & 0x78) >> 3;
+                    sad->channels = 1 + sad->v[0] & 0x7;
+                    sad->freq_bits = sad->v[1];
+                    if (sad->format == 1) {
+                        sad->depth_bits = sad->v[2];
+                    } else if (sad->format >= 2
+                            && sad->format <= 8) {
+                        sad->max_kbps = 8 * sad->v[2];
+                    }
+                    e->sad_count++;
                 }
                 break;
-            case 0x4:
-                blk_speaker->alloc_bits = blk->header.ptr[1];
+            case 0x4: /* Speaker allocation */
+                e->speaker_alloc_bits = blk->header.ptr[1];
                 break;
-            case 0x3:
-            case 0x2: /* SVD list is handled elsewhere */
+            case 0x2: /* SVDs */
+                for(i = 1; i <= blk->header.len; i++)
+                    e->svds[e->svd_count++].v = blk->header.ptr[i];
+                break;
+            case 0x3: /* Vendor-specific */
+                // TODO:
             default:
                 break;
         }
@@ -154,9 +163,11 @@ edid *edid_new(const char *data, unsigned int len) {
     e->dtds = malloc(sizeof(struct edid_dtd) * 1000);
     e->cea_blocks = malloc(sizeof(struct edid_cea_block) * 1000);
     e->svds = malloc(sizeof(struct edid_svd) * 1000);
+    e->sads = malloc(sizeof(struct edid_sad) * 1000);
     memset(e->dtds, 0, sizeof(struct edid_dtd) * 1000);
     memset(e->cea_blocks, 0, sizeof(struct edid_cea_block) * 1000);
     memset(e->svds, 0, sizeof(struct edid_svd) * 1000);
+    memset(e->sads, 0, sizeof(struct edid_sad) * 1000);
 
     uint16_t vid = be16toh(e->u16[4]); /* bytes 8-9 */
     e->ven[2] = 64 + (vid & 0x1f);
@@ -305,11 +316,7 @@ edid *edid_new(const char *data, unsigned int len) {
                         e->cea_blocks[e->cea_block_count].header.ptr = &u8[b];
                         e->cea_blocks[e->cea_block_count].header.type = db_type;
                         e->cea_blocks[e->cea_block_count].header.len = db_size;
-                        if (db_type == 0x2) {
-                            for(i = 1; i <= db_size; i++)
-                                e->svds[e->svd_count++].v = u8[b+i];
-                        } else
-                            cea_block_decode(&e->cea_blocks[e->cea_block_count]);
+                        cea_block_decode(&e->cea_blocks[e->cea_block_count], e);
                         e->cea_block_count++;
                         b += db_size + 1;
                     }
@@ -441,6 +448,13 @@ edid *edid_new(const char *data, unsigned int len) {
         e->svds = NULL;
     } else {
         e->svds = realloc(e->svds, sizeof(struct edid_svd) * e->svd_count);
+    }
+    if (!e->sad_count) {
+        if (e->sads)
+            free(e->sads);
+        e->sads = NULL;
+    } else {
+        e->sads = realloc(e->sads, sizeof(struct edid_sad) * e->sad_count);
     }
 
     return e;
@@ -635,72 +649,81 @@ const char *edid_descriptor_type(int type) {
     return N_("detailed timing descriptor");
 }
 
+char *edid_cea_audio_describe(struct edid_sad *sad) {
+    if (!sad) return NULL;
+
+    if (!sad->format)
+        return  g_strdup_printf("format:([%x] %s)",
+            sad->format, _(edid_cea_audio_type(sad->format)) );
+
+    gchar *ret = NULL;
+    gchar *tmp[3] = {};
+#define appfreq(b, f) if (sad->freq_bits & (1 << b)) tmp[0] = appf(tmp[0], ", ", "%d", f);
+#define appdepth(b, d) if (sad->depth_bits & (1 << b)) tmp[1] = appf(tmp[1], ", ", "%d%s", d, _("-bit"));
+    appfreq(0, 32);
+    appfreq(1, 44);
+    appfreq(2, 48);
+    appfreq(3, 88);
+    appfreq(4, 96);
+    appfreq(5, 176);
+    appfreq(6, 192);
+
+    if (sad->format == 1) {
+        appdepth(0, 16);
+        appdepth(1, 20);
+        appdepth(2, 24);
+        tmp[2] = g_strdup_printf("depths: %s", tmp[1]);
+    } else if (sad->format >= 2
+                && sad->format <= 8 ) {
+        tmp[2] = g_strdup_printf("max_bitrate: %d %s", sad->max_kbps, _("kbps"));
+    } else
+        tmp[2] = g_strdup("");
+
+    ret = g_strdup_printf("format:([%x] %s) channels:%d rates:%s %s %s",
+        sad->format, _(edid_cea_audio_type(sad->format)),
+        sad->channels, tmp[0], _("kHz"),
+        tmp[2]);
+    g_free(tmp[0]);
+    g_free(tmp[1]);
+    g_free(tmp[2]);
+    return ret;
+}
+
+char *edid_cea_speaker_allocation_describe(int bitfield, int short_version) {
+    gchar *spk_list = NULL;
+#define appspk(b, sv, fv) if (bitfield & (1 << b)) \
+    spk_list = appf(spk_list, short_version ? ", " : "\n", "%s", short_version ? sv : fv);
+
+    appspk(0, "FL+FR", _("Front left and right"));
+    appspk(1, "LFE", _("Low-frequency effects"));
+    appspk(2, "FC", _("Front center"));
+    appspk(3, "RL+RR", _("Rear left and right"));
+    appspk(4, "RC", _("Rear center"));
+    appspk(5, "???", _(""));
+    appspk(6, "???", _(""));
+
+    return spk_list;
+}
+
 char *edid_cea_block_describe(struct edid_cea_block *blk) {
     gchar *ret = NULL;
     gchar *tmp[3] = {};
-    struct edid_cea_audio *blk_audio = (void*)blk;
-    struct edid_cea_speaker *blk_speaker = (void*)blk;
-    //struct edid_cea_vendor_spec *blk_vendor_spec = (void*)blk;
 
     if (blk) {
         char *hb = hex_bytes(blk->header.ptr, blk->header.len+1);
         switch(blk->header.type) {
-            case 0x1:
-
-#define appfreq(b, f) if (blk_audio->freq_bits & (1 << b)) tmp[0] = appf(tmp[0], ", ", "%d", f);
-#define appdepth(b, d) if (blk_audio->depth_bits & (1 << b)) tmp[1] = appf(tmp[1], ", ", "%d%s", d, _("-bit"));
-                appfreq(0, 32);
-                appfreq(1, 44);
-                appfreq(2, 48);
-                appfreq(3, 88);
-                appfreq(4, 96);
-                appfreq(5, 176);
-                appfreq(6, 192);
-
-                if (blk_audio->format == 1) {
-                    appdepth(0, 16);
-                    appdepth(1, 20);
-                    appdepth(2, 24);
-                    tmp[2] = g_strdup_printf("depths: %s", tmp[1]);
-                } else if (blk_audio->format >= 2
-                            && blk_audio->format <= 8 ) {
-                    tmp[2] = g_strdup_printf("max_bitrate: %d %s", blk_audio->max_kbps, _("kbps"));
-                } else
-                    tmp[2] = g_strdup("");
-
-                ret = g_strdup_printf("([%x] %s) len:%d format:([%x] %s) channels:%d rates:%s %s %s -- %s",
+            case 0x1: /* SAD list */
+                ret = g_strdup_printf("([%x] %s) sads:%d",
                     blk->header.type, _(edid_cea_block_type(blk->header.type)),
-                    blk->header.len,
-                    blk_audio->format, _(edid_cea_audio_type(blk_audio->format)),
-                    blk_audio->channels, tmp[0], _("kHz"),
-                    tmp[2],
-                    hb);
-                g_free(tmp[0]);
-                g_free(tmp[1]);
-                g_free(tmp[2]);
+                    blk->header.len/3);
                 break;
-            case 0x4:
-#define appspk(b, s) if (blk_speaker->alloc_bits & (1 << b)) tmp[0] = appf(tmp[0], ", ", "%s", s);
-                appspk(0, _("LF+LR: Front left and right"));
-                appspk(1, _("LFE: Low-frequency effects"));
-                appspk(2, _("FC: Front center"));
-                appspk(3, _("LR+LR: Rear left and right"));
-                appspk(4, _("RC: Rear center"));
-                appspk(5, _("???"));
-                appspk(6, _("???"));
-                ret = g_strdup_printf("([%x] %s) len:%d %s -- %s",
-                    blk->header.type, _(edid_cea_block_type(blk->header.type)),
-                    blk->header.len,
-                    tmp[0],
-                    hb);
-                g_free(tmp[0]);
-                break;
-            case 0x2:
+            case 0x2: /* SVD list */
                 ret = g_strdup_printf("([%x] %s) svds:%d",
                     blk->header.type, _(edid_cea_block_type(blk->header.type)),
                     blk->header.len);
                 break;
             case 0x3: //TODO
+            case 0x4:
             default:
                 ret = g_strdup_printf("([%x] %s) len:%d -- %s",
                     blk->header.type, _(edid_cea_block_type(blk->header.type)),
@@ -772,6 +795,12 @@ char *edid_dump2(edid *e) {
     g_free(desc);
     g_free(desc_max);
 
+    if (e->speaker_alloc_bits) {
+        char *desc = edid_cea_speaker_allocation_describe(e->speaker_alloc_bits, 1);
+        ret = appfnl(ret, "speakers: %s", desc);
+        g_free(desc);
+    }
+
     for(i = 0; i < e->etb_count; i++) {
         char *desc = edid_output_describe(&e->etbs[i]);
         ret = appfnl(ret, "etb[%d]: %s", i, desc);
@@ -814,6 +843,14 @@ char *edid_dump2(edid *e) {
     for(i = 0; i < e->svd_count; i++) {
         char *desc = edid_output_describe(&e->svds[i].out);
         ret = appfnl(ret, "svd[%d] [%02x] %s", i, e->svds[i].v, desc);
+        free(desc);
+    }
+
+    for(i = 0; i < e->sad_count; i++) {
+        char *desc = edid_cea_audio_describe(&e->sads[i]);
+        ret = appfnl(ret, "sad[%d] [%02x%02x%02x] %s", i,
+            e->sads[i].v[0], e->sads[i].v[1], e->sads[i].v[2],
+            desc);
         free(desc);
     }
 

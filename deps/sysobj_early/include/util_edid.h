@@ -54,6 +54,13 @@ struct edid_svd {
     edid_output out;
 };
 
+struct edid_sad {
+    uint8_t v[3];
+    int format, channels, freq_bits;
+    int depth_bits; /* format 1 */
+    int max_kbps;   /* formats 2-8 */
+};
+
 struct edid_cea_header {
     uint8_t *ptr;
     int type, len;
@@ -62,22 +69,6 @@ struct edid_cea_header {
 struct edid_cea_block {
     struct edid_cea_header header;
     int reserved[8];
-};
-
-struct edid_cea_audio {
-    struct edid_cea_header header;
-    int format, channels, freq_bits;
-    int depth_bits; /* format 1 */
-    int max_kbps;   /* formats 2-8 */
-};
-
-struct edid_cea_vendor_spec {
-    struct edid_cea_header header;
-};
-
-struct edid_cea_speaker {
-    struct edid_cea_header header;
-    int alloc_bits;
 };
 
 typedef struct {
@@ -109,11 +100,14 @@ typedef struct {
     int dtd_count;
     struct edid_dtd *dtds;
 
+    int cea_block_count;
+    struct edid_cea_block *cea_blocks;
+
     int svd_count;
     struct edid_svd *svds;
 
-    int cea_block_count;
-    struct edid_cea_block *cea_blocks;
+    int sad_count;
+    struct edid_sad *sads;
 
     char ven[4];
     int d_type[4];
@@ -132,6 +126,8 @@ typedef struct {
     int week, year;
     edid_output img;
     edid_output img_max;
+    int speaker_alloc_bits;
+
 } edid;
 edid *edid_new(const char *data, unsigned int len);
 edid *edid_new_from_hex(const char *hex_string);
@@ -149,6 +145,8 @@ const char *edid_cea_audio_type(int type);
 char *edid_output_describe(edid_output *out);
 char *edid_dtd_describe(struct edid_dtd *dtd, int dump_bytes);
 char *edid_cea_block_describe(struct edid_cea_block *blk);
+char *edid_cea_audio_describe(struct edid_sad *sad);
+char *edid_cea_speaker_allocation_describe(int bitfield, int short_version);
 
 char *edid_dump2(edid *e);
 
