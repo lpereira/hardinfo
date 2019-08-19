@@ -29,6 +29,8 @@
 #include "util_edid.h"
 #include "util_sysobj.h"
 
+#include "util_edid_svd_table.c"
+
 /* block must be 128 bytes */
 static int block_check(const void *edid_block_bytes) {
     if (!edid_block_bytes) return 0;
@@ -53,9 +55,8 @@ char *hex_bytes(uint8_t *bytes, int count) {
 
 static void cea_block_decode(struct edid_cea_block *blk) {
     struct edid_cea_audio *blk_audio = (void*)blk;
-    struct edid_cea_video *blk_video = (void*)blk;
     struct edid_cea_speaker *blk_speaker = (void*)blk;
-    struct edid_cea_vendor_spec *blk_vendor_spec = (void*)blk;
+    //struct edid_cea_vendor_spec *blk_vendor_spec = (void*)blk;
     if (blk) {
         switch(blk->header.type) {
             case 0x1:
@@ -73,7 +74,7 @@ static void cea_block_decode(struct edid_cea_block *blk) {
                 blk_speaker->alloc_bits = blk->header.ptr[1];
                 break;
             case 0x3:
-            case 0x2:
+            case 0x2: /* SVD list is handled elsewhere */
             default:
                 break;
         }
@@ -101,17 +102,41 @@ static void edid_output_fill(edid_output *out) {
     if (!out->vert_freq_hz && out->pixel_clock_khz) {
         uint64_t h = out->horiz_pixels + out->horiz_blanking;
         uint64_t v = out->vert_lines + out->vert_blanking;
-        uint64_t work = out->pixel_clock_khz * 1000;
-        work /= (h*v);
-        out->vert_freq_hz = work;
+        if (h && v) {
+            uint64_t work = out->pixel_clock_khz * 1000;
+            work /= (h*v);
+            out->vert_freq_hz = work;
+        }
     }
 
     out->pixels = out->horiz_pixels;
     out->pixels *= out->vert_pixels;
 
-    static const char *inlbl = "\""; /* TODO: unicode */
-    sprintf(out->class_inch, "%0.1f%s", out->diag_in, inlbl);
-    util_strchomp_float(out->class_inch);
+    if (out->diag_in) {
+        static const char *inlbl = "\""; /* TODO: unicode */
+        sprintf(out->class_inch, "%0.1f%s", out->diag_in, inlbl);
+        util_strchomp_float(out->class_inch);
+    }
+}
+
+edid_output edid_output_from_svd(uint8_t index) {
+    int i;
+    if (index >= 128 && index <= 192) index &= 0x7f; /* "native" flag for 0-64 */
+    for(i = 0; i < (int)G_N_ELEMENTS(cea_standard_timings); i++) {
+        if (cea_standard_timings[i].index == index) {
+            edid_output out = {};
+            out.horiz_pixels = cea_standard_timings[i].horiz_active;
+            out.vert_lines = cea_standard_timings[i].vert_active;
+            if (strchr(cea_standard_timings[i].short_name, 'i'))
+                out.is_interlaced = 1;
+            out.pixel_clock_khz = cea_standard_timings[i].pixel_clock_mhz * 1000;
+            out.vert_freq_hz = cea_standard_timings[i].vert_freq_hz;
+            out.src = 5;
+            edid_output_fill(&out);
+            return out;
+        }
+    }
+    return (edid_output){};
 }
 
 edid *edid_new(const char *data, unsigned int len) {
@@ -128,8 +153,10 @@ edid *edid_new(const char *data, unsigned int len) {
 
     e->dtds = malloc(sizeof(struct edid_dtd) * 1000);
     e->cea_blocks = malloc(sizeof(struct edid_cea_block) * 1000);
+    e->svds = malloc(sizeof(struct edid_svd) * 1000);
     memset(e->dtds, 0, sizeof(struct edid_dtd) * 1000);
     memset(e->cea_blocks, 0, sizeof(struct edid_cea_block) * 1000);
+    memset(e->svds, 0, sizeof(struct edid_svd) * 1000);
 
     uint16_t vid = be16toh(e->u16[4]); /* bytes 8-9 */
     e->ven[2] = 64 + (vid & 0x1f);
@@ -196,7 +223,7 @@ edid *edid_new(const char *data, unsigned int len) {
     /* standard timings */
     for(i = 38; i < 53; i+=2) {
         /* 0101 is unused */
-        if (e->u8[i] == 0x01 && e->u8[i] == 0x01)
+        if (e->u8[i] == 0x01 && e->u8[i+1] == 0x01)
             continue;
         double xres = (e->u8[i] + 31) * 8;
         double yres = 0;
@@ -270,26 +297,26 @@ edid *edid_new(const char *data, unsigned int len) {
                 e->std = MAX(e->std, 1);
                 /* CEA extension */
                 int db_end = u8[2];
-                //printf("db_end: %d\n", db_end);
                 if (db_end) {
                     int b = 4;
                     while(b < db_end) {
                         int db_type = (u8[b] & 0xe0) >> 5;
                         int db_size = u8[b] & 0x1f;
-                        //printf("CEA BLK: %s\n", hex_bytes(&u8[b], db_size+1));
                         e->cea_blocks[e->cea_block_count].header.ptr = &u8[b];
                         e->cea_blocks[e->cea_block_count].header.type = db_type;
                         e->cea_blocks[e->cea_block_count].header.len = db_size;
-                        cea_block_decode(&e->cea_blocks[e->cea_block_count]);
+                        if (db_type == 0x2) {
+                            for(i = 1; i <= db_size; i++)
+                                e->svds[e->svd_count++].v = u8[b+i];
+                        } else
+                            cea_block_decode(&e->cea_blocks[e->cea_block_count]);
                         e->cea_block_count++;
                         b += db_size + 1;
                     }
                     if (b > db_end) b = db_end;
-                    //printf("dtd start: %d\n", b);
                     /* DTDs */
                     while(b < 127) {
                         if (u8[b]) {
-                            //printf("DTD: %s\n", hex_bytes(&u8[b], 18));
                             e->dtds[e->dtd_count].ptr = &u8[b];
                             e->dtds[e->dtd_count].cea_ext = 1;
                             e->dtd_count++;
@@ -385,6 +412,15 @@ edid *edid_new(const char *data, unsigned int len) {
         e->img_max = e->dtds[0].out;
     }
 
+    /* svds */
+    for(i = 0; i < e->svd_count; i++) {
+        if (e->svds[i].v >= 128 &&
+            e->svds[i].v <= 192) {
+            e->svds[i].is_native = 1;
+        }
+        e->svds[i].out = edid_output_from_svd(e->svds[i].v);
+    }
+
     /* squeeze lists */
     if (!e->dtd_count) {
         free(e->dtds);
@@ -398,6 +434,13 @@ edid *edid_new(const char *data, unsigned int len) {
         e->cea_blocks = NULL;
     } else {
         e->cea_blocks = realloc(e->cea_blocks, sizeof(struct edid_cea_block) * e->cea_block_count);
+    }
+    if (!e->svd_count) {
+        if (e->svds)
+            free(e->svds);
+        e->svds = NULL;
+    } else {
+        e->svds = realloc(e->svds, sizeof(struct edid_svd) * e->svd_count);
     }
 
     return e;
@@ -596,9 +639,8 @@ char *edid_cea_block_describe(struct edid_cea_block *blk) {
     gchar *ret = NULL;
     gchar *tmp[3] = {};
     struct edid_cea_audio *blk_audio = (void*)blk;
-    struct edid_cea_video *blk_video = (void*)blk;
     struct edid_cea_speaker *blk_speaker = (void*)blk;
-    struct edid_cea_vendor_spec *blk_vendor_spec = (void*)blk;
+    //struct edid_cea_vendor_spec *blk_vendor_spec = (void*)blk;
 
     if (blk) {
         char *hb = hex_bytes(blk->header.ptr, blk->header.len+1);
@@ -653,8 +695,12 @@ char *edid_cea_block_describe(struct edid_cea_block *blk) {
                     hb);
                 g_free(tmp[0]);
                 break;
-            case 0x3:
             case 0x2:
+                ret = g_strdup_printf("([%x] %s) svds:%d",
+                    blk->header.type, _(edid_cea_block_type(blk->header.type)),
+                    blk->header.len);
+                break;
+            case 0x3: //TODO
             default:
                 ret = g_strdup_printf("([%x] %s) len:%d -- %s",
                     blk->header.type, _(edid_cea_block_type(blk->header.type)),
@@ -670,11 +716,13 @@ char *edid_cea_block_describe(struct edid_cea_block *blk) {
 char *edid_output_describe(edid_output *out) {
     gchar *ret = NULL;
     if (out) {
-        ret = g_strdup_printf("%dx%d@%.0f%s, %0.1fx%0.1f%s (%0.1f\") %s %s",
-            out->horiz_pixels, out->vert_pixels, out->vert_freq_hz, _("Hz"),
-            out->horiz_cm, out->vert_cm, _("cm"), out->diag_in,
-            out->is_interlaced ? "interlaced" : "progressive",
-            out->stereo_mode ? "stereo" : "normal");
+        ret = g_strdup_printf("%dx%d@%.0f%s",
+            out->horiz_pixels, out->vert_pixels, out->vert_freq_hz, _("Hz") );
+        if (out->diag_cm)
+            ret = appfsp(ret, "%0.1fx%0.1f%s (%0.1f\")",
+                out->horiz_cm, out->vert_cm, _("cm"), out->diag_in );
+        ret = appfsp(ret, "%s", out->is_interlaced ? "interlaced" : "progressive");
+        ret = appfsp(ret, "%s", out->stereo_mode ? "stereo" : "normal");
     }
     return ret;
 }
@@ -761,6 +809,12 @@ char *edid_dump2(edid *e) {
     for(i = 0; i < e->cea_block_count; i++) {
         char *desc = edid_cea_block_describe(&e->cea_blocks[i]);
         ret = appfnl(ret, "cea_block[%d] %s", i, desc);
+    }
+
+    for(i = 0; i < e->svd_count; i++) {
+        char *desc = edid_output_describe(&e->svds[i].out);
+        ret = appfnl(ret, "svd[%d] [%02x] %s", i, e->svds[i].v, desc);
+        free(desc);
     }
 
     return ret;

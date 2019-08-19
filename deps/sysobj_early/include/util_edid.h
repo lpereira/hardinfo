@@ -31,8 +31,8 @@ typedef struct {
     float vert_freq_hz;
     int is_interlaced;
     int stereo_mode;
-    int pixel_clock_khz;
-    int src; /* 0: edid, 1: etb, 2: std, 3: dtd, 4: cea-dtd, ... */
+    uint64_t pixel_clock_khz;
+    int src; /* 0: edid, 1: etb, 2: std, 3: dtd, 4: cea-dtd, 5: svd ... */
     uint64_t pixels; /* h*v: easier to compare */
     char class_inch[6];
 } edid_output;
@@ -45,6 +45,12 @@ struct edid_std {
 struct edid_dtd {
     uint8_t *ptr;
     int cea_ext;
+    edid_output out;
+};
+
+struct edid_svd {
+    uint8_t v;
+    int is_native;
     edid_output out;
 };
 
@@ -63,10 +69,6 @@ struct edid_cea_audio {
     int format, channels, freq_bits;
     int depth_bits; /* format 1 */
     int max_kbps;   /* formats 2-8 */
-};
-
-struct edid_cea_video {
-    struct edid_cea_header header;
 };
 
 struct edid_cea_vendor_spec {
@@ -106,6 +108,9 @@ typedef struct {
 
     int dtd_count;
     struct edid_dtd *dtds;
+
+    int svd_count;
+    struct edid_svd *svds;
 
     int cea_block_count;
     struct edid_cea_block *cea_blocks;
