@@ -256,9 +256,11 @@ static gchar *make_edid_section(monitor *m) {
         if (!sad_list) sad_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
         gchar *speakers = NULL;
-        if (e->speaker_alloc_bits)
-            speakers = edid_cea_speaker_allocation_describe(e->speaker_alloc_bits, 0);
-        else
+        if (e->speaker_alloc_bits) {
+            gchar *spk_tmp = edid_cea_speaker_allocation_describe(e->speaker_alloc_bits, 0);
+            speakers = gg_key_file_parse_string_as_value(spk_tmp, '|');
+            g_free(spk_tmp);
+        } else
             speakers = g_strdup(_("(Unspecified)"));
 
         gchar *hex = edid_dump_hex(e, 0, 1);

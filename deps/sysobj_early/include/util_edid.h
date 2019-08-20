@@ -24,6 +24,38 @@
 #include <stdint.h>  /* for *int*_t types */
 
 typedef struct {
+    uint8_t version;
+    uint8_t extension_length;
+    uint8_t primary_use_case;
+    uint8_t extension_count;
+    int blocks;
+    int checksum_ok;
+} DisplayIDMeta;
+
+typedef struct {
+    uint8_t *ptr;
+    union {
+        uint8_t tag;
+        uint8_t type;
+    };
+    uint8_t revision;
+    uint8_t len;
+} DisplayIDBlock;
+
+/* order by rising priority */
+enum {
+    OUTSRC_EDID,
+    OUTSRC_ETB,
+    OUTSRC_STD,
+    OUTSRC_DTD,
+    OUTSRC_CEA_DTD,
+    OUTSRC_SVD,
+    OUTSRC_DID_TYPE_I,
+    OUTSRC_DID_TYPE_VI,
+    OUTSRC_DID_TYPE_VII,
+};
+
+typedef struct {
     float horiz_cm, vert_cm;
     float diag_cm, diag_in;
     int horiz_blanking, vert_blanking;
@@ -31,8 +63,9 @@ typedef struct {
     float vert_freq_hz;
     int is_interlaced;
     int stereo_mode;
+    int is_preferred;
     uint64_t pixel_clock_khz;
-    int src; /* 0: edid, 1: etb, 2: std, 3: dtd, 4: cea-dtd, 5: svd ... */
+    int src; /* enum OUTSRC_* */
     uint64_t pixels; /* h*v: easier to compare */
     char class_inch[6];
 } edid_output;
@@ -71,6 +104,14 @@ struct edid_cea_block {
     int reserved[8];
 };
 
+enum {
+    STD_EDID         = 0,
+    STD_EEDID        = 1,
+    STD_EIACEA861    = 2,
+    STD_DISPLAYID    = 3,
+    STD_DISPLAYID20  = 4,
+};
+
 typedef struct {
     union {
         void* data;
@@ -80,10 +121,7 @@ typedef struct {
     };
     unsigned int len;
 
-    /* 0 - EDID
-     * 1 - EIA/CEA-861
-     * 2 - DisplayID
-     */
+    /* enum STD_* */
     int std;
 
     int ver_major, ver_minor;
@@ -128,6 +166,12 @@ typedef struct {
     edid_output img_max;
     int speaker_alloc_bits;
 
+    DisplayIDMeta did;
+    int did_block_count;
+    DisplayIDBlock *did_blocks;
+
+    int didt_count;
+    edid_output *didts;
 } edid;
 edid *edid_new(const char *data, unsigned int len);
 edid *edid_new_from_hex(const char *hex_string);
@@ -147,6 +191,8 @@ char *edid_dtd_describe(struct edid_dtd *dtd, int dump_bytes);
 char *edid_cea_block_describe(struct edid_cea_block *blk);
 char *edid_cea_audio_describe(struct edid_sad *sad);
 char *edid_cea_speaker_allocation_describe(int bitfield, int short_version);
+const char *edid_did_block_type(int type);
+char *edid_did_block_describe(DisplayIDBlock *blk);
 
 char *edid_dump2(edid *e);
 

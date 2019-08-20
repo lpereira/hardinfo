@@ -128,13 +128,89 @@ name Toshiba Corporation
 name Vizio
     name_short VIZIO
     ansi_color 0;30;107
+    match_string Vizio
     note EDID vendor: VIZ
     match_string_exact VIZ
+
+name AOC International
+    name_short AOC
+    url www.aoc.com
+    wikipedia AOC International
+    ansi_color 0;97;44
+    match_string_case AOC
+    note formerly Admiral Overseas Corporation
+    match_string Admiral Overseas Corporation
+    match_string Admiral
+
+name Magewell
+    url www.magewell.com
+    ansi_color 0;34;107
+    match_string Magewell
+
+name Harman International
+    name_short Harman
+    url www.harman.com
+    ansi_color 0;34;107
+    match_string Harman International
+    match_string Harman
+
+name Oculus VR
+    name_short Oculus
+    url www.oculus.com
+    ansi_color 0;97;100
+    wikipedia Oculus VR
+    match_string Oculus VR
+    match_string Oculus
+
+name Yamaha Corporation
+    name_short Yamaha
+    url www.yamaha.com
+    wikipedia Yamaha Corporation
+    ansi_color 0;35;107
+    match_string Yamaha
+
+name AU Optronics Corporation
+    name_short AUO
+    url www.auo.com
+    wikipedia AU Optronics
+    ansi_color 0;34;107
+    match_string AU Optronics
+    match_string_case AUO
+
+name Planar
+    name_short PLANAR
+    url www.planar.com
+    ansi_color 0;91;40
+    match_string Planar
+
+name Seiko Epson Corporation
+    name_short EPSON
+    url epson.com
+    wikipedia Seiko Epson
+    ansi_color 0;34;107
+    match_string Seiko Epson
+    match_string Epson
+    match_string Seiko
+
+# Company defunct, now brand name of Chinese company
+name Eastman Kodak Company
+    name_short Kodak
+    wikipedia Kodak
+    ansi_color 0;31;43
+    match_string Kodak
+
+# Company defunct, now brand name of Chinese company
+name Westinghouse Electronics
+    name_short W
+    wikipedia Westinghouse Electronics
+    ansi_color 0;97;44
+    match_string Westinghouse
 
 name ViewSonic Corporation
     name_short ViewSonic
     url www.viewsonic.com
     ansi_color 0;35;103
+    match_string ViewSonic
     note EDID vendor: VSC
     match_string_exact VSC
 
@@ -164,17 +240,14 @@ name Plextor
     url www.plextor.be
     match_string Plextor
 
-name Western Digital
-    name_short WD
-    url www.wdc.com
-    ansi_color 0;37;40
-    match_string_case WDC
-
 name LG Electronics
     name_short LG
     url www.lge.com
     ansi_color 0;97;41
+    match_string LG Electronics [Lucky Goldstar Co. Ltd]
+    match_string Lucky Goldstar
     match_string Lucky-Goldstar
+    match_string LG Semi
     match_string_case LG
 
 name LG Electronics (formerly Goldstar)
@@ -269,9 +342,12 @@ name Qualcomm (formerly Atheros)
     match_string Atheros
 
 name Panasonic Industry Company
+# AKA: Matsushita Electric Industrial
     name_short Panasonic
     url www.panasonic.com
     ansi_color 0;30;107
+    match_string Panasonic
+    match_string Matsushita
     match_string MATSHITA
     note EDID vendor: MEI
     match_string_exact MEI
@@ -299,6 +375,7 @@ name International Business Machines Corporation
     name_short IBM
     url www.ibm.com
     ansi_color 0;94;107
+    match_string International Business Machines
     match_string_case IBM
 
 name Dell Computer
@@ -322,6 +399,8 @@ name Fujitsu
     url www.fujitsu.com
     ansi_color 0;31;107
     match_string FUJITSU
+    name_short Fujitsu/Siemens
+    match_string Fujitsu Siemens
 
 name Sony
     name_short SONY
@@ -331,6 +410,14 @@ name Sony
 #   match_string_case CDU
     note EDID vendor: SNY
     match_string_exact SNY
+
+name Sony Mobile
+    name_short SONY
+    url www.sony.com
+    ansi_color 0;30;107
+    match_string Sony Mobile
+    name_short SONY/Ericsson
+    match_string Sony Ericsson
 
 name SanDisk
     url www.sandisk.com
@@ -466,6 +553,13 @@ name BenQ
     url www.benq.com
     ansi_color 0;35;107
     match_string BENQ
+
+name BenQ (formerly Acer Peripherals)
+    name_short BenQ/acer
+    url www.benq.com
+    ansi_color 0;35;107
+    match_string Acer Peripherals
+    match_string Acer Peripherals Inc. (now BenQ Corp.)
 
 name Holtek Semiconductor
     name_short Holtek
@@ -608,6 +702,7 @@ name Crucial (Micron)
     url www.crucial.com
     ansi_color 0;37;44
     match_string Crucial
+    match_string Micron/Crucial
 
 name Toshiba Samsung Storage Technology
     name_short TSST
@@ -622,7 +717,7 @@ name Seagate Technology
     url www.seagate.com
     ansi_color 0;92;100
     match_string Seagate
-#    match_string_case ST
+    match_string_num_prefix_case ST
 
 name Silicon Integrated Systems Corporation
     name_short SIS
@@ -719,6 +814,7 @@ name Infineon Technologies
     wikipedia Infineon Technologies
     ansi_color 0;34;107
     match_string Infineon
+    match_string Infineon (former Siemens)
 
 name Cypress Semiconductor
     name_short Cypress
@@ -744,6 +840,7 @@ name Victor Company of Japan
     url www.victor.co.jp
     ansi_color 0;91;107
     match_string_case JVC
+    match_string Victor
 
 name ASRock
     url www.asrock.com
@@ -813,6 +910,51 @@ name SK Hynix
     ansi_color 0;31;43
     match_string Hynix
     match_string Hyundai
+
+name PNY Technologies
+    name_short PNY
+    url www.pny.com
+    wikipedia PNY Technologies
+    ansi_color 0;97;100
+    match_string_case PNY
+
+name Linaro
+    url linaro.org
+    wikipedia Linaro
+    ansi_color 0;32;107
+    match_string Linaro
+
+name Longsys
+    name_short longsys
+    url longsys.com
+    ansi_color 0;31;107
+    match_string Longsys
+
+name Longsys (formerly Micron Lexar)
+    name_short longsys/Lexar
+    url lexar.com
+    wikipedia Lexar
+    ansi_color 0;31;40
+    match_string Lexar
+
+name Angelbird Technologies
+    name_short Angelbird
+    url www.angelbird.com
+    ansi_color 0;97;100
+    match_string Angelbird
+
+name Hoodman Corporation
+    name_short Hoodman
+    url www.hoodmanusa.com
+    ansi_color 0;30;43
+    match_string Hoodman
+
+name Silicon Power
+    name_short SP
+    url www.silicon-power.com
+    wikipedia Silicon Power
+    ansi_color 0;97;40
+    match_string Silicon Power
 
 #
 # BIOS manufacturers
@@ -884,16 +1026,19 @@ name Red Hat
     match_string Red Hat
     match_string RedHat
 
-name Sun Microsystems
-    name_short Sun
-    wikipedia Sun Microsystems
-    match_string Sun Microsystems
-
 name Oracle Corporation
     name_short Oracle
     url www.oracle.com
     ansi_color 0;97;41
     match_string Oracle
+
+name Oracle Corporation (formerly Sun Microsystems)
+    name_short Oracle (Sun)
+    url www.oracle.com
+    wikipedia Sun Microsystems
+    ansi_color 0;97;41
+    match_string Sun Microsystems
+    match_string Oracle Corporation (former Sun Microsystems)
 
 name Oracle Corporation (formerly InnoTek Systemberatung)
     name_short Oracle (InnoTek)
@@ -1008,7 +1153,17 @@ name Digital Equipment Corporation
     note Dead; various parts to Intel, Compaq, HP
     match_string_case DEC
     match_string Digital Equipment
-    match_string Digital
+    match_string_exact Digital
+
+name Western Digital
+    name_short WD
+    url www.westerndigital.com
+    wikipedia Western Digital
+    ansi_color 0;37;40
+#   ansi_color 0;97;44
+    match_string Western Digital
+    match_string_case WDC
+    match_string_num_prefix_case WD
 
 name Marvell Technology Group
     name_short Marvell
@@ -1066,6 +1221,14 @@ name MediaTek
     wikipedia MediaTek
     ansi_color 0;97;43
     match_string MediaTek
+
+name Valve Corporation
+    name_short VALVE
+    url valvesoftware.com
+    wikipedia Valve Corporation
+    ansi_color 0;97;41
+    match_string Valve Corporation
+    match_string Valve
 
 #
 # x86 VM vendor strings
