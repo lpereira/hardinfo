@@ -498,7 +498,7 @@ edid *edid_new_from_hex(const char *hex_string) {
 
 char *edid_dump_hex(edid *e, int tabs, int breaks) {
     if (!e) return NULL;
-    int lines = e->len / 16;
+    int lines = 1 + (e->len / 16);
     int blen = lines * 35 + 1;
     unsigned int pc = 0;
     char *ret = malloc(blen);
@@ -506,10 +506,11 @@ char *edid_dump_hex(edid *e, int tabs, int breaks) {
     uint8_t *u8 = e->u8;
     char *p = ret;
     for(; lines; lines--) {
-        int i;
+        int i, d = MIN(16, (e->len - pc));
+        if (!d) break;
         for(i = 0; i < tabs; i++)
             sprintf(p++, "\t");
-        for(i = 0; i < 16; i++) {
+        for(i = d; i; i--) {
             sprintf(p, "%02x", (unsigned int)*u8);
             p+=2;
             u8++;
@@ -707,8 +708,6 @@ char *edid_cea_speaker_allocation_describe(int bitfield, int short_version) {
 
 char *edid_cea_block_describe(struct edid_cea_block *blk) {
     gchar *ret = NULL;
-    gchar *tmp[3] = {};
-
     if (blk) {
         char *hb = hex_bytes(blk->header.ptr, blk->header.len+1);
         switch(blk->header.type) {
