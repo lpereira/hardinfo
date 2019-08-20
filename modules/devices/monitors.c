@@ -121,7 +121,7 @@ gchar *monitor_name(monitor *m, gboolean include_vendor) {
     }
 
     if (e->img_max.diag_in)
-        desc = appfsp(desc, "%s\"", e->img_max.class_inch);
+        desc = appfsp(desc, "%s", e->img_max.class_inch);
 
     if (e->name)
         desc = appfsp(desc, "%s", e->name);
