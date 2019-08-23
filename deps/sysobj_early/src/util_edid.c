@@ -31,21 +31,154 @@
 
 #include "util_edid_svd_table.c"
 
-static int block_check_n(const void *edid_block_bytes, int len) {
-    if (!edid_block_bytes) return 0;
+#define NOMASK (~0U)
+#define BFMASK(LSB, MASK) (MASK << LSB)
+
+#define DPTR(ADDY) (uint8_t*)(&((ADDY).e->u8[(ADDY).offset]))
+#define OFMT "@%03d" /* for addy.offset */
+
+#define EDID_MSG_STDERR 0
+#define edid_msg(e, msg, ...) {\
+    if (EDID_MSG_STDERR) fprintf (stderr, ">[%s;L%d] " msg "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+    g_string_append_printf(e->msg_log, "[%s;L%d] " msg "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); }
+
+static inline
+uint32_t bf_value(uint32_t value, uint32_t mask) {
+    uint32_t result = value & mask;
+    if (result)
+        while(!(mask & 1)) {
+            result >>= 1;
+            mask >>= 1;
+        }
+    return result;
+}
+
+static inline
+uint8_t bounds_check(edid *e, uint32_t offset) {
+    if (!e) return 0;
+    if (offset > e->len) return 0;
+    return 1;
+}
+
+static inline
+char *rstr(edid *e, uint32_t offset, uint32_t len) {
+    if (!bounds_check(e, offset+len)) return NULL;
+    char *raw = malloc(len+1), *ret = NULL;
+    strncpy(raw, &e->u8[offset], len);
+    raw[len] = 0;
+    ret = g_utf8_make_valid(raw, len);
+    g_free(raw);
+    return ret;
+}
+
+static inline
+char *rstr_strip(edid *e, uint32_t offset, uint32_t len) {
+    if (!bounds_check(e, offset+len)) return NULL;
+    char *raw = malloc(len+1), *ret = NULL;
+    strncpy(raw, &e->u8[offset], len);
+    raw[len] = 0;
+    ret = g_strstrip(g_utf8_make_valid(raw, len));
+    g_free(raw);
+    return ret;
+}
+
+static inline
+uint32_t r8(edid *e, uint32_t offset, uint32_t mask) {
+    if (!bounds_check(e, offset)) return 0;
+    return bf_value(e->u8[offset], mask);
+}
+
+static inline
+uint32_t r16le(edid *e, uint32_t offset, uint32_t mask) {
+    if (!bounds_check(e, offset+1)) return 0;
+    uint32_t v = (e->u8[offset+1] << 8) + e->u8[offset];
+    return bf_value(v, mask);
+}
+
+static inline
+uint32_t r16be(edid *e, uint32_t offset, uint32_t mask) {
+    if (!bounds_check(e, offset+1)) return 0;
+    uint32_t v = (e->u8[offset] << 8) + e->u8[offset+1];
+    return bf_value(v, mask);
+}
+
+static inline
+uint32_t r24le(edid *e, uint32_t offset, uint32_t mask) {
+    if (!bounds_check(e, offset+2)) return 0;
+    uint32_t v = (e->u8[offset+2] << 16) + (e->u8[offset+1] << 8) + e->u8[offset];
+    return bf_value(v, mask);
+}
+
+static inline
+uint32_t r24be(edid *e, uint32_t offset, uint32_t mask) {
+    if (!bounds_check(e, offset+2)) return 0;
+    uint32_t v = (e->u8[offset] << 16) + (e->u8[offset+1] << 8) + e->u8[offset+2];
+    return bf_value(v, mask);
+}
+
+static inline
+uint32_t r32le(edid *e, uint32_t offset, uint32_t mask) {
+    if (!bounds_check(e, offset+3)) return 0;
+    uint32_t v = (e->u8[offset+3] << 24) + (e->u8[offset+2] << 16)
+        + (e->u8[offset+1] << 8) + e->u8[offset];
+    return bf_value(v, mask);
+}
+
+static inline
+uint32_t r32be(edid *e, uint32_t offset, uint32_t mask) {
+    if (!bounds_check(e, offset+3)) return 0;
+    uint32_t v = (e->u8[offset] << 24) + (e->u8[offset+1] << 16)
+        + (e->u8[offset+2] << 8) + e->u8[offset+3];
+    return bf_value(v, mask);
+}
+
+static inline
+int rpnpcpy(edid_ven *dest, edid *e, uint32_t offset) {
+    uint32_t pnp = r16be(e, offset, NOMASK);
+    edid_ven ret = {.type = VEN_TYPE_INVALID};
+    if (pnp) {
+        ret.type = VEN_TYPE_PNP;
+        ret.pnp[2] = 64 + (pnp & 0x1f);
+        ret.pnp[1] = 64 + ((pnp >> 5) & 0x1f);
+        ret.pnp[0] = 64 + ((pnp >> 10) & 0x1f);
+        *dest = ret;
+        return 1;
+    }
+    return 0;
+}
+
+static inline
+int rouicpy(edid_ven *dest, edid *e, uint32_t offset) {
+    edid_ven ret = {.type = VEN_TYPE_OUI};
+    ret.oui = r24be(e, offset, NOMASK);
+    if (ret.oui) {
+        *dest = ret;
+        return 1;
+    }
+    return 0;
+}
+
+static int _block_check_n(const void *bytes, int len) {
+    if (!bytes) return 0;
     uint8_t sum = 0;
-    uint8_t *data = (uint8_t*)edid_block_bytes;
+    uint8_t *data = (uint8_t*)bytes;
     int i;
     for(i=0; i<len; i++)
         sum += data[i];
     return sum == 0 ? 1 : 0;
 }
-static int block_check(const void *edid_block_bytes) {
-    /* block must be 128 bytes */
-    return block_check_n(edid_block_bytes, 128);
+
+static int block_check_n(edid *e, uint32_t offset, int len) {
+    if (!bounds_check(e, offset+len)) return 0;
+    return _block_check_n(e->u8, len);
 }
 
-char *hex_bytes(uint8_t *bytes, int count) {
+static int block_check(edid *e, uint32_t offset) {
+    if (!bounds_check(e, offset+128)) return 0;
+    return _block_check_n(e->u8, 128);
+}
+
+static char *hex_bytes(uint8_t *bytes, int count) {
     char *buffer = malloc(count*3+1), *p = buffer;
     memset(buffer, 0, count*3+1);
     int i;
@@ -95,67 +228,115 @@ static void edid_output_fill(edid_output *out) {
     out->pixels *= out->vert_pixels;
 
     if (out->diag_in) {
-        static const char *inlbl = "\""; /* TODO: unicode */
+        static const char *inlbl = "\u2033"; /* double prime */
         sprintf(out->class_inch, "%0.1f%s", out->diag_in, inlbl);
         util_strchomp_float(out->class_inch);
     }
 }
 
-static void cea_block_decode(struct edid_cea_block *blk, edid *e) {
+static void cea_block_decode(struct edid_cea_block *blk) {
+    if (!blk) return;
+    if (!blk->bounds_ok)
+        blk->bounds_ok =
+        bounds_check(blk->addy.e, blk->addy.offset + 1 + blk->len);
+    if (!blk->bounds_ok) return;
+
+    edid *e = blk->addy.e;
+    uint8_t *ptr = DPTR(blk->addy);
     int i;
-    if (blk) {
-        switch(blk->header.type) {
-            case 0x1: /* SADS */
-                for(i = 1; i <= blk->header.len; i+=3) {
-                    struct edid_sad *sad = &e->sads[e->sad_count];
-                    sad->v[0] = blk->header.ptr[i];
-                    sad->v[1] = blk->header.ptr[i+1];
-                    sad->v[2] = blk->header.ptr[i+2];
-                    sad->format = (sad->v[0] & 0x78) >> 3;
-                    sad->channels = 1 + sad->v[0] & 0x7;
-                    sad->freq_bits = sad->v[1];
-                    if (sad->format == 1) {
-                        sad->depth_bits = sad->v[2];
-                    } else if (sad->format >= 2
-                            && sad->format <= 8) {
-                        sad->max_kbps = 8 * sad->v[2];
-                    }
-                    e->sad_count++;
+    switch(blk->type) {
+        case 0x1: /* SADS */
+            for(i = 1; i <= blk->len; i+=3) {
+                struct edid_sad *sad = &e->sads[e->sad_count];
+                sad->v[0] = ptr[i];
+                sad->v[1] = ptr[i+1];
+                sad->v[2] = ptr[i+2];
+                sad->format = bf_value(sad->v[0], 0x78);
+                sad->channels = 1 + bf_value(sad->v[0], 0x07);
+                sad->freq_bits = sad->v[1];
+                if (sad->format == 1) {
+                    sad->depth_bits = sad->v[2];
+                } else if (sad->format >= 2
+                        && sad->format <= 8) {
+                    sad->max_kbps = 8 * sad->v[2];
                 }
-                break;
-            case 0x4: /* Speaker allocation */
-                e->speaker_alloc_bits = blk->header.ptr[1];
-                break;
-            case 0x2: /* SVDs */
-                for(i = 1; i <= blk->header.len; i++)
-                    e->svds[e->svd_count++].v = blk->header.ptr[i];
-                break;
-            case 0x3: /* Vendor-specific */
-                // TODO:
-            default:
-                break;
-        }
+                e->sad_count++;
+            }
+            break;
+        case 0x4: /* Speaker allocation */
+            e->speaker_alloc_bits = ptr[1];
+            break;
+        case 0x2: /* SVDs */
+            for(i = 1; i <= blk->len; i++)
+                e->svds[e->svd_count++].v = ptr[i];
+            break;
+        case 0x3: /* Vendor-specific */
+            // TODO:
+        default:
+            break;
     }
 }
 
-static void did_block_decode(DisplayIDBlock *blk, edid *e) {
+static void did_block_decode(DisplayIDBlock *blk) {
+    if (!blk) return;
+
+    //printf("did_block_decode: %s\n", hex_bytes(DPTR(blk->addy), blk->len+3));
+
+    if (!blk->bounds_ok)
+        blk->bounds_ok =
+        bounds_check(blk->addy.e, blk->addy.offset + 3 + blk->len);
+    if (!blk->bounds_ok) return;
+
+    edid *e = blk->addy.e;
+    uint32_t a = blk->addy.offset + 3;
+
+    uint8_t *u8 = DPTR(blk->addy);
     int b = 3;
-    uint8_t *u8 = blk->ptr;
+    edid_ven ven = {};
     edid_output out = {};
     if (blk) {
         switch(blk->type) {
+            case 0:     /* Product ID (1.x) */
+                /* UNTESTED */
+                if (rpnpcpy(&ven, e, a) )
+                    e->ven = ven;
+                e->did_strings[e->did_string_count].is_product_name = 1;
+                e->did_strings[e->did_string_count].len = blk->len;
+                e->did_strings[e->did_string_count].str = rstr_strip(e, a+12, u8[b+11]);
+                e->name = e->did_strings[e->did_string_count].str;
+                e->did_string_count++;
+                break;
+            case 0x20:  /* Product ID */
+                /* UNTESTED */
+                if (rouicpy(&ven, e, a) )
+                    e->ven = ven;
+                e->did_strings[e->did_string_count].is_product_name = 1;
+                e->did_strings[e->did_string_count].len = blk->len;
+                e->did_strings[e->did_string_count].str = rstr_strip(e, a+12, u8[b+11]);
+                e->name = e->did_strings[e->did_string_count].str;
+                e->did_string_count++;
+                break;
+            case 0x0a: /* Serial Number (ASCII String) */
+                e->did_strings[e->did_string_count].is_serial = 1;
+                e->did_strings[e->did_string_count].len = blk->len;
+                e->did_strings[e->did_string_count].str = rstr_strip(e, a, blk->len);
+                e->serial = e->did_strings[e->did_string_count].str;
+                e->did_string_count++;
+                break;
+            case 0x0b: /* General Purpose ASCII String */
+                e->did_strings[e->did_string_count].len = blk->len;
+                e->did_strings[e->did_string_count].str = rstr(e, a, blk->len);
+                e->did_string_count++;
+                break;
             case 0x03: /* Type I Detailed timings */
-                out.pixel_clock_khz = u8[b+2] << 16;
-                out.pixel_clock_khz += u8[b+1] << 8;
-                out.pixel_clock_khz += u8[b];
-                out.pixel_clock_khz *= 10;
-                out.horiz_pixels = (u8[b+5] << 8) + u8[b+4];
-                out.horiz_blanking = (u8[b+7] << 8) + u8[b+6];
-                out.vert_lines = (u8[b+13] << 8) + u8[b+12];
-                out.vert_blanking = (u8[b+15] << 8) + u8[b+14];
-                out.is_interlaced = (u8[b+3] >> 4) & 0x1;
-                out.stereo_mode = (u8[b+3] >> 5) & 0x2;
-                out.is_preferred = (u8[b+3] >> 7) & 0x1;
+                out.pixel_clock_khz = 10 * r24le(e, a, NOMASK);
+                out.horiz_pixels    = 1 + (u8[b+5] << 8) + u8[b+4];
+                out.horiz_blanking  = (u8[b+7] << 8) + u8[b+6];
+                out.vert_lines      = 1 + (u8[b+13] << 8) + u8[b+12];
+                out.vert_blanking   = (u8[b+15] << 8) + u8[b+14];
+                out.is_interlaced   = bf_value(u8[b+3], BFMASK(4, 0x1));
+                out.stereo_mode     = bf_value(u8[b+3], BFMASK(5, 0x3));
+                out.is_preferred    = bf_value(u8[b+3], BFMASK(7, 0x1));
                 out.src = OUTSRC_DID_TYPE_I;
                 edid_output_fill(&out);
                 e->didts[e->didt_count++] = out;
@@ -193,11 +374,12 @@ static void did_block_decode(DisplayIDBlock *blk, edid *e) {
             case 0x81: /* CTA DisplayID, ... Embedded CEA Blocks */
                 while(b < blk->len) {
                     int db_type = (u8[b] & 0xe0) >> 5;
-                    int db_size = u8[b] & 0x1f;
-                    e->cea_blocks[e->cea_block_count].header.ptr = &u8[b];
-                    e->cea_blocks[e->cea_block_count].header.type = db_type;
-                    e->cea_blocks[e->cea_block_count].header.len = db_size;
-                    cea_block_decode(&e->cea_blocks[e->cea_block_count], e);
+                    int db_size =  u8[b] & 0x1f;
+                    e->cea_blocks[e->cea_block_count].addy.e = blk->addy.e;
+                    e->cea_blocks[e->cea_block_count].addy.offset = blk->addy.offset + b;
+                    e->cea_blocks[e->cea_block_count].type = db_type;
+                    e->cea_blocks[e->cea_block_count].len = db_size;
+                    cea_block_decode(&e->cea_blocks[e->cea_block_count]);
                     e->cea_block_count++;
                     b += db_size + 1;
                 }
@@ -240,6 +422,8 @@ edid *edid_new(const char *data, unsigned int len) {
     e->ver_major = e->u8[18];
     e->ver_minor = e->u8[19];
 
+    e->msg_log = g_string_new(NULL);
+
 #define RESERVE_COUNT 300
     e->dtds = malloc(sizeof(struct edid_dtd) * RESERVE_COUNT);
     e->cea_blocks = malloc(sizeof(struct edid_cea_block) * RESERVE_COUNT);
@@ -247,24 +431,23 @@ edid *edid_new(const char *data, unsigned int len) {
     e->sads = malloc(sizeof(struct edid_sad) * RESERVE_COUNT);
     e->did_blocks = malloc(sizeof(DisplayIDBlock) * RESERVE_COUNT);
     e->didts = malloc(sizeof(edid_output) * RESERVE_COUNT);
+    e->did_strings = malloc(sizeof(edid_output) * RESERVE_COUNT);
     memset(e->dtds, 0, sizeof(struct edid_dtd) * RESERVE_COUNT);
     memset(e->cea_blocks, 0, sizeof(struct edid_cea_block) * RESERVE_COUNT);
     memset(e->svds, 0, sizeof(struct edid_svd) * RESERVE_COUNT);
     memset(e->sads, 0, sizeof(struct edid_sad) * RESERVE_COUNT);
     memset(e->did_blocks, 0, sizeof(DisplayIDBlock) * RESERVE_COUNT);
     memset(e->didts, 0, sizeof(edid_output) * RESERVE_COUNT);
+    memset(e->did_strings, 0, sizeof(edid_output) * RESERVE_COUNT);
 
-    uint16_t vid = be16toh(e->u16[4]); /* bytes 8-9 */
-    e->ven[2] = 64 + (vid & 0x1f);
-    e->ven[1] = 64 + ((vid >> 5) & 0x1f);
-    e->ven[0] = 64 + ((vid >> 10) & 0x1f);
-    e->product = le16toh(e->u16[5]); /* bytes 10-11 */
-    e->n_serial = le32toh(e->u32[3]);/* bytes 12-15 */
-    e->week = e->u8[16];             /* byte 16 */
-    e->year = e->u8[17] + 1990;      /* byte 17 */
-
-    if (e->week >= 52)
-        e->week = 0;
+    /* base product information */
+    rpnpcpy(&e->ven, e, 8);             /* bytes 8-9 */
+    e->product = r16le(e, 10, NOMASK);  /* bytes 10-11 */
+    e->n_serial = r32le(e, 12, NOMASK); /* bytes 12-15 */
+    e->dom.week = e->u8[16];            /* byte 16 */
+    e->dom.year = e->u8[17] + 1990;     /* byte 17 */
+    e->dom.is_model_year = (e->dom.week > 52);
+    e->dom.std = STD_EDID;
 
     e->a_or_d = (e->u8[20] & 0x80) ? 1 : 0;
     if (e->a_or_d == 1) {
@@ -353,23 +536,25 @@ edid *edid_new(const char *data, unsigned int len) {
     }
 
     uint16_t dh, dl;
-#define CHECK_DESCRIPTOR(index, offset)       \
-    if (e->u8[offset] == 0) {                 \
-        dh = be16toh(e->u16[offset/2]);       \
-        dl = be16toh(e->u16[offset/2+1]);     \
-        e->d_type[index] = (dh << 16) + dl;   \
-        switch(e->d_type[index]) {            \
+#define CHECK_DESCRIPTOR(INDEX, OFFSET)       \
+    e->d[INDEX].addy.e = e;                   \
+    e->d[INDEX].addy.offset = OFFSET;         \
+    if (e->u8[OFFSET] == 0) {                 \
+        dh = be16toh(e->u16[OFFSET/2]);       \
+        dl = be16toh(e->u16[OFFSET/2+1]);     \
+        e->d[INDEX].type = (dh << 16) + dl;   \
+        switch(e->d[INDEX].type) {            \
             case 0xfc: case 0xff: case 0xfe:  \
-                strncpy(e->d_text[index], (char*)e->u8+offset+5, 13);  \
-        } \
-    } else e->dtds[e->dtd_count++].ptr = &e->u8[offset];
+                strncpy(e->d[INDEX].text, (char*)e->u8+OFFSET+5, 13);  \
+        }                                     \
+    } else e->dtds[e->dtd_count++].addy = e->d[INDEX].addy;
 
     CHECK_DESCRIPTOR(0, 54);
     CHECK_DESCRIPTOR(1, 72);
     CHECK_DESCRIPTOR(2, 90);
     CHECK_DESCRIPTOR(3, 108);
 
-    e->checksum_ok = block_check(e->data); /* first 128-byte block only */
+    e->checksum_ok = block_check(e, 0); /* first 128-byte block only */
     if (len > 128) {
         /* check extension blocks */
         int blocks = len / 128;
@@ -377,8 +562,9 @@ edid *edid_new(const char *data, unsigned int len) {
         e->ext_blocks = blocks;
         e->ext_ok = malloc(sizeof(uint8_t) * blocks);
         for(; blocks; blocks--) {
-            uint8_t *u8 = e->u8 + (blocks * 128);
-            int r = block_check(u8);
+            uint32_t offset = blocks * 128;
+            uint8_t *u8 = e->u8 + offset;
+            int r = block_check(e, offset);
             e->ext_ok[blocks-1] = r;
             if (r) e->ext_blocks_ok++;
             else e->ext_blocks_fail++;
@@ -391,26 +577,27 @@ edid *edid_new(const char *data, unsigned int len) {
                 else e->std = MAX(e->std, STD_DISPLAYID);
                 e->did.extension_length = u8[2];
                 e->did.primary_use_case = u8[3];
-                e->did.extension_count = u8[4];
+                e->did.extension_count  = u8[4];
+                e->did.checksum_ok = block_check_n(e, offset, e->did.extension_length + 5);
                 int db_end = u8[2] + 5;
                 int b = 5;
                 while(b < db_end) {
+                    if (r24le(e, offset + b, NOMASK) == 0) break;
                     int db_type = u8[b];
                     int db_revision = u8[b+1] & 0x7;
                     int db_size = u8[b+2];
-                    e->did_blocks[e->did_block_count].ptr = &u8[b];
+                    e->did_blocks[e->did_block_count].addy.e = e;
+                    e->did_blocks[e->did_block_count].addy.offset = offset + b;
                     e->did_blocks[e->did_block_count].type = db_type;
                     e->did_blocks[e->did_block_count].revision = db_revision;
                     e->did_blocks[e->did_block_count].len = db_size;
-                    did_block_decode(&e->did_blocks[e->did_block_count], e);
+                    did_block_decode(&e->did_blocks[e->did_block_count]);
                     e->did_block_count++;
                     e->did.blocks++;
                     b += db_size + 3;
                 }
-                if (b != db_end) {
-                    // over or under-run ...
-                }
-                e->did.checksum_ok = block_check_n(u8, u8[2] + 5);
+                if (b > db_end)
+                    edid_msg(e, "DID block overrun [in ext " OFMT "], expect to end at +%d, but last ends at +%d" , offset, db_end-1, b-1);
                 //printf("DID: v:%02x el:%d uc:%d ec:%d, blocks:%d ok:%d\n",
                 //    e->did.version, e->did.extension_length,
                 //    e->did.primary_use_case, e->did.extension_count,
@@ -425,19 +612,24 @@ edid *edid_new(const char *data, unsigned int len) {
                     int b = 4;
                     while(b < db_end) {
                         int db_type = (u8[b] & 0xe0) >> 5;
-                        int db_size = u8[b] & 0x1f;
-                        e->cea_blocks[e->cea_block_count].header.ptr = &u8[b];
-                        e->cea_blocks[e->cea_block_count].header.type = db_type;
-                        e->cea_blocks[e->cea_block_count].header.len = db_size;
-                        cea_block_decode(&e->cea_blocks[e->cea_block_count], e);
+                        int db_size =  u8[b] & 0x1f;
+                        e->cea_blocks[e->cea_block_count].addy.e = e;
+                        e->cea_blocks[e->cea_block_count].addy.offset = offset + b;
+                        e->cea_blocks[e->cea_block_count].type = db_type;
+                        e->cea_blocks[e->cea_block_count].len = db_size;
+                        cea_block_decode(&e->cea_blocks[e->cea_block_count]);
                         e->cea_block_count++;
                         b += db_size + 1;
                     }
-                    if (b > db_end) b = db_end;
+                    if (b > db_end) {
+                        b = db_end;
+                        edid_msg(e, "CEA block overrun [in ext " OFMT "], expect to end at +%d, but last ends at +%d" , offset, db_end-1, b-1);
+                    }
                     /* DTDs */
                     while(b < 127) {
                         if (u8[b]) {
-                            e->dtds[e->dtd_count].ptr = &u8[b];
+                            e->dtds[e->dtd_count].addy.e = e;
+                            e->dtds[e->dtd_count].addy.offset = offset + b;
                             e->dtds[e->dtd_count].cea_ext = 1;
                             e->dtd_count++;
                         }
@@ -453,19 +645,22 @@ edid *edid_new(const char *data, unsigned int len) {
 
     /* strings */
     for(i = 0; i < 4; i++) {
-        g_strstrip(e->d_text[i]);
-        switch(e->d_type[i]) {
+        if (!g_utf8_validate(e->d[i].text, -1, NULL)) {
+            strcpy(e->d[i].text, "(INVALID)");
+        }
+        g_strstrip(e->d[i].text);
+        switch(e->d[i].type) {
             case 0xfc:
-                e->name = e->d_text[i];
+                e->name = e->d[i].text;
                 break;
             case 0xff:
-                e->serial = e->d_text[i];
+                e->serial = e->d[i].text;
                 break;
             case 0xfe:
                 if (e->ut1)
-                    e->ut2 = e->d_text[i];
+                    e->ut2 = e->d[i].text;
                 else
-                    e->ut1 = e->d_text[i];
+                    e->ut1 = e->d[i].text;
                 break;
         }
     }
@@ -502,12 +697,18 @@ edid *edid_new(const char *data, unsigned int len) {
 
     /* dtds */
     for(i = 0; i < e->dtd_count; i++) {
-        uint8_t *u8 = e->dtds[i].ptr;
-        uint16_t *u16 = (uint16_t*)e->dtds[i].ptr;
+        edid_addy a = e->dtds[i].addy;
+        if (!e->dtds[i].bounds_ok)
+            e->dtds[i].bounds_ok = bounds_check(a.e, a.offset + 18);
+        if (!e->dtds[i].bounds_ok) {
+            printf("bounds fail\n");
+            exit(0);
+        }
+        uint8_t *u8 = DPTR(a);
         edid_output *out = &e->dtds[i].out;
         if (e->dtds[i].cea_ext) out->src = OUTSRC_CEA_DTD;
         else out->src = OUTSRC_DTD;
-        out->pixel_clock_khz = le16toh(u16[0]) * 10;
+        out->pixel_clock_khz = 10 * r16le(a.e, a.offset, NOMASK);
         out->horiz_pixels =
             ((u8[4] & 0xf0) << 4) + u8[2];
         out->vert_lines =
@@ -548,6 +749,13 @@ edid *edid_new(const char *data, unsigned int len) {
             e->img_max.is_preferred = 1;
             OUTPUT_CPY_SIZE(e->img_max, tmp);
         }
+        if (e->svds[i].out.pixels > e->img_svd.pixels
+            || e->svds[i].is_native) {
+            e->img_svd = e->svds[i].out;
+            if (e->svds[i].is_native)
+                e->img_svd.is_preferred = 1;
+            OUTPUT_CPY_SIZE(e->img_svd, e->img_max);
+        }
     }
 
     /* didts */
@@ -556,9 +764,9 @@ edid *edid_new(const char *data, unsigned int len) {
         int max_pref = e->img_max.is_preferred;
         int bigger = (e->didts[i].pixels > e->img_max.pixels);
         int better = (e->didts[i].src > e->img_max.src);
-        if (bigger && !max_pref
-            || pref && !max_pref
-            || pref && better) {
+        if ((bigger && !max_pref)
+            || (pref && !max_pref)
+            || (better)) {
             edid_output tmp = e->img_max;
             e->img_max = e->didts[i];
             OUTPUT_CPY_SIZE(e->img_max, tmp);
@@ -582,15 +790,25 @@ edid *edid_new(const char *data, unsigned int len) {
     SQUEEZE(sad_count, sads);
     SQUEEZE(did_block_count, did_blocks);
     SQUEEZE(didt_count, didts);
+    SQUEEZE(did_string_count, did_strings);
     return e;
 }
 
 void edid_free(edid *e) {
+    int i;
     if (e) {
         g_free(e->ext_ok);
         g_free(e->cea_blocks);
         g_free(e->dtds);
+        g_free(e->svds);
+        g_free(e->sads);
+        g_free(e->did_blocks);
+        g_free(e->didts);
+        for(i = 0; i < e->did_string_count; i++)
+            g_free(e->did_strings[i].str);
+        g_free(e->did_strings);
         g_free(e->data);
+        g_string_free(e->msg_log, TRUE);
         g_free(e);
     }
 }
@@ -619,6 +837,17 @@ edid *edid_new_from_hex(const char *hex_string) {
     edid *e = edid_new((char*)buffer, len);
     free(buffer);
     return e;
+}
+
+edid *edid_new_from_file(const char *path) {
+    char *bin = NULL;
+    gsize len = 0;
+    if (g_file_get_contents(path, &bin, &len, NULL) ) {
+        edid *ret = edid_new(bin, len);
+        g_free(bin);
+        return ret;
+    }
+    return NULL;
 }
 
 char *edid_dump_hex(edid *e, int tabs, int breaks) {
@@ -744,6 +973,7 @@ const char *edid_did_block_type(int type) {
         case 0x0F: return N_("Display Interface Data (1.x)");
         case 0x10: return N_("Stereo Display Interface (1.x)");
         case 0x11: return N_("Type V Timing - Short (1.x)");
+        case 0x12: return N_("Tiled Display Topology (1.x)");
         case 0x13: return N_("Type VI Timing - Detailed (1.x)");
         case 0x7F: return N_("Vendor specific (1.x)");
         /* 2.x */
@@ -880,24 +1110,28 @@ char *edid_cea_speaker_allocation_describe(int bitfield, int short_version) {
 char *edid_cea_block_describe(struct edid_cea_block *blk) {
     gchar *ret = NULL;
     if (blk) {
-        char *hb = hex_bytes(blk->header.ptr, blk->header.len+1);
-        switch(blk->header.type) {
+        char *hb = hex_bytes(DPTR(blk->addy), blk->len+1);
+        switch(blk->type) {
             case 0x1: /* SAD list */
                 ret = g_strdup_printf("([%x] %s) sads:%d",
-                    blk->header.type, _(edid_cea_block_type(blk->header.type)),
-                    blk->header.len/3);
+                    blk->type, _(edid_cea_block_type(blk->type)),
+                    blk->len/3);
                 break;
             case 0x2: /* SVD list */
                 ret = g_strdup_printf("([%x] %s) svds:%d",
-                    blk->header.type, _(edid_cea_block_type(blk->header.type)),
-                    blk->header.len);
+                    blk->type, _(edid_cea_block_type(blk->type)),
+                    blk->len);
+                break;
+            case 0x4: /* speaker allocation */
+                ret = g_strdup_printf("([%x] %s) len:%d",
+                    blk->type, _(edid_cea_block_type(blk->type)),
+                    blk->len);
                 break;
             case 0x3: //TODO
-            case 0x4:
             default:
                 ret = g_strdup_printf("([%x] %s) len:%d -- %s",
-                    blk->header.type, _(edid_cea_block_type(blk->header.type)),
-                    blk->header.len,
+                    blk->type, _(edid_cea_block_type(blk->type)),
+                    blk->len,
                     hb);
                 break;
         }
@@ -906,20 +1140,64 @@ char *edid_cea_block_describe(struct edid_cea_block *blk) {
     return ret;
 }
 
-char *edid_did_block_describe(DisplayIDBlock *blk) {
+char *edid_base_descriptor_describe(struct edid_descriptor *d) {
     gchar *ret = NULL;
-    if (blk) {
-        char *hb = hex_bytes(blk->ptr, blk->len+3);
-        switch(blk->type) {
-            default:
-                ret = g_strdup_printf("([%02x:r%02x] %s) len:%d -- %s",
-                    blk->type, blk->revision, _(edid_did_block_type(blk->type)),
-                    blk->len,
-                    hb);
+    if (d) {
+        char *hb = hex_bytes(DPTR(d->addy), 18);
+        char *txt = NULL;
+        switch(d->type) {
+            case 0: /* DTD */
+                txt = "{...}"; /* displayed elsewhere */
                 break;
-        }
+            case 0x10: /* dummy */
+                txt = "";
+                break;
+            default:
+                txt = (*d->text) ? d->text : hb;
+                break;
+        };
+        ret = g_strdup_printf("([%02x] %s) %s",
+            d->type, _(edid_descriptor_type(d->type)),
+            txt);
         free(hb);
     }
+    return ret;
+}
+
+char *edid_did_block_describe(DisplayIDBlock *blk) {
+    if (!blk) return NULL;
+
+    gchar *ret = NULL;
+    edid *e = blk->addy.e;
+    uint32_t a = blk->addy.offset + 3;
+    char *str = NULL;
+
+    //printf("edid_did_block_describe: ((%d)) t:%02x a{%p, %d}...\n", blk->addy.e->did.extension_count, blk->type, blk->addy.e, blk->addy.offset);
+    char *hb = hex_bytes(DPTR(blk->addy), blk->len+3);
+    switch(blk->type) {
+        case 0x0a: /* Product Serial ASCII string */
+            str = rstr_strip(e, a, blk->len);
+            ret = g_strdup_printf("([%02x:r%02x] %s) len:%d \"%s\"",
+                blk->type, blk->revision, _(edid_did_block_type(blk->type)),
+                blk->len,
+                str);
+            break;
+        case 0x0b: /* ASCII string */
+            str = rstr(e, a, blk->len);
+            ret = g_strdup_printf("([%02x:r%02x] %s) len:%d \"%s\"",
+                blk->type, blk->revision, _(edid_did_block_type(blk->type)),
+                blk->len,
+                str);
+            break;
+        default:
+            ret = g_strdup_printf("([%02x:r%02x] %s) len:%d -- %s",
+                blk->type, blk->revision, _(edid_did_block_type(blk->type)),
+                blk->len,
+                hb);
+            break;
+    }
+    free(hb);
+
     return ret;
 }
 
@@ -941,7 +1219,7 @@ char *edid_dtd_describe(struct edid_dtd *dtd, int dump_bytes) {
     gchar *ret = NULL;
     if (dtd) {
         edid_output *out = &dtd->out;
-        char *hb = hex_bytes(dtd->ptr, 18);
+        char *hb = hex_bytes(DPTR(dtd->addy), 18);
         ret = g_strdup_printf("%dx%d@%.0f%s, %0.1fx%0.1f%s (%0.1f\") %s %s (%s)%s%s",
             out->horiz_pixels, out->vert_lines, out->vert_freq_hz, _("Hz"),
             out->horiz_cm, out->vert_cm, _("cm"), out->diag_in,
@@ -955,19 +1233,33 @@ char *edid_dtd_describe(struct edid_dtd *dtd, int dump_bytes) {
     return ret;
 }
 
+char *edid_manf_date_describe(struct edid_manf_date dom) {
+    if (!dom.year) return g_strdup("unspecified");
+    if (dom.is_model_year)
+        return g_strdup_printf(_("model year %d"), dom.year);
+    if (dom.week <= 52)
+        return g_strdup_printf(_("week %d of %d"), dom.week, dom.year);
+    return g_strdup_printf("%d", dom.year);
+}
+
 char *edid_dump2(edid *e) {
     char *ret = NULL;
     int i;
     if (!e) return NULL;
 
     ret = appfnl(ret, "edid version: %d.%d (%d bytes)", e->ver_major, e->ver_minor, e->len);
-    ret = appfnl(ret, "extended to: %s", _(edid_standard(e->std)) );
+    if (e->std)
+        ret = appfnl(ret, "extended to: %s", _(edid_standard(e->std)) );
 
-    ret = appfnl(ret, "mfg: %s, model: [%04x-%08x] %u-%u", e->ven, e->product, e->n_serial, e->product, e->n_serial);
-    if (e->week && e->year)
-        ret = appf(ret, "", ", dom: week %d of %d", e->week, e->year);
-    else if (e->year)
-        ret = appf(ret, "", ", dom: %d", e->year);
+    ret = appfnl(ret, "mfg: %s, model: [%04x-%08x] %u-%u", e->ven.pnp, e->product, e->n_serial, e->product, e->n_serial);
+    char *dom_desc = edid_manf_date_describe(e->dom);
+    ret = appfnl(ret, "date: %s", dom_desc);
+    g_free(dom_desc);
+
+    if (e->name)
+        ret = appfnl(ret, "product: %s", e->name);
+    if (e->serial)
+        ret = appfnl(ret, "serial: %s", e->serial);
 
     ret = appfnl(ret, "type: %s", e->a_or_d ? "digital" : "analog");
     if (e->bpc)
@@ -976,10 +1268,14 @@ char *edid_dump2(edid *e) {
         ret = appfnl(ret, "interface: %s", _(edid_interface(e->interface)));
 
     char *desc = edid_output_describe(&e->img);
+    char *desc_svd = edid_output_describe(&e->img_svd);
     char *desc_max = edid_output_describe(&e->img_max);
     ret = appfnl(ret, "base(%s): %s", _(edid_output_src(e->img.src)), desc);
-    ret = appfnl(ret, "ext(%s): %s", _(edid_output_src(e->img_max.src)), desc_max);
+    if (e->svd_count)
+        ret = appfnl(ret, "svd(%s): %s", _(edid_output_src(e->img_svd.src)), desc_svd);
+    ret = appfnl(ret, "max(%s): %s", _(edid_output_src(e->img_max.src)), desc_max);
     g_free(desc);
+    g_free(desc_svd);
     g_free(desc_max);
 
     if (e->speaker_alloc_bits) {
@@ -1004,8 +1300,11 @@ char *edid_dump2(edid *e) {
     if (e->ext_blocks_ok || e->ext_blocks_fail)
         ret = appf(ret, "", ", extension blocks: %d of %d ok", e->ext_blocks_ok, e->ext_blocks_ok + e->ext_blocks_fail);
 
-    for(i = 0; i < 4; i++)
-        ret = appfnl(ret, "descriptor[%d] ([%02x] %s): %s", i, e->d_type[i], _(edid_descriptor_type(e->d_type[i])), *e->d_text[i] ? e->d_text[i] : "{...}");
+    for(i = 0; i < 4; i++) {
+        char *desc = edid_base_descriptor_describe(&e->d[i]);
+        ret = appfnl(ret, "descriptor[%d] %s", i, desc);
+        g_free(desc);
+    }
 
     for(i = 0; i < e->ext_blocks; i++) {
         int type = e->u8[(i+1)*128];
@@ -1053,6 +1352,12 @@ char *edid_dump2(edid *e) {
         ret = appfnl(ret, "did_timing[%d]: %s", i, desc);
         g_free(desc);
     }
+
+    for(i = 0; i < e->did_string_count; i++) {
+        ret = appfnl(ret, "did_string[%d]: %s", i, e->did_strings[i].str);
+    }
+
+    ret = appfnl(ret, "parse messages:\n%s---", e->msg_log->str);
 
     return ret;
 }

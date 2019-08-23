@@ -92,18 +92,24 @@ void monitor_free(monitor *m) {
 const gchar *monitor_vendor_str(monitor *m) {
     if (m->_vstr)
         return m->_vstr;
+    edid_ven ven = m->e->ven;
 
-    ids_query_result result = {};
+    if (ven.type == VEN_TYPE_PNP) {
+        ids_query_result result = {};
 
-    if (!edid_ids_file)
-        find_edid_ids_file();
+        if (!edid_ids_file)
+            find_edid_ids_file();
 
-    scan_ids_file(edid_ids_file, m->e->ven, &result, -1);
-    if (result.results[0]) {
-        m->_vstr = g_strdup(result.results[0]);
-        return m->_vstr;
+        scan_ids_file(edid_ids_file, ven.pnp, &result, -1);
+        if (result.results[0]) {
+            m->_vstr = g_strdup(result.results[0]);
+            return m->_vstr;
+        }
+        return g_strdup(ven.pnp);
+    } else if (ven.type == VEN_TYPE_OUI) {
+        //TODO...
     }
-    return g_strdup(m->e->ven);
+    return "...";
 }
 
 gchar *monitor_name(monitor *m, gboolean include_vendor) {
@@ -114,7 +120,7 @@ gchar *monitor_name(monitor *m, gboolean include_vendor) {
         return g_strdup(_("(Unknown)"));
 
     if (include_vendor) {
-        if (*e->ven)
+        if (e->ven.type != VEN_TYPE_INVALID)
             desc = appfsp(desc, "%s", vendor_get_shortest_name(monitor_vendor_str(m)));
         else
             desc = appfsp(desc, "%s", "Unknown");
@@ -174,10 +180,10 @@ static gchar *make_edid_section(monitor *m) {
         const gchar *vstr = monitor_vendor_str(m);
 
         gchar *dom = NULL;
-        if (e->week && e->year)
-            dom = g_strdup_printf(_("Week %d of %d"), e->week, e->year);
-        else if (e->year)
-            dom = g_strdup_printf("%d", e->year);
+        if (!e->dom.is_model_year && e->dom.week && e->dom.year)
+            dom = g_strdup_printf(_("Week %d of %d"), e->dom.week, e->dom.year);
+        else if (e->dom.year)
+            dom = g_strdup_printf("%d", e->dom.year);
 
         gchar *bpcc = NULL;
         if (e->bpc)
@@ -190,7 +196,8 @@ static gchar *make_edid_section(monitor *m) {
         const gchar *iface = e->interface ? _(edid_interface(e->interface)) : _("(Unspecified)");
 
         gchar *d_list, *ext_list, *dtd_list, *cea_list,
-            *etb_list, *std_list, *svd_list, *sad_list;
+            *etb_list, *std_list, *svd_list, *sad_list,
+            *didt_list, *did_string_list;
 
         etb_list = NULL;
         for(i = 0; i < e->etb_count; i++) {
@@ -209,8 +216,11 @@ static gchar *make_edid_section(monitor *m) {
         if (!std_list) std_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
         d_list = NULL;
-        for(i = 0; i < 4; i++)
-            d_list = appfnl(d_list, "descriptor%d = ([%02x] %s): %s", i, e->d_type[i], _(edid_descriptor_type(e->d_type[i])), *e->d_text[i] ? e->d_text[i] : "{...}");
+        for(i = 0; i < 4; i++) {
+            char *desc = edid_base_descriptor_describe(&e->d[i]);
+            d_list = appfnl(d_list, "descriptor%d=%s", i, desc);
+            g_free(desc);
+        }
         if (!d_list) d_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
         ext_list = NULL;
@@ -254,6 +264,20 @@ static gchar *make_edid_section(monitor *m) {
             g_free(desc);
         }
         if (!sad_list) sad_list = g_strdup_printf("%s=\n", _("(Empty List)"));
+
+        didt_list = NULL;
+        for(i = 0; i < e->didt_count; i++) {
+            char *desc = edid_output_describe(&e->didts[i]);
+            didt_list = appfnl(didt_list, "didt%d=%s", i, desc);
+            g_free(desc);
+        }
+        if (!didt_list) didt_list = g_strdup_printf("%s=\n", _("(Empty List)"));
+
+        did_string_list = NULL;
+        for(i = 0; i < e->did_string_count; i++) {
+            did_string_list = appfnl(did_string_list, "did_string%d=%s", i, e->did_strings[i].str);
+        }
+        if (!did_string_list) did_string_list = g_strdup_printf("%s=\n", _("(Empty List)"));
 
         gchar *speakers = NULL;
         if (e->speaker_alloc_bits) {
@@ -301,6 +325,8 @@ static gchar *make_edid_section(monitor *m) {
             "[%s]\n%s\n"
             "[%s]\n%s\n"
             "[%s]\n%s\n"
+            "[%s]\n%s\n"
+            "[%s]\n%s\n"
             "[%s]\n%s=%s\n"
             ,
             _("Signal Type"), e->a_or_d ? _("Digital") : _("Analog"),
@@ -330,6 +356,8 @@ static gchar *make_edid_section(monitor *m) {
             _("EIA/CEA-861 Data Blocks"), cea_list,
             _("EIA/CEA-861 Short Audio Descriptors"), sad_list,
             _("EIA/CEA-861 Short Video Descriptors"), svd_list,
+            _("DisplayID Timings"), didt_list,
+            _("DisplayID Strings"), did_string_list,
             _("Hex Dump"), _("Data"), hex
             );
         g_free(bpcc);
@@ -343,6 +371,8 @@ static gchar *make_edid_section(monitor *m) {
         g_free(cea_list);
         g_free(sad_list);
         g_free(svd_list);
+        g_free(didt_list);
+        g_free(did_string_list);
         g_free(hex);
         //printf("ret: %s\n", ret);
         return ret;
