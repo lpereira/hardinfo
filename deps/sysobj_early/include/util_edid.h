@@ -61,7 +61,8 @@ typedef struct {
 
 /* order by rising priority */
 enum {
-    OUTSRC_EDID,
+    OUTSRC_INVALID = -1,
+    OUTSRC_EDID    =  0,
     OUTSRC_ETB,
     OUTSRC_STD,
     OUTSRC_DTD,
