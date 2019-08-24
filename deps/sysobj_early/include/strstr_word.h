@@ -18,13 +18,18 @@
  *
  */
 
-/* versions of strstr() and strcasestr() where the match must be preceded and
- * succeded by a non-alpha-numeric character. */
-
 #ifndef __STRSTR_WORD_H__
 #define __STRSTR_WORD_H__
 
+/* versions of strstr() and strcasestr() where the match must be preceded and
+ * succeded by a non-alpha-numeric character. */
 char *strstr_word(const char *haystack, const char *needle);
 char *strcasestr_word(const char *haystack, const char *needle);
+
+/* word boundary at start only (prefix), or end only (suffix) */
+char *strstr_word_prefix(const char *haystack, const char *needle);
+char *strcasestr_word_prefix(const char *haystack, const char *needle);
+char *strstr_word_suffix(const char *haystack, const char *needle);
+char *strcasestr_word_suffix(const char *haystack, const char *needle);
 
 #endif

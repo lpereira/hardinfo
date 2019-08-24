@@ -28,9 +28,22 @@ vendor_list vendor_list_concat_va(int count, vendor_list vl, ...); /* count = -1
 #define vendor_list_remove_duplicates(vl) gg_slist_remove_duplicates(vl)
 vendor_list vendor_list_remove_duplicates_deep(vendor_list vl);
 
+enum {
+  VENDOR_MATCH_RULE_WORD_IGNORE_CASE   = 0,
+  VENDOR_MATCH_RULE_WORD_MATCH_CASE    = 1,
+  VENDOR_MATCH_RULE_EXACT              = 2,
+  VENDOR_MATCH_RULE_WORD_PREFIX_IGNORE_CASE = 3,
+  VENDOR_MATCH_RULE_WORD_PREFIX_MATCH_CASE  = 4,
+  VENDOR_MATCH_RULE_WORD_SUFFIX_IGNORE_CASE = 5,
+  VENDOR_MATCH_RULE_WORD_SUFFIX_MATCH_CASE  = 6,
+  /* "ST" hits for "ST3600A" but not "AST" or "STMicro" or "STEC" */
+  VENDOR_MATCH_RULE_NUM_PREFIX_IGNORE_CASE  = 7,
+  VENDOR_MATCH_RULE_NUM_PREFIX_MATCH_CASE   = 8,
+};
+
 typedef struct {
   char *match_string;
-  int match_rule; /* 0 = ignore case, 1 = match case, 2 = exact */
+  int match_rule; /* VENDOR_MATCH_RULE_* enum */
   char *name;
   char *name_short;
   char *url;
@@ -41,11 +54,16 @@ typedef struct {
 
   unsigned long file_line;
   unsigned long ms_length;
+  unsigned long weight;
+  gboolean has_parens;
 } Vendor;
 
 void vendor_init(void);
 void vendor_cleanup(void);
-const Vendor *vendor_match(const gchar *id_str, ...) /* end list of strings with NULL */
+/* end list of strings with NULL */
+const Vendor *vendor_match(const gchar *id_str, ...)
+  __attribute__((sentinel));
+vendor_list vendors_match(const gchar *id_str, ...)
   __attribute__((sentinel));
 const gchar *vendor_get_name(const gchar *id_str);
 const gchar *vendor_get_shortest_name(const gchar *id_str);
@@ -55,5 +73,7 @@ gchar *vendor_get_link_from_vendor(const Vendor *v);
 void vendor_free(Vendor *v);
 
 vendor_list vendors_match_core(const gchar *str, int limit);
+
+extern gboolean vendor_die_on_error;
 
 #endif	/* __VENDOR_H__ */

@@ -25,40 +25,56 @@
 #include <string.h>
 #include <ctype.h>
 
-char *strstr_word(const char *haystack, const char *needle) {
+static char *_strstr(const char *haystack, const char *needle, int anycase) {
+    return anycase
+        ? strcasestr(haystack, needle)
+        : strstr(haystack, needle);
+}
+
+static char *_strstr_word(const char *haystack, const char *needle,
+                          int anycase, int prefix_ok, int suffix_ok) {
+
     if (!haystack || !needle)
         return NULL;
 
     char *c;
     const char *p = haystack;
     size_t l = strlen(needle);
-    while(c = strstr(p, needle)) {
+    while((c = _strstr(p, needle, anycase))) {
         const char *before = (c == haystack) ? NULL : c-1;
         const char *after = c + l;
-        int ok = 1;
-        if (isalnum(*after)) ok = 0;
-        if (before && isalnum(*before)) ok = 0;
+        int ok = 1, wbs = 1, wbe = 1;
+        if (isalnum(*after)) wbe = 0;
+        if (before && isalnum(*before)) wbs = 0;
+        if (!wbe && !prefix_ok) ok = 0;
+        if (!wbs && !suffix_ok) ok = 0;
+        if (!(wbs || wbe)) ok = 0;
         if (ok) return c;
         p++;
     }
     return NULL;
 }
 
-char *strcasestr_word(const char *haystack, const char *needle) {
-    if (!haystack || !needle)
-        return NULL;
+char *strstr_word(const char *haystack, const char *needle) {
+    return _strstr_word(haystack, needle, 0, 0, 0);
+}
 
-    char *c;
-    const char *p = haystack;
-    size_t l = strlen(needle);
-    while(c = strcasestr(p, needle)) {
-        const char *before = (c == haystack) ? NULL : c-1;
-        const char *after = c + l;
-        int ok = 1;
-        if (isalnum(*after)) ok = 0;
-        if (before && isalnum(*before)) ok = 0;
-        if (ok) return c;
-        p++;
-    }
-    return NULL;
+char *strcasestr_word(const char *haystack, const char *needle) {
+    return _strstr_word(haystack, needle, 1, 0, 0);
+}
+
+char *strstr_word_prefix(const char *haystack, const char *needle) {
+    return _strstr_word(haystack, needle, 0, 1, 0);
+}
+
+char *strcasestr_word_prefix(const char *haystack, const char *needle) {
+    return _strstr_word(haystack, needle, 1, 1, 0);
+}
+
+char *strstr_word_suffix(const char *haystack, const char *needle) {
+    return _strstr_word(haystack, needle, 0, 0, 1);
+}
+
+char *strcasestr_word_suffix(const char *haystack, const char *needle) {
+    return _strstr_word(haystack, needle, 1, 0, 1);
 }
