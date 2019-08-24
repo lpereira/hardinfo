@@ -59,6 +59,13 @@ typedef struct {
     uint8_t bounds_ok;
 } DisplayIDBlock;
 
+typedef struct {
+    edid_addy addy;
+    uint8_t interface;
+    uint8_t supports_hdcp;
+    uint8_t exists;
+} DIExtData;
+
 /* order by rising priority */
 enum {
     OUTSRC_INVALID = -1,
@@ -86,7 +93,7 @@ typedef struct {
     uint64_t pixel_clock_khz;
     int src; /* enum OUTSRC_* */
     uint64_t pixels; /* h*v: easier to compare */
-    char class_inch[6];
+    char class_inch[12];
 } edid_output;
 
 struct edid_std {
@@ -207,6 +214,8 @@ typedef struct _edid {
     edid_output img_max;
     uint32_t speaker_alloc_bits;
 
+    DIExtData di;
+
     DisplayIDMeta did;
     int did_block_count;
     DisplayIDBlock *did_blocks;
@@ -224,9 +233,10 @@ edid *edid_new_from_file(const char *path);
 void edid_free(edid *e);
 char *edid_dump_hex(edid *e, int tabs, int breaks);
 
-const char *edid_standard(int type);
+const char *edid_standard(int std);
 const char *edid_output_src(int src);
 const char *edid_interface(int type);
+const char *edid_di_interface(int type);
 const char *edid_descriptor_type(int type);
 const char *edid_ext_block_type(int type);
 const char *edid_cea_block_type(int type);

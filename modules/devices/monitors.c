@@ -193,7 +193,21 @@ static gchar *make_edid_section(monitor *m) {
         if (e->ext_blocks_fail) aok = 0;
         gchar *csum = aok ? _("Ok") : _("Fail");
 
-        const gchar *iface = e->interface ? _(edid_interface(e->interface)) : _("(Unspecified)");
+        gchar *iface;
+        if (e->interface && e->di.exists) {
+            gchar *tmp = g_strdup_printf("[%x] %s\n[DI-EXT:%x] %s",
+                e->interface, _(edid_interface(e->interface)),
+                e->di.interface, _(edid_di_interface(e->di.interface)) );
+            iface = gg_key_file_parse_string_as_value(tmp, '|');
+            g_free(tmp);
+        } else if (e->di.exists) {
+            iface = g_strdup_printf("[DI-EXT:%x] %s",
+                e->di.interface, _(edid_di_interface(e->di.interface)) );
+        } else {
+            iface = g_strdup_printf("[%x] %s",
+                e->interface,
+                e->interface ? _(edid_interface(e->interface)) : _("(Unspecified)") );
+        }
 
         gchar *d_list, *ext_list, *dtd_list, *cea_list,
             *etb_list, *std_list, *svd_list, *sad_list,
@@ -299,7 +313,7 @@ static gchar *make_edid_section(monitor *m) {
         gchar *ret = g_strdup_printf(
             /* extending "Connection" section */
             "%s=%s\n" /* sig type */
-            "%s=[%x] %s\n" /* interface */
+            "%s=%s\n" /* interface */
             "%s=%s\n" /* bpcc */
             "%s=%s\n" /* speakers */
             "[%s]\n"
@@ -330,7 +344,7 @@ static gchar *make_edid_section(monitor *m) {
             "[%s]\n%s=%s\n"
             ,
             _("Signal Type"), e->a_or_d ? _("Digital") : _("Analog"),
-            _("Interface"), e->interface, iface,
+            _("Interface"), iface,
             _("Bits per Color Channel"), UNSPECIFNULL2(bpcc),
             _("Speaker Allocation"), speakers,
             _("Output (Max)"),
@@ -373,6 +387,7 @@ static gchar *make_edid_section(monitor *m) {
         g_free(svd_list);
         g_free(didt_list);
         g_free(did_string_list);
+        g_free(iface);
         g_free(hex);
         //printf("ret: %s\n", ret);
         return ret;
@@ -386,10 +401,13 @@ gchar *monitors_get_info() {
     gchar tag_prefix[] = "DEV";
 
     gchar **edid_files = get_output_lines("find /sys/devices -name edid");
-    //gchar **edid_files = get_output_lines("find /home/pburt/github/verbose-spork/junk/testing/.testing/edid/ -name edid.*");
+    //gchar **edid_files = get_output_lines("find /home/pburt/github/verbose-spork/junk/testing/.testing/edid2/ -name edid.*");
     int i, found = 0;
     for(i = 0; edid_files[i]; i++) {
         monitor *m = monitor_new_from_sysfs(edid_files[i]);
+        //if (m && m->e->std < STD_DISPLAYID) continue;
+        //if (m && !m->e->interface) continue;
+        //if (m && m->e->interface != 1) continue;
         if (m && !SEQ(m->drm_status, "disconnected")) {
             gchar *tag = g_strdup_printf("%d-%s", found, m->drm_connection);
             tag_make_safe_inplace(tag);
