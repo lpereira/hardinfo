@@ -64,7 +64,7 @@ static inline
 char *rstr(edid *e, uint32_t offset, uint32_t len) {
     if (!bounds_check(e, offset+len)) return NULL;
     char *raw = malloc(len+1), *ret = NULL;
-    strncpy(raw, &e->u8[offset], len);
+    strncpy(raw, (char*)&e->u8[offset], len);
     raw[len] = 0;
     ret = g_utf8_make_valid(raw, len);
     g_free(raw);
@@ -75,7 +75,7 @@ static inline
 char *rstr_strip(edid *e, uint32_t offset, uint32_t len) {
     if (!bounds_check(e, offset+len)) return NULL;
     char *raw = malloc(len+1), *ret = NULL;
-    strncpy(raw, &e->u8[offset], len);
+    strncpy(raw, (char*)&e->u8[offset], len);
     raw[len] = 0;
     ret = g_strstrip(g_utf8_make_valid(raw, len));
     g_free(raw);
@@ -300,6 +300,12 @@ static void did_block_decode(DisplayIDBlock *blk) {
                 /* UNTESTED */
                 if (rpnpcpy(&ven, e, a) )
                     e->ven = ven;
+                if (u8[12] || u8[13]) {
+                    e->dom.week = u8[12];
+                    e->dom.year = u8[13] + 2000;
+                    e->dom.is_model_year = (e->dom.week == 255);
+                    e->dom.std = STD_DISPLAYID;
+                }
                 e->did_strings[e->did_string_count].is_product_name = 1;
                 e->did_strings[e->did_string_count].len = blk->len;
                 e->did_strings[e->did_string_count].str = rstr_strip(e, a+12, u8[b+11]);
@@ -310,6 +316,12 @@ static void did_block_decode(DisplayIDBlock *blk) {
                 /* UNTESTED */
                 if (rouicpy(&ven, e, a) )
                     e->ven = ven;
+                if (u8[12] || u8[13]) {
+                    e->dom.week = u8[12];
+                    e->dom.year = u8[13] + 2000;
+                    e->dom.is_model_year = (e->dom.week == 255);
+                    e->dom.std = STD_DISPLAYID20;
+                }
                 e->did_strings[e->did_string_count].is_product_name = 1;
                 e->did_strings[e->did_string_count].len = blk->len;
                 e->did_strings[e->did_string_count].str = rstr_strip(e, a+12, u8[b+11]);
@@ -407,7 +419,7 @@ static edid_output edid_output_from_svd(uint8_t index) {
             return out;
         }
     }
-    return (edid_output){};
+    return (edid_output){.src = OUTSRC_INVALID};
 }
 
 edid *edid_new(const char *data, unsigned int len) {
@@ -446,7 +458,7 @@ edid *edid_new(const char *data, unsigned int len) {
     e->n_serial = r32le(e, 12, NOMASK); /* bytes 12-15 */
     e->dom.week = e->u8[16];            /* byte 16 */
     e->dom.year = e->u8[17] + 1990;     /* byte 17 */
-    e->dom.is_model_year = (e->dom.week > 52);
+    e->dom.is_model_year = (e->dom.week == 255);
     e->dom.std = STD_EDID;
 
     e->a_or_d = (e->u8[20] & 0x80) ? 1 : 0;
@@ -503,6 +515,9 @@ edid *edid_new(const char *data, unsigned int len) {
     for(i = 38; i < 53; i+=2) {
         /* 0101 is unused */
         if (e->u8[i] == 0x01 && e->u8[i+1] == 0x01)
+            continue;
+        /* 00.. is invalid/"reserved" */
+        if (e->u8[i] == 0x00)
             continue;
         double xres = (e->u8[i] + 31) * 8;
         double yres = 0;
@@ -739,6 +754,9 @@ edid *edid_new(const char *data, unsigned int len) {
     /* svds */
     for(i = 0; i < e->svd_count; i++) {
         e->svds[i].out = edid_output_from_svd(e->svds[i].v);
+        if (e->svds[i].out.src == OUTSRC_INVALID)
+            continue;
+
         if (e->svds[i].v >= 128 &&
             e->svds[i].v <= 192) {
             e->svds[i].is_native = 1;
@@ -757,6 +775,15 @@ edid *edid_new(const char *data, unsigned int len) {
             OUTPUT_CPY_SIZE(e->img_svd, e->img_max);
         }
     }
+    /* remove invalid SVDs */
+    int d = 0;
+    for(i = 0; i < e->svd_count; i++) {
+        if (d != i)
+            e->svds[d].out = e->svds[i].out;
+        if (e->svds[i].out.src != OUTSRC_INVALID)
+            d++;
+    }
+    e->svd_count -= (i-d);
 
     /* didts */
     for(i = 0; i < e->didt_count; i++) {
@@ -1237,7 +1264,7 @@ char *edid_manf_date_describe(struct edid_manf_date dom) {
     if (!dom.year) return g_strdup("unspecified");
     if (dom.is_model_year)
         return g_strdup_printf(_("model year %d"), dom.year);
-    if (dom.week <= 52)
+    if (dom.week && dom.week <= 53)
         return g_strdup_printf(_("week %d of %d"), dom.week, dom.year);
     return g_strdup_printf("%d", dom.year);
 }
