@@ -117,11 +117,7 @@ gchar *monitor_vendor_str(monitor *m, gboolean include_value, gboolean link_name
         strcpy(v, ven.pnp);
         strcpy(t, "PNP");
     } else if (ven.type == VEN_TYPE_OUI) {
-        sprintf(v, "%02x%02x%02x",
-            /* file lists as big endian */
-            (ven.oui >> 16) & 0xff,
-            (ven.oui >> 8) & 0xff,
-             ven.oui & 0xff );
+        strcpy(v, ven.oui_str);
         strcpy(t, "OUI");
     }
 
