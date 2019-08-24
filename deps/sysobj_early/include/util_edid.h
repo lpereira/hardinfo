@@ -32,6 +32,19 @@ typedef struct {
     uint32_t offset;
 } edid_addy;
 
+/* OUI is stored in EDID as 24-bit little-endian,
+ * but lookup file from IEEE expects big-endian.
+ * .oui_str is .oui rendered into big-endian for
+ * easy lookup. */
+typedef struct {
+    union {
+        char pnp[7]; /* only needs 3+null */
+        char oui_str[7]; /* needs 6+null */
+    };
+    uint32_t oui;
+    uint8_t type; /* enum VEN_TYPE_* */
+} edid_ven;
+
 typedef struct {
     char *str;
     uint16_t len;
@@ -57,6 +70,9 @@ typedef struct {
     uint8_t revision;
     uint8_t len;
     uint8_t bounds_ok;
+
+    /* for vendor specific block */
+    edid_ven ven;
 } DisplayIDBlock;
 
 typedef struct {
@@ -125,6 +141,9 @@ struct edid_cea_block {
     edid_addy addy;
     int type, len;
     uint8_t bounds_ok;
+
+    /* for vendor specific block */
+    edid_ven ven;
 };
 
 struct edid_descriptor {
@@ -145,13 +164,6 @@ enum {
     VEN_TYPE_PNP,
     VEN_TYPE_OUI,
 };
-
-typedef struct {
-    //TODO: union?
-    char pnp[4];
-    uint32_t oui;
-    uint8_t type; /* enum VEN_TYPE_* */
-} edid_ven;
 
 enum {
     STD_EDID         = 0,

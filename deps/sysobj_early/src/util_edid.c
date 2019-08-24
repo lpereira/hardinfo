@@ -162,7 +162,11 @@ int rpnpcpy(edid_ven *dest, edid *e, uint32_t offset) {
 static inline
 int rouicpy(edid_ven *dest, edid *e, uint32_t offset) {
     edid_ven ret = {.type = VEN_TYPE_OUI};
-    ret.oui = r24be(e, offset, NOMASK);
+    ret.oui = r24le(e, offset, NOMASK);
+    sprintf(ret.oui_str, "%02x%02x%02x",
+        (ret.oui >> 16) & 0xff,
+        (ret.oui >> 8) & 0xff,
+            ret.oui & 0xff );
     if (ret.oui) {
         *dest = ret;
         return 1;
@@ -254,11 +258,13 @@ static void cea_block_decode(struct edid_cea_block *blk) {
     if (!blk->bounds_ok) return;
 
     edid *e = blk->addy.e;
+    static uint32_t h = 1; /* header size */
+    uint32_t a = blk->addy.offset; /* start of block, includes header */
     uint8_t *ptr = DPTR(blk->addy);
     int i;
     switch(blk->type) {
         case 0x1: /* SADS */
-            for(i = 1; i <= blk->len; i+=3) {
+            for(i = h; i <= blk->len; i+=3) {
                 struct edid_sad *sad = &e->sads[e->sad_count];
                 sad->v[0] = ptr[i];
                 sad->v[1] = ptr[i+1];
@@ -276,14 +282,16 @@ static void cea_block_decode(struct edid_cea_block *blk) {
             }
             break;
         case 0x4: /* Speaker allocation */
-            e->speaker_alloc_bits = ptr[1];
+            e->speaker_alloc_bits = ptr[h];
             break;
         case 0x2: /* SVDs */
-            for(i = 1; i <= blk->len; i++)
+            for(i = h; i <= blk->len; i++)
                 e->svds[e->svd_count++].v = ptr[i];
             break;
         case 0x3: /* Vendor-specific */
+            rouicpy(&blk->ven, e, a+h);
             // TODO:
+            break;
         default:
             break;
     }
@@ -300,17 +308,17 @@ static void did_block_decode(DisplayIDBlock *blk) {
     if (!blk->bounds_ok) return;
 
     edid *e = blk->addy.e;
-    uint32_t a = blk->addy.offset + 3;
-
+    static uint32_t h = 3; /* header size */
+    uint32_t a = blk->addy.offset; /* start of block, includes header */
     uint8_t *u8 = DPTR(blk->addy);
-    int b = 3;
+    int b = h;
     edid_ven ven = {};
     edid_output out = {};
     if (blk) {
         switch(blk->type) {
             case 0:     /* Product ID (1.x) */
                 /* UNTESTED */
-                if (rpnpcpy(&ven, e, a) )
+                if (rpnpcpy(&ven, e, a+h) )
                     e->ven = ven;
                 if (u8[12] || u8[13]) {
                     e->dom.week = u8[12];
@@ -320,13 +328,13 @@ static void did_block_decode(DisplayIDBlock *blk) {
                 }
                 e->did_strings[e->did_string_count].is_product_name = 1;
                 e->did_strings[e->did_string_count].len = blk->len;
-                e->did_strings[e->did_string_count].str = rstr_strip(e, a+12, u8[b+11]);
+                e->did_strings[e->did_string_count].str = rstr_strip(e, a+h+12, u8[b+11]);
                 e->name = e->did_strings[e->did_string_count].str;
                 e->did_string_count++;
                 break;
             case 0x20:  /* Product ID */
                 /* UNTESTED */
-                if (rouicpy(&ven, e, a) )
+                if (rouicpy(&ven, e, a+h) )
                     e->ven = ven;
                 if (u8[12] || u8[13]) {
                     e->dom.week = u8[12];
@@ -336,24 +344,24 @@ static void did_block_decode(DisplayIDBlock *blk) {
                 }
                 e->did_strings[e->did_string_count].is_product_name = 1;
                 e->did_strings[e->did_string_count].len = blk->len;
-                e->did_strings[e->did_string_count].str = rstr_strip(e, a+12, u8[b+11]);
+                e->did_strings[e->did_string_count].str = rstr_strip(e, a+h+12, u8[b+11]);
                 e->name = e->did_strings[e->did_string_count].str;
                 e->did_string_count++;
                 break;
             case 0x0a: /* Serial Number (ASCII String) */
                 e->did_strings[e->did_string_count].is_serial = 1;
                 e->did_strings[e->did_string_count].len = blk->len;
-                e->did_strings[e->did_string_count].str = rstr_strip(e, a, blk->len);
+                e->did_strings[e->did_string_count].str = rstr_strip(e, a+h, blk->len);
                 e->serial = e->did_strings[e->did_string_count].str;
                 e->did_string_count++;
                 break;
             case 0x0b: /* General Purpose ASCII String */
                 e->did_strings[e->did_string_count].len = blk->len;
-                e->did_strings[e->did_string_count].str = rstr(e, a, blk->len);
+                e->did_strings[e->did_string_count].str = rstr(e, a+h, blk->len);
                 e->did_string_count++;
                 break;
             case 0x03: /* Type I Detailed timings */
-                out.pixel_clock_khz = 10 * r24le(e, a, NOMASK);
+                out.pixel_clock_khz = 10 * r24le(e, a+h, NOMASK);
                 out.horiz_pixels    = 1 + (u8[b+5] << 8) + u8[b+4];
                 out.horiz_blanking  = (u8[b+7] << 8) + u8[b+6];
                 out.vert_lines      = 1 + (u8[b+13] << 8) + u8[b+12];
@@ -394,6 +402,11 @@ static void did_block_decode(DisplayIDBlock *blk) {
                 out.src = OUTSRC_DID_TYPE_VII;
                 edid_output_fill(&out);
                 e->didts[e->didt_count++] = out;
+                break;
+            case 0x7e: /* vendor specific data */
+            case 0x7f: /* vendor specific data */
+                rouicpy(&blk->ven, e, a+h);
+                // TODO:
                 break;
             case 0x81: /* CTA DisplayID, ... Embedded CEA Blocks */
                 while(b < blk->len) {
@@ -1197,7 +1210,12 @@ char *edid_cea_block_describe(struct edid_cea_block *blk) {
                     blk->type, _(edid_cea_block_type(blk->type)),
                     blk->len);
                 break;
-            case 0x3: //TODO
+            case 0x3: /* vendor specific */
+                ret = g_strdup_printf("([%x] %s) len:%d (OUI:%s) -- %s",
+                    blk->type, _(edid_cea_block_type(blk->type)),
+                    blk->len, blk->ven.oui_str,
+                    hb);
+                break;
             default:
                 ret = g_strdup_printf("([%x] %s) len:%d -- %s",
                     blk->type, _(edid_cea_block_type(blk->type)),
