@@ -42,6 +42,18 @@
     if (EDID_MSG_STDERR) fprintf (stderr, ">[%s;L%d] " msg "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
     g_string_append_printf(e->msg_log, "[%s;L%d] " msg "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); }
 
+static int str_make_printable(char *str) {
+    int rc = 0;
+    char *p;
+    for(p = str; *p; p++) {
+        if (!isprint(*p)) {
+            *p = '.';
+            rc++;
+        }
+    }
+    return rc;
+}
+
 static inline
 uint32_t bf_value(uint32_t value, uint32_t mask) {
     uint32_t result = value & mask;
@@ -584,6 +596,16 @@ edid *edid_new(const char *data, unsigned int len) {
             if (r) e->ext_blocks_ok++;
             else e->ext_blocks_fail++;
 
+            if (u8[0] == 0x40) {
+                /* DI-EXT */
+                e->di.exists = 1;
+                e->di.addy.e = e;
+                e->di.addy.offset = offset;
+
+                e->di.interface = r8(e, offset + 2, NOMASK);
+                e->di.supports_hdcp = r8(e, offset + 3, 0x8);
+            }
+
             if (u8[0] == 0x70) {
                 /* DisplayID */
                 e->did.version = u8[1];
@@ -660,10 +682,8 @@ edid *edid_new(const char *data, unsigned int len) {
 
     /* strings */
     for(i = 0; i < 4; i++) {
-        if (!g_utf8_validate(e->d[i].text, -1, NULL)) {
-            strcpy(e->d[i].text, "(INVALID)");
-        }
         g_strstrip(e->d[i].text);
+        str_make_printable(e->d[i].text);
         switch(e->d[i].type) {
             case 0xfc:
                 e->name = e->d[i].text;
@@ -692,6 +712,11 @@ edid *edid_new(const char *data, unsigned int len) {
             if (e->ut1) e->name = e->ut1;
             if (e->ut2 && !e->serial) e->serial = e->ut2;
         }
+    }
+    if (!e->interface && e->di.interface) {
+        if (e->di.interface >= 1
+            && e->di.interface <= 5)
+            e->interface = 1; /* DVI */
     }
 
     /* largest in ETB */
@@ -936,10 +961,28 @@ const char *edid_output_src(int src) {
 const char *edid_interface(int type) {
     switch(type) {
         case 0: return N_("undefined");
+        case 0x1: return N_("DVI");
         case 0x2: return N_("HDMIa");
         case 0x3: return N_("HDMIb");
         case 0x4: return N_("MDDI");
         case 0x5: return N_("DisplayPort");
+    };
+    return N_("unknown");
+}
+
+const char *edid_di_interface(int type) {
+    switch(type) {
+        case 0: return N_("Analog");
+        case 0x1: return N_("DVI");
+        case 0x2: return N_("DVI - Single Link");
+        case 0x3: return N_("DVI - Dual Link (Hi-Resolution)");
+        case 0x4: return N_("DVI - Dual Link (Hi-Color)");
+        case 0x5: return N_("DVI for Consumer Electronics");
+        case 0x6: return N_("PnD");
+        case 0x7: return N_("DFP");
+        case 0x8: return N_("OpenLDI - Single Link");
+        case 0x9: return N_("OpenLDI - Dual Link");
+        case 0xa: return N_("OpenLDI for Consumer Electronics");
     };
     return N_("unknown");
 }
@@ -1025,17 +1068,17 @@ const char *edid_ext_block_type(int type) {
         case 0x00:
             return N_("timing extension");
         case 0x02:
-            return N_("EIA/CEA-861 extension block");
+            return N_("EIA/CEA-861 extension (CEA-EXT)");
         case 0x10:
-            return N_("video timing block");
+            return N_("Video Timing Block extension (VTB-EXT)");
         case 0x20:
             return N_("EDID 2.0 extension");
         case 0x40:
-            return N_("DVI feature data/display information");
+            return N_("Display Information extension (DI-EXT)");
         case 0x50:
-            return N_("localized strings");
+            return N_("Localized String extension (LS-EXT)");
         case 0x60:
-            return N_("microdisplay interface");
+            return N_("Digital Packet Video Link extension (DPVL-EXT)");
         case 0x70:
             return N_("DisplayID");
         case 0xa7:
@@ -1293,6 +1336,10 @@ char *edid_dump2(edid *e) {
         ret = appfnl(ret, "bits per color channel: %d", e->bpc);
     if (e->interface)
         ret = appfnl(ret, "interface: %s", _(edid_interface(e->interface)));
+    if (e->di.exists) {
+        ret = appfnl(ret, "interface_ext: %s", _(edid_di_interface(e->di.interface)));
+        ret = appfnl(ret, "hdcp: %s", e->di.supports_hdcp ? "supported" : "no");
+    }
 
     char *desc = edid_output_describe(&e->img);
     char *desc_svd = edid_output_describe(&e->img_svd);
