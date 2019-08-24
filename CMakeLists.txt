@@ -125,6 +125,7 @@ set(HARDINFO_RESOURCES
 	"deps/sysobj_early/data/usb.ids"
 	"deps/sysobj_early/data/arm.ids"
 	"deps/sysobj_early/data/edid.ids"
+	"deps/sysobj_early/data/ieee_oui.ids"
 )
 
 set(HARDINFO_MANPAGES

@@ -31,6 +31,7 @@ static const char monitor_icon[] = "monitor.png";
 gboolean no_monitors = FALSE;
 
 gchar *edid_ids_file = NULL;
+gchar *ieee_oui_ids_file = NULL;
 
 void find_edid_ids_file() {
     if (edid_ids_file) return;
@@ -47,6 +48,23 @@ void find_edid_ids_file() {
             g_free(file_search_order[n]);
     }
     auto_free(edid_ids_file);
+}
+
+void find_ieee_oui_ids_file() {
+    if (ieee_oui_ids_file) return;
+    char *file_search_order[] = {
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "ieee_oui.ids", NULL),
+        g_build_filename(params.path_data, "ieee_oui.ids", NULL),
+        NULL
+    };
+    int n;
+    for(n = 0; file_search_order[n]; n++) {
+        if (!ieee_oui_ids_file && !access(file_search_order[n], R_OK))
+            ieee_oui_ids_file = file_search_order[n];
+        else
+            g_free(file_search_order[n]);
+    }
+    auto_free(ieee_oui_ids_file);
 }
 
 typedef struct {
@@ -89,27 +107,55 @@ void monitor_free(monitor *m) {
     }
 }
 
-const gchar *monitor_vendor_str(monitor *m) {
-    if (m->_vstr)
-        return m->_vstr;
+gchar *monitor_vendor_str(monitor *m, gboolean include_value, gboolean link_name) {
+    if (!m || !m->e) return NULL;
     edid_ven ven = m->e->ven;
+    gchar v[20] = "", t[4] = "";
+    ids_query_result result = {};
 
     if (ven.type == VEN_TYPE_PNP) {
-        ids_query_result result = {};
-
-        if (!edid_ids_file)
-            find_edid_ids_file();
-
-        scan_ids_file(edid_ids_file, ven.pnp, &result, -1);
-        if (result.results[0]) {
-            m->_vstr = g_strdup(result.results[0]);
-            return m->_vstr;
-        }
-        return g_strdup(ven.pnp);
+        strcpy(v, ven.pnp);
+        strcpy(t, "PNP");
     } else if (ven.type == VEN_TYPE_OUI) {
-        //TODO...
+        sprintf(v, "%02x%02x%02x",
+            /* file lists as big endian */
+            (ven.oui >> 16) & 0xff,
+            (ven.oui >> 8) & 0xff,
+             ven.oui & 0xff );
+        strcpy(t, "OUI");
     }
-    return "...";
+
+    if (!m->_vstr) {
+        if (ven.type == VEN_TYPE_PNP) {
+            if (!edid_ids_file)
+                find_edid_ids_file();
+            scan_ids_file(edid_ids_file, v, &result, -1);
+            if (result.results[0])
+                m->_vstr = g_strdup(result.results[0]);
+        } else if (ven.type == VEN_TYPE_OUI) {
+            if (!ieee_oui_ids_file)
+                find_ieee_oui_ids_file();
+            scan_ids_file(ieee_oui_ids_file, v, &result, -1);
+            if (result.results[0])
+                m->_vstr = g_strdup(result.results[0]);
+        }
+    }
+
+    gchar *ret = NULL;
+    if (include_value)
+        ret = g_strdup_printf("[%s:%s]", t, v);
+    if (m->_vstr) {
+        if (link_name) {
+            gchar *lv = vendor_get_link(m->_vstr);
+            ret = appfsp(ret, "%s", lv);
+            g_free(lv);
+        } else
+            ret = appfsp(ret, "%s", m->_vstr);
+    } else if (!include_value && ven.type == VEN_TYPE_PNP) {
+        ret = appfsp(ret, "%s", ven.pnp);
+    } else
+        ret = appfsp(ret, "%s", _("(Unknown)"));
+    return ret;
 }
 
 gchar *monitor_name(monitor *m, gboolean include_vendor) {
@@ -120,9 +166,11 @@ gchar *monitor_name(monitor *m, gboolean include_vendor) {
         return g_strdup(_("(Unknown)"));
 
     if (include_vendor) {
-        if (e->ven.type != VEN_TYPE_INVALID)
-            desc = appfsp(desc, "%s", vendor_get_shortest_name(monitor_vendor_str(m)));
-        else
+        if (e->ven.type != VEN_TYPE_INVALID) {
+            gchar *vstr = monitor_vendor_str(m, FALSE, FALSE);
+            desc = appfsp(desc, "%s", vendor_get_shortest_name(vstr));
+            g_free(vstr);
+        } else
             desc = appfsp(desc, "%s", "Unknown");
     }
 
@@ -177,7 +225,7 @@ static gchar *make_edid_section(monitor *m) {
     int i;
     edid *e = m->e;
     if (e->len) {
-        const gchar *vstr = monitor_vendor_str(m);
+        gchar *vstr = monitor_vendor_str(m, TRUE, TRUE);
 
         gchar *dom = NULL;
         if (!e->dom.is_model_year && e->dom.week && e->dom.year)
@@ -388,6 +436,7 @@ static gchar *make_edid_section(monitor *m) {
         g_free(didt_list);
         g_free(did_string_list);
         g_free(iface);
+        g_free(vstr);
         g_free(hex);
         //printf("ret: %s\n", ret);
         return ret;
@@ -419,12 +468,10 @@ gchar *monitors_get_info() {
 
             gchar *details = g_strdup_printf("[%s]\n"
                                 "%s=%s\n"
-                                //"%s=%s\n"
                                 "%s=%s %s\n"
                                 "%s\n",
                                 _("Connection"),
                                 _("DRM"), m->drm_connection,
-                                //_("DRM Path"), m->drm_path,
                                 _("Status"), m->drm_status, m->drm_enabled,
                                 edid_section ? edid_section : ""
                                 );
