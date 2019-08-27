@@ -508,13 +508,13 @@ edid *edid_new(const char *data, unsigned int len) {
     }
 
     /* established timing bitmap */
-#define ETB_CHECK(byte, bit, h, v, f, i)         \
-    if (byte & (1<<bit)) {                       \
+#define ETB_CHECK(BYT, BIT, HP, VP, RF, IL)      \
+    if (e->u8[BYT] & (1<<BIT)) {                 \
         e->etbs[e->etb_count] = e->img;          \
-        e->etbs[e->etb_count].horiz_pixels = h;  \
-        e->etbs[e->etb_count].vert_pixels = v;   \
-        e->etbs[e->etb_count].vert_freq_hz = f;  \
-        e->etbs[e->etb_count].is_interlaced = i; \
+        e->etbs[e->etb_count].horiz_pixels = HP; \
+        e->etbs[e->etb_count].vert_pixels = VP;  \
+        e->etbs[e->etb_count].vert_freq_hz = RF; \
+        e->etbs[e->etb_count].is_interlaced = IL;\
         e->etbs[e->etb_count].src = OUTSRC_ETB;  \
         edid_output_fill(&e->etbs[e->etb_count]);\
         e->etb_count++; };
@@ -534,7 +534,7 @@ edid *edid_new(const char *data, unsigned int len) {
     ETB_CHECK(36, 2, 1024, 768, 70, 0);
     ETB_CHECK(36, 1, 1024, 768, 75, 0);
     ETB_CHECK(36, 0, 1280, 1024, 75, 0);
-    ETB_CHECK(35, 7, 1152, 870, 75, 0); //(Apple Macintosh II)
+    ETB_CHECK(37, 7, 1152, 870, 75, 0); //(Apple Macintosh II)
 
     /* standard timings */
     for(i = 38; i < 53; i+=2) {
