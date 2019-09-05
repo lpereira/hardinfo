@@ -4,6 +4,8 @@
 #include "hardinfo.h"
 #include "util_sysobj.h" /* for SEQ() */
 
+#define BENCH_PTR_BITS ((unsigned int)sizeof(void*) * 8)
+
 extern ProgramParameters params;
 
 enum {
