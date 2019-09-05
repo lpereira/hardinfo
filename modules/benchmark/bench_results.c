@@ -33,6 +33,7 @@ typedef struct {
     int cores;
     int threads;
     char *mid;
+    int ptr_bits; /* 32, 64... BENCH_PTR_BITS; 0 for unspecified */
     int machine_data_version;
 } bench_machine;
 
@@ -151,6 +152,7 @@ bench_machine *bench_machine_this() {
 
     m = bench_machine_new();
     if (m) {
+        m->ptr_bits = BENCH_PTR_BITS;
         m->board = module_call_method("devices::getMotherboard");
         m->cpu_name = module_call_method("devices::getProcessorName");
         m->cpu_desc = module_call_method("devices::getProcessorDesc");
@@ -278,6 +280,8 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
                 b->machine->gpu_desc = strdup(values[11]);
             if (vl >= 13)
                 b->machine->machine_data_version = atoi(values[12]);
+            if (vl >= 14)
+                b->machine->ptr_bits = atoi(values[13]);
             b->legacy = 0;
         } else if (vl >= 2) {
             b->bvalue.result = atof(values[0]);
@@ -367,7 +371,7 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
     char *bv = bench_value_to_str(b->bvalue);
 
 #define prep_str(s) (s ? (char*)auto_free(gg_key_file_parse_string_as_value(s, '|')) : "")
-    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s|%s|%d\n",
+    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s|%s|%d|%d\n",
             b->machine->mid, bv, b->bvalue.threads_used,
             prep_str(b->machine->board),
             prep_str(b->machine->cpu_name),
@@ -377,7 +381,8 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
             b->machine->processors, b->machine->cores, b->machine->threads,
             prep_str(b->machine->ogl_renderer),
             prep_str(b->machine->gpu_desc),
-            b->machine->machine_data_version // [12]
+            b->machine->machine_data_version, // [12]
+            b->machine->ptr_bits // [13]
             );
 
     free(cpu_config);
@@ -393,6 +398,9 @@ static char *bench_result_more_info_less(bench_result *b) {
     char bench_str[256] = "";
     if (b->bvalue.revision >= 0)
         snprintf(bench_str, 127, "%d", b->bvalue.revision);
+    char bits[24] = "";
+    if (b->machine->ptr_bits)
+        snprintf(bits, 23, _("%d-bit"), b->machine->ptr_bits);
 
     char *ret = g_strdup_printf("[%s]\n"
         /* threads */   "%s=%d\n"
@@ -409,13 +417,14 @@ static char *bench_result_more_info_less(bench_result *b) {
         /* threads */   "%s=%d\n"
         /* gpu desc */  "%s=%s\n"
         /* ogl rend */  "%s=%s\n"
-        /* mem */       "%s=%s\n",
+        /* mem */       "%s=%s\n"
+        /* bits */      "%s=%s\n",
                         _("Benchmark Result"),
                         _("Threads"), b->bvalue.threads_used,
                         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
-                        *bench_str ? _("Revision") : _("#Revision"), bench_str,
-                        *b->bvalue.extra ? _("Extra Information") : _("#Extra"), b->bvalue.extra,
-                        *b->bvalue.user_note ? _("User Note") : _("#User Note"), b->bvalue.user_note,
+                        *bench_str ? _("Revision") : "#Revision", bench_str,
+                        *b->bvalue.extra ? _("Extra Information") : "#Extra", b->bvalue.extra,
+                        *b->bvalue.user_note ? _("User Note") : "#User Note", b->bvalue.user_note,
                         b->legacy ? problem_marker() : "",
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
@@ -427,7 +436,8 @@ static char *bench_result_more_info_less(bench_result *b) {
                         _("Threads Available"), b->machine->threads,
                         _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
                         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
-                        _("Memory"), memory
+                        _("Memory"), memory,
+                        b->machine->ptr_bits ? _("Pointer Size"): "#AddySize", bits
                         );
     free(memory);
     return ret;
@@ -438,6 +448,9 @@ static char *bench_result_more_info_complete(bench_result *b) {
     strncpy(bench_str, b->name, 127);
     if (b->bvalue.revision >= 0)
         snprintf(bench_str + strlen(bench_str), 127, " (r%d)", b->bvalue.revision);
+    char bits[24] = "";
+    if (b->machine->ptr_bits)
+        snprintf(bits, 23, _("%d-bit"), b->machine->ptr_bits);
 
     return g_strdup_printf("[%s]\n"
         /* bench name */"%s=%s\n"
@@ -456,6 +469,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
         /* gpu desc */  "%s=%s\n"
         /* ogl rend */  "%s=%s\n"
         /* mem */       "%s=%d %s\n"
+        /* bits */      "%s=%s\n"
                         "%s=%d\n"
                         "[%s]\n"
         /* mid */       "%s=%s\n"
@@ -465,8 +479,8 @@ static char *bench_result_more_info_complete(bench_result *b) {
                         _("Threads"), b->bvalue.threads_used,
                         _("Result"), b->bvalue.result,
                         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
-                        *b->bvalue.extra ? _("Extra Information") : _("#Extra"), b->bvalue.extra,
-                        *b->bvalue.user_note ? _("User Note") : _("#User Note"), b->bvalue.user_note,
+                        *b->bvalue.extra ? _("Extra Information") : "#Extra", b->bvalue.extra,
+                        *b->bvalue.user_note ? _("User Note") : "#User Note", b->bvalue.user_note,
                         b->legacy ? problem_marker() : "",
                         b->legacy ? _("Note") : "#Note",
                         b->legacy ? _("This result is from an old version of HardInfo. Results might not be comparable to current version. Some details are missing.") : "",
@@ -479,6 +493,7 @@ static char *bench_result_more_info_complete(bench_result *b) {
                         _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
                         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
                         _("Memory"), b->machine->memory_kiB, _("kiB"),
+                        b->machine->ptr_bits ? _("Pointer Size"): "#AddySize", bits,
                         ".machine_data_version", b->machine->machine_data_version,
                         _("Handles"),
                         _("mid"), b->machine->mid,

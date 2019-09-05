@@ -20,6 +20,8 @@
 #include "hardinfo.h"
 #include "benchmark.h"
 
+#define STATMSG "Performing Alexey Kopytov's sysbench memory benchmark"
+
 /* known to work with:
  * sysbench 0.4.12 --> r:4012
  * sysbench 1.0.11 --> r:1000011
@@ -63,7 +65,7 @@ int sysbench_version() {
     return ret;
 }
 
-static gboolean sysbench_run(struct sysbench_ctx *ctx) {
+static gboolean sysbench_run(struct sysbench_ctx *ctx, int expecting_version) {
     gboolean spawned;
     gchar *out, *err, *p, *next_nl;
 
@@ -81,8 +83,9 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx) {
     snprintf(ctx->r.extra, 255, "--time=%d %s", ctx->max_time, ctx->parms_test);
     util_compress_space(ctx->r.extra);
 
-    int expecting = sysbench_version();
-    if (expecting < 1000000) {
+    if (!expecting_version)
+        expecting_version = sysbench_version();
+    if (expecting_version < 1000000) {
         /* v0.x.x: sysbench [general-options]... --test=<test-name> [test-options]... command */
         cmd_line = g_strdup_printf("sysbench --num-threads=%d --max-time=%d --test=%s %s run", ctx->threads, ctx->max_time, ctx->test, ctx->parms_test);
     } else {
@@ -171,65 +174,45 @@ sysbench_failed:
     return 0;
 }
 
-void benchmark_memory_single(void) {
+void benchmark_memory_run(int threads, int result_index) {
     struct sysbench_ctx ctx = {
         .test = "memory",
-        .threads = 1,
-        .parms_test =
+        .threads = threads,
+        .parms_test = "",
+        .r = EMPTY_BENCH_VALUE};
+
+    int sbv = sysbench_version();
+    if (BENCH_PTR_BITS > 32 && sbv >= 1000011) {
+        ctx.parms_test =
+           " --memory-block-size=1K"
+           " --memory-total-size=100G"
+           " --memory-scope=global"
+           " --memory-hugetlb=off"
+           " --memory-oper=write"
+           " --memory-access-mode=seq";
+    } else {
+        /* safer set */
+        ctx.parms_test =
            " --memory-block-size=1K"
            " --memory-total-size=3056M"
            " --memory-scope=global"
            " --memory-hugetlb=off"
            " --memory-oper=write"
-           " --memory-access-mode=seq",
-        .r = EMPTY_BENCH_VALUE};
+           " --memory-access-mode=seq";
+    }
 
     shell_view_set_enabled(FALSE);
-    shell_status_update("Performing Alexey Kopytov's sysbench memory benchmark (single thread)...");
+    char msg[128] = "";
+    snprintf(msg, 128, "%s (threads: %d)", STATMSG, threads);
+    shell_status_update(msg);
 
-    sysbench_run(&ctx);
-    bench_results[BENCHMARK_MEMORY_SINGLE] = ctx.r;
+    sysbench_run(&ctx, sbv);
+    bench_results[result_index] = ctx.r;
 }
 
-void benchmark_memory_dual(void) {
-    struct sysbench_ctx ctx = {
-        .test = "memory",
-        .threads = 2,
-        .parms_test =
-           " --memory-block-size=1K"
-           " --memory-total-size=3056M"
-           " --memory-scope=global"
-           " --memory-hugetlb=off"
-           " --memory-oper=write"
-           " --memory-access-mode=seq",
-        .r = EMPTY_BENCH_VALUE};
-
-    shell_view_set_enabled(FALSE);
-    shell_status_update("Performing Alexey Kopytov's sysbench memory benchmark (two threads)...");
-
-    sysbench_run(&ctx);
-    bench_results[BENCHMARK_MEMORY_DUAL] = ctx.r;
-}
-
-void benchmark_memory_quad(void) {
-    struct sysbench_ctx ctx = {
-        .test = "memory",
-        .threads = 4,
-        .parms_test =
-           " --memory-block-size=1K"
-           " --memory-total-size=3056M"
-           " --memory-scope=global"
-           " --memory-hugetlb=off"
-           " --memory-oper=write"
-           " --memory-access-mode=seq",
-        .r = EMPTY_BENCH_VALUE};
-
-    shell_view_set_enabled(FALSE);
-    shell_status_update("Performing Alexey Kopytov's sysbench memory benchmark (four threads)...");
-
-    sysbench_run(&ctx);
-    bench_results[BENCHMARK_MEMORY_QUAD] = ctx.r;
-}
+void benchmark_memory_single(void) { benchmark_memory_run(1, BENCHMARK_MEMORY_SINGLE); }
+void benchmark_memory_dual(void) { benchmark_memory_run(2, BENCHMARK_MEMORY_DUAL); }
+void benchmark_memory_quad(void) {  benchmark_memory_run(4, BENCHMARK_MEMORY_QUAD); }
 
 void benchmark_sbcpu_single(void) {
     struct sysbench_ctx ctx = {
@@ -240,9 +223,9 @@ void benchmark_sbcpu_single(void) {
         .r = EMPTY_BENCH_VALUE};
 
     shell_view_set_enabled(FALSE);
-    shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (single thread)...");
+    shell_status_update(STATMSG " (single thread)...");
 
-    sysbench_run(&ctx);
+    sysbench_run(&ctx, 0);
     bench_results[BENCHMARK_SBCPU_SINGLE] = ctx.r;
 }
 
@@ -257,9 +240,9 @@ void benchmark_sbcpu_all(void) {
         .r = EMPTY_BENCH_VALUE};
 
     shell_view_set_enabled(FALSE);
-    shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (Multi-thread)...");
+    shell_status_update(STATMSG " (Multi-thread)...");
 
-    sysbench_run(&ctx);
+    sysbench_run(&ctx, 0);
     bench_results[BENCHMARK_SBCPU_ALL] = ctx.r;
 }
 
@@ -272,8 +255,8 @@ void benchmark_sbcpu_quad(void) {
         .r = EMPTY_BENCH_VALUE};
 
     shell_view_set_enabled(FALSE);
-    shell_status_update("Performing Alexey Kopytov's sysbench CPU benchmark (Four thread)...");
+    shell_status_update(STATMSG " (Four thread)...");
 
-    sysbench_run(&ctx);
+    sysbench_run(&ctx, 0);
     bench_results[BENCHMARK_SBCPU_QUAD] = ctx.r;
 }

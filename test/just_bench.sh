@@ -27,7 +27,7 @@ if [ ! -z `which sysbench` ]; then
     do_hi_bench "SysBench CPU (Single-thread)"
     do_hi_bench "SysBench CPU (Multi-thread)"
     #do_hi_bench "SysBench CPU (Four threads)"
-    #do_hi_bench "SysBench Memory (Single-thread)"
+    do_hi_bench "SysBench Memory (Single-thread)"
     #do_hi_bench "SysBench Memory (Two threads)"
     do_hi_bench "SysBench Memory"
 fi
