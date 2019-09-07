@@ -259,6 +259,21 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
             struct InfoField *field = &g_array_index(group->fields, struct InfoField, i);
             gchar tmp_tag[256] = ""; /* for generated tag */
 
+            gboolean do_escape = TRUE;
+            if (field->value && strchr(field->value, '|') ) {
+                /* turning off escaping for values that may have columns */
+                do_escape = FALSE;
+                /* TODO:/FIXME: struct InfoField should store the column values
+                 * in an array instead of packing them into one value with '|'.
+                 * Then each value can be escaped and joined together with '|'
+                 * for flatten(). unflatten() can then split on non-escaped '|',
+                 * and unescape the result values into the column value array.
+                 * Another way to do this might be to check
+                 * .column_headers_visible in struct Info, but that is not
+                 * available here.
+                 */
+            }
+
             const gchar *tp = field->tag;
             gboolean tagged = !!tp;
             gboolean flagged = field->highlight || field->report_details;
@@ -274,9 +289,13 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
                     tp);
             }
 
-            gchar *escaped_value = gg_key_file_parse_string_as_value(field->value, '|');
-            g_string_append_printf(output, "%s=%s\n", field->name, escaped_value);
-            g_free(escaped_value);
+            if (do_escape) {
+                gchar *escaped_value = gg_key_file_parse_string_as_value(field->value, '|');
+                g_string_append_printf(output, "%s=%s\n", field->name, escaped_value);
+                g_free(escaped_value);
+            } else {
+                g_string_append_printf(output, "%s=%s\n", field->name, field->value);
+            }
         }
     } else if (group->computed) {
         g_string_append_printf(output, "%s\n", group->computed);
