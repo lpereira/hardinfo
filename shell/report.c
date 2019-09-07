@@ -51,17 +51,17 @@ void report_subtitle(ReportContext * ctx, gchar * text)
 void report_subsubtitle(ReportContext * ctx, gchar * text)
 { ctx->subsubtitle(ctx, text); }
 
-void report_key_value(ReportContext * ctx, gchar * key, gchar * value)
-{ ctx->keyvalue(ctx, key, value); }
+void report_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
+{ ctx->keyvalue(ctx, key, value, longest_key); }
 
-void report_details_start(ReportContext *ctx, gchar *key, gchar *value)
-{ ctx->details_start(ctx, key, value); }
+void report_details_start(ReportContext *ctx, gchar *key, gchar *value, gsize longest_key)
+{ ctx->details_start(ctx, key, value, longest_key); }
 
 void report_details_section(ReportContext *ctx, gchar *label)
 { ctx->details_section(ctx, label); }
 
-void report_details_keyvalue(ReportContext *ctx, gchar *key, gchar *value)
-{ ctx->details_keyvalue(ctx, key, value); }
+void report_details_keyvalue(ReportContext *ctx, gchar *key, gchar *value, gsize longest_key)
+{ ctx->details_keyvalue(ctx, key, value, longest_key); }
 
 void report_details_end(ReportContext *ctx)
 { ctx->details_end(ctx); }
@@ -198,9 +198,9 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 
 }
 
-static void report_html_details_start(ReportContext *ctx, gchar *key, gchar *value) {
+static void report_html_details_start(ReportContext *ctx, gchar *key, gchar *value, gsize longest_key) {
     guint cols = report_get_visible_columns(ctx);
-    report_key_value(ctx, key, value);
+    report_key_value(ctx, key, value, longest_key);
     ctx->parent_columns = ctx->columns;
     ctx->columns = REPORT_COL_VALUE;
     ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\"><table class=\"details\">\n", ctx->output, cols);
@@ -212,13 +212,13 @@ static void report_html_details_end(ReportContext *ctx) {
     ctx->parent_columns = 0;
 }
 
-void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details)
+void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details, gsize longest_key)
 {
     GKeyFile *key_file = g_key_file_new();
     gchar **groups;
     gint i;
 
-    report_details_start(ctx, key, value);
+    report_details_start(ctx, key, value, longest_key);
     ctx->in_details = TRUE;
 
     g_key_file_load_from_data(key_file, details, strlen(details), 0, NULL);
@@ -241,11 +241,21 @@ void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details
         report_subsubtitle(ctx, group);
 
         keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
+
+        gsize longest_key = 0;
+        for (j = 0; keys[j]; j++) {
+            gchar *lbl;
+            key_get_components(keys[j], NULL, NULL, NULL, &lbl, NULL, TRUE);
+            longest_key = MAX(longest_key, strlen(lbl));
+            g_free(lbl);
+        }
+
         for (j = 0; keys[j]; j++) {
             gchar *key = keys[j];
-            gchar *value;
+            gchar *raw_value, *value;
 
-            value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+            raw_value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+            value = g_strcompress(raw_value); /* un-escape \n, \t, etc */
 
             if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
                 strend(key, '#');
@@ -257,11 +267,12 @@ void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details
                     }
                 }
 
-                report_key_value(ctx, key, value);
+                report_key_value(ctx, key, value, longest_key);
 
             }
 
             g_free(value);
+            g_free(raw_value);
         }
 
         g_strfreev(keys);
@@ -357,11 +368,21 @@ void report_table(ReportContext * ctx, gchar * text)
         report_subsubtitle(ctx, group);
 
         keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
+
+        gsize longest_key = 0;
+        for (j = 0; keys[j]; j++) {
+            gchar *lbl;
+            key_get_components(keys[j], NULL, NULL, NULL, &lbl, NULL, TRUE);
+            longest_key = MAX(longest_key, strlen(lbl));
+            g_free(lbl);
+        }
+
         for (j = 0; keys[j]; j++) {
             gchar *key = keys[j];
-            gchar *value;
+            gchar *raw_value, *value;
 
-            value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+            raw_value = g_key_file_get_value(key_file, tmpgroup, key, NULL);
+            value = g_strcompress(raw_value); /* un-escape \n, \t, etc */
 
             if (g_utf8_validate(key, -1, NULL) && g_utf8_validate(value, -1, NULL)) {
                 strend(key, '#');
@@ -381,18 +402,19 @@ void report_table(ReportContext * ctx, gchar * text)
                         mi_data = ctx->entry->morefunc(mi_tag);
 
                     if (mi_data)
-                        report_details(ctx, key, value, mi_data);
+                        report_details(ctx, key, value, mi_data, longest_key);
                     else
-                        report_key_value(ctx, key, value);
+                        report_key_value(ctx, key, value, longest_key);
 
                     g_free(mi_tag);
                 } else {
-                    report_key_value(ctx, key, value);
+                    report_key_value(ctx, key, value, longest_key);
                 }
 
             }
 
             g_free(value);
+            g_free(raw_value);
         }
 
         g_strfreev(keys);
@@ -495,7 +517,7 @@ static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
 }
 
 static void
-report_html_key_value(ReportContext * ctx, gchar * key, gchar * value)
+report_html_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
@@ -586,28 +608,50 @@ static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
 }
 
 static void
-report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
+report_text_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
-    gint i, mc;
+    gint i, mc, field_width = MAX(10, longest_key);
     gchar indent[10] = "      ";
     if (!ctx->in_details)
         indent[0] = 0;
+    gchar field_spacer[51];
+    for(i = 0; i < 49; i++)
+        field_spacer[i] = ' ';
+    field_width = MIN(50, field_width);
+    field_spacer[field_width] = 0;
 
     gboolean highlight = key_is_highlighted(key);
+    gboolean multiline = (value && strlen(value) && strchr(value, '\n'));
     gchar *name = (gchar*)key_get_name(key);
+    gchar *pf = g_strdup_printf("%s%s", indent, highlight ? "* " : "  ");
+    gchar *rjname = g_strdup(field_spacer);
+    if (strlen(name) > strlen(rjname))
+        name[strlen(rjname)] = 0;
+    strcpy(rjname + strlen(rjname) - strlen(name), name);
 
     if (columns == 2 || ctx->in_details) {
-      if (strlen(value))
-          ctx->output = h_strdup_cprintf("%s%s%s\t\t: %s\n", ctx->output, indent, highlight ? "* " : "", name, value);
-      else
-          ctx->output = h_strdup_cprintf("%s%s%s\n", ctx->output, indent, highlight ? "* " : "", name);
+      if (strlen(value)) {
+          if (multiline) {
+              gchar **lines = g_strsplit(value, "\n", 0);
+              for(i=0; lines[i]; i++) {
+                  if (i == 0)
+                      ctx->output = h_strdup_cprintf("%s%s : %s\n", ctx->output, pf, rjname, lines[i]);
+                  else
+                      ctx->output = h_strdup_cprintf("%s%s   %s\n", ctx->output, pf, field_spacer, lines[i]);
+              }
+              g_strfreev(lines);
+          } else {
+              ctx->output = h_strdup_cprintf("%s%s : %s\n", ctx->output, pf, rjname, value);
+          }
+      } else
+          ctx->output = h_strdup_cprintf("%s%s\n", ctx->output, pf, rjname);
     } else {
       values = g_strsplit(value, "|", columns);
       mc = g_strv_length(values) - 1;
 
-      ctx->output = h_strdup_cprintf("%s%s%s", ctx->output, indent, highlight ? "* " : "", name);
+      ctx->output = h_strdup_cprintf("%s%s", ctx->output, pf, rjname);
 
       for (i = mc; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("\t%s",
@@ -619,6 +663,7 @@ report_text_key_value(ReportContext * ctx, gchar * key, gchar * value)
 
       g_strfreev(values);
     }
+    g_free(pf);
 }
 
 static GSList *report_create_module_list_from_dialog(ReportDialog * rd)
