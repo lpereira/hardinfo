@@ -184,7 +184,8 @@ void free_auto_free_thread_final() {
 void free_auto_free_final() {
     free_final = TRUE;
     free_auto_free_ex(TRUE);
-    g_timer_destroy(auto_free_timer);
+    if (auto_free_timer)
+        g_timer_destroy(auto_free_timer);
     auto_free_timer = NULL;
 }
 
