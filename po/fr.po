@@ -71,7 +71,7 @@ msgstr "(Non Disponible)"
 
 #: hardinfo/cpu_util.c:210 hardinfo/cpu_util.c:212
 msgid "Socket"
-msgstr ""
+msgstr "Socket"
 
 #: hardinfo/cpu_util.c:215 hardinfo/cpu_util.c:217
 msgid "Core"
@@ -79,7 +79,7 @@ msgstr "Coeur"
 
 #: hardinfo/cpu_util.c:220
 msgid "Book"
-msgstr ""
+msgstr "Book"
 
 #: hardinfo/cpu_util.c:222
 msgid "Drawer"
@@ -104,7 +104,7 @@ msgstr "Type de châssis inconnu"
 
 #: hardinfo/dmi_util.c:133
 msgid "Desktop"
-msgstr ""
+msgstr "Ordinateur de bureau"
 
 #: hardinfo/dmi_util.c:134
 msgid "Low-profile Desktop"
@@ -116,7 +116,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:136
 msgid "Mini Tower"
-msgstr ""
+msgstr "Mini Tour"
 
 #: hardinfo/dmi_util.c:137
 msgid "Tower"
@@ -257,7 +257,7 @@ msgstr ""
 msgid ""
 "Modules:\n"
 "%-20s %-15s %-12s\n"
-msgstr ""
+msgstr "Modules:\n"
 
 #: hardinfo/hardinfo.c:78
 msgid "File Name"
@@ -340,12 +340,12 @@ msgstr "%.1f GiB"
 #: hardinfo/util.c:136
 #, c-format
 msgid "%.1f TiB"
-msgstr ""
+msgstr "%.1f TiB"
 
 #: hardinfo/util.c:138
 #, c-format
 msgid "%.1f PiB"
-msgstr ""
+msgstr "%.1f PiB"
 
 #: hardinfo/util.c:361
 msgid "Error"
@@ -361,7 +361,7 @@ msgstr "Erreur Fatale"
 
 #: hardinfo/util.c:403
 msgid "creates a report and prints to standard output"
-msgstr "crée un rapport et imprime sur la sortie standard"
+msgstr "créer un rapport et imprimer sur la sortie standard"
 
 #: hardinfo/util.c:409
 msgid "chooses a report format (text, html)"
@@ -369,11 +369,11 @@ msgstr "choisir un format de rapport (texte, html)"
 
 #: hardinfo/util.c:415
 msgid "run benchmark; requires benchmark.so to be loaded"
-msgstr "Envoyé le benchmark; nécessite benchmark.so"
+msgstr "Envoyer le benchmark; nécessite benchmark.so"
 
 #: hardinfo/util.c:421
 msgid "benchmark result format ([short], conf, shell)"
-msgstr ""
+msgstr "Format Résultat du benchmark ([short], conf, shell)"
 
 #: hardinfo/util.c:427
 msgid "lists modules"
@@ -397,7 +397,7 @@ msgstr "Affiche la version du programme et quitter"
 
 #: hardinfo/util.c:459
 msgid "do not run benchmarks"
-msgstr ""
+msgstr "Ne pas activer de Benchmark"
 
 #: hardinfo/util.c:464
 msgid "- System Profiler and Benchmark tool"
@@ -410,7 +410,7 @@ msgid ""
 "Try ``%s --help'' for more information.\n"
 msgstr ""
 "commandes inconnues.\n"
-"taper ``%s --help'' pour plus d'informations.\n"
+"Essayer ``%s --help'' pour plus d'informations.\n"
 
 #: hardinfo/util.c:542
 #, c-format
@@ -431,8 +431,7 @@ msgstr "Module \"%s\" depends du module \"%s\"."
 #, c-format
 msgid "No module could be loaded. Check permissions on \"%s\" and try again."
 msgstr ""
-"Aucun module peut être chargé. Vérifiez les permissions sur \"%s\" et "
-"essayez à nouveau."
+"Aucun module peut être chargé. Vérifiez les permissions sur \"%s\" et essayer à nouveau."
 
 #: hardinfo/util.c:963
 msgid ""
@@ -440,8 +439,7 @@ msgid ""
 "modules and try again with a valid module list."
 msgstr ""
 "Aucun module peut être chargé. S'il vous plaît utiliser hardinfo -l pour "
-"répertorier tous les modules disponibles et essayez à nouveau avec une liste "
-"de modules valides."
+"répertorier tous les modules disponibles et essayez à nouveau avec une liste de modules valides."
 
 #: hardinfo/util.c:1040
 #, c-format
@@ -465,7 +463,7 @@ msgstr ""
 #: shell/callbacks.c:142
 #, c-format
 msgid "No about information is associated with the %s module."
-msgstr "Pas d'information associée au module %s."
+msgstr "Pas d'information associée à ce module %s."
 
 #: shell/callbacks.c:158
 msgid "Author:"
@@ -481,31 +479,29 @@ msgstr "Basé sur le travail de:"
 
 #: shell/callbacks.c:167
 msgid "MD5 implementation by Colin Plumb (see md5.c for details)"
-msgstr "Implémentation  MD5 par Colin Plumb (voir md5.c pour les détails)"
+msgstr "Implémentation  MD5 par Colin Plumb (détails voir md5.c)"
 
 #: shell/callbacks.c:168
 msgid "SHA1 implementation by Steve Reid (see sha1.c for details)"
-msgstr "implémentation  SHA1 par Steve Reid (voir sha1.c pour les détails)"
+msgstr "implémentation SHA1 par Steve Reid (détails voir sha1.c)"
 
 #: shell/callbacks.c:169
 msgid "Blowfish implementation by Paul Kocher (see blowfich.c for details)"
-msgstr ""
-"Implémentation Blowfish par Paul Kocher (voir blowchih.c pour de plus amples "
-"détails"
+msgstr "Implémentation Blowfish par Paul Kocher (voir blowchih.c)"
+
 
 #: shell/callbacks.c:170
 msgid "Raytracing benchmark by John Walker (see fbench.c for details)"
 msgstr ""
-"Raytracing benchmark par John Walker (voir fbench.c pour de plus amples "
-"détails)"
+"Raytracing benchmark par John Walker (détails voir fbench.c)"
 
 #: shell/callbacks.c:171
 msgid "FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"
-msgstr "FFT benchmark par Scott Robert Ladd (voir fftbench.c pour les détails)"
+msgstr "FFT benchmark par Scott Robert Ladd (détails voir fftbench.c)"
 
 #: shell/callbacks.c:172
 msgid "Some code partly based on x86cpucaps by Osamu Kayasono"
-msgstr "Une partie du code est basé sur x86cpucaps par Osamu Kayasono"
+msgstr "Une partie du code est basée sur x86cpucaps par Osamu Kayasono"
 
 #: shell/callbacks.c:173
 msgid "Vendor list based on GtkSysInfo by Pissens Sebastien"
@@ -525,11 +521,11 @@ msgstr "Projet Tango"
 
 #: shell/callbacks.c:181
 msgid "The GNOME Project"
-msgstr "Le Projet Gnome"
+msgstr "Projet Gnome"
 
 #: shell/callbacks.c:182
 msgid "VMWare, Inc. (USB icon from VMWare Workstation 6)"
-msgstr "VMWare, Inc. (USB icône sur VMWare Workstation 6)"
+msgstr "VMWare, Inc. (icône USB VMWare Workstation 6)"
 
 #: shell/callbacks.c:200
 msgid "System information and benchmark tool"
@@ -550,10 +546,22 @@ msgid ""
 "this program; if not, write to the Free Software Foundation, Inc., 51 "
 "Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 msgstr ""
+"HardInfo is free software; you can redistribute it and/or modify it under "
+"the terms of the GNU General Public License as published by the Free "
+"Software Foundation, version 2.\n"
+"\n"
+"This program is distributed in the hope that it will be useful, but WITHOUT "
+"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
+"FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
+"more details.\n"
+"\n"
+"Recevoir une copie de GNU General Public License  "
+"de ce programme ou écrire à the Free Software Foundation, Inc., 51 "
+"Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 
 #: shell/callbacks.c:220
 msgid "translator-credits"
-msgstr ""
+msgstr "Crédits Traducteurs"
 
 #: shell/menu.c:35
 msgid "_Information"
@@ -637,11 +645,11 @@ msgstr "Sauvegarder le fichier"
 
 #: shell/report.c:503 shell/report.c:935 shell/syncmanager.c:748
 msgid "_Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: shell/report.c:505
 msgid "_Save"
-msgstr ""
+msgstr "_Sauvegarder"
 
 #: shell/report.c:635
 msgid "Cannot create ReportContext. Programming bug?"
@@ -649,15 +657,15 @@ msgstr "Impossible de créer un rapport général. Bug?"
 
 #: shell/report.c:654
 msgid "Open the report with your web browser?"
-msgstr "Ouvrez le rapport avec votre navigateur Web?"
+msgstr "Ouvrez le rapport dans votre navigateur Web?"
 
 #: shell/report.c:657
 msgid "_No"
-msgstr ""
+msgstr "_Non"
 
 #: shell/report.c:658
 msgid "_Open"
-msgstr ""
+msgstr "_Ouvrir"
 
 #: shell/report.c:688
 msgid "Generating report..."
@@ -680,7 +688,7 @@ msgid ""
 "<big><b>Generate Report</b></big>\n"
 "Please choose the information that you wish to view in your report:"
 msgstr ""
-"<big> <b> Générer un rapport </b> </big> \n"
+"<big> <b>Générer un rapport</b> </big> \n"
 " Choisissez les informations que vous souhaitez afficher dans votre rapport:"
 
 #: shell/report.c:899
@@ -737,7 +745,7 @@ msgstr ""
 msgid ""
 "HardInfo was compiled without libsoup support. (Network Updater requires it.)"
 msgstr ""
-"HARDiNFO a été compilé sans le support libsoup. (Mise à jour des données l'exige.)"
+"HARDiNFO a été compilé sans le support libsoup. (Exigé pour mise à jour des données.)"
 
 #: shell/syncmanager.c:161 shell/syncmanager.c:189
 #, c-format
@@ -759,7 +767,7 @@ msgstr ""
 
 #: shell/syncmanager.c:375
 msgid "Contacting HardInfo Central Database"
-msgstr "En contact avec la base de données centrale du site HARDiNFO"
+msgstr "En contact avec la base de données centrale du site HardInfo"
 
 #: shell/syncmanager.c:376
 msgid "Cleaning up"
@@ -771,7 +779,7 @@ msgstr "(annuler)"
 
 #: shell/syncmanager.c:510
 msgid "(failed)"
-msgstr "(echec)"
+msgstr "(échec)"
 
 #: shell/syncmanager.c:521
 #, c-format
@@ -837,15 +845,15 @@ msgstr "Test GPU Drawing"
 
 #: modules/benchmark/benches.c:91
 msgid "Results in MiB/second. Higher is better."
-msgstr "Résultats en MiB/seconde. Plus c'est élevé meilleur c'est."
+msgstr "Résultats en MiB/seconde. Plus c'est élevé, meilleur est le résultat."
 
 #: modules/benchmark/benches.c:95
 msgid "Results in HIMarks. Higher is better."
-msgstr "Résultats en HIMarks. Plus c'est élevé, meilleur c'est."
+msgstr "Résultats en HIMarks. Plus c'est élevé, meilleur est le résultat."
 
 #: modules/benchmark/benches.c:102
 msgid "Results in seconds. Lower is better."
-msgstr "Résultats en secondes. Plus c'est bas, meilleur c'est."
+msgstr "Résultats en secondes. Plus c'est bas, meilleur est le résultat."
 
 #. /or modify
 #. *    it under the terms of the GNU General Public License as published by
@@ -868,7 +876,7 @@ msgstr "Résultats en secondes. Plus c'est bas, meilleur c'est."
 #: modules/devices/pci.c:117 modules/devices/pci.c:118 modules/devices/usb.c:27
 #: modules/network/net.c:437 includes/cpu_util.h:11
 msgid "(Unknown)"
-msgstr ""
+msgstr "(Inconnu)"
 
 #: modules/benchmark/bench_results.c:47 modules/benchmark/bench_results.c:322
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:276
@@ -894,7 +902,7 @@ msgstr ""
 
 #: modules/benchmark/bench_results.c:389 modules/benchmark/bench_results.c:426
 msgid "Benchmark Result"
-msgstr "Résultats d"
+msgstr "Résultats du Benchmark"
 
 #: modules/benchmark/bench_results.c:390 modules/benchmark/bench_results.c:428
 msgid "Threads"
@@ -902,13 +910,15 @@ msgstr ""
 
 #: modules/benchmark/bench_results.c:391 modules/benchmark/bench_results.c:431
 msgid "Note"
-msgstr ""
+msgstr "Notes"
 
 #: modules/benchmark/bench_results.c:392 modules/benchmark/bench_results.c:432
 msgid ""
 "This result is from an old version of HardInfo. Results might not be "
 "comparable to current version. Some details are missing."
 msgstr ""
+"Ce résultat provient d'une ancienne version de HardInfo. Les résultats peuvent ne pas être"
+"comparable à la version actuelle. Il manque quelques détails."
 
 #: modules/benchmark/bench_results.c:393 modules/benchmark/bench_results.c:433
 #: modules/devices/devicetree/pmac_data.c:81 modules/devices/sh/processor.c:85
@@ -922,20 +932,20 @@ msgstr ""
 
 #: modules/benchmark/bench_results.c:395 modules/benchmark/bench_results.c:435
 msgid "CPU Name"
-msgstr ""
+msgstr "Nom du CPU"
 
 #: modules/benchmark/bench_results.c:396 modules/benchmark/bench_results.c:436
 msgid "CPU Description"
-msgstr ""
+msgstr "Description du CPU"
 
 #: modules/benchmark/bench_results.c:397 modules/benchmark/bench_results.c:437
 #: modules/benchmark.c:390
 msgid "CPU Config"
-msgstr ""
+msgstr "Configuration du CPU"
 
 #: modules/benchmark/bench_results.c:398 modules/benchmark/bench_results.c:438
 msgid "Threads Available"
-msgstr ""
+msgstr "Sujets disponibles"
 
 #: modules/benchmark/bench_results.c:399 modules/benchmark/bench_results.c:439
 msgid "GPU"
@@ -953,19 +963,19 @@ msgstr "Mémoire"
 
 #: modules/benchmark/bench_results.c:427
 msgid "Benchmark"
-msgstr ""
+msgstr "Outil d'évaluation"
 
 #: modules/benchmark/bench_results.c:429
 msgid "Result"
-msgstr ""
+msgstr "Résultat"
 
 #: modules/benchmark/bench_results.c:430
 msgid "Elapsed Time"
-msgstr ""
+msgstr "Temps écoulé"
 
 #: modules/benchmark/bench_results.c:442
 msgid "Handles"
-msgstr ""
+msgstr "identifiants"
 
 #: modules/benchmark/bench_results.c:443
 msgid "mid"
@@ -977,7 +987,7 @@ msgstr ""
 
 #: modules/benchmark.c:390
 msgid "Results"
-msgstr ""
+msgstr "Résultats"
 
 #: modules/benchmark.c:390 modules/computer.c:811
 #: modules/devices/sparc/processor.c:75
@@ -1009,7 +1019,7 @@ msgstr "Effectuer des tâches et les comparer avec d'autres systèmes"
 
 #: modules/benchmark.c:692
 msgid "Send benchmark results"
-msgstr "Envoyer vos résultats de référence"
+msgstr "Envoyer vos résultats de benchmark"
 
 #: modules/benchmark.c:697
 msgid "Receive benchmark results"
@@ -1045,7 +1055,7 @@ msgstr "Langues"
 
 #: modules/computer.c:81
 msgid "Filesystems"
-msgstr "Fichiers Systeme"
+msgstr "Fichiers Système"
 
 #: modules/computer.c:82 modules/computer.c:476
 msgid "Display"
@@ -1070,7 +1080,7 @@ msgstr "Groupes"
 #: modules/computer.c:112
 #, c-format
 msgid "%dMB (%dMB used)"
-msgstr "%dMB (%dMB utilisé)"
+msgstr "%dMB (%dMB utilisées)"
 
 #: modules/computer.c:114 modules/computer.c:514
 msgid "Uptime"
@@ -1082,7 +1092,7 @@ msgstr "Date/Heure"
 
 #: modules/computer.c:121 modules/computer.c:515
 msgid "Load Average"
-msgstr ""
+msgstr "Nombre de chargements"
 
 #: modules/computer.c:123 modules/computer.c:516
 msgid "Available entropy in /dev/random"
@@ -1245,7 +1255,7 @@ msgstr ""
 
 #: modules/computer.c:401 modules/computer.c:402
 msgid "Virtual (Unknown)"
-msgstr ""
+msgstr "Virtual (Inconnu)"
 
 #: modules/computer.c:404 modules/computer.c:405 modules/computer.c:406
 #: modules/computer.c:427
@@ -1277,7 +1287,7 @@ msgstr "Processeur"
 
 #: modules/computer.c:469
 msgid "Machine Type"
-msgstr ""
+msgstr "Type de machine"
 
 #: modules/computer.c:472 modules/computer.c:508
 msgid "User Name"
@@ -1314,11 +1324,11 @@ msgstr ""
 
 #: modules/computer.c:506
 msgid "Current Session"
-msgstr "Session en cours "
+msgstr "Session en cours"
 
 #: modules/computer.c:507
 msgid "Computer Name"
-msgstr "Ordinateur"
+msgstr "Nom de l'Ordinateur"
 
 #: modules/computer.c:509 modules/computer/languages.c:108
 msgid "Language"
@@ -1356,7 +1366,7 @@ msgstr "Langues disponibles"
 
 #: modules/computer.c:555
 msgid "Language Code"
-msgstr "Type de Code"
+msgstr "Langage Code"
 
 #: modules/computer.c:567
 msgid "Mounted File Systems"
@@ -1449,7 +1459,7 @@ msgstr ""
 
 #: modules/computer.c:642
 msgid "Renderer"
-msgstr "moteur de rendu"
+msgstr "Moteur de rendu"
 
 #: modules/computer.c:643
 msgid "Direct Rendering"
@@ -1497,7 +1507,7 @@ msgstr ""
 
 #: modules/computer.c:811 modules/devices/devicetree/pmac_data.c:82
 msgid "Motherboard"
-msgstr "Carte mère"
+msgstr "Carte Mère"
 
 #: modules/computer.c:811
 msgid "Graphics"
@@ -1521,11 +1531,11 @@ msgstr "Collecte des informations de l'ordinateur"
 
 #: modules/computer/filesystem.c:83
 msgid "Filesystem"
-msgstr ""
+msgstr "Système de fichiers"
 
 #: modules/computer/filesystem.c:84
 msgid "Mounted As"
-msgstr "Monté comme"
+msgstr "Monté sur"
 
 #: modules/computer/filesystem.c:84
 msgid "Read-Write"
@@ -1565,7 +1575,7 @@ msgstr ""
 
 #: modules/computer/languages.c:109
 msgid "Territory"
-msgstr ""
+msgstr "Territoire"
 
 #: modules/computer/languages.c:110 modules/devices/arm/processor.c:341
 #: modules/devices/gpu.c:146 modules/devices/ia64/processor.c:166
@@ -1597,7 +1607,7 @@ msgstr ""
 
 #: modules/computer/modules.c:143
 msgid "Path"
-msgstr ""
+msgstr "Chemin"
 
 #: modules/computer/modules.c:144
 msgid "Used Memory"
@@ -1688,7 +1698,7 @@ msgstr "%d bits (élévé)"
 
 #: modules/computer/users.c:47
 msgid "User Information"
-msgstr "Inforamtion Utilisateur"
+msgstr "Information Utilisateur"
 
 #: modules/computer/users.c:48
 msgid "User ID"
@@ -1760,7 +1770,7 @@ msgstr ""
 #: modules/devices/arm/arm_data.c:45
 msgctxt "arm-flag"
 msgid "26-Bit Model (Processor status register folded into program counter)"
-msgstr "26-Bit Model (Registre d'état du processeur incorporé dans le compteur de programme)"
+msgstr "26-Bit Model (Registre d'état du cpu incorporé dans le compteur de programme)"
 
 #. /flag:fastmult
 #: modules/devices/arm/arm_data.c:46
@@ -1909,7 +1919,7 @@ msgstr ""
 
 #: modules/devices/arm/processor.c:142
 msgid "ARM Processor"
-msgstr ""
+msgstr "Processeur ARM"
 
 #: modules/devices/arm/processor.c:200 modules/devices/riscv/processor.c:147
 #: modules/devices/x86/processor.c:606
@@ -1928,7 +1938,7 @@ msgstr ""
 
 #: modules/devices/arm/processor.c:328
 msgid "Linux Name"
-msgstr "Linux Nom"
+msgstr "Nom version Linux"
 
 #: modules/devices/arm/processor.c:329
 msgid "Decoded Name"
@@ -2178,7 +2188,7 @@ msgstr ""
 
 #: modules/devices/devicetree.c:89 modules/devices/devicetree.c:90
 msgid "(None)"
-msgstr "(aucun)"
+msgstr "(Aucun)"
 
 #: modules/devices/devicetree.c:90
 msgid "Symbol"
@@ -2190,7 +2200,7 @@ msgstr "Plateforme"
 
 #: modules/devices/devicetree.c:144 modules/devices/devicetree.c:209
 msgid "Compatible"
-msgstr ""
+msgstr "Similaire"
 
 #: modules/devices/devicetree.c:145
 msgid "GPU-compatible"
@@ -2198,7 +2208,7 @@ msgstr ""
 
 #: modules/devices/devicetree.c:160
 msgid "Raspberry Pi or Compatible"
-msgstr "Raspberry Pi ou Compatible"
+msgstr "Raspberry Pi ou Similaire"
 
 #: modules/devices/devicetree.c:162 modules/devices/devicetree.c:189
 #: modules/devices/devicetree.c:208 modules/devices/devicetree/rpi_data.c:161
@@ -2212,7 +2222,7 @@ msgstr ""
 
 #: modules/devices/devicetree.c:163
 msgid "No revision code available; unable to lookup model details."
-msgstr "Aucun code de révision n'est disponible ; il n'est pas possible de consulter les détails du modèle."
+msgstr "Aucun code de révision n'est disponible; il n'est pas possible de consulter les détails du modèle."
 
 #: modules/devices/devicetree.c:188
 msgid "More"
@@ -2291,11 +2301,11 @@ msgstr "Mémoire totale"
 
 #: modules/devices/devmemory.c:102
 msgid "Free Memory"
-msgstr ""
+msgstr "Mémoire libre"
 
 #: modules/devices/devmemory.c:103
 msgid "Cached Swap"
-msgstr ""
+msgstr "Swap Cache"
 
 #: modules/devices/devmemory.c:104
 msgid "High Memory"
@@ -2345,7 +2355,7 @@ msgstr ""
 
 #: modules/devices/dmi.c:116
 msgid "(Not available; Perhaps try running HardInfo as root.)"
-msgstr "(Non disponible ; essayez peut-être d'exécuter HardInfo en tant que root.)"
+msgstr "(Non disponible; essayez peut-être d'exécuter HardInfo en tant que root.)"
 
 #: modules/devices/gpu.c:102 modules/devices/pci.c:79
 msgid "SVendor"
@@ -2403,7 +2413,7 @@ msgstr ""
 
 #: modules/devices/gpu.c:150 modules/devices/pci.c:117
 msgid "In Use"
-msgstr ""
+msgstr "En cours"
 
 #: modules/devices/gpu.c:174
 msgid "Unknown integrated GPU"
@@ -2540,11 +2550,11 @@ msgstr "⚬ Imprimante rejette cette tâche=\n"
 
 #: modules/devices/printers.c:95
 msgid "⚬ Printer was automatically discovered and added=\n"
-msgstr "⚬ Imprimante a été automatiquement détecté et ajouté=\n"
+msgstr "⚬ Imprimante a été automatiquement détectée et ajoutée=\n"
 
 #: modules/devices/printers.c:110
 msgid "Idle"
-msgstr "Inoccupé"
+msgstr "Inoccupée"
 
 #: modules/devices/printers.c:112
 msgid "Printing a Job"
@@ -2552,7 +2562,7 @@ msgstr "Impression"
 
 #: modules/devices/printers.c:114
 msgid "Stopped"
-msgstr "Arrêt"
+msgstr "Arrêtée"
 
 #: modules/devices/printers.c:190
 msgid ""
@@ -2571,7 +2581,7 @@ msgid ""
 "[Printers]\n"
 "No printers found=\n"
 msgstr ""
-"[Printers]\n"
+"[Imprimantes]\n"
 "Aucune imprimante trouvée=\n"
 
 #: modules/devices/riscv/processor.c:107
@@ -2604,13 +2614,13 @@ msgstr ""
 #: modules/devices/riscv/riscv_data.c:40
 msgctxt "rv-ext"
 msgid "Base embedded integer instructions (15 registers)"
-msgstr "Instructions embedded de base (15 registres)"
+msgstr "Instructions embarquées (15 registres)"
 
 #. /ext:I
 #: modules/devices/riscv/riscv_data.c:41
 msgctxt "rv-ext"
 msgid "Base integer instructions (31 registers)"
-msgstr "Instructions embedded de base (31 registres)"
+msgstr "Instructions intégrées (31 registres)"
 
 #. /ext:M
 #: modules/devices/riscv/riscv_data.c:42
@@ -2704,11 +2714,11 @@ msgstr ""
 
 #: modules/devices/sh/processor.c:88
 msgid "Bus Frequency"
-msgstr ""
+msgstr "Fréquence BUS"
 
 #: modules/devices/sh/processor.c:89
 msgid "Module Frequency"
-msgstr ""
+msgstr "Fréquence Modules"
 
 #: modules/devices/spd-decode.c:1475
 msgid ""
@@ -2717,12 +2727,15 @@ msgid ""
 "[$ShellParam$]\n"
 "ReloadInterval=500\n"
 msgstr ""
+"[SPD]\n"
+"Télécharger le module eeprom pour avoir les informations de mémoire SPD=\n"
+"[$ShellParam$]\n"
 
 #: modules/devices/spd-decode.c:1480
 msgid ""
 "[SPD]\n"
 "Reading memory SPD not supported on this system=\n"
-msgstr ""
+msgstr "Mémoire de lecture SPD non prise en charge sur ce système"
 
 #: modules/devices/spd-decode.c:1509
 msgid "SPD"
@@ -2738,7 +2751,7 @@ msgid ""
 "[SCSI Disks]\n"
 msgstr ""
 "\n"
-"[SCSI Disks]\n"
+"[Disques SCSI]\n"
 
 #: modules/devices/storage.c:114 modules/devices/storage.c:320
 #, c-format
@@ -2746,7 +2759,7 @@ msgid ""
 "[Device Information]\n"
 "Model=%s\n"
 msgstr ""
-"[Device Information]\n"
+"[Informations des périphériques]\n"
 "Modele=%s\n"
 
 #: modules/devices/storage.c:119 modules/devices/storage.c:326
@@ -2784,7 +2797,7 @@ msgid ""
 "[IDE Disks]\n"
 msgstr ""
 "\n"
-"[IDE Disks]\n"
+"[Disques IDE]\n"
 
 #: modules/devices/storage.c:257
 #, c-format
@@ -2798,6 +2811,9 @@ msgid ""
 "Media=%s\n"
 "Cache=%dkb\n"
 msgstr ""
+"Nom du Périphérique=hd%c\n"
+"Media=%s\n"
+"Cache=%dkb\n
 
 #: modules/devices/storage.c:341
 #, c-format
@@ -2816,7 +2832,7 @@ msgid ""
 "[Capabilities]\n"
 "%s"
 msgstr ""
-"[Capabilities]\n"
+"[Capacités]\n"
 "%s"
 
 #: modules/devices/storage.c:358
@@ -2825,7 +2841,7 @@ msgid ""
 "[Speeds]\n"
 "%s"
 msgstr ""
-"[Speeds]\n"
+"[Vitesses]\n"
 "%s"
 
 #: modules/devices/usb.c:65
@@ -2846,7 +2862,7 @@ msgstr ""
 
 #: modules/devices/usb.c:69
 msgid "Device Version"
-msgstr ""
+msgstr "Version du périphériques"
 
 #: modules/devices/usb.c:103
 msgid "No USB devices found."
@@ -2871,7 +2887,7 @@ msgstr "Données"
 #: modules/devices/x86/processor.c:171
 msgctxt "cache-type"
 msgid "Instruction"
-msgstr ""
+msgstr "Instructions"
 
 #. /cache type, as appears in: Level 2 (Unified)
 #: modules/devices/x86/processor.c:172
@@ -3064,7 +3080,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:64
 msgctxt "x86-flag"
 msgid "Multimedia Extensions"
-msgstr ""
+msgstr "Plugins Multimédia"
 
 #. /flag:fxsr
 #: modules/devices/x86/x86_data.c:65
@@ -3109,12 +3125,14 @@ msgid ""
 "Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
 "x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
 msgstr ""
+"Intel Itanium Architecture 64-bit (à ne pas confondre avec le 64-bit d'Intel) ".
+"Architecture x86 avec drapeau x86-64 ou \"AMD64\" bit indiqué par drapeau lm)"
 
 #. /flag:pbe
 #: modules/devices/x86/x86_data.c:72
 msgctxt "x86-flag"
 msgid "Pending Break Enable (PBE# pin) wakeup support"
-msgstr ""
+msgstr "Prise en charge du réveil Pending Break Enable (broche PBE#)"
 
 #. /flag:syscall
 #: modules/devices/x86/x86_data.c:75
@@ -3180,7 +3198,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:86
 msgctxt "x86-flag"
 msgid "CPU in recovery mode"
-msgstr ""
+msgstr "CPU en mode recovery"
 
 #. /flag:longrun
 #: modules/devices/x86/x86_data.c:87
@@ -3416,13 +3434,13 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:128
 msgctxt "x86-flag"
 msgid "Send Task Priority Messages"
-msgstr ""
+msgstr "Envoyer des messages des tâches prioritaires"
 
 #. /flag:pdcm
 #: modules/devices/x86/x86_data.c:129
 msgctxt "x86-flag"
 msgid "Performance Capabilities"
-msgstr ""
+msgstr "Capacités de performance"
 
 #. /flag:pcid
 #: modules/devices/x86/x86_data.c:130
@@ -3458,7 +3476,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:135
 msgctxt "x86-flag"
 msgid "Move Data After Swapping Bytes instruction"
-msgstr ""
+msgstr "Déplacer les données après l'instruction d'échange d'octets"
 
 #. /flag:popcnt
 #: modules/devices/x86/x86_data.c:136
@@ -3467,6 +3485,8 @@ msgid ""
 "Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i."
 "e. bit count)"
 msgstr ""
+"Retourne le nombre de bits réglé à 1 instruction (poids de Hamming, i."
+"e. nombre de bits)"
 
 #. /flag:tsc_deadline_timer
 #: modules/devices/x86/x86_data.c:137
@@ -3478,13 +3498,13 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:138
 msgctxt "x86-flag"
 msgid "Advanced Encryption Standard (New Instructions)"
-msgstr ""
+msgstr "Norme de chriffrement avancée (nouvelles instructions)"
 
 #. /flag:xsave
 #: modules/devices/x86/x86_data.c:139
 msgctxt "x86-flag"
 msgid "Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY"
-msgstr ""
+msgstr "Save Processor Extended States : fournit également XGETBY,XRSTOR,XSETBY"
 
 #. /flag:avx
 #: modules/devices/x86/x86_data.c:140
@@ -3502,7 +3522,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:142
 msgctxt "x86-flag"
 msgid "Read Random Number from hardware random number generator instruction"
-msgstr ""
+msgstr "Lecture d'un nombre aléatoire à partir de l'instruction du générateur de nombres aléatoires matériel"
 
 #. /flag:hypervisor
 #: modules/devices/x86/x86_data.c:143
@@ -3515,13 +3535,13 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:145
 msgctxt "x86-flag"
 msgid "Random Number Generator present (xstore)"
-msgstr ""
+msgstr "Générateur de chriffrement présent (xstore)"
 
 #. /flag:rng_en
 #: modules/devices/x86/x86_data.c:146
 msgctxt "x86-flag"
 msgid "Random Number Generator enabled"
-msgstr ""
+msgstr "Générateur de chriffrement présent"
 
 #. /flag:ace
 #: modules/devices/x86/x86_data.c:147
@@ -3621,6 +3641,9 @@ msgid ""
 "legacy SSE instructions operate on unaligned data. Also depends on CR0 and "
 "Alignment Checking bit"
 msgstr ""
+"indique si une exception de protection générale (#GP) est générée"
+"lorsque certaines instructions SSE héritées fonctionnent sur des données non alignées."
+"Dépend aussi de CR0 et contrôle d'alignement des octets"
 
 #. /flag:3dnowprefetch
 #: modules/devices/x86/x86_data.c:164
@@ -4380,7 +4403,7 @@ msgstr ""
 
 #: modules/network.c:304
 msgid "MAC Address"
-msgstr ""
+msgstr "Adresse MAC"
 
 #: modules/network.c:313
 msgid "SAMBA"
@@ -4392,7 +4415,7 @@ msgstr ""
 
 #: modules/network.c:325
 msgid "Name Servers"
-msgstr ""
+msgstr "Nom des Serveurs"
 
 #: modules/network.c:340
 msgid "Connections"
@@ -4400,7 +4423,7 @@ msgstr ""
 
 #: modules/network.c:341
 msgid "Local Address"
-msgstr ""
+msgstr "Adresse Locale"
 
 #: modules/network.c:341
 msgid "Protocol"
@@ -4412,7 +4435,7 @@ msgstr ""
 
 #: modules/network.c:341
 msgid "State"
-msgstr ""
+msgstr "Etat"
 
 #: modules/network.c:357
 msgid "Sent"
@@ -4479,7 +4502,7 @@ msgstr ""
 #: modules/network/net.c:78
 msgctxt "wi-op-mode"
 msgid "(Unknown)"
-msgstr ""
+msgstr "(Inconnu)"
 
 #: modules/network/net.c:242 modules/network/net.c:262
 #: modules/network/net.c:270
@@ -4522,7 +4545,7 @@ msgstr ""
 #: modules/network/net.c:252
 msgctxt "net-if-type"
 msgid "Infrared"
-msgstr ""
+msgstr "InfraRouge"
 
 #: modules/network/net.c:253 modules/network/net.c:271
 msgctxt "net-if-type"
@@ -4582,12 +4605,12 @@ msgstr ""
 #: modules/network/net.c:265
 msgctxt "net-if-type"
 msgid "Mesh Network"
-msgstr ""
+msgstr "Réseau Mesh"
 
 #: modules/network/net.c:266
 msgctxt "net-if-type"
 msgid "Wireless Master Interface"
-msgstr ""
+msgstr "Principale Interface Sans Fil"
 
 #: modules/network/net.c:267
 msgctxt "net-if-type"
@@ -4602,15 +4625,15 @@ msgstr ""
 #: modules/network/net.c:275
 msgctxt "net-if-type"
 msgid "(Unknown)"
-msgstr ""
+msgstr "(Inconnu)"
 
 #: modules/network/net.c:343 modules/network/net.c:353
 msgid "Network Interfaces"
-msgstr ""
+msgstr "Interfaces Réseau"
 
 #: modules/network/net.c:343
 msgid "None Found"
-msgstr ""
+msgstr "Non Trouvé"
 
 #: modules/network/net.c:395 modules/network/net.c:417
 #: modules/network/net.c:418
@@ -4623,7 +4646,7 @@ msgstr ""
 
 #: modules/network/net.c:410
 msgid "Interface Type"
-msgstr ""
+msgstr "Type d'Interfaces"
 
 #: modules/network/net.c:411
 msgid "Hardware Address (MAC)"
@@ -4639,11 +4662,11 @@ msgstr ""
 
 #: modules/network/net.c:417
 msgid "Bytes Received"
-msgstr ""
+msgstr "Bytes reçues"
 
 #: modules/network/net.c:418
 msgid "Bytes Sent"
-msgstr ""
+msgstr "Bytes Envoyées"
 
 #: modules/network/net.c:435 modules/network/net.c:457
 #: modules/network/net.c:458
@@ -4660,7 +4683,7 @@ msgstr ""
 
 #: modules/network/net.c:450
 msgid "Network Name (SSID)"
-msgstr ""
+msgstr "Nom du Réseau (SSID)"
 
 #: modules/network/net.c:451
 msgid "Bit Rate"
@@ -4676,7 +4699,7 @@ msgstr ""
 
 #: modules/network/net.c:454
 msgid "Status"
-msgstr ""
+msgstr "Etats"
 
 #: modules/network/net.c:455
 msgid "Link Quality"
