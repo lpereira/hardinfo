@@ -32,7 +32,7 @@ gboolean __scan_udisks2_devices(void) {
     udisksa *attrib;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
     gchar *devid, *label, *size, *tmp = NULL, *media_comp = NULL;
-    const gchar *url, *vendor_str, *media_label, *icon, *media_curr = NULL;
+    const gchar *url, *vendor_str, *media_label, *alabel, *icon, *media_curr = NULL;
     int n = 0, i, j;
 
     // http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Drive.html#gdbus-property-org-freedesktop-UDisks2-Drive.MediaCompatibility
@@ -74,6 +74,66 @@ gboolean __scan_udisks2_devices(void) {
         { "optical_mo",             "MO Disc",            "cdrom" },
         { "optical_mrw",            "MRW Media",          "cdrom" },
         { "optical_mrw_w",          "MRW Media (write)",  "cdrom" },
+        { NULL, NULL }
+    };
+
+    struct {
+        char *identifier;
+        char *label;
+    } smart_attrib_info[] = {
+        { "raw-read-error-rate",          _("Read Error Rate" ) },
+        { "throughput-performance",       _("Throughput Performance") },
+        { "spin-up-time",                 _("Spin-Up Time") },
+        { "start-stop-count",             _("Start/Stop Count") },
+        { "reallocated-sector-count",     _("Reallocated Sector Count") },
+        { "read-channel-margin",          _("Read Channel Margin") },
+        { "seek-error-rate",              _("Seek Error Rate") },
+        { "seek-time-performance",        _("Seek Timer Performance") },
+        { "power-on-hours",               _("Power-On Hours") },
+        { "spin-retry-count",             _("Spin Retry Count") },
+        { "calibration-retry-count",      _("Calibration Retry Count") },
+        { "power-cycle-count",            _("Power Cycle Count") },
+        { "read-soft-error-rate",         _("Soft Read Error Rate") },
+        { "runtime-bad-block-total",      _("Runtime Bad Block") },
+        { "end-to-end-error",             _("End-to-End error") },
+        { "reported-uncorrect",           _("Reported Uncorrectable Errors") },
+        { "command-timeout",              _("Command Timeout") },
+        { "high-fly-writes",              _("High Fly Writes") },
+        { "airflow-temperature-celsius",  _("Airflow Temperature") },
+        { "g-sense-error-rate",           _("G-sense Error Rate") },
+        { "power-off-retract-count",      _("Power-off Retract Count") },
+        { "load-cycle-count",             _("Load Cycle Count") },
+        { "temperature-celsius-2",        _("Temperature") },
+        { "hardware-ecc-recovered",       _("Hardware ECC Recovered") },
+        { "reallocated-event-count",      _("Reallocation Event Count") },
+        { "current-pending-sector",       _("Current Pending Sector Count") },
+        { "offline-uncorrectable",        _("Uncorrectable Sector Count") },
+        { "udma-crc-error-count",         _("UltraDMA CRC Error Count") },
+        { "multi-zone-error-rate",        _("Multi-Zone Error Rate") },
+        { "soft-read-error-rate",         _("Soft Read Error Rate") },
+        { "run-out-cancel",               _("Run Out Cancel") },
+        { "flying-height",                _("Flying Height") },
+        { "spin-high-current",            _("Spin High Current") },
+        { "spin-buzz",                    _("Spin Buzz") },
+        { "offline-seek-performance",     _("Offline Seek Performance") },
+        { "disk-shift",                   _("Disk Shift") },
+        { "g-sense-error-rate-2",         _("G-Sense Error Rate") },
+        { "loaded-hours",                 _("Loaded Hours") },
+        { "load-retry-count",             _("Load/Unload Retry Count") },
+        { "load-friction",                _("Load Friction") },
+        { "load-cycle-count-2",           _("Load/Unload Cycle Count") },
+        { "load-in-time",                 _("Load-in time") },
+        { "torq-amp-count",               _("Torque Amplification Count") },
+        { "power-off-retract-count-2",    _("Power-Off Retract Count") },
+        { "head-amplitude",               _("GMR Head Amplitude") },
+        { "temperature-celsius",          _("Temperature") },
+        { "endurance-remaining",          _("Endurance Remaining") },
+        { "power-on-seconds-2",           _("Power-On Hours") },
+        { "good-block-rate",              _("Good Block Rate") },
+        { "head-flying-hours",            _("Head Flying Hours") },
+        { "read-error-retry-rate",        _("Read Error Retry Rate") },
+        { "total-lbas-written",           _("Total LBAs Written") },
+        { "total-lbas-read",              _("Total LBAs Read") },
         { NULL, NULL }
     };
 
@@ -225,11 +285,18 @@ gboolean __scan_udisks2_devices(void) {
                     else
                         tmp = h_strdup_cprintf(" / ???", tmp);
 
+
+                    alabel = attrib->identifier;
+                    for (i = 0; smart_attrib_info[i].identifier != NULL; i++) {
+                        if (g_strcmp0(attrib->identifier, smart_attrib_info[i].identifier) == 0) {
+                            alabel = smart_attrib_info[i].label;
+                            break;
+                        }
+                    }
+
                     moreinfo = h_strdup_cprintf(_("(%d) %s=%s\n"),
                                             moreinfo,
-                                            attrib->id,
-                                            attrib->identifier,
-                                            tmp);
+                                            attrib->id, alabel, tmp);
                     g_free(tmp);
                     attrib = attrib->next;
                 }
