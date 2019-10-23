@@ -9,6 +9,15 @@ typedef struct udiskp {
     struct udiskp* next;
 } udiskp;
 
+typedef struct udisksa {
+    guint8 id;
+    gchar *identifier;
+    gint value;
+    gint worst;
+    gint threshold;
+    struct udisksa* next;
+} udisksa;
+
 typedef struct udiskd {
     gchar *model;
     gchar *vendor;
@@ -33,6 +42,7 @@ typedef struct udiskd {
     guint64 smart_poweron;
     gint64 smart_bad_sectors;
     gint32 smart_temperature;
+    udisksa *smart_attributes;
     vendor_list vendors;
 } udiskd;
 
@@ -40,7 +50,6 @@ typedef struct udiskt {
     gchar *drive;
     gint32 temperature;
 } udiskt;
-
 void udisks2_init();
 void udisks2_shutdown();
 GSList *get_udisks2_temps();

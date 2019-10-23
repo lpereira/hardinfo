@@ -201,7 +201,8 @@ GSList* get_block_dev_paths_from_sysfs(){
 }
 
 GSList* udisks2_drives_func_caller(GDBusConnection* conn,
-                                   gpointer (*func)(const char*, GDBusProxy*, GDBusProxy*)) {
+                                   gpointer (*func)(const char*, GDBusProxy*,
+                                   GDBusProxy*, const char*)) {
     GDBusProxy *block_proxy, *drive_proxy;
     GVariant *block_v, *v;
     GSList *result_list = NULL, *block_dev_list, *node;
@@ -262,7 +263,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
 
                 if (error == NULL) {
                     // call requested function
-                    output = func(block_dev, block_proxy, drive_proxy);
+                    output = func(block_dev, block_proxy, drive_proxy, drive_path);
 
                     if (output != NULL){
                         result_list = g_slist_append(result_list, output);
@@ -322,6 +323,10 @@ udiskt* udiskt_new() {
     return g_new0(udiskt, 1);
 }
 
+udisksa* udisksa_new() {
+    return g_new0(udisksa, 1);
+}
+
 udiskp* udiskp_new() {
     return g_new0(udiskp, 1);
 }
@@ -330,9 +335,18 @@ udiskd* udiskd_new() {
     return g_new0(udiskd, 1);
 }
 
+
 void udiskt_free(udiskt *u) {
     if (u) {
         g_free(u->drive);
+        g_free(u);
+    }
+}
+
+void udisksa_free(udisksa *u) {
+    if (u) {
+        g_free(u->identifier);
+        udisksa_free(u->next);
         g_free(u);
     }
 }
@@ -358,11 +372,13 @@ void udiskd_free(udiskd *u) {
         g_free(u->connection_bus);
         g_free(u->partition_table);
         udiskp_free(u->partitions);
+        udisksa_free(u->smart_attributes);
         g_free(u->media);
         g_strfreev(u->media_compatibility);
         g_free(u);
     }
 }
+
 
 udiskp* get_udisks2_partition_info(const gchar *part_path) {
     GVariant *v;
@@ -414,7 +430,8 @@ udiskp* get_udisks2_partition_info(const gchar *part_path) {
     return partition;
 }
 
-gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *block, GDBusProxy *drive){
+gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *block,
+                          GDBusProxy *drive, const char *drivepath){
     GVariant *v;
     gboolean smart_enabled = FALSE;
     udiskt* disk_temp = NULL;
@@ -449,7 +466,69 @@ gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *block, GDBusProxy *d
     return disk_temp;
 }
 
-gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusProxy *drive) {
+gchar* get_udisks2_smart_attributes(udiskd* dsk, const char *drivepath){
+    GDBusProxy *proxy;
+    GVariant *options, *v, *v2;
+    GVariantIter *iter;
+    GError *error = NULL;
+    const char* aidenf;
+    guint8 aid;
+    gint16 avalue, aworst, athreshold;
+    gint64 pretty;
+    udisksa *lastp = NULL, *p;
+
+    proxy = g_dbus_proxy_new_sync(udisks2_conn, G_DBUS_PROXY_FLAGS_NONE, NULL,
+                                  UDISKS2_INTERFACE, drivepath,
+                                  UDISKS2_DRIVE_ATA_INTERFACE, NULL, &error);
+
+    options = g_variant_new_parsed("@a{sv} { %s: <true> }",
+                                   "auth.no_user_interaction");
+    if (error != NULL){
+        g_error_free (error);
+        return NULL;
+    }
+
+    v = g_dbus_proxy_call_sync(proxy, "SmartGetAttributes",
+                               g_variant_new_tuple(&options, 1),
+                               G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+    g_object_unref(proxy);
+
+    if (error != NULL){
+        g_error_free (error);
+        g_object_unref(proxy);
+        return NULL;
+    }
+
+    v2 = g_variant_get_child_value(v, 0);
+    iter = g_variant_iter_new(v2);
+
+    // id(y), identifier(s), flags(q), value(i), worst(i), threshold(i),
+    // pretty(x), pretty_unit(i), expansion(a{sv})
+    while (g_variant_iter_loop (iter, "(ysqiiixia{sv})", &aid, &aidenf, NULL, &avalue, &aworst, &athreshold, NULL, NULL, NULL)){
+        p = udisksa_new();
+        p->id = aid;
+        p->identifier = g_strdup(aidenf);
+        p->value = avalue;
+        p->worst = aworst;
+        p->threshold = athreshold;
+        p->next = NULL;
+
+        if (lastp == NULL)
+            dsk->smart_attributes = p;
+        else
+            lastp->next = p;
+
+        lastp = p;
+    }
+    g_variant_iter_free (iter);
+    g_variant_unref(v2);
+    g_variant_unref(v);
+
+    return NULL;
+}
+
+gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block,
+                                GDBusProxy *drive, const char *drivepath) {
     GVariant *v;
     GVariantIter *iter;
     const gchar *str, *part;
@@ -573,6 +652,7 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block, GDBusPr
             u->smart_failing = g_variant_get_boolean(v);
             g_variant_unref(v);
         }
+        get_udisks2_smart_attributes(u, drivepath);
     }
 
     v = get_dbus_property(block, UDISKS2_PART_TABLE_INTERFACE, "Type");
