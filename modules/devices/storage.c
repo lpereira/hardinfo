@@ -29,6 +29,7 @@ gboolean __scan_udisks2_devices(void) {
     GSList *node, *drives;
     udiskd *disk;
     udiskp *part;
+    udisksa *attrib;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
     gchar *devid, *label, *size, *tmp = NULL, *media_comp = NULL;
     const gchar *url, *vendor_str, *media_label, *icon, *media_curr = NULL;
@@ -199,6 +200,40 @@ gboolean __scan_udisks2_devices(void) {
                                         disk->smart_bad_sectors,
                                         disk->smart_poweron/(60*60*24), (disk->smart_poweron/60/60) % 24,
                                         disk->smart_temperature);
+
+            if (disk->smart_attributes != NULL) {
+                moreinfo = h_strdup_cprintf(_("[S.M.A.R.T. Attributes]\n"
+                                            "Attribute=Normalized Value / Worst / Threshold\n"),
+                                            moreinfo);
+
+                attrib = disk->smart_attributes;
+
+                while (attrib != NULL){
+                    tmp = g_strdup("");
+                    if (attrib->value != -1)
+                        tmp = h_strdup_cprintf("%3d", tmp, attrib->value);
+                    else
+                        tmp = h_strdup_cprintf("???", tmp);
+
+                    if (attrib->worst != -1)
+                        tmp = h_strdup_cprintf(" / %3d", tmp, attrib->worst);
+                    else
+                        tmp = h_strdup_cprintf(" / ???", tmp);
+
+                    if (attrib->threshold != -1)
+                        tmp = h_strdup_cprintf(" / %3d", tmp, attrib->threshold);
+                    else
+                        tmp = h_strdup_cprintf(" / ???", tmp);
+
+                    moreinfo = h_strdup_cprintf(_("(%d) %s=%s\n"),
+                                            moreinfo,
+                                            attrib->id,
+                                            attrib->identifier,
+                                            tmp);
+                    g_free(tmp);
+                    attrib = attrib->next;
+                }
+            }
         }
         if (disk->partition_table || disk->partitions) {
             moreinfo = h_strdup_cprintf(_("[Partition table]\n"
