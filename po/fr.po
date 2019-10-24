@@ -2,8 +2,8 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Yolateng0 <http://kreizenn-dafar.org>, 2014.
 #
-msgid "En"
-msgstr "FR"
+msgid ""
+msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: https://github.com/lpereira/hardinfo/edit/master/po/fr.po\n"
 "POT-Creation-Date: 2018-06-09 14:09-0500\n"
@@ -2007,26 +2007,6 @@ msgstr ""
 "Modele=%s\n"
 "Numéro de série=%s\n"
 
-#: modules/devices/battery.c:258
-#, c-format
-msgid ""
-"\n"
-"[Battery: %s]\n"
-"State=%s\n"
-"Capacity=%s / %s\n"
-"Battery Technology=%s\n"
-"Manufacturer=%s\n"
-"Model Number=%s\n"
-"Serial Number=%s\n"
-msgstr ""
-"[Batterie: %s]\n"
-"Etat=%s (load: %s)\n"
-"Capacité=%s / %s (%.2f%%)\n"
-"Technologie=%s (%s)\n"
-"Fabriquant=%s\n"
-"Modele=%s\n"
-"Numéro de série=%s\n"
-
 #: modules/devices/battery.c:346
 #, c-format
 msgid ""
@@ -2731,12 +2711,6 @@ msgstr ""
 "Télécharger le module eeprom pour avoir les informations de mémoire SPD=\n"
 "[$ShellParam$]\n"
 
-#: modules/devices/spd-decode.c:1480
-msgid ""
-"[SPD]\n"
-"Reading memory SPD not supported on this system=\n"
-msgstr "Mémoire de lecture SPD non prise en charge sur ce système"
-
 #: modules/devices/spd-decode.c:1509
 msgid "SPD"
 msgstr ""
@@ -2813,7 +2787,7 @@ msgid ""
 msgstr ""
 "Nom du Périphérique=hd%c\n"
 "Media=%s\n"
-"Cache=%dkb\n
+"Cache=%dkb\n"
 
 #: modules/devices/storage.c:341
 #, c-format
@@ -3125,7 +3099,7 @@ msgid ""
 "Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
 "x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
 msgstr ""
-"Intel Itanium Architecture 64-bit (à ne pas confondre avec le 64-bit d'Intel) ".
+"Intel Itanium Architecture 64-bit (à ne pas confondre avec le 64-bit d'Intel) "
 "Architecture x86 avec drapeau x86-64 ou \"AMD64\" bit indiqué par drapeau lm)"
 
 #. /flag:pbe
