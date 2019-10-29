@@ -2,7 +2,7 @@ HARDINFO
 ========
 
 HardInfo is a system profiler and benchmark for Linux systems. It is able to
-obtain information from both hardware and basic software, and organize them
+obtain information from both hardware and basic software, and organize it
 in a simple to use GUI.
 
 Features include:
@@ -13,9 +13,9 @@ Features include:
 Status
 ------
 
-Capabilities: Hardinfo currently decteds software and detected hardware by the OS, mostly almost all.
-Features: the remote sync was disable due server was lost
-Development: currently are made by contribution, a stable and fixed/dedicated maintainer are required.
+Capabilities: HardInfo currently detects most software and hardware detected by the OS.
+Features: The remote sync was disabled due to server loss.
+Development: Currently done by contributors, a new dedicated maintainer is needed.
 
 DEPENDENCIES
 ------------
@@ -42,26 +42,26 @@ Create a build directory and build from there:
 
 There are some variables that can be changed:
 
- * `CMAKE_BUILD_TYPE` : Can be either Release or Debug
-   * `[Default: Release]` Debug builds prints messages to console and are not recommended for general use
- * `CMAKE_INSTALL_PREFIX` : Sets the installation prefix.
-   * `[Default: /usr/local]` : distributions generalli changes to `/usr`
- * `HARDINFO_NOSYNC` : Disables network synchronization
-   * `[Default: 1]` : Disabled by default due the server service was lost.
+ * `CMAKE_BUILD_TYPE`: Can either be ``Release`` or ``Debug``.
+   * `[Default: Release]` ``Debug`` prints messages to console and is not recommended for general use.
+ * `CMAKE_INSTALL_PREFIX`: Sets the installation prefix.
+   * `[Default: /usr/local]`: Distributions usually change this to `/usr`.
+ * `HARDINFO_NOSYNC`: Disables network synchronization.
+   * `[Default: 1]`: Disabled by default due to the server being lost.
 
-To set a variable, pass use cmake's -D command-line parameter. For example:
+To set a variable, use cmake's -D parameter. For example:
 
 `	build $ cmake .. -DCMAKE_BUILD_TYPE=Debug `
 
-Network sync are enabled if libsoup are detected, if having trouble building with libsoup, disable it with:
+Network sync is enabled if libsoup is detected. If having trouble building with libsoup, disable it with:
 
 `	build $ cmake -DHARDINFO_NOSYNC=1`
 
 SETTING UP
 ----------
 
-Most things in HardInfo are detected automatically. However, some things
-depends on manual set up. They are:
+Most hardware is detected automatically by HardInfo, however, some hardware 
+needs manual set up. They are:
 
 ### Sensors
 
@@ -74,5 +74,5 @@ in daemon mode, using the default port.
 
 ### Memory Speed
 
-The module `eeeprom` mus be loaded to display info about memory hardware instaled.
-Load with `modprobe eeprom` and refres the module screen.
+The module `eeprom` must be loaded to display info about your currently installed memory.
+Load with `modprobe eeprom` and refresh the module screen.
