@@ -448,7 +448,7 @@ gchar *caches_summary(GSList * processors)
     return ret;
 }
 
-#define PROC_SCAN_READ_BUFFER_SIZE 896
+#define PROC_SCAN_READ_BUFFER_SIZE 1024
 GSList *processor_scan(void)
 {
     GSList *procs = NULL, *l = NULL;
