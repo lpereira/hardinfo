@@ -56,8 +56,6 @@ typedef struct {
     ids_query_result result;
 } ids_query;
 
-void ids_query_result_cpy(ids_query_result *dest, ids_query_result *src);
-
 ids_query *ids_query_new(const gchar *qpath);
 void ids_query_free(ids_query *s);
 typedef GSList* ids_query_list;
