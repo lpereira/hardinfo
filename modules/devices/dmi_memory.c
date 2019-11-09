@@ -26,6 +26,9 @@
 
 extern const char *dtree_mem_str; /* in devicetree.c */
 
+/* in monitors.c */
+gchar **get_output_lines(const char *cmd_line);
+
 #include "util_sysobj.h" /* for appfsp() */
 #define dmi_spd_msg(...)  /* fprintf (stderr, __VA_ARGS__) */
 
@@ -382,6 +385,34 @@ static void dmi_fill_from_spd(dmi_mem_socket *s) {
         s->type_detail = g_strdup(s->spd->type_detail);
 }
 
+static dmi_mem_size size_of_online_memory_blocks() {
+    gchar **online_files = NULL;
+    gchar *block_size_bytes_str = NULL;
+    dmi_mem_size block_size_bytes = 0;
+    dmi_mem_size ret = 0;
+
+    if (g_file_get_contents("/sys/devices/system/memory/block_size_bytes", &block_size_bytes_str, NULL, NULL) ) {
+        block_size_bytes = strtoll(block_size_bytes_str, NULL, 16);
+    }
+    if (!block_size_bytes)
+        return 0;
+
+    online_files = get_output_lines("find /sys/devices/system/memory -name online");
+    int i, found = 0;
+    for(i = 0; online_files[i]; i++) {
+        gchar *online = NULL;
+        if (g_file_get_contents(online_files[i], &online, NULL, NULL) ) {
+            if (1 == strtol(online, NULL, 0)) {
+                found++;
+                ret += block_size_bytes;
+            }
+        }
+        g_free(online);
+    }
+    g_strfreev(online_files);
+    return ret;
+}
+
 dmi_mem *dmi_mem_new() {
     dmi_mem *m = g_new0(dmi_mem, 1);
 
@@ -530,6 +561,10 @@ dmi_mem_new_last_chance:
                 m->system_memory_ram_types |= (1 << (rt-1));
         }
     }
+
+    /* Try to sum the online blocks for a physical memory total */
+    if (!m->system_memory_MiB)
+        m->system_memory_MiB = size_of_online_memory_blocks() / 1024 / 1024;
 
     return m;
 }
