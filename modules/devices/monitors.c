@@ -483,6 +483,7 @@ gchar *monitors_get_info() {
         }
         monitor_free(m);
     }
+    g_strfreev(edid_files);
 
     no_monitors = FALSE;
     if(!found) {
