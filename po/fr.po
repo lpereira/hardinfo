@@ -28,7 +28,7 @@ msgstr ""
 
 #: hardinfo/cpu_util.c:184 hardinfo/cpu_util.c:195 modules/devices/gpu.c:200
 msgid "Frequency Scaling"
-msgstr ""
+msgstr "Echelle de fréquence"
 
 #: hardinfo/cpu_util.c:185 modules/devices/gpu.c:201
 msgid "Minimum"
@@ -37,7 +37,7 @@ msgstr "Minimum"
 #: hardinfo/cpu_util.c:185 hardinfo/cpu_util.c:186 hardinfo/cpu_util.c:187
 #: hardinfo/dt_util.c:589 modules/devices/gpu.c:201 modules/devices/gpu.c:202
 msgid "kHz"
-msgstr ""
+msgstr "kHz"
 
 #: hardinfo/cpu_util.c:186 modules/devices/gpu.c:202
 msgid "Maximum"
@@ -49,20 +49,20 @@ msgstr "Actuel"
 
 #: hardinfo/cpu_util.c:188 modules/devices/gpu.c:203
 msgid "Transition Latency"
-msgstr ""
+msgstr "Latence de transition"
 
 #: hardinfo/cpu_util.c:188 modules/devices/gpu.c:203
 msgid "ns"
-msgstr ""
+msgstr "ns"
 
 #: hardinfo/cpu_util.c:189
 msgid "Governor"
-msgstr ""
+msgstr "Governor"
 
 #: hardinfo/cpu_util.c:190 hardinfo/cpu_util.c:196 modules/devices/gpu.c:153
 #: modules/devices/pci.c:134 modules/devices/usb.c:136
 msgid "Driver"
-msgstr ""
+msgstr "Driver"
 
 #: hardinfo/cpu_util.c:202 modules/computer.c:737
 #: modules/devices/arm/processor.c:256 modules/devices/x86/processor.c:284
@@ -85,7 +85,7 @@ msgstr "Book"
 
 #: hardinfo/cpu_util.c:222
 msgid "Drawer"
-msgstr ""
+msgstr "Drawer"
 
 #: hardinfo/cpu_util.c:228 modules/devices/arm/processor.c:471
 #: modules/devices/x86/processor.c:750
@@ -94,11 +94,11 @@ msgstr "Topologie"
 
 #: hardinfo/cpu_util.c:229
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: hardinfo/dmi_util.c:25
 msgid "BIOS Information"
-msgstr ""
+msgstr "Informations du BIOS"
 
 #: hardinfo/dmi_util.c:26 modules/devices/parisc/processor.c:157
 msgid "System"
@@ -106,11 +106,11 @@ msgstr "Système"
 
 #: hardinfo/dmi_util.c:27
 msgid "Base Board"
-msgstr ""
+msgstr "Base Carte Mère"
 
 #: hardinfo/dmi_util.c:28 modules/devices/dmi.c:53
 msgid "Chassis"
-msgstr ""
+msgstr "Châssis"
 
 #: hardinfo/dmi_util.c:29 modules/computer.c:529 modules/computer.c:1000
 #: modules/devices/alpha/processor.c:87 modules/devices/arm/processor.c:341
@@ -125,48 +125,48 @@ msgstr "Processeur"
 
 #: hardinfo/dmi_util.c:30
 msgid "Memory Controller"
-msgstr ""
+msgstr "Controleur de mémoire"
 
 #: hardinfo/dmi_util.c:31
 msgid "Memory Module"
-msgstr ""
+msgstr "Module Mémoire"
 
 #: hardinfo/dmi_util.c:32 modules/devices/parisc/processor.c:163
 #: modules/devices/x86/processor.c:662
 msgid "Cache"
-msgstr ""
+msgstr "Cache"
 
 #: hardinfo/dmi_util.c:33
 msgid "Port Connector"
-msgstr ""
+msgstr "Connecteur de port"
 
 #: hardinfo/dmi_util.c:34
 msgid "System Slots"
-msgstr ""
+msgstr "Slots Système"
 
 #: hardinfo/dmi_util.c:35
 msgid "On Board Devices"
-msgstr ""
+msgstr "Appareils Périphériques"
 
 #: hardinfo/dmi_util.c:36
 msgid "OEM Strings"
-msgstr ""
+msgstr "Fabricant OEM "
 
 #: hardinfo/dmi_util.c:37
 msgid "System Configuration Options"
-msgstr ""
+msgstr "Options Configuration Système"
 
 #: hardinfo/dmi_util.c:38
 msgid "BIOS Language"
-msgstr ""
+msgstr "Langue du BIOS"
 
 #: hardinfo/dmi_util.c:39
 msgid "Group Associations"
-msgstr ""
+msgstr "Associations"
 
 #: hardinfo/dmi_util.c:40
 msgid "System Event Log"
-msgstr ""
+msgstr "Log évènement Système"
 
 #: hardinfo/dmi_util.c:41
 msgid "Physical Memory Array"
@@ -174,7 +174,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:42
 msgid "Memory Device"
-msgstr ""
+msgstr "Périphérique Mémoire"
 
 #: hardinfo/dmi_util.c:43
 msgid "32-bit Memory Error"
@@ -182,63 +182,63 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:44
 msgid "Memory Array Mapped Address"
-msgstr ""
+msgstr "Map "
 
 #: hardinfo/dmi_util.c:45
 msgid "Memory Device Mapped Address"
-msgstr ""
+msgstr "Mappage Périphérique Mémoire"
 
 #: hardinfo/dmi_util.c:46
 msgid "Built-in Pointing Device"
-msgstr ""
+msgstr "Périphérique de Pointage Présent"
 
 #: hardinfo/dmi_util.c:47
 msgid "Portable Battery"
-msgstr ""
+msgstr "Batterie Portable"
 
 #: hardinfo/dmi_util.c:48
 msgid "System Reset"
-msgstr ""
+msgstr "Reset Système"
 
 #: hardinfo/dmi_util.c:49
 msgid "Hardware Security"
-msgstr ""
+msgstr "Sécurité Hardware"
 
 #: hardinfo/dmi_util.c:50
 msgid "System Power Controls"
-msgstr ""
+msgstr "Contrôle Puissance Système"
 
 #: hardinfo/dmi_util.c:51
 msgid "Voltage Probe"
-msgstr ""
+msgstr "Sonde de Tension"
 
 #: hardinfo/dmi_util.c:52
 msgid "Cooling Device"
-msgstr ""
+msgstr "dispositif de refroidissement Cooling"
 
 #: hardinfo/dmi_util.c:53
 msgid "Temperature Probe"
-msgstr ""
+msgstr "Sonde de Température"
 
 #: hardinfo/dmi_util.c:54
 msgid "Electrical Current Probe"
-msgstr ""
+msgstr "Sonde Courant Electrique"
 
 #: hardinfo/dmi_util.c:55
 msgid "Out-of-band Remote Access"
-msgstr ""
+msgstr "Accès Contrôle à Distance"
 
 #: hardinfo/dmi_util.c:56
 msgid "Boot Integrity Services"
-msgstr ""
+msgstr "Services de Boot"
 
 #: hardinfo/dmi_util.c:57
 msgid "System Boot"
-msgstr ""
+msgstr "Système de Boot"
 
 #: hardinfo/dmi_util.c:58
 msgid "64-bit Memory Error"
-msgstr ""
+msgstr "Erreur Mémoire 64-bit"
 
 #: hardinfo/dmi_util.c:59
 msgid "Management Device"
@@ -246,31 +246,31 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:60
 msgid "Management Device Component"
-msgstr ""
+msgstr "Dispositif des Composants Périphériques"
 
 #: hardinfo/dmi_util.c:61
 msgid "Management Device Threshold Data"
-msgstr ""
+msgstr "Dispositif de Seuil Mémoire de Périphériques"
 
 #: hardinfo/dmi_util.c:62
 msgid "Memory Channel"
-msgstr ""
+msgstr "Canal Mémoire"
 
 #: hardinfo/dmi_util.c:63
 msgid "IPMI Device"
-msgstr ""
+msgstr "Périphérique IPMI"
 
 #: hardinfo/dmi_util.c:64
 msgid "Power Supply"
-msgstr ""
+msgstr "Alimentation électrique"
 
 #: hardinfo/dmi_util.c:65
 msgid "Additional Information"
-msgstr ""
+msgstr "Informations Supplémentaires"
 
 #: hardinfo/dmi_util.c:66
 msgid "Onboard Device"
-msgstr ""
+msgstr "Périphériques Embarqués"
 
 #: hardinfo/dmi_util.c:226
 msgid "Invalid chassis type (0)"
@@ -302,7 +302,7 @@ msgstr "Tour"
 
 #: hardinfo/dmi_util.c:234
 msgid "Portable"
-msgstr ""
+msgstr "Portable"
 
 #: hardinfo/dmi_util.c:235 modules/computer.c:391 modules/computer.c:400
 #: modules/computer.c:422
@@ -311,11 +311,11 @@ msgstr "Portable"
 
 #: hardinfo/dmi_util.c:236
 msgid "Notebook"
-msgstr ""
+msgstr "Notebook"
 
 #: hardinfo/dmi_util.c:237
 msgid "Handheld"
-msgstr ""
+msgstr "Appareil Portatif"
 
 #: hardinfo/dmi_util.c:238
 msgid "Docking Station"
@@ -327,15 +327,15 @@ msgstr "Tout en Un"
 
 #: hardinfo/dmi_util.c:240
 msgid "Subnotebook"
-msgstr ""
+msgstr "Subnotebook"
 
 #: hardinfo/dmi_util.c:241
 msgid "Space-saving"
-msgstr ""
+msgstr "Space-saving"
 
 #: hardinfo/dmi_util.c:242
 msgid "Lunch Box"
-msgstr ""
+msgstr "Lunch Box"
 
 #: hardinfo/dmi_util.c:243
 msgid "Main Server Chassis"
@@ -343,11 +343,11 @@ msgstr "Châssis du serveur principal"
 
 #: hardinfo/dmi_util.c:244
 msgid "Expansion Chassis"
-msgstr ""
+msgstr "Extension de Châssis"
 
 #: hardinfo/dmi_util.c:245
 msgid "Sub Chassis"
-msgstr ""
+msgstr "Sous Châssis"
 
 #: hardinfo/dmi_util.c:246
 msgid "Bus Expansion Chassis"
@@ -371,7 +371,7 @@ msgstr "Boîtier étanche"
 
 #: hardinfo/dmi_util.c:251
 msgid "Multi-system"
-msgstr ""
+msgstr "Système Multiple"
 
 #: hardinfo/dmi_util.c:252
 msgid "CompactPCI"
@@ -391,43 +391,43 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:256
 msgid "Tablet"
-msgstr ""
+msgstr "Tablette"
 
 #: hardinfo/dmi_util.c:257
 msgid "Convertible"
-msgstr ""
+msgstr "Convertible"
 
 #: hardinfo/dmi_util.c:258
 msgid "Detachable"
-msgstr ""
+msgstr "Detachable"
 
 #: hardinfo/dmi_util.c:259
 msgid "IoT Gateway"
-msgstr ""
+msgstr "Iot Passerelle"
 
 #: hardinfo/dmi_util.c:260
 msgid "Embedded PC"
-msgstr ""
+msgstr "PC embarqué"
 
 #: hardinfo/dmi_util.c:261
 msgid "Mini PC"
-msgstr ""
+msgstr "Mini PC"
 
 #: hardinfo/dmi_util.c:262
 msgid "Stick PC"
-msgstr ""
+msgstr "Stick PC"
 
 #: hardinfo/dt_util.c:1179
 msgid "phandle Map"
-msgstr ""
+msgstr "Map Descriptif"
 
 #: hardinfo/dt_util.c:1180
 msgid "Alias Map"
-msgstr ""
+msgstr "Map Alias"
 
 #: hardinfo/dt_util.c:1181
 msgid "Symbol Map"
-msgstr ""
+msgstr "Symbol Map"
 
 #. / %d will be latest year of copyright
 #: hardinfo/hardinfo.c:50
