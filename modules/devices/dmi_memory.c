@@ -386,7 +386,6 @@ static void dmi_fill_from_spd(dmi_mem_socket *s) {
 }
 
 static dmi_mem_size size_of_online_memory_blocks() {
-    gchar **online_files = NULL;
     gchar *block_size_bytes_str = NULL;
     dmi_mem_size block_size_bytes = 0;
     dmi_mem_size ret = 0;
@@ -397,19 +396,22 @@ static dmi_mem_size size_of_online_memory_blocks() {
     if (!block_size_bytes)
         return 0;
 
-    online_files = get_output_lines("find /sys/devices/system/memory -name online");
-    int i, found = 0;
-    for(i = 0; online_files[i]; i++) {
-        gchar *online = NULL;
-        if (g_file_get_contents(online_files[i], &online, NULL, NULL) ) {
-            if (1 == strtol(online, NULL, 0)) {
-                found++;
+    const gchar *f = NULL;
+    GDir *d = g_dir_open("/sys/devices/system/memory", 0, NULL);
+    if (!d) return 0;
+
+    while((f = g_dir_read_name(d))) {
+        gchar *p = g_strdup_printf("/sys/devices/system/memory/%s/online", f);
+        gchar *ol = NULL;
+        if (g_file_get_contents(p, &ol, NULL, NULL) ) {
+            if (1 == strtol(ol, NULL, 0)) {
                 ret += block_size_bytes;
             }
         }
-        g_free(online);
+        g_free(ol);
+        g_free(p);
     }
-    g_strfreev(online_files);
+    g_dir_close(d);
     return ret;
 }
 
