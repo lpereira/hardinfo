@@ -456,7 +456,7 @@ GSList *processor_scan(void)
     FILE *cpuinfo;
     gchar *buffer;
 
-    buffer = (gchar *) g_malloc(PROC_SCAN_READ_BUFFER_SIZE * sizeof(gchar));
+    buffer = g_malloc(PROC_SCAN_READ_BUFFER_SIZE);
     cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
         return NULL;
