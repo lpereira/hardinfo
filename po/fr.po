@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-10-24 15:16-0500\n"
-"PO-Revision-Date: 2019-09-28\n"
-"Last-Translator: yolateng0\n"
+"PO-Revision-Date: 2019-11-18\n"
+"Last-Translator: yolateng0 <yolateng0-AT-yo.nohost.me>\n"
 "Language-Team: KreizennDafar\n"
 "Language: fr\n"
 "X-Poedit-Basepath: ../\n"
@@ -20,15 +20,15 @@ msgstr ""
 
 #: hardinfo/cpu_util.c:30
 msgid "Little Endian"
-msgstr ""
+msgstr "Little Endian"
 
 #: hardinfo/cpu_util.c:32
 msgid "Big Endian"
-msgstr ""
+msgstr "Big Endian"
 
 #: hardinfo/cpu_util.c:184 hardinfo/cpu_util.c:195 modules/devices/gpu.c:200
 msgid "Frequency Scaling"
-msgstr "Echelle de fréquence"
+msgstr "Echelle de Fréquence"
 
 #: hardinfo/cpu_util.c:185 modules/devices/gpu.c:201
 msgid "Minimum"
@@ -170,7 +170,7 @@ msgstr "Log évènement Système"
 
 #: hardinfo/dmi_util.c:41
 msgid "Physical Memory Array"
-msgstr ""
+msgstr "Tableau Mémoire Physique"
 
 #: hardinfo/dmi_util.c:42
 msgid "Memory Device"
@@ -178,11 +178,11 @@ msgstr "Périphérique Mémoire"
 
 #: hardinfo/dmi_util.c:43
 msgid "32-bit Memory Error"
-msgstr ""
+msgstr "Erreur Mémoire 32-bit"
 
 #: hardinfo/dmi_util.c:44
 msgid "Memory Array Mapped Address"
-msgstr "Map "
+msgstr "Mappage Tableau Mémoire "
 
 #: hardinfo/dmi_util.c:45
 msgid "Memory Device Mapped Address"
