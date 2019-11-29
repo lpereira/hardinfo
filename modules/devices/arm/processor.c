@@ -416,7 +416,7 @@ gchar *processor_name(GSList *processors) {
         { "qcom,msm8939", "Qualcomm", "Snapdragon 615"},
         { "qcom,msm", "Qualcomm", "Snapdragon-family"},
         { "nvidia,tegra", "nVidia", "Tegra-family" },
-        { "bcm,", "Broadcom", UNKSOC },
+        { "brcm,", "Broadcom", UNKSOC },
         { "nvidia,", "nVidia", UNKSOC },
         { "rockchip,", "Rockchip", UNKSOC },
         { "ti,", "Texas Instruments", UNKSOC },
