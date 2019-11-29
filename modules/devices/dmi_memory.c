@@ -958,7 +958,7 @@ gchar *memory_devices_get_system_memory_types_str() {
     return ret;
 }
 
-int memory_devices_get_system_memory_MiB() {
+uint64_t memory_devices_get_system_memory_MiB() {
     dmi_mem *mem = dmi_mem_new();
     int ret = (int)mem->system_memory_MiB;
     dmi_mem_free(mem);

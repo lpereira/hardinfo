@@ -18,12 +18,18 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <inttypes.h>
+
+/* in dmi_memory.c */
+uint64_t memory_devices_get_system_memory_MiB();
+gchar *memory_devices_get_system_memory_types_str();
+
 /*/ Used for an unknown value. Having it in only one place cleans up the .po line references */
 static const char *unk = N_("(Unknown)");
 
 typedef struct {
     char *board;
-    int memory_kiB;
+    uint64_t memory_kiB; /* from /proc/meminfo -> MemTotal */
     char *cpu_name;
     char *cpu_desc;
     char *cpu_config;
@@ -34,6 +40,9 @@ typedef struct {
     int threads;
     char *mid;
     int ptr_bits; /* 32, 64... BENCH_PTR_BITS; 0 for unspecified */
+    int is_su_data; /* 1 = data collected as root */
+    uint64_t memory_phys_MiB; /* from DMI/SPD/DTree/Table/Blocks, etc. */
+    char *ram_types;
     int machine_data_version;
 } bench_machine;
 
@@ -153,6 +162,7 @@ bench_machine *bench_machine_this() {
     m = bench_machine_new();
     if (m) {
         m->ptr_bits = BENCH_PTR_BITS;
+        m->is_su_data = (getuid() == 0);
         m->board = module_call_method("devices::getMotherboard");
         m->cpu_name = module_call_method("devices::getProcessorName");
         m->cpu_desc = module_call_method("devices::getProcessorDesc");
@@ -160,7 +170,9 @@ bench_machine *bench_machine_this() {
         m->gpu_desc = module_call_method("devices::getGPUList");
         m->ogl_renderer = module_call_method("computer::getOGLRenderer");
         tmp = module_call_method("computer::getMemoryTotal");
-        m->memory_kiB = atoi(tmp);
+        m->memory_kiB = strtoll(tmp, NULL, 10);
+        m->memory_phys_MiB = memory_devices_get_system_memory_MiB();
+        m->ram_types = memory_devices_get_system_memory_types_str();
         free(tmp);
 
         cpu_procs_cores_threads(&m->processors, &m->cores, &m->threads);
@@ -176,6 +188,7 @@ void bench_machine_free(bench_machine *s) {
         free(s->cpu_desc);
         free(s->cpu_config);
         free(s->mid);
+        free(s->ram_types);
     }
 }
 
@@ -270,7 +283,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             b->machine->cpu_name = strdup(values[3]);
             b->machine->cpu_desc = strdup(values[4]);
             b->machine->cpu_config = strdup(values[5]);
-            b->machine->memory_kiB = atoi(values[6]);
+            b->machine->memory_kiB = strtoll(values[6], NULL, 10);
             b->machine->processors = atoi(values[7]);
             b->machine->cores = atoi(values[8]);
             b->machine->threads = atoi(values[9]);
@@ -282,6 +295,12 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
                 b->machine->machine_data_version = atoi(values[12]);
             if (vl >= 14)
                 b->machine->ptr_bits = atoi(values[13]);
+            if (vl >= 15)
+                b->machine->is_su_data = atoi(values[14]);
+            if (vl >= 16)
+                b->machine->memory_phys_MiB = strtoll(values[15], NULL, 10);
+            if (vl >= 17)
+                b->machine->ram_types = strdup(values[16]);
             b->legacy = 0;
         } else if (vl >= 2) {
             b->bvalue.result = atof(values[0]);
@@ -371,7 +390,7 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
     char *bv = bench_value_to_str(b->bvalue);
 
 #define prep_str(s) (s ? (char*)auto_free(gg_key_file_parse_string_as_value(s, '|')) : "")
-    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%d|%d|%d|%d|%s|%s|%d|%d\n",
+    char *ret = g_strdup_printf("%s=%s|%d|%s|%s|%s|%s|%"PRId64"|%d|%d|%d|%s|%s|%d|%d|%d|%"PRId64"|%s\n",
             b->machine->mid, bv, b->bvalue.threads_used,
             prep_str(b->machine->board),
             prep_str(b->machine->cpu_name),
@@ -382,7 +401,10 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
             prep_str(b->machine->ogl_renderer),
             prep_str(b->machine->gpu_desc),
             b->machine->machine_data_version, // [12]
-            b->machine->ptr_bits // [13]
+            b->machine->ptr_bits, // [13]
+            b->machine->is_su_data, // [14]
+            b->machine->memory_phys_MiB, // [15]
+            b->machine->ram_types // [16]
             );
 
     free(cpu_config);
@@ -391,10 +413,16 @@ char *bench_result_benchmarkconf_line(bench_result *b) {
 }
 
 static char *bench_result_more_info_less(bench_result *b) {
-    char *memory =
-        (b->machine->memory_kiB > 0)
-        ? g_strdup_printf("%d %s", b->machine->memory_kiB, _("kiB") )
-        : g_strdup(_(unk) );
+    char *memory = NULL;
+    if (b->machine->memory_phys_MiB) {
+        memory = g_strdup_printf("%"PRId64" %s %s",
+            b->machine->memory_phys_MiB, _("MiB"), b->machine->ram_types);
+    } else {
+        memory =
+            (b->machine->memory_kiB > 0)
+            ? g_strdup_printf("%"PRId64" %s %s", b->machine->memory_kiB, _("kiB"), problem_marker() )
+            : g_strdup(_(unk));
+    }
     char bench_str[256] = "";
     if (b->bvalue.revision >= 0)
         snprintf(bench_str, 127, "%d", b->bvalue.revision);
@@ -468,8 +496,10 @@ static char *bench_result_more_info_complete(bench_result *b) {
         /* threads */   "%s=%d\n"
         /* gpu desc */  "%s=%s\n"
         /* ogl rend */  "%s=%s\n"
-        /* mem */       "%s=%d %s\n"
+        /* mem */       "%s=%"PRId64" %s\n"
+        /* mem phys */  "%s=%"PRId64" %s %s\n"
         /* bits */      "%s=%s\n"
+                        "%s=%d\n"
                         "%s=%d\n"
                         "[%s]\n"
         /* mid */       "%s=%s\n"
@@ -493,8 +523,10 @@ static char *bench_result_more_info_complete(bench_result *b) {
                         _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
                         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
                         _("Memory"), b->machine->memory_kiB, _("kiB"),
+                        _("Physical Memory"), b->machine->memory_phys_MiB, _("MiB"), b->machine->ram_types,
                         b->machine->ptr_bits ? _("Pointer Size"): "#AddySize", bits,
                         ".machine_data_version", b->machine->machine_data_version,
+                        ".is_su_data", b->machine->is_su_data,
                         _("Handles"),
                         _("mid"), b->machine->mid,
                         _("cfg_val"), cpu_config_val(b->machine->cpu_config)
