@@ -17,6 +17,7 @@
  */
 
 #include <string.h>
+#include <sys/utsname.h>
 
 #include "computer.h"
 #include "cpu_util.h" /* for STRIFNULL() */
@@ -30,17 +31,78 @@
     }
 
 GHashTable *_module_hash_table = NULL;
+gchar *kernel_modules_dir = NULL;
+
+static struct {
+    gchar *dir;
+    gchar *icon;
+} modules_icons[] = {
+    { "kernel/net/bluetooth/", "bluetooth"},
+    { "kernel/net/wireless/", "wireless"},
+    { "kernel/net/ethernet/", "network-interface"},
+    { "kernel/drivers/bluetooth/", "bluetooth"},
+    { "kernel/drivers/input/joystick/", "joystick"},
+    { "kernel/drivers/input/keyboard/", "keyboard"},
+    { "kernel/drivers/input/mouse/", "mouse"},
+    { "kernel/drivers/cdrom/", "cdrom"},
+    { "kernel/drivers/hwmon/", "therm"},
+    { "kernel/drivers/hid/", "inputdevices"},
+    { "kernel/drivers/gpu/", "monitor"},
+    { "kernel/drivers/i2c/", "memory"},
+    { "kernel/drivers/nvme/", "hdd"},
+    { "kernel/drivers/ata/", "hdd"},
+    { "kernel/drivers/scsi/", "hdd"},
+    { "kernel/drivers/usb/", "usb"},
+    { "kernel/drivers/net/wireless/", "wireless"},
+    { "kernel/drivers/net/ethernet/", "network-interface"},
+    { "kernel/drivers/crypto/", "cryptohash"},
+    { "kernel/drivers/pci/", "devices"},
+    { "kernel/drivers/iommu/", "memory"},
+    { "kernel/drivers/edac/", "memory"},
+    { "kernel/arch/x86/crypto/", "cryptohash"},
+    { "kernel/net/", "network-connections"},
+    { "kernel/crypto/", "cryptohash"},
+    { "kernel/sound/", "audio"},
+    { NULL, NULL}
+};
+
+static const char* get_module_icon(const char *path)
+{
+    int i = 0;
+
+    if (kernel_modules_dir == NULL){
+        struct utsname utsbuf;
+        uname(&utsbuf);
+        kernel_modules_dir = g_strdup_printf("/lib/modules/%s/", utsbuf.release);
+    }
+
+    if (!g_str_has_prefix(path, kernel_modules_dir))
+        return NULL;
+
+    const gchar *path_no_prefix = path+strlen(kernel_modules_dir);
+
+    while (modules_icons[i].dir != NULL) {
+        if (g_str_has_prefix(path_no_prefix, modules_icons[i].dir)) {
+            return modules_icons[i].icon;
+        }
+        i++;
+    }
+    return NULL;
+}
 
 void scan_modules_do(void) {
     FILE *lsmod;
     gchar buffer[1024];
     gchar *lsmod_path;
+    gchar *module_icons;
+    const gchar *icon;
 
     if (!_module_hash_table) { _module_hash_table = g_hash_table_new(g_str_hash, g_str_equal); }
 
     g_free(module_list);
 
     module_list = NULL;
+    module_icons = NULL;
     moreinfo_del_with_prefix("COMP:MOD");
 
     lsmod_path = find_program("lsmod");
@@ -113,6 +175,9 @@ void scan_modules_do(void) {
         /* append this module to the list of modules */
         module_list = h_strdup_cprintf("$%s$%s=%s\n", module_list, hashkey, modname,
                                        description ? description : "");
+        icon = get_module_icon(filename);
+        module_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", module_icons, hashkey,
+                                        modname, icon ? icon: "module");
 
         STRIFNULL(filename, _("(Not available)"));
         STRIFNULL(description, _("(Not available)"));
@@ -178,4 +243,10 @@ void scan_modules_do(void) {
     pclose(lsmod);
 
     g_free(lsmod_path);
+    g_free(kernel_modules_dir);
+
+    if (module_list != NULL && module_icons != NULL) {
+        module_list = h_strdup_cprintf("[$ShellParam$]\n%s", module_list, module_icons);
+    }
+    g_free(module_icons);
 }
