@@ -31,62 +31,69 @@
     }
 
 GHashTable *_module_hash_table = NULL;
-gchar *kernel_modules_dir = NULL;
+static gchar *kernel_modules_dir = NULL;
 
-static struct {
-    gchar *dir;
-    gchar *icon;
+/* Keep this sorted by reverse strlen(dir)! */
+static const struct {
+    const gchar *dir;
+    const gchar *icon;
 } modules_icons[] = {
-    { "kernel/net/bluetooth/", "bluetooth"},
-    { "kernel/net/wireless/", "wireless"},
-    { "kernel/net/ethernet/", "network-interface"},
-    { "kernel/drivers/bluetooth/", "bluetooth"},
-    { "kernel/drivers/input/joystick/", "joystick"},
-    { "kernel/drivers/input/keyboard/", "keyboard"},
-    { "kernel/drivers/input/mouse/", "mouse"},
-    { "kernel/drivers/cdrom/", "cdrom"},
-    { "kernel/drivers/hwmon/", "therm"},
-    { "kernel/drivers/hid/", "inputdevices"},
-    { "kernel/drivers/gpu/", "monitor"},
-    { "kernel/drivers/i2c/", "memory"},
-    { "kernel/drivers/nvme/", "hdd"},
-    { "kernel/drivers/ata/", "hdd"},
-    { "kernel/drivers/scsi/", "hdd"},
-    { "kernel/drivers/usb/", "usb"},
-    { "kernel/drivers/net/wireless/", "wireless"},
-    { "kernel/drivers/net/ethernet/", "network-interface"},
-    { "kernel/drivers/crypto/", "cryptohash"},
-    { "kernel/drivers/pci/", "devices"},
-    { "kernel/drivers/iommu/", "memory"},
-    { "kernel/drivers/edac/", "memory"},
-    { "kernel/arch/x86/crypto/", "cryptohash"},
-    { "kernel/net/", "network-connections"},
-    { "kernel/crypto/", "cryptohash"},
-    { "kernel/sound/", "audio"},
-    { NULL, NULL}
+    { "drivers/input/joystick/", "joystick" },
+    { "drivers/input/keyboard/", "keyboard" },
+    { "drivers/net/wireless/", "wireless" },
+    { "drivers/net/ethernet/", "network-interface" },
+    { "drivers/input/mouse/", "mouse" },
+    { "drivers/bluetooth/", "bluetooth" },
+    { "arch/x86/crypto/", "cryptohash" },
+    { "drivers/crypto/", "cryptohash" },
+    { "net/bluetooth/", "bluetooth" },
+    { "drivers/input/", "inputdevices" },
+    { "drivers/cdrom/", "cdrom" },
+    { "drivers/hwmon/", "therm" },
+    { "drivers/iommu/", "memory" },
+    { "net/wireless/", "wireless" },
+    { "drivers/nvme/", "hdd" },
+    { "net/ethernet/", "network-interface" },
+    { "drivers/scsi/", "hdd" },
+    { "drivers/edac/", "memory" },
+    { "drivers/hid/", "inputdevices" },
+    { "drivers/gpu/", "monitor" },
+    { "drivers/i2c/", "memory" },
+    { "drivers/ata/", "hdd" },
+    { "drivers/usb/", "usb" },
+    { "drivers/pci/", "devices" },
+    { "drivers/net/", "network" },
+    { "drivers/mmc/", "media-removable" },
+    { "drivers/fs/", "media-floppy" },
+    { "crypto/", "cryptohash" },
+    { "sound/", "audio" },
+    { "net/", "network-connections" },
+    { }
 };
 
-static const char* get_module_icon(const char *path)
+static const gchar* get_module_icon(const char *path)
 {
-    int i = 0;
+    if (path == NULL) /* modinfo couldn't find module path */
+        return NULL;
 
-    if (kernel_modules_dir == NULL){
+    if (kernel_modules_dir == NULL) {
         struct utsname utsbuf;
         uname(&utsbuf);
-        kernel_modules_dir = g_strdup_printf("/lib/modules/%s/", utsbuf.release);
+        kernel_modules_dir = g_strdup_printf("/lib/modules/%s/kernel/", utsbuf.release);
     }
 
     if (!g_str_has_prefix(path, kernel_modules_dir))
         return NULL;
 
-    const gchar *path_no_prefix = path+strlen(kernel_modules_dir);
+    const gchar *path_no_prefix = path + strlen(kernel_modules_dir);
+    const size_t path_no_prefix_len = strlen(path_no_prefix);
+    int i;
 
-    while (modules_icons[i].dir != NULL) {
-        if (g_str_has_prefix(path_no_prefix, modules_icons[i].dir)) {
+    for (i = 0; modules_icons[i].dir; i++) {
+        if (g_str_has_prefix(path_no_prefix, modules_icons[i].dir))
             return modules_icons[i].icon;
-        }
-        i++;
     }
+
     return NULL;
 }
 
