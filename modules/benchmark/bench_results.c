@@ -170,7 +170,7 @@ bench_machine *bench_machine_this() {
         m->gpu_desc = module_call_method("devices::getGPUList");
         m->ogl_renderer = module_call_method("computer::getOGLRenderer");
         tmp = module_call_method("computer::getMemoryTotal");
-        m->memory_kiB = strtoll(tmp, NULL, 10);
+        m->memory_kiB = strtoull(tmp, NULL, 10);
         m->memory_phys_MiB = memory_devices_get_system_memory_MiB();
         m->ram_types = memory_devices_get_system_memory_types_str();
         free(tmp);
@@ -283,7 +283,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             b->machine->cpu_name = strdup(values[3]);
             b->machine->cpu_desc = strdup(values[4]);
             b->machine->cpu_config = strdup(values[5]);
-            b->machine->memory_kiB = strtoll(values[6], NULL, 10);
+            b->machine->memory_kiB = strtoull(values[6], NULL, 10);
             b->machine->processors = atoi(values[7]);
             b->machine->cores = atoi(values[8]);
             b->machine->threads = atoi(values[9]);
@@ -298,7 +298,7 @@ bench_result *bench_result_benchmarkconf(const char *section, const char *key, c
             if (vl >= 15)
                 b->machine->is_su_data = atoi(values[14]);
             if (vl >= 16)
-                b->machine->memory_phys_MiB = strtoll(values[15], NULL, 10);
+                b->machine->memory_phys_MiB = strtoull(values[15], NULL, 10);
             if (vl >= 17)
                 b->machine->ram_types = strdup(values[16]);
             b->legacy = 0;
