@@ -67,6 +67,7 @@ void nice_name_x86_cpuid_model_string(char *cpuid_model_string) {
     static gboolean remove_amd_xn_ncore_redundancy = TRUE;
     static gboolean remove_processor_cpu_apu_etc = TRUE;
     static gboolean remove_mhz_ghz = TRUE;
+    static gboolean remove_radeon = TRUE;
 
     if (!cpuid_model_string) return;
     g_strstrip(cpuid_model_string);
@@ -100,6 +101,13 @@ void nice_name_x86_cpuid_model_string(char *cpuid_model_string) {
 
     if (g_str_has_prefix(cpuid_model_string, "AMD")) {
         while(str_shorten(cpuid_model_string, "Mobile Technology", "Mobile")) {};
+
+        if (remove_radeon) {
+            char *radeon = strcasestr(cpuid_model_string, "with Radeon");
+            if (!radeon)
+                radeon = strcasestr(cpuid_model_string, "Radeon");
+            if (radeon) *radeon = 0;
+        }
 
         if (remove_amd_compute_cores) {
             if (strcasestr(cpuid_model_string, " COMPUTE CORES ")) {
