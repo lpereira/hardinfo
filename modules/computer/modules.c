@@ -40,10 +40,12 @@ static const struct {
 } modules_icons[] = {
     { "drivers/input/joystick/", "joystick" },
     { "drivers/input/keyboard/", "keyboard" },
+    { "drivers/media/usb/uvc/", "camera-web" },
     { "drivers/net/wireless/", "wireless" },
     { "drivers/net/ethernet/", "network-interface" },
     { "drivers/input/mouse/", "mouse" },
     { "drivers/bluetooth/", "bluetooth" },
+    { "drivers/media/v4l", "camera-web" },
     { "arch/x86/crypto/", "cryptohash" },
     { "drivers/crypto/", "cryptohash" },
     { "net/bluetooth/", "bluetooth" },
@@ -64,10 +66,10 @@ static const struct {
     { "drivers/pci/", "devices" },
     { "drivers/net/", "network" },
     { "drivers/mmc/", "media-removable" },
-    { "drivers/fs/", "media-floppy" },
     { "crypto/", "cryptohash" },
     { "sound/", "audio" },
     { "net/", "network-connections" },
+    { "fs/", "media-floppy" },
     { }
 };
 
