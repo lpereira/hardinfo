@@ -52,6 +52,7 @@ static const char mem_icon[] = "memory.png";
 static const char array_icon[] = "devices.png";
 static const char empty_icon[] = "module.png";
 
+#define UNKNOWN_MEM_TYPE_STRING _("RAM")
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
 #define STR_IGNORE(str, ignore) if (SEQ(str, ignore)) { *str = 0; null_if_empty(&str); }
@@ -953,7 +954,11 @@ gchar *memory_devices_get_system_memory_types_str() {
         if (rtypes & bit)
             types_str = appfsp(types_str, "%s", GET_RAM_TYPE_STR(i));
     }
-    ret = g_strdup(UNKIFNULL2(types_str));
+
+    if (types_str)
+        ret = g_strdup(types_str);
+    else
+        ret = g_strdup(UNKNOWN_MEM_TYPE_STRING);
     g_free(types_str);
     return ret;
 }
