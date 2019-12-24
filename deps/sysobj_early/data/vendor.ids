@@ -29,6 +29,12 @@ name Lenovo Group
     note EDID vendor: LEN
     match_string_exact LEN
 
+name Union Memory (Shenzhen)
+    name_short Union Memory
+    url unionmem.com
+    ansi_color 0;35;107
+    match_string Union Memory (Shenzhen)
+
 name ASUSTeK Computer
     name_short ASUS
     url www.asus.com
@@ -265,15 +271,30 @@ name LG Display
     note EDID vendor: LGD
     match_string_exact LGD
 
+name LIG Nex1
+    wikipedia LIG Nex1
+    match_string LIG Nex1
+    match_string LG Innotek
+    match_string NEX1 Future
+
 name Hitachi-LG Data Storage
     name_short HLDS
     url http://hlds.co.kr
+    wikipedia Hitachi-LG Data Storage
+    ansi_color 0;97;105
     match_string_case HL-DT-ST
+    match_string_case HLDS
+    match_string_case H-L Data Storage
+    match_string Hitachi-LG
+    match_string Hitachi LG
+    match_string LG (HLDS)
 
 name Hitachi Global Storage Technologies
     name_short HGST
     url hgst.com
     ansi_color 0;97;40
+    match_string HGST a Western Digital Company
+    match_string Hitachi Global Storage
     match_string_case HGST
 
 name Hitachi
@@ -626,6 +647,12 @@ name ST-Ericsson
     match_string ST Ericsson
     match_string STEricsson
 
+name Ericsson-LG
+    wikipedia Ericsson-LG
+    ansi_color 0;97;43
+    match_string Ericsson-LG
+    match_string LG-Ericsson
+
 name Telefonaktiebolaget LM Ericsson
     name_short Ericsson
     url ericsson.com
@@ -709,6 +736,7 @@ name Toshiba Samsung Storage Technology
     url www.tsst.co.kr
     wikipedia Toshiba Samsung Storage Technology
     ansi_color 0;34;107
+    match_string Toshiba Samsung Storage
     match_string TSSTcorp
     match_string_case TSST
 
