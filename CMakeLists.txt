@@ -216,6 +216,7 @@ set_source_files_properties(
 	modules/devices/dmi_memory.c
 #	modules/devices/spd-decode.c
 	hardinfo/problem_marker.c
+	hardinfo/hinote_util.c
 	PROPERTIES
 	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-deprecated-declarations -Wno-switch"
 )
@@ -278,6 +279,7 @@ add_executable(hardinfo
 	hardinfo/util.c
 	hardinfo/gg_key_file_parse_string_as_value.c
 	hardinfo/problem_marker.c
+	hardinfo/hinote_util.c
 	hardinfo/vendor.c
 	hardinfo/info.c
 	hardinfo/cpu_util.c
@@ -316,6 +318,7 @@ add_executable(hardinfo
 	hardinfo/util.c
 	hardinfo/gg_key_file_parse_string_as_value.c
 	hardinfo/problem_marker.c
+	hardinfo/hinote_util.c
 	hardinfo/vendor.c
 	hardinfo/info.c
 	hardinfo/cpu_util.c

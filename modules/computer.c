@@ -76,22 +76,40 @@ void scan_env_var(gboolean reload);
 void scan_dev(gboolean reload);
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
+enum {
+    ENTRY_SUMMARY,
+    ENTRY_OS,
+    ENTRY_SECURITY,
+    ENTRY_KMOD,
+    ENTRY_BOOTS,
+    ENTRY_LANGUAGES,
+    ENTRY_MEMORY_USAGE,
+    ENTRY_FS,
+    ENTRY_DISPLAY,
+    ENTRY_ENV,
+    ENTRY_DEVEL,
+    ENTRY_USERS,
+    ENTRY_GROUPS
+};
+
 static ModuleEntry entries[] = {
-    {N_("Summary"), "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
-    {N_("Operating System"), "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
-    {N_("Security"), "security.png", callback_security, scan_security, MODULE_FLAG_NONE},
-    {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
-    {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
-    {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
-    {N_("Memory Usage"), "memory.png", callback_memory_usage, scan_memory_usage, MODULE_FLAG_NONE},
-    {N_("Filesystems"), "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
-    {N_("Display"), "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
-    {N_("Environment Variables"), "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
+    [ENTRY_SUMMARY] = {N_("Summary"), "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
+    [ENTRY_OS] = {N_("Operating System"), "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
+    [ENTRY_SECURITY] = {N_("Security"), "security.png", callback_security, scan_security, MODULE_FLAG_NONE},
+    [ENTRY_KMOD] = {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
+    [ENTRY_BOOTS] = {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
+    [ENTRY_LANGUAGES] = {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
+    [ENTRY_MEMORY_USAGE] = {N_("Memory Usage"), "memory.png", callback_memory_usage, scan_memory_usage, MODULE_FLAG_NONE},
+    [ENTRY_FS] = {N_("Filesystems"), "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
+    [ENTRY_DISPLAY] = {N_("Display"), "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
+    [ENTRY_ENV] = {N_("Environment Variables"), "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
 #if GLIB_CHECK_VERSION(2,14,0)
-    {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
+    [ENTRY_DEVEL] = {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
+#else
+    [ENTRY_DEVEL] = {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_HIDE},
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
-    {N_("Users"), "users.png", callback_users, scan_users, MODULE_FLAG_NONE},
-    {N_("Groups"), "users.png", callback_groups, scan_groups, MODULE_FLAG_NONE},
+    [ENTRY_USERS] = {N_("Users"), "users.png", callback_users, scan_users, MODULE_FLAG_NONE},
+    [ENTRY_GROUPS] = {N_("Groups"), "users.png", callback_groups, scan_groups, MODULE_FLAG_NONE},
     {NULL},
 };
 
@@ -1055,3 +1073,30 @@ ModuleAbout *hi_module_get_about(void)
     return ma;
 }
 
+static const gchar *hinote_kmod() {
+    static gchar note[note_max_len] = "";
+    gboolean ok = TRUE;
+    *note = 0; /* clear */
+    ok &= note_require_tool("lsmod", note, _("<i><b>lsmod</b></i> is required."));
+    return ok ? NULL : g_strstrip(note); /* remove last \n */
+}
+
+static const gchar *hinote_display() {
+    static gchar note[note_max_len] = "";
+    gboolean ok = TRUE;
+    *note = 0; /* clear */
+    ok &= note_require_tool("xrandr", note, _("X.org's <i><b>xrandr</b></i> utility provides additional details when available."));
+    ok &= note_require_tool("glxinfo", note, _("Mesa's <i><b>glxinfo</b></i> utility is required for OpenGL information."));
+    return ok ? NULL : g_strstrip(note); /* remove last \n */
+}
+
+const gchar *hi_note_func(gint entry)
+{
+    if (entry == ENTRY_KMOD) {
+        return hinote_kmod();
+    }
+    else if (entry == ENTRY_DISPLAY) {
+        return hinote_display();
+    }
+    return NULL;
+}

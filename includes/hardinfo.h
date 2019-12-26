@@ -210,4 +210,13 @@ gboolean hardinfo_spawn_command_line_sync(const gchar *command_line,
 /* a marker in text to point out problems, using markup where possible */
 const char *problem_marker();
 
+/* hinote helpers */
+#define note_max_len 512
+#define note_printf(note_buff, fmt, ...)  \
+    snprintf((note_buff) + strlen(note_buff), note_max_len - strlen(note_buff) - 1, \
+        fmt, ##__VA_ARGS__)
+#define note_print(note_buff, str) note_printf((note_buff), "%s", str)
+gboolean note_cond_bullet(gboolean cond, gchar *note_buff, const gchar *desc_str);
+gboolean note_require_tool(const gchar *tool, gchar *note_buff, const gchar *desc_str);
+
 #endif				/* __HARDINFO_H__ */
