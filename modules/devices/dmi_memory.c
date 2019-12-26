@@ -977,10 +977,9 @@ gchar *memory_devices_get_system_memory_str() {
     return ret;
 }
 
-static gchar *note_state = NULL;
+static gchar note_state[note_max_len] = "";
 
 gboolean memory_devices_hinote(const char **msg) {
-
     gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available");
     gchar *want_root   = _(" ... <i>and</i> HardInfo running with superuser privileges");
     gchar *want_eeprom = _(" <b><i>eeprom</i></b> module loaded (for SDR, DDR, DDR2, DDR3)");
@@ -991,15 +990,17 @@ gboolean memory_devices_hinote(const char **msg) {
     gboolean has_eeprom = g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
     gboolean has_ee1004 = g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_IS_DIR);
 
-    char *bullet_yes = "<big><b>\u2713</b></big>";
-    char *bullet_no = "<big><b>\u2022<tt> </tt></b></big>";
-
-    g_free(note_state);
-    note_state = g_strdup(_("Memory information requires <b>one or both</b> of the following:"));
-    note_state = appfnl(note_state, "<tt>1. </tt>%s%s", has_dmi ? bullet_yes : bullet_no, want_dmi);
-    note_state = appfnl(note_state, "<tt>   </tt>%s%s", has_root ? bullet_yes : bullet_no, want_root);
-    note_state = appfnl(note_state, "<tt>2. </tt>%s%s", has_eeprom ? bullet_yes : bullet_no, want_eeprom);
-    note_state = appfnl(note_state, "<tt>   </tt>%s%s", has_ee1004 ? bullet_yes : bullet_no, want_ee1004);
+    *note_state = 0; /* clear */
+    note_printf(note_state, "%s\n", _("Memory information requires <b>one or both</b> of the following:"));
+    note_print(note_state, "<tt>1. </tt>");
+    note_cond_bullet(has_dmi, note_state, want_dmi);
+    note_print(note_state, "<tt>   </tt>");
+    note_cond_bullet(has_root, note_state, want_root);
+    note_print(note_state, "<tt>2. </tt>");
+    note_cond_bullet(has_eeprom, note_state, want_eeprom);
+    note_print(note_state, "<tt>   </tt>");
+    note_cond_bullet(has_ee1004, note_state, want_ee1004);
+    g_strstrip(note_state); /* remove last \n */
 
     gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<DDR3_SDRAM)) && has_ee1004);
 
