@@ -604,14 +604,6 @@ gchar *make_spd_section(spd_data *spd) {
             default:
                 DEBUG("blug for type: %d %s\n", spd->type, ram_types[spd->type]);
         }
-        gchar *vendor_str = NULL;
-        if (spd->vendor) {
-            vendor_str = vendor_get_link_from_vendor(spd->vendor);
-        }
-        gchar *dram_vendor_str = NULL;
-        if (spd->dram_vendor) {
-            dram_vendor_str = vendor_get_link_from_vendor(spd->dram_vendor);
-        }
         gchar *size_str = NULL;
         if (!spd->size_MiB)
             size_str = g_strdup(_("(Unknown)"));
@@ -627,8 +619,8 @@ gchar *make_spd_section(spd_data *spd) {
                     "%s=%d.%d\n"
                     "%s=%s\n"
                     "%s=%s\n"
-                    "%s=[%02x%02x] %s%s\n" /* module vendor */
-                    "%s=[%02x%02x] %s%s\n" /* dram vendor */
+                    "$^$%s=[%02x%02x] %s\n" /* module vendor */
+                    "$^$%s=[%02x%02x] %s\n" /* dram vendor */
                     "%s=%s\n" /* part */
                     "%s=%s\n" /* size */
                     "%s=%s\n" /* mfg date */
@@ -640,16 +632,15 @@ gchar *make_spd_section(spd_data *spd) {
                     _("Form Factor"), UNKIFNULL2(spd->form_factor),
                     _("Type"), UNKIFEMPTY2(spd->type_detail),
                     _("Module Vendor"), spd->vendor_bank, spd->vendor_index,
-                        UNKIFNULL2(spd->vendor_str), vendor_str ? vendor_str : "",
+                        UNKIFNULL2(spd->vendor_str),
                     _("DRAM Vendor"), spd->dram_vendor_bank, spd->dram_vendor_index,
-                        UNKIFNULL2(spd->dram_vendor_str), dram_vendor_str ? dram_vendor_str : "",
+                        UNKIFNULL2(spd->dram_vendor_str),
                     _("Part Number"), UNKIFEMPTY2(spd->partno),
                     _("Size"), size_str,
                     _("Manufacturing Date (Week / Year)"), UNKIFNULL2(mfg_date_str),
                     full_spd ? full_spd : ""
                     );
         g_free(full_spd);
-        g_free(vendor_str);
         g_free(size_str);
         g_free(mfg_date_str);
     }
@@ -748,10 +739,6 @@ gchar *memory_devices_get_info() {
         tag_make_safe_inplace(tag);
 
         if (s->populated) {
-            gchar *vendor_str = NULL;
-            if (s->vendor) {
-                vendor_str = vendor_get_link_from_vendor(s->vendor);
-            }
             gchar *size_str = NULL;
             if (!s->size_str)
                 size_str = g_strdup(_("(Unknown)"));
@@ -768,7 +755,7 @@ gchar *memory_devices_get_info() {
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s / %s\n"
-                            "%s=[%02x%02x] %s%s\n"
+                            "$^$%s=[%02x%02x] %s\n"
                             "%s=%s\n"
                             "%s=%s\n"
                             "%s=%s\n"
@@ -786,8 +773,7 @@ gchar *memory_devices_get_info() {
                             _("Form Factor"), UNKIFNULL2(s->form_factor),
                             _("Type"), UNKIFNULL2(s->type), UNKIFNULL2(s->type_detail),
                             _("Vendor"),
-                                s->mfgr_bank, s->mfgr_index,
-                                UNKIFNULL2(s->mfgr), vendor_str ? vendor_str : "",
+                                s->mfgr_bank, s->mfgr_index, UNKIFNULL2(s->mfgr),
                             _("Part Number"), UNKIFNULL2(s->partno),
                             _("Size"), size_str,
                             _("Rated Speed"), UNKIFNULL2(s->speed_str),
@@ -809,7 +795,6 @@ gchar *memory_devices_get_info() {
                     UNKIFNULL2(s->partno), size_str, UNKIFNULL2(mfgr)
                     );
             icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, mem_icon);
-            g_free(vendor_str);
             g_free(size_str);
         } else {
             gchar *details = g_strdup_printf("[%s]\n"

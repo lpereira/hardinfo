@@ -1524,6 +1524,46 @@ static gboolean detail_activate_link (GtkLabel *label, gchar *uri, gpointer user
     return uri_open(uri);
 }
 
+#include "format_early.h"
+
+static gchar *vendor_info_markup(const Vendor *v) {
+    if (!v) return NULL;
+    gchar *ven_mt = NULL;
+    gchar *full_link = NULL, *p = NULL;
+    gchar *ven_tag = v->name_short ? g_strdup(v->name_short) : g_strdup(v->name);
+    tag_vendor(&ven_tag, 0, ven_tag, v->ansi_color, FMT_OPT_PANGO);
+    //if (v->name_short)
+    //    ven_mt = appf(ven_mt, "\n", "%s", v->name);
+    ven_mt = appf(ven_mt, "\n", "%s", ven_tag);
+    if (v->url) {
+        if (!g_str_has_prefix(v->url, "http") )
+            full_link = g_strdup_printf("http://%s", v->url);
+        ven_mt = appf(ven_mt, "\n", "<b>%s:</b> <a href=\"%s\">%s</a>", _("URL"), full_link ? full_link : v->url, v->url);
+        g_free(full_link);
+        full_link = NULL;
+    }
+    if (v->url_support) {
+        if (!g_str_has_prefix(v->url_support, "http") )
+            full_link = g_strdup_printf("http://%s", v->url_support);
+        ven_mt = appf(ven_mt, "\n", "<b>%s:</b> <a href=\"%s\">%s</a>", _("Support URL"), full_link ? full_link : v->url_support, v->url_support);
+        g_free(full_link);
+        full_link = NULL;
+    }
+    if (v->wikipedia) {
+        /* sending the title to wikipedia.com/wiki will autmatically handle the language and section parts,
+         * but perhaps that shouldn't be relied on so much? */
+        full_link = g_strdup_printf("http://wikipedia.com/wiki/%s", v->wikipedia);
+        for(p = full_link; *p; p++) {
+            if (*p == ' ') *p = '_';
+        }
+        ven_mt = appf(ven_mt, "\n", "<b>%s:</b> <a href=\"%s\">%s</a>", _("Wikipedia"), full_link ? full_link : v->wikipedia, v->wikipedia);
+        g_free(full_link);
+        full_link = NULL;
+    }
+    g_free(ven_tag);
+    return ven_mt;
+}
+
 static void module_selected_show_info_detail(GKeyFile *key_file,
                                              ShellModuleEntry *entry,
                                              gchar **groups)
@@ -1557,12 +1597,12 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
             gtk_container_set_border_width(GTK_CONTAINER(table), 4);
             gtk_container_add(GTK_CONTAINER(frame), table);
 
-            gint j;
+            gint j, a = 0;
             for (j = 0; keys[j]; j++) {
                 gchar *key_markup;
                 gchar *value;
-                gchar *name, *label, *tag;
-                key_get_components(keys[j], NULL, &tag, &name, &label, NULL, TRUE);
+                gchar *name, *label, *tag, *flags;
+                key_get_components(keys[j], &flags, &tag, &name, &label, NULL, TRUE);
 
                 value = g_key_file_get_string(key_file, groups[i], keys[j], NULL);
 
@@ -1571,6 +1611,20 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                     value = entry->fieldfunc(keys[j]);
                 }
 
+                gboolean has_ven = key_value_has_vendor_string(flags);
+                const Vendor *v = has_ven ? vendor_match(value, NULL) : NULL;
+                gchar *value_markup = NULL;
+
+/*
+                if (v) {
+                    gchar *vendor_markup = vendor_info_markup(v);
+                    value_markup = g_strdup_printf("%s\n%s", value, vendor_markup);
+                    g_free(vendor_markup);
+                } else { */
+                    value_markup = g_strdup(value);
+                    g_free(value);
+                //}
+
                 key_markup =
                     g_strdup_printf("<span color=\"#666\">%s</span>", label);
 
@@ -1578,7 +1632,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 gtk_label_set_use_markup(GTK_LABEL(key_label), TRUE);
                 gtk_misc_set_alignment(GTK_MISC(key_label), 1.0f, 0.5f);
 
-                GtkWidget *value_label = gtk_label_new(value);
+                GtkWidget *value_label = gtk_label_new(value_markup);
                 gtk_label_set_use_markup(GTK_LABEL(value_label), TRUE);
                 gtk_label_set_selectable(GTK_LABEL(value_label), TRUE);
 #if !GTK_CHECK_VERSION(3, 0, 0)
@@ -1599,10 +1653,27 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 gtk_widget_show(value_box);
                 gtk_widget_show(value_label);
 
-                gtk_table_attach(GTK_TABLE(table), key_label, 0, 1, j, j + 1,
+                gtk_table_attach(GTK_TABLE(table), key_label, 0, 1, j + a, j + a + 1,
                                  GTK_FILL, GTK_FILL, 6, 4);
-                gtk_table_attach(GTK_TABLE(table), value_box, 1, 2, j, j + 1,
+                gtk_table_attach(GTK_TABLE(table), value_box, 1, 2, j + a, j + a + 1,
                                  GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 4);
+
+                if (v) {
+                    a++; /* insert a row */
+                    gchar *vendor_markup = vendor_info_markup(v);
+                    GtkWidget *vendor_label = gtk_label_new(vendor_markup);
+                    gtk_label_set_use_markup(GTK_LABEL(vendor_label), TRUE);
+                    gtk_label_set_selectable(GTK_LABEL(vendor_label), TRUE);
+                    gtk_misc_set_alignment(GTK_MISC(vendor_label), 0.0f, 0.5f);
+                    g_signal_connect(vendor_label, "activate-link", G_CALLBACK(detail_activate_link), NULL);
+                    GtkWidget *vendor_box = gtk_hbox_new(FALSE, 4);
+                    gtk_box_pack_start(GTK_BOX(vendor_box), vendor_label, TRUE, TRUE, 0);
+                    gtk_table_attach(GTK_TABLE(table), vendor_box, 1, 2, j + a, j + a + 1,
+                                     GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 4);
+                    gtk_widget_show(vendor_box);
+                    gtk_widget_show(vendor_label);
+                    g_free(vendor_markup);
+                }
 
                 struct UpdateTableItem *item = g_new0(struct UpdateTableItem, 1);
                 item->is_iter = FALSE;
@@ -1616,7 +1687,8 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                     g_free(tag);
                 }
 
-                g_free(value);
+                g_free(flags);
+                g_free(value_markup);
                 g_free(key_markup);
                 g_free(label);
             }
@@ -2185,6 +2257,16 @@ gboolean key_wants_details(const gchar *key) {
     return FALSE;
 }
 
+gboolean key_value_has_vendor_string(const gchar *key) {
+    gchar *flags;
+    key_get_components(key, &flags, NULL, NULL, NULL, NULL, TRUE);
+    if (flags && strchr(flags, '^')) {
+        g_free(flags);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 gchar *key_mi_tag(const gchar *key) {
     gchar *p = (gchar*)key, *l, *t;
 
@@ -2212,7 +2294,7 @@ const gchar *key_get_name(const gchar *key) {
  *  [$[<flags>][<tag>]$]<name>[#[<dis>]]
  *
  * example for key = "$*!Foo$Bar#7":
- * flags = "$*!Foo$"  // key_is/wants_*() still works on flags
+ * flags = "$*!^Foo$"  // key_is/wants_*() still works on flags
  * tag = "Foo"        // the moreinfo/icon tag
  * name = "Bar#7"     // the full unique name
  * label = "Bar"      // the label displayed
