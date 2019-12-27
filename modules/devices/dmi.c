@@ -30,28 +30,29 @@ struct _DMIInfo {
   const gchar *name;
   const gchar *id_str;
   int group;
+  gboolean maybe_vendor;
 };
 
 DMIInfo dmi_info_table[] = {
   { N_("Product"), NULL, 1 },
   { N_("Name"), "system-product-name", 0 },
   { N_("Family"), "system-product-family", 0 },
-  { N_("Vendor"), "system-manufacturer", 0 },
+  { N_("Vendor"), "system-manufacturer", 0, TRUE },
   { N_("Version"), "system-version", 0 },
   { N_("Serial Number"), "system-serial-number", 0 },
   { N_("SKU"), "system-sku", 0 },
   { N_("BIOS"), NULL, 1 },
   { N_("Date"), "bios-release-date", 0 },
-  { N_("Vendor"), "bios-vendor", 0 },
+  { N_("Vendor"), "bios-vendor", 0, TRUE },
   { N_("Version"), "bios-version", 0 },
   { N_("Board"), NULL, 1 },
   { N_("Name"), "baseboard-product-name", 0 },
-  { N_("Vendor"), "baseboard-manufacturer", 0 },
+  { N_("Vendor"), "baseboard-manufacturer", 0, TRUE },
   { N_("Version"), "baseboard-version", 0 },
   { N_("Serial Number"), "baseboard-serial-number", 0 },
   { N_("Asset Tag"), "baseboard-asset-tag", 0 },
   { N_("Chassis"), NULL, 1 },
-  { N_("Vendor"), "chassis-manufacturer", 0 },
+  { N_("Vendor"), "chassis-manufacturer", 0, TRUE },
   { N_("Type"), "chassis-type", 0 },
   { N_("Version"), "chassis-version", 0 },
   { N_("Serial Number"), "chassis-serial-number", 0 },
@@ -125,10 +126,10 @@ gboolean dmi_get_info(void)
                 break;
             case 3: /* good value */
             {
-                gchar *link = vendor_get_link(value);
                 dmi_info =
-                    h_strdup_cprintf("%s=%s\n", dmi_info, _(info->name), link);
-                g_free(link);
+                    h_strdup_cprintf("%s%s=%s\n", dmi_info,
+                        info->maybe_vendor ? "$^$" : "",
+                        _(info->name), value);
                 add_to_moreinfo(group, info->name, value);
                 dmi_succeeded = TRUE;
                 break;
