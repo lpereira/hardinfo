@@ -276,16 +276,17 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
 
             const gchar *tp = field->tag;
             gboolean tagged = !!tp;
-            gboolean flagged = field->highlight || field->report_details;
+            gboolean flagged = field->highlight || field->report_details || field->value_has_vendor;
             if (!tp) {
                 snprintf(tmp_tag, 255, "ITEM%d-%d", group_count, i);
                 tp = tmp_tag;
             }
 
             if (tagged || flagged || field->icon) {
-                g_string_append_printf(output, "$%s%s%s$",
+                g_string_append_printf(output, "$%s%s%s%s$",
                     field->highlight ? "*" : "",
                     field->report_details ? "!" : "",
+                    field->value_has_vendor ? "^" : "",
                     tp);
             }
 
@@ -462,6 +463,8 @@ struct Info *info_unflatten(const gchar *str)
                     field.report_details = TRUE;
                 if (key_is_highlighted(flags))
                     field.highlight = TRUE;
+                if (key_value_has_vendor_string(flags))
+                    field.value_has_vendor = TRUE;
 
                 g_free(flags);
                 g_array_append_val(group.fields, field);

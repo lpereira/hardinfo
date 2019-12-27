@@ -64,6 +64,7 @@ struct InfoField {
     int update_interval;
     gboolean highlight;      /* select in GUI, highlight in report (flag:*) */
     gboolean report_details; /* show moreinfo() in report (flag:!) */
+    gboolean value_has_vendor; /* (flag:^) */
 
     gboolean free_name_on_flatten;
     gboolean free_value_on_flatten;
