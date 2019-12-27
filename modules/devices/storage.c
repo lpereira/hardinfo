@@ -151,7 +151,9 @@ gboolean __scan_udisks2_devices(void) {
         }
         else{
             label = g_strdup(disk->model);
-            vendor_str = disk->model;
+            /* try and pull one out of the model */
+            const Vendor *v = vendor_match(disk->model, NULL);
+            vendor_str = v ? v->name : _("(Unknown)");
         }
 
         icon = NULL;
@@ -218,9 +220,9 @@ gboolean __scan_udisks2_devices(void) {
                                    "Model=%s\n"),
                                    label);
 
-        moreinfo = h_strdup_cprintf(_("Vendor=%s\n"),
+        moreinfo = h_strdup_cprintf("$^$%s=%s\n",
                                      moreinfo,
-                                     idle_free(vendor_get_link(vendor_str)));
+                                     _("Vendor"), vendor_str);
 
         size = size_human_readable((gfloat) disk->size);
         moreinfo = h_strdup_cprintf(_("Revision=%s\n"
@@ -446,9 +448,9 @@ void __scan_scsi_devices(void)
                 gchar *strhash = g_strdup_printf(_("[Device Information]\n"
                                                  "Model=%s\n"), model);
 
-                strhash = h_strdup_cprintf(_("Vendor=%s\n"),
+                strhash = h_strdup_cprintf("$^$%s=%s\n",
                                            strhash,
-                                           idle_free(vendor_get_link(model)));
+                                           _("Vendor"), model);
 
                 strhash = h_strdup_cprintf(_("Type=%s\n"
                                            "Revision=%s\n"
@@ -645,7 +647,8 @@ void __scan_ide_devices(void)
 	    gchar *strhash = g_strdup_printf(_("[Device Information]\n" "Model=%s\n"),
 					     model);
 
-            strhash = h_strdup_cprintf(_("Vendor=%s\n"), strhash, idle_free(vendor_get_link(model)));
+            strhash = h_strdup_cprintf("$^$%s=%s\n",
+                            strhash, _("Vendor"), model);
 
 	    strhash = h_strdup_cprintf(_("Device Name=hd%c\n"
 					 "Media=%s\n" "Cache=%dkb\n"), strhash, iface, media, cache);
