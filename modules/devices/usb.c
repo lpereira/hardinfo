@@ -98,7 +98,7 @@ static const char* get_usbdev_icon(const usbd *u) {
 }
 
 static void _usb_dev(const usbd *u) {
-    gchar *name, *key, *v_str, *mv_str, *label, *str, *speed;
+    gchar *name, *key, *label, *str, *speed;
     gchar *product, *vendor, *manufacturer, *device;  /* don't free */
     gchar *interfaces = strdup("");
     usbi *i;
@@ -116,9 +116,6 @@ static void _usb_dev(const usbd *u) {
 
     usb_list = h_strdup_cprintf("$%s$%s=%s\n", usb_list, key, label, name);
     usb_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", usb_icons, key, label, icon ? icon: "usb");
-
-    v_str = vendor_get_link(vendor);
-    mv_str = vendor_get_link(manufacturer);
 
     if (u->if_list != NULL) {
         i = u->if_list;
@@ -148,9 +145,9 @@ static void _usb_dev(const usbd *u) {
 
     str = g_strdup_printf("[%s]\n"
              /* Product */      "%s=[0x%04x] %s\n"
-             /* Vendor */       "%s=[0x%04x] %s\n"
+             /* Vendor */       "$^$%s=[0x%04x] %s\n"
              /* Device */       "%s=%s\n"
-             /* Manufacturer */ "%s=%s\n"
+             /* Manufacturer */ "$^$%s=%s\n"
              /* Max Current */  "%s=%d %s\n"
              /* USB Version */ "%s=%s\n"
              /* Speed */       "%s=%s\n"
@@ -165,9 +162,9 @@ static void _usb_dev(const usbd *u) {
              /* Interfaces */  "%s",
                 _("Device Information"),
                 _("Product"), u->product_id, product,
-                _("Vendor"), u->vendor_id, v_str,
+                _("Vendor"), u->vendor_id, vendor,
                 _("Device"), device,
-                _("Manufacturer"), mv_str,
+                _("Manufacturer"), manufacturer,
                 _("Max Current"), u->max_curr_ma, _("mA"),
                 _("USB Version"), u->usb_version,
                 _("Speed"), speed,
@@ -185,8 +182,6 @@ static void _usb_dev(const usbd *u) {
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
 
     g_free(speed);
-    g_free(v_str);
-    g_free(mv_str);
     g_free(name);
     g_free(key);
     g_free(label);
