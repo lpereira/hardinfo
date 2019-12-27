@@ -144,10 +144,11 @@ gchar *__cups_callback_boolean(gchar *value)
 const struct {
   char *key, *name;
   gchar *(*callback)(gchar *value);
+  gboolean maybe_vendor;
 } cups_fields[] = {
   { "Printer Information", NULL, NULL },
   { "printer-info", "Destination Name", NULL },
-  { "printer-make-and-model", "Make and Model", NULL },
+  { "printer-make-and-model", "Make and Model", NULL, TRUE },
 
   { "Capabilities", NULL, NULL },
   { "printer-type", "#", __cups_callback_ptype },
@@ -244,8 +245,9 @@ scan_printers_do(void)
                   }
                 }
 
-                prn_moreinfo = h_strdup_cprintf("%s=%s\n",
+                prn_moreinfo = h_strdup_cprintf("%s%s=%s\n",
                                                 prn_moreinfo,
+                                                cups_fields[j].maybe_vendor ? "$^$" : "",
                                                 cups_fields[j].name,
                                                 temp);
 
