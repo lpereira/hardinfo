@@ -109,7 +109,12 @@ static void _usb_dev(const usbd *u) {
     manufacturer = UNKIFNULL_AC(u->manufacturer);
     device = UNKIFNULL_AC(u->device);
 
-    name = g_strdup_printf("%s %s", u->vendor? vendor: manufacturer, u->product? product: device);
+    if (u->vendors) {
+        gchar *ribbon = vendor_list_ribbon(u->vendors, params.fmt_opts);
+        name = g_strdup_printf("%s %s", ribbon, u->product? product: device);
+    } else {
+        name = g_strdup_printf("%s %s", u->vendor? vendor: manufacturer, u->product? product: device);
+    }
     key = g_strdup_printf("USB%03d:%03d:%03d", u->bus, u->dev, 0);
     label = g_strdup_printf("%03d:%03d", u->bus, u->dev);
     icon = get_usbdev_icon(u);
