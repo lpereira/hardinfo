@@ -929,6 +929,9 @@ static gboolean report_generate(ReportDialog * rd)
     gchar *file;
     FILE *stream;
 
+    int old_fmt_opts = params.fmt_opts;
+    params.fmt_opts =  FMT_OPT_NONE; // FIXME: FMT_OPT_HTML for HTML
+
     if (!(file = report_get_filename()))
 	return FALSE;
 
@@ -943,6 +946,7 @@ static gboolean report_generate(ReportDialog * rd)
 	g_warning(_("Cannot create ReportContext. Programming bug?"));
 	g_free(file);
 	fclose(stream);
+    params.fmt_opts = old_fmt_opts;
 	return FALSE;
     }
 
@@ -984,6 +988,7 @@ static gboolean report_generate(ReportDialog * rd)
     report_context_free(ctx);
     g_free(file);
 
+    params.fmt_opts = old_fmt_opts;
     return TRUE;
 }
 

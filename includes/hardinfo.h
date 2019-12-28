@@ -29,6 +29,7 @@
 #include "vendor.h"
 #include "gettext.h"
 #include "info.h"
+#include "format_early.h"
 
 #define HARDINFO_COPYRIGHT_LATEST_YEAR 2019
 
@@ -65,6 +66,7 @@ struct _ProgramParameters {
    * https://developer.gnome.org/pango/stable/PangoMarkupFormat.html
    */
   gboolean markup_ok;
+  int fmt_opts;
 
   gint     report_format;
   gint     max_bench_results;

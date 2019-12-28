@@ -27,6 +27,7 @@
 #include "util_sysobj.h"
 
 enum {
+    FMT_OPT_NONE   = 0,
     FMT_OPT_ATERM  = 1<<16,  /* ANSI color terminal */
     FMT_OPT_PANGO  = 1<<17,  /* pango markup for gtk */
     FMT_OPT_HTML   = 1<<18,  /* html */
