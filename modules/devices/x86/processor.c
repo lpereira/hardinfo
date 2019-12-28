@@ -628,7 +628,7 @@ gchar *processor_get_detailed_info(Processor * processor)
     ret = g_strdup_printf("[%s]\n"
                        "%s=%s\n"
                        "%s=%d, %d, %d (%s)\n" /* family, model, stepping (decoded name) */
-                       "%s=%s\n"      /* vendor */
+                       "$^$%s=%s\n"      /* vendor */
                        "%s=%s\n"      /* microcode */
                        "[%s]\n"       /* configuration */
                        "%s=%d %s\n"   /* cache size (from cpuinfo) */
@@ -652,7 +652,7 @@ gchar *processor_get_detailed_info(Processor * processor)
                    processor->model,
                    processor->stepping,
                    processor->strmodel,
-                   _("Vendor"), (char*)idle_free(vendor_get_link(processor->vendor_id)),
+                   _("Vendor"), processor->vendor_id,
                    _("Microcode Version"), processor->microcode,
                    _("Configuration"),
                    _("Cache Size"), processor->cache_size, _("kb"),
@@ -767,8 +767,9 @@ gchar *processor_get_info(GSList * processors)
     gchar *ret, *tmp, *hashkey;
     gchar *meta; /* becomes owned by more_info? no need to free? */
     GSList *l;
+    gchar *icons=g_strdup("");
 
-    tmp = g_strdup_printf("$!CPU_META$%s=\n", _("Package Information") );
+    tmp = g_strdup_printf("$!CPU_META$%s=|Summary\n", "all");
 
     meta = processor_meta(processors);
     moreinfo_add_with_prefix("DEV", "CPU_META", meta);
@@ -776,27 +777,46 @@ gchar *processor_get_info(GSList * processors)
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
 
-        tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s|%d:%d|%d\n",
+        gchar *model_name = g_strdup(processor->model_name);
+        const Vendor *v = vendor_match(processor->vendor_id, NULL);
+        if (v)
+            tag_vendor(&model_name, 0, v->name_short ? v->name_short : v->name, v->ansi_color, params.fmt_opts);
+
+        // bp: not convinced it looks good, but here's how it would be done...
+        //icons = h_strdup_cprintf("Icon$CPU%d$cpu%d=processor.png\n", icons, processor->id, processor->id);
+
+        tmp = g_strdup_printf("%s$CPU%d$cpu%d=%.2f %s|%s|%d:%d\n",
                   tmp, processor->id,
-                  processor->model_name,
+                  processor->id,
                   processor->cpu_mhz, _("MHz"),
+                  model_name,
                   processor->cputopo->socket_id,
-                  processor->cputopo->core_id,
-                  processor->cputopo->id );
+                  processor->cputopo->core_id);
 
         hashkey = g_strdup_printf("CPU%d", processor->id);
         moreinfo_add_with_prefix("DEV", hashkey,
                 processor_get_detailed_info(processor));
         g_free(hashkey);
+        g_free(model_name);
     }
 
     ret = g_strdup_printf("[$ShellParam$]\n"
                   "ViewType=1\n"
+                  "ColumnTitle$TextValue=%s\n"
+                  "ColumnTitle$Value=%s\n"
                   "ColumnTitle$Extra1=%s\n"
                   "ColumnTitle$Extra2=%s\n"
+                  "ShowColumnHeaders=true\n"
+                  "%s"
                   "[Processors]\n"
-                  "%s", _("Socket:Core"), _("Thread" /*TODO: +s*/), tmp);
+                  "%s", _("Device"), _("Frequency"), _("Model"), _("Socket:Core"), icons, tmp);
     g_free(tmp);
+    g_free(icons);
+
+    // now here's something fun...
+    struct Info *i = info_unflatten(ret);
+    g_free(ret);
+    ret = info_flatten(i);
 
     return ret;
 }
