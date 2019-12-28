@@ -739,9 +739,13 @@ gchar *callback_printers()
 gchar *callback_storage()
 {
     return g_strdup_printf("%s\n"
-			   "[$ShellParam$]\n"
-			   "ReloadInterval=5000\n"
-			   "ViewType=1\n%s", storage_list, storage_icons);
+        "[$ShellParam$]\n"
+        "ReloadInterval=5000\n"
+        "ColumnTitle$TextValue=%s\n"
+        "ColumnTitle$Value=%s\n"
+        "ColumnTitle$Extra1=%s\n"
+        "ShowColumnHeaders=true\n"
+        "ViewType=1\n%s", storage_list, _("Model"), _("Vendor"), _("Size"), storage_icons);
 }
 
 gchar *callback_input()

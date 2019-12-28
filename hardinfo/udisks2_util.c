@@ -2,6 +2,7 @@
 #include "udisks2_util.h"
 #include "hardinfo.h"
 #include "util_ids.h"
+#include "pci_util.h"
 
 #define UDISKS2_INTERFACE            "org.freedesktop.UDisks2"
 #define UDISKS2_MANAGER_INTERFACE    "org.freedesktop.UDisks2.Manager"
@@ -675,6 +676,21 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block,
 
         g_variant_iter_free (iter);
         g_variant_unref(v);
+    }
+
+    /* NVMe vendor from PCI device */
+    if (strstr(u->block_dev, "nvme")
+        && (!u->vendor || !*u->vendor)
+        ) {
+        gchar *file = g_strdup_printf("/sys/block/%s/device/device/vendor", u->block_dev);
+        gchar *val = NULL;
+        if (g_file_get_contents(file, &val, NULL, NULL) ) {
+            unsigned long int id = strtoul(val, NULL, 16);
+            if (id)
+                u->vendor = pci_lookup_ids_vendor_str(id);
+        }
+        g_free(file);
+        g_free(val);
     }
 
     check_sdcard_vendor(u);
