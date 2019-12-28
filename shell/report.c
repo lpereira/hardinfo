@@ -889,6 +889,9 @@ void report_context_free(ReportContext * ctx)
 
 void report_create_from_module_list(ReportContext * ctx, GSList * modules)
 {
+    if (ctx->format == REPORT_FORMAT_HTML)
+        params.fmt_opts = FMT_OPT_HTML;
+
     report_header(ctx);
 
     report_create_inner_from_module_list(ctx, modules);
@@ -930,7 +933,7 @@ static gboolean report_generate(ReportDialog * rd)
     FILE *stream;
 
     int old_fmt_opts = params.fmt_opts;
-    params.fmt_opts =  FMT_OPT_NONE; // FIXME: FMT_OPT_HTML for HTML
+    params.fmt_opts = FMT_OPT_NONE;
 
     if (!(file = report_get_filename()))
 	return FALSE;
