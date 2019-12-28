@@ -59,10 +59,14 @@ static const gchar *find_icon_for_class(uint32_t class)
     return "devices.png";
 }
 
+#include "format_early.h"
+
 static gchar *_pci_dev(const pcid *p, gchar *icons) {
     gchar *str;
-    gchar *class, *vendor, *svendor, *v_str, *sv_str, *product, *sproduct;
+    gchar *class, *vendor, *svendor, *product, *sproduct;
     gchar *name, *key;
+
+    gboolean vendor_is_svendor = (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id);
 
     class = UNKIFNULL_AC(p->class_str);
     vendor = UNKIFNULL_AC(p->vendor_id_str);
@@ -70,31 +74,41 @@ static gchar *_pci_dev(const pcid *p, gchar *icons) {
     product = UNKIFNULL_AC(p->device_id_str);
     sproduct = UNKIFNULL_AC(p->sub_device_id_str);
 
-    v_str = vendor_get_link(vendor);
-    sv_str = vendor_get_link(svendor);
+    gchar *ven_tag = vendor_match_tag(p->vendor_id_str, FMT_OPT_PANGO); /* TODO:FIX FOR REPORT! */
+    gchar *sven_tag = vendor_match_tag(p->sub_vendor_id_str, FMT_OPT_PANGO); /* TODO:FIX FOR REPORT! */
+    if (ven_tag) {
+        if (sven_tag && !vendor_is_svendor) {
+            name = g_strdup_printf("%s %s %s", sven_tag, ven_tag, product);
+        } else {
+            name = g_strdup_printf("%s %s", ven_tag, product);
+        }
+    } else {
+        name = g_strdup_printf("%s %s", vendor, product);
+    }
+    g_free(ven_tag);
+    g_free(sven_tag);
 
-    name = g_strdup_printf("%s %s", vendor, product);
     key = g_strdup_printf("PCI%04x:%02x:%02x.%01x", p->domain, p->bus, p->device, p->function);
 
     pci_list = h_strdup_cprintf("$%s$%04x:%02x:%02x.%01x=%s\n", pci_list, key, p->domain, p->bus, p->device, p->function, name);
     icons = h_strdup_cprintf("Icon$%s$%04x:%02x:%02x.%01x=%s\n", icons, key, p->domain, p->bus, p->device, p->function, find_icon_for_class(p->class));
 
     gchar *vendor_device_str;
-    if (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id) {
+    if (vendor_is_svendor) {
         vendor_device_str = g_strdup_printf(
-                     /* Vendor */     "%s=[%04x] %s\n"
+                     /* Vendor */     "$^$%s=[%04x] %s\n"
                      /* Device */     "%s=[%04x] %s\n",
-                    _("Vendor"), p->vendor_id, v_str,
+                    _("Vendor"), p->vendor_id, vendor,
                     _("Device"), p->device_id, product);
     } else {
         vendor_device_str = g_strdup_printf(
-                     /* Vendor */     "%s=[%04x] %s\n"
+                     /* Vendor */     "$^$%s=[%04x] %s\n"
                      /* Device */     "%s=[%04x] %s\n"
-                     /* Sub-device vendor */     "%s=[%04x] %s\n"
+                     /* Sub-device vendor */  "$^$%s=[%04x] %s\n"
                      /* Sub-device */     "%s=[%04x] %s\n",
-                    _("Vendor"), p->vendor_id, v_str,
+                    _("Vendor"), p->vendor_id, vendor,
                     _("Device"), p->device_id, product,
-                    _("SVendor"), p->sub_vendor_id, sv_str,
+                    _("SVendor"), p->sub_vendor_id, svendor,
                     _("SDevice"), p->sub_device_id, sproduct);
     }
 
@@ -146,8 +160,6 @@ static gchar *_pci_dev(const pcid *p, gchar *icons) {
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
 
     g_free(vendor_device_str);
-    g_free(v_str);
-    g_free(sv_str);
     g_free(name);
     g_free(key);
 
