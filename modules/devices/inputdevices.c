@@ -27,7 +27,7 @@ static struct {
     char *name;
     char *icon;
 } input_devices[] = {
-    { "Unknown",  "module.png"   },
+    { NULL,       "module.png"   }, // UNKNOWN
     { "Keyboard", "keyboard.png" },
     { "Joystick", "joystick.png" },
     { "Mouse",    "mouse.png"    },
@@ -35,11 +35,15 @@ static struct {
     { "Audio",    "audio.png"    }
 };
 
+#define UNKWNIFNULL(f) ((f) ? f : _("(Unknown)"))
+#define EMPTYIFNULL(f) ((f) ? f : "")
+
 void
 __scan_input_devices(void)
 {
     FILE *dev;
     gchar buffer[1024];
+    vendor_list vl = NULL;
     gchar *tmp, *name = NULL, *phys = NULL;
     gchar *vendor_str = NULL, *product_str = NULL, *vendor_tags = NULL;
     gint bus = 0, vendor = 0, product = 0, version = 0;
@@ -88,17 +92,21 @@ __scan_input_devices(void)
                 d = 4;    // INPUT_PCSPKR
             }
             if (d == 0 && g_strcmp0(phys, "ALSA")) {
-                d = 5;    // INPUT_PCSPKR
+                d = 5;    // INPUT_AUDIO
             }
 
             if (vendor > 0 && product > 0 && g_str_has_prefix(phys, "usb-")) {
                 usb_lookup_ids_vendor_product_str(vendor, product, &vendor_str, &product_str);
             }
 
+            vl = vendor_list_remove_duplicates_deep(vendors_match(name, vendor_str, NULL));
+            vendor_tags = vendor_list_ribbon(vl, params.fmt_opts);
+
             tmp = g_strdup_printf("INP%d", ++n);
-            input_list = h_strdup_cprintf("$%s$%s=\n",
+            input_list = h_strdup_cprintf("$%s$%s=%s|%s\n",
                          input_list,
-                         tmp, name);
+                         tmp, name, EMPTYIFNULL(vendor_tags),
+                         EMPTYIFNULL(input_devices[d].name));
             input_icons = h_strdup_cprintf("Icon$%s$%s=%s\n",
                           input_icons,
                           tmp, name,
@@ -113,10 +121,10 @@ __scan_input_devices(void)
                     /* Version */"%s=0x%x\n",
                             _("Device Information"),
                             _("Name"), name,
-                            _("Type"), input_devices[d].name,
+                            _("Type"), UNKWNIFNULL(input_devices[d].name),
                             _("Bus"), bus,
-                            _("Vendor"), vendor, vendor_str ? vendor_str: _("(Unknown)"),
-                            _("Product"), product, product_str ? product_str: _("(Unknown)"),
+                            _("Vendor"), vendor, UNKWNIFNULL(vendor_str),
+                            _("Product"), product, UNKWNIFNULL(product_str),
                             _("Version"), version );
 
             if (phys && phys[1] != 0) {
@@ -132,9 +140,11 @@ __scan_input_devices(void)
             g_free(phys);
             g_free(name);
             g_free(vendor_str);
+            g_free(vendor_tags);
             g_free(product_str);
             vendor_str = NULL;
             product_str = NULL;
+            vendor_tags = NULL;
         }
     }
 
