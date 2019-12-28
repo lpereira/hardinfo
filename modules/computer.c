@@ -592,12 +592,14 @@ gchar *callback_os(void)
         info_field(_("Version"), computer->os->kernel_version),
         info_field(_("C Library"), computer->os->libc),
         info_field(_("Distribution"), computer->os->distro,
+                   .value_has_vendor = TRUE,
                    .icon = distro_icon),
         info_field_last());
 
     if (computer->os->distro_flavor) {
         info_group_add_field(version_group,
             info_field(_("Spin/Flavor"), computer->os->distro_flavor->name,
+                .value_has_vendor = TRUE,
                 .icon = computer->os->distro_flavor->icon) );
     }
 
@@ -757,7 +759,7 @@ gchar *callback_display(void)
 
     info_add_group(info, _("X Server"),
         info_field(_("Current Display Name"), THISORUNK(xi->display_name) ),
-        info_field(_("Vendor"), THISORUNK(xi->vendor) ),
+        info_field(_("Vendor"), THISORUNK(xi->vendor), .value_has_vendor = TRUE ),
         info_field(_("Version"), THISORUNK(xi->version) ),
         info_field(_("Release Number"), THISORUNK(xi->release_number) ),
         info_field_last());
@@ -797,7 +799,7 @@ gchar *callback_display(void)
     info_add_computed_group(info, _("Outputs (XRandR)"), outputs_str);
 
     info_add_group(info, _("OpenGL (GLX)"),
-        info_field(_("Vendor"), THISORUNK(glx->ogl_vendor) ),
+        info_field(_("Vendor"), THISORUNK(glx->ogl_vendor), .value_has_vendor = TRUE ),
         info_field(_("Renderer"), THISORUNK(glx->ogl_renderer) ),
         info_field(_("Direct Rendering"),
             glx->direct_rendering ? _("Yes") : _("No")),
