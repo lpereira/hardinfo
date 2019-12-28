@@ -2256,11 +2256,13 @@ gboolean key_value_has_vendor_string(const gchar *key) {
 }
 
 gchar *key_mi_tag(const gchar *key) {
+    static char flag_list[] = "*!^";
     gchar *p = (gchar*)key, *l, *t;
 
     if (key_is_flagged(key)) {
         l = strchr(key+1, '$');
-        while(p < l && (*p == '$' || *p == '*' || *p == '!') ) {
+        if (*p == '$') p++; /* skip first if exists */
+        while(p < l && strchr(flag_list, *p)) {
             p++;
         }
         if (strlen(p)) {
