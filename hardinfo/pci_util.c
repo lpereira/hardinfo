@@ -20,6 +20,80 @@
 
 #include "hardinfo.h"
 #include "pci_util.h"
+#include "util_ids.h"
+
+gchar *pci_ids_file = NULL;
+
+void find_pci_ids_file() {
+    if (pci_ids_file) return;
+    char *file_search_order[] = {
+        g_strdup("/usr/share/hwdata/pci.ids"),
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "pci.ids", NULL),
+        g_build_filename(params.path_data, "pci.ids", NULL),
+        NULL
+    };
+    int n;
+    for(n = 0; file_search_order[n]; n++) {
+        if (!pci_ids_file && !access(file_search_order[n], R_OK))
+            pci_ids_file = file_search_order[n];
+        else
+            g_free(file_search_order[n]);
+    }
+}
+
+char *pci_lookup_ids_vendor_str(uint32_t id) {
+    gchar *ret = NULL;
+
+    ids_query_result result = {};
+    gchar *qpath;
+
+    if (!pci_ids_file)
+        find_pci_ids_file();
+
+    qpath = g_strdup_printf("%04x", id);
+    scan_ids_file(pci_ids_file, qpath, &result, -1);
+    if (result.results[0]) {
+        ret = g_strdup(result.results[0]);
+    }
+    g_free(qpath);
+
+    return ret;
+}
+
+static void pci_lookup_ids(pcid *d) {
+    ids_query_result result = {};
+    gchar *qpath;
+
+    if (!pci_ids_file)
+        find_pci_ids_file();
+
+    /* lookup vendor, device, sub device */
+    qpath = g_strdup_printf("%04x/%04x/%04x %04x",
+        d->vendor_id, d->device_id, d->sub_vendor_id, d->sub_device_id);
+    scan_ids_file(pci_ids_file, qpath, &result, -1);
+    if (result.results[0]) {
+        if (d->vendor_id_str) g_free(d->vendor_id_str);
+        d->vendor_id_str = g_strdup(result.results[0]);
+    }
+    if (result.results[1]) {
+        if (d->device_id_str) g_free(d->device_id_str);
+        d->device_id_str = g_strdup(result.results[1]);
+    }
+    if (result.results[2]) {
+        if (d->sub_device_id_str) g_free(d->sub_device_id_str);
+        d->sub_device_id_str = g_strdup(result.results[2]);
+    }
+    g_free(qpath);
+
+    /* lookup sub vendor by itself */
+    qpath = g_strdup_printf("%04x", d->sub_vendor_id);
+    scan_ids_file(pci_ids_file, qpath, &result, -1);
+    if (result.results[0]) {
+        if (d->sub_vendor_id_str) g_free(d->sub_vendor_id_str);
+        d->sub_vendor_id_str = g_strdup(result.results[0]);
+    }
+    g_free(qpath);
+}
 
 pcid *pcid_new() {
     return g_new0(pcid, 1);
