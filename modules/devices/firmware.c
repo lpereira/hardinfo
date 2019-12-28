@@ -163,9 +163,10 @@ gchar *fwupdmgr_get_devices_info() {
             *next_nl = 0;
             if (!isspace(*p) && *p != 0) {
                 if (gv && !has_vendor_field) {
-                    gchar *vstr = vendor_get_link_from_vendor(gv);
                     info_group_add_field(this_group,
-                        info_field(_("Vendor"), vstr, .free_value_on_flatten = TRUE) );
+                        info_field(_("Vendor"), gv->name,
+                            .value_has_vendor = TRUE,
+                            .free_value_on_flatten = FALSE) );
                 }
                 g_strstrip(p);
                 this_group = info_add_group(info, g_strdup(p), info_field_last());
@@ -185,10 +186,10 @@ gchar *fwupdmgr_get_devices_info() {
                         has_vendor_field = TRUE;
                         const Vendor* v = vendor_match(col+1, NULL);
                         if (v) {
-                            gchar *vstr = vendor_get_link_from_vendor(v);
                             info_group_add_field(this_group,
-                                info_field(_("Vendor"), vstr,
-                                .free_value_on_flatten = TRUE) );
+                                info_field(_("Vendor"), v->name,
+                                .value_has_vendor = TRUE,
+                                .free_value_on_flatten = FALSE) );
                         } else {
                             info_group_add_field(this_group,
                                 info_field(find_translation(p), g_strdup(col+1),
@@ -223,9 +224,10 @@ gchar *fwupdmgr_get_devices_info() {
         }
 
         if (gv && !has_vendor_field) {
-            gchar *vstr = vendor_get_link_from_vendor(gv);
             info_group_add_field(this_group,
-                info_field(_("Vendor"), vstr, .free_value_on_flatten = TRUE) );
+                info_field(_("Vendor"), gv->name,
+                    .value_has_vendor = TRUE,
+                    .free_value_on_flatten = FALSE) );
         }
 
         g_free(out);
