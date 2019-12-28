@@ -164,8 +164,10 @@ gchar *monitor_name(monitor *m, gboolean include_vendor) {
     if (include_vendor) {
         if (e->ven.type != VEN_TYPE_INVALID) {
             gchar *vstr = monitor_vendor_str(m, FALSE, FALSE);
-            desc = appfsp(desc, "%s", vendor_get_shortest_name(vstr));
+            gchar *vtag = vendor_match_tag(vstr, params.fmt_opts);
+                desc = appfsp(desc, "%s", vtag ? vtag : vstr);
             g_free(vstr);
+            g_free(vtag);
         } else
             desc = appfsp(desc, "%s", "Unknown");
     }
@@ -221,7 +223,7 @@ static gchar *make_edid_section(monitor *m) {
     int i;
     edid *e = m->e;
     if (e->len) {
-        gchar *vstr = monitor_vendor_str(m, TRUE, TRUE);
+        gchar *vstr = monitor_vendor_str(m, TRUE, FALSE);
 
         gchar *dom = NULL;
         if (!e->dom.is_model_year && e->dom.week && e->dom.year)
@@ -364,7 +366,7 @@ static gchar *make_edid_section(monitor *m) {
             "%s=%s\n" /* base out */
             "%s=%s\n" /* ext out */
             "[%s]\n"
-            "%s=%s\n" /* vendor */
+            "$^$%s=%s\n" /* vendor */
             "%s=%s\n" /* name */
             "%s=[%04x-%08x] %u-%u\n" /* model, n_serial */
             "%s=%s\n" /* serial */
