@@ -751,11 +751,16 @@ gchar *callback_storage()
 gchar *callback_input()
 {
     return g_strdup_printf("[Input Devices]\n"
-			   "%s"
-			   "[$ShellParam$]\n"
-			   "ViewType=1\n"
-			   "ReloadInterval=5000\n%s", input_list,
-			   input_icons);
+                           "%s"
+                           "[$ShellParam$]\n"
+                           "ViewType=1\n"
+                           "ColumnTitle$TextValue=%s\n"
+                           "ColumnTitle$Value=%s\n"
+                           "ColumnTitle$Extra1=%s\n"
+                           "ShowColumnHeaders=true\n"
+                           "ReloadInterval=5000\n%s",
+                           input_list, _("Device"), _("Vendor"), _("Type"),
+                           input_icons);
 }
 
 gchar *callback_usb()
