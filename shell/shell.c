@@ -1612,17 +1612,6 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
 
                 gboolean has_ven = key_value_has_vendor_string(flags);
                 const Vendor *v = has_ven ? vendor_match(value, NULL) : NULL;
-                gchar *value_markup = NULL;
-
-/*
-                if (v) {
-                    gchar *vendor_markup = vendor_info_markup(v);
-                    value_markup = g_strdup_printf("%s\n%s", value, vendor_markup);
-                    g_free(vendor_markup);
-                } else { */
-                    value_markup = g_strdup(value);
-                    g_free(value);
-                //}
 
                 key_markup =
                     g_strdup_printf("<span color=\"#666\">%s</span>", label);
@@ -1631,7 +1620,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 gtk_label_set_use_markup(GTK_LABEL(key_label), TRUE);
                 gtk_misc_set_alignment(GTK_MISC(key_label), 1.0f, 0.5f);
 
-                GtkWidget *value_label = gtk_label_new(value_markup);
+                GtkWidget *value_label = gtk_label_new(value);
                 gtk_label_set_use_markup(GTK_LABEL(value_label), TRUE);
                 gtk_label_set_selectable(GTK_LABEL(value_label), TRUE);
 #if !GTK_CHECK_VERSION(3, 0, 0)
@@ -1687,7 +1676,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 }
 
                 g_free(flags);
-                g_free(value_markup);
+                g_free(value);
                 g_free(key_markup);
                 g_free(label);
             }
