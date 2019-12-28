@@ -9,11 +9,21 @@
 #    wikipedia [language:]<article title>[#section]
 #    note <short note>
 #    ansi_color n[;n][...]
-#    [match_string|match_string_case|match_string_exact] <match>
+#    <match_rule> <match_string>
 #    ...
-#    [match_string|match_string_case|match_string_exact] <match>
-#    [match_string|match_string_case|match_string_exact] <match>
+#    <match_rule> <match_string>
+#    <match_rule> <match_string>
 #
+# match rules:
+#    match_string - match a word, ignore case
+#    match_string_case - match a word, consider case
+#    match_string_exact - entire string must match exactly
+#    match_string_prefix - prefix of a word, ignore case
+#    match_string_prefix_case - prefix of a word, consider case
+#    match_string_suffix - suffix of a word, ignore case
+#    match_string_suffix_case - suffix of a word, consider case
+#    match_string_num_prefix - prefix next character must be a digit, ignore case
+#    match_string_num_prefix_case - prefix next character must be a digit, consider case
 #
 # Except for the newline, trailing whitespace is included in the string.
 # Match strings should be unique.
