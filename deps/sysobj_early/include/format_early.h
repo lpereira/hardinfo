@@ -25,6 +25,7 @@
 #include <strings.h>
 #include "appf.h"
 #include "util_sysobj.h"
+#include "vendor.h"
 
 enum {
     FMT_OPT_NONE   = 0,
@@ -40,5 +41,7 @@ gchar *format_with_ansi_color(const gchar *str, const gchar *ansi_color, int fmt
 
 void tag_vendor(gchar **str, guint offset, const gchar *vendor_str, const char *ansi_color, int fmt_opts);
 gchar *vendor_match_tag(const gchar *vendor_str, int fmt_opts);
+
+gchar *vendor_list_ribbon(const vendor_list vl_in, int fmt_opts);
 
 #endif

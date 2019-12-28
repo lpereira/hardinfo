@@ -19,7 +19,6 @@
  */
 
 #include "format_early.h"
-#include "vendor.h"
 
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
@@ -127,4 +126,33 @@ gchar *vendor_match_tag(const gchar *vendor_str, int fmt_opts) {
         return ven_tag;
     }
     return NULL;
+}
+
+gchar *vendor_list_ribbon(const vendor_list vl_in, int fmt_opts) {
+    gchar *ret = NULL;
+    vendor_list vl = g_slist_copy(vl_in); /* shallow is fine */
+    vl = vendor_list_remove_duplicates(vl);
+    if (vl) {
+        GSList *l = vl, *n = l ? l->next : NULL;
+        /* replace each vendor with the vendor tag */
+        for(; l; l = n) {
+            n = l->next;
+            const Vendor *v = l->data;
+            if (!v) {
+                vl = g_slist_delete_link(vl, l);
+                continue;
+            }
+            gchar *ven_tag = v->name_short ? g_strdup(v->name_short) : g_strdup(v->name);
+            if(ven_tag) {
+                tag_vendor(&ven_tag, 0, ven_tag, v->ansi_color, fmt_opts);
+                l->data = ven_tag;
+            }
+        }
+        /* vl is now a regular GSList of formatted vendor tag strings */
+        vl = gg_slist_remove_duplicates_custom(vl, (GCompareFunc)g_strcmp0);
+        for(l = vl; l; l = l->next)
+            ret = appfsp(ret, "%s", (gchar*)l->data);
+    }
+    g_slist_free_full(vl, g_free);
+    return ret;
 }

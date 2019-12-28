@@ -58,6 +58,7 @@ usbd *usbd_new() {
 void usbd_free(usbd *s) {
     if (s) {
         usbi_list_free(s->if_list);
+        vendor_list_free(s->vendors);
         g_free(s->vendor);
         g_free(s->product);
         g_free(s->manufacturer);
@@ -517,11 +518,17 @@ static usbd *usb_get_device_list_sysfs() {
 }
 
 usbd *usb_get_device_list() {
-    usbd *lst;
+    usbd *lst, *l;
 
     lst = usb_get_device_list_sysfs();
     if (lst == NULL)
         lst = usb_get_device_list_lsusb();
+
+    l = lst;
+    while(l) {
+        l->vendors = vendor_list_remove_duplicates_deep(vendors_match(l->vendor, l->manufacturer, NULL));
+        l = l->next;
+    }
 
     return lst;
 }

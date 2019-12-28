@@ -43,6 +43,8 @@ typedef struct usbd {
 
     int speed_mbs;
 
+    vendor_list vendors;
+
     gboolean user_scan; /* not scanned as root */
     struct usbi *if_list;
 
