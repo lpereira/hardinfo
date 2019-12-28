@@ -27,11 +27,12 @@ static struct {
     char *name;
     char *icon;
 } input_devices[] = {
+    { "Unknown",  "module.png"   },
     { "Keyboard", "keyboard.png" },
     { "Joystick", "joystick.png" },
     { "Mouse",    "mouse.png"    },
-    { "Speaker",  "audio.png"  },
-    { "Unknown",  "module.png"   },
+    { "Speaker",  "audio.png"    },
+    { "Audio",    "audio.png"    }
 };
 
 void
@@ -74,17 +75,20 @@ __scan_input_devices(void)
             break;
         case 'H':
             if (strstr(tmp, "kbd"))
-            d = 0;      //INPUT_KEYBOARD;
+            d = 1;      //INPUT_KEYBOARD;
             else if (strstr(tmp, "js"))
-            d = 1;      //INPUT_JOYSTICK;
+            d = 2;      //INPUT_JOYSTICK;
             else if (strstr(tmp, "mouse"))
-            d = 2;      //INPUT_MOUSE;
+            d = 3;      //INPUT_MOUSE;
             else
-            d = 4;      //INPUT_UNKNOWN;
+            d = 0;      //INPUT_UNKNOWN;
             break;
         case '\n':
             if (name && strstr(name, "PC Speaker")) {
-              d = 3;    // INPUT_PCSPKR
+                d = 4;    // INPUT_PCSPKR
+            }
+            if (d == 0 && g_strcmp0(phys, "ALSA")) {
+                d = 5;    // INPUT_PCSPKR
             }
 
             if (vendor > 0 && product > 0 && g_str_has_prefix(phys, "usb-")) {
