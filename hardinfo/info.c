@@ -109,6 +109,25 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
     };
 }
 
+static void info_group_strip_extra(struct InfoGroup *group)
+{
+    guint fi;
+    char *val, *oldval;
+    struct InfoField *field;
+
+    for (fi = 0; fi < group->fields->len; fi++) {
+        field = &g_array_index(group->fields, struct InfoField, fi);
+        if (field->value){
+            val = strrchr(field->value, '|');
+            if (val) {
+                oldval = field->value;
+                field->value = strdup(val + 1);
+                g_free(oldval);
+            }
+        }
+    }
+}
+
 void info_add_computed_group(struct Info *info, const gchar *name, const gchar *value)
 {
     /* This is a scaffolding method: HardInfo should move away from pre-computing
@@ -135,6 +154,20 @@ void info_add_computed_group(struct Info *info, const gchar *name, const gchar *
 
     g_free(tmp_info); // TODO: doesn't do enough
     g_free(tmp_str);
+}
+
+void info_add_computed_group_wo_extra(struct Info *info, const gchar *name, const gchar *value)
+{
+    /* This is a scaffolding method: HardInfo should move away from pre-computing
+     * the strings in favor of storing InfoGroups instead; while modules are not
+     * fully converted, use this instead. */
+    struct InfoGroup *agroup;
+
+    info_add_computed_group(info, name, value);
+    if (info->groups->len > 0) {
+        agroup = &g_array_index(info->groups, struct InfoGroup, info->groups->len - 1);
+        info_group_strip_extra(agroup);
+    }
 }
 
 void info_set_column_title(struct Info *info, const gchar *column, const gchar *title)
