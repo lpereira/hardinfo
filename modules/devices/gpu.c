@@ -44,9 +44,11 @@ void gpu_summary_add(const char *gpu_name) {
 static void _gpu_pci_dev(gpud* gpu) {
     pcid *p = gpu->pci_dev;
     gchar *str;
-    gchar *vendor, *svendor, *v_str, *sv_str, *product, *sproduct;
+    gchar *vendor, *svendor, *product, *sproduct;
     gchar *name, *key;
     gchar *drm_path = NULL;
+
+    gboolean vendor_is_svendor = (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id);
 
     vendor = UNKIFNULL_AC(p->vendor_id_str);
     svendor = UNKIFNULL_AC(p->sub_vendor_id_str);
@@ -57,10 +59,20 @@ static void _gpu_pci_dev(gpud* gpu) {
     else
         drm_path = g_strdup(_("(Unknown)"));
 
-    v_str = vendor_get_link(vendor);
-    sv_str = vendor_get_link(svendor);
+    gchar *ven_tag = vendor_match_tag(p->vendor_id_str, params.fmt_opts);
+    gchar *sven_tag = vendor_match_tag(p->sub_vendor_id_str, params.fmt_opts);
+    if (ven_tag) {
+        if (sven_tag && !vendor_is_svendor) {
+            name = g_strdup_printf("%s %s %s", sven_tag, ven_tag, product);
+        } else {
+            name = g_strdup_printf("%s %s", ven_tag, product);
+        }
+    } else {
+        name = g_strdup_printf("%s %s", vendor, product);
+    }
+    g_free(ven_tag);
+    g_free(sven_tag);
 
-    name = g_strdup_printf("%s %s", vendor, product);
     key = g_strdup_printf("GPU%s", gpu->id);
 
     gpu_summary_add((gpu->nice_name) ? gpu->nice_name : name);
@@ -69,19 +81,19 @@ static void _gpu_pci_dev(gpud* gpu) {
     gchar *vendor_device_str;
     if (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id) {
         vendor_device_str = g_strdup_printf(
-                     /* Vendor */     "%s=[%04x] %s\n"
+                     /* Vendor */     "$^$%s=[%04x] %s\n"
                      /* Device */     "%s=[%04x] %s\n",
-                    _("Vendor"), p->vendor_id, v_str,
+                    _("Vendor"), p->vendor_id, vendor,
                     _("Device"), p->device_id, product);
     } else {
         vendor_device_str = g_strdup_printf(
-                     /* Vendor */     "%s=[%04x] %s\n"
+                     /* Vendor */     "$^$%s=[%04x] %s\n"
                      /* Device */     "%s=[%04x] %s\n"
-                     /* Sub-device vendor */     "%s=[%04x] %s\n"
+                     /* Sub-device vendor */ "$^$%s=[%04x] %s\n"
                      /* Sub-device */     "%s=[%04x] %s\n",
-                    _("Vendor"), p->vendor_id, v_str,
+                    _("Vendor"), p->vendor_id, vendor,
                     _("Device"), p->device_id, product,
-                    _("SVendor"), p->sub_vendor_id, sv_str,
+                    _("SVendor"), p->sub_vendor_id, svendor,
                     _("SDevice"), p->sub_device_id, sproduct);
     }
 
@@ -161,8 +173,6 @@ static void _gpu_pci_dev(gpud* gpu) {
     g_free(pcie_str);
     g_free(nv_str);
     g_free(vendor_device_str);
-    g_free(v_str);
-    g_free(sv_str);
     g_free(name);
     g_free(key);
 }
@@ -181,9 +191,17 @@ int _dt_soc_gpu(gpud *gpu) {
             freq = g_strdup_printf("%0.2f %s", (double) gpu->khz_max / 1000, _("MHz"));
     }
     gchar *key = g_strdup(gpu->id);
-    gchar *name = (vendor == UNKSOC && device == UNKSOC)
+
+    gchar *name = NULL;
+    gchar *vtag = vendor_match_tag(gpu->vendor_str, params.fmt_opts);
+    if (vtag) {
+        name = g_strdup_printf("%s %s", vtag, device);
+    } else {
+        name = (vendor == UNKSOC && device == UNKSOC)
             ? g_strdup(_("Unknown integrated GPU"))
             : g_strdup_printf("%s %s", vendor, device);
+    }
+    g_free(vtag);
 
     gchar *opp_str;
     if (gpu->dt_opp) {
@@ -209,7 +227,7 @@ int _dt_soc_gpu(gpud *gpu) {
     gpu_list = h_strdup_cprintf("$!%s$%s=%s\n", gpu_list, key, key, name);
     gchar *str = g_strdup_printf("[%s]\n"
              /* Location */  "%s=%s\n"
-             /* Vendor */  "%s=%s\n"
+             /* Vendor */  "$^$%s=%s\n"
              /* Device */  "%s=%s\n"
                            "[%s]\n"
              /* Freq */    "%s=%s\n"
