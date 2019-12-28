@@ -24,7 +24,7 @@
 
 gchar *pci_ids_file = NULL;
 
-void find_pci_ids_file() {
+static void find_pci_ids_file() {
     if (pci_ids_file) return;
     char *file_search_order[] = {
         g_strdup("/usr/share/hwdata/pci.ids"),
@@ -49,6 +49,8 @@ char *pci_lookup_ids_vendor_str(uint32_t id) {
 
     if (!pci_ids_file)
         find_pci_ids_file();
+    if (!pci_ids_file)
+        return NULL;
 
     qpath = g_strdup_printf("%04x", id);
     scan_ids_file(pci_ids_file, qpath, &result, -1);
@@ -66,6 +68,7 @@ static void pci_lookup_ids(pcid *d) {
 
     if (!pci_ids_file)
         find_pci_ids_file();
+    if (!pci_ids_file) return;
 
     /* lookup vendor, device, sub device */
     qpath = g_strdup_printf("%04x/%04x/%04x %04x",
