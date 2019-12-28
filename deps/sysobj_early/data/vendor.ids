@@ -1092,6 +1092,13 @@ name CDEmu
     url cdemu.sourceforge.io
     match_string CDEmu
 
+name X.Org Foundation
+    name_short X.Org
+    url www.x.org
+    wikipedia X.Org Foundation
+    ansi_color 0;30;43
+    match_string X.Org
+
 #
 # x86 vendor strings
 #
