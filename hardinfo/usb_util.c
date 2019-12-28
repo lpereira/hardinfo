@@ -317,7 +317,7 @@ static gboolean usb_get_interface_sysfs(int conf, int number,
     return TRUE;
 }
 
-void find_usb_ids_file() {
+static void find_usb_ids_file() {
     if (usb_ids_file) return;
     char *file_search_order[] = {
         g_build_filename(g_get_user_config_dir(), "hardinfo", "usb.ids", NULL),
@@ -331,6 +331,25 @@ void find_usb_ids_file() {
         else
             g_free(file_search_order[n]);
     }
+}
+
+void usb_lookup_ids_vendor_product_str(gint vendor_id, gint product_id,
+                                       gchar **vendor_str, gchar **product_str) {
+    ids_query_result result = {};
+    gchar *qpath;
+
+    if (!usb_ids_file)
+        find_usb_ids_file();
+    if (!usb_ids_file)
+        return;
+
+    qpath = g_strdup_printf("%04x/%04x", vendor_id, product_id);
+    scan_ids_file(usb_ids_file, qpath, &result, -1);
+    if (result.results[0])
+        *vendor_str = g_strdup(result.results[0]);
+    if (result.results[1])
+        *product_str = g_strdup(result.results[1]);
+    g_free(qpath);
 }
 
 static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, usbd *s) {

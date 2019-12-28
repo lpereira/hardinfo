@@ -40,6 +40,7 @@ __scan_input_devices(void)
     FILE *dev;
     gchar buffer[1024];
     gchar *tmp, *name = NULL, *phys = NULL;
+    gchar *vendor_str = NULL, *product_str = NULL, *vendor_tags = NULL;
     gint bus = 0, vendor = 0, product = 0, version = 0;
     int d = 0, n = 0;
 
@@ -86,6 +87,10 @@ __scan_input_devices(void)
 	      d = 3;		// INPUT_PCSPKR
 	    }
 
+        if (vendor > 0 && product > 0 && g_str_has_prefix(phys, "usb-")) {
+            usb_lookup_ids_vendor_product_str(vendor, product, &vendor_str, &product_str);
+        }
+        
         tmp = g_strdup_printf("INP%d", ++n);
         input_list = h_strdup_cprintf("$%s$%s=\n",
                      input_list,
@@ -95,24 +100,19 @@ __scan_input_devices(void)
                       tmp, name,
                       input_devices[d].icon);
 
-        gchar *v_str = vendor_get_link(name);
-        if (g_strcmp0(v_str, name) == 0)
-            v_str = hardinfo_clean_value(v_str, 1);
-        name = hardinfo_clean_value(name, 1);
-
         gchar *strhash = g_strdup_printf("[%s]\n"
-                /* Name */   "%s=%s\n"
+                /* Name */   "$^$%s=%s\n"
                 /* Type */   "%s=%s\n"
                 /* Bus */    "%s=0x%x\n"
-                /* Vendor */ "%s=[0x%x] %s\n"
-                /* Product */"%s=0x%x\n"
+                /* Vendor */ "$^$%s=[0x%x] %s\n"
+                /* Product */"%s=[0x%x] %s\n"
                 /* Version */"%s=0x%x\n",
                         _("Device Information"),
                         _("Name"), name,
                         _("Type"), input_devices[d].name,
                         _("Bus"), bus,
-                        _("Vendor"), vendor, v_str,
-                        _("Product"), product,
+                        _("Vendor"), vendor, vendor_str ? vendor_str: _("(Unknown)"),
+                        _("Product"), product, product_str ? product_str: _("(Unknown)"),
                         _("Version"), version );
 
         if (phys && phys[1] != 0) {
@@ -127,7 +127,10 @@ __scan_input_devices(void)
         g_free(tmp);
         g_free(phys);
         g_free(name);
-        g_free(v_str);
+        g_free(vendor_str);
+        g_free(product_str);
+        vendor_str = NULL;
+        product_str = NULL;
     }
     }
 

@@ -69,6 +69,8 @@ typedef struct usbi {
 usbd *usb_get_device_list();
 int usbd_list_count(usbd *);
 void usbd_list_free(usbd *);
+void usb_lookup_ids_vendor_product_str(gint vendor_id, gint product_id,
+                                       gchar **vendor_str, gchar **product_str);
 
 usbd *usb_get_device(int bus, int dev, const gchar* sysfspath);
 void usbd_free(usbd *);
