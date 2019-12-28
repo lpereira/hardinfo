@@ -60,14 +60,17 @@ char *bench_value_to_str(bench_value r) {
 
 bench_value bench_value_from_str(const char* str) {
     bench_value ret = EMPTY_BENCH_VALUE;
-    double r, e;
+    char rstr[32] = "", estr[32] = "", *p;
     int t, c, v;
     char extra[256], user_note[256];
     if (str) {
-        c = sscanf(str, "%lf; %lf; %d; %d; %255[^\r\n;|]; %255[^\r\n;|]", &r, &e, &t, &v, extra, user_note);
+        /* try to handle floats from locales that use ',' or '.' as decimal sep */
+        c = sscanf(str, "%[-+0-9.,]; %[-+0-9.,]; %d; %d; %255[^\r\n;|]; %255[^\r\n;|]", rstr, estr, &t, &v, extra, user_note);
         if (c >= 3) {
-            ret.result = r;
-            ret.elapsed_time = e;
+            if ((p = strchr(rstr, ','))) { *p = '.'; }
+            if ((p = strchr(estr, ','))) { *p = '.'; }
+            ret.result = strtod(rstr, NULL);
+            ret.elapsed_time = strtod(estr, NULL);
             ret.threads_used = t;
         }
         if (c >= 4) {
