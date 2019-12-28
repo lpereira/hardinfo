@@ -787,7 +787,7 @@ gchar *memory_devices_get_info() {
                             );
             g_free(spd);
             moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
-            const gchar *mfgr = s->mfgr ? vendor_get_shortest_name(s->mfgr) : NULL;
+            gchar *mfgr = s->mfgr ? vendor_match_tag(s->mfgr,  params.fmt_opts) : NULL;
             ret = h_strdup_cprintf("$!%s$%s=%s|%s|%s\n",
                     ret,
                     tag,
@@ -796,6 +796,7 @@ gchar *memory_devices_get_info() {
                     );
             icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, mem_icon);
             g_free(size_str);
+            g_free(mfgr);
         } else {
             gchar *details = g_strdup_printf("[%s]\n"
                             "%s=0x%"PRIx32", 0x%"PRIx32"\n"

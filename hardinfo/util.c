@@ -535,6 +535,9 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     if (param->create_report && param->report_format != REPORT_FORMAT_HTML)
         param->markup_ok = FALSE;
 
+    // TODO: fmt_opts: FMT_OPT_ATERM, FMT_OPT_HTML, FMT_OPT_PANGO...
+    param->fmt_opts = FMT_OPT_NONE;
+
     gchar *confdir = g_build_filename(g_get_user_config_dir(), "hardinfo", NULL);
     if (!g_file_test(confdir, G_FILE_TEST_EXISTS)) {
         mkdir(confdir, 0744);

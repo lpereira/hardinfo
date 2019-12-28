@@ -59,8 +59,6 @@ static const gchar *find_icon_for_class(uint32_t class)
     return "devices.png";
 }
 
-#include "format_early.h"
-
 static gchar *_pci_dev(const pcid *p, gchar *icons) {
     gchar *str;
     gchar *class, *vendor, *svendor, *product, *sproduct;
@@ -74,8 +72,8 @@ static gchar *_pci_dev(const pcid *p, gchar *icons) {
     product = UNKIFNULL_AC(p->device_id_str);
     sproduct = UNKIFNULL_AC(p->sub_device_id_str);
 
-    gchar *ven_tag = vendor_match_tag(p->vendor_id_str, FMT_OPT_PANGO); /* TODO:FIX FOR REPORT! */
-    gchar *sven_tag = vendor_match_tag(p->sub_vendor_id_str, FMT_OPT_PANGO); /* TODO:FIX FOR REPORT! */
+    gchar *ven_tag = vendor_match_tag(p->vendor_id_str, params.fmt_opts);
+    gchar *sven_tag = vendor_match_tag(p->sub_vendor_id_str, params.fmt_opts);
     if (ven_tag) {
         if (sven_tag && !vendor_is_svendor) {
             name = g_strdup_printf("%s %s %s", sven_tag, ven_tag, product);

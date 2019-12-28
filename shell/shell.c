@@ -747,6 +747,7 @@ void shell_init(GSList * modules)
     DEBUG("initializing shell");
 
     uri_set_function(hardinfo_link);
+    params.fmt_opts = FMT_OPT_PANGO;
 
     create_window();
 
@@ -1523,8 +1524,6 @@ static void module_selected_show_info_list(GKeyFile *key_file,
 static gboolean detail_activate_link (GtkLabel *label, gchar *uri, gpointer user_data) {
     return uri_open(uri);
 }
-
-#include "format_early.h"
 
 static gchar *vendor_info_markup(const Vendor *v) {
     if (!v) return NULL;
