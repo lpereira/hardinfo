@@ -69,8 +69,8 @@ bench_value bench_value_from_str(const char* str) {
         if (c >= 3) {
             if ((p = strchr(rstr, ','))) { *p = '.'; }
             if ((p = strchr(estr, ','))) { *p = '.'; }
-            ret.result = strtod(rstr, NULL);
-            ret.elapsed_time = strtod(estr, NULL);
+            ret.result = g_ascii_strtod(rstr, NULL);
+            ret.elapsed_time = g_ascii_strtod(estr, NULL);
             ret.threads_used = t;
         }
         if (c >= 4) {
