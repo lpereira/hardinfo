@@ -32,7 +32,7 @@ gboolean __scan_udisks2_devices(void) {
     udisksa *attrib;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
     gchar *devid, *label, *size, *tmp = NULL, *media_comp = NULL;
-    const gchar *url, *vendor_str, *media_label, *alabel, *icon, *media_curr = NULL;
+    const gchar *url, *vendor_str, *ven_tag, *media_label, *alabel, *icon, *media_curr = NULL;
     int n = 0, i, j;
 
     // http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Drive.html#gdbus-property-org-freedesktop-UDisks2-Drive.MediaCompatibility
@@ -196,7 +196,10 @@ gboolean __scan_udisks2_devices(void) {
             icon = "hdd";
         }
 
-        udisks2_storage_list = h_strdup_cprintf("$%s$%s=\n", udisks2_storage_list, devid, label);
+        size = size_human_readable((gfloat) disk->size);
+        ven_tag = vendor_match_tag(vendor_str, params.fmt_opts);
+
+        udisks2_storage_list = h_strdup_cprintf("$%s$%s=%s|%s\n", udisks2_storage_list, devid, label, ven_tag ? ven_tag : "", size);
         storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, label, icon);
         features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
 
@@ -224,7 +227,6 @@ gboolean __scan_udisks2_devices(void) {
                                      moreinfo,
                                      _("Vendor"), vendor_str);
 
-        size = size_human_readable((gfloat) disk->size);
         moreinfo = h_strdup_cprintf(_("Revision=%s\n"
                                     "Block Device=%s\n"
                                     "Serial=%s\n"
@@ -237,6 +239,7 @@ gboolean __scan_udisks2_devices(void) {
                                     size,
                                     features);
         g_free(size);
+        g_free(ven_tag);
 
         if (disk->rotation_rate > 0) {
             moreinfo = h_strdup_cprintf(_("Rotation Rate=%d RPM\n"), moreinfo, disk->rotation_rate);
