@@ -37,6 +37,7 @@ static void find_pci_ids_file() {
     if (pci_ids_file) return;
     char *file_search_order[] = {
         g_strdup("/usr/share/hwdata/pci.ids"),
+        g_strdup("/usr/share/misc/pci.ids"),
         g_build_filename(g_get_user_config_dir(), "hardinfo", "pci.ids", NULL),
         g_build_filename(params.path_data, "pci.ids", NULL),
         NULL
