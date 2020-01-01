@@ -61,7 +61,7 @@ static const gchar *find_icon_for_class(uint32_t class)
 
 static gchar *_pci_dev(const pcid *p, gchar *icons) {
     gchar *str;
-    const gchar *class, *vendor, *svendor, *product, *sproduct;
+    const gchar *class, *vendor, *svendor, *product, *sproduct, *lproduct;
     gchar *name, *key;
 
     gboolean device_is_sdevice = (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id);
@@ -69,20 +69,21 @@ static gchar *_pci_dev(const pcid *p, gchar *icons) {
     class = UNKIFNULL_AC(p->class_str);
     vendor = UNKIFNULL_AC(p->vendor_id_str);
     svendor = UNKIFNULL_AC(p->sub_vendor_id_str);
-    product = p->device_id_str ? p->device_id_str : p->class_str;
-    product = UNKIFNULL_AC(product);
+    product = UNKIFNULL_AC(p->device_id_str);
     sproduct = UNKIFNULL_AC(p->sub_device_id_str);
+    lproduct = p->device_id_str ? p->device_id_str : p->class_str;
+    lproduct = UNKIFNULL_AC(lproduct);
 
     gchar *ven_tag = vendor_match_tag(p->vendor_id_str, params.fmt_opts);
     gchar *sven_tag = vendor_match_tag(p->sub_vendor_id_str, params.fmt_opts);
     if (ven_tag) {
         if (sven_tag && p->vendor_id != p->sub_vendor_id) {
-            name = g_strdup_printf("%s %s %s", sven_tag, ven_tag, product);
+            name = g_strdup_printf("%s %s %s", sven_tag, ven_tag, lproduct);
         } else {
-            name = g_strdup_printf("%s %s", ven_tag, product);
+            name = g_strdup_printf("%s %s", ven_tag, lproduct);
         }
     } else {
-        name = g_strdup_printf("%s %s", vendor, product);
+        name = g_strdup_printf("%s %s", vendor, lproduct);
     }
     g_free(ven_tag);
     g_free(sven_tag);
