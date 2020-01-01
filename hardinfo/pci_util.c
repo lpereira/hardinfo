@@ -23,6 +23,15 @@
 #include "util_ids.h"
 
 gchar *pci_ids_file = NULL;
+const gboolean nolspci = FALSE; /* true for testing */
+
+/* Two pieces of info still only from lspci:
+ * - kernel driver in use
+ * - kernel modules list
+ *
+ * TODO: could use readlink() and basename() to get kernel driver from sysfs
+ * - /sys/bus/pci/devices/<addy>/driver is a symlink
+ */
 
 static void find_pci_ids_file() {
     if (pci_ids_file) return;
@@ -101,6 +110,26 @@ static gboolean pci_lookup_ids(pcid *d) {
         ret = TRUE;
     };
     g_free(qpath);
+
+    /* lookup class */
+    qpath = g_strdup_printf("C %02x/%02x", (d->class >> 8) & 0xff, (d->class & 0xff));
+    scan_ids_file(pci_ids_file, qpath, &result, -1);
+    if (result.results[0]) {
+        if (d->class_str) g_free(d->class_str);
+        d->class_str = g_strdup(result.results[0]);
+        if (result.results[1]
+            && !SEQ(result.results[0], result.results[1]) ) {
+                /* options 1: results[0] + " :: " + results[1] */
+                //d->class_str = appf(d->class_str, " :: ", "%s", result.results[1]);
+
+                /* option 2: results[1] or results[0] */
+                g_free(d->class_str);
+                d->class_str = g_strdup(result.results[1]);
+        }
+        ret = TRUE;
+    }
+    g_free(qpath);
+
     return ret;
 }
 
@@ -177,6 +206,7 @@ static int lspci_line_string_and_code(char *line, char *prefix, char **str, uint
 }
 
 static gboolean pci_fill_details(pcid *s) {
+    if (nolspci) return FALSE;
     gboolean spawned;
     gchar *out, *err, *p, *l, *next_nl;
     gchar *pci_loc = pci_address_str(s->domain, s->bus, s->device, s->function);
@@ -284,6 +314,7 @@ static gboolean pci_get_device_sysfs(uint32_t dom, uint32_t bus, uint32_t dev, u
 }
 
 static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func, pcid *s) {
+    if (nolspci) return FALSE;
     gboolean spawned;
     gchar *out, *err, *p, *l, *next_nl;
     gchar *pci_loc = pci_address_str(dom, bus, dev, func);
@@ -359,6 +390,7 @@ pcid *pci_get_device(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func) {
 }
 
 static pcid *pci_get_device_list_lspci(uint32_t class_min, uint32_t class_max) {
+    if (nolspci) return NULL;
     gboolean spawned;
     gchar *out, *err, *p, *next_nl;
     pcid *head = NULL, *nd;

@@ -61,7 +61,7 @@ static const gchar *find_icon_for_class(uint32_t class)
 
 static gchar *_pci_dev(const pcid *p, gchar *icons) {
     gchar *str;
-    gchar *class, *vendor, *svendor, *product, *sproduct;
+    const gchar *class, *vendor, *svendor, *product, *sproduct;
     gchar *name, *key;
 
     gboolean device_is_sdevice = (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id);
@@ -69,7 +69,8 @@ static gchar *_pci_dev(const pcid *p, gchar *icons) {
     class = UNKIFNULL_AC(p->class_str);
     vendor = UNKIFNULL_AC(p->vendor_id_str);
     svendor = UNKIFNULL_AC(p->sub_vendor_id_str);
-    product = UNKIFNULL_AC(p->device_id_str);
+    product = p->device_id_str ? p->device_id_str : p->class_str;
+    product = UNKIFNULL_AC(product);
     sproduct = UNKIFNULL_AC(p->sub_device_id_str);
 
     gchar *ven_tag = vendor_match_tag(p->vendor_id_str, params.fmt_opts);
