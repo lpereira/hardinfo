@@ -110,6 +110,7 @@ void scan_modules_do(void) {
 
     g_free(module_list);
 
+    kernel_modules_dir = NULL;
     module_list = NULL;
     module_icons = NULL;
     moreinfo_del_with_prefix("COMP:MOD");
