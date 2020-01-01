@@ -62,13 +62,14 @@ char *pci_lookup_ids_vendor_str(uint32_t id) {
     return ret;
 }
 
-static void pci_lookup_ids(pcid *d) {
+static gboolean pci_lookup_ids(pcid *d) {
+    gboolean ret = FALSE;
     ids_query_result result = {};
     gchar *qpath;
 
     if (!pci_ids_file)
         find_pci_ids_file();
-    if (!pci_ids_file) return;
+    if (!pci_ids_file) return FALSE;
 
     /* lookup vendor, device, sub device */
     qpath = g_strdup_printf("%04x/%04x/%04x %04x",
@@ -77,14 +78,17 @@ static void pci_lookup_ids(pcid *d) {
     if (result.results[0]) {
         if (d->vendor_id_str) g_free(d->vendor_id_str);
         d->vendor_id_str = g_strdup(result.results[0]);
+        ret = TRUE;
     }
     if (result.results[1]) {
         if (d->device_id_str) g_free(d->device_id_str);
         d->device_id_str = g_strdup(result.results[1]);
+        ret = TRUE;
     }
     if (result.results[2]) {
         if (d->sub_device_id_str) g_free(d->sub_device_id_str);
         d->sub_device_id_str = g_strdup(result.results[2]);
+        ret = TRUE;
     }
     g_free(qpath);
 
@@ -94,8 +98,10 @@ static void pci_lookup_ids(pcid *d) {
     if (result.results[0]) {
         if (d->sub_vendor_id_str) g_free(d->sub_vendor_id_str);
         d->sub_vendor_id_str = g_strdup(result.results[0]);
-    }
+        ret = TRUE;
+    };
     g_free(qpath);
+    return ret;
 }
 
 pcid *pcid_new() {
@@ -339,9 +345,11 @@ pcid *pci_get_device(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func) {
     gboolean ok = FALSE;
     if (s) {
         ok = pci_get_device_sysfs(dom, bus, dev, func, s);
-        ok |= pci_get_device_lspci(dom, bus, dev, func, s);
-        /* TODO: other methods */
-
+        if (ok) {
+            ok |= pci_lookup_ids(s);
+            if (!ok)
+                ok |= pci_get_device_lspci(dom, bus, dev, func, s);
+        }
         if (!ok) {
             pcid_free(s);
             s = NULL;
@@ -386,9 +394,47 @@ static pcid *pci_get_device_list_lspci(uint32_t class_min, uint32_t class_max) {
     return head;
 }
 
+static pcid *pci_get_device_list_sysfs(uint32_t class_min, uint32_t class_max) {
+    pcid *head = NULL, *nd;
+    uint32_t dom, bus, dev, func, cls;
+    int ec;
+
+    if (class_max == 0) class_max = 0xffff;
+
+    const gchar *f = NULL;
+    GDir *d = g_dir_open("/sys/bus/pci/devices", 0, NULL);
+    if (!d) return 0;
+
+    while((f = g_dir_read_name(d))) {
+        ec = sscanf(f, "%x:%x:%x.%x", &dom, &bus, &dev, &func);
+        if (ec == 4) {
+            gchar *cf = g_strdup_printf("/sys/bus/pci/devices/%s/class", f);
+            gchar *cstr = NULL;
+            if (g_file_get_contents(cf, &cstr, NULL, NULL) ) {
+                cls = strtoul(cstr, NULL, 16) >> 8;
+                if (cls >= class_min && cls <= class_max) {
+                    nd = pci_get_device(dom, bus, dev, func);
+                    pci_fill_details(nd);
+                    if (head == NULL) {
+                        head = nd;
+                    } else {
+                        pcid_list_append(head, nd);
+                    }
+                }
+            }
+            g_free(cstr);
+            g_free(cf);
+        }
+    }
+    g_dir_close(d);
+    return head;
+}
+
 pcid *pci_get_device_list(uint32_t class_min, uint32_t class_max) {
-    /* try lspci */
-    return pci_get_device_list_lspci(class_min, class_max);
-    /* TODO: other methods */
+    pcid *ret = NULL;
+    ret = pci_get_device_list_sysfs(class_min, class_max);
+    if (!ret)
+        ret = pci_get_device_list_lspci(class_min, class_max);
+    return ret;
 }
 
