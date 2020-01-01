@@ -18,6 +18,9 @@
  *
  */
 
+#ifndef _CPUBITS_H_
+#define _CPUBITS_H_
+
 #include <stdint.h>
 
 typedef uint32_t cpubits;
@@ -32,3 +35,5 @@ char *cpubits_to_str(cpubits *bits, char *str, int max_len);
 #define CPUBIT_SET(BITS, BIT) ((BITS)[(BIT)/32] |= (1 << (BIT)%32))
 #define CPUBIT_GET(BITS, BIT) (((BITS)[(BIT)/32] & (1 << (BIT)%32)) >> (BIT)%32)
 #define CPUBITS_CLEAR(BITS) memset((BITS), 0, CPUBITS_SIZE)
+
+#endif
