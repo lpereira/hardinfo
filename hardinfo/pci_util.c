@@ -323,7 +323,7 @@ static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, u
 }
 
 pcid *pci_get_device_str(const char *addy) {
-    uint32_t dom, bus, dev, func, cls;
+    uint32_t dom, bus, dev, func;
     int ec;
     if (addy) {
         ec = sscanf(addy, "%x:%x:%x.%x", &dom, &bus, &dev, &func);

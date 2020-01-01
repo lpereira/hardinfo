@@ -2,7 +2,6 @@
 #include "udisks2_util.h"
 #include "hardinfo.h"
 #include "util_ids.h"
-#include "pci_util.h"
 
 #define UDISKS2_INTERFACE            "org.freedesktop.UDisks2"
 #define UDISKS2_MANAGER_INTERFACE    "org.freedesktop.UDisks2.Manager"
@@ -376,6 +375,7 @@ void udiskd_free(udiskd *u) {
         udisksa_free(u->smart_attributes);
         g_free(u->media);
         g_strfreev(u->media_compatibility);
+        pcid_free(u->nvme_controller);
         g_free(u);
     }
 }
@@ -678,29 +678,36 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block,
         g_variant_unref(v);
     }
 
-    /* NVMe vendor from PCI device */
-    if (strstr(u->block_dev, "nvme")
-        && (!u->vendor || !*u->vendor)
-        ) {
-        gchar *file = g_strdup_printf("/sys/block/%s/device/device/vendor", u->block_dev);
-        gchar *val = NULL;
-        if (g_file_get_contents(file, &val, NULL, NULL) ) {
-            unsigned long int id = strtoul(val, NULL, 16);
-            if (id)
-                u->vendor = pci_lookup_ids_vendor_str(id);
-        }
-        g_free(file);
-        g_free(val);
+    if (!u->vendor || !*u->vendor) {
+        const Vendor *v = vendor_match(u->model, NULL);
+        if (v)
+            u->vendor = g_strdup(v->name);
     }
 
     check_sdcard_vendor(u);
 
-    if (!u->vendors) {
-        const Vendor *v = NULL;
-        v = vendor_match(u->vendor, NULL);
-        if (v)
-            u->vendors = vendor_list_append(u->vendors, v);
+    u->vendors = vendor_list_append(u->vendors, vendor_match(u->vendor, NULL));
+
+    /* NVMe PCI device */
+    if (strstr(u->block_dev, "nvme")) {
+        gchar *path = g_strdup_printf("/sys/block/%s/device/device", u->block_dev);
+        gchar *systarget = g_file_read_link(path, NULL);
+        gchar *target = systarget ? g_filename_to_utf8(systarget, -1, NULL, NULL, NULL) : NULL;
+        gchar *pci_addy = target ? g_path_get_basename(target) : NULL;
+        u->nvme_controller = pci_addy ? pci_get_device_str(pci_addy) : NULL;
+        g_free(path);
+        g_free(systarget);
+        g_free(target);
+        g_free(pci_addy);
+        if (u->nvme_controller) {
+            u->vendors = vendor_list_append(u->vendors,
+                vendor_match(u->nvme_controller->vendor_id_str, NULL));
+            u->vendors = vendor_list_append(u->vendors,
+                vendor_match(u->nvme_controller->sub_vendor_id_str, NULL));
+        }
     }
+    u->vendors = gg_slist_remove_null(u->vendors);
+    u->vendors = vendor_list_remove_duplicates_deep(u->vendors);
 
     return u;
 }
