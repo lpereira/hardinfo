@@ -195,16 +195,12 @@ gboolean __scan_udisks2_devices(void) {
         disk = (udiskd *)node->data;
         devid = g_strdup_printf("UDISKS%d", n++);
 
-        if (disk->vendor && strlen(disk->vendor) > 0) {
-            label = g_strdup_printf("%s %s", disk->vendor, disk->model);
+        if (disk->vendor && strlen(disk->vendor) > 0)
             vendor_str = disk->vendor;
-        }
-        else{
-            label = g_strdup(disk->model);
-            /* try and pull one out of the model */
-            const Vendor *v = vendor_match(disk->model, NULL);
-            vendor_str = v ? v->name : _("(Unknown)");
-        }
+        else
+            vendor_str = _("(Unknown)");
+
+        label = g_strdup(disk->model);
 
         icon = NULL;
 
