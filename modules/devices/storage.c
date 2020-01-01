@@ -81,8 +81,8 @@ gboolean __scan_udisks2_devices(void) {
     udiskp *part;
     udisksa *attrib;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
-    gchar *devid, *label, *size, *tmp = NULL, *media_comp = NULL, *ven_tag = NULL;
-    const gchar *url, *vendor_str, *media_label, *alabel, *icon, *media_curr = NULL;
+    gchar *devid, *size, *tmp = NULL, *media_comp = NULL, *ven_tag = NULL;
+    const gchar *url, *media_label, *alabel, *icon, *media_curr = NULL;
     int n = 0, i, j;
 
     // http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Drive.html#gdbus-property-org-freedesktop-UDisks2-Drive.MediaCompatibility
@@ -195,13 +195,6 @@ gboolean __scan_udisks2_devices(void) {
         disk = (udiskd *)node->data;
         devid = g_strdup_printf("UDISKS%d", n++);
 
-        if (disk->vendor && strlen(disk->vendor) > 0)
-            vendor_str = disk->vendor;
-        else
-            vendor_str = _("(Unknown)");
-
-        label = g_strdup(disk->model);
-
         icon = NULL;
 
         media_curr = disk->media;
@@ -245,8 +238,8 @@ gboolean __scan_udisks2_devices(void) {
         size = size_human_readable((gfloat) disk->size);
         ven_tag = vendor_list_ribbon(disk->vendors, params.fmt_opts);
 
-        udisks2_storage_list = h_strdup_cprintf("$%s$%s=%s|%s\n", udisks2_storage_list, devid, label, ven_tag ? ven_tag : "", size);
-        storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, label, icon);
+        udisks2_storage_list = h_strdup_cprintf("$%s$%s=%s|%s %s\n", udisks2_storage_list, devid, disk->block_dev, size, ven_tag ? ven_tag : "", disk->model);
+        storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, disk->model, icon);
         features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
 
         if (disk->ejectable) {
@@ -267,11 +260,13 @@ gboolean __scan_udisks2_devices(void) {
 
         moreinfo = g_strdup_printf(_("[Drive Information]\n"
                                    "Model=%s\n"),
-                                   label);
+                                   disk->model);
 
-        moreinfo = h_strdup_cprintf("$^$%s=%s\n",
-                                     moreinfo,
-                                     _("Vendor"), vendor_str);
+        if (disk->vendor && *disk->vendor) {
+            moreinfo = h_strdup_cprintf("$^$%s=%s\n",
+                                        moreinfo,
+                                        _("Vendor"), disk->vendor);
+        }
 
         moreinfo = h_strdup_cprintf(_("Revision=%s\n"
                                     "Block Device=%s\n"
@@ -391,7 +386,6 @@ gboolean __scan_udisks2_devices(void) {
         moreinfo_add_with_prefix("DEV", devid, moreinfo);
         g_free(devid);
         g_free(features);
-        g_free(label);
         g_free(media_comp);
         media_comp = NULL;
 
@@ -497,7 +491,7 @@ void __scan_scsi_devices(void)
                 }
 
                 gchar *devid = g_strdup_printf("SCSI%d", n);
-                scsi_storage_list = h_strdup_cprintf("$%s$%s=\n", scsi_storage_list, devid, model);
+                scsi_storage_list = h_strdup_cprintf("$%s$scsi%d=|%s\n", scsi_storage_list, devid, scsi_controller, model);
                 storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
 
                 gchar *strhash = g_strdup_printf(_("[Device Information]\n"
@@ -694,7 +688,7 @@ void __scan_ide_devices(void)
 
 	    gchar *devid = g_strdup_printf("IDE%d", n);
 
-	    ide_storage_list = h_strdup_cprintf("$%s$%s=\n", ide_storage_list, devid, model);
+	    ide_storage_list = h_strdup_cprintf("$%s$%hd%c=|%s\n", ide_storage_list, devid, iface, model);
 	    storage_icons =
 		h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons,
 				 devid, model, g_str_equal(media, "cdrom") ? "cdrom" : "hdd");

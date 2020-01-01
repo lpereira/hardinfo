@@ -76,6 +76,7 @@ struct InfoField {
 struct Info *info_new(void);
 
 struct InfoGroup *info_add_group(struct Info *info, const gchar *group_name, ...);
+void info_group_strip_extra(struct InfoGroup *group);
 
 void info_add_computed_group(struct Info *info, const gchar *name, const gchar *value);
 void info_add_computed_group_wo_extra(struct Info *info, const gchar *name, const gchar *value);

@@ -272,6 +272,44 @@ gchar *get_processor_name_and_desc(void)
     return nd;
 }
 
+gchar *get_storage_devices_simple(void)
+{
+    scan_storage(FALSE);
+
+    struct Info *info = info_unflatten(storage_list);
+    if (!info) {
+        return "";
+    }
+
+    int i, fi;
+    struct InfoGroup *group;
+    struct InfoField *field;
+    gchar *storage_devs = NULL, *tmp;
+    const gchar *dev_label, *model_wo_tags;
+
+    GRegex *regex;
+    regex = g_regex_new ("<.*>", 0, 0, NULL);
+
+    for (i = 0; i < info->groups->len; i++) {
+        group = &g_array_index(info->groups, struct InfoGroup, info->groups->len - 1);
+        if (!group)
+            continue;
+
+        info_group_strip_extra(group);
+        for (fi = 0; fi < group->fields->len; fi++) {
+            field = &g_array_index(group->fields, struct InfoField, fi);
+            if (!field->value)
+                continue;
+
+            tmp = g_regex_replace(regex, field->value, -1, 0, "", 0, NULL); // remove html tags
+            storage_devs = h_strdup_cprintf("%s\n", storage_devs, tmp);
+            g_free(tmp);
+        }
+    }
+    g_free(info);
+
+    return storage_devs;
+}
 
 gchar *get_storage_devices(void)
 {
@@ -515,6 +553,7 @@ ShellModuleMethod *hi_exported_methods(void)
 	{"getProcessorFrequency", get_processor_max_frequency},
 	{"getProcessorFrequencyDesc", get_processor_frequency_desc},
 	{"getStorageDevices", get_storage_devices},
+	{"getStorageDevicesSimple", get_storage_devices_simple},
 	{"getPrinters", get_printers},
 	{"getInputDevices", get_input_devices},
 	{"getMotherboard", get_motherboard},
@@ -745,7 +784,7 @@ gchar *callback_storage()
         "ColumnTitle$Value=%s\n"
         "ColumnTitle$Extra1=%s\n"
         "ShowColumnHeaders=true\n"
-        "ViewType=1\n%s", storage_list, _("Model"), _("Vendor"), _("Size"), storage_icons);
+        "ViewType=1\n%s", storage_list, _("Device"), _("Size"), _("Model"), storage_icons);
 }
 
 gchar *callback_input()
