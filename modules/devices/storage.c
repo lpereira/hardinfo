@@ -23,7 +23,57 @@
 #include "devices.h"
 #include "udisks2_util.h"
 
+#define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)");
+
 gchar *storage_icons = NULL;
+
+gchar *nvme_pci_sections(pcid *p) {
+    const gchar *vendor, *svendor, *product, *sproduct;
+
+    if (!p) return NULL;
+
+    vendor = UNKIFNULL_AC(p->vendor_id_str);
+    svendor = UNKIFNULL_AC(p->sub_vendor_id_str);
+    product = UNKIFNULL_AC(p->device_id_str);
+    sproduct = UNKIFNULL_AC(p->sub_device_id_str);
+
+    gchar *vendor_device_str;
+    if (p->vendor_id == p->sub_vendor_id && p->device_id == p->sub_device_id) {
+        vendor_device_str = g_strdup_printf("[%s]\n"
+                     /* Vendor */     "$^$%s=[%04x] %s\n"
+                     /* Device */     "%s=[%04x] %s\n",
+                    _("NVMe Controller"),
+                    _("Vendor"), p->vendor_id, vendor,
+                    _("Device"), p->device_id, product);
+    } else {
+        vendor_device_str = g_strdup_printf("[%s]\n"
+                     /* Vendor */     "$^$%s=[%04x] %s\n"
+                     /* Device */     "%s=[%04x] %s\n"
+                     /* Sub-device vendor */ "$^$%s=[%04x] %s\n"
+                     /* Sub-device */     "%s=[%04x] %s\n",
+                    _("NVMe Controller"),
+                    _("Vendor"), p->vendor_id, vendor,
+                    _("Device"), p->device_id, product,
+                    _("SVendor"), p->sub_vendor_id, svendor,
+                    _("SDevice"), p->sub_device_id, sproduct);
+    }
+
+    gchar *pcie_str;
+    if (p->pcie_width_curr) {
+        pcie_str = g_strdup_printf("[%s]\n"
+                     /* Width (max) */  "%s=x%u\n"
+                     /* Speed (max) */  "%s=%0.1f %s\n",
+                    _("PCI Express"),
+                    _("Maximum Link Width"), p->pcie_width_max,
+                    _("Maximum Link Speed"), p->pcie_speed_max, _("GT/s") );
+    } else
+        pcie_str = strdup("");
+
+    gchar *ret = g_strdup_printf("%s%s", vendor_device_str, pcie_str);
+    g_free(vendor_device_str);
+    g_free(pcie_str);
+    return ret;
+}
 
 gboolean __scan_udisks2_devices(void) {
     GSList *node, *drives;
@@ -31,8 +81,8 @@ gboolean __scan_udisks2_devices(void) {
     udiskp *part;
     udisksa *attrib;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
-    gchar *devid, *label, *size, *tmp = NULL, *media_comp = NULL;
-    const gchar *url, *vendor_str, *ven_tag, *media_label, *alabel, *icon, *media_curr = NULL;
+    gchar *devid, *label, *size, *tmp = NULL, *media_comp = NULL, *ven_tag = NULL;
+    const gchar *url, *vendor_str, *media_label, *alabel, *icon, *media_curr = NULL;
     int n = 0, i, j;
 
     // http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Drive.html#gdbus-property-org-freedesktop-UDisks2-Drive.MediaCompatibility
@@ -197,7 +247,7 @@ gboolean __scan_udisks2_devices(void) {
         }
 
         size = size_human_readable((gfloat) disk->size);
-        ven_tag = vendor_match_tag(vendor_str, params.fmt_opts);
+        ven_tag = vendor_list_ribbon(disk->vendors, params.fmt_opts);
 
         udisks2_storage_list = h_strdup_cprintf("$%s$%s=%s|%s\n", udisks2_storage_list, devid, label, ven_tag ? ven_tag : "", size);
         storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, label, icon);
@@ -253,6 +303,12 @@ gboolean __scan_udisks2_devices(void) {
         }
         if (disk->connection_bus && strlen(disk->connection_bus) > 0) {
             moreinfo = h_strdup_cprintf(_("Connection bus=%s\n"), moreinfo, disk->connection_bus);
+        }
+        if (disk->nvme_controller) {
+            gchar *nvme = nvme_pci_sections(disk->nvme_controller);
+            if (nvme)
+                moreinfo = h_strdup_cprintf("%s", moreinfo, nvme);
+            g_free(nvme);
         }
         if (disk->smart_enabled) {
             moreinfo = h_strdup_cprintf(_("[Self-monitoring (S.M.A.R.T.)]\n"
