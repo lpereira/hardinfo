@@ -633,6 +633,8 @@ name Corsair Components
     wikipedia Corsair Components
     ansi_color 0;30;43
     match_string Corsair
+    match_string_num_prefix Force MP
+    match_string_num_prefix Force LE
 
 name Genius
     url www.genius.ru
