@@ -1009,7 +1009,7 @@ gchar *hi_module_get_summary(void)
                     "Method=computer::getDisplaySummary\n"
                     "[%s]\n"
                     "Icon=hdd.png\n"
-                    "Method=devices::getStorageDevices\n"
+                    "Method=devices::getStorageDevicesSimple\n"
                     "[%s]\n"
                     "Icon=printer.png\n"
                     "Method=devices::getPrinters\n"

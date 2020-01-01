@@ -109,7 +109,7 @@ struct InfoField info_field_printf(const gchar *name, const gchar *format, ...)
     };
 }
 
-static void info_group_strip_extra(struct InfoGroup *group)
+void info_group_strip_extra(struct InfoGroup *group)
 {
     guint fi;
     char *val, *oldval;
