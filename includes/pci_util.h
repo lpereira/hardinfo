@@ -67,6 +67,8 @@ int pcid_list_count(pcid *);
 void pcid_list_free(pcid *);
 
 pcid *pci_get_device(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func);
+pcid *pci_get_device_str(const char *addy);
+
 void pcid_free(pcid *);
 
 char *pci_lookup_ids_vendor_str(uint32_t id);

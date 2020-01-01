@@ -322,6 +322,18 @@ static gboolean pci_get_device_lspci(uint32_t dom, uint32_t bus, uint32_t dev, u
     return FALSE;
 }
 
+pcid *pci_get_device_str(const char *addy) {
+    uint32_t dom, bus, dev, func, cls;
+    int ec;
+    if (addy) {
+        ec = sscanf(addy, "%x:%x:%x.%x", &dom, &bus, &dev, &func);
+        if (ec == 4) {
+            return pci_get_device(dom, bus, dev, func);
+        }
+    }
+    return NULL;
+}
+
 pcid *pci_get_device(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func) {
     pcid *s = pcid_new();
     gboolean ok = FALSE;
