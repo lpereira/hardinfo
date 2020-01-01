@@ -20,8 +20,7 @@
 #include <string.h>
 #include "hardinfo.h"
 #include "cpu_util.h"
-
-#include "cpubits.c"
+#include "cpubits.h"
 
 #define CPU_TOPO_NULL -9877
 
