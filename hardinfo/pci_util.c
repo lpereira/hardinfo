@@ -280,6 +280,7 @@ static gboolean pci_get_device_sysfs(uint32_t dom, uint32_t bus, uint32_t dev, u
     s->bus = bus;
     s->device = dev;
     s->function = func;
+    s->slot_str = s->slot_str ? s->slot_str : pci_address_str(dom, bus, dev, func);
     if (! _sysfs_bus_pci_read_hex(dom, bus, dev, func, "class", &s->class) )
         return FALSE;
     s->class >>= 8; /* TODO: find out why */
