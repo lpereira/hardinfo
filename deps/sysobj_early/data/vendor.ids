@@ -45,6 +45,13 @@ name Union Memory (Shenzhen)
     ansi_color 0;35;107
     match_string Union Memory (Shenzhen)
 
+name SSK Corporation (Shenzhen)
+    name_short SSK飚王
+    url www.ssk.cn
+    ansi_color 0;91;107
+    match_string SSK (Shenzhen)
+    match_string_case SSK
+
 name ASUSTeK Computer
     name_short ASUS
     url www.asus.com
