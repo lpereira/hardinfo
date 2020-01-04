@@ -75,6 +75,7 @@ struct InfoField {
 
 struct Info *info_new(void);
 
+void info_remove_group(struct Info *info, guint index);
 struct InfoGroup *info_add_group(struct Info *info, const gchar *group_name, ...);
 void info_group_strip_extra(struct InfoGroup *group);
 
