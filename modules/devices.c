@@ -887,6 +887,16 @@ gchar **hi_module_get_dependencies(void)
 
 const gchar *hi_note_func(gint entry)
 {
+    if (entry == ENTRY_PCI
+        || entry == ENTRY_GPU) {
+            const gchar *ids = find_pci_ids_file();
+            if (!ids) {
+                return g_strdup(_("A copy of <i><b>pci.ids</b></i> is not available on the system."));
+            }
+            if (ids && strstr(ids, ".min")) {
+                return g_strdup(_("A full <i><b>pci.ids</b></i> is not available on the system."));
+            }
+    }
     if (entry == ENTRY_RESOURCES) {
         if (root_required_for_resources()) {
             return g_strdup(_("Resource information requires superuser privileges"));

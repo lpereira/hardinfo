@@ -73,4 +73,6 @@ void pcid_free(pcid *);
 
 char *pci_lookup_ids_vendor_str(uint32_t id);
 
+const gchar *find_pci_ids_file();
+
 #endif

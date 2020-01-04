@@ -126,6 +126,7 @@ set(HARDINFO_RESOURCES
 	"deps/sysobj_early/data/arm.ids"
 	"deps/sysobj_early/data/edid.ids"
 	"deps/sysobj_early/data/ieee_oui.ids"
+	"deps/sysobj_early/data/pci.ids.min"
 )
 
 set(HARDINFO_MANPAGES
