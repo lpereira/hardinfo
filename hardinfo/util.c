@@ -1349,6 +1349,26 @@ gboolean g_strv_contains(const gchar * const * strv, const gchar *str) {
 }
 #endif
 
+gchar *hardinfo_clean_grpname(const gchar *v, int replacing) {
+    gchar *clean, *p;
+
+    p = clean = g_strdup(v);
+    while (*p != 0) {
+        switch(*p) {
+            case '[':
+                *p = '('; break;
+            case ']':
+                *p = ')'; break;
+            default:
+                break;
+        }
+        p++;
+    }
+    if (replacing)
+        g_free((gpointer)v);
+    return clean;
+}
+
 /* Hardinfo labels that have # are truncated and/or hidden.
  * Labels can't have $ because that is the delimiter in
  * moreinfo. */

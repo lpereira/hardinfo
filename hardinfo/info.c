@@ -431,6 +431,19 @@ gchar *info_flatten(struct Info *info)
     return g_string_free(values, FALSE);
 }
 
+void info_remove_group(struct Info *info, guint index)
+{
+    struct InfoGroup *grp;
+
+    if (index >= info->groups->len)
+        return;
+
+    grp = &g_array_index(info->groups, struct InfoGroup, index);
+    free_group_fields(grp);
+
+    g_array_remove_index(info->groups, index);
+}
+
 struct InfoField *info_find_field(struct Info *info, const gchar *tag, const gchar *name) {
     struct InfoGroup *group;
     struct InfoField *field;

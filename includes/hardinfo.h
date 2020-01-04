@@ -193,6 +193,7 @@ gboolean g_strv_contains(const gchar * const * strv, const gchar *str);
 gchar *
 gg_key_file_parse_string_as_value (const gchar *string, const gchar list_separator);
 
+gchar *hardinfo_clean_grpname(const gchar *v, int replacing);
 /* Hardinfo labels that have # are truncated and/or hidden.
  * Labels can't have $ because that is the delimiter in
  * moreinfo.
