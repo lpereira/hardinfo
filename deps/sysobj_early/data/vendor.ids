@@ -625,6 +625,8 @@ name Kingston Technology
 
 name Chicony
     url www.chicony.com.tw
+    wikipedia Chicony Electronics
+    ansi_color 0;36;107
     match_string Chicony
 
 name Phison Electronics Corporation
@@ -821,6 +823,7 @@ name Sapphire Technology
     url www.sapphiretech.com
     ansi_color 0;30;107
     match_string sapphire tech
+    match_string sapphire technology
 
 name Synopsys
     url www.synopsys.com
@@ -1002,6 +1005,17 @@ name Silicon Power
     wikipedia Silicon Power
     ansi_color 0;97;40
     match_string Silicon Power
+
+name Google
+    url www.google.com
+    ansi_color 0;34;107
+    match_string Google
+
+name RaidSonic Technology
+    name_short RaidSonic
+    url www.raidsonic.de
+    ansi_color 0;31;107
+    match_string ICY BOX
 
 #
 # BIOS manufacturers
