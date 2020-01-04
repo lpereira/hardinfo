@@ -23,6 +23,7 @@
 #include "util_ids.h"
 
 gchar *pci_ids_file = NULL;
+GTimer *pci_ids_timer = NULL;
 const gboolean nolspci = FALSE; /* true for testing */
 
 /* Two pieces of info still only from lspci:
@@ -33,13 +34,24 @@ const gboolean nolspci = FALSE; /* true for testing */
  * - /sys/bus/pci/devices/<addy>/driver is a symlink
  */
 
-static void find_pci_ids_file() {
-    if (pci_ids_file) return;
+const gchar *find_pci_ids_file() {
+    if (pci_ids_file) {
+        if (!strstr(pci_ids_file, ".min"))
+            return pci_ids_file;
+        if (g_timer_elapsed(pci_ids_timer, NULL) > 2.0) {
+            /* try again for the full version */
+            DEBUG("find_pci_ids_file() found only a \".min\" version, trying again...");
+            g_free(pci_ids_file);
+            pci_ids_file = NULL;
+        }
+    }
     char *file_search_order[] = {
         g_strdup("/usr/share/hwdata/pci.ids"),
         g_strdup("/usr/share/misc/pci.ids"),
         g_build_filename(g_get_user_config_dir(), "hardinfo", "pci.ids", NULL),
         g_build_filename(params.path_data, "pci.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "pci.ids.min", NULL),
+        g_build_filename(params.path_data, "pci.ids.min", NULL),
         NULL
     };
     int n;
@@ -49,6 +61,14 @@ static void find_pci_ids_file() {
         else
             g_free(file_search_order[n]);
     }
+    DEBUG("find_pci_ids_file() result: %s", pci_ids_file);
+    if (pci_ids_file) {
+        if (!pci_ids_timer)
+            pci_ids_timer = g_timer_new();
+        else
+            g_timer_reset(pci_ids_timer);
+    }
+    return pci_ids_file;
 }
 
 char *pci_lookup_ids_vendor_str(uint32_t id) {
@@ -57,10 +77,8 @@ char *pci_lookup_ids_vendor_str(uint32_t id) {
     ids_query_result result = {};
     gchar *qpath;
 
-    if (!pci_ids_file)
-        find_pci_ids_file();
-    if (!pci_ids_file)
-        return NULL;
+    if (!find_pci_ids_file())
+        return FALSE;
 
     qpath = g_strdup_printf("%04x", id);
     scan_ids_file(pci_ids_file, qpath, &result, -1);
@@ -77,9 +95,8 @@ static gboolean pci_lookup_ids(pcid *d) {
     ids_query_result result = {};
     gchar *qpath;
 
-    if (!pci_ids_file)
-        find_pci_ids_file();
-    if (!pci_ids_file) return FALSE;
+    if (!find_pci_ids_file())
+        return FALSE;
 
     /* lookup vendor, device, sub device */
     qpath = g_strdup_printf("%04x/%04x/%04x %04x",
