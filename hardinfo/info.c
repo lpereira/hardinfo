@@ -496,8 +496,8 @@ struct Info *info_unflatten(const gchar *str)
 
             for (k = 0; keys[k]; k++) {
                 struct InfoField field = {};
-                gchar *flags, *tag, *name;
-                key_get_components(keys[k], &flags, &tag, &name, NULL, NULL, TRUE);
+                gchar *flags, *tag, *name, *label, *dis;
+                key_get_components(keys[k], &flags, &tag, &name, &label, &dis, TRUE);
                 gchar *value = g_key_file_get_value(key_file, group_name, keys[k], NULL);
 
                 field.tag = tag;
@@ -511,8 +511,13 @@ struct Info *info_unflatten(const gchar *str)
                     field.highlight = TRUE;
                 if (key_value_has_vendor_string(flags))
                     field.value_has_vendor = TRUE;
+                if (key_label_is_escaped(flags)) {
+                    //TODO:...
+                }
 
                 g_free(flags);
+                g_free(label);
+                g_free(dis);
                 g_array_append_val(group.fields, field);
             }
             g_array_append_val(info->groups, group);

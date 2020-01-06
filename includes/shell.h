@@ -227,11 +227,16 @@ void		shell_set_remote_label(Shell *shell, gchar *label);
  *  ! = show details (moreinfo) in reports
  *  * = highlight/select this row
  *  ^ = value is/has a vendor string
+ *  @ = label is escaped with key_label_escape()
  */
 gboolean    key_is_flagged(const gchar *key);       /* has $[<flags>][<tag>]$ at the start of the key */
 gboolean    key_is_highlighted(const gchar *key);   /* flag '*' = select/highlight */
 gboolean    key_wants_details(const gchar *key);    /* flag '!' = report should include the "moreinfo" */
 gboolean key_value_has_vendor_string(const gchar *key); /* flag '^' = try and match the value to a vendor */
+#define key_label_escape(LBL) (gg_strescape(LBL, NULL, "=$#"))
+gboolean    key_label_is_escaped(const gchar *key); /* flag '@' = the label part is key_label_escape()-d and
+                                                     * needs to be g_strcompress()-ed before use.
+                                                     * key_get_components() will do this automatically for label. */
 gchar       *key_mi_tag(const gchar *key);          /* moreinfo lookup tag */
 const gchar *key_get_name(const gchar *key);        /* get the key's name, flagged or not */
 /*

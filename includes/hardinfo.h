@@ -213,6 +213,13 @@ gboolean hardinfo_spawn_command_line_sync(const gchar *command_line,
 /* a marker in text to point out problems, using markup where possible */
 const char *problem_marker();
 
+/* a version of g_strescape() that allows escaping extra characters.
+ * use with g_strcompress() as normal. */
+gchar *
+gg_strescape (const gchar *source,
+             const gchar *exceptions,
+             const gchar *extra);
+
 /* hinote helpers */
 #define note_max_len 512
 #define note_printf(note_buff, fmt, ...)  \
