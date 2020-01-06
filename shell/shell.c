@@ -2342,11 +2342,9 @@ void key_get_components(const gchar *key,
             *dis = g_strdup(lbp + 1);
 
         if (flags && *flags && strchr(*flags, '@')) {
-            printf("flag@: %s\n", *label);
             gchar *ol = *label;
             *label = g_strcompress(ol);
             g_free(ol);
-            printf("..... %s\n", *label);
         }
     }
 }
