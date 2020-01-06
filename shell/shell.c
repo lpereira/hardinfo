@@ -1319,14 +1319,16 @@ static void group_handle_normal(GKeyFile *key_file,
         struct UpdateTableItem *item = g_new0(struct UpdateTableItem, 1);
         item->is_iter = TRUE;
         item->iter = gtk_tree_iter_copy(&child);
-        gchar *flags, *tag, *name;
-        key_get_components(key, &flags, &tag, &name, NULL, NULL, TRUE);
+        gchar *flags, *tag, *name, *label;
+        key_get_components(key, &flags, &tag, &name, &label, NULL, TRUE);
 
         if (flags) {
-            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, name,
+            //TODO: name was formerly used where label is here. Check all uses
+            //for problems.
+            gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, label,
                                INFO_TREE_COL_DATA, flags, -1);
             g_hash_table_insert(update_tbl, tag, item);
-            g_free(name);
+            g_free(label);
         } else {
             gtk_tree_store_set(store, &child, INFO_TREE_COL_NAME, key,
                                INFO_TREE_COL_DATA, NULL, -1);
@@ -2255,8 +2257,18 @@ gboolean key_value_has_vendor_string(const gchar *key) {
     return FALSE;
 }
 
+gboolean key_label_is_escaped(const gchar *key) {
+    gchar *flags;
+    key_get_components(key, &flags, NULL, NULL, NULL, NULL, TRUE);
+    if (flags && strchr(flags, '@')) {
+        g_free(flags);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 gchar *key_mi_tag(const gchar *key) {
-    static char flag_list[] = "*!^";
+    static char flag_list[] = "*!^@";
     gchar *p = (gchar*)key, *l, *t;
 
     if (key_is_flagged(key)) {
@@ -2328,5 +2340,13 @@ void key_get_components(const gchar *key,
             *lbp = 0;
         if (lbp && dis)
             *dis = g_strdup(lbp + 1);
+
+        if (flags && *flags && strchr(*flags, '@')) {
+            printf("flag@: %s\n", *label);
+            gchar *ol = *label;
+            *label = g_strcompress(ol);
+            g_free(ol);
+            printf("..... %s\n", *label);
+        }
     }
 }

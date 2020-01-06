@@ -281,6 +281,7 @@ add_executable(hardinfo
 	hardinfo/socket.c
 	hardinfo/util.c
 	hardinfo/gg_key_file_parse_string_as_value.c
+	hardinfo/gg_strescape.c
 	hardinfo/problem_marker.c
 	hardinfo/hinote_util.c
 	hardinfo/vendor.c
@@ -320,6 +321,7 @@ add_executable(hardinfo
 	hardinfo/socket.c
 	hardinfo/util.c
 	hardinfo/gg_key_file_parse_string_as_value.c
+	hardinfo/gg_strescape.c
 	hardinfo/problem_marker.c
 	hardinfo/hinote_util.c
 	hardinfo/vendor.c
