@@ -120,7 +120,7 @@ void info_group_strip_extra(struct InfoGroup *group)
         if (field->value){
             val = strrchr(field->value, '|');
             if (val) {
-                oldval = field->value;
+                oldval = (gchar*)field->value;
                 field->value = strdup(val + 1);
                 g_free(oldval);
             }
@@ -292,7 +292,7 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
             struct InfoField *field = &g_array_index(group->fields, struct InfoField, i);
             gchar tmp_tag[256] = ""; /* for generated tag */
 
-            gboolean do_escape = TRUE;
+            gboolean do_escape = TRUE; /* refers to the value side only */
             if (field->value && strchr(field->value, '|') ) {
                 /* turning off escaping for values that may have columns */
                 do_escape = FALSE;
@@ -314,9 +314,19 @@ static void flatten_group(GString *output, const struct InfoGroup *group, guint 
                 snprintf(tmp_tag, 255, "ITEM%d-%d", group_count, i);
                 tp = tmp_tag;
             }
-
+            if (!field->label_is_escaped) {
+                if (strchr(field->name, '=')
+                    || strchr(field->name, '$')) {
+                        // TODO: what about # ?
+                        gchar *ofn = (gchar*)field->name;
+                        field->name = key_label_escape(ofn);
+                        g_free(ofn);
+                        field->label_is_escaped = TRUE;
+                }
+            }
             if (tagged || flagged || field->icon) {
-                g_string_append_printf(output, "$%s%s%s%s$",
+                g_string_append_printf(output, "$%s%s%s%s%s$",
+                    field->label_is_escaped ? "@" : "",
                     field->highlight ? "*" : "",
                     field->report_details ? "!" : "",
                     field->value_has_vendor ? "^" : "",
@@ -503,17 +513,16 @@ struct Info *info_unflatten(const gchar *str)
                 field.tag = tag;
                 field.name = name;
                 field.value = value;
-                field.free_value_on_flatten = TRUE;
-                field.free_name_on_flatten = TRUE;
+                if (key_label_is_escaped(flags))
+                    field.label_is_escaped = TRUE;
                 if (key_wants_details(flags))
                     field.report_details = TRUE;
                 if (key_is_highlighted(flags))
                     field.highlight = TRUE;
                 if (key_value_has_vendor_string(flags))
                     field.value_has_vendor = TRUE;
-                if (key_label_is_escaped(flags)) {
-                    //TODO:...
-                }
+                field.free_value_on_flatten = TRUE;
+                field.free_name_on_flatten = TRUE;
 
                 g_free(flags);
                 g_free(label);
