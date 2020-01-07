@@ -65,6 +65,7 @@ struct InfoField {
     gboolean highlight;      /* select in GUI, highlight in report (flag:*) */
     gboolean report_details; /* show moreinfo() in report (flag:!) */
     gboolean value_has_vendor; /* (flag:^) */
+    gboolean label_is_escaped;  /* if the label will need g_strcompress() before display use */
 
     gboolean free_name_on_flatten;
     gboolean free_value_on_flatten;
