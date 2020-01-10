@@ -64,9 +64,9 @@ void pcid_free(pcid *);
 typedef GSList* pcid_list;
 /* examples:
  * to get all pci devices:
- *    pcid *list = pci_get_device_list(0, 0);
+ *    pcid_list list = pci_get_device_list(0, 0);
  * to get all display controllers:
- *    pcid *list = pci_get_device_list(0x300, 0x3ff);
+ *    pcid_list list = pci_get_device_list(0x300, 0x3ff);
  */
 pcid_list pci_get_device_list(uint32_t class_min, uint32_t class_max);
 #define pcid_list_count(l) g_slist_length(l);
