@@ -151,6 +151,11 @@ static gboolean pci_lookup_ids(pcid *d) {
     return ret;
 }
 
+gint pcid_cmp_by_addy(const pcid* a, const pcid* b) {
+    if (!a || !b) return (!!a - !!b);
+    return g_strcmp0(a->slot_str, b->slot_str);
+}
+
 void pcid_free(pcid *s) {
     if (s) {
         g_free(s->slot_str);
