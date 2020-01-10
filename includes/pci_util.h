@@ -58,6 +58,7 @@ typedef struct pcid {
 pcid *pci_get_device(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func);
 pcid *pci_get_device_str(const char *addy);
 #define pcid_new() g_new0(pcid, 1)
+gint pcid_cmp_by_addy(const pcid* a, const pcid* b);
 void pcid_free(pcid *);
 
 typedef GSList* pcid_list;

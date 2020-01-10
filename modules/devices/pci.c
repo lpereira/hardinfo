@@ -177,6 +177,7 @@ void scan_pci_do(void) {
     gchar *pci_icons = g_strdup("");
 
     pcid_list list = pci_get_device_list(0,0);
+    list = g_slist_sort(list, pcid_cmp_by_addy);
     GSList *l = list;
 
     int c = 0;
