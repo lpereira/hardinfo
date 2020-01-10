@@ -397,15 +397,15 @@ gpud *gpu_get_device_list() {
     gpud *list = NULL;
 
 /* Can we just ask DRM someway? ... */
+    /* TODO: yes. /sys/class/drm/card* */
 
 /* Try PCI ... */
-    pcid *pci_list = pci_get_device_list(0x300,0x3ff);
-    pcid *curr = pci_list;
+    pcid_list pci_list = pci_get_device_list(0x300,0x3ff);
+    GSList *l = pci_list;
 
-    int c = pcid_list_count(pci_list);
-
-    if (c > 0) {
-        while(curr) {
+    if (l) {
+        while(l) {
+            pcid *curr = (pcid*)l->data;
             char *pci_loc = NULL;
             gpud *new_gpu = gpud_new();
             new_gpu->pci_dev = curr;
@@ -457,10 +457,11 @@ gpud *gpu_get_device_list() {
                 gpud_list_append(list, new_gpu);
 
             free(pci_loc);
-            curr=curr->next;
+            l=l->next;
         }
 
         /* don't pcid_list_free(pci_list); They will be freed by gpud_free() */
+        g_slist_free(pci_list); /* just the linking data */
         return list;
     }
 

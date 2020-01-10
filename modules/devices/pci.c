@@ -176,19 +176,17 @@ void scan_pci_do(void) {
 
     gchar *pci_icons = g_strdup("");
 
-    pcid *list = pci_get_device_list(0,0);
-    pcid *curr = list;
+    pcid_list list = pci_get_device_list(0,0);
+    GSList *l = list;
 
-    int c = pcid_list_count(list);
-
-    if (c > 0) {
-        while(curr) {
-            pci_icons = _pci_dev(curr, pci_icons);
-            curr=curr->next;
-        }
-
-        pcid_list_free(list);
+    int c = 0;
+    while(l) {
+        pcid *curr = (pcid*)l->data;
+        pci_icons = _pci_dev(curr, pci_icons);
+        c++;
+        l=l->next;
     }
+    pcid_list_free(list);
 
     if (c) {
         pci_list = g_strconcat(pci_list, "[$ShellParam$]\n", "ViewType=1\n", pci_icons, NULL);

@@ -151,10 +151,6 @@ static gboolean pci_lookup_ids(pcid *d) {
     return ret;
 }
 
-pcid *pcid_new() {
-    return g_new0(pcid, 1);
-}
-
 void pcid_free(pcid *s) {
     if (s) {
         g_free(s->slot_str);
@@ -167,36 +163,6 @@ void pcid_free(pcid *s) {
         g_free(s->driver_list);
         g_free(s);
     }
-}
-
-void pcid_list_free(pcid *s) {
-    pcid *n;
-    while(s != NULL) {
-        n = s->next;
-        pcid_free(s);
-        s = n;
-    }
-}
-
-/* returns number of items after append */
-static int pcid_list_append(pcid *l, pcid *n) {
-    int c = 0;
-    while(l != NULL) {
-        c++;
-        if (l->next == NULL) {
-            if (n != NULL) {
-                l->next = n;
-                c++;
-            }
-            break;
-        }
-        l = l->next;
-    }
-    return c;
-}
-
-int pcid_list_count(pcid *s) {
-    return pcid_list_append(s, NULL);
 }
 
 static char *lspci_line_value(char *line, const char *prefix) {
@@ -408,11 +374,12 @@ pcid *pci_get_device(uint32_t dom, uint32_t bus, uint32_t dev, uint32_t func) {
     return s;
 }
 
-static pcid *pci_get_device_list_lspci(uint32_t class_min, uint32_t class_max) {
+static pcid_list pci_get_device_list_lspci(uint32_t class_min, uint32_t class_max) {
     if (nolspci) return NULL;
     gboolean spawned;
     gchar *out, *err, *p, *next_nl;
-    pcid *head = NULL, *nd;
+    pcid_list dl = NULL;
+    pcid *nd;
     uint32_t dom, bus, dev, func, cls;
     int ec;
 
@@ -429,12 +396,7 @@ static pcid *pci_get_device_list_lspci(uint32_t class_min, uint32_t class_max) {
                 if (cls >= class_min && cls <= class_max) {
                     nd = pci_get_device(dom, bus, dev, func);
                     pci_fill_details(nd);
-
-                    if (head == NULL) {
-                        head = nd;
-                    } else {
-                        pcid_list_append(head, nd);
-                    }
+                    dl = g_slist_append(dl, nd);
                 }
             }
             p = next_nl + 1;
@@ -442,11 +404,12 @@ static pcid *pci_get_device_list_lspci(uint32_t class_min, uint32_t class_max) {
         g_free(out);
         g_free(err);
     }
-    return head;
+    return dl;
 }
 
-static pcid *pci_get_device_list_sysfs(uint32_t class_min, uint32_t class_max) {
-    pcid *head = NULL, *nd;
+static pcid_list pci_get_device_list_sysfs(uint32_t class_min, uint32_t class_max) {
+    pcid_list dl = NULL;
+    pcid *nd;
     uint32_t dom, bus, dev, func, cls;
     int ec;
 
@@ -466,11 +429,7 @@ static pcid *pci_get_device_list_sysfs(uint32_t class_min, uint32_t class_max) {
                 if (cls >= class_min && cls <= class_max) {
                     nd = pci_get_device(dom, bus, dev, func);
                     pci_fill_details(nd);
-                    if (head == NULL) {
-                        head = nd;
-                    } else {
-                        pcid_list_append(head, nd);
-                    }
+                    dl = g_slist_append(dl, nd);
                 }
             }
             g_free(cstr);
@@ -478,14 +437,14 @@ static pcid *pci_get_device_list_sysfs(uint32_t class_min, uint32_t class_max) {
         }
     }
     g_dir_close(d);
-    return head;
+    return dl;
 }
 
-pcid *pci_get_device_list(uint32_t class_min, uint32_t class_max) {
-    pcid *ret = NULL;
-    ret = pci_get_device_list_sysfs(class_min, class_max);
-    if (!ret)
-        ret = pci_get_device_list_lspci(class_min, class_max);
-    return ret;
+pcid_list pci_get_device_list(uint32_t class_min, uint32_t class_max) {
+    pcid_list dl = NULL;
+    dl = pci_get_device_list_sysfs(class_min, class_max);
+    if (!dl)
+        dl = pci_get_device_list_lspci(class_min, class_max);
+    return dl;
 }
 
