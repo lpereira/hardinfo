@@ -25,6 +25,11 @@
 #include <stdint.h>  /* for *int*_t types */
 #include <glib.h>
 
+// TODO: find a better fix, I've seen a few EDID strings with bogus chars
+#if !GLIB_CHECK_VERSION(2,52,0)
+#define g_utf8_make_valid(S,L) g_strdup(S)
+#endif
+
 typedef struct _edid edid;
 
 typedef struct {
