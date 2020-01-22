@@ -31,6 +31,17 @@
 
 #include "util_edid_svd_table.c"
 
+// TODO: find a better fix, I've seen a few EDID strings with bogus chars
+#if !GLIB_CHECK_VERSION(2,52,0)
+__attribute__ ((weak))
+gchar *g_utf8_make_valid(const gchar *s, const gssize l) {
+    if (l < 0)
+        return g_strdup(s);
+    else
+        return g_strndup(s, (gsize)l);
+}
+#endif
+
 #define NOMASK (~0U)
 #define BFMASK(LSB, MASK) (MASK << LSB)
 
