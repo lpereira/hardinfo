@@ -544,8 +544,8 @@ gchar *callback_summary(void)
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
     info_add_group(info, _("Computer"),
-        info_field(_("Processor"),
-            module_call_method("devices::getProcessorName")),
+        info_field_printf(_("Processor"),
+            idle_free(module_call_method("devices::getProcessorNameAndDesc"))),
         info_field_update(_("Memory"), 1000),
         info_field_printf(_("Machine Type"), "%s",
             computer_get_virtualization()),
@@ -557,8 +557,10 @@ gchar *callback_summary(void)
     info_add_group(info, _("Display"),
         info_field_printf(_("Resolution"), _(/* label for resolution */ "%dx%d pixels"),
             computer->display->width, computer->display->height),
-        info_field(_("OpenGL Renderer"), THISORUNK(computer->display->xi->glx->ogl_renderer) ),
-        info_field(_("Session Display Server"), THISORUNK(computer->display->display_server) ),
+        info_field(_("Display Adapter"),
+            idle_free(module_call_method("devices::getGPUList"))),
+        info_field(_("OpenGL Renderer"), THISORUNK(computer->display->xi->glx->ogl_renderer)),
+        info_field(_("Session Display Server"), THISORUNK(computer->display->display_server)),
         info_field_last());
 
     info_add_computed_group(info, _("Audio Devices"),
