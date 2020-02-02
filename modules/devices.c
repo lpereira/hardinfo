@@ -750,8 +750,7 @@ gchar *callback_gpu()
 
 gchar *callback_sensors()
 {
-    return g_strdup_printf("[Sensors]\n"
-                           "%s\n"
+    return g_strdup_printf("%s\n"
                            "[$ShellParam$]\n"
                            "ViewType=2\n"
                            "LoadGraphSuffix=\n"

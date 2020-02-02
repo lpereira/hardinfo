@@ -134,10 +134,10 @@ static void add_sensor(const char *type,
                        const char *unit) {
     char key[64];
 
-    sensors = h_strdup_cprintf("%s/%s=%.2f%s|%s\n", sensors,
-        parent, sensor, value, unit, type);
-
     snprintf(key, sizeof(key), "%s/%s", parent, sensor);
+    sensors = h_strdup_cprintf("$%s$%s=%.2f%s|%s\n", sensors,
+        key, sensor, value, unit, type);
+
     moreinfo_add_with_prefix("DEV", key, g_strdup_printf("%.2f%s", value, unit));
 
     lginterval = h_strdup_cprintf("UpdateInterval$%s=1000\n", lginterval, key);
@@ -287,6 +287,7 @@ static void read_sensors_hwmon(void) {
     int hwmon, count, min, max;
     gchar *path_hwmon, *tmp, *devname, *name, *mon, *key;
     const char **prefix, *entry;
+    gboolean first_sensor;
     GDir *dir;
     GRegex *regex;
     GMatchInfo *match_info;
@@ -303,6 +304,8 @@ static void read_sensors_hwmon(void) {
             if (hwmon_first_run) {
                 read_sensor_labels(devname);
             }
+
+            first_sensor = TRUE;
 
             dir = g_dir_open(path_hwmon, 0, NULL);
             if (!dir)
@@ -360,6 +363,11 @@ static void read_sensors_hwmon(void) {
                         float adjusted = adjust_sensor(key,
                             atof(tmp) / sensor->adjust_ratio);
 
+                        if (first_sensor) {
+                            sensors = h_strdup_cprintf("[%s]\n", sensors, devname);
+                            first_sensor = FALSE;
+                        }
+
                         add_sensor(sensor->friendly_name,
                                    name,
                                    devname,
@@ -387,6 +395,7 @@ static void read_sensors_hwmon(void) {
 
 static void read_sensors_acpi(void) {
     const gchar *path_tz = "/proc/acpi/thermal_zone";
+    gboolean first = TRUE;
 
     if (g_file_test(path_tz, G_FILE_TEST_EXISTS)) {
         GDir *tz;
@@ -401,6 +410,11 @@ static void read_sensors_acpi(void) {
 
                 if (g_file_get_contents(path, &contents, NULL, NULL)) {
                     int temperature;
+
+                    if (first) {
+                        sensors = h_strdup_cprintf("[Thermal zones]\n", sensors);
+                        first = FALSE;
+                    }
 
                     sscanf(contents, "temperature: %d C", &temperature);
 
@@ -419,6 +433,7 @@ static void read_sensors_acpi(void) {
 
 static void read_sensors_sys_thermal(void) {
     const gchar *path_tz = "/sys/class/thermal";
+    gboolean first = TRUE;
 
     if (g_file_test(path_tz, G_FILE_TEST_EXISTS)) {
         GDir *tz;
@@ -433,6 +448,11 @@ static void read_sensors_sys_thermal(void) {
 
                 if (g_file_get_contents(path, &contents, NULL, NULL)) {
                     int temperature;
+
+                    if (first) {
+                        sensors = h_strdup_cprintf("[Thermal]\n", sensors);
+                        first = FALSE;
+                    }
 
                     sscanf(contents, "%d", &temperature);
 
@@ -458,13 +478,15 @@ static void read_sensors_omnibook(void) {
     if (g_file_get_contents(path_ob, &contents, NULL, NULL)) {
         int temperature;
 
+        sensors = h_strdup_cprintf("[Omnibook]\n", sensors);
+
         sscanf(contents, "CPU temperature: %d C", &temperature);
 
         add_sensor("Temperature",
                    "CPU",
                    "omnibook",
                    temperature,
-                   "\302\260C\n");
+                   "\302\260C");
 
         g_free(contents);
     }
@@ -477,6 +499,8 @@ static void read_sensors_hddtemp(void) {
 
     if (!(s = sock_connect("127.0.0.1", 7634)))
         return;
+
+    sensors = h_strdup_cprintf("[Hddtemp]\n", sensors);
 
     while (!len)
         len = sock_read(s, buffer, sizeof(buffer));
@@ -517,6 +541,11 @@ void read_sensors_udisks2(void) {
     udiskt *disk;
 
     temps = get_udisks2_temps();
+    if (temps == NULL)
+        return;
+
+    sensors = h_strdup_cprintf("[Udisks2]\n", sensors);
+
     for (node = temps; node != NULL; node = node->next) {
         disk = (udiskt *)node->data;
         add_sensor("Hard Drive",
