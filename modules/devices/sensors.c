@@ -25,6 +25,7 @@
 #include "udisks2_util.h"
 
 gchar *sensors = NULL;
+gchar *sensor_icons = NULL;
 GHashTable *sensor_compute = NULL;
 GHashTable *sensor_labels = NULL;
 gboolean hwmon_first_run = TRUE;
@@ -131,12 +132,18 @@ static void add_sensor(const char *type,
                        const char *sensor,
                        const char *parent,
                        double value,
-                       const char *unit) {
+                       const char *unit,
+                       const char *icon) {
     char key[64];
 
     snprintf(key, sizeof(key), "%s/%s", parent, sensor);
     sensors = h_strdup_cprintf("$%s$%s=%.2f%s|%s\n", sensors,
         key, sensor, value, unit, type);
+
+    if (icon != NULL) {
+        sensor_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", sensor_icons,
+            key, sensor, icon);
+    }
 
     moreinfo_add_with_prefix("DEV", key, g_strdup_printf("%.2f%s", value, unit));
 
@@ -206,6 +213,7 @@ struct HwmonSensor {
     const char *key_format;
     const char *unit;
     const float adjust_ratio;
+    const char *icon;
 };
 
 static const struct HwmonSensor hwmon_sensors[] = {
@@ -216,7 +224,8 @@ static const struct HwmonSensor hwmon_sensors[] = {
         "%s/fan%d_label",
         "fan%d",
         "RPM",
-        1.0
+        1.0,
+        "fan"
     },
     {
         "Temperature",
@@ -225,7 +234,8 @@ static const struct HwmonSensor hwmon_sensors[] = {
         "%s/temp%d_label",
         "temp%d",
         "\302\260C",
-        1000.0
+        1000.0,
+        "therm"
     },
     {
         "Voltage",
@@ -234,7 +244,8 @@ static const struct HwmonSensor hwmon_sensors[] = {
         "%s/in%d_label",
         "in%d",
         "V",
-        1000.0
+        1000.0,
+        "bolt"
     },
     {
         "Current",
@@ -243,7 +254,8 @@ static const struct HwmonSensor hwmon_sensors[] = {
         "%s/curr%d_label",
         "curr%d",
         "A",
-        1000.0
+        1000.0,
+        "bolt"
     },
     {
         "Power",
@@ -252,7 +264,8 @@ static const struct HwmonSensor hwmon_sensors[] = {
         "%s/power%d_label",
         "power%d",
         "W",
-        1000000.0
+        1000000.0,
+        "bolt"
     },
     {
         "Voltage",
@@ -261,7 +274,8 @@ static const struct HwmonSensor hwmon_sensors[] = {
         NULL,
         "cpu%d_vid",
         "V",
-        1000.0
+        1000.0,
+        "bolt"
     },
     { }
 };
@@ -372,7 +386,8 @@ static void read_sensors_hwmon(void) {
                                    name,
                                    devname,
                                    adjusted,
-                                   sensor->unit);
+                                   sensor->unit,
+                                   sensor->icon);
                     }
 
                     g_free(tmp);
@@ -422,7 +437,8 @@ static void read_sensors_acpi(void) {
                                entry,
                                "ACPI Thermal Zone",
                                temperature,
-                               "\302\260C");
+                               "\302\260C",
+                               "therm");
                 }
             }
 
@@ -460,7 +476,8 @@ static void read_sensors_sys_thermal(void) {
                                entry,
                                "thermal",
                                temperature / 1000.0,
-                               "\302\260C");
+                               "\302\260C",
+                               "therm");
 
                     g_free(contents);
                 }
@@ -486,7 +503,8 @@ static void read_sensors_omnibook(void) {
                    "CPU",
                    "omnibook",
                    temperature,
-                   "\302\260C");
+                   "\302\260C",
+                   "therm");
 
         g_free(contents);
     }
@@ -526,7 +544,8 @@ static void read_sensors_hddtemp(void) {
                        fields[1],
                        "hddtemp",
                        atoi(fields[2]),
-                       unit);
+                       unit,
+                       "therm");
 
             g_strfreev(fields);
         }
@@ -552,7 +571,8 @@ void read_sensors_udisks2(void) {
                    disk->drive,
                    "udisks2",
                    disk->temperature,
-                   "\302\260C");
+                   "\302\260C",
+                   "therm");
         udiskt_free(disk);
     }
     g_slist_free(temps);
@@ -560,7 +580,9 @@ void read_sensors_udisks2(void) {
 
 void scan_sensors_do(void) {
     g_free(sensors);
+    g_free(sensor_icons);
     sensors = g_strdup("");
+    sensor_icons = g_strdup("");
 
     g_free(lginterval);
     lginterval = g_strdup("");
