@@ -759,10 +759,12 @@ gchar *callback_sensors()
                            "ColumnTitle$Extra1=%s\n"
                            "ShowColumnHeaders=true\n"
                            "RescanInterval=5000\n"
+                           "%s\n"
                            "%s",
                            sensors,
                            _("Sensor"), _("Value"), _("Type"), /* column labels */
-                           lginterval);
+                           lginterval,
+                           sensor_icons);
 }
 
 gchar *callback_printers()
