@@ -218,12 +218,12 @@ struct HwmonSensor {
 
 static const struct HwmonSensor hwmon_sensors[] = {
     {
-        "Fan",
+        "Fan Speed",
         "^fan([0-9]+)_input$",
         "%s/fan%d_input",
         "%s/fan%d_label",
         "fan%d",
-        "RPM",
+        " RPM",
         1.0,
         "fan"
     },
@@ -253,7 +253,7 @@ static const struct HwmonSensor hwmon_sensors[] = {
         "%s/curr%d_input",
         "%s/curr%d_label",
         "curr%d",
-        "A",
+        " A",
         1000.0,
         "bolt"
     },
@@ -263,17 +263,17 @@ static const struct HwmonSensor hwmon_sensors[] = {
         "%s/power%d_input",
         "%s/power%d_label",
         "power%d",
-        "W",
+        " W",
         1000000.0,
         "bolt"
     },
     {
-        "Voltage",
+        "CPU Voltage",
         "^cpu([0-9]+)_vid$",
         "%s/cpu%d_vid",
         NULL,
         "cpu%d_vid",
-        "V",
+        " V",
         1000.0,
         "bolt"
     },
@@ -540,7 +540,7 @@ static void read_sensors_hddtemp(void) {
              */
             const gchar *unit = strcmp(fields[3], "C")
                 ? "\302\260C" : "\302\260F";
-            add_sensor("Hard Drive",
+            add_sensor("Drive Temperature",
                        fields[1],
                        "hddtemp",
                        atoi(fields[2]),
@@ -567,7 +567,7 @@ void read_sensors_udisks2(void) {
 
     for (node = temps; node != NULL; node = node->next) {
         disk = (udiskt *)node->data;
-        add_sensor("Hard Drive",
+        add_sensor("Drive Temperature",
                    disk->drive,
                    "udisks2",
                    disk->temperature,
