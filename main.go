@@ -124,7 +124,7 @@ func handleGet(database *sql.DB, updateCacheRequest chan string, w http.Response
 	var timeStamp int64
 	err = stmt.QueryRow(req.URL.Path).Scan(&blob, &timeStamp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, req.URL.Path+": file not found", http.StatusNotFound)
 		return
 	}
 
