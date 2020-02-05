@@ -81,7 +81,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		data_from_super_user, timestamp)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'))`)
 	if err != nil {
-		http.Error(w, "Couldn't prepare statement: " + err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Couldn't prepare statement: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -105,7 +105,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		bench.PointerBits,
 		bench.DataFromSuperUser)
 	if err != nil {
-		http.Error(w, "Could not publish benchmark result: " + err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Could not publish benchmark result: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
