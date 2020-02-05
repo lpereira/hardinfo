@@ -78,11 +78,11 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 	}
 
 	stmt, err := database.Prepare(`INSERT INTO benchmark_result (benchmark_type,
-		benchmark_result, machine_id, board, cpu_name, cpu_desc, cpu_config,
+		benchmark_result, extra_info, machine_id, board, cpu_name, cpu_desc, cpu_config,
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, machine_data_version, pointer_bits,
 		data_from_super_user, timestamp)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'))`)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'))`)
 	if err != nil {
 		http.Error(w, "Couldn't prepare statement: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -91,6 +91,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 	_, err = stmt.Exec(
 		bench.BenchmarkType,
 		bench.BenchmarkResult,
+		bench.ExtraInfo,
 		bench.MachineId,
 		bench.Board,
 		bench.CpuName,
@@ -187,7 +188,7 @@ func fetchUrlIntoCache(database *sql.DB, URL string) error {
 func updateBenchmarkJsonCache(database *sql.DB, benchmarkTypes []string) error {
 	resultMap := make(map[string][]BenchmarkResult)
 
-	stmt, err := database.Prepare("SELECT machine_id, benchmark_result, board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer, gpu_desc, machine_data_Version, pointer_bits, data_from_super_user FROM benchmark_result WHERE benchmark_type=? ORDER BY RANDOM() LIMIT 100")
+	stmt, err := database.Prepare("SELECT extra_info, machine_id, benchmark_result, board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer, gpu_desc, machine_data_Version, pointer_bits, data_from_super_user FROM benchmark_result WHERE benchmark_type=? ORDER BY RANDOM() LIMIT 100")
 	if err != nil {
 		return err
 	}
@@ -204,6 +205,7 @@ func updateBenchmarkJsonCache(database *sql.DB, benchmarkTypes []string) error {
 			var result BenchmarkResult
 
 			err = rows.Scan(
+				&result.ExtraInfo,
 				&result.MachineId,
 				&result.BenchmarkResult,
 				&result.Board,
