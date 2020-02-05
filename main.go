@@ -188,7 +188,15 @@ func fetchUrlIntoCache(database *sql.DB, URL string) error {
 func updateBenchmarkJsonCache(database *sql.DB, benchmarkTypes []string) error {
 	resultMap := make(map[string][]BenchmarkResult)
 
-	stmt, err := database.Prepare("SELECT extra_info, machine_id, benchmark_result, board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer, gpu_desc, machine_data_Version, pointer_bits, data_from_super_user FROM benchmark_result WHERE benchmark_type=? ORDER BY RANDOM() LIMIT 100")
+	stmt, err := database.Prepare(`
+		SELECT extra_info, machine_id, benchmark_result,
+			board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads,
+			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
+			gpu_desc, machine_data_Version, pointer_bits, data_from_super_user
+		FROM benchmark_result
+		WHERE benchmark_type=?
+		ORDER BY RANDOM()
+		LIMIT 100`)
 	if err != nil {
 		return err
 	}
