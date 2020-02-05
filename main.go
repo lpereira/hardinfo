@@ -14,10 +14,10 @@ import (
 )
 
 type BenchmarkResult struct {
-	BenchmarkType string
-
-	MachineId       string
-	BenchmarkResult float64
+	MachineId          string
+	BenchmarkResult    float64
+	MachineDataVersion int
+	ExtraInfo          string
 
 	Board      string
 	CpuName    string
@@ -34,10 +34,13 @@ type BenchmarkResult struct {
 	OpenGlRenderer string
 	GpuDesc        string
 
-	MachineDataVersion int
-
 	PointerBits       int
 	DataFromSuperUser bool
+}
+
+type BenchmarkResultInput struct {
+	BenchmarkResult
+	BenchmarkType string
 }
 
 func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
@@ -53,7 +56,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var bench BenchmarkResult
+	var bench BenchmarkResultInput
 	if err = json.Unmarshal(body, &bench); err != nil {
 		http.Error(w, "Error while parsing JSON: "+err.Error(), http.StatusBadRequest)
 		return
