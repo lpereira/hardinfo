@@ -286,23 +286,35 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 	return err
 }
 
+func connectDB() (database *sql.DB, err error) {
+	if database, err = sql.Open("sqlite3", "./hardinfo-database.db"); err != nil {
+		return nil, err
+	}
+
+	if err := database.Ping(); err != nil {
+		return nil, err
+	}
+
+	return database, nil
+}
+
 func main() {
 	var database *sql.DB
-	var err error
 
-	if database, err = sql.Open("sqlite3", "./hardinfo-database.db"); err != nil {
-		log.Fatal(err)
+	database, err := connectDB()
+	if err != nil {
+		log.Fatalf("Could not connect to database: %s", err)
 	}
+
 	defer database.Close()
-	if err := database.Ping(); err != nil {
-		log.Fatal(err)
-	}
 
 	updateCacheRequest := make(chan string)
 
 	go func() {
 		onceEveryDay := time.NewTicker(time.Hour * 24)
 		lastUpdate := make(map[string]time.Time)
+
+		var err error
 
 		for {
 			select {
