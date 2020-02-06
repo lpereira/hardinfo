@@ -56,27 +56,6 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var bench BenchmarkResultInput
-	if err = json.Unmarshal(body, &bench); err != nil {
-		http.Error(w, "Error while parsing JSON: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if bench.BenchmarkType == "" {
-		http.Error(w, "BenchmarkType not provided", http.StatusBadRequest)
-		return
-	}
-
-	if bench.PointerBits != 32 && bench.PointerBits != 64 {
-		http.Error(w, "Unknown PointerBits value", http.StatusBadRequest)
-		return
-	}
-
-	if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 {
-		http.Error(w, "Number of CPUs, cores, or threads is invalid", http.StatusBadRequest)
-		return
-	}
-
 	stmt, err := database.Prepare(`INSERT INTO benchmark_result (benchmark_type,
 		benchmark_result, extra_info, machine_id, board, cpu_name, cpu_desc, cpu_config,
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
@@ -88,32 +67,57 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err = stmt.Exec(
-		bench.BenchmarkType,
-		bench.BenchmarkResult,
-		bench.ExtraInfo,
-		bench.MachineId,
-		bench.Board,
-		bench.CpuName,
-		bench.CpuDesc,
-		bench.CpuConfig,
-		bench.NumCpus,
-		bench.NumCores,
-		bench.NumThreads,
-		bench.MemoryInKiB,
-		bench.PhysicalMemoryInMiB,
-		bench.MemoryTypes,
-		bench.OpenGlRenderer,
-		bench.GpuDesc,
-		bench.MachineDataVersion,
-		bench.PointerBits,
-		bench.DataFromSuperUser)
-	if err != nil {
-		http.Error(w, "Could not publish benchmark result: "+err.Error(), http.StatusInternalServerError)
+	defer stmt.Close()
+
+	var benches []BenchmarkResultInput
+	if err = json.Unmarshal(body, &benches); err != nil {
+		http.Error(w, "Error while parsing JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	w.Write([]byte("Benchmark " + bench.BenchmarkType + " updated"))
+	for _, bench := range benches {
+		if bench.BenchmarkType == "" {
+			http.Error(w, "BenchmarkType not provided", http.StatusBadRequest)
+			return
+		}
+
+		if bench.PointerBits != 32 && bench.PointerBits != 64 {
+			http.Error(w, "Unknown PointerBits value", http.StatusBadRequest)
+			return
+		}
+
+		if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 {
+			http.Error(w, "Number of CPUs, cores, or threads is invalid", http.StatusBadRequest)
+			return
+		}
+
+		_, err = stmt.Exec(
+			bench.BenchmarkType,
+			bench.BenchmarkResult.BenchmarkResult,
+			bench.ExtraInfo,
+			bench.MachineId,
+			bench.Board,
+			bench.CpuName,
+			bench.CpuDesc,
+			bench.CpuConfig,
+			bench.NumCpus,
+			bench.NumCores,
+			bench.NumThreads,
+			bench.MemoryInKiB,
+			bench.PhysicalMemoryInMiB,
+			bench.MemoryTypes,
+			bench.OpenGlRenderer,
+			bench.GpuDesc,
+			bench.MachineDataVersion,
+			bench.PointerBits,
+			bench.DataFromSuperUser)
+		if err != nil {
+			http.Error(w, "Could not publish benchmark result: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Write([]byte("Benchmark results for " + bench.BenchmarkType + " published\n"))
+	}
 }
 
 func handleGet(database *sql.DB, updateCacheRequest chan string, w http.ResponseWriter, req *http.Request) {
