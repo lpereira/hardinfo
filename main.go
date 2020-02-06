@@ -45,7 +45,7 @@ type BenchmarkResultInput struct {
 
 func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 	if req.URL.Path != "/benchmark.json" {
-		http.Error(w, "Can't POST to "+req.URL.Path, http.StatusBadRequest)
+		http.Error(w, "Can't POST to "+req.URL.Path, http.StatusForbidden)
 		return
 	}
 
