@@ -334,10 +334,7 @@ func main() {
 				}
 
 				if err == nil {
-					log.Printf("Cache updated for %q", URL)
 					lastUpdate[URL] = time.Now()
-				} else {
-					log.Printf("Error while updating cache: %q", err)
 				}
 			}
 		}
