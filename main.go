@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -81,6 +82,11 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		if bench.MachineId == "" || !strings.Contains(bench.MachineId, ";") {
+			http.Error(w, "MachineId looks  invalid", http.StatusBadRequest)
+			return
+		}
+
 		if bench.PointerBits != 32 && bench.PointerBits != 64 {
 			http.Error(w, "Unknown PointerBits value", http.StatusBadRequest)
 			return
@@ -91,7 +97,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		if bench.MemoryInKiB < 4 * 1024 || bench.PhysicalMemoryInMiB < 4 {
+		if bench.MemoryInKiB < 4*1024 || bench.PhysicalMemoryInMiB < 4 {
 			http.Error(w, "Total memory value is too low to be true", http.StatusBadRequest)
 			return
 		}
