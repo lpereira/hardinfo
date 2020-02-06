@@ -289,6 +289,7 @@ func main() {
 	updateCacheRequest := make(chan string)
 	go func() {
 		onceEveryDay := time.NewTicker(time.Hour * 24)
+		lastUpdate := make(map[string]time.Time)
 
 		for {
 			select {
@@ -296,6 +297,11 @@ func main() {
 				database.Exec("VACUUM")
 
 			case URL := <-updateCacheRequest:
+				if last, ok := lastUpdate[URL]; ok && time.Now().Sub(last) < time.Hour {
+					// Avoids repeated requests to refresh the cache from actually doing so
+					continue
+				}
+
 				if URL == "/benchmark.json" {
 					err = updateBenchmarkJsonCache(database, benchmarkTypes)
 				} else {
@@ -304,6 +310,7 @@ func main() {
 
 				if err == nil {
 					log.Printf("Cache updated for %q", URL)
+					lastUpdate[URL] = time.Now()
 				} else {
 					log.Printf("Error while updating cache: %q", err)
 				}
