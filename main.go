@@ -266,18 +266,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	go func() {
-		for {
-			if _, err := database.Exec("VACUUM"); err != nil {
-				log.Printf("Vacuuming database failed, will try again in an hour")
-				time.Sleep(1 * time.Hour)
-			} else {
-				log.Printf("Vacuuming database succeeded, will try again tomorrow")
-				time.Sleep(1 * time.Hour * 24)
-			}
-		}
-	}()
-
 	// TODO: spawn goroutine to average values for the same machines every day
 	// TODO: spawn goroutine to create a cached table with random items,
 	//       using select distinct to not serialize the same machine id twice
@@ -300,8 +288,13 @@ func main() {
 
 	updateCacheRequest := make(chan string)
 	go func() {
+		onceEveryDay := time.NewTicker(time.Hour * 24)
+
 		for {
 			select {
+			case <-onceEveryDay.C:
+				database.Exec("VACUUM")
+
 			case URL := <-updateCacheRequest:
 				if URL == "/benchmark.json" {
 					err = updateBenchmarkJsonCache(database, benchmarkTypes)
