@@ -279,7 +279,8 @@ func main() {
 	}()
 
 	// TODO: spawn goroutine to average values for the same machines every day
-	// TODO: spawn goroutine to create a cached table with random items
+	// TODO: spawn goroutine to create a cached table with random items,
+	//       using select distinct to not serialize the same machine id twice
 
 	// TODO: this will have to either go, or query the cached table
 	types, err := database.Query("SELECT benchmark_type FROM benchmark_result GROUP BY benchmark_type")
