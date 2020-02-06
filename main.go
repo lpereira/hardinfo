@@ -185,18 +185,39 @@ func fetchUrlIntoCache(database *sql.DB, URL string) error {
 	return updateCache(database, URL, string(blob))
 }
 
-func updateBenchmarkJsonCache(database *sql.DB, benchmarkTypes []string) error {
+func updateBenchmarkJsonCache(database *sql.DB) error {
+	var benchmarkTypes []string
+
+	// TODO: fetch from the cached table (more below)
+	types, err := database.Query(`SELECT DISTINCT benchmark_type FROM benchmark_result`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for types.Next() {
+		var benchType string
+		err = types.Scan(&benchType)
+		if err != nil {
+			log.Fatal(err)
+		}
+		benchmarkTypes = append(benchmarkTypes, benchType)
+	}
+	types.Close()
+
 	resultMap := make(map[string][]BenchmarkResult)
 
+	// TODO: spawn goroutine to average values for the same machines every day
+	// TODO: spawn goroutine to create a cached table with random items,
+	//       using select distinct to not serialize the same machine id twice
 	stmt, err := database.Prepare(`
-		SELECT extra_info, machine_id, benchmark_result,
+		SELECT extra_info, machine_id, AVG(benchmark_result) AS benchmark_result,
 			board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads,
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
 			gpu_desc, machine_data_Version, pointer_bits, data_from_super_user
 		FROM benchmark_result
 		WHERE benchmark_type=?
+		GROUP BY machine_id, pointer_bits
 		ORDER BY RANDOM()
-		LIMIT 100`)
+		LIMIT 50`)
 	if err != nil {
 		return err
 	}
@@ -250,7 +271,6 @@ func updateBenchmarkJsonCache(database *sql.DB, benchmarkTypes []string) error {
 }
 
 func main() {
-	var benchmarkTypes []string
 	var database *sql.DB
 	var err error
 
@@ -262,27 +282,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// TODO: spawn goroutine to average values for the same machines every day
-	// TODO: spawn goroutine to create a cached table with random items,
-	//       using select distinct to not serialize the same machine id twice
-
-	// TODO: this will have to either go, or query the cached table
-	types, err := database.Query("SELECT benchmark_type FROM benchmark_result GROUP BY benchmark_type")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for types.Next() {
-		var benchType string
-		err = types.Scan(&benchType)
-		if err != nil {
-			log.Fatal(err)
-		}
-		benchmarkTypes = append(benchmarkTypes, benchType)
-		log.Printf("Found benchmark type: %s", benchType)
-	}
-	types.Close()
-
 	updateCacheRequest := make(chan string)
+
 	go func() {
 		onceEveryDay := time.NewTicker(time.Hour * 24)
 		lastUpdate := make(map[string]time.Time)
@@ -299,7 +300,7 @@ func main() {
 				}
 
 				if URL == "/benchmark.json" {
-					err = updateBenchmarkJsonCache(database, benchmarkTypes)
+					err = updateBenchmarkJsonCache(database)
 				} else {
 					err = fetchUrlIntoCache(database, URL)
 				}
