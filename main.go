@@ -149,23 +149,19 @@ func fetch(url string) ([]byte, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Printf("Error while fetching %s: %v", url, err)
 		return nil, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("Got non-OK response for %q (%d)", url, resp.StatusCode)
 		return nil, errors.New("Non-200 response")
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
-		log.Printf("Error while reading %s body: %v", url, err)
 		return nil, err
 	}
 
-	log.Printf("Got %d bytes of response", len(body))
 	return body, nil
 }
 
