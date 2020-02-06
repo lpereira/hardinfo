@@ -91,6 +91,16 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		if bench.MemoryInKiB < 4 * 1024 || bench.PhysicalMemoryInMiB < 4 {
+			http.Error(w, "Total memory value is too low to be true", http.StatusBadRequest)
+			return
+		}
+
+		if bench.BenchmarkResult.BenchmarkResult < 0 {
+			http.Error(w, "Benchmark results can't be negative", http.StatusBadRequest)
+			return
+		}
+
 		_, err = stmt.Exec(
 			bench.BenchmarkType,
 			bench.BenchmarkResult.BenchmarkResult,
