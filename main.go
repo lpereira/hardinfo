@@ -191,13 +191,13 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 	// TODO: fetch from the cached table (more below)
 	types, err := database.Query(`SELECT DISTINCT benchmark_type FROM benchmark_result`)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	for types.Next() {
 		var benchType string
 		err = types.Scan(&benchType)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		benchmarkTypes = append(benchmarkTypes, benchType)
 	}
