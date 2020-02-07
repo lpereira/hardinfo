@@ -193,7 +193,16 @@ func updateCache(database *sql.DB, URL, contents string) error {
 }
 
 func fetchUrlIntoCache(database *sql.DB, URL string) error {
-	blob, err := fetch("https://raw.githubusercontent.com/lpereira/hardinfo/master/data/" + URL)
+	switch URL {
+	case "/pci.ids":
+		URL = "https://pci-ids.ucw.cz/v2.2/pci.ids"
+	case "/usb.ids":
+		URL = "http://www.linux-usb.org/usb.ids"
+	default:
+		URL = "https://raw.githubusercontent.com/lpereira/hardinfo/master/data/" + URL
+	}
+
+	blob, err := fetch(URL)
 	if err != nil {
 		return err
 	}
