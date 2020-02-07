@@ -193,6 +193,8 @@ func updateCache(database *sql.DB, URL, contents string) error {
 }
 
 func fetchUrlIntoCache(database *sql.DB, URL string) error {
+	origUrl := URL
+
 	switch URL {
 	case "/pci.ids":
 		URL = "https://pci-ids.ucw.cz/v2.2/pci.ids"
@@ -207,7 +209,7 @@ func fetchUrlIntoCache(database *sql.DB, URL string) error {
 		return err
 	}
 
-	return updateCache(database, URL, string(blob))
+	return updateCache(database, origUrl, string(blob))
 }
 
 func updateBenchmarkJsonCache(database *sql.DB) error {
