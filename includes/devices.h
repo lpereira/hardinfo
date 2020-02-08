@@ -61,6 +61,8 @@ void scan_pci_do(void);
 void scan_printers_do(void);
 
 /* Sensors */
+#define SENSORS_GROUP_BY_TYPE 1
+
 void scan_sensors_do(void);
 void sensors_init(void);
 void sensors_shutdown(void);
