@@ -30,6 +30,8 @@ GHashTable *sensor_compute = NULL;
 GHashTable *sensor_labels = NULL;
 gboolean hwmon_first_run = TRUE;
 
+static gchar *last_group = NULL;
+
 static void read_sensor_labels(gchar *devname) {
     FILE *conf;
     gchar buf[256], *line, *p;
@@ -137,8 +139,27 @@ static void add_sensor(const char *type,
     char key[64];
 
     snprintf(key, sizeof(key), "%s/%s", parent, sensor);
-    sensors = h_strdup_cprintf("$%s$%s=%.2f%s|%s\n", sensors,
-        key, sensor, value, unit, type);
+
+    if (SENSORS_GROUP_BY_TYPE) {
+        // group by type
+        if (g_strcmp0(last_group, type) != 0) {
+            sensors = h_strdup_cprintf("[%s]\n", sensors, type);
+            g_free(last_group);
+            last_group = g_strdup(type);
+        }
+        sensors = h_strdup_cprintf("$%s$%s=%.2f%s|%s\n", sensors,
+            key, sensor, value, unit, parent);
+    }
+    else {
+        // group by device source / driver
+        if (g_strcmp0(last_group, parent) != 0) {
+            sensors = h_strdup_cprintf("[%s]\n", sensors, parent);
+            g_free(last_group);
+            last_group = g_strdup(parent);
+        }
+        sensors = h_strdup_cprintf("$%s$%s=%.2f%s|%s\n", sensors,
+            key, sensor, value, unit, type);
+    }
 
     if (icon != NULL) {
         sensor_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", sensor_icons,
@@ -301,7 +322,6 @@ static void read_sensors_hwmon(void) {
     int hwmon, count, min, max;
     gchar *path_hwmon, *tmp, *devname, *name, *mon, *key;
     const char **prefix, *entry;
-    gboolean first_sensor;
     GDir *dir;
     GRegex *regex;
     GMatchInfo *match_info;
@@ -318,8 +338,6 @@ static void read_sensors_hwmon(void) {
             if (hwmon_first_run) {
                 read_sensor_labels(devname);
             }
-
-            first_sensor = TRUE;
 
             dir = g_dir_open(path_hwmon, 0, NULL);
             if (!dir)
@@ -377,11 +395,6 @@ static void read_sensors_hwmon(void) {
                         float adjusted = adjust_sensor(key,
                             atof(tmp) / sensor->adjust_ratio);
 
-                        if (first_sensor) {
-                            sensors = h_strdup_cprintf("[%s]\n", sensors, devname);
-                            first_sensor = FALSE;
-                        }
-
                         add_sensor(sensor->friendly_name,
                                    name,
                                    devname,
@@ -410,7 +423,6 @@ static void read_sensors_hwmon(void) {
 
 static void read_sensors_acpi(void) {
     const gchar *path_tz = "/proc/acpi/thermal_zone";
-    gboolean first = TRUE;
 
     if (g_file_test(path_tz, G_FILE_TEST_EXISTS)) {
         GDir *tz;
@@ -425,11 +437,6 @@ static void read_sensors_acpi(void) {
 
                 if (g_file_get_contents(path, &contents, NULL, NULL)) {
                     int temperature;
-
-                    if (first) {
-                        sensors = h_strdup_cprintf("[Thermal zones]\n", sensors);
-                        first = FALSE;
-                    }
 
                     sscanf(contents, "temperature: %d C", &temperature);
 
@@ -449,7 +456,6 @@ static void read_sensors_acpi(void) {
 
 static void read_sensors_sys_thermal(void) {
     const gchar *path_tz = "/sys/class/thermal";
-    gboolean first = TRUE;
 
     if (g_file_test(path_tz, G_FILE_TEST_EXISTS)) {
         GDir *tz;
@@ -464,11 +470,6 @@ static void read_sensors_sys_thermal(void) {
 
                 if (g_file_get_contents(path, &contents, NULL, NULL)) {
                     int temperature;
-
-                    if (first) {
-                        sensors = h_strdup_cprintf("[Thermal]\n", sensors);
-                        first = FALSE;
-                    }
 
                     sscanf(contents, "%d", &temperature);
 
@@ -495,8 +496,6 @@ static void read_sensors_omnibook(void) {
     if (g_file_get_contents(path_ob, &contents, NULL, NULL)) {
         int temperature;
 
-        sensors = h_strdup_cprintf("[Omnibook]\n", sensors);
-
         sscanf(contents, "CPU temperature: %d C", &temperature);
 
         add_sensor("Temperature",
@@ -517,8 +516,6 @@ static void read_sensors_hddtemp(void) {
 
     if (!(s = sock_connect("127.0.0.1", 7634)))
         return;
-
-    sensors = h_strdup_cprintf("[Hddtemp]\n", sensors);
 
     while (!len)
         len = sock_read(s, buffer, sizeof(buffer));
@@ -563,8 +560,6 @@ void read_sensors_udisks2(void) {
     if (temps == NULL)
         return;
 
-    sensors = h_strdup_cprintf("[Udisks2]\n", sensors);
-
     for (node = temps; node != NULL; node = node->next) {
         disk = (udiskt *)node->data;
         add_sensor("Drive Temperature",
@@ -581,6 +576,8 @@ void read_sensors_udisks2(void) {
 void scan_sensors_do(void) {
     g_free(sensors);
     g_free(sensor_icons);
+    g_free(last_group);
+    last_group = NULL;
     sensors = g_strdup("");
     sensor_icons = g_strdup("");
 

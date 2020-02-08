@@ -762,7 +762,8 @@ gchar *callback_sensors()
                            "%s\n"
                            "%s",
                            sensors,
-                           _("Sensor"), _("Value"), _("Type"), /* column labels */
+                           _("Sensor"), _("Value"),
+                                SENSORS_GROUP_BY_TYPE ? _("Driver"): _("Type"),
                            lginterval,
                            sensor_icons);
 }
