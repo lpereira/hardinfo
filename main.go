@@ -39,11 +39,6 @@ type BenchmarkResult struct {
 	DataFromSuperUser bool
 }
 
-type BenchmarkResultInput struct {
-	BenchmarkResult
-	BenchmarkType string
-}
-
 func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 	if req.URL.Path != "/benchmark.json" {
 		http.Error(w, "Can't POST to "+req.URL.Path, http.StatusForbidden)
@@ -57,7 +52,19 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	stmt, err := database.Prepare(`INSERT INTO benchmark_result (benchmark_type,
+	benches := make(map[string]BenchmarkResult)
+	if err = json.Unmarshal(body, &benches); err != nil {
+		http.Error(w, "Error while parsing JSON: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	tx, err := database.Begin()
+	if err != nil {
+		http.Error(w, "Could not create transaction", http.StatusInternalServerError)
+		return
+	}
+
+	stmt, err := tx.Prepare(`INSERT INTO benchmark_result (benchmark_type,
 		benchmark_result, extra_info, machine_id, board, cpu_name, cpu_desc, cpu_config,
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, machine_data_version, pointer_bits,
@@ -70,18 +77,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 
 	defer stmt.Close()
 
-	var benches []BenchmarkResultInput
-	if err = json.Unmarshal(body, &benches); err != nil {
-		http.Error(w, "Error while parsing JSON: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	for _, bench := range benches {
-		if bench.BenchmarkType == "" {
-			http.Error(w, "BenchmarkType not provided", http.StatusBadRequest)
-			return
-		}
-
+	for benchType, bench := range benches {
 		if bench.MachineId == "" || !strings.Contains(bench.MachineId, ";") {
 			http.Error(w, "MachineId looks  invalid", http.StatusBadRequest)
 			return
@@ -102,14 +98,14 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		if bench.BenchmarkResult.BenchmarkResult < 0 {
+		if bench.BenchmarkResult < 0 {
 			http.Error(w, "Benchmark results can't be negative", http.StatusBadRequest)
 			return
 		}
 
 		_, err = stmt.Exec(
-			bench.BenchmarkType,
-			bench.BenchmarkResult.BenchmarkResult,
+			benchType,
+			bench.BenchmarkResult,
 			bench.ExtraInfo,
 			bench.MachineId,
 			bench.Board,
@@ -131,8 +127,15 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "Could not publish benchmark result: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+	}
 
-		w.Write([]byte("Benchmark results for " + bench.BenchmarkType + " published\n"))
+	if err := tx.Commit(); err != nil {
+		http.Error(w, "Could not commit transaction: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for k, _ := range benches {
+		w.Write([]byte("Benchmark results for " + k + " published\n"))
 	}
 }
 
