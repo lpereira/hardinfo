@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"github.com/pkg/errors"
@@ -166,7 +167,15 @@ func handleGet(database *sql.DB, updateCacheRequest chan string, w http.Response
 func fetch(url string) ([]byte, error) {
 	log.Printf("Fetching %s", url)
 
-	resp, err := http.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, err
 	}
