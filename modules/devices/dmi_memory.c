@@ -93,6 +93,7 @@ typedef struct {
     int devs_populated;
     dmi_mem_size size_MiB_max;
     dmi_mem_size size_MiB_present;
+    dmi_mem_size size_MiB_rom;
     int ram_types; /* bits using enum RamType */
 } dmi_mem_array;
 
@@ -141,6 +142,9 @@ typedef struct dmi_mem_socket {
     gchar *short_locator;
     gchar *size_str;
     dmi_mem_size size_MiB;
+
+    gboolean is_not_ram; /* maybe is_rom, maybe elsewise, but don't include in RAM total */
+    gboolean is_rom;
 
     gchar *type;
     gchar *type_detail;
@@ -241,14 +245,19 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
         s->form_factor = dmidecode_match("Form Factor", &dtm, &h);
         s->type = dmidecode_match("Type", &dtm, &h);
         STR_IGNORE(s->type, "Unknown");
-        if (SEQ(s->type, "DDR")) s->ram_type = DDR_SDRAM;
-        if (SEQ(s->type, "DDR2")) s->ram_type = DDR2_SDRAM;
-        if (SEQ(s->type, "DDR3")) s->ram_type = DDR3_SDRAM;
-        if (SEQ(s->type, "DDR4")) s->ram_type = DDR4_SDRAM;
-        if (SEQ(s->type, "DRDRAM")) s->ram_type = DIRECT_RAMBUS;
-        if (SEQ(s->type, "RDRAM")) s->ram_type = RAMBUS;
-        if (s->ram_type)
-            dmi_ram_types |= (1 << (s->ram_type-1));
+        if (SEQ(s->type, "Flash") || SEQ(s->type, "ROM")) {
+            s->is_rom = TRUE;
+            s->is_not_ram = TRUE;
+        } else {
+            if (SEQ(s->type, "DDR")) s->ram_type = DDR_SDRAM;
+            if (SEQ(s->type, "DDR2")) s->ram_type = DDR2_SDRAM;
+            if (SEQ(s->type, "DDR3")) s->ram_type = DDR3_SDRAM;
+            if (SEQ(s->type, "DDR4")) s->ram_type = DDR4_SDRAM;
+            if (SEQ(s->type, "DRDRAM")) s->ram_type = DIRECT_RAMBUS;
+            if (SEQ(s->type, "RDRAM")) s->ram_type = RAMBUS;
+            if (s->ram_type)
+                dmi_ram_types |= (1 << (s->ram_type-1));
+        }
         s->type_detail = dmidecode_match("Type Detail", &dtm, &h);
         STR_IGNORE(s->type_detail, "None");
 
@@ -474,11 +483,16 @@ dmi_mem *dmi_mem_new() {
         /* update array present devices/size */
         dmi_mem_array *a = dmi_mem_find_array(m, s->array_handle);
         if (a) {
-            a->size_MiB_present += s->size_MiB;
-            if (s->populated)
-                a->devs_populated++;
-            if (s->ram_type)
-                a->ram_types |= (1 << (s->ram_type-1));
+            if (s->is_not_ram) {
+                if (s->is_rom)
+                    a->size_MiB_rom += s->size_MiB;
+            } else {
+                a->size_MiB_present += s->size_MiB;
+                if (s->populated)
+                    a->devs_populated++;
+                if (s->ram_type)
+                    a->ram_types |= (1 << (s->ram_type-1));
+            }
         }
     }
 
@@ -681,7 +695,7 @@ gchar *memory_devices_get_info() {
     for(l = mem->arrays; l; l = l->next) {
         dmi_mem_array *a = (dmi_mem_array*)l->data;
         gchar *tag = g_strdup_printf("%s", a->locator);
-        gchar *size_str = NULL;
+        gchar *size_str = NULL, *rom_size_str = NULL;
 
         tag_make_safe_inplace(tag);
 
@@ -695,6 +709,11 @@ gchar *memory_devices_get_info() {
             sketchy_info = TRUE;
             size_str = h_strdup_cprintf(" %s", size_str, problem_marker());
         }
+
+        if (a->size_MiB_rom > 1024 && (a->size_MiB_rom % 1024 == 0))
+            rom_size_str = g_strdup_printf("%"PRId64" %s", a->size_MiB_rom / 1024, _("GiB"));
+        else
+            rom_size_str = g_strdup_printf("%"PRId64" %s", a->size_MiB_rom, _("MiB"));
 
         gchar *types_str = NULL;
         int i;
@@ -711,7 +730,8 @@ gchar *memory_devices_get_info() {
                         "%s=%s\n"
                         "%s=%s\n"
                         "%s=%d / %d\n"
-                        "%s=[0x%x] %s\n",
+                        "%s=[0x%x] %s\n"
+                        "%s=%s\n",
                         _("Memory Array"),
                         _("DMI Handle"), a->array_handle,
                         _("Locator"), a->locator ? a->locator : ".",
@@ -719,7 +739,8 @@ gchar *memory_devices_get_info() {
                         _("Error Correction Type"), UNKIFNULL2(a->ecc),
                         _("Size (Present / Max)"), size_str,
                         _("Devices (Populated / Sockets)"), a->devs_populated, a->devs,
-                        _("Types Present"), a->ram_types, UNKIFNULL2(types_str)
+                        _("Types Present"), a->ram_types, UNKIFNULL2(types_str),
+                        _("ROM Size"), rom_size_str
                         );
         moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
         ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
@@ -729,6 +750,7 @@ gchar *memory_devices_get_info() {
         icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, array_icon);
         g_free(tag);
         g_free(size_str);
+        g_free(rom_size_str);
         g_free(types_str);
     }
 
