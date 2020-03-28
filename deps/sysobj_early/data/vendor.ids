@@ -1278,6 +1278,13 @@ name Westinghouse Electronics
     ansi_color 0;97;44
     match_string Westinghouse
 
+name Winbond Electronics Corporation
+    name_short Winbond
+    url www.winbond.com
+    wikipedia Winbond
+    ansi_color 0;31;107
+    match_string Winbond
+
 name X.Org Foundation
     name_short X.Org
     url www.x.org
@@ -1309,3 +1316,4 @@ name ZOTAC International
     url_support www.zotac.com/support/
     ansi_color 0;90;43
     match_string ZOTAC
+
