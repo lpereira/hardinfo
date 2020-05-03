@@ -760,23 +760,25 @@ ShellModuleMethod *hi_exported_methods(void)
 
 void hi_module_init(void)
 {
-    static SyncEntry se[] = {{.fancy_name = N_("Send benchmark results"),
-                              .name = "SendBenchmarkResults",
-                              .save_to = NULL,
-                              .get_data = get_benchmark_results},
-                             {.fancy_name = N_("Receive benchmark results"),
-                              .name = "RecvBenchmarkResults",
-                              .save_to = "benchmark.conf",
-                              .get_data = NULL}};
+    static SyncEntry se[] = {
+        {
+            .fancy_name = N_("Send benchmark results"),
+            .name = "SendBenchmarkResults",
+            .get_data = get_benchmark_results,
+        },
+        {
+            .fancy_name = N_("Receive benchmark results"),
+            .name = "RecvBenchmarkResults",
+            .save_to = "benchmark.conf",
+        },
+    };
 
     sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
 
-    bench_value er = EMPTY_BENCH_VALUE;
     int i;
-    for (i = 0; i < G_N_ELEMENTS(entries) - 1; i++) {
-        bench_results[i] = er;
-    }
+    for (i = 0; i < G_N_ELEMENTS(entries) - 1 /* account for NULL */; i++)
+        bench_results[i] = (bench_value)EMPTY_BENCH_VALUE;
 }
 
 gchar **hi_module_get_dependencies(void)
