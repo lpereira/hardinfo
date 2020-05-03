@@ -751,9 +751,12 @@ static gchar *run_benchmark(gchar *name)
     return NULL;
 }
 
-ShellModuleMethod *hi_exported_methods(void)
+const ShellModuleMethod *hi_exported_methods(void)
 {
-    static ShellModuleMethod m[] = {{"runBenchmark", run_benchmark}, {NULL}};
+    static const ShellModuleMethod m[] = {
+        {"runBenchmark", run_benchmark},
+        {NULL},
+    };
 
     return m;
 }

@@ -953,9 +953,9 @@ const gchar *get_memory_desc(void) // [1] const (as to say "don't free")
     return (gchar*)idle_free(avail); // [1] idle_free()
 }
 
-ShellModuleMethod *hi_exported_methods(void)
+const ShellModuleMethod *hi_exported_methods(void)
 {
-    static ShellModuleMethod m[] = {
+    static const ShellModuleMethod m[] = {
         {"getOSKernel", get_os_kernel},
         {"getOS", get_os},
         {"getDisplaySummary", get_display_summary},
@@ -964,7 +964,7 @@ ShellModuleMethod *hi_exported_methods(void)
         {"getKernelModuleDescription", get_kernel_module_description},
         {"getMemoryTotal", get_memory_total},
         {"getMemoryDesc", get_memory_desc},
-        {NULL}
+        {NULL},
     };
 
     return m;

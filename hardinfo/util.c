@@ -583,7 +583,7 @@ static GHashTable *__module_methods = NULL;
 
 static void module_register_methods(ShellModule * module)
 {
-    ShellModuleMethod *(*get_methods) (void);
+    const ShellModuleMethod *(*get_methods)(void);
     gchar *method_name;
 
     if (__module_methods == NULL) {
@@ -591,8 +591,8 @@ static void module_register_methods(ShellModule * module)
     }
 
     if (g_module_symbol
-	(module->dll, "hi_exported_methods", (gpointer) & get_methods)) {
-	ShellModuleMethod *methods;
+	(module->dll, "hi_exported_methods", (gpointer)&get_methods)) {
+	const ShellModuleMethod *methods;
 
 	for (methods = get_methods(); methods->name; methods++) {
 	    ShellModuleMethod method = *methods;

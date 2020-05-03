@@ -543,22 +543,22 @@ gchar *get_motherboard(void)
     return g_strdup(_("Unknown"));
 }
 
-ShellModuleMethod *hi_exported_methods(void)
+const ShellModuleMethod *hi_exported_methods(void)
 {
-    static ShellModuleMethod m[] = {
-	{"getProcessorCount", get_processor_count},
-	{"getProcessorName", get_processor_name},
-	{"getProcessorDesc", get_processor_desc},
-	{"getProcessorNameAndDesc", get_processor_name_and_desc},
-	{"getProcessorFrequency", get_processor_max_frequency},
-	{"getProcessorFrequencyDesc", get_processor_frequency_desc},
-	{"getStorageDevices", get_storage_devices},
-	{"getStorageDevicesSimple", get_storage_devices_simple},
-	{"getPrinters", get_printers},
-	{"getInputDevices", get_input_devices},
-	{"getMotherboard", get_motherboard},
-	{"getGPUList", get_gpu_summary},
-	{NULL}
+    static const ShellModuleMethod m[] = {
+        {"getProcessorCount", get_processor_count},
+        {"getProcessorName", get_processor_name},
+        {"getProcessorDesc", get_processor_desc},
+        {"getProcessorNameAndDesc", get_processor_name_and_desc},
+        {"getProcessorFrequency", get_processor_max_frequency},
+        {"getProcessorFrequencyDesc", get_processor_frequency_desc},
+        {"getStorageDevices", get_storage_devices},
+        {"getStorageDevicesSimple", get_storage_devices_simple},
+        {"getPrinters", get_printers},
+        {"getInputDevices", get_input_devices},
+        {"getMotherboard", get_motherboard},
+        {"getGPUList", get_gpu_summary},
+        {NULL},
     };
 
     return m;
