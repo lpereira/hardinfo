@@ -18,6 +18,7 @@ import (
 type BenchmarkResult struct {
 	MachineId          string
 	BenchmarkResult    float64
+	UsedThreads        int
 	MachineDataVersion int
 	ExtraInfo          string
 
@@ -69,8 +70,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		benchmark_result, extra_info, machine_id, board, cpu_name, cpu_desc, cpu_config,
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, machine_data_version, pointer_bits,
-		data_from_super_user, timestamp)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'))`)
+		data_from_super_user, used_threads, timestamp)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'))`)
 	if err != nil {
 		http.Error(w, "Couldn't prepare statement: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -123,7 +124,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			bench.GpuDesc,
 			bench.MachineDataVersion,
 			bench.PointerBits,
-			bench.DataFromSuperUser)
+			bench.DataFromSuperUser,
+			bench.UsedThreads)
 		if err != nil {
 			http.Error(w, "Could not publish benchmark result: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -251,7 +253,8 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 		SELECT extra_info, machine_id, AVG(benchmark_result) AS benchmark_result,
 			board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads,
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
-			gpu_desc, machine_data_Version, pointer_bits, data_from_super_user
+			gpu_desc, machine_data_Version, pointer_bits, data_from_super_user,
+			used_threads
 		FROM benchmark_result
 		WHERE benchmark_type=?
 		GROUP BY machine_id, pointer_bits
@@ -290,7 +293,8 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.GpuDesc,
 				&result.MachineDataVersion,
 				&result.PointerBits,
-				&result.DataFromSuperUser)
+				&result.DataFromSuperUser,
+				&result.UsedThreads)
 			if err == nil {
 				resultMap[benchType] = append(resultMap[benchType], result)
 			} else {
