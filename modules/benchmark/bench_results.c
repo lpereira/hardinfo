@@ -275,6 +275,12 @@ static int guess_threads_old_result(const char *bench_name,
     return threads_available;
 }
 
+static gboolean cpu_name_needs_cleanup(const char *cpu_name)
+{
+    return strstr(cpu_name, "Intel") || strstr(cpu_name, "AMD") ||
+           strstr(cpu_name, "VIA") || strstr(cpu_name, "Cyrix");
+}
+
 bench_result *
 bench_result_benchmarkconf(const char *section, const char *key, char **values)
 {
@@ -382,14 +388,9 @@ bench_result_benchmarkconf(const char *section, const char *key, char **values)
             b->machine->processors = -1;
             b->machine->cores = -1;
 
-            /* clean the old result's CPU model name
-             * if it was probably an x86 */
-            if (strstr(b->machine->cpu_name, "Intel") ||
-                strstr(b->machine->cpu_name, "AMD") ||
-                strstr(b->machine->cpu_name, "VIA") ||
-                strstr(b->machine->cpu_name, "Cyrix")) {
+            /* clean the old result's CPU model name if it was probably an x86 */
+            if (cpu_name_needs_cleanup(b->machine->cpu_name))
                 nice_name_x86_cpuid_model_string(b->machine->cpu_name);
-            }
         }
 
         b->machine->cpu_config =
