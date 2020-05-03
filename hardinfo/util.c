@@ -849,7 +849,7 @@ static void module_entry_free(gpointer data, gpointer user_data)
 }
 #endif
 
-ModuleAbout *module_get_about(ShellModule * module)
+const ModuleAbout *module_get_about(ShellModule * module)
 {
     if (module->aboutfunc) {
     	return module->aboutfunc();

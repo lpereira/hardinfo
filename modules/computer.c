@@ -1069,17 +1069,16 @@ void hi_module_init(void)
     init_memory_labels();
 }
 
-ModuleAbout *hi_module_get_about(void)
+const ModuleAbout *hi_module_get_about(void)
 {
-    static ModuleAbout ma[] = {
-    {
-     .author = "Leandro A. F. Pereira",
-     .description = N_("Gathers high-level computer information"),
-     .version = VERSION,
-     .license = "GNU GPL version 2"}
+    static const ModuleAbout ma = {
+        .author = "Leandro A. F. Pereira",
+        .description = N_("Gathers high-level computer information"),
+        .version = VERSION,
+        .license = "GNU GPL version 2",
     };
 
-    return ma;
+    return &ma;
 }
 
 static const gchar *hinote_kmod() {

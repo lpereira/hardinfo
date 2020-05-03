@@ -139,7 +139,7 @@ struct _ShellModule {
     GdkPixbuf		*icon;
     GModule		*dll;
 
-    gpointer		(*aboutfunc) ();
+    gconstpointer 	(*aboutfunc)(void);
     gchar		*(*summaryfunc) ();
     void		(*deinit) ();
 

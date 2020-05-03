@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 	for (modules = modules_load_all(); modules;
 	     modules = modules->next) {
 	    ShellModule *module = (ShellModule *) modules->data;
-	    ModuleAbout *ma = module_get_about(module);
+	    const ModuleAbout *ma = module_get_about(module);
 	    gchar *name = g_path_get_basename(g_module_name(module->dll));
 
 	    g_print("%-20s %-15s %-12s\n", name, module->name, ma->version);

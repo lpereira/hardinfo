@@ -95,7 +95,7 @@ void cb_about_module(GtkAction * action)
 {
     Shell *shell = shell_get_main_shell();
     GSList *modules = shell->tree->modules;
-    ModuleAbout *ma;
+    const ModuleAbout *ma;
     gchar *name;
 
     g_object_get(G_OBJECT(action), "tooltip", &name, NULL);

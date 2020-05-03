@@ -649,15 +649,16 @@ guchar hi_module_get_weight(void) { return 240; }
 
 ModuleEntry *hi_module_get_entries(void) { return entries; }
 
-ModuleAbout *hi_module_get_about(void)
+const ModuleAbout *hi_module_get_about(void)
 {
-    static ModuleAbout ma[] = {
-        {.author = "Leandro A. F. Pereira",
-         .description = N_("Perform tasks and compare with other systems"),
-         .version = VERSION,
-         .license = "GNU GPL version 2"}};
+    static const ModuleAbout ma = {
+        .author = "Leandro A. F. Pereira",
+        .description = N_("Perform tasks and compare with other systems"),
+        .version = VERSION,
+        .license = "GNU GPL version 2",
+    };
 
-    return ma;
+    return &ma;
 }
 
 static gchar *get_benchmark_results()

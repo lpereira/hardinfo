@@ -433,15 +433,15 @@ void hi_module_deinit(void)
     g_free(__connections);
 }
 
-ModuleAbout *hi_module_get_about(void)
+const ModuleAbout *hi_module_get_about(void)
 {
-    static ModuleAbout ma[] = {
-	{
-	 .author = "Leandro A. F. Pereira",
-	 .description = N_("Gathers information about this computer's network connection"),
-	 .version = VERSION,
-	 .license = "GNU GPL version 2"}
+    static const ModuleAbout ma = {
+        .author = "Leandro A. F. Pereira",
+        .description =
+            N_("Gathers information about this computer's network connection"),
+        .version = VERSION,
+        .license = "GNU GPL version 2",
     };
 
-    return ma;
+    return &ma;
 }

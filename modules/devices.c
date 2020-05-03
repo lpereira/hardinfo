@@ -867,17 +867,16 @@ void hi_module_deinit(void)
     g_module_close(cups);
 }
 
-ModuleAbout *hi_module_get_about(void)
+const ModuleAbout *hi_module_get_about(void)
 {
-    static ModuleAbout ma[] = {
-	{
-	 .author = "Leandro A. F. Pereira",
-	 .description = N_("Gathers information about hardware devices"),
-	 .version = VERSION,
-	 .license = "GNU GPL version 2"}
+    const static ModuleAbout ma = {
+        .author = "Leandro A. F. Pereira",
+        .description = N_("Gathers information about hardware devices"),
+        .version = VERSION,
+        .license = "GNU GPL version 2",
     };
 
-    return ma;
+    return &ma;
 }
 
 gchar **hi_module_get_dependencies(void)

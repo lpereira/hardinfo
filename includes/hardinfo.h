@@ -134,7 +134,7 @@ GSList	     *modules_get_list(void);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
 void	      module_unload_all(void);
-ModuleAbout  *module_get_about(ShellModule *module);
+const ModuleAbout  *module_get_about(ShellModule *module);
 gchar        *seconds_to_string(unsigned int seconds);
 
 gchar        *h_strdup_cprintf(const gchar *format, gchar *source, ...);
