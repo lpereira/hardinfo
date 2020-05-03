@@ -377,14 +377,15 @@ gint bench_result_sort(gconstpointer a, gconstpointer b)
     return 0;
 }
 
-static gchar *__benchmark_include_results(bench_value r,
-                                          const gchar *benchmark,
-                                          ShellOrderType order_type)
+static gchar *benchmark_include_results_conf(const gchar *path,
+                                             bench_value r,
+                                             const gchar *benchmark,
+                                             ShellOrderType order_type)
 {
     bench_result *b = NULL;
     GKeyFile *conf;
     gchar **machines;
-    gchar *path, *results = g_strdup("");
+    gchar *results = g_strdup("");
     int i, len, loc, win_min, win_max, win_size = params.max_bench_results;
 
     GSList *result_list = NULL, *li = NULL;
@@ -399,13 +400,6 @@ static gchar *__benchmark_include_results(bench_value r,
 
     /* load saved results */
     conf = g_key_file_new();
-    path = g_build_filename(g_get_user_config_dir(), "hardinfo",
-                            "benchmark.conf", NULL);
-    if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-        DEBUG("local benchmark.conf not found, trying system-wide");
-        g_free(path);
-        path = g_build_filename(params.path_data, "benchmark.conf", NULL);
-    }
 
     g_key_file_load_from_file(conf, path, 0, NULL);
     g_key_file_set_list_separator(conf, '|');
@@ -424,7 +418,6 @@ static gchar *__benchmark_include_results(bench_value r,
     }
 
     g_strfreev(machines);
-    g_free(path);
     g_key_file_free(conf);
 
     /* sort */
@@ -471,32 +464,58 @@ static gchar *__benchmark_include_results(bench_value r,
 
     g_slist_free(result_list);
 
-    /* send to shell */
-    return g_strdup_printf("[$ShellParam$]\n"
-                           "Zebra=1\n"
-                           "OrderType=%d\n"
-                           "ViewType=4\n"
-                           "ColumnTitle$Extra1=%s\n"    /* CPU Clock */
-                           "ColumnTitle$Progress=%s\n"  /* Results */
-                           "ColumnTitle$TextValue=%s\n" /* CPU */
-                           "ShowColumnHeaders=true\n"
-                           "[%s]\n%s",
-                           order_type, _("CPU Config"), _("Results"), _("CPU"),
-                           benchmark, results);
+    return results;
+}
+
+static gchar *benchmark_include_results_internal(bench_value r,
+                                                 const gchar *benchmark,
+                                                 ShellOrderType order_type)
+{
+    gchar *bench_results;
+    gchar *output;
+    gchar *path;
+
+    path = g_build_filename(g_get_user_config_dir(), "hardinfo",
+                            "benchmark.conf", NULL);
+    if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+        DEBUG("local benchmark.conf not found, trying system-wide");
+        g_free(path);
+        path = g_build_filename(params.path_data, "benchmark.conf", NULL);
+    }
+
+    bench_results =
+        benchmark_include_results_conf(path, r, benchmark, order_type);
+
+    output = g_strdup_printf("[$ShellParam$]\n"
+                             "Zebra=1\n"
+                             "OrderType=%d\n"
+                             "ViewType=4\n"
+                             "ColumnTitle$Extra1=%s\n"    /* CPU Clock */
+                             "ColumnTitle$Progress=%s\n"  /* Results */
+                             "ColumnTitle$TextValue=%s\n" /* CPU */
+                             "ShowColumnHeaders=true\n"
+                             "[%s]\n%s",
+                             order_type, _("CPU Config"), _("Results"),
+                             _("CPU"), benchmark, bench_results);
+
+    g_free(path);
+    g_free(bench_results);
+
+    return output;
 }
 
 static gchar *benchmark_include_results_reverse(bench_value result,
                                                 const gchar *benchmark)
 {
-    return __benchmark_include_results(result, benchmark,
-                                       SHELL_ORDER_DESCENDING);
+    return benchmark_include_results_internal(result, benchmark,
+                                              SHELL_ORDER_DESCENDING);
 }
 
 static gchar *benchmark_include_results(bench_value result,
                                         const gchar *benchmark)
 {
-    return __benchmark_include_results(result, benchmark,
-                                       SHELL_ORDER_ASCENDING);
+    return benchmark_include_results_internal(result, benchmark,
+                                              SHELL_ORDER_ASCENDING);
 }
 
 typedef struct _BenchmarkDialog BenchmarkDialog;
