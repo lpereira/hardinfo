@@ -79,43 +79,138 @@ void scan_gui(gboolean reload)
 
 static ModuleEntry entries[] = {
     [BENCHMARK_BLOWFISH_SINGLE] =
-    {N_("CPU Blowfish (Single-thread)"), "blowfish.png", callback_benchmark_bfish_single, scan_benchmark_bfish_single, MODULE_FLAG_NONE},
+        {
+            N_("CPU Blowfish (Single-thread)"),
+            "blowfish.png",
+            callback_benchmark_bfish_single,
+            scan_benchmark_bfish_single,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_BLOWFISH_THREADS] =
-    {N_("CPU Blowfish (Multi-thread)"), "blowfish.png", callback_benchmark_bfish_threads, scan_benchmark_bfish_threads, MODULE_FLAG_NONE},
+        {
+            N_("CPU Blowfish (Multi-thread)"),
+            "blowfish.png",
+            callback_benchmark_bfish_threads,
+            scan_benchmark_bfish_threads,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_BLOWFISH_CORES] =
-    {N_("CPU Blowfish (Multi-core)"), "blowfish.png", callback_benchmark_bfish_cores, scan_benchmark_bfish_cores, MODULE_FLAG_NONE},
+        {
+            N_("CPU Blowfish (Multi-core)"),
+            "blowfish.png",
+            callback_benchmark_bfish_cores,
+            scan_benchmark_bfish_cores,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_ZLIB] =
-    {N_("CPU Zlib"), "file-roller.png", callback_benchmark_zlib, scan_benchmark_zlib, MODULE_FLAG_NONE},
+        {
+            N_("CPU Zlib"),
+            "file-roller.png",
+            callback_benchmark_zlib,
+            scan_benchmark_zlib,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_CRYPTOHASH] =
-    {N_("CPU CryptoHash"), "cryptohash.png", callback_benchmark_cryptohash, scan_benchmark_cryptohash, MODULE_FLAG_NONE},
+        {
+            N_("CPU CryptoHash"),
+            "cryptohash.png",
+            callback_benchmark_cryptohash,
+            scan_benchmark_cryptohash,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_FIB] =
-    {N_("CPU Fibonacci"), "nautilus.png", callback_benchmark_fib, scan_benchmark_fib, MODULE_FLAG_NONE},
+        {
+            N_("CPU Fibonacci"),
+            "nautilus.png",
+            callback_benchmark_fib,
+            scan_benchmark_fib,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_NQUEENS] =
-    {N_("CPU N-Queens"), "nqueens.png", callback_benchmark_nqueens, scan_benchmark_nqueens, MODULE_FLAG_NONE},
+        {
+            N_("CPU N-Queens"),
+            "nqueens.png",
+            callback_benchmark_nqueens,
+            scan_benchmark_nqueens,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_FFT] =
-    {N_("FPU FFT"), "fft.png", callback_benchmark_fft, scan_benchmark_fft, MODULE_FLAG_NONE},
+        {
+            N_("FPU FFT"),
+            "fft.png",
+            callback_benchmark_fft,
+            scan_benchmark_fft,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_RAYTRACE] =
-    {N_("FPU Raytracing"), "raytrace.png", callback_benchmark_raytrace, scan_benchmark_raytrace, MODULE_FLAG_NONE},
+        {
+            N_("FPU Raytracing"),
+            "raytrace.png",
+            callback_benchmark_raytrace,
+            scan_benchmark_raytrace,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_SBCPU_SINGLE] =
-    {N_("SysBench CPU (Single-thread)"), "processor.png", callback_benchmark_sbcpu_single, scan_benchmark_sbcpu_single, MODULE_FLAG_NONE},
+        {
+            N_("SysBench CPU (Single-thread)"),
+            "processor.png",
+            callback_benchmark_sbcpu_single,
+            scan_benchmark_sbcpu_single,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_SBCPU_ALL] =
-    {N_("SysBench CPU (Multi-thread)"), "processor.png", callback_benchmark_sbcpu_all, scan_benchmark_sbcpu_all, MODULE_FLAG_NONE},
+        {
+            N_("SysBench CPU (Multi-thread)"),
+            "processor.png",
+            callback_benchmark_sbcpu_all,
+            scan_benchmark_sbcpu_all,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_SBCPU_QUAD] =
-    {N_("SysBench CPU (Four threads)"), "processor.png", callback_benchmark_sbcpu_quad, scan_benchmark_sbcpu_quad, MODULE_FLAG_HIDE},
+        {
+            N_("SysBench CPU (Four threads)"),
+            "processor.png",
+            callback_benchmark_sbcpu_quad,
+            scan_benchmark_sbcpu_quad,
+            MODULE_FLAG_HIDE,
+        },
     [BENCHMARK_MEMORY_SINGLE] =
-    {N_("SysBench Memory (Single-thread)"), "memory.png", callback_benchmark_memory_single, scan_benchmark_memory_single, MODULE_FLAG_NONE},
+        {
+            N_("SysBench Memory (Single-thread)"),
+            "memory.png",
+            callback_benchmark_memory_single,
+            scan_benchmark_memory_single,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_MEMORY_DUAL] =
-    {N_("SysBench Memory (Two threads)"), "memory.png", callback_benchmark_memory_dual, scan_benchmark_memory_dual, MODULE_FLAG_HIDE},
+        {
+            N_("SysBench Memory (Two threads)"),
+            "memory.png",
+            callback_benchmark_memory_dual,
+            scan_benchmark_memory_dual,
+            MODULE_FLAG_HIDE,
+        },
     [BENCHMARK_MEMORY_QUAD] =
-    {N_("SysBench Memory"), "memory.png", callback_benchmark_memory_quad, scan_benchmark_memory_quad, MODULE_FLAG_NONE},
-#if !GTK_CHECK_VERSION(3,0,0)
+        {
+            N_("SysBench Memory"),
+            "memory.png",
+            callback_benchmark_memory_quad,
+            scan_benchmark_memory_quad,
+            MODULE_FLAG_NONE,
+        },
+#if !GTK_CHECK_VERSION(3, 0, 0)
     [BENCHMARK_GUI] =
-    {N_("GPU Drawing"), "module.png", callback_gui, scan_gui, MODULE_FLAG_NO_REMOTE | MODULE_FLAG_HIDE},
+        {
+            N_("GPU Drawing"),
+            "module.png",
+            callback_gui,
+            scan_gui,
+            MODULE_FLAG_NO_REMOTE | MODULE_FLAG_HIDE,
+        },
 #else
-    [BENCHMARK_GUI] = { "#" },
+    [BENCHMARK_GUI] = {"#"},
 #endif
-    { NULL }
-};
+    {NULL}};
 
 const gchar *hi_note_func(gint entry)
 {
