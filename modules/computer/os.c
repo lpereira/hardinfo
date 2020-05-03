@@ -353,6 +353,7 @@ parse_os_release(void)
 {
     gchar *pretty_name = NULL;
     gchar *id = NULL;
+    gchar *codename = NULL;
     gchar **split, *contents, **line;
 
     if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
@@ -365,6 +366,8 @@ parse_os_release(void)
     for (line = split; *line; line++) {
         if (!strncmp(*line, "ID=", sizeof("ID=") - 1)) {
             id = g_strdup(*line + strlen("ID="));
+        } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1)) {
+            codename = g_strdup(*line + strlen("CODENAME="));
         } else if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
             pretty_name = g_strdup(*line +
                                    strlen("PRETTY_NAME=\""));
@@ -375,7 +378,7 @@ parse_os_release(void)
     g_strfreev(split);
 
     if (pretty_name)
-        return (Distro) { .distro = pretty_name, .codename = id };
+        return (Distro) { .distro = pretty_name, .codename = codename, .id = id };
 
     g_free(id);
     return (Distro) {};
@@ -386,6 +389,7 @@ parse_lsb_release(void)
 {
     gchar *pretty_name = NULL;
     gchar *id = NULL;
+    gchar *codename = NULL;
     gchar **split, *contents, **line;
 
     if (!hardinfo_spawn_command_line_sync("/usr/bin/lsb_release -di", &contents, NULL, NULL, NULL))
@@ -398,6 +402,8 @@ parse_lsb_release(void)
     for (line = split; *line; line++) {
         if (!strncmp(*line, "Distributor ID:\t", sizeof("Distributor ID:\t") - 1)) {
             id = g_utf8_strdown(*line + strlen("Distributor ID:\t"), -1);
+        } else if (!strncmp(*line, "Codename:\t", sizeof("Codename:\t") - 1)) {
+            codename = g_utf8_strdown(*line + strlen("Codename:\t"), -1);
         } else if (!strncmp(*line, "Description:\t", sizeof("Description:\t") - 1)) {
             pretty_name = g_strdup(*line + strlen("Description:\t"));
         }
@@ -406,7 +412,7 @@ parse_lsb_release(void)
     g_strfreev(split);
 
     if (pretty_name)
-        return (Distro) { .distro = pretty_name, .codename = id };
+        return (Distro) { .distro = pretty_name, .codename = codename, .id = id };
 
     g_free(id);
     return (Distro) {};
@@ -510,6 +516,7 @@ computer_get_os(void)
 
     Distro distro = detect_distro();
     os->distro = g_strstrip(distro.distro);
+    os->distroid = distro.id;
     os->distrocode = distro.codename;
 
     /* Kernel and hostname info */

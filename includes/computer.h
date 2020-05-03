@@ -97,6 +97,7 @@ struct _OperatingSystem {
     gchar *kcmdline;
     gchar *libc;
     gchar *distrocode;
+    gchar *distroid;
     gchar *distro;
     gchar *hostname;
     gchar *language;
@@ -123,6 +124,7 @@ struct _MemoryInfo {
 struct _Distro {
     gchar *distro;
     gchar *codename;
+    gchar *id;
 };
 
 #define get_str(field_name,ptr)               \

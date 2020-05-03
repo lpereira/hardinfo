@@ -579,13 +579,18 @@ gchar *callback_os(void)
 {
     struct Info *info = info_new();
     gchar *distro_icon;
+    gchar *distro;
 
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
-    distro_icon = computer->os->distrocode
+    distro_icon = computer->os->distroid
                       ? idle_free(g_strdup_printf("distros/%s.svg",
-                                                  computer->os->distrocode))
+                                                  computer->os->distroid))
                       : NULL;
+    distro = computer->os->distrocode
+                      ? idle_free(g_strdup_printf("%s (%s)",
+                                  computer->os->distro, computer->os->distrocode))
+                      : computer->os->distro;
 
     struct InfoGroup *version_group =
     info_add_group(
@@ -593,7 +598,7 @@ gchar *callback_os(void)
         info_field(_("Command Line"), computer->os->kcmdline ?: _("Unknown")),
         info_field(_("Version"), computer->os->kernel_version),
         info_field(_("C Library"), computer->os->libc),
-        info_field(_("Distribution"), computer->os->distro,
+        info_field(_("Distribution"), distro,
                    .value_has_vendor = TRUE,
                    .icon = distro_icon),
         info_field_last());
