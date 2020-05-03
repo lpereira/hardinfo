@@ -21,17 +21,17 @@
 
 #include <gtk/gtk.h>
 
-typedef struct _SyncEntry	SyncEntry;
+typedef struct _SyncEntry SyncEntry;
 
 struct _SyncEntry {
-  gchar *name;
-  gchar	*fancy_name;
-  gchar	*save_to;
+    gchar *name;
+    gchar *fancy_name;
+    gchar *save_to;
 
-  gchar	*(*get_data)(void);
-  void   (*callback)(SyncEntry *entry, const gchar *response);
-  
-  gboolean selected;
+    gchar *(*get_data)(void);
+    void (*callback)(SyncEntry *entry, const gchar *response);
+
+    gboolean selected;
 };
 
 void sync_manager_add_entry(SyncEntry *entry);
@@ -39,4 +39,4 @@ void sync_manager_clear_entries(void);
 void sync_manager_show(GtkWidget *parent);
 gint sync_manager_count_entries(void);
 
-#endif	/* __SYNCMANAGER_H__ */
+#endif /* __SYNCMANAGER_H__ */
