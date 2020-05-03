@@ -71,6 +71,7 @@ message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/share/locale")
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
 
 add_definitions("-std=gnu89")
+add_definitions("-Wno-deprecated-declarations")
 
 add_subdirectory(po)
 
