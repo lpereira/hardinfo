@@ -330,18 +330,14 @@ bench_value benchmark_parallel_for(gint n_threads,
 
 gchar *hi_more_info(gchar *entry)
 {
-    gchar *info = moreinfo_lookup_with_prefix("BENCH", entry);
-    if (info)
-        return g_strdup(info);
-    return g_strdup("?");
+    const gchar *info = moreinfo_lookup_with_prefix("BENCH", entry);
+    return g_strdup(info ? info : "?");
 }
 
 gchar *hi_get_field(gchar *field)
 {
-    gchar *info = moreinfo_lookup_with_prefix("BENCH", field);
-    if (info)
-        return g_strdup(info);
-    return g_strdup(field);
+    const gchar *info = moreinfo_lookup_with_prefix("BENCH", field);
+    return g_strdup(info ? info : field);
 }
 
 static void br_mi_add(char **results_list, bench_result *b, gboolean select)
