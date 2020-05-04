@@ -39,60 +39,44 @@ def nice_cpu_name(name,
         vendor_intel = re.compile(r'Intel '),
         vendor_amd = re.compile(r'AMD '),
         integrated_processor = re.compile(r'(Integrated Processor|Processor)', re.I),
-        frequency = re.compile(r'(\d+\.?\d+?\+?\s*[GH]z)')):
+        frequency = re.compile(r'(\d+\.?\d+?\+?\s*[GH]z)'),
+        core_count = re.compile(r'(Dual|Triple|Quad|Six|Eight|Octal|Twelve|Sixteen|\d+)[ -]Core'),
+        radeon = re.compile(r'(with )?Radeon'),
+        cpu_apu = re.compile(r' [CA]PU'),
+        multiple_spaces = re.compile(r'\s\s+')):
     # Cleaned-up port of nice_name_x86_cpuid_model_string() from
     # deps/sysobj_early/src/nice_name.c
 
     name = name.strip()
 
     name = name.replace("@", "")
-    name = trademark_stuff.sub("", name)
 
     # Move vendor to front
     match = first_truthy_or_none(vendor_intel.search(name), vendor_amd.search(name))
     if match:
         span = match.span()
-        name = name[span[0]:span[1]] + name[0:span[0]] + name[span[1]:]
+        name = name[span[0]:span[1]] + name[:span[0]] + name[span[1]:]
 
     # Remove vendor-specific crud
     if name.startswith("AMD"):
         name = name.replace("Mobile Technology", "Mobile")
-        name = name.replace("with Radeon", "")
-        name = name.replace("Radeon", "")
+        name = radeon.sub("", name)
         if "COMPUTE CORES" in name:
             name, _ = name.split(',', 2)
-        if "X2" in name:
-            name = name.replace("Dual-Core", "")
-            name = name.replace("Dual Core", "")
-        if "X3" in name:
-            name = name.replace("Triple-Core", "")
-        if "X4" in name:
-            name = name.replace("Quad-Core", "")
     elif name.startswith("Cyrix"):
         name = name.replace("tm ", "")
     else:
         name = name.replace("Genuine Intel", "Intel")
 
-    name = name.replace(" CPU", "")
-    name = name.replace(" APU", "")
-    name = integrated_processor.sub("", name)
-    name = frequency.sub("", name)
-
-    for core_count in ("Dual", "Triple", "Quad", "Six",
-                       "Eight", "Octal", "Twelve", "Sixteen",
-                       "8", "16", "24", "32", "48", "56", "64"):
-        name = name.replace("%s-Core" % core_count, "")
-        name = name.replace("%s Core" % core_count, "")
-
-    while "  " in name:
-        name = name.replace("  ", " ")
+    for regex in (cpu_apu, integrated_processor, frequency, core_count, trademark_stuff):
+        name = regex.sub("", name)
+    name = multiple_spaces.sub(" ", name)
 
     return name.strip()
 
 def cleanup_old_style_cpu_name(name):
-    for n in ('Intel', 'AMD', 'VIA', 'Cyrix'):
-        if n in name:
-            return nice_cpu_name(name)
+    if any(vendor in name for vendor in ('Intel', 'AMD', 'VIA', 'Cyrix')):
+        return nice_cpu_name(name)
     return name
 
 def cpu_config_val(config,
@@ -103,14 +87,8 @@ def cpu_config_val(config,
         value += float(val) * (float(num) if num else 1.0)
     return value
 
-def cpu_config_cmp(config1, config2):
-    r0 = cpu_config_val(config1)
-    r1 = cpu_config_val(config2)
-    if r0 == r1:
-        return 0
-    if r0 < r1:
-        return -1
-    return 1
+def cpu_config_less(config1, config2):
+    return cpu_config_val(config1) < cpu_config_val(config2)
 
 def cpu_config_is_close(config1, config2):
     r0 = cpu_config_val(config1)
@@ -132,7 +110,7 @@ def guess_old_style_cpu_config(cpu_config, num_logical_cpus,
         freq *= 1000
 
     candidate_config = "%dx %.2f MHz" % (num_logical_cpus, freq)
-    if cpu_config_cmp(cpu_config, candidate_config) == -1 and \
+    if cpu_config_less(cpu_config, candidate_config) and \
             not cpu_config_is_close(cpu_config, candidate_config):
         return candidate_config
     
@@ -157,7 +135,7 @@ def parse_old_style_cpu_info(cpu_config, cpu_name, bench_name,
 def generate_machine_id(bench,
         invalid_chars_re = re.compile(r'[^A-Za-z0-9\(\);]')):
     mid = "%s;%s;%.2f" % (
-        bench['Board'] if 'Board' in bench else '(Unknown)',
+        bench.get('Board', '(Unknown)'),
         bench['CpuName'],
         cpu_config_val(bench['CpuConfig']),
     )
@@ -239,10 +217,8 @@ if __name__ == '__main__':
                     'BenchmarkResult': float(values[0]),
                 }
 
-                bench.update(parse_old_style_cpu_info(
-                    values[1].replace(",", "."),
-                    key,
-                    section))
+                cpu_info = parse_old_style_cpu_info(values[1].replace(",", "."), key, section)
+                bench.update(cpu_info)
                 bench['MachineId'] = generate_machine_id(bench)
             else:
                 raise SyntaxError("unexpected value length: %d (%s)" % (len(values), values))
