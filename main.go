@@ -21,6 +21,7 @@ type BenchmarkResult struct {
 	UserNote  string
 
 	BenchmarkVersion   int
+	MachineDataVersion int
 
 	BenchmarkResult float64
 	ElapsedTime     float64
@@ -76,8 +77,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, pointer_bits,
 		data_from_super_user, used_threads, benchmark_version, user_note,
-		elapsed_time, timestamp)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+		elapsed_time, machine_data_version, timestamp)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 		strftime('%s', 'now'))`)
 	if err != nil {
 		http.Error(w, "Couldn't prepare statement: "+err.Error(), http.StatusInternalServerError)
@@ -134,7 +135,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			bench.UsedThreads,
 			bench.BenchmarkVersion,
 			bench.UserNote,
-			bench.ElapsedTime)
+			bench.ElapsedTime,
+			bench.MachineDataVersion)
 		if err != nil {
 			http.Error(w, "Could not publish benchmark result: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -263,7 +265,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 			board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads,
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
 			gpu_desc, pointer_bits, data_from_super_user,
-			used_threads, benchmark_version, user_note, elapsed_time
+			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version
 		FROM benchmark_result
 		WHERE benchmark_type=?
 		GROUP BY machine_id, pointer_bits
@@ -305,7 +307,8 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.UsedThreads,
 				&result.BenchmarkVersion,
 				&result.UserNote,
-				&result.ElapsedTime)
+				&result.ElapsedTime,
+				&result.MachineDataVersion)
 			if err == nil {
 				resultMap[benchType] = append(resultMap[benchType], result)
 			} else {
