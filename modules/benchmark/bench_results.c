@@ -136,21 +136,19 @@ static int cpu_config_is_close(char *str0, char *str1)
 static void gen_machine_id(bench_machine *m)
 {
     char *s;
+
     if (m) {
         if (m->mid != NULL)
             free(m->mid);
+
         /* Don't try and translate unknown. The mid string needs to be made of
          * all untranslated elements.*/
         m->mid = g_strdup_printf("%s;%s;%.2f",
                                  (m->board != NULL) ? m->board : "(Unknown)",
                                  m->cpu_name, cpu_config_val(m->cpu_config));
-        s = m->mid;
-        while (*s != 0) {
-            if (!isalnum(*s)) {
-                if (*s != ';' && *s != '(' && *s != '(' && *s != ')')
-                    *s = '_';
-            }
-            s++;
+        for (s = m->mid; *s; s++) {
+            if (!isalnum(*s) && (*s != '(' || *s != ')' || *s != ';'))
+                *s = '_';
         }
     }
 }
