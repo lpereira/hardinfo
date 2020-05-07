@@ -8,7 +8,7 @@
 
 extern ProgramParameters params;
 
-enum {
+enum BenchmarkEntries {
     BENCHMARK_BLOWFISH_SINGLE,
     BENCHMARK_BLOWFISH_THREADS,
     BENCHMARK_BLOWFISH_CORES,
@@ -26,7 +26,7 @@ enum {
     BENCHMARK_MEMORY_QUAD,
     BENCHMARK_GUI,
     BENCHMARK_N_ENTRIES
-} BenchmarkEntries;
+};
 
 void benchmark_bfish_single(void);
 void benchmark_bfish_threads(void);
