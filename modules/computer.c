@@ -544,7 +544,7 @@ gchar *callback_summary(void)
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
     info_add_group(info, _("Computer"),
-        info_field_printf(_("Processor"),
+        info_field_printf(_("Processor"), "%s",
             idle_free(module_call_method("devices::getProcessorNameAndDesc"))),
         info_field_update(_("Memory"), 1000),
         info_field_printf(_("Machine Type"), "%s",
