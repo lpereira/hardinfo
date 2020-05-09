@@ -451,10 +451,8 @@ static GSList *benchmark_include_results_json(const gchar *path,
         goto out;
 
     root = json_parser_get_root(parser);
-    if (json_node_get_node_type(root) != JSON_NODE_OBJECT) {
-        json_node_unref(root);
+    if (json_node_get_node_type(root) != JSON_NODE_OBJECT)
         goto out;
-    }
 
     JsonObject *results = json_node_get_object(root);
     if (results) {
