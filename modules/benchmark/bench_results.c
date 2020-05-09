@@ -18,8 +18,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include <json-glib/json-glib.h>
 #include <inttypes.h>
+#include <json-glib/json-glib.h>
 
 /* in dmi_memory.c */
 uint64_t memory_devices_get_system_memory_MiB();
@@ -323,11 +323,11 @@ static gchar *json_get_string_dup(JsonObject *obj, const gchar *key)
     return g_strdup(json_get_string(obj, key));
 }
 
-bench_result *bench_result_benchmarkjson(const gchar *bench_name, JsonNode *node)
+bench_result *bench_result_benchmarkjson(const gchar *bench_name,
+                                         JsonNode *node)
 {
     JsonObject *machine;
     bench_result *b;
-    const gchar *cp;
     gchar *p;
 
     if (json_node_get_node_type(node) != JSON_NODE_OBJECT)
@@ -346,16 +346,16 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name, JsonNode *node
         .revision = json_get_int(machine, "BenchmarkRevision"),
     };
 
-    cp = json_get_string(machine, "ExtraInfo");
-    snprintf(b->bvalue.extra, sizeof(b->bvalue.extra), "%s", cp ? cp : "");
+    snprintf(b->bvalue.extra, sizeof(b->bvalue.extra), "%s",
+             json_get_string(machine, "ExtraInfo"));
     filter_invalid_chars(b->bvalue.extra);
 
-    cp = json_get_string(machine, "UserNote");
-    snprintf(b->bvalue.user_note, sizeof(b->bvalue.user_note), "%s", cp ? cp : "");
+    snprintf(b->bvalue.user_note, sizeof(b->bvalue.user_note), "%s",
+             json_get_string(machine, "UserNote"));
     filter_invalid_chars(b->bvalue.user_note);
 
     b->machine = bench_machine_new();
-    *b->machine = (bench_machine) {
+    *b->machine = (bench_machine){
         .board = json_get_string_dup(machine, "Board"),
         .memory_kiB = json_get_int(machine, "MemoryInKiB"),
         .cpu_name = json_get_string_dup(machine, "CpuName"),
