@@ -45,6 +45,8 @@ type BenchmarkResult struct {
 	PointerBits int
 
 	DataFromSuperUser bool
+
+	Legacy bool
 }
 
 func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
@@ -77,8 +79,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, pointer_bits,
 		data_from_super_user, used_threads, benchmark_version, user_note,
-		elapsed_time, machine_data_version, timestamp)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+		elapsed_time, machine_data_version, legacy, timestamp)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 		strftime('%s', 'now'))`)
 	if err != nil {
 		http.Error(w, "Couldn't prepare statement: "+err.Error(), http.StatusInternalServerError)
@@ -136,7 +138,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			bench.BenchmarkVersion,
 			bench.UserNote,
 			bench.ElapsedTime,
-			bench.MachineDataVersion)
+			bench.MachineDataVersion,
+			bench.Legacy)
 		if err != nil {
 			http.Error(w, "Could not publish benchmark result: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -265,7 +268,8 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 			board, cpu_name, cpu_desc, cpu_config, num_cpus, num_cores, num_threads,
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
 			gpu_desc, pointer_bits, data_from_super_user,
-			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version
+			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version,
+			legacy,
 		FROM benchmark_result
 		WHERE benchmark_type=?
 		GROUP BY machine_id, pointer_bits
@@ -308,7 +312,8 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.BenchmarkVersion,
 				&result.UserNote,
 				&result.ElapsedTime,
-				&result.MachineDataVersion)
+				&result.MachineDataVersion,
+				&result.Legacy)
 			if err == nil {
 				resultMap[benchType] = append(resultMap[benchType], result)
 			} else {
