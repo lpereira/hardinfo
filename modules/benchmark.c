@@ -543,7 +543,7 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
                                                  const gchar *benchmark,
                                                  ShellOrderType order_type)
 {
-    bench_result *this_machine = NULL;
+    bench_result *this_machine;
     GSList *result_list, *li;
     gchar *results = g_strdup("");
     gchar *output;
@@ -565,7 +565,9 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
     /* this result */
     if (this_machine_value.result > 0.0) {
         this_machine = bench_result_this_machine(benchmark, this_machine_value);
-        result_list = g_slist_append(result_list, this_machine);
+        result_list = g_slist_prepend(result_list, this_machine);
+    } else {
+        this_machine = NULL;
     }
 
     /* sort */
