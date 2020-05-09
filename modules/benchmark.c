@@ -428,7 +428,6 @@ static void append_machine_result_json(JsonArray *array,
                                        gpointer user_data)
 {
     struct append_machine_result_json_data *data = user_data;
-    GSList **result_list = user_data;
     bench_result *result;
 
     result = bench_result_benchmarkjson(data->benchmark_name, element_node);
