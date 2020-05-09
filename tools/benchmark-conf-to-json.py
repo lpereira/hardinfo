@@ -196,6 +196,7 @@ if __name__ == '__main__':
                     'NumCpus': int(values[7]),
                     'NumCores': int(values[8]),
                     'NumThreads': int(values[9]),
+                    'Legacy': False,
                 }
                 bench.update(parse_new_style_bench_value(values[0]))
                 if len(values) >= 11:
@@ -215,6 +216,7 @@ if __name__ == '__main__':
             elif len(values) >= 2:
                 bench = {
                     'BenchmarkResult': float(values[0]),
+                    'Legacy': True,
                 }
 
                 cpu_info = parse_old_style_cpu_info(values[1].replace(",", "."), key, section)

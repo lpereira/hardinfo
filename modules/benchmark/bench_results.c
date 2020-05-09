@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2017 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2020 Leandro A. F. Pereira <leandro@hardinfo.org>
  *    This file:
  *    Copyright (C) 2017 Burt P. <pburt0@gmail.com>
  *
@@ -18,6 +18,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <json-glib/json-glib.h>
 #include <inttypes.h>
 
 /* in dmi_memory.c */
@@ -277,6 +278,103 @@ static gboolean cpu_name_needs_cleanup(const char *cpu_name)
 {
     return strstr(cpu_name, "Intel") || strstr(cpu_name, "AMD") ||
            strstr(cpu_name, "VIA") || strstr(cpu_name, "Cyrix");
+}
+
+static void filter_invalid_chars(gchar *str)
+{
+    gchar *p;
+
+    for (p = str; *p; p++) {
+        if (*p = '\n' || *p == ';' || *p == '|')
+            *p = '_';
+    }
+}
+
+static gboolean json_get_boolean(JsonObject *obj, const gchar *key)
+{
+    if (!json_object_has_member(obj, key))
+        return FALSE;
+    return json_object_get_boolean_member(obj, key);
+}
+
+static double json_get_double(JsonObject *obj, const gchar *key)
+{
+    if (!json_object_has_member(obj, key))
+        return 0;
+    return json_object_get_double_member(obj, key);
+}
+
+static int json_get_int(JsonObject *obj, const gchar *key)
+{
+    if (!json_object_has_member(obj, key))
+        return 0;
+    return json_object_get_int_member(obj, key);
+}
+
+static const gchar *json_get_string(JsonObject *obj, const gchar *key)
+{
+    if (!json_object_has_member(obj, key))
+        return "";
+    return json_object_get_string_member(obj, key);
+}
+
+static gchar *json_get_string_dup(JsonObject *obj, const gchar *key)
+{
+    return g_strdup(json_get_string(obj, key));
+}
+
+bench_result *bench_result_benchmarkjson(const gchar *bench_name, JsonNode *node)
+{
+    JsonObject *machine;
+    bench_result *b;
+    const gchar *cp;
+    gchar *p;
+
+    if (json_node_get_node_type(node) != JSON_NODE_OBJECT)
+        return NULL;
+
+    machine = json_node_get_object(node);
+
+    b = g_new0(bench_result, 1);
+    b->name = g_strdup(bench_name);
+    b->legacy = json_get_boolean(machine, "Legacy");
+
+    b->bvalue = (bench_value){
+        .result = json_get_double(machine, "BenchmarkResult"),
+        .elapsed_time = json_get_double(machine, "ElapsedTime"),
+        .threads_used = json_get_int(machine, "UsedThreads"),
+        .revision = json_get_int(machine, "BenchmarkRevision"),
+    };
+
+    cp = json_get_string(machine, "ExtraInfo");
+    snprintf(b->bvalue.extra, sizeof(b->bvalue.extra), "%s", cp ? cp : "");
+    filter_invalid_chars(b->bvalue.extra);
+
+    cp = json_get_string(machine, "UserNote");
+    snprintf(b->bvalue.user_note, sizeof(b->bvalue.user_note), "%s", cp ? cp : "");
+    filter_invalid_chars(b->bvalue.user_note);
+
+    b->machine = bench_machine_new();
+    *b->machine = (bench_machine) {
+        .board = json_get_string_dup(machine, "Board"),
+        .memory_kiB = json_get_int(machine, "MemoryInKiB"),
+        .cpu_name = json_get_string_dup(machine, "CpuName"),
+        .cpu_desc = json_get_string_dup(machine, "CpuDesc"),
+        .cpu_config = json_get_string_dup(machine, "CpuConfig"),
+        .ogl_renderer = json_get_string_dup(machine, "OpenGlRenderer"),
+        .gpu_desc = json_get_string_dup(machine, "GpuDesc"),
+        .processors = json_get_int(machine, "NumCpus"),
+        .cores = json_get_int(machine, "NumCores"),
+        .threads = json_get_int(machine, "NumThreads"),
+        .mid = json_get_string_dup(machine, "MachineId"),
+        .ptr_bits = json_get_int(machine, "PointerBits"),
+        .is_su_data = json_get_boolean(machine, "DataFromSuperUser"),
+        .memory_phys_MiB = json_get_int(machine, "PhysicalMemoryInMiB"),
+        .ram_types = json_get_string_dup(machine, "MemoryTypes"),
+        .machine_data_version = json_get_int(machine, "MachineDataVersion"),
+    };
+
+    return b;
 }
 
 bench_result *

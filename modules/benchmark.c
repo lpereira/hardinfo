@@ -345,13 +345,17 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select)
     static unsigned int ri = 0; /* to ensure key is unique */
     gchar *rkey, *lbl, *elbl, *this_marker;
 
-    this_marker =
-        format_with_ansi_color(_("This Machine"), "0;30;43", params.fmt_opts);
+    if (select) {
+        this_marker = format_with_ansi_color(_("This Machine"), "0;30;43",
+                                             params.fmt_opts);
+    } else {
+        this_marker = "";
+    }
 
     rkey = g_strdup_printf("%s__%d", b->machine->mid, ri++);
 
-    lbl = g_strdup_printf("%s%s%s%s", select ? this_marker : "",
-                          select ? " " : "", b->machine->cpu_name,
+    lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
+                          b->machine->cpu_name,
                           b->legacy ? problem_marker() : "");
     elbl = key_label_escape(lbl);
 
@@ -364,9 +368,9 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select)
     g_free(lbl);
     g_free(elbl);
     g_free(rkey);
-    g_free(this_marker);
+    if (*this_marker)
+        g_free(this_marker);
 }
-
 gint bench_result_sort(gconstpointer a, gconstpointer b)
 {
     bench_result *A = (bench_result *)a, *B = (bench_result *)b;
@@ -377,28 +381,18 @@ gint bench_result_sort(gconstpointer a, gconstpointer b)
     return 0;
 }
 
-static gchar *benchmark_include_results_conf(const gchar *path,
-                                             bench_value r,
-                                             const gchar *benchmark,
-                                             ShellOrderType order_type)
+static GSList *benchmark_include_results_conf(const gchar *path,
+                                              bench_value r,
+                                              const gchar *benchmark)
 {
-    bench_result *b = NULL;
     GKeyFile *conf;
     gchar **machines;
     gchar *results = g_strdup("");
-    int i, len, loc, win_min, win_max, win_size = params.max_bench_results;
+    GSList *result_list = NULL;
+    gint i;
 
-    GSList *result_list = NULL, *li = NULL;
+    DEBUG("Loading benchmark results from conf file %s", path);
 
-    moreinfo_del_with_prefix("BENCH");
-
-    /* this result */
-    if (r.result > 0.0) {
-        b = bench_result_this_machine(benchmark, r);
-        result_list = g_slist_append(result_list, b);
-    }
-
-    /* load saved results */
     conf = g_key_file_new();
 
     g_key_file_load_from_file(conf, path, 0, NULL);
@@ -420,6 +414,124 @@ static gchar *benchmark_include_results_conf(const gchar *path,
     g_strfreev(machines);
     g_key_file_free(conf);
 
+    return result_list;
+}
+
+struct append_machine_result_json_data {
+    GSList **result_list;
+    const gchar *benchmark_name;
+};
+
+static void append_machine_result_json(JsonArray *array,
+                                       guint index,
+                                       JsonNode *element_node,
+                                       gpointer user_data)
+{
+    struct append_machine_result_json_data *data = user_data;
+    GSList **result_list = user_data;
+    bench_result *result;
+
+    result = bench_result_benchmarkjson(data->benchmark_name, element_node);
+    *data->result_list = g_slist_append(*data->result_list, result);
+}
+
+static GSList *benchmark_include_results_json(const gchar *path,
+                                              bench_value r,
+                                              const gchar *benchmark)
+{
+    JsonParser *parser;
+    JsonNode *root;
+    bench_result *this_machine = NULL;
+    GSList *result_list = NULL;
+
+    DEBUG("Loading benchmark results from JSON file %s", path);
+
+    parser = json_parser_new();
+    if (!json_parser_load_from_file(parser, path, NULL))
+        goto out;
+
+    root = json_parser_get_root(parser);
+    if (json_node_get_node_type(root) != JSON_NODE_OBJECT) {
+        json_node_unref(root);
+        goto out;
+    }
+
+    JsonObject *results = json_node_get_object(root);
+    if (results) {
+        JsonArray *machines = json_object_get_array_member(results, benchmark);
+
+        if (machines) {
+            struct append_machine_result_json_data data = {
+                .result_list = &result_list,
+                .benchmark_name = benchmark,
+            };
+            json_array_foreach_element(machines, append_machine_result_json,
+                                       &data);
+        }
+    }
+
+out:
+    g_object_unref(parser);
+
+    return result_list;
+}
+
+static gchar *find_benchmark_conf(void)
+{
+    const gchar *files[] = {"benchmark.json", "benchmark.conf", NULL};
+    const gchar *config_dir = g_get_user_config_dir();
+    gint i;
+
+    for (i = 0; files[i]; i++) {
+        gchar *path;
+
+        path = g_build_filename(config_dir, "hardinfo", files[i], NULL);
+        if (g_file_test(path, G_FILE_TEST_EXISTS))
+            return path;
+        g_free(path);
+
+        path = g_build_filename(params.path_data, files[i], NULL);
+        if (g_file_test(path, G_FILE_TEST_EXISTS))
+            return path;
+        g_free(path);
+    }
+
+    return NULL;
+}
+
+static gchar *benchmark_include_results_internal(bench_value this_machine_value,
+                                                 const gchar *benchmark,
+                                                 ShellOrderType order_type)
+{
+    GSList *result_list;
+    GSList *li;
+    int i, len, loc, win_min, win_max, win_size = params.max_bench_results;
+    bench_result *this_machine = NULL;
+    gchar *results = g_strdup("");
+    gchar *output;
+    gchar *path;
+
+    moreinfo_del_with_prefix("BENCH");
+
+    path = find_benchmark_conf();
+
+    if (path) {
+        if (g_str_has_suffix(path, ".json"))
+            result_list = benchmark_include_results_json(
+                path, this_machine_value, benchmark);
+        else if (g_str_has_suffix(path, ".conf"))
+            result_list = benchmark_include_results_conf(
+                path, this_machine_value, benchmark);
+        else
+            g_assert_not_reached();
+    }
+
+    /* this result */
+    if (this_machine_value.result > 0.0) {
+        this_machine = bench_result_this_machine(benchmark, this_machine_value);
+        result_list = g_slist_append(result_list, this_machine);
+    }
+
     /* sort */
     result_list = g_slist_sort(result_list, bench_result_sort);
     if (order_type == SHELL_ORDER_DESCENDING)
@@ -431,7 +543,7 @@ static gchar *benchmark_include_results_conf(const gchar *path,
         win_size = 1;
     if (win_size < 0)
         win_size = len;
-    loc = g_slist_index(result_list, b); /* -1 if not found */
+    loc = g_slist_index(result_list, this_machine); /* -1 if not found */
     if (loc >= 0) {
         win_min = loc - win_size / 2;
         win_max = win_min + win_size;
@@ -451,40 +563,15 @@ static gchar *benchmark_include_results_conf(const gchar *path,
           win_size, win_min, win_max - 1);
 
     /* prepare for shell */
-    i = 0;
-    li = result_list;
-    while (li) {
+    for (i = 0, li = result_list; li; li = g_slist_next(li), i++) {
         bench_result *tr = (bench_result *)li->data;
+
         if (i >= win_min && i < win_max)
-            br_mi_add(&results, tr, (tr == b) ? 1 : 0);
+            br_mi_add(&results, tr, tr == this_machine);
+
         bench_result_free(tr); /* no longer needed */
-        i++;
-        li = g_slist_next(li);
     }
-
     g_slist_free(result_list);
-
-    return results;
-}
-
-static gchar *benchmark_include_results_internal(bench_value r,
-                                                 const gchar *benchmark,
-                                                 ShellOrderType order_type)
-{
-    gchar *bench_results;
-    gchar *output;
-    gchar *path;
-
-    path = g_build_filename(g_get_user_config_dir(), "hardinfo",
-                            "benchmark.conf", NULL);
-    if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-        DEBUG("local benchmark.conf not found, trying system-wide");
-        g_free(path);
-        path = g_build_filename(params.path_data, "benchmark.conf", NULL);
-    }
-
-    bench_results =
-        benchmark_include_results_conf(path, r, benchmark, order_type);
 
     output = g_strdup_printf("[$ShellParam$]\n"
                              "Zebra=1\n"
@@ -496,10 +583,10 @@ static gchar *benchmark_include_results_internal(bench_value r,
                              "ShowColumnHeaders=true\n"
                              "[%s]\n%s",
                              order_type, _("CPU Config"), _("Results"),
-                             _("CPU"), benchmark, bench_results);
+                             _("CPU"), benchmark, results);
 
     g_free(path);
-    g_free(bench_results);
+    g_free(results);
 
     return output;
 }
