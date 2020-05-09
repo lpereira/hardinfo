@@ -89,6 +89,8 @@ if(NOT HARDINFO_NOSYNC)
 	pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
 endif()
 
+pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0>=1.4)
+
 pkg_check_modules(X11 REQUIRED x11)
 
 include(FindZLIB REQUIRED)
@@ -105,11 +107,13 @@ include_directories(
 	${LIBSOUP_INCLUDE_DIRS}
 	${ZLIB_INCLUDE_DIRS}
 	${X11_INCLUDE_DIRS}
+	${JSON_GLIB_INCLUDE_DIRS}
 )
 link_directories(
 	${GTK_LIBRARY_DIRS}
 	${LIBSOUP_LIBRARY_DIRS}
 	${X11_LIBRARY_DIRS}
+	${JSON_GLIB_LIBRARY_DIRS}
 )
 
 set(HARDINFO_MODULES
@@ -349,6 +353,7 @@ target_link_libraries(hardinfo
 	m
 	${ZLIB_LIBRARIES}
 	${X11_LIBRARIES}
+	${JSON_GLIB_LIBRARIES}
 )
 endif()
 
