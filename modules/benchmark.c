@@ -496,17 +496,59 @@ static gchar *find_benchmark_conf(void)
     return NULL;
 }
 
+struct bench_window {
+    int min, max;
+};
+
+static struct bench_window get_bench_window(GSList *result_list,
+                                            const bench_result *this_machine)
+{
+    struct bench_window window = {};
+    int size = params.max_bench_results;
+    int len = g_slist_length(result_list);
+
+    if (size == 0)
+        size = 1;
+    else if (size < 0)
+        size = len;
+
+    int loc = g_slist_index(result_list, this_machine); /* -1 if not found */
+    if (loc >= 0) {
+        window.min = loc - size / 2;
+        window.max = window.min + size;
+        if (window.min < 0) {
+            window.min = 0;
+            window.max = MIN(size, len);
+        } else if (window.max > len) {
+            window.max = len;
+            window.min = MAX(len - size, 0);
+        }
+    } else {
+        window.min = 0;
+        window.max = len;
+    }
+
+    DEBUG("...len: %d, loc: %d, win_size: %d, win: [%d..%d]\n", len, loc, size,
+          window.min, window.max - 1);
+
+    return window;
+}
+
+static gboolean is_in_bench_window(const struct bench_window *window, int i)
+{
+    return i >= window->min && i < window->max;
+}
+
 static gchar *benchmark_include_results_internal(bench_value this_machine_value,
                                                  const gchar *benchmark,
                                                  ShellOrderType order_type)
 {
-    GSList *result_list;
-    GSList *li;
-    int i, len, loc, win_min, win_max, win_size = params.max_bench_results;
     bench_result *this_machine = NULL;
+    GSList *result_list, *li;
     gchar *results = g_strdup("");
     gchar *output;
     gchar *path;
+    gint i;
 
     moreinfo_del_with_prefix("BENCH");
 
@@ -534,39 +576,15 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
     if (order_type == SHELL_ORDER_DESCENDING)
         result_list = g_slist_reverse(result_list);
 
-    /* limit results to those near the current result */
-    len = g_slist_length(result_list);
-    if (win_size == 0)
-        win_size = 1;
-    if (win_size < 0)
-        win_size = len;
-    loc = g_slist_index(result_list, this_machine); /* -1 if not found */
-    if (loc >= 0) {
-        win_min = loc - win_size / 2;
-        win_max = win_min + win_size;
-        if (win_min < 0) {
-            win_min = 0;
-            win_max = MIN(win_size, len);
-        } else if (win_max > len) {
-            win_max = len;
-            win_min = MAX(len - win_size, 0);
-        }
-    } else {
-        win_min = 0;
-        win_max = len;
-    }
-
-    DEBUG("...len: %d, loc: %d, win_size: %d, win: [%d..%d]\n", len, loc,
-          win_size, win_min, win_max - 1);
-
     /* prepare for shell */
+    const struct bench_window window = get_bench_window(result_list, this_machine);
     for (i = 0, li = result_list; li; li = g_slist_next(li), i++) {
-        bench_result *tr = (bench_result *)li->data;
+        bench_result *br = li->data;
 
-        if (i >= win_min && i < win_max)
-            br_mi_add(&results, tr, tr == this_machine);
+        if (is_in_bench_window(&window, i))
+            br_mi_add(&results, br, br == this_machine);
 
-        bench_result_free(tr); /* no longer needed */
+        bench_result_free(br); /* no longer needed */
     }
     g_slist_free(result_list);
 
