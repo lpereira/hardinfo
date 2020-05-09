@@ -550,10 +550,7 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
     gchar *path;
     gint i;
 
-    moreinfo_del_with_prefix("BENCH");
-
     path = find_benchmark_conf();
-
     if (path) {
         if (g_str_has_suffix(path, ".json"))
             result_list = benchmark_include_results_json(
@@ -577,6 +574,8 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
         result_list = g_slist_reverse(result_list);
 
     /* prepare for shell */
+    moreinfo_del_with_prefix("BENCH");
+
     const struct bench_window window = get_bench_window(result_list, this_machine);
     for (i = 0, li = result_list; li; li = g_slist_next(li), i++) {
         bench_result *br = li->data;
