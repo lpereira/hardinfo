@@ -44,8 +44,6 @@ static gchar *benchmark_include_results(bench_value result,
 /* ModuleEntry entries, scan_*(), callback_*(), etc. */
 #include "benchmark/benches.c"
 
-static gboolean sending_benchmark_results = FALSE;
-
 char *bench_value_to_str(bench_value r)
 {
     gboolean has_rev = r.revision >= 0;
@@ -664,7 +662,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
     if (params.skip_benchmarks)
         return;
 
-    if (params.gui_running && !sending_benchmark_results) {
+    if (params.gui_running) {
         gchar *argv[] = {params.argv0, "-b",           entries[entry].name,
                          "-m",         "benchmark.so", "-a",
                          NULL};
@@ -695,6 +693,8 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
             GTK_MESSAGE_INFO, GTK_BUTTONS_NONE,
             _("Benchmarking. Please do not move your mouse "
               "or press any keys."));
+        gtk_window_set_transient_for(GTK_WINDOW(bench_dialog),
+                                     GTK_WINDOW(shell_get_main_shell()->window));
         gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog), _("Cancel"),
                                GTK_RESPONSE_ACCEPT, NULL);
 
@@ -790,7 +790,6 @@ static gchar *get_benchmark_results(gsize *len)
     gchar *out;
     gint i;
 
-    sending_benchmark_results = TRUE;
     for (i = 0; i < G_N_ELEMENTS(entries); i++) {
         if (!entries[i].name || !entries[i].scan_callback)
             continue;
@@ -801,7 +800,6 @@ static gchar *get_benchmark_results(gsize *len)
         if (scan_callback)
             scan_callback(bench_results[i].result < 0.0);
     }
-    sending_benchmark_results = FALSE;
 
     this_machine = bench_machine_this();
     builder = json_builder_new();
