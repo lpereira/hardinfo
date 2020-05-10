@@ -851,12 +851,6 @@ void hi_module_init(void)
             .name = N_("Update SD card manufacturer information"),
             .file_name = "sdcard.ids",
         },
-#if defined(ARCH_x86) || defined(ARCH_x86_64)
-        {
-            .name = N_("Update CPU feature database"),
-            .file_name = "cpuflags.conf",
-        },
-#endif /* defined(ARCH_x86) */
     };
     gint i;
 
