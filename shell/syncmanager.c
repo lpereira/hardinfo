@@ -249,7 +249,7 @@ static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
         GFile *file = g_file_new_for_path(path);
 
         g_file_replace(file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
-                       NULL, NULL);
+                       NULL, &sna->error);
 
         g_free(path);
         g_object_unref(file);
