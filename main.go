@@ -271,7 +271,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
 			gpu_desc, pointer_bits, data_from_super_user,
 			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version,
-			legacy,
+			legacy
 		FROM benchmark_result
 		WHERE benchmark_type=?
 		GROUP BY machine_id, pointer_bits
