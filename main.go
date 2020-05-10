@@ -383,6 +383,8 @@ func main() {
 
 				if err == nil {
 					lastUpdate[URL] = time.Now()
+				} else {
+					log.Printf("Error while updating URL %q: %q", URL, err)
 				}
 			}
 		}
