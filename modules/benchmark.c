@@ -578,7 +578,8 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
     /* prepare for shell */
     moreinfo_del_with_prefix("BENCH");
 
-    const struct bench_window window = get_bench_window(result_list, this_machine);
+    const struct bench_window window =
+        get_bench_window(result_list, this_machine);
     for (i = 0, li = result_list; li; li = g_slist_next(li), i++) {
         bench_result *br = li->data;
 
@@ -781,46 +782,93 @@ const ModuleAbout *hi_module_get_about(void)
 
 static gchar *get_benchmark_results()
 {
+    void (*scan_callback)(gboolean);
+    JsonBuilder *builder;
+    JsonGenerator *generator;
+    JsonNode *root;
+    bench_machine *this_machine;
+    gchar *out;
     gint i;
-    void (*scan_callback)(gboolean rescan);
 
     sending_benchmark_results = TRUE;
-
-    gchar *machine = module_call_method("devices::getProcessorName");
-    gchar *machineclock = module_call_method("devices::getProcessorFrequency");
-    gchar *machineram = module_call_method("computer::getMemoryTotal");
-    gchar *result = g_strdup_printf("[param]\n"
-                                    "machine=%s\n"
-                                    "machineclock=%s\n"
-                                    "machineram=%s\n"
-                                    "nbenchmarks=%zu\n",
-                                    machine, machineclock, machineram,
-                                    G_N_ELEMENTS(entries) - 1);
     for (i = 0; i < G_N_ELEMENTS(entries); i++) {
-        scan_callback = entries[i].scan_callback;
-        if (!scan_callback)
+        if (!entries[i].name || !entries[i].scan_callback)
+            continue;
+        if (entries[i].flags & MODULE_FLAG_HIDE)
             continue;
 
-        if (bench_results[i].result < 0.0) {
-            /* benchmark was cancelled */
-            scan_callback(TRUE);
-        } else {
-            scan_callback(FALSE);
-        }
-
-        result = h_strdup_cprintf("[bench%d]\n"
-                                  "name=%s\n"
-                                  "value=%f\n",
-                                  result, i, entries[i].name, bench_results[i]);
+        scan_callback = entries[i].scan_callback;
+        if (scan_callback)
+            scan_callback(bench_results[i].result < 0.0);
     }
-
-    g_free(machine);
-    g_free(machineclock);
-    g_free(machineram);
-
     sending_benchmark_results = FALSE;
 
-    return result;
+    this_machine = bench_machine_this();
+    builder = json_builder_new();
+    json_builder_begin_object(builder);
+    for (i = 0; i < G_N_ELEMENTS(entries); i++) {
+        if (!entries[i].name || entries[i].flags & MODULE_FLAG_HIDE)
+            continue;
+        if (bench_results[i].result < 0.0) {
+            /* Benchmark failed? */
+            continue;
+        }
+
+        json_builder_set_member_name(builder, entries[i].name);
+
+        json_builder_begin_object(builder);
+
+#define ADD_JSON_VALUE(type, name, value)                                      \
+    do {                                                                       \
+        json_builder_set_member_name(builder, (name));                         \
+        json_builder_add_##type##_value(builder, (value));                     \
+    } while (0)
+
+        ADD_JSON_VALUE(string, "Board", this_machine->board);
+        ADD_JSON_VALUE(int, "MemoryInKiB", this_machine->memory_kiB);
+        ADD_JSON_VALUE(string, "CpuName", this_machine->cpu_name);
+        ADD_JSON_VALUE(string, "CpuDesc", this_machine->cpu_desc);
+        ADD_JSON_VALUE(string, "CpuConfig", this_machine->cpu_config);
+        ADD_JSON_VALUE(string, "CpuConfig", this_machine->cpu_config);
+        ADD_JSON_VALUE(string, "OpenGlRenderer", this_machine->ogl_renderer);
+        ADD_JSON_VALUE(string, "GpuDesc", this_machine->gpu_desc);
+        ADD_JSON_VALUE(int, "NumCpus", this_machine->processors);
+        ADD_JSON_VALUE(int, "NumCores", this_machine->cores);
+        ADD_JSON_VALUE(int, "NumThreads", this_machine->threads);
+        ADD_JSON_VALUE(string, "MachineId", this_machine->mid);
+        ADD_JSON_VALUE(int, "PointerBits", this_machine->ptr_bits);
+        ADD_JSON_VALUE(int, "DataFromSuperUser", this_machine->is_su_data);
+        ADD_JSON_VALUE(int, "PhysicalMemoryInMiB",
+                       this_machine->memory_phys_MiB);
+        ADD_JSON_VALUE(string, "MemoryTypes", this_machine->ram_types);
+        ADD_JSON_VALUE(int, "MachineDataVersion",
+                       this_machine->machine_data_version);
+
+        ADD_JSON_VALUE(boolean, "Legacy", FALSE);
+        ADD_JSON_VALUE(string, "ExtraInfo", bench_results[i].extra);
+        ADD_JSON_VALUE(string, "UserNote", bench_results[i].user_note);
+        ADD_JSON_VALUE(double, "BenchmarkResult", bench_results[i].result);
+        ADD_JSON_VALUE(double, "ElapsedTime", bench_results[i].elapsed_time);
+        ADD_JSON_VALUE(int, "UsedThreads", bench_results[i].threads_used);
+        ADD_JSON_VALUE(int, "BenchmarkVersion", bench_results[i].revision);
+
+#undef ADD_JSON_VALUE
+
+        json_builder_end_object(builder);
+    }
+    json_builder_end_object(builder);
+
+    generator = json_generator_new();
+    json_generator_set_root(generator, json_builder_get_root(builder));
+    json_generator_set_pretty(generator, TRUE);
+
+    out = json_generator_to_data(generator, NULL);
+
+    g_object_unref(generator);
+    g_object_unref(builder);
+    bench_machine_free(this_machine);
+
+    return out;
 }
 
 static gchar *run_benchmark(gchar *name)
