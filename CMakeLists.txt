@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
-option(HARDINFO_NOSYNC "Disable database sync via libsoup" 1)
+option(HARDINFO_NOSYNC "Disable database sync via libsoup" 0)
 option(HARDINFO_GTK3 "Attempt to build for GTK3 (0/off for GTK2)" 0)
 set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
 set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")

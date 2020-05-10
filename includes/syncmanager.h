@@ -24,12 +24,10 @@
 typedef struct _SyncEntry SyncEntry;
 
 struct _SyncEntry {
-    gchar *name;
-    gchar *fancy_name;
-    gchar *save_to;
+    const gchar *name;
+    const gchar *file_name;
 
-    gchar *(*get_data)(void);
-    void (*callback)(SyncEntry *entry, const gchar *response);
+    gchar *(*generate_contents_for_upload)(gsize *size);
 
     gboolean selected;
 };

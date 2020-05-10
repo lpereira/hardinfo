@@ -830,29 +830,21 @@ guchar hi_module_get_weight(void)
 
 void hi_module_init(void)
 {
-    if (!g_file_test("/usr/share/misc/pci.ids", G_FILE_TEST_EXISTS)) {
-        static SyncEntry se = {
-             .fancy_name = N_("Update PCI ID listing"),
-             .name = "GetPCIIds",
-             .save_to = "pci.ids",
-             .get_data = NULL
-        };
+    static SyncEntry pci_ids = {
+        .name = N_("Update PCI ID listing"),
+        .file_name = "pci.ids",
+    };
 
-        sync_manager_add_entry(&se);
-    }
+    sync_manager_add_entry(&pci_ids);
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
-    {
-      static SyncEntry se = {
-        .fancy_name = N_("Update CPU feature database"),
-        .name = "RecvCPUFlags",
-        .save_to = "cpuflags.conf",
-        .get_data = NULL
-      };
+    static SyncEntry cpuflags_conf = {
+        .name = N_("Update CPU feature database"),
+        .file_name = "cpuflags.conf",
+    };
 
-      sync_manager_add_entry(&se);
-    }
-#endif	/* defined(ARCH_x86) */
+    sync_manager_add_entry(&cpuflags_conf);
+#endif /* defined(ARCH_x86) */
 
     init_cups();
     sensors_init();

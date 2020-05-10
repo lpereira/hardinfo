@@ -252,10 +252,8 @@ void vendor_init(void)
 {
     gchar *path;
     static SyncEntry se = {
-       .fancy_name = "Update vendor list",
-       .name = "RecvVendorList",
-       .save_to = "vendor.ids",
-       .get_data = NULL
+       .name = N_("Update vendor list"),
+       .file_name = "vendor.ids",
     };
 
     /* already initialized */

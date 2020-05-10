@@ -780,7 +780,7 @@ const ModuleAbout *hi_module_get_about(void)
     return &ma;
 }
 
-static gchar *get_benchmark_results()
+static gchar *get_benchmark_results(gsize *len)
 {
     void (*scan_callback)(gboolean);
     JsonBuilder *builder;
@@ -862,7 +862,7 @@ static gchar *get_benchmark_results()
     json_generator_set_root(generator, json_builder_get_root(builder));
     json_generator_set_pretty(generator, TRUE);
 
-    out = json_generator_to_data(generator, NULL);
+    out = json_generator_to_data(generator, len);
 
     g_object_unref(generator);
     g_object_unref(builder);
@@ -931,14 +931,13 @@ void hi_module_init(void)
 {
     static SyncEntry se[] = {
         {
-            .fancy_name = N_("Send benchmark results"),
-            .name = "SendBenchmarkResults",
-            .get_data = get_benchmark_results,
+            .name = N_("Send benchmark results"),
+            .file_name = "benchmark.json",
+            .generate_contents_for_upload = get_benchmark_results,
         },
         {
-            .fancy_name = N_("Receive benchmark results"),
-            .name = "RecvBenchmarkResults",
-            .save_to = "benchmark.conf",
+            .name = N_("Receive benchmark results"),
+            .file_name = "benchmark.json",
         },
     };
 
