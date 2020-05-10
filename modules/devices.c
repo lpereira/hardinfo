@@ -830,21 +830,38 @@ guchar hi_module_get_weight(void)
 
 void hi_module_init(void)
 {
-    static SyncEntry pci_ids = {
-        .name = N_("Update PCI ID listing"),
-        .file_name = "pci.ids",
-    };
-
-    sync_manager_add_entry(&pci_ids);
-
+    static SyncEntry entries[] = {
+        {
+            .name = N_("Update PCI ID listing"),
+            .file_name = "pci.ids",
+        },
+        {
+            .name = N_("Update USB ID listing"),
+            .file_name = "usb.ids",
+        },
+        {
+            .name = N_("Update EDID vendor codes"),
+            .file_name = "edid.ids",
+        },
+        {
+            .name = N_("Update IEEE OUI vendor codes"),
+            .file_name = "ieee_oui.ids",
+        },
+        {
+            .name = N_("Update SD card manufacturer information"),
+            .file_name = "sdcard.ids",
+        },
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
-    static SyncEntry cpuflags_conf = {
-        .name = N_("Update CPU feature database"),
-        .file_name = "cpuflags.conf",
-    };
-
-    sync_manager_add_entry(&cpuflags_conf);
+        {
+            .name = N_("Update CPU feature database"),
+            .file_name = "cpuflags.conf",
+        },
 #endif /* defined(ARCH_x86) */
+    };
+    gint i;
+
+    for (i = 0; i < G_N_ELEMENTS(entries); i++)
+        sync_manager_add_entry(&entries[i]);
 
     init_cups();
     sensors_init();

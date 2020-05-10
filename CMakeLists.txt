@@ -125,14 +125,13 @@ set(HARDINFO_MODULES
 set(HARDINFO_RESOURCES
 	"data/benchmark.conf"
 	"data/benchmark.json"
-	"data/benchmark.data"
-	"deps/sysobj_early/data/vendor.ids"
-	"deps/sysobj_early/data/sdcard.ids"
-	"deps/sysobj_early/data/usb.ids"
-	"deps/sysobj_early/data/arm.ids"
-	"deps/sysobj_early/data/edid.ids"
-	"deps/sysobj_early/data/ieee_oui.ids"
-	"deps/sysobj_early/data/pci.ids.min"
+	"data/vendor.ids"
+	"data/sdcard.ids"
+	"data/usb.ids"
+	"data/arm.ids"
+	"data/edid.ids"
+	"data/ieee_oui.ids"
+	"data/pci.ids.min"
 )
 
 set(HARDINFO_MANPAGES
