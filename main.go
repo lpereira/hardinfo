@@ -95,19 +95,21 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		if bench.PointerBits != 32 && bench.PointerBits != 64 {
-			http.Error(w, "Unknown PointerBits value", http.StatusBadRequest)
-			return
-		}
+		if !bench.Legacy {
+			if bench.PointerBits != 32 && bench.PointerBits != 64 {
+				http.Error(w, "Unknown PointerBits value", http.StatusBadRequest)
+				return
+			}
 
-		if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 {
-			http.Error(w, "Number of CPUs, cores, or threads is invalid", http.StatusBadRequest)
-			return
-		}
+			if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 {
+				http.Error(w, "Number of CPUs, cores, or threads is invalid", http.StatusBadRequest)
+				return
+			}
 
-		if bench.MemoryInKiB < 4*1024 || bench.PhysicalMemoryInMiB < 4 {
-			http.Error(w, "Total memory value is too low to be true", http.StatusBadRequest)
-			return
+			if bench.MemoryInKiB < 4*1024 || bench.PhysicalMemoryInMiB < 4 {
+				http.Error(w, "Total memory value is too low to be true", http.StatusBadRequest)
+				return
+			}
 		}
 
 		if bench.BenchmarkResult < 0 {
