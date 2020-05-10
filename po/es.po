@@ -441,8 +441,7 @@ msgid ""
 "Copyright (C) 2003-%d Leandro A. F. Pereira. See COPYING for details.\n"
 "\n"
 msgstr ""
-"Copyright (C) 2003-%d Leandro A. F. Pereira. Vea COPYING para obtener más"
-" detalles.\n"
+"Copyright (C) 2003-%d Leandro A. F. Pereira. Vea COPYING para obtener más detalles.\n"
 "\n"
 
 #: hardinfo/hardinfo.c:52
