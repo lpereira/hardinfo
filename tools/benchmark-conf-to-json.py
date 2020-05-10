@@ -208,7 +208,7 @@ if __name__ == '__main__':
                 if len(values) >= 14:
                     bench['PointerBits'] = int(values[13])
                 if len(values) >= 15:
-                    bench['DataFromSuperUser'] = int(values[14])
+                    bench['DataFromSuperUser'] = int(values[14]) != 0
                 if len(values) >= 16:
                     bench['PhysicalMemoryInMiB'] = int(values[15])
                 if len(values) >= 17:

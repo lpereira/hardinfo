@@ -702,7 +702,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -1421,7 +1421,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -2129,7 +2129,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -2859,7 +2859,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -4161,7 +4161,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -4350,7 +4350,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -4639,7 +4639,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -4928,7 +4928,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -5197,7 +5197,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -5286,7 +5286,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -5375,7 +5375,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -5486,7 +5486,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
@@ -5618,7 +5618,7 @@
       "GpuDesc": "AMD/ATI Ellesmere",
       "MachineDataVersion": 0,
       "PointerBits": 64,
-      "DataFromSuperUser": 0,
+      "DataFromSuperUser": false,
       "PhysicalMemoryInMiB": 32768,
       "MemoryTypes": "DDR4 SDRAM"
     }
