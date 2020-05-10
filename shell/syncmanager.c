@@ -234,6 +234,32 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     g_main_loop_unref(loop);
 }
 
+static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
+{
+    SyncNetAction *sna = user_data;
+    GInputStream *is;
+
+    is = soup_session_send_finish(session, res, &sna->error);
+    if (sna->error != NULL)
+        goto out;
+
+    if (sna->entry->file_name != NULL && g_input_stream_has_pending(is)) {
+        gchar *path = g_build_filename(g_get_user_config_dir(), "hardinfo",
+                                       sna->entry->file_name, NULL);
+        GFile *file = g_file_new_for_path(path);
+
+        g_file_replace(file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
+                       NULL, NULL);
+
+        g_free(path);
+        g_object_unref(file);
+    }
+
+out:
+    g_main_loop_quit(loop);
+    g_object_unref(is);
+}
+
 static gboolean send_request_for_net_action(SyncNetAction *sna)
 {
     gchar *uri;
@@ -253,21 +279,20 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
                                  SOUP_MEMORY_TAKE, contents, size);
     }
 
-    response_code = soup_session_send_message(session, msg);
-
-    if (sna->entry->file_name != NULL && msg->response_body->length) {
-        gchar *filename = g_build_filename(g_get_user_config_dir(), "hardinfo",
-                                           sna->entry->file_name, NULL);
-
-        g_file_set_contents(filename, msg->response_body->data,
-                            msg->response_body->length, NULL);
-        g_free(filename);
-    }
+    soup_session_send_async(session, msg, NULL, got_response, sna);
+    g_main_loop_run(loop);
 
     g_object_unref(msg);
     g_free(uri);
 
-    return response_code == 200;
+    if (sna->error != NULL) {
+        DEBUG("Error while sending request: %s", sna->error->message);
+        g_error_free(sna->error);
+        sna->error = NULL;
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 static void
