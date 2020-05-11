@@ -64,7 +64,7 @@ msgstr "Gobernador"
 #: hardinfo/cpu_util.c:190 hardinfo/cpu_util.c:196 modules/devices/gpu.c:153
 #: modules/devices/pci.c:134 modules/devices/usb.c:136
 msgid "Driver"
-msgstr "Controlador"
+msgstr "Manejador"
 
 #: hardinfo/cpu_util.c:202 modules/computer.c:737
 #: modules/devices/arm/processor.c:256 modules/devices/x86/processor.c:284
@@ -287,11 +287,11 @@ msgstr "Tipo de chasis desconocido"
 
 #: hardinfo/dmi_util.c:229
 msgid "Desktop"
-msgstr "Ordenador de escritorio"
+msgstr "De escritorio"
 
 #: hardinfo/dmi_util.c:230
 msgid "Low-profile Desktop"
-msgstr "Ordenador de bajo rendimiento"
+msgstr "De bajo rendimiento"
 
 #: hardinfo/dmi_util.c:231
 msgid "Pizza Box"
@@ -320,7 +320,7 @@ msgstr "Portátil"
 
 #: hardinfo/dmi_util.c:237
 msgid "Handheld"
-msgstr "Ordenador de bolsillo"
+msgstr "De bolsillo"
 
 #: hardinfo/dmi_util.c:238
 msgid "Docking Station"
