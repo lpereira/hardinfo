@@ -79,7 +79,7 @@ void info_group_add_fields(struct InfoGroup *group, ...)
 struct InfoGroup *info_add_group(struct Info *info, const gchar *group_name, ...)
 {
     struct InfoGroup group = {
-        .name = group_name,
+        .name = g_strdup(group_name),
         .fields = g_array_new(FALSE, FALSE, sizeof(struct InfoField))
     };
     va_list ap;
