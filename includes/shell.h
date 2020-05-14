@@ -83,6 +83,8 @@ struct _Shell {
     GtkWidget		*notebook;
     GtkWidget		*hbox, *vpaned;
 
+    GtkWindow		*transient_dialog;
+
     ShellTree		*tree;
     ShellInfoTree	*info_tree;
     ShellModule		*selected_module;
@@ -193,6 +195,8 @@ void		shell_action_set_active(const gchar *action_name,
 void		shell_action_set_property(const gchar *action_name,
                                           const gchar *property,
                                           gboolean setting);
+
+void            shell_set_transient_dialog(GtkWindow *dialog);
 
 void		shell_set_side_pane_visible(gboolean setting);
 void		shell_set_note_from_entry(ShellModuleEntry *entry);

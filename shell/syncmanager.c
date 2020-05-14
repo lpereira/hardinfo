@@ -135,9 +135,11 @@ void sync_manager_show(GtkWidget *parent)
     if (gtk_dialog_run(GTK_DIALOG(sd->dialog)) == GTK_RESPONSE_ACCEPT) {
         shell_view_set_enabled(FALSE);
         shell_status_set_enabled(TRUE);
+        shell_set_transient_dialog(sd->dialog);
 
         sync_dialog_start_sync(sd);
 
+        shell_set_transient_dialog(NULL);
         shell_status_set_enabled(FALSE);
         shell_view_set_enabled(TRUE);
     }

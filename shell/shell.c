@@ -737,6 +737,11 @@ gboolean hardinfo_link(const gchar *uri) {
     return FALSE; /* didn't handle it */
 }
 
+void shell_set_transient_dialog(GtkWindow *dialog)
+{
+    shell->transient_dialog = dialog ? dialog : shell->window;
+}
+
 void shell_init(GSList * modules)
 {
     if (shell) {
@@ -761,6 +766,7 @@ void shell_init(GSList * modules)
     shell->info_tree = info_tree_new();
     shell->loadgraph = load_graph_new(75);
     shell->detail_view = detail_view_new();
+    shell->transient_dialog = shell->window;
 
     update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
                                        g_free, destroy_update_tbl_value);

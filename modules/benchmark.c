@@ -694,7 +694,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
             _("Benchmarking. Please do not move your mouse "
               "or press any keys."));
         gtk_window_set_transient_for(GTK_WINDOW(bench_dialog),
-                                     GTK_WINDOW(shell_get_main_shell()->window));
+                                     GTK_WINDOW(shell_get_main_shell()->transient_dialog));
         gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog), _("Cancel"),
                                GTK_RESPONSE_ACCEPT, NULL);
 
