@@ -835,7 +835,7 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(int, "NumThreads", this_machine->threads);
         ADD_JSON_VALUE(string, "MachineId", this_machine->mid);
         ADD_JSON_VALUE(int, "PointerBits", this_machine->ptr_bits);
-        ADD_JSON_VALUE(int, "DataFromSuperUser", this_machine->is_su_data);
+        ADD_JSON_VALUE(boolean, "DataFromSuperUser", this_machine->is_su_data);
         ADD_JSON_VALUE(int, "PhysicalMemoryInMiB",
                        this_machine->memory_phys_MiB);
         ADD_JSON_VALUE(string, "MemoryTypes", this_machine->ram_types);
