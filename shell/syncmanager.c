@@ -240,6 +240,8 @@ static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
     GInputStream *is;
 
     is = soup_session_send_finish(session, res, &sna->error);
+    if (is == NULL)
+        goto out;
     if (sna->error != NULL)
         goto out;
 
@@ -247,9 +249,15 @@ static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
         gchar *path = g_build_filename(g_get_user_config_dir(), "hardinfo",
                                        sna->entry->file_name, NULL);
         GFile *file = g_file_new_for_path(path);
+        GFileOutputStream *output =
+            g_file_replace(file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
+                           NULL, &sna->error);
 
-        g_file_replace(file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
-                       NULL, &sna->error);
+        if (output != NULL) {
+            g_output_stream_splice(output, is,
+                                   G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET, NULL,
+                                   &sna->error);
+        }
 
         g_free(path);
         g_object_unref(file);
