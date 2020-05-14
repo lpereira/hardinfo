@@ -148,7 +148,7 @@ static void gen_machine_id(bench_machine *m)
                                  (m->board != NULL) ? m->board : "(Unknown)",
                                  m->cpu_name, cpu_config_val(m->cpu_config));
         for (s = m->mid; *s; s++) {
-            if (!isalnum(*s) && (*s != '(' || *s != ')' || *s != ';'))
+            if (!isalnum(*s) && *s != '(' && *s != ')' && *s != ';')
                 *s = '_';
         }
     }
