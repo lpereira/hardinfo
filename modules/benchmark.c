@@ -695,6 +695,8 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
               "or press any keys."));
         gtk_window_set_transient_for(GTK_WINDOW(bench_dialog),
                                      GTK_WINDOW(shell_get_main_shell()->transient_dialog));
+        gtk_widget_set_sensitive(GTK_WIDGET(shell_get_main_shell()->transient_dialog),
+                                 FALSE);
         gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog), _("Cancel"),
                                GTK_RESPONSE_ACCEPT, NULL);
 
@@ -744,6 +746,8 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
             g_io_channel_unref(channel);
             shell_view_set_enabled(TRUE);
             shell_status_set_enabled(TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(shell_get_main_shell()->transient_dialog),
+                                     TRUE);
             g_free(benchmark_dialog);
 
             shell_status_update(_("Done."));
