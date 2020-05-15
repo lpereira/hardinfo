@@ -11,11 +11,13 @@
 #endif		/* !RELEASE */
 
 #ifdef HAS_LIBSOUP
-#define SYNC_MANAGER_ITEMS "		<separator/>" \
-"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" />"
+#define SYNC_MANAGER_MENU_ITEMS "		<separator/>" \
+"		<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" always-show-image=\"true\"/>"
+#define SYNC_MANAGER_TOOL_ITEMS "		<toolitem name=\"SyncManager\" action=\"SyncManagerAction\" />"
 
 #else		/* !HAS_LIBSOUP */
-#define SYNC_MANAGER_ITEMS
+#define SYNC_MANAGER_MENU_ITEMS
+#define SYNC_MANAGER_TOOL_ITEMS
 #endif		/* !HAS_LIBSOUP */
 
 char *uidefs_str = "<ui>" \
@@ -23,7 +25,7 @@ char *uidefs_str = "<ui>" \
 "	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">" \
 "		<menuitem name=\"Report\" action=\"ReportAction\" />" \
 "		<menuitem name=\"Copy\" action=\"CopyAction\" />" \
-SYNC_MANAGER_ITEMS
+SYNC_MANAGER_MENU_ITEMS
 "		<separator/>" \
 "		<menuitem name=\"Quit\" action=\"QuitAction\" />" \
 "	</menu>" \
@@ -47,6 +49,7 @@ SYNC_MANAGER_ITEMS
 "	<toolbar action=\"MainMenuBar\" action=\"MainMenuBarAction\">" \
 "		<placeholder name=\"ToolItems\">" \
 "			<toolitem name=\"Refresh\" action=\"RefreshAction\"/>" \
+SYNC_MANAGER_TOOL_ITEMS \
 "			<separator/>" \
 "			<toolitem name=\"Report\" action=\"ReportAction\"/>" \
 "			<toolitem name=\"Copy\" action=\"CopyAction\"/>" \

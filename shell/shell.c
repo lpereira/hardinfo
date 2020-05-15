@@ -293,7 +293,6 @@ void shell_view_set_enabled(gboolean setting)
     shell_action_set_enabled("CopyAction", setting);
     shell_action_set_enabled("ReportAction", setting);
     shell_action_set_enabled("SyncManagerAction", setting && sync_manager_count_entries() > 0);
-
 }
 
 void shell_status_set_enabled(gboolean setting)
@@ -761,6 +760,7 @@ void shell_init(GSList * modules)
     shell_action_set_property("RefreshAction", "is-important", TRUE);
     shell_action_set_property("ReportAction", "is-important", TRUE);
     shell_action_set_property("ReportBugAction", "is-important", TRUE);
+    shell_action_set_property("SyncManagerAction", "is-important", TRUE);
 
     shell->tree = tree_new();
     shell->info_tree = info_tree_new();
