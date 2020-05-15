@@ -135,7 +135,7 @@ void sync_manager_show(GtkWidget *parent)
     if (gtk_dialog_run(GTK_DIALOG(sd->dialog)) == GTK_RESPONSE_ACCEPT) {
         shell_view_set_enabled(FALSE);
         shell_status_set_enabled(TRUE);
-        shell_set_transient_dialog(sd->dialog);
+        shell_set_transient_dialog(GTK_WINDOW(sd->dialog));
 
         sync_dialog_start_sync(sd);
 
@@ -158,7 +158,7 @@ static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
     }
 
     sd->flag_cancel = TRUE;
-    g_main_quit(loop);
+    g_main_loop_quit(loop);
 
     gtk_widget_set_sensitive(widget, FALSE);
 
@@ -230,7 +230,7 @@ static void sync_dialog_start_sync(SyncDialog *sd)
         gtk_widget_show(sd->button_close);
 
         /* wait for the user to close the dialog */
-        g_main_run(loop);
+        g_main_loop_run(loop);
     }
 
     g_main_loop_unref(loop);
@@ -256,7 +256,7 @@ static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
                            NULL, &sna->error);
 
         if (output != NULL) {
-            g_output_stream_splice(output, is,
+            g_output_stream_splice(G_OUTPUT_STREAM(output), is,
                                    G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET, NULL,
                                    &sna->error);
         }
@@ -484,7 +484,7 @@ static void sel_toggle(GtkCellRendererToggle *cellrenderertoggle,
     gtk_tree_path_free(path);
 }
 
-static void close_clicked(void) { g_main_quit(loop); }
+static void close_clicked(void) { g_main_loop_quit(loop); }
 
 static SyncDialog *sync_dialog_new(GtkWidget *parent)
 {
