@@ -123,7 +123,7 @@ set(HARDINFO_MODULES
 	network
 )
 set(HARDINFO_RESOURCES
-	"data/benchmark.conf"
+	"data/benchmark.data"
 	"data/benchmark.json"
 	"data/vendor.ids"
 	"data/sdcard.ids"
