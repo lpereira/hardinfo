@@ -474,10 +474,8 @@ gchar *monitors_get_info() {
                                 edid_section ? edid_section : ""
                                 );
             moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
-            ret = h_strdup_cprintf("$!%s$%s=%s|%s\n",
-                                    ret,
-                                    tag, m->drm_connection, desc
-                                    );
+            ret = h_strdup_cprintf("$!%s$%s=%s\n",
+                                    ret, tag, m->drm_connection, desc);
             icons = h_strdup_cprintf("Icon$%s$=%s\n", icons, tag, monitor_icon);
             g_free(desc);
             g_free(edid_section);
