@@ -50,30 +50,25 @@ type BenchmarkResult struct {
 	Legacy bool
 }
 
-type StatusError struct {
-	ResponseCode int
-	Error        error
-}
-
-func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) StatusError {
+func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int, error) {
 	if req.URL.Path != "/benchmark.json" {
-		return StatusError{http.StatusForbidden, fmt.Errorf("Can't POST to " + req.URL.Path)}
+		return http.StatusForbidden, fmt.Errorf("Can't POST to " + req.URL.Path)
 	}
 
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 	if err != nil {
-		return StatusError{http.StatusBadRequest, fmt.Errorf("Error while reading body: " + err.Error())}
+		return http.StatusBadRequest, fmt.Errorf("Error while reading body: " + err.Error())
 	}
 
 	benches := make(map[string]BenchmarkResult)
 	if err = json.Unmarshal(body, &benches); err != nil {
-		return StatusError{http.StatusBadRequest, fmt.Errorf("Error while parsing JSON: " + err.Error())}
+		return http.StatusBadRequest, fmt.Errorf("Error while parsing JSON: " + err.Error())
 	}
 
 	tx, err := database.Begin()
 	if err != nil {
-		return StatusError{http.StatusInternalServerError, fmt.Errorf("Could not create transaction")}
+		return http.StatusInternalServerError, fmt.Errorf("Could not create transaction")
 	}
 
 	stmt, err := tx.Prepare(`INSERT INTO benchmark_result (benchmark_type,
@@ -85,36 +80,36 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) Stat
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 		strftime('%s', 'now'))`)
 	if err != nil {
-		return StatusError{http.StatusInternalServerError, fmt.Errorf("Couldn't prepare statement: " + err.Error())}
+		return http.StatusInternalServerError, fmt.Errorf("Couldn't prepare statement: " + err.Error())
 	}
 
 	defer stmt.Close()
 
 	for benchType, bench := range benches {
 		if bench.MachineId == "" || !strings.Contains(bench.MachineId, ";") {
-			return StatusError{http.StatusBadRequest, fmt.Errorf("MachineId looks invalid")}
+			return http.StatusBadRequest, fmt.Errorf("MachineId looks invalid")
 		}
 
 		if !bench.Legacy {
 			if bench.PointerBits != 32 && bench.PointerBits != 64 {
-				return StatusError{http.StatusBadRequest, fmt.Errorf("Unknown PointerBits value")}
+				return http.StatusBadRequest, fmt.Errorf("Unknown PointerBits value")
 			}
 
 			if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 {
-				return StatusError{http.StatusBadRequest, fmt.Errorf("Number of CPUs, cores, or threads is invalid")}
+				return http.StatusBadRequest, fmt.Errorf("Number of CPUs, cores, or threads is invalid")
 			}
 
 			if bench.MemoryInKiB < 4*1024 {
-				return StatusError{http.StatusBadRequest, fmt.Errorf("Total memory value is too low to be true")}
+				return http.StatusBadRequest, fmt.Errorf("Total memory value is too low to be true")
 			}
 
 			if bench.PhysicalMemoryInMiB != 0 && bench.PhysicalMemoryInMiB < 4 {
-				return StatusError{http.StatusBadRequest, fmt.Errorf("Physical memory value is too low to be true")}
+				return http.StatusBadRequest, fmt.Errorf("Physical memory value is too low to be true")
 			}
 		}
 
 		if bench.BenchmarkResult < 0 {
-			return StatusError{http.StatusBadRequest, fmt.Errorf("Benchmark results can't be negative")}
+			return http.StatusBadRequest, fmt.Errorf("Benchmark results can't be negative")
 		}
 
 		_, err = stmt.Exec(
@@ -143,21 +138,21 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) Stat
 			bench.MachineDataVersion,
 			bench.Legacy)
 		if err != nil {
-			return StatusError{http.StatusInternalServerError, fmt.Errorf("Could not publish benchmark result: " + err.Error())}
+			return http.StatusInternalServerError, fmt.Errorf("Could not publish benchmark result: " + err.Error())
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return StatusError{http.StatusInternalServerError, fmt.Errorf("Could not commit transaction: " + err.Error())}
+		return http.StatusInternalServerError, fmt.Errorf("Could not commit transaction: " + err.Error())
 	}
 
-	return StatusError{http.StatusOK, nil}
+	return http.StatusOK, nil
 }
 
-func handleGet(database *sql.DB, updateCacheRequest chan string, w http.ResponseWriter, req *http.Request) StatusError {
+func handleGet(database *sql.DB, updateCacheRequest chan string, w http.ResponseWriter, req *http.Request) (int, error) {
 	stmt, err := database.Prepare("SELECT blob, timestamp FROM cached_blobs WHERE name=?")
 	if err != nil {
-		return StatusError{http.StatusInternalServerError, err}
+		return http.StatusInternalServerError, err
 	}
 
 	defer stmt.Close()
@@ -166,7 +161,7 @@ func handleGet(database *sql.DB, updateCacheRequest chan string, w http.Response
 	var timeStamp int64
 	err = stmt.QueryRow(req.URL.Path).Scan(&blob, &timeStamp)
 	if err != nil {
-		return StatusError{http.StatusNotFound, fmt.Errorf("%s: file not found", req.URL.Path)}
+		return http.StatusNotFound, fmt.Errorf("%s: file not found", req.URL.Path)
 	}
 
 	if time.Now().Sub(time.Unix(timeStamp, 0)) > 12*time.Hour {
@@ -175,7 +170,7 @@ func handleGet(database *sql.DB, updateCacheRequest chan string, w http.Response
 
 	w.Write([]byte(blob))
 
-	return StatusError{http.StatusOK, nil}
+	return http.StatusOK, nil
 }
 
 func fetch(url string) ([]byte, error) {
@@ -392,19 +387,21 @@ func main() {
 			return
 		}
 
-		var err StatusError
+		var err error
+		var responseCode int
 		switch req.Method {
 		case "POST":
-			err = handlePost(database, w, req)
+			responseCode, err = handlePost(database, w, req)
 		case "GET":
-			err = handleGet(database, updateCacheRequest, w, req)
+			responseCode, err = handleGet(database, updateCacheRequest, w, req)
 		default:
-			http.Error(w, "Invalid method: "+req.Method, http.StatusMethodNotAllowed)
+			responseCode = http.StatusMethodNotAllowed
+			err = fmt.Errorf("Invalid method: %q", req.Method)
 		}
 
-		if err.Error != nil {
-			log.Printf("Error: %q", err.Error.Error())
-			http.Error(w, err.Error.Error(), err.ResponseCode)
+		if err != nil {
+			log.Printf("Error: %q", err.Error())
+			http.Error(w, err.Error(), responseCode)
 		}
 	})
 
