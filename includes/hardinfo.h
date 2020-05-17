@@ -137,7 +137,8 @@ void	      module_unload_all(void);
 const ModuleAbout  *module_get_about(ShellModule *module);
 gchar        *seconds_to_string(unsigned int seconds);
 
-gchar        *h_strdup_cprintf(const gchar *format, gchar *source, ...);
+gchar        *h_strdup_cprintf(const gchar *format, gchar *source, ...)
+                                __attribute__((format(gnu_printf, 1, 3)));
 gchar	     *h_strconcat(gchar *string1, ...);
 void          h_hash_table_remove_all (GHashTable *hash_table);
 

@@ -307,7 +307,7 @@ gboolean __scan_udisks2_devices(void) {
             moreinfo = h_strdup_cprintf(_("[Self-monitoring (S.M.A.R.T.)]\n"
                                         "Status=%s\n"
                                         "Bad Sectors=%ld\n"
-                                        "Power on time=%d days %d hours\n"
+                                        "Power on time=%lu days %lu hours\n"
                                         "Temperature=%d°C\n"),
                                         moreinfo,
                                         disk->smart_failing ? _("Failing"): _("OK"),
@@ -542,7 +542,8 @@ void __scan_scsi_devices(void)
 void __scan_ide_devices(void)
 {
     FILE *proc_ide;
-    gchar *device, iface, *model, *media, *pgeometry = NULL, *lgeometry = NULL;
+    gchar *device, *model, *media, *pgeometry = NULL, *lgeometry = NULL;
+    gchar iface;
     gint n = 0, i = 0, cache, nn = 0;
     gchar *capab = NULL, *speed = NULL, *driver = NULL, *ide_storage_list;
 
@@ -690,7 +691,7 @@ void __scan_ide_devices(void)
 
 	    gchar *devid = g_strdup_printf("IDE%d", n);
 
-	    ide_storage_list = h_strdup_cprintf("$%s$%hd%c=|%s\n", ide_storage_list, devid, iface, model);
+	    ide_storage_list = h_strdup_cprintf("$%s$hd%c=|%s\n", ide_storage_list, devid, iface, model);
 	    storage_icons =
 		h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons,
 				 devid, model, g_str_equal(media, "cdrom") ? "cdrom" : "hdd");

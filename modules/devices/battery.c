@@ -82,9 +82,9 @@ __scan_battery_apcupsd(void)
             battery_list = h_strdup_cprintf("[%s]\n", battery_list, ups_fields[i].key);
           } else {
             /* there's a name: adds a line */
+            const gchar *name = g_hash_table_lookup(ups_data, ups_fields[i].key);
             battery_list = h_strdup_cprintf("%s=%s\n", battery_list,
-                                            ups_fields[i].name,
-                                            g_hash_table_lookup(ups_data, ups_fields[i].key));
+                                            ups_fields[i].name, name);
           }
         }
 

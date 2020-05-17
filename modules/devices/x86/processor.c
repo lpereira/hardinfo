@@ -704,7 +704,7 @@ gchar *dmi_socket_info() {
             gchar *voltage_str = dmidecode_match("Voltage", &dt, &h);
             gchar *max_speed_str = dmidecode_match("Max Speed", &dt, &h);
 
-            ret = h_strdup_cprintf("[%s (%lu) %s]\n"
+            ret = h_strdup_cprintf("[%s (%d) %s]\n"
                             "%s=0x%x\n"
                             "%s=%s\n"
                             "%s=%s\n"
