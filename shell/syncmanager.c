@@ -510,7 +510,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 
     dialog = gtk_dialog_new();
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
-    gtk_window_set_title(GTK_WINDOW(dialog), _("Network Updater"));
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Synchronize"));
     gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
     gtk_window_set_icon(GTK_WINDOW(dialog),
                         icon_cache_get_pixbuf("syncmanager.png"));

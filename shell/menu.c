@@ -49,12 +49,12 @@ static GtkActionEntry entries[] = {
 
     {"ReportAction", HI_STOCK_REPORT,	/* name, stock id */
      N_("Generate _Report"), "<control>R",	/* label, accelerator */
-     NULL,			/* tooltip */
+     N_("Generates a report with detailed system information"),			/* tooltip */
      G_CALLBACK(cb_generate_report)},
 
     {"SyncManagerAction", HI_STOCK_SYNC_MENU,
-     N_("_Network Updater..."), NULL,
-     NULL,
+     N_("Synchronize"), NULL,
+     N_("Send benchmark results and receive updated data from the network"),
      G_CALLBACK(cb_sync_manager)},
 
     {"OpenAction", "_Open",
