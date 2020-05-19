@@ -88,10 +88,9 @@ else()
 endif()
 
 if(NOT HARDINFO_NOSYNC)
-	pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
+	pkg_check_modules(LIBSOUP REQUIRED libsoup-2.4>=2.24)
+	pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0)
 endif()
-
-pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0>=1.4)
 
 pkg_check_modules(X11 REQUIRED x11)
 
