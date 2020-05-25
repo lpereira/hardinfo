@@ -877,6 +877,10 @@ static gboolean update_field(gpointer data)
     return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+#define RANGE_SET_VALUE(...)
+#define RANGE_GET_VALUE(...) 0
+#else
 #define RANGE_SET_VALUE(tree, scrollbar, value)                                \
     do {                                                                       \
         GtkRange CONCAT(*range, __LINE__) =                                    \
@@ -888,6 +892,7 @@ static gboolean update_field(gpointer data)
 #define RANGE_GET_VALUE(tree, scrollbar)                                       \
     gtk_range_get_value(                                                       \
         GTK_RANGE(GTK_SCROLLED_WINDOW(shell->tree->scroll)->scrollbar))
+#endif
 
 static void
 destroy_widget(GtkWidget *widget, gpointer user_data)
