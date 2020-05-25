@@ -315,6 +315,7 @@ target_link_libraries(hardinfo
 	m
 	${ZLIB_LIBRARIES}
 	${X11_LIBRARIES}
+	${JSON_GLIB_LIBRARIES}
 )
 set_target_properties(hardinfo PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 else()
