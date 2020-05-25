@@ -231,6 +231,7 @@ foreach (_module ${HARDINFO_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
 endforeach()
+target_link_libraries(benchmark ${JSON_GLIB_LIBRARIES})
 
 add_library(sysobj_early STATIC
 	deps/sysobj_early/src/gg_slist.c
