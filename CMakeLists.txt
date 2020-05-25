@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6)
 
 set(HARDINFO_VERSION "0.6-alpha")
-option(HARDINFO_NOSYNC "Disable database sync via libsoup" 0)
 option(HARDINFO_GTK3 "Attempt to build for GTK3 (0/off for GTK2)" 0)
 set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
 set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
@@ -87,8 +86,8 @@ else()
 	pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
 endif()
 
-if(NOT HARDINFO_NOSYNC)
-	pkg_check_modules(LIBSOUP REQUIRED libsoup-2.4>=2.24)
+pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
+if (LIBSOUP_FOUND)
 	pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0)
 endif()
 
