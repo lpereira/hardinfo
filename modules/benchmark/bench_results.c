@@ -285,7 +285,7 @@ static void filter_invalid_chars(gchar *str)
     gchar *p;
 
     for (p = str; *p; p++) {
-        if (*p = '\n' || *p == ';' || *p == '|')
+        if (*p == '\n' || *p == ';' || *p == '|')
             *p = '_';
     }
 }
