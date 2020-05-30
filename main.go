@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/gzip"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -168,7 +169,14 @@ func handleGet(database *sql.DB, updateCacheRequest chan string, w http.Response
 		updateCacheRequest <- req.URL.Path
 	}
 
-	w.Write([]byte(blob))
+	if !strings.Contains(req.Header.Get("Accept-Encoding"), "gzip") {
+		w.Write([]byte(blob))
+	} else {
+		w.Header().Set("Content-Encoding", "gzip")
+		gz := gzip.NewWriter(w)
+		defer gz.Close()
+		gz.Write([]byte(blob))
+	}
 
 	return http.StatusOK, nil
 }
