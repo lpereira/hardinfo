@@ -230,7 +230,7 @@ func fetchUrlIntoCache(database *sql.DB, URL string) error {
 	case "/usb.ids":
 		URL = "http://www.linux-usb.org/usb.ids"
 	default:
-		URL = "https://raw.githubusercontent.com/lpereira/hardinfo/master/data/" + URL
+		URL = "https://raw.githubusercontent.com/lpereira/hardinfo/master/data" + URL
 	}
 
 	blob, err := fetch(URL)
