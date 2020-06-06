@@ -541,21 +541,21 @@ msgstr "(Nenhum)"
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] "1%d dia"
+msgstr[0] "%d dia"
 msgstr[1] "%d dias"
 
 #: hardinfo/util.c:105 modules/computer/uptime.c:55
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] "1%d hora"
+msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
 #: hardinfo/util.c:106 modules/computer/uptime.c:56
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] "1%d minuto"
+msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
 #: hardinfo/util.c:107
@@ -2675,14 +2675,14 @@ msgstr "Recursos"
 #, c-format
 msgid "%d physical processor"
 msgid_plural "%d physical processors"
-msgstr[0] "1%d processador físico"
+msgstr[0] "%d processador físico"
 msgstr[1] "%d processadores físicos"
 
 #: modules/devices.c:178
 #, c-format
 msgid "%d core"
 msgid_plural "%d cores"
-msgstr[0] "1%d núcleo"
+msgstr[0] "%d núcleo"
 msgstr[1] " %d núcleos"
 
 #: modules/devices.c:179
