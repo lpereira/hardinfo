@@ -46,6 +46,7 @@ typedef struct {
     uint64_t memory_phys_MiB; /* from DMI/SPD/DTree/Table/Blocks, etc. */
     char *ram_types;
     int machine_data_version;
+    char *machine_type;
 } bench_machine;
 
 typedef struct {
@@ -156,11 +157,7 @@ static void gen_machine_id(bench_machine *m)
 
 bench_machine *bench_machine_new()
 {
-    bench_machine *m = NULL;
-    m = malloc(sizeof(bench_machine));
-    if (m)
-        memset(m, 0, sizeof(bench_machine));
-    return m;
+    return calloc(1, sizeof(bench_machine));
 }
 
 bench_machine *bench_machine_this()
@@ -183,6 +180,7 @@ bench_machine *bench_machine_this()
         m->memory_kiB = strtoull(tmp, NULL, 10);
         m->memory_phys_MiB = memory_devices_get_system_memory_MiB();
         m->ram_types = memory_devices_get_system_memory_types_str();
+        m->machine_type = module_call_method("computer::getMachineType");
         free(tmp);
 
         cpu_procs_cores_threads(&m->processors, &m->cores, &m->threads);
@@ -200,6 +198,8 @@ void bench_machine_free(bench_machine *s)
         free(s->cpu_config);
         free(s->mid);
         free(s->ram_types);
+        free(s->machine_type);
+        free(s);
     }
 }
 
@@ -208,6 +208,7 @@ void bench_result_free(bench_result *s)
     if (s) {
         free(s->name);
         bench_machine_free(s->machine);
+        g_free(s);
     }
 }
 
@@ -372,6 +373,7 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
         .memory_phys_MiB = json_get_int(machine, "PhysicalMemoryInMiB"),
         .ram_types = json_get_string_dup(machine, "MemoryTypes"),
         .machine_data_version = json_get_int(machine, "MachineDataVersion"),
+        .machine_type = json_get_string_dup(machine, "MachineType"),
     };
 
     return b;
@@ -563,6 +565,7 @@ static char *bench_result_more_info_less(bench_result *b)
         /* legacy */ "%s%s=%s\n"
         "[%s]\n"
         /* board */ "%s=%s\n"
+        /* machine_type */ "%s=%s\n"
         /* cpu   */ "%s=%s\n"
         /* cpudesc */ "%s=%s\n"
         /* cpucfg */ "%s=%s\n"
@@ -582,15 +585,15 @@ static char *bench_result_more_info_less(bench_result *b)
                       "might not be comparable to current version. Some "
                       "details are missing.")
                   : "",
-        _("Machine"), _("Board"),
-        (b->machine->board != NULL) ? b->machine->board : _(unk), _("CPU Name"),
-        b->machine->cpu_name, _("CPU Description"),
-        (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
-        _("CPU Config"), b->machine->cpu_config, _("Threads Available"),
-        b->machine->threads, _("GPU"),
-        (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
-        _("OpenGL Renderer"),
-        (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
+        _("Machine"),
+        _("Board"), (b->machine->board != NULL) ? b->machine->board : _(unk),
+        _("Machine Type"), (b->machine->machine_type != NULL) ? b->machine->machine_type : _(unk),
+        _("CPU Name"), b->machine->cpu_name,
+        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
+        _("CPU Config"), b->machine->cpu_config,
+        _("Threads Available"), b->machine->threads,
+        _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
+        _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
         _("Memory"), memory,
         b->machine->ptr_bits ? _("Pointer Size") : "#AddySize", bits);
     free(memory);
@@ -619,6 +622,7 @@ static char *bench_result_more_info_complete(bench_result *b)
         /* legacy */ "%s%s=%s\n"
         "[%s]\n"
         /* board */ "%s=%s\n"
+        /* machine_type */ "%s=%s\n"
         /* cpu   */ "%s=%s\n"
         /* cpudesc */ "%s=%s\n"
         /* cpucfg */ "%s=%s\n"
@@ -645,7 +649,9 @@ static char *bench_result_more_info_complete(bench_result *b)
                       "details are missing.")
                   : "",
         _("Machine"), _("Board"),
-        (b->machine->board != NULL) ? b->machine->board : _(unk), _("CPU Name"),
+        (b->machine->board != NULL) ? b->machine->board : _(unk),
+        _("Machine Type"), (b->machine->machine_type != NULL) ? b->machine->machine_type : _(unk),
+        _("CPU Name"),
         b->machine->cpu_name, _("CPU Description"),
         (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
         _("CPU Config"), b->machine->cpu_config, _("Threads Available"),

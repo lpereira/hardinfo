@@ -953,6 +953,11 @@ const gchar *get_memory_desc(void) // [1] const (as to say "don't free")
     return (gchar*)idle_free(avail); // [1] idle_free()
 }
 
+static gchar *get_machine_type(void)
+{
+    return computer_get_virtualization();
+}
+
 const ShellModuleMethod *hi_exported_methods(void)
 {
     static const ShellModuleMethod m[] = {
@@ -964,6 +969,7 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getKernelModuleDescription", get_kernel_module_description},
         {"getMemoryTotal", get_memory_total},
         {"getMemoryDesc", get_memory_desc},
+        {"getMachineType", get_machine_type},
         {NULL},
     };
 

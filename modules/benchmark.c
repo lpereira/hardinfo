@@ -850,6 +850,7 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(string, "MemoryTypes", this_machine->ram_types);
         ADD_JSON_VALUE(int, "MachineDataVersion",
                        this_machine->machine_data_version);
+        ADD_JSON_VALUE(string, "MachineType", this_machine->machine_type);
 
         ADD_JSON_VALUE(boolean, "Legacy", FALSE);
         ADD_JSON_VALUE(string, "ExtraInfo", bench_results[i].extra);
