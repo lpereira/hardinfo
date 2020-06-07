@@ -29,13 +29,14 @@ type BenchmarkResult struct {
 	ElapsedTime     float64
 	UsedThreads     int
 
-	Board      string
-	CpuName    string
-	CpuDesc    string
-	CpuConfig  string
-	NumCpus    int
-	NumCores   int
-	NumThreads int
+	Board       string
+	MachineType string
+	CpuName     string
+	CpuDesc     string
+	CpuConfig   string
+	NumCpus     int
+	NumCores    int
+	NumThreads  int
 
 	MemoryInKiB         int
 	PhysicalMemoryInMiB int
@@ -77,8 +78,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, pointer_bits,
 		data_from_super_user, used_threads, benchmark_version, user_note,
-		elapsed_time, machine_data_version, legacy, timestamp)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+		elapsed_time, machine_data_version, legacy, machine_type, timestamp)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 		strftime('%s', 'now'))`)
 	if err != nil {
 		return http.StatusInternalServerError, fmt.Errorf("Couldn't prepare statement: " + err.Error())
@@ -137,7 +138,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 			bench.UserNote,
 			bench.ElapsedTime,
 			bench.MachineDataVersion,
-			bench.Legacy)
+			bench.Legacy,
+			bench.MachineType)
 		if err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("Could not publish benchmark result: " + err.Error())
 		}
@@ -270,7 +272,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
 			gpu_desc, pointer_bits, data_from_super_user,
 			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version,
-			legacy
+			legacy, machine_type
 		FROM benchmark_result
 		WHERE benchmark_type=?
 		GROUP BY machine_id, pointer_bits
@@ -314,7 +316,8 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.UserNote,
 				&result.ElapsedTime,
 				&result.MachineDataVersion,
-				&result.Legacy)
+				&result.Legacy,
+				&result.MachineType)
 			if err == nil {
 				resultMap[benchType] = append(resultMap[benchType], result)
 			} else {
