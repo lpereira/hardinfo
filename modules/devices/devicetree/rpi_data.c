@@ -67,6 +67,7 @@ static const RaspberryPiBoard rpi_boardinfo[] = {
   { "a03111",    "Q2 2019",    "4 Model B",           "1.0",    "1024 MB DDR4",      "Sony",          "BCM2838" },
   { "b03111",    "Q2 2019",    "4 Model B",           "1.0",    "2048 MB DDR4",      "Sony",          "BCM2838" },
   { "c03111",    "Q2 2019",    "4 Model B",           "1.1",    "4096 MB DDR4",      "Sony",          "BCM2838" },
+  { "c03114",    "Q2 2020",    "4 Model B",           "1.4",    "8192 MB DDR4",      "Sony",          "BCM2838" },
 
   { NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
