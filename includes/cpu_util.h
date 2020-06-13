@@ -36,6 +36,8 @@ typedef struct {
     gint drawer_id;
 } cpu_topology_data;
 
+int cpu_procs_cores_threads(int *p, int *c, int *t);
+
 cpufreq_data *cpufreq_new(gint id);
 void cpufreq_update(cpufreq_data *cpufd, int cur_only);
 void cpufreq_free(cpufreq_data *cpufd);

@@ -17,6 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <string.h>
 #include <glib.h>
 
 guchar excmap_def[256] = {1,0};

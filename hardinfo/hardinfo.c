@@ -27,6 +27,8 @@
 
 #include <binreloc.h>
 
+#include "dmi_util.h"
+
 ProgramParameters params = { 0 };
 
 int main(int argc, char **argv)

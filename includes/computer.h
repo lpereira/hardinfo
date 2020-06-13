@@ -178,4 +178,22 @@ extern GHashTable *memlabels;
 void init_memory_labels(void);
 void scan_memory_do(void);
 
+/* Scan callbacks */
+void scan_summary(gboolean reload);
+void scan_os(gboolean reload);
+void scan_security(gboolean reload);
+void scan_modules(gboolean reload);
+void scan_boots(gboolean reload);
+void scan_locales(gboolean reload);
+void scan_fs(gboolean reload);
+void scan_memory_usage(gboolean reload);
+void scan_display(gboolean reload);
+void scan_network(gboolean reload);
+void scan_users(gboolean reload);
+void scan_groups(gboolean reload);
+void scan_env_var(gboolean reload);
+#if GLIB_CHECK_VERSION(2,14,0)
+void scan_dev(gboolean reload);
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
+
 #endif				/* __COMPUTER_H__ */

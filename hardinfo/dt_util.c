@@ -607,7 +607,7 @@ char *dtr_elem_uint(dt_uint e) {
 }
 
 char *dtr_elem_uint64(dt_uint64 e) {
-    return g_strdup_printf("%" PRIu64, be64toh(e) );
+    return g_strdup_printf("%" PRIu64, (dt_uint64)be64toh(e) );
 }
 
 char *dtr_list_byte(uint8_t *bytes, unsigned long count) {

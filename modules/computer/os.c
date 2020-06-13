@@ -22,6 +22,7 @@
 #include "hardinfo.h"
 #include "computer.h"
 #include "distro_flavors.h"
+#include "languages.h"
 
 static gchar *
 get_libc_version(void)

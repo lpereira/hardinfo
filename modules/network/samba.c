@@ -20,6 +20,7 @@
 
 #include "hardinfo.h"
 #include "network.h"
+#include "samba.h"
 
 gchar *smb_shares_list = NULL;
 

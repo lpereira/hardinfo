@@ -58,4 +58,6 @@ void gpud_list_free(gpud *);
 
 void gpud_free(gpud *);
 
+void scan_gpu_do(void);
+
 #endif

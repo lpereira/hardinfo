@@ -124,7 +124,7 @@ static int read_from_vendor_conf(const char *path) {
 static int read_from_vendor_ids(const char *path) {
 #define VEN_BUFF_SIZE 128
 #define VEN_FFWD() while(isspace((unsigned char)*p)) p++;
-#define VEN_CHK(TOK) (strncmp(p, TOK, tl = strlen(TOK)) == 0 && (ok = 1))
+#define VEN_CHK(TOK) ({ int _ok = strncmp(p, TOK, tl = strlen(TOK)); if (_ok) ok = 1; _ok; })
     char buff[VEN_BUFF_SIZE] = "";
 
     char vars[7][VEN_BUFF_SIZE];

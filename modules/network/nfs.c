@@ -20,6 +20,7 @@
 
 #include "hardinfo.h"
 #include "network.h"
+#include "nfs.h"
 
 gchar *nfs_shares_list = NULL;
 

@@ -21,6 +21,7 @@
 #include "hardinfo.h"
 #include "computer.h"
 #include "cpu_util.h" /* for UNKIFNULL() */
+#include "languages.h"
 
 typedef struct {
     gchar name[32];

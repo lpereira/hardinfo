@@ -26,6 +26,7 @@
 #include "shell.h"
 #include "report.h"
 #include "syncmanager.h"
+#include "uri_handler.h"
 #include "xmlrpc-server.h"
 
 #include "config.h"

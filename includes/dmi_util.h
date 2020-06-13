@@ -66,4 +66,6 @@ char *dmidecode_match(const char *name, const dmi_type *type, const dmi_handle *
 
 void dmidecode_cache_free();
 
+void __scan_dmi(void);
+
 #endif

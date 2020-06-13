@@ -20,6 +20,7 @@
 #include <grp.h>
 #include "hardinfo.h"
 #include "computer.h"
+#include "groups.h"
 
 gchar *groups = NULL;
 

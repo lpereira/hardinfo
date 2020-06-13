@@ -9,6 +9,7 @@ typedef struct udiskp {
     guint64 size;
     struct udiskp* next;
 } udiskp;
+void udiskp_free(udiskp *u);
 
 typedef struct udisksa {
     guint8 id;
@@ -18,6 +19,7 @@ typedef struct udisksa {
     gint threshold;
     struct udisksa* next;
 } udisksa;
+void udisksa_free(udisksa *u);
 
 typedef struct udiskd {
     gchar *model;
@@ -47,11 +49,13 @@ typedef struct udiskd {
     pcid *nvme_controller;
     vendor_list vendors;
 } udiskd;
+void udiskd_free(udiskd *u);
 
 typedef struct udiskt {
     gchar *drive;
     gint32 temperature;
 } udiskt;
+void udiskt_free(udiskt *u);
 void udisks2_init();
 void udisks2_shutdown();
 GSList *get_udisks2_temps();

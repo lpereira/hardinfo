@@ -20,6 +20,7 @@
 #include <string.h>
 #include "hardinfo.h"
 #include "computer.h"
+#include "boots.h"
 
 void
 scan_boots_real(void)

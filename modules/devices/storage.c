@@ -22,6 +22,7 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "udisks2_util.h"
+#include "storage.h"
 
 #define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)");
 

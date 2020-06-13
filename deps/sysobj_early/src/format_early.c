@@ -18,6 +18,8 @@
  *
  */
 
+#include <stdlib.h>
+#include <string.h>
 #include "format_early.h"
 
 #define ANSI_COLOR_RESET   "\x1b[0m"

@@ -38,6 +38,8 @@
 #include <vendor.h>
 
 #include "network.h"
+#include "nfs.h"
+#include "samba.h"
 
 /* Callbacks */
 gchar *callback_network();

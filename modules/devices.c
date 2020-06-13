@@ -36,9 +36,14 @@
 #include <expr.h>
 #include <socket.h>
 
+#include "cpu_util.h"
 #include "devices.h"
 #include "dt_util.h"
+#include "gpu_util.h"
+#include "inputdevices.h"
+#include "storage.h"
 #include "udisks2_util.h"
+#include "usb_util.h"
 
 gchar *callback_processors();
 gchar *callback_gpu();

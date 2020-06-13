@@ -31,12 +31,16 @@
 
 #include <vendor.h>
 
+#include "boots.h"
 #include "computer.h"
+#include "cpu_util.h"
 
 #include "dmi_util.h" /* for dmi_get_str() */
 #include "dt_util.h" /* for dtr_get_string() */
 
+#include "groups.h"
 #include "info.h"
+#include "languages.h"
 
 #define THISORUNK(t) ( (t) ? t : _("(Unknown)") )
 
@@ -56,24 +60,6 @@ gchar *callback_groups(void);
 gchar *callback_env_var(void);
 #if GLIB_CHECK_VERSION(2,14,0)
 gchar *callback_dev(void);
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
-
-/* Scan callbacks */
-void scan_summary(gboolean reload);
-void scan_os(gboolean reload);
-void scan_security(gboolean reload);
-void scan_modules(gboolean reload);
-void scan_boots(gboolean reload);
-void scan_locales(gboolean reload);
-void scan_fs(gboolean reload);
-void scan_memory_usage(gboolean reload);
-void scan_display(gboolean reload);
-void scan_network(gboolean reload);
-void scan_users(gboolean reload);
-void scan_groups(gboolean reload);
-void scan_env_var(gboolean reload);
-#if GLIB_CHECK_VERSION(2,14,0)
-void scan_dev(gboolean reload);
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
 
 enum {

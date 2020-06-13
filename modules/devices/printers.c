@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#define __USE_XOPEN /* For strptime(). */
 #include <time.h>
 
 #include "devices.h"
