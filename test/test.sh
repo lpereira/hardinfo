@@ -31,3 +31,5 @@ do_test() {
 #do_test s390 data/s390_hurcules_cpuinfo
 #do_test riscv data/riscv_sim_cpuinfo
 #do_test riscv data/riscv_fake_cpuinfo
+#do_test e2k data/e2k_elbrus_e1c+_cpuinfo
+#do_test e2k data/e2k_elbrus_e8c_cpuinfo
