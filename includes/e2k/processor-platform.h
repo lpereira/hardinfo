@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2020 EntityFX <artem.solopiy@gmail.com> and MCST Elbrus Team 
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -55,8 +55,6 @@ struct _ProcessorCache {
     gchar *shared_cpu_list; /* some kernel's don't give a uid, so try shared_cpu_list */
     gint phy_sock;
 };
-
-
 
 //e2k processor structure
 struct _Processor {

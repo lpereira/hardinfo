@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2020 EntityFX <artem.solopiy@gmail.com> and MCST Elbrus Team 
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -238,25 +238,18 @@ gchar *caches_summary(GSList * processors)
     return ret;
 }
 
-
-#define PROC_SCAN_READ_BUFFER_SIZE 1024
 GSList *processor_scan(void)
 {
     GSList *procs = NULL, *l = NULL;
     Processor *processor = NULL;
     FILE *cpuinfo;
-    gchar *buffer;
+    gchar buffer[1024];
 
-    buffer = g_malloc(PROC_SCAN_READ_BUFFER_SIZE);
     cpuinfo = fopen(PROC_CPUINFO, "r");
     if (!cpuinfo)
         return NULL;
 
-    while (fgets(buffer, PROC_SCAN_READ_BUFFER_SIZE, cpuinfo)) {
-        int rlen = strlen(buffer);
-        if (rlen >= PROC_SCAN_READ_BUFFER_SIZE - 1) {
-            fprintf(stderr, "Warning: truncated a line (probably flags list) longer than %d bytes while reading %s.\n", PROC_SCAN_READ_BUFFER_SIZE, PROC_CPUINFO);
-        }
+    while (fgets(buffer, 1024, cpuinfo)) {
         gchar **tmp = g_strsplit(buffer, ":", 2);
         if (!tmp[1] || !tmp[0]) {
             g_strfreev(tmp);
