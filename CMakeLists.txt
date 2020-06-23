@@ -88,7 +88,7 @@ else()
 	pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
 endif()
 
-pkg_check_modules(LIBSOUP libsoup-2.4>=2.24)
+pkg_check_modules(LIBSOUP libsoup-2.4>=2.42)
 if (LIBSOUP_FOUND)
 	pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0)
 endif()
