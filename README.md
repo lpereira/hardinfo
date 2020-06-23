@@ -21,12 +21,12 @@ DEPENDENCIES
 ------------
 
 Required:
-- GTK+ 2.10 (or newer)
-- GLib 2.10 (or newer)
+- GTK+ 2.24 (or newer)
+- GLib 2.24 (or newer)
 - Zlib (for zlib benchmark)
 
 Optional (for synchronization/remote):
-- Libsoup 2.24 (or newer)
+- Libsoup 2.42 (or newer)
 
 BUILDING
 --------
@@ -46,8 +46,7 @@ There are some variables that can be changed:
    * `[Default: Release]` ``Debug`` prints messages to console and is not recommended for general use.
  * `CMAKE_INSTALL_PREFIX`: Sets the installation prefix.
    * `[Default: /usr/local]`: Distributions usually change this to `/usr`.
- * `HARDINFO_NOSYNC`: Disables network synchronization.
-   * `[Default: 1]`: Disabled by default due to the server being lost.
+ * Sync manager and uploads of report will be disabled if there's no libsoup requirements!
 
 To set a variable, use cmake's -D parameter. For example:
 
