@@ -46,7 +46,6 @@ There are some variables that can be changed:
    * `[Default: Release]` ``Debug`` prints messages to console and is not recommended for general use.
  * `CMAKE_INSTALL_PREFIX`: Sets the installation prefix.
    * `[Default: /usr/local]`: Distributions usually change this to `/usr`.
- * Sync manager and uploads of report will be disabled if there's no libsoup requirements!
 
 To set a variable, use cmake's -D parameter. For example:
 
