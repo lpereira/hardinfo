@@ -64,7 +64,7 @@ static GQuark err_quark;
 
 #define LABEL_SYNC_DEFAULT                                                     \
     _("<big><b>Synchronize with Central Database</b></big>\n"                  \
-      "The following information may be synchronized "                         \
+      "The following information may be synchronized\n"                         \
       "with the HardInfo central database.")
 #define LABEL_SYNC_SYNCING                                                     \
     _("<big><b>Synchronizing</b></big>\n"                                      \

@@ -691,7 +691,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
         bench_dialog = gtk_message_dialog_new(
             GTK_WINDOW(shell_get_main_shell()->transient_dialog), GTK_DIALOG_MODAL,
             GTK_MESSAGE_INFO, GTK_BUTTONS_NONE,
-            _("Benchmarking. Please do not move your mouse "
+            _("Benchmarking. Please do not move your mouse\n"
               "or press any keys."));
 
         gtk_widget_set_sensitive(

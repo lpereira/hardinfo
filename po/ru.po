@@ -1008,11 +1008,11 @@ msgstr "Обновление..."
 #: shell/syncmanager.c:69
 msgid ""
 "<big><b>Synchronize with Central Database</b></big>\n"
-"The following information may be synchronized with the HardInfo central "
+"The following information may be synchronized\nwith the HardInfo central "
 "database."
 msgstr ""
 "<big><b>Синхронизировать с центральной базой данных</b></big>\n"
-"Следующая информация может быть синхронизирована с центральной базой данных "
+"Следующая информация может быть синхронизирована\nс центральной базой данных "
 "HardInfo."
 
 #: shell/syncmanager.c:72
@@ -1380,8 +1380,8 @@ msgid "Benchmarking: <b>%s</b>."
 msgstr "Тестирование: <b>%s</b>"
 
 #: modules/benchmark.c:538
-msgid "Benchmarking. Please do not move your mouse or press any keys."
-msgstr "Тестирование. Пожалуйста, не двигайте мышь и не нажимайте на кнопки."
+msgid "Benchmarking. Please do not move your mouse\nor press any keys."
+msgstr "Тестирование. Пожалуйста, не двигайте мышь\nи не нажимайте на кнопки."
 
 #: modules/benchmark.c:541
 msgid "Cancel"

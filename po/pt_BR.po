@@ -999,11 +999,11 @@ msgstr "Atualizando..."
 #: shell/syncmanager.c:69
 msgid ""
 "<big><b>Synchronize with Central Database</b></big>\n"
-"The following information may be synchronized with the HardInfo central "
+"The following information may be synchronized\nwith the HardInfo central "
 "database."
 msgstr ""
 "<big><b>sincronizar com o banco de dados</big>\n"
-"As informações a seguir podem ser sincronizadas com o banco de dados central "
+"As informações a seguir podem ser sincronizadas\ncom o banco de dados central "
 "do HardInfo."
 
 #: shell/syncmanager.c:72
@@ -1365,9 +1365,9 @@ msgid "Benchmarking: <b>%s</b>."
 msgstr "avaliação comparativa Benchmarking: <b>%s</b>."
 
 #: modules/benchmark.c:527
-msgid "Benchmarking. Please do not move your mouse or press any keys."
+msgid "Benchmarking. Please do not move your mouse\nor press any keys."
 msgstr ""
-"Avaliação comparativa. Por favor, não mova o mouse ou pressione qualquer "
+"Avaliando o desempenho. Por favor, não mova o mouse\nou pressione qualquer "
 "tecla."
 
 #: modules/benchmark.c:530

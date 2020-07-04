@@ -951,7 +951,7 @@ msgstr "正在更新..."
 #: shell/syncmanager.c:69
 msgid ""
 "<big><b>Synchronize with Central Database</b></big>\n"
-"The following information may be synchronized with the HardInfo central "
+"The following information may be synchronized\nwith the HardInfo central "
 "database."
 msgstr ""
 
@@ -1296,7 +1296,7 @@ msgid "Benchmarking: <b>%s</b>."
 msgstr ""
 
 #: modules/benchmark.c:527
-msgid "Benchmarking. Please do not move your mouse or press any keys."
+msgid "Benchmarking. Please do not move your mouse\nor press any keys."
 msgstr ""
 
 #: modules/benchmark.c:530

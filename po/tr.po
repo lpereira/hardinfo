@@ -1007,11 +1007,11 @@ msgstr "Güncelleniyor..."
 #: shell/syncmanager.c:66
 msgid ""
 "<big><b>Synchronize with Central Database</b></big>\n"
-"The following information may be synchronized with the HardInfo central "
+"The following information may be synchronized\nwith the HardInfo central "
 "database."
 msgstr ""
 "<big><b>Merkezi Veritabanı ile Senkronize Et </b></big>\n"
-"Aşağıdaki bilgiler HardInfo merkezi veritabanıyla senkronize edilebilir."
+"Aşağıdaki bilgiler HardInfo merkezi veritabanıyla\nsenkronize edilebilir."
 
 #: shell/syncmanager.c:70
 msgid ""
@@ -1351,9 +1351,9 @@ msgid "Benchmarking: <b>%s</b>."
 msgstr "Karşılaştırılıyor: <b>%s</b>."
 
 #: modules/benchmark.c:694
-msgid "Benchmarking. Please do not move your mouse or press any keys."
+msgid "Benchmarking. Please do not move your mouse\nor press any keys."
 msgstr ""
-"Karşılaştırılıyor. Lütfen farenizi hareket ettirmeyin veya herhangi bir tuşa "
+"Karşılaştırılıyor. Lütfen farenizi hareket\nettirmeyin veya herhangi bir tuşa "
 "basmayın."
 
 #: modules/benchmark.c:702
