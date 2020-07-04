@@ -497,6 +497,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     GtkWidget *button8;
     GtkWidget *button7;
     GtkWidget *button6;
+    GtkWidget *priv_policy_btn;
     GtkWidget *label;
     GtkWidget *hbox;
 
@@ -582,6 +583,12 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     gtk_tree_view_column_add_attribute(column, cr_text, "markup", 1);
 
     populate_store(store);
+
+    priv_policy_btn = gtk_link_button_new_with_label(
+            "https://github.com/lpereira/hardinfo/wiki/Privacy-Policy",
+            _("Privacy Policy"));
+    gtk_widget_show(priv_policy_btn);
+    gtk_box_pack_start(GTK_BOX(dialog1_vbox), priv_policy_btn, FALSE, FALSE, 0);
 
 #if GTK_CHECK_VERSION(2, 14, 0)
     dialog1_action_area = gtk_dialog_get_action_area(GTK_DIALOG(dialog));
