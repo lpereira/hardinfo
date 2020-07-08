@@ -47,6 +47,7 @@ struct _SyncDialog {
     GtkWidget *button_sync;
     GtkWidget *button_cancel;
     GtkWidget *button_close;
+    GtkWidget *button_priv_policy;
 
     GtkWidget *scroll_box;
 
@@ -217,6 +218,7 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     loop = g_main_loop_new(NULL, TRUE);
 
     gtk_widget_hide(sd->button_sync);
+    gtk_widget_hide(sd->button_priv_policy);
     sync_dialog_netarea_show(sd);
     g_signal_connect(G_OBJECT(sd->button_cancel), "clicked",
                      (GCallback)_cancel_sync, sd);
@@ -632,6 +634,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     sd->button_sync = button7;
     sd->button_cancel = button8;
     sd->button_close = button6;
+    sd->button_priv_policy = priv_policy_btn;
     sd->scroll_box = scrolledwindow2;
     sd->label = label;
 
