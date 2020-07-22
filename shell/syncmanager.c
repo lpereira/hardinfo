@@ -326,7 +326,7 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[], gint n)
 
         hbox = gtk_hbox_new(FALSE, 5);
 
-        labels[i] = gtk_label_new(sna[i].entry->name);
+        labels[i] = gtk_label_new(_(sna[i].entry->name));
         status_labels[i] = gtk_label_new(empty_str);
 
         gtk_label_set_use_markup(GTK_LABEL(labels[i]), TRUE);
