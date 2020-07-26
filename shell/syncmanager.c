@@ -367,7 +367,7 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[], gint n)
 
         if (sna[i].entry && !send_request_for_net_action(&sna[i])) {
             markup = g_strdup_printf("<b><s>%s</s></b> <i>%s</i>",
-                                     sna[i].entry->name, _("(failed)"));
+                                     _(sna[i].entry->name), _("(failed)"));
             gtk_label_set_markup(GTK_LABEL(labels[i]), markup);
             g_free(markup);
 
@@ -464,7 +464,7 @@ static void populate_store(GtkListStore *store)
         e->selected = TRUE;
 
         gtk_list_store_append(store, &iter);
-        gtk_list_store_set(store, &iter, 0, TRUE, 1, e->name, 2, e, -1);
+        gtk_list_store_set(store, &iter, 0, TRUE, 1, _(e->name), 2, e, -1);
     }
 }
 
