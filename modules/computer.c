@@ -260,7 +260,7 @@ void scan_dev(gboolean reload)
        gchar *compiler_name;
        gchar *version_command;
        gchar *regex;
-       gboolean stdout;
+       gboolean read_stdout;
     } detect_lang[] = {
        { N_("Scripting Languages"), NULL, FALSE },
        { N_("Gambas3 (gbr3)"), "gbr3 --version", "\\d+\\.\\d+\\.\\d+", TRUE },
@@ -318,7 +318,7 @@ void scan_dev(gboolean reload)
             continue;
        }
 
-       if (detect_lang[i].stdout) {
+       if (detect_lang[i].read_stdout) {
             found = hardinfo_spawn_command_line_sync(detect_lang[i].version_command, &output, &ignored, NULL, NULL);
        } else {
             found = hardinfo_spawn_command_line_sync(detect_lang[i].version_command, &ignored, &output, NULL, NULL);
