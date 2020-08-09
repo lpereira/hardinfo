@@ -586,6 +586,12 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
 
     populate_store(store);
 
+    priv_policy_btn = gtk_link_button_new_with_label(
+            "https://github.com/lpereira/hardinfo/wiki/Privacy-Policy",
+            _("Privacy Policy"));
+    gtk_widget_show(priv_policy_btn);
+    gtk_box_pack_start(GTK_BOX(dialog1_vbox), priv_policy_btn, FALSE, FALSE, 0);
+
 #if GTK_CHECK_VERSION(2, 14, 0)
     dialog1_action_area = gtk_dialog_get_action_area(GTK_DIALOG(dialog));
 #else
@@ -594,12 +600,6 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     gtk_widget_show(dialog1_action_area);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog1_action_area),
                               GTK_BUTTONBOX_END);
-
-    priv_policy_btn = gtk_link_button_new_with_label(
-            "https://github.com/lpereira/hardinfo/wiki/Privacy-Policy",
-            _("Privacy Policy"));
-    gtk_widget_show(priv_policy_btn);
-    gtk_box_pack_start(GTK_BOX(dialog1_action_area), priv_policy_btn, FALSE, FALSE, 0);
 
     button8 = gtk_button_new_with_mnemonic(_("_Cancel"));
     gtk_widget_show(button8);
