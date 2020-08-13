@@ -89,9 +89,7 @@ else()
 endif()
 
 pkg_check_modules(LIBSOUP libsoup-2.4>=2.42)
-if (LIBSOUP_FOUND)
-	pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0)
-endif()
+pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0)
 
 pkg_check_modules(X11 REQUIRED x11)
 
