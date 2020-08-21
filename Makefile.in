@@ -1,0 +1,37 @@
+# ----------------------------------------------------------------------------
+
+CC = gcc
+CFLAGS = -Wall -g $(GTK_CFLAGS)
+
+# ----------------------------------------------------------------------------
+
+OBJECTS = hardinfo.o scsi.o ide.o pci.o usb.o isapnp.o serial.o parport.o \
+	computer.o
+
+all:	$(OBJECTS)
+	$(CC) $(CFLAGS) -o hardinfo $(OBJECTS) $(GTK_LIBS) $(GTK_FLAGS)
+
+clean:
+	rm -rf *~ .xvpics *.o hardinfo
+
+install:	all
+	cp hardinfo ${DESTDIR}/usr/bin/hardinfo; \
+	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps
+	cp -rv pixmaps/*.png ${DESTDIR}/usr/share/hardinfo/pixmaps
+	mkdir -p ${DESTDIR}/usr/share/hardinfo/pixmaps/distro
+	cp -rv pixmaps/distro/*.png ${DESTDIR}/usr/share/hardinfo/pixmaps/distro
+
+
+dist-clean:	clean
+	rm -rf Makefile debian/hardinfo/ config.h
+
+package:	dist-clean
+	@echo "Creating tar.gz..."
+	cd .. && tar czf $(PACKAGE).tar.gz $(PACKAGE)/* && cd $(PACKAGE)
+	@echo "Creating tar.bz2..."
+	cd .. && tar cjf $(PACKAGE).tar.bz2 $(PACKAGE)/* && cd $(PACKAGE)
+
+deb:	dist-clean
+	@echo "Creating deb..."
+	dpkg-buildpackage -rfakeroot -k${USER}
+

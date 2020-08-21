@@ -1,0 +1,161 @@
+#!/bin/sh
+#
+# ToscoConf 0.01
+# Copyright (c) 2003 Leandro Pereira <leandro@linuxmag.com.br>
+# All rights reserved.
+#
+# This script is in the Tosco Public License. It may be copied and/or
+# modified, in whole or in part, provided that all copies must retain the
+# above copyright notice, this condition and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+# AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+#
+# (yes, I did a copy&paste from the BSD license, eat me)
+#
+# ---------------------------------------------------------------------------
+#
+
+echo -n "Running: "
+OS=`uname`
+echo -n $OS
+case $OS in		
+	Linux)
+		echo " (OK)" ;;
+	*)
+		echo " (not supported, yet!)"
+		exit ;;
+esac	
+
+# ---------------------------------------------------------------------------
+
+echo -n "Checking for lspci... "
+LSPCIPATH="`which lspci` /sbin/lspci /usr/sbin/lspci /bin/lspci /usr/bin/lspci"
+for i in $LSPCIPATH; do
+	if [ -x "$i" ]; then
+		USE_LSPCI=1
+		LSPCI=$i
+		break;
+	fi
+done
+
+if [ -e "$LSPCI" ]; then
+	echo $LSPCI
+else
+	if [ -e "/proc/pci" ]; then
+		echo "not found, will parse /proc/pci"
+	else
+		echo "no lspci, no /proc/pci..."
+		echo "Are you sure you're running Linux?"
+		exit
+	fi
+fi
+
+# ---------------------------------------------------------------------------
+
+GTK2=-1
+MIN_VERSION="2.0.0"
+echo -n "Checking for GTK ${MIN_VERSION}... "
+for i in `which pkg-config`; do
+	pkg-config --errors-to-stdout gtk+-2.0 \
+		--atleast-version=$MIN_VERSION > /dev/null
+	case $? in
+		0)
+			GTK_FLAGS=`pkg-config gtk+-2.0 --cflags`
+			GTK_LIBS=`pkg-config gtk+-2.0 --libs`
+			echo "seems ok, will not test though."
+			GTK2=1 ;;
+		*)
+			echo "not found." ;;
+	esac
+done
+
+# If the user doesn't have GTK2, try to compile with GTK1.2 :)
+
+GTK1=-1
+if [ "$GTK2" -ne 1 ]; then
+	min_major=1
+	min_minor=2
+	min_rev=6
+	echo -n "Checking for GTK $min_major.$min_minor.$min_rev... "
+	for i in `which gtk-config`; do
+		VER=`gtk-config --version`
+
+		# RegExp stolen from AutoConf.
+		major=`echo $VER | sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
+		minor=`echo $VER | sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
+		rev=`echo $VER | sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
+		
+		if [ $major -lt $min_major ]; then
+			break;			
+		fi
+
+		if [ $minor -lt $min_minor ]; then
+			break;			
+		fi
+
+		if [ $rev -lt $min_rev ]; then
+			break;			
+		fi
+
+		GTK_FLAGS=`gtk-config --cflags`
+		GTK_LIBS=`gtk-config --libs`
+		echo "seems ok, will not test though."
+		GTK1=1 
+	done
+fi
+
+# --------------------------------------------------------------------------
+
+if [ `expr $GTK1 + $GTK2` -eq -2 ]; then
+	echo -e "\nYou need the GTK libraries, including the development stuff."
+	echo "If you're using Debian, running the command as root:"
+	echo -e "\n\tapt-get install libgtk2.0-dev\n"
+	echo "Will do the trick."
+	exit
+fi
+
+# --------------------------------------------------------------------------
+
+echo -e "\nWriting config.h..."
+rm -f config.h
+echo -e "#ifndef __CONFIG_H__\n#define __CONFIG_H__\n" > config.h
+
+if [ "$LSPCI" ]; then
+	echo "#define USE_LSPCI" >> config.h
+	echo "#define LSPCI \"$LSPCI -v\"" >> config.h
+fi
+
+if [ "$GTK2" -ne -1 ]; then
+	echo "#define GTK2" >> config.h
+else
+	echo "#define GTK1" >> config.h
+fi
+
+echo "#define VERSION \"`basename ${PWD} | cut -d"-" -f2`\"" >> config.h
+echo -e "\n#endif	/* __CONFIG_H__ */" >> config.h
+
+echo "Writing Makefile..."
+rm -f Makefile
+if [ "$GTK2" -ne -1 ]; then
+	echo "TARGET = GTK2" > Makefile
+else
+	echo "TARGET = GTK1" > Makefile
+fi
+
+echo "GTK_LIBS = ${GTK_LIBS}" >> Makefile
+echo "GTK_CFLAGS = ${GTK_FLAGS}" >> Makefile
+echo "PACKAGE = `basename ${PWD}`" >> Makefile
+
+cat Makefile.in >> Makefile
+
+echo -e "\nDone. Type \"make\" to compile the program.\n"
+echo "If you get errors, probably you don't have the right libraries,"
+echo "includes or utilities. However, if you're sure this is a bug in my"
+echo -e "code, please send a patch (use \"diff -u\") to <leandro@linuxmag.com.br>.\n"
+

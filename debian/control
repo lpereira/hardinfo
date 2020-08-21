@@ -1,0 +1,15 @@
+Source: hardinfo
+Section: x11
+Priority: optional
+Maintainer: Leandro Pereira <leandro@linuxmag.com.br>
+Build-Depends: debhelper (>> 4.0.0)
+Standards-Version: 3.5.8
+
+Package: hardinfo
+Architecture: any
+Depends: ${shlibs:Depends} ${misc:Depends}, pciutils (>=1:2.1.11-2)
+Description: Shows system information in a GTK window
+ HardInfo is a system information tool for Linux written from scratch in
+ pure C. It uses the GTK+ toolkit for all of its interface needs.
+ .
+ Homepage: http://alpha.linuxmag.com.br/~leandro/hardinfo
