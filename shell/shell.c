@@ -844,6 +844,8 @@ static gboolean update_field(gpointer data)
             if (shell->view_type == SHELL_VIEW_LOAD_GRAPH &&
                 gtk_tree_selection_iter_is_selected(shell->info_tree->selection,
                                                     item->iter)) {
+
+                load_graph_set_title(shell->loadgraph, fu->field_name);
                 load_graph_update(shell->loadgraph, atof(value));
             }
 
