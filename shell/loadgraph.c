@@ -43,6 +43,7 @@ struct _LoadGraph {
 
     PangoLayout   *layout;
     gchar     *suffix;
+    gchar *title;
 };
 
 static void _draw(LoadGraph * lg);
@@ -56,6 +57,7 @@ LoadGraph *load_graph_new(gint size)
     size++;
 
     lg->suffix = g_strdup("");
+    lg->title = g_strdup("");
     lg->area = gtk_drawing_area_new();
     lg->size = (size * 3) / 2;
     lg->data = g_new0(gint, lg->size);
@@ -85,6 +87,18 @@ void load_graph_set_data_suffix(LoadGraph * lg, gchar * suffix)
 gchar *load_graph_get_data_suffix(LoadGraph * lg)
 {
     return lg->suffix;
+}
+
+void load_graph_set_title(LoadGraph * lg, gchar * title)
+{
+    g_free(lg->title);
+    lg->title = g_strdup(title);
+}
+
+gchar *load_graph_get_title(LoadGraph *lg)
+{
+    if (lg != NULL) return lg->title;
+    return NULL;
 }
 
 GtkWidget *load_graph_get_framed(LoadGraph * lg)
@@ -179,6 +193,18 @@ void load_graph_configure_expose(LoadGraph * lg)
              (GCallback) _expose, lg);
 }
 
+static void _draw_title(LoadGraph * lg, const char* title) {
+    gchar *tmp = g_strdup_printf("<span size=\"x-small\">%s</span>", title);
+    pango_layout_set_markup(lg->layout, tmp, -1);
+    int width = 0;
+    int height = 0;
+    pango_layout_get_pixel_size(lg->layout, &width, &height);
+    gint position = (lg->width / 2) - (width / 2);
+    gdk_draw_layout(GDK_DRAWABLE(lg->buf), lg->trace, position, 2,
+                    lg->layout);
+    g_free(tmp);
+}
+
 static void _draw_label_and_line(LoadGraph * lg, gint position, gint value)
 {
     gchar *tmp;
@@ -241,6 +267,9 @@ static void _draw(LoadGraph * lg)
     _draw_label_and_line(lg, lg->height / 4, 3 * (lg->max_value / 4));
     _draw_label_and_line(lg, lg->height / 2, lg->max_value / 2);
     _draw_label_and_line(lg, 3 * (lg->height / 4), lg->max_value / 4);
+
+    /* graph title */
+    _draw_title(lg, lg->title);
 
     gtk_widget_queue_draw(lg->area);
 }
