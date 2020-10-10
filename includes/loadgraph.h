@@ -47,8 +47,8 @@ void         load_graph_clear(LoadGraph *lg);
 void         load_graph_set_data_suffix(LoadGraph *lg, gchar *suffix);
 gchar       *load_graph_get_data_suffix(LoadGraph *lg);
 
-void         load_graph_set_title(LoadGraph *lg, gchar *title);
-gchar        *load_graph_get_title(LoadGraph *lg);
+void         load_graph_set_title(LoadGraph *lg, const gchar *title);
+const gchar *load_graph_get_title(LoadGraph *lg);
 
 gint         load_graph_get_height(LoadGraph *lg);
 

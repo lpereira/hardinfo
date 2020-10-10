@@ -89,13 +89,13 @@ gchar *load_graph_get_data_suffix(LoadGraph * lg)
     return lg->suffix;
 }
 
-void load_graph_set_title(LoadGraph * lg, gchar * title)
+void load_graph_set_title(LoadGraph * lg, const gchar * title)
 {
     g_free(lg->title);
     lg->title = g_strdup(title);
 }
 
-gchar *load_graph_get_title(LoadGraph *lg)
+const gchar *load_graph_get_title(LoadGraph *lg)
 {
     if (lg != NULL) return lg->title;
     return NULL;

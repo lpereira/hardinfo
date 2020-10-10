@@ -75,6 +75,10 @@ GtkWidget *load_graph_get_framed(LoadGraph * lg)
     return NULL;
 }
 
+void load_graph_set_title(LoadGraph * lg, const gchar *title)
+{
+}
+
 void load_graph_clear(LoadGraph * lg)
 {
     int i;
