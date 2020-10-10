@@ -129,6 +129,8 @@ void load_graph_clear(LoadGraph * lg)
     lg->max_value = 1;
     lg->remax_count = 0;
 
+    load_graph_set_title(lg, "");
+
     _draw(lg);
 }
 
