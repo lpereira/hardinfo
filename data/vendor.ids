@@ -300,7 +300,10 @@ name Corsair Components
 
 name Creative Labs
     url www.creative.com
+    wikipedia Creative Technology
+    ansi_color 0;30;107
     match_string Creative Labs
+    match_string Creative Technology
 
 name Crucial (Micron)
     name_short Crucial
