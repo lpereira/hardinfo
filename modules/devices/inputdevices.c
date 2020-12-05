@@ -35,6 +35,18 @@ static struct {
     { "Audio",    "audio.png"    }
 };
 
+// source: https://elixir.bootlin.com/linux/v5.9/source/include/uapi/linux/input.h#L251
+static const gchar *bus_types[] = {
+    NULL,          "PCI",            "ISA PnP",          "USB",        // 0x0  - 0x3
+    "HIL",         "Bluetooth",      "Virtual",          NULL,         // 0x4  - 0x7
+    NULL,          NULL,             NULL,               NULL,         // 0x8  - 0xB
+    NULL,          NULL,             NULL,               NULL,         // 0xC  - 0xF
+    "ISA",         "i8042",          "XT Keyboard bus",  "RS232",      // 0x10 - 0x13
+    "Game port",   "Parallel port",  "Amiga bus",        "ADB",        // 0x14 - 0x17
+    "I²C",         "HOST",           "GSC",              "Atari bus",  // 0x18 - 0x1B
+    "SPI",         "RMI",            "CEC",              "Intel ISHTP" // 0x1C - 0x1F
+};
+
 #define UNKWNIFNULL(f) ((f) ? f : _("(Unknown)"))
 #define EMPTYIFNULL(f) ((f) ? f : "")
 
@@ -47,6 +59,7 @@ __scan_input_devices(void)
     gchar *tmp, *name = NULL, *phys = NULL;
     gchar *vendor_str = NULL, *product_str = NULL, *vendor_tags = NULL;
     gint bus = 0, vendor = 0, product = 0, version = 0;
+    const gchar *bus_str = NULL;
     int d = 0, n = 0;
 
     dev = fopen("/proc/bus/input/devices", "r");
@@ -99,6 +112,10 @@ __scan_input_devices(void)
                 usb_lookup_ids_vendor_product_str(vendor, product, &vendor_str, &product_str);
             }
 
+            if (bus >= 0 && bus < sizeof(bus_types) / sizeof(gchar*)) {
+                bus_str = bus_types[bus];
+            }
+
             vl = vendor_list_remove_duplicates_deep(vendors_match(name, vendor_str, NULL));
             vendor_tags = vendor_list_ribbon(vl, params.fmt_opts);
 
@@ -115,14 +132,14 @@ __scan_input_devices(void)
             gchar *strhash = g_strdup_printf("[%s]\n"
                     /* Name */   "$^$%s=%s\n"
                     /* Type */   "%s=%s\n"
-                    /* Bus */    "%s=0x%x\n"
+                    /* Bus */    "%s=[0x%x] %s\n"
                     /* Vendor */ "$^$%s=[0x%x] %s\n"
                     /* Product */"%s=[0x%x] %s\n"
                     /* Version */"%s=0x%x\n",
                             _("Device Information"),
                             _("Name"), name,
                             _("Type"), UNKWNIFNULL(input_devices[d].name),
-                            _("Bus"), bus,
+                            _("Bus"), bus, UNKWNIFNULL(bus_str),
                             _("Vendor"), vendor, UNKWNIFNULL(vendor_str),
                             _("Product"), product, UNKWNIFNULL(product_str),
                             _("Version"), version );
@@ -142,6 +159,7 @@ __scan_input_devices(void)
             g_free(vendor_str);
             g_free(vendor_tags);
             g_free(product_str);
+            bus_str = NULL;
             vendor_str = NULL;
             product_str = NULL;
             vendor_tags = NULL;
