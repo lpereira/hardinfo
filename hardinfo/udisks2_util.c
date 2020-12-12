@@ -474,7 +474,7 @@ gchar* get_udisks2_smart_attributes(udiskd* dsk, const char *drivepath){
     GError *error = NULL;
     const char* aidenf;
     guint8 aid;
-    gint16 avalue, aworst, athreshold;
+    gint16 avalue, aworst, athreshold, pretty_unit;
     gint64 pretty;
     udisksa *lastp = NULL, *p;
 
@@ -505,13 +505,43 @@ gchar* get_udisks2_smart_attributes(udiskd* dsk, const char *drivepath){
 
     // id(y), identifier(s), flags(q), value(i), worst(i), threshold(i),
     // pretty(x), pretty_unit(i), expansion(a{sv})
-    while (g_variant_iter_loop (iter, "(ysqiiixia{sv})", &aid, &aidenf, NULL, &avalue, &aworst, &athreshold, NULL, NULL, NULL)){
+    // pretty_unit = 0 (unknown), 1 (dimensionless), 2 (milliseconds), 3 (sectors), 4 (millikelvin).
+    while (g_variant_iter_loop (iter, "(ysqiiixia{sv})", &aid, &aidenf, NULL, &avalue,
+                                &aworst, &athreshold, &pretty, &pretty_unit, NULL)){
         p = udisksa_new();
         p->id = aid;
         p->identifier = g_strdup(aidenf);
         p->value = avalue;
         p->worst = aworst;
         p->threshold = athreshold;
+        switch (pretty_unit){
+            case 1:
+                p->interpreted_unit = UDSK_INTPVAL_DIMENSIONLESS;
+                p->interpreted = pretty;
+                break;
+            case 2:
+                if (pretty > 1000*60*60){ // > 1h
+                    p->interpreted_unit = UDSK_INTPVAL_HOURS;
+                    p->interpreted = pretty / (1000*60*60);
+                }
+                else{
+                    p->interpreted_unit = UDSK_INTPVAL_MILISECONDS;
+                    p->interpreted = pretty;
+                }
+                break;
+            case 3:
+                p->interpreted_unit = UDSK_INTPVAL_SECTORS;
+                p->interpreted = pretty;
+                break;
+            case 4:
+                p->interpreted_unit = UDSK_INTPVAL_CELSIUS;
+                p->interpreted = (pretty - 273150) / 1000; //mK to °C
+                break;
+            default:
+                p->interpreted_unit = UDSK_INTPVAL_SKIP;
+                p->interpreted = -1;
+                break;
+        }
         p->next = NULL;
 
         if (lastp == NULL)

@@ -10,12 +10,23 @@ typedef struct udiskp {
     struct udiskp* next;
 } udiskp;
 
+enum{
+    UDSK_INTPVAL_SKIP          = 0,
+    UDSK_INTPVAL_DIMENSIONLESS = 1,
+    UDSK_INTPVAL_MILISECONDS   = 2,
+    UDSK_INTPVAL_HOURS         = 3,
+    UDSK_INTPVAL_SECTORS       = 4,
+    UDSK_INTPVAL_CELSIUS       = 5,
+};
+
 typedef struct udisksa {
     guint8 id;
     gchar *identifier;
     gint value;
     gint worst;
     gint threshold;
+    gint64 interpreted;
+    guint8 interpreted_unit; // enum
     struct udisksa* next;
 } udisksa;
 
