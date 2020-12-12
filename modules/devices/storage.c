@@ -317,17 +317,40 @@ gboolean __scan_udisks2_devices(void) {
 
             if (disk->smart_attributes != NULL) {
                 moreinfo = h_strdup_cprintf(_("[S.M.A.R.T. Attributes]\n"
-                                            "Attribute=Normalized Value / Worst / Threshold\n"),
+                                            "Attribute=Value / Normalized / Worst / Threshold\n"),
                                             moreinfo);
 
                 attrib = disk->smart_attributes;
 
                 while (attrib != NULL){
                     tmp = g_strdup("");
+
+                    switch (attrib->interpreted_unit){
+                        case UDSK_INTPVAL_SKIP:
+                            tmp = h_strdup_cprintf("-", tmp);
+                            break;
+                        case UDSK_INTPVAL_MILISECONDS:
+                            tmp = h_strdup_cprintf("%ld ms", tmp, attrib->interpreted);
+                            break;
+                        case UDSK_INTPVAL_HOURS:
+                            tmp = h_strdup_cprintf("%ld h", tmp, attrib->interpreted);
+                            break;
+                        case UDSK_INTPVAL_CELSIUS:
+                            tmp = h_strdup_cprintf("%ld°C", tmp, attrib->interpreted);
+                            break;
+                        case UDSK_INTPVAL_SECTORS:
+                            tmp = h_strdup_cprintf(ngettext("%ld sector", "%ld sectors", attrib->interpreted), tmp, attrib->interpreted);
+                            break;
+                        case UDSK_INTPVAL_DIMENSIONLESS:
+                        default:
+                            tmp = h_strdup_cprintf("%ld", tmp, attrib->interpreted);
+                            break;
+                    }
+
                     if (attrib->value != -1)
-                        tmp = h_strdup_cprintf("%3d", tmp, attrib->value);
+                        tmp = h_strdup_cprintf(" / %3d", tmp, attrib->value);
                     else
-                        tmp = h_strdup_cprintf("???", tmp);
+                        tmp = h_strdup_cprintf(" / ???", tmp);
 
                     if (attrib->worst != -1)
                         tmp = h_strdup_cprintf(" / %3d", tmp, attrib->worst);
