@@ -26,6 +26,7 @@ Here is an incomplete list of contributors:
 * Mattia Rizzolo <mattia@mapreri.org>
 * Yo <yoldc22@free.fr>
 * "jamesbond" (http://chiselapp.com/user/jamesbond/)
+* Ondrej Čerman <ocerman@sda1.eu>
 
 Includes code from or based on:
 
