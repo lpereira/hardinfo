@@ -317,7 +317,7 @@ gboolean __scan_udisks2_devices(void) {
 
             if (disk->smart_attributes != NULL) {
                 moreinfo = h_strdup_cprintf(_("[S.M.A.R.T. Attributes]\n"
-                                            "Attribute=Value / Normalized / Worst / Threshold\n"),
+                                            "Attribute=<tt>Value      / Normalized / Worst / Threshold</tt>\n"),
                                             moreinfo);
 
                 attrib = disk->smart_attributes;
@@ -347,20 +347,24 @@ gboolean __scan_udisks2_devices(void) {
                             break;
                     }
 
+                    // pad spaces to next col
+                    j = g_utf8_strlen(tmp, -1);
+                    if (j < 13) tmp = h_strdup_cprintf("%*c", tmp, 13 - j, ' ');
+
                     if (attrib->value != -1)
-                        tmp = h_strdup_cprintf(" / %3d", tmp, attrib->value);
+                        tmp = h_strdup_cprintf("%-13d", tmp, attrib->value);
                     else
-                        tmp = h_strdup_cprintf(" / ???", tmp);
+                        tmp = h_strdup_cprintf("%-13s", tmp, "???");
 
                     if (attrib->worst != -1)
-                        tmp = h_strdup_cprintf(" / %3d", tmp, attrib->worst);
+                        tmp = h_strdup_cprintf("%-8d", tmp, attrib->worst);
                     else
-                        tmp = h_strdup_cprintf(" / ???", tmp);
+                        tmp = h_strdup_cprintf("%-8s", tmp, "???");
 
                     if (attrib->threshold != -1)
-                        tmp = h_strdup_cprintf(" / %3d", tmp, attrib->threshold);
+                        tmp = h_strdup_cprintf("%d", tmp, attrib->threshold);
                     else
-                        tmp = h_strdup_cprintf(" / ???", tmp);
+                        tmp = h_strdup_cprintf("???", tmp);
 
 
                     alabel = attrib->identifier;
@@ -371,7 +375,7 @@ gboolean __scan_udisks2_devices(void) {
                         }
                     }
 
-                    moreinfo = h_strdup_cprintf(_("(%d) %s=%s\n"),
+                    moreinfo = h_strdup_cprintf(_("(%d) %s=<tt>%s</tt>\n"),
                                             moreinfo,
                                             attrib->id, alabel, tmp);
                     g_free(tmp);
