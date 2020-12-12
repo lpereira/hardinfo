@@ -186,6 +186,10 @@ gboolean __scan_udisks2_devices(void) {
         { "read-error-retry-rate",        _("Read Error Retry Rate") },
         { "total-lbas-written",           _("Total LBAs Written") },
         { "total-lbas-read",              _("Total LBAs Read") },
+        { "wear-leveling-count",          _("Wear leveling Count") },
+        { "used-reserved-blocks-total",   _("Total Used Reserved Block Count") },
+        { "program-fail-count-total",     _("Total Program Fail Count") },
+        { "erase-fail-count-total",       _("Total Erase Fail Count") },
         { NULL, NULL }
     };
 
