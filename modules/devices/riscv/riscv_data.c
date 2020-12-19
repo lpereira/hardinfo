@@ -93,7 +93,7 @@ const char *riscv_ext_meaning(const char *ext) {
 
 /* see RISC-V spec 2.2: Chapter 22: ISA Subset Naming Conventions */
 
-/* Spec says case-insensitve, but I prefer single-letter extensions
+/* Spec says case-insensitive, but I prefer single-letter extensions
  * capped and version string (like "2p1") with a lowercase p. */
 #define RV_FIX_CASE(fstr,vo) \
     p = fstr; while (*p != 0 && *p != ':') { if (!vo) *p = toupper(*p); p++; } \
