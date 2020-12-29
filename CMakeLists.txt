@@ -66,8 +66,8 @@ if (OVRDTRROOT)
 	add_definitions(-DDTR_ROOT=${OVRDTRROOT})
 	message(STATUS "/proc/device-tree override: ${OVRDTRROOT}")
 endif()
-add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_PREFIX}/share/locale")
-message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/share/locale")
+add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_LOCALEDIR}")
+message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_LOCALEDIR}")
 
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
 
@@ -390,6 +390,6 @@ install(FILES ${HARDINFO_MANPAGES}
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
 install(FILES pixmaps/hardinfo.png
-	DESTINATION share/icons/hicolor/48x48/apps
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
