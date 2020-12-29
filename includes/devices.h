@@ -64,8 +64,8 @@ void scan_printers_do(void);
 #define SENSORS_GROUP_BY_TYPE 1
 
 void scan_sensors_do(void);
-void sensors_init(void);
-void sensors_shutdown(void);
+void sensor_init(void);
+void sensor_shutdown(void);
 
 extern gchar *battery_list;
 extern gchar *input_icons;

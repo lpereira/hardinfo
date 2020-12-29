@@ -33,4 +33,6 @@
 #define ENABLE_BINRELOC 1
 #define HAS_LINUX_WE 1
 
+#cmakedefine01 HAS_LIBSENSORS
+
 #endif	/* __CONFIG_H__ */

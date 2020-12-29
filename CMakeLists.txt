@@ -233,6 +233,12 @@ foreach (_module ${HARDINFO_MODULES})
 endforeach()
 target_link_libraries(benchmark ${JSON_GLIB_LIBRARIES})
 
+find_library(LIBSENSORS_LIBRARY NAMES libsensors.so)
+if (LIBSENSORS_LIBRARY)
+	set(HAS_LIBSENSORS 1)
+	target_link_libraries(devices ${LIBSENSORS_LIBRARY})
+endif ()
+
 add_library(sysobj_early STATIC
 	deps/sysobj_early/src/gg_slist.c
 	deps/sysobj_early/src/strstr_word.c

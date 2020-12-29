@@ -24,6 +24,10 @@
 #include "socket.h"
 #include "udisks2_util.h"
 
+#ifdef HAS_LIBSENSORS
+#include <sensors/sensors.h>
+#endif
+
 gchar *sensors = NULL;
 gchar *sensor_icons = NULL;
 GHashTable *sensor_compute = NULL;
@@ -551,7 +555,7 @@ static void read_sensors_hddtemp(void) {
     }
 }
 
-void read_sensors_udisks2(void) {
+static void read_sensors_udisks2(void) {
     GSList *node;
     GSList *temps;
     udiskt *disk;
@@ -573,6 +577,73 @@ void read_sensors_udisks2(void) {
     g_slist_free(temps);
 }
 
+static gboolean libsensors_initialized;
+#if HAS_LIBSENSORS
+static const struct libsensors_feature_type {
+    const char *type_name;
+    const char *icon;
+    const char *unit;
+    sensors_subfeature_type input;
+} libsensors_feature_types[SENSORS_FEATURE_MAX] = {
+    [SENSORS_FEATURE_FAN] = {"Fan", "fan", "RPM",
+                             SENSORS_SUBFEATURE_FAN_INPUT},
+    [SENSORS_FEATURE_TEMP] = {"Temperature", "therm", "\302\260C",
+                              SENSORS_SUBFEATURE_TEMP_INPUT},
+    [SENSORS_FEATURE_POWER] = {"Power", "bolt", "W",
+                               SENSORS_SUBFEATURE_POWER_INPUT},
+    [SENSORS_FEATURE_CURR] = {"Current", "bolt", "A",
+                              SENSORS_SUBFEATURE_CURR_INPUT},
+    [SENSORS_FEATURE_IN] = {"Voltage", "bolt", "V",
+                            SENSORS_SUBFEATURE_IN_INPUT},
+    [SENSORS_FEATURE_VID] = {"CPU Voltage", "bolt", "V",
+                            SENSORS_SUBFEATURE_VID},
+};
+static void read_sensors_libsensors(void) {
+    char chip_name_buf[512];
+    const sensors_chip_name *name;
+    int chip_nr = 0;
+
+    if (!libsensors_initialized)
+        return;
+
+    while ((name = sensors_get_detected_chips(NULL, &chip_nr))) {
+        const struct sensors_feature *feat;
+        int feat_nr = 0;
+
+        sensors_snprintf_chip_name(chip_name_buf, 512, name);
+
+        while ((feat = sensors_get_features(name, &feat_nr))) {
+            const struct libsensors_feature_type *feat_descr;
+            const struct sensors_subfeature *subfeat;
+            double value;
+
+            feat_descr = &libsensors_feature_types[feat->type];
+            if (!feat_descr->type_name)
+                continue;
+
+            subfeat = sensors_get_subfeature(name, feat, feat_descr->input);
+            if (!subfeat)
+                continue;
+
+            if (!sensors_get_value(name, subfeat->number, &value)) {
+                char *label = sensors_get_label(name, feat);
+                gchar *label_with_chip = g_strdup_printf("%s (%s)", label, chip_name_buf);
+
+                add_sensor(feat_descr->type_name,
+                           label_with_chip,
+                           "libsensors",
+                           value,
+                           feat_descr->unit,
+                           feat_descr->icon);
+
+                free(label_with_chip);
+                free(label);
+            }
+        }
+    }
+}
+#endif
+
 void scan_sensors_do(void) {
     g_free(sensors);
     g_free(sensor_icons);
@@ -584,23 +655,30 @@ void scan_sensors_do(void) {
     g_free(lginterval);
     lginterval = g_strdup("");
 
+    read_sensors_libsensors();
     read_sensors_hwmon();
     read_sensors_acpi();
     read_sensors_sys_thermal();
     read_sensors_omnibook();
     read_sensors_hddtemp();
     read_sensors_udisks2();
-
-    /* FIXME: Add support for  ibm acpi and more sensors */
 }
 
-void sensors_init(void) {
+void sensor_init(void) {
+#if HAS_LIBSENSORS
+    libsensors_initialized = sensors_init(NULL) == 0;
+#endif
+
     sensor_labels =
         g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
     sensor_compute = g_hash_table_new(g_str_hash, g_str_equal);
 }
 
-void sensors_shutdown(void) {
+void sensor_shutdown(void) {
+#if HAS_LIBSENSORS
+    sensors_cleanup();
+#endif
+
     g_hash_table_destroy(sensor_labels);
     g_hash_table_destroy(sensor_compute);
 }

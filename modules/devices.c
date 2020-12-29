@@ -858,14 +858,14 @@ void hi_module_init(void)
         sync_manager_add_entry(&entries[i]);
 
     init_cups();
-    sensors_init();
+    sensor_init();
     udisks2_init();
 }
 
 void hi_module_deinit(void)
 {
     moreinfo_del_with_prefix("DEV");
-    sensors_shutdown();
+    sensor_shutdown();
     udisks2_shutdown();
     g_module_close(cups);
 }
