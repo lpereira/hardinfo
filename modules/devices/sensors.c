@@ -577,7 +577,6 @@ static void read_sensors_udisks2(void) {
     g_slist_free(temps);
 }
 
-static gboolean libsensors_initialized;
 #if HAS_LIBSENSORS
 static const struct libsensors_feature_type {
     const char *type_name;
@@ -598,13 +597,16 @@ static const struct libsensors_feature_type {
     [SENSORS_FEATURE_VID] = {"CPU Voltage", "bolt", "V",
                             SENSORS_SUBFEATURE_VID},
 };
-static void read_sensors_libsensors(void) {
+static gboolean libsensors_initialized;
+
+static int read_sensors_libsensors(void) {
     char chip_name_buf[512];
     const sensors_chip_name *name;
     int chip_nr = 0;
+    int added_sensors = 0;
 
     if (!libsensors_initialized)
-        return;
+        return 0;
 
     while ((name = sensors_get_detected_chips(NULL, &chip_nr))) {
         const struct sensors_feature *feat;
@@ -638,9 +640,18 @@ static void read_sensors_libsensors(void) {
 
                 free(label_with_chip);
                 free(label);
+
+                added_sensors++;
             }
         }
     }
+
+    return added_sensors;
+}
+#else
+static int read_sensors_libsensors(void)
+{
+    return 0;
 }
 #endif
 
@@ -655,11 +666,13 @@ void scan_sensors_do(void) {
     g_free(lginterval);
     lginterval = g_strdup("");
 
-    read_sensors_libsensors();
-    read_sensors_hwmon();
-    read_sensors_acpi();
-    read_sensors_sys_thermal();
-    read_sensors_omnibook();
+    if (read_sensors_libsensors() == 0) {
+        read_sensors_hwmon();
+        read_sensors_acpi();
+        read_sensors_sys_thermal();
+        read_sensors_omnibook();
+    }
+
     read_sensors_hddtemp();
     read_sensors_udisks2();
 }
