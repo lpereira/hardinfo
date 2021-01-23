@@ -393,6 +393,8 @@ func main() {
 	}()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		log.Printf("%s %s", req.Method, req.URL.Path)
+
 		if matched, err := regexp.MatchString(`\/[a-zA-Z0-9_-]+\.[a-z]+`, req.URL.Path); !matched || err != nil {
 			http.Error(w, "Invalid file name: "+req.URL.Path, http.StatusBadRequest)
 			return
