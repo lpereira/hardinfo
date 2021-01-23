@@ -251,6 +251,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 	if err != nil {
 		return err
 	}
+	defer types.Close()
 	for types.Next() {
 		var benchType string
 		err = types.Scan(&benchType)
@@ -259,7 +260,6 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 		}
 		benchmarkTypes = append(benchmarkTypes, benchType)
 	}
-	types.Close()
 
 	resultMap := make(map[string][]BenchmarkResult)
 
