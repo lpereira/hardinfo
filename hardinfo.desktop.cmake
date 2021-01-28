@@ -7,6 +7,7 @@ Name[ru]=Информация о системе и тестирование
 Name[tr]=Sistem Bilgisi ve Karşılaştırma
 Comment=Displays system information
 Comment[ru]=Показывает информацию о системе
+Comment[tr]=Sistem bilgilerini görüntüler
 Exec=@CMAKE_INSTALL_FULL_BINDIR@/hardinfo
 Icon=hardinfo
 Terminal=false
