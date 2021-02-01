@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Cihan Alkan <cihanalk@gmail.com>, 2020.
-# Serkan Önder <serkanonder@outlook.com>,2021
+# Serkan Önder <serkanonder@outlook.com>, 2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-10-24 15:16-0500\n"
-"PO-Revision-Date: 2021-01-28 15:52+0300\n"
+"PO-Revision-Date: 2021-02-01 12:14+0300\n"
 "Last-Translator: serkanonder@outlook.com\n"
 "Language-Team: Turkish\n"
 "Language: tr\n"
@@ -59,7 +59,7 @@ msgstr "ns"
 
 #: hardinfo/cpu_util.c:189
 msgid "Governor"
-msgstr "Vali"
+msgstr "Yönetici"
 
 #: hardinfo/cpu_util.c:190 hardinfo/cpu_util.c:196 modules/devices/gpu.c:153
 #: modules/devices/pci.c:134 modules/devices/usb.c:136
@@ -70,11 +70,11 @@ msgstr "Sürücü"
 #: modules/devices/arm/processor.c:256 modules/devices/x86/processor.c:284
 #: modules/devices/x86/processor.c:388 modules/devices/x86/processor.c:524
 msgid "(Not Available)"
-msgstr "(Uygun değil)"
+msgstr "(Mevcut değil)"
 
 #: hardinfo/cpu_util.c:210 hardinfo/cpu_util.c:212
 msgid "Socket"
-msgstr "Soket"
+msgstr "Yuva"
 
 #: hardinfo/cpu_util.c:215 hardinfo/cpu_util.c:217 modules/devices/gpu.c:149
 #: modules/devices/gpu.c:227
@@ -421,7 +421,7 @@ msgstr "Çubuk PC"
 
 #: hardinfo/dt_util.c:1179
 msgid "phandle Map"
-msgstr ""
+msgstr "tanıtıcı Haritası"
 
 #: hardinfo/dt_util.c:1180
 msgid "Alias Map"
@@ -539,28 +539,28 @@ msgstr "(Yok)"
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d gün"
-msgstr[1] "%d gün"
+msgstr[1] "%d günler"
 
 #: hardinfo/util.c:105 modules/computer/uptime.c:55
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d saat"
-msgstr[1] "%d saat"
+msgstr[1] "%d saatler"
 
 #: hardinfo/util.c:106 modules/computer/uptime.c:56
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d dakika"
-msgstr[1] "%d dakika"
+msgstr[1] "%d dakikalar"
 
 #: hardinfo/util.c:107
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d saniye"
-msgstr[1] "%d saniye"
+msgstr[1] "%d saniyeler"
 
 #: hardinfo/util.c:128
 #, c-format
@@ -1309,7 +1309,7 @@ msgstr "CPU Yapılandırması"
 
 #: modules/benchmark/bench_results.c:436 modules/benchmark/bench_results.c:492
 msgid "Threads Available"
-msgstr "Mevcut Konular"
+msgstr "Mevcut İş Parçacığı"
 
 #: modules/benchmark/bench_results.c:437 modules/benchmark/bench_results.c:493
 msgid "GPU"
@@ -1793,7 +1793,7 @@ msgstr "Linux Güvenlik Modülleri"
 
 #: modules/computer.c:625
 msgid "Modules available"
-msgstr "Uygun Modüller"
+msgstr "Mevcut Modüller"
 
 #: modules/computer.c:626
 msgid "SELinux status"
@@ -2107,7 +2107,7 @@ msgstr "Boş Sanal Hafıza"
 #: modules/devices/dmi.c:111 modules/devices/dmi_memory.c:881
 #: modules/devices/firmware.c:246 modules/devices/x86/processor.c:693
 msgid "(Not available)"
-msgstr "(Uygun değil)"
+msgstr "(Mevcut değil)"
 
 #: modules/computer/modules.c:148
 msgid "Module Information"
@@ -2682,14 +2682,14 @@ msgstr[1] "%d fiziksel işlemciler"
 msgid "%d core"
 msgid_plural "%d cores"
 msgstr[0] "%d çekirdek"
-msgstr[1] "%d çekirdekler"
+msgstr[1] "%d çekirdek"
 
 #: modules/devices.c:179
 #, c-format
 msgid "%d thread"
 msgid_plural "%d threads"
-msgstr[0] "%d işlem"
-msgstr[1] "%d işlemler"
+msgstr[0] "%d iş parçacığı"
+msgstr[1] "%d iş parçacığı"
 
 #. /NP procs; NC cores; NT threads
 #: modules/devices.c:180
@@ -4257,7 +4257,7 @@ msgstr "USB cihazı bulunamadı."
 
 #: modules/devices/x86/processor.c:149
 msgid "Cache information not available=\n"
-msgstr "Önbellek bilgisi yok =\n"
+msgstr "Önbellek bilgisi yok=\n"
 
 #: modules/devices/x86/processor.c:155
 #, c-format
@@ -4351,37 +4351,37 @@ msgstr "Konu"
 #: modules/devices/x86/x86_data.c:43
 msgctxt "x86-flag"
 msgid "Onboard FPU (floating point support)"
-msgstr ""
+msgstr "Yerleşik FPU (kayan nokta desteği)"
 
 #. /flag:vme
 #: modules/devices/x86/x86_data.c:44
 msgctxt "x86-flag"
 msgid "Virtual 8086 mode enhancements"
-msgstr ""
+msgstr "Sanal 8086 modu geliştirmeleri"
 
 #. /flag:de
 #: modules/devices/x86/x86_data.c:45
 msgctxt "x86-flag"
 msgid "Debugging Extensions (CR4.DE)"
-msgstr ""
+msgstr "Uzantılarda Hata Ayıklama (CR4.DE)"
 
 #. /flag:pse
 #: modules/devices/x86/x86_data.c:46
 msgctxt "x86-flag"
 msgid "Page Size Extensions (4MB memory pages)"
-msgstr ""
+msgstr "Sayfa Boyutu Uzantıları (4MB bellek sayfaları)"
 
 #. /flag:tsc
 #: modules/devices/x86/x86_data.c:47
 msgctxt "x86-flag"
 msgid "Time Stamp Counter (RDTSC)"
-msgstr ""
+msgstr "Zaman Damgası Sayacı (RDTSC)"
 
 #. /flag:msr
 #: modules/devices/x86/x86_data.c:48
 msgctxt "x86-flag"
 msgid "Model-Specific Registers (RDMSR, WRMSR)"
-msgstr ""
+msgstr "Modele Özgü Kayıtlar (RDMSR, WRMSR)"
 
 #. /flag:pae
 #: modules/devices/x86/x86_data.c:49
@@ -4393,61 +4393,61 @@ msgstr "Fiziksel Adres Uzantıları (4GB'dan fazla RAM desteği)"
 #: modules/devices/x86/x86_data.c:50
 msgctxt "x86-flag"
 msgid "Machine Check Exception"
-msgstr ""
+msgstr "Makine Kontrolü İstisnası"
 
 #. /flag:cx8
 #: modules/devices/x86/x86_data.c:51
 msgctxt "x86-flag"
 msgid "CMPXCHG8 instruction (64-bit compare-and-swap)"
-msgstr ""
+msgstr "CMPXCHG8 talimatı (64-bit karşılaştırma ve değiştirme)"
 
 #. /flag:apic
 #: modules/devices/x86/x86_data.c:52
 msgctxt "x86-flag"
 msgid "Onboard APIC"
-msgstr ""
+msgstr "Yerleşik APIC"
 
 #. /flag:sep
 #: modules/devices/x86/x86_data.c:53
 msgctxt "x86-flag"
 msgid "SYSENTER/SYSEXIT"
-msgstr ""
+msgstr "SİS GİRİŞ/SİS ÇIKIŞ"
 
 #. /flag:mtrr
 #: modules/devices/x86/x86_data.c:54
 msgctxt "x86-flag"
 msgid "Memory Type Range Registers"
-msgstr ""
+msgstr "Bellek Tipi Aralık Kayıtları"
 
 #. /flag:pge
 #: modules/devices/x86/x86_data.c:55
 msgctxt "x86-flag"
 msgid "Page Global Enable (global bit in PDEs and PTEs)"
-msgstr ""
+msgstr "Sayfa Genel Etkinleştir (Pde'lerde ve Pte'lerde genel bit)"
 
 #. /flag:mca
 #: modules/devices/x86/x86_data.c:56
 msgctxt "x86-flag"
 msgid "Machine Check Architecture"
-msgstr ""
+msgstr "Makine Kontrol Mimarisi"
 
 #. /flag:cmov
 #: modules/devices/x86/x86_data.c:57
 msgctxt "x86-flag"
 msgid "CMOV instructions (conditional move) (also FCMOV)"
-msgstr ""
+msgstr "CMOV talimatları (koşullu hareket) (ayrıca FCMOV)"
 
 #. /flag:pat
 #: modules/devices/x86/x86_data.c:58
 msgctxt "x86-flag"
 msgid "Page Attribute Table"
-msgstr ""
+msgstr "Sayfa Öznitelik Tablosu"
 
 #. /flag:pse36
 #: modules/devices/x86/x86_data.c:59
 msgctxt "x86-flag"
 msgid "36-bit PSEs (huge pages)"
-msgstr ""
+msgstr "36 bit PSE'ler (büyük sayfalar)"
 
 #. /flag:pn
 #: modules/devices/x86/x86_data.c:60
@@ -4459,7 +4459,7 @@ msgstr "İşlemci seri numarası"
 #: modules/devices/x86/x86_data.c:61
 msgctxt "x86-flag"
 msgid "Cache Line Flush instruction"
-msgstr ""
+msgstr "Önbellek Hat Temizleme talimatı"
 
 #. /flag:dts
 #: modules/devices/x86/x86_data.c:62
@@ -4468,54 +4468,56 @@ msgid ""
 "Debug Store (buffer for debugging and profiling instructions), or "
 "alternately: digital thermal sensor"
 msgstr ""
+"Hata Ayıklama Deposu (hata ayıklama ve profil oluşturma talimatları için "
+"arabellek) veya alternatif olarak: dijital sıcaklık sensörü"
 
 #. /flag:acpi
 #: modules/devices/x86/x86_data.c:63
 msgctxt "x86-flag"
 msgid "ACPI via MSR (temperature monitoring and clock speed modulation)"
-msgstr ""
+msgstr "MSR aracılığıyla ACPI (sıcaklık izleme ve saat hızı modülasyonu)"
 
 #. /flag:mmx
 #: modules/devices/x86/x86_data.c:64
 msgctxt "x86-flag"
 msgid "Multimedia Extensions"
-msgstr ""
+msgstr "Multimedya Uzantıları"
 
 #. /flag:fxsr
 #: modules/devices/x86/x86_data.c:65
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR, CR4.OSFXSR"
-msgstr ""
+msgstr "FXSAVE/FXRSTOR, CR4.OSFXSR"
 
 #. /flag:sse
 #: modules/devices/x86/x86_data.c:66
 msgctxt "x86-flag"
 msgid "Intel SSE vector instructions"
-msgstr ""
+msgstr "Intel SSE vektör talimatları"
 
 #. /flag:sse2
 #: modules/devices/x86/x86_data.c:67
 msgctxt "x86-flag"
 msgid "SSE2"
-msgstr ""
+msgstr "SSE2"
 
 #. /flag:ss
 #: modules/devices/x86/x86_data.c:68
 msgctxt "x86-flag"
 msgid "CPU self snoop"
-msgstr ""
+msgstr "CPU kendini gözetleme"
 
 #. /flag:ht
 #: modules/devices/x86/x86_data.c:69
 msgctxt "x86-flag"
 msgid "Hyper-Threading"
-msgstr ""
+msgstr "Yüksek-İş parçacığı"
 
 #. /flag:tm
 #: modules/devices/x86/x86_data.c:70
 msgctxt "x86-flag"
 msgid "Automatic clock control (Thermal Monitor)"
-msgstr ""
+msgstr "Otomatik saat kontrolü (Sıcaklık Monitör)"
 
 #. /flag:ia64
 #: modules/devices/x86/x86_data.c:71
@@ -4524,228 +4526,233 @@ msgid ""
 "Intel Itanium Architecture 64-bit (not to be confused with Intel's 64-bit "
 "x86 architecture with flag x86-64 or \"AMD64\" bit indicated by flag lm)"
 msgstr ""
+"Intel Itanium Mimarisi 64 bit (Intel'in x86-64 işaretli 64 bit x86 "
+"mimarisiyle veya işaret lm ile gösterilen \"AMD64\" bitiyle "
+"karıştırılmamalıdır)"
 
 #. /flag:pbe
 #: modules/devices/x86/x86_data.c:72
 msgctxt "x86-flag"
 msgid "Pending Break Enable (PBE# pin) wakeup support"
-msgstr ""
+msgstr "Beklemede Arayı Etkinleştirme (PBE # pin) uyandırma desteği"
 
 #. /flag:syscall
 #: modules/devices/x86/x86_data.c:75
 msgctxt "x86-flag"
 msgid "SYSCALL (Fast System Call) and SYSRET (Return From Fast System Call)"
 msgstr ""
+"SYSCALL (Hızlı Sistem Çağrısı) ve SYSRET (Hızlı Sistem Çağrısından Dönüş)"
 
 #. /flag:mp
 #: modules/devices/x86/x86_data.c:76
 msgctxt "x86-flag"
 msgid "Multiprocessing Capable."
-msgstr ""
+msgstr "Çoklu İşlem Yeteneği."
 
 #. /flag:nx
 #: modules/devices/x86/x86_data.c:77
 msgctxt "x86-flag"
 msgid "Execute Disable"
-msgstr ""
+msgstr "Devre Dışı Bırak"
 
 #. /flag:mmxext
 #: modules/devices/x86/x86_data.c:78
 msgctxt "x86-flag"
 msgid "AMD MMX extensions"
-msgstr ""
+msgstr "AMD MMX uzantıları"
 
 #. /flag:fxsr_opt
 #: modules/devices/x86/x86_data.c:79
 msgctxt "x86-flag"
 msgid "FXSAVE/FXRSTOR optimizations"
-msgstr ""
+msgstr "FXSAVE / FXRSTOR optimizasyonları"
 
 #. /flag:pdpe1gb
 #: modules/devices/x86/x86_data.c:80
 msgctxt "x86-flag"
 msgid "One GB pages (allows hugepagesz=1G)"
-msgstr ""
+msgstr "Bir GB sayfa (büyüksayfalar = 1G'ye izin verir)"
 
 #. /flag:rdtscp
 #: modules/devices/x86/x86_data.c:81
 msgctxt "x86-flag"
 msgid "Read Time-Stamp Counter and Processor ID"
-msgstr ""
+msgstr "Zaman Damgası Sayacını ve İşlemci Kimliğini Oku"
 
 #. /flag:lm
 #: modules/devices/x86/x86_data.c:82
 msgctxt "x86-flag"
 msgid "Long Mode (x86-64: amd64, also known as Intel 64, i.e. 64-bit capable)"
 msgstr ""
+"Uzun Mod (x86-64: amd64, Intel 64 olarak da bilinir, yani 64 bit özellikli)"
 
 #. /flag:3dnow
 #: modules/devices/x86/x86_data.c:83
 msgctxt "x86-flag"
 msgid "3DNow! (AMD vector instructions, competing with Intel's SSE1)"
-msgstr ""
+msgstr "3BŞimdi! (Intel'in SSE1 ile rekabet eden AMD vektör talimatları)"
 
 #. /flag:3dnowext
 #: modules/devices/x86/x86_data.c:84
 msgctxt "x86-flag"
 msgid "AMD 3DNow! extensions"
-msgstr ""
+msgstr "AMD 3BŞimdi! uzantıları"
 
 #. /flag:recovery
 #: modules/devices/x86/x86_data.c:86
 msgctxt "x86-flag"
 msgid "CPU in recovery mode"
-msgstr ""
+msgstr "Kurtarma modunda CPU"
 
 #. /flag:longrun
 #: modules/devices/x86/x86_data.c:87
 msgctxt "x86-flag"
 msgid "Longrun power control"
-msgstr ""
+msgstr "Uzun süreli güç kontrolü"
 
 #. /flag:lrti
 #: modules/devices/x86/x86_data.c:88
 msgctxt "x86-flag"
 msgid "LongRun table interface"
-msgstr ""
+msgstr "Uzun koşu tablo arayüzü"
 
 #. /flag:cxmmx
 #: modules/devices/x86/x86_data.c:90
 msgctxt "x86-flag"
 msgid "Cyrix MMX extensions"
-msgstr ""
+msgstr "Cyrix MMX uzantıları"
 
 #. /flag:k6_mtrr
 #: modules/devices/x86/x86_data.c:91
 msgctxt "x86-flag"
 msgid "AMD K6 nonstandard MTRRs"
-msgstr ""
+msgstr "AMD K6 standart olmayan MTRR'ler"
 
 #. /flag:cyrix_arr
 #: modules/devices/x86/x86_data.c:92
 msgctxt "x86-flag"
 msgid "Cyrix ARRs (= MTRRs)"
-msgstr ""
+msgstr "Cyrix ARRs (= MTRRs)"
 
 #. /flag:centaur_mcr
 #: modules/devices/x86/x86_data.c:93
 msgctxt "x86-flag"
 msgid "Centaur MCRs (= MTRRs)"
-msgstr ""
+msgstr "Centaur MCRs (= MTRRs)"
 
 #. /flag:constant_tsc
 #: modules/devices/x86/x86_data.c:94
 msgctxt "x86-flag"
 msgid "TSC ticks at a constant rate"
-msgstr ""
+msgstr "TSC sabit bir oranda geçiyor"
 
 #. /flag:up
 #: modules/devices/x86/x86_data.c:95
 msgctxt "x86-flag"
 msgid "SMP kernel running on UP"
-msgstr ""
+msgstr "UP'de çalışan SMP çekirdeği"
 
 #. /flag:art
 #: modules/devices/x86/x86_data.c:96
 msgctxt "x86-flag"
 msgid "Always-Running Timer"
-msgstr ""
+msgstr "Her Zaman Çalışan Zamanlayıcı"
 
 #. /flag:arch_perfmon
 #: modules/devices/x86/x86_data.c:97
 msgctxt "x86-flag"
 msgid "Intel Architectural PerfMon"
-msgstr ""
+msgstr "Intel Mimari PerfMon"
 
 #. /flag:pebs
 #: modules/devices/x86/x86_data.c:98
 msgctxt "x86-flag"
 msgid "Precise-Event Based Sampling"
-msgstr ""
+msgstr "Kesin Olay Bazlı Örnekleme"
 
 #. /flag:bts
 #: modules/devices/x86/x86_data.c:99
 msgctxt "x86-flag"
 msgid "Branch Trace Store"
-msgstr ""
+msgstr "Şube İzleme Mağazası"
 
 #. /flag:rep_good
 #: modules/devices/x86/x86_data.c:100
 msgctxt "x86-flag"
 msgid "rep microcode works well"
-msgstr ""
+msgstr "rep mikro kodu iyi çalışıyor"
 
 #. /flag:acc_power
 #: modules/devices/x86/x86_data.c:101
 msgctxt "x86-flag"
 msgid "AMD accumulated power mechanism"
-msgstr ""
+msgstr "AMD birikmiş güç mekanizması"
 
 #. /flag:nopl
 #: modules/devices/x86/x86_data.c:102
 msgctxt "x86-flag"
 msgid "The NOPL (0F 1F) instructions"
-msgstr ""
+msgstr "NOPL (0F 1F) talimatları"
 
 #. /flag:xtopology
 #: modules/devices/x86/x86_data.c:103
 msgctxt "x86-flag"
 msgid "cpu topology enum extensions"
-msgstr ""
+msgstr "cpu topolojisi numaralandırma uzantıları"
 
 #. /flag:tsc_reliable
 #: modules/devices/x86/x86_data.c:104
 msgctxt "x86-flag"
 msgid "TSC is known to be reliable"
-msgstr ""
+msgstr "TSC'nin güvenilir olduğu biliniyor"
 
 #. /flag:nonstop_tsc
 #: modules/devices/x86/x86_data.c:105
 msgctxt "x86-flag"
 msgid "TSC does not stop in C states"
-msgstr ""
+msgstr "TSC, C bölgelerinde durmuyor"
 
 #. /flag:extd_apicid
 #: modules/devices/x86/x86_data.c:106
 msgctxt "x86-flag"
 msgid "has extended APICID (8 bits)"
-msgstr ""
+msgstr "APICID'yi (8 bit) genişletti"
 
 #. /flag:amd_dcm
 #: modules/devices/x86/x86_data.c:107
 msgctxt "x86-flag"
 msgid "multi-node processor"
-msgstr ""
+msgstr "çok düğümlü işlemci"
 
 #. /flag:aperfmperf
 #: modules/devices/x86/x86_data.c:108
 msgctxt "x86-flag"
 msgid "APERFMPERF"
-msgstr ""
+msgstr "APERFMPERF"
 
 #. /flag:eagerfpu
 #: modules/devices/x86/x86_data.c:109
 msgctxt "x86-flag"
 msgid "Non lazy FPU restore"
-msgstr ""
+msgstr "Tembel olmayan FPU geri yüklemesi"
 
 #. /flag:nonstop_tsc_s3
 #: modules/devices/x86/x86_data.c:110
 msgctxt "x86-flag"
 msgid "TSC doesn't stop in S3 state"
-msgstr ""
+msgstr "TSC S3 durumunda durmuyor"
 
 #. /flag:mce_recovery
 #: modules/devices/x86/x86_data.c:111
 msgctxt "x86-flag"
 msgid "CPU has recoverable machine checks"
-msgstr ""
+msgstr "CPU'da kurtarılabilir makine kontrolleri var"
 
 #. /flag:pni
 #: modules/devices/x86/x86_data.c:114
 msgctxt "x86-flag"
 msgid "SSE-3 (\"Prescott New Instructions\")"
-msgstr ""
+msgstr "SSE-3 (\"Prescott Yeni Talimatlar\")"
 
 #. /flag:pclmulqdq
 #: modules/devices/x86/x86_data.c:115
@@ -4754,126 +4761,128 @@ msgid ""
 "Perform a Carry-Less Multiplication of Quadword instruction - accelerator "
 "for GCM)"
 msgstr ""
+"Quadword talimatının Carry-Less Çarpımını gerçekleştirin - GCM için "
+"hızlandırıcı)"
 
 #. /flag:dtes64
 #: modules/devices/x86/x86_data.c:116
 msgctxt "x86-flag"
 msgid "64-bit Debug Store"
-msgstr ""
+msgstr "64-bit Hata Ayıklama Deposu"
 
 #. /flag:monitor
 #: modules/devices/x86/x86_data.c:117
 msgctxt "x86-flag"
 msgid "Monitor/Mwait support (Intel SSE3 supplements)"
-msgstr ""
+msgstr "Monitor / Mwait desteği (Intel SSE3 ekleri)"
 
 #. /flag:ds_cpl
 #: modules/devices/x86/x86_data.c:118
 msgctxt "x86-flag"
 msgid "CPL Qual. Debug Store"
-msgstr ""
+msgstr "CPL Kalitesi Hata Ayıklama Deposu"
 
 #. /flag:vmx
 #: modules/devices/x86/x86_data.c:119
 msgctxt "x86-flag"
 msgid "Hardware virtualization, Intel VMX"
-msgstr ""
+msgstr "Donanım sanallaştırma, Intel VMX"
 
 #. /flag:smx
 #: modules/devices/x86/x86_data.c:120
 msgctxt "x86-flag"
 msgid "Safer mode TXT (TPM support)"
-msgstr ""
+msgstr "Daha güvenli mod TXT (TPM desteği)"
 
 #. /flag:est
 #: modules/devices/x86/x86_data.c:121
 msgctxt "x86-flag"
 msgid "Enhanced SpeedStep"
-msgstr ""
+msgstr "Gelişmiş Hız Adımı"
 
 #. /flag:tm2
 #: modules/devices/x86/x86_data.c:122
 msgctxt "x86-flag"
 msgid "Thermal Monitor 2"
-msgstr ""
+msgstr "Sıcaklık Monitörü 2"
 
 #. /flag:ssse3
 #: modules/devices/x86/x86_data.c:123
 msgctxt "x86-flag"
 msgid "Supplemental SSE-3"
-msgstr ""
+msgstr "Tamamlayıcı SSE-3"
 
 #. /flag:cid
 #: modules/devices/x86/x86_data.c:124
 msgctxt "x86-flag"
 msgid "Context ID"
-msgstr ""
+msgstr "Bağlam Kimliği"
 
 #. /flag:sdbg
 #: modules/devices/x86/x86_data.c:125
 msgctxt "x86-flag"
 msgid "silicon debug"
-msgstr ""
+msgstr "silikon hata ayıklama"
 
 #. /flag:fma
 #: modules/devices/x86/x86_data.c:126
 msgctxt "x86-flag"
 msgid "Fused multiply-add"
-msgstr ""
+msgstr "Kaynaşmış çarpma-ekleme"
 
 #. /flag:cx16
 #: modules/devices/x86/x86_data.c:127
 msgctxt "x86-flag"
 msgid "CMPXCHG16B"
-msgstr ""
+msgstr "CMPXCHG16B"
 
 #. /flag:xtpr
 #: modules/devices/x86/x86_data.c:128
 msgctxt "x86-flag"
 msgid "Send Task Priority Messages"
-msgstr ""
+msgstr "Görev Öncelikli Mesajları Gönderin"
 
 #. /flag:pdcm
 #: modules/devices/x86/x86_data.c:129
 msgctxt "x86-flag"
 msgid "Performance Capabilities"
-msgstr ""
+msgstr "Performans Yetenekleri"
 
 #. /flag:pcid
 #: modules/devices/x86/x86_data.c:130
 msgctxt "x86-flag"
 msgid "Process Context Identifiers"
-msgstr ""
+msgstr "İşlem Bağlam Tanımlayıcıları"
 
 #. /flag:dca
 #: modules/devices/x86/x86_data.c:131
 msgctxt "x86-flag"
 msgid "Direct Cache Access"
-msgstr ""
+msgstr "Doğrudan Önbellek Erişimi"
 
 #. /flag:sse4_1
 #: modules/devices/x86/x86_data.c:132
 msgctxt "x86-flag"
 msgid "SSE-4.1"
-msgstr ""
+msgstr "SSE-4.1"
 
 #. /flag:sse4_2
 #: modules/devices/x86/x86_data.c:133
 msgctxt "x86-flag"
 msgid "SSE-4.2"
-msgstr ""
+msgstr "SSE-4.2"
 
 #. /flag:x2apic
 #: modules/devices/x86/x86_data.c:134
 msgctxt "x86-flag"
 msgid "x2APIC"
-msgstr ""
+msgstr "x2APIC"
 
 #. /flag:movbe
 #: modules/devices/x86/x86_data.c:135
 msgctxt "x86-flag"
 msgid "Move Data After Swapping Bytes instruction"
-msgstr ""
+msgstr "Bayt Değiştirildikten Sonra Verileri Taşı talimatı"
 
 #. /flag:popcnt
 #: modules/devices/x86/x86_data.c:136
@@ -4882,151 +4891,156 @@ msgid ""
 "Return the Count of Number of Bits Set to 1 instruction (Hamming weight, i."
 "e. bit count)"
 msgstr ""
+"1 komuta ayarlanmış Bit Sayısı Sayısını döndür (Hamming ağırlığı, yani bit "
+"sayısı)"
 
 #. /flag:tsc_deadline_timer
 #: modules/devices/x86/x86_data.c:137
 msgctxt "x86-flag"
 msgid "Tsc deadline timer"
-msgstr ""
+msgstr "Tsc son tarih zamanlayıcı"
 
 #. /flag:aes/aes-ni
 #: modules/devices/x86/x86_data.c:138
 msgctxt "x86-flag"
 msgid "Advanced Encryption Standard (New Instructions)"
-msgstr ""
+msgstr "Gelişmiş Şifreleme Standardı (Yeni Talimatlar)"
 
 #. /flag:xsave
 #: modules/devices/x86/x86_data.c:139
 msgctxt "x86-flag"
 msgid "Save Processor Extended States: also provides XGETBY,XRSTOR,XSETBY"
 msgstr ""
+"İşlemci Genişletilmiş Durumlarını Kaydet: ayrıca XGETBY, XRSTOR, XSETBY "
+"sağlar"
 
 #. /flag:avx
 #: modules/devices/x86/x86_data.c:140
 msgctxt "x86-flag"
 msgid "Advanced Vector Extensions"
-msgstr ""
+msgstr "Gelişmiş Vektör Uzantıları"
 
 #. /flag:f16c
 #: modules/devices/x86/x86_data.c:141
 msgctxt "x86-flag"
 msgid "16-bit fp conversions (CVT16)"
-msgstr ""
+msgstr "16 bit fp dönüşümleri (CVT16)"
 
 #. /flag:rdrand
 #: modules/devices/x86/x86_data.c:142
 msgctxt "x86-flag"
 msgid "Read Random Number from hardware random number generator instruction"
-msgstr ""
+msgstr "Donanım rasgele sayı üreteci talimatından Rasgele Sayı okuyun"
 
 #. /flag:hypervisor
 #: modules/devices/x86/x86_data.c:143
 msgctxt "x86-flag"
 msgid "Running on a hypervisor"
-msgstr ""
+msgstr "Bir hiper yönetici üzerinde çalıştırma"
 
 #. /Cyrix/Centaur-defined CPU features, CPUID level 0xC0000001
 #. /flag:rng
 #: modules/devices/x86/x86_data.c:145
 msgctxt "x86-flag"
 msgid "Random Number Generator present (xstore)"
-msgstr ""
+msgstr "Rastgele Sayı Üreticisi mevcut (xstore)"
 
 #. /flag:rng_en
 #: modules/devices/x86/x86_data.c:146
 msgctxt "x86-flag"
 msgid "Random Number Generator enabled"
-msgstr ""
+msgstr "Rastgele Sayı Üreticisi etkinleştirildi"
 
 #. /flag:ace
 #: modules/devices/x86/x86_data.c:147
 msgctxt "x86-flag"
 msgid "on-CPU crypto (xcrypt)"
-msgstr ""
+msgstr "CPU üzerinde kripto (xcrypt)"
 
 #. /flag:ace_en
 #: modules/devices/x86/x86_data.c:148
 msgctxt "x86-flag"
 msgid "on-CPU crypto enabled"
-msgstr ""
+msgstr "CPU üzerinde kripto etkin"
 
 #. /flag:ace2
 #: modules/devices/x86/x86_data.c:149
 msgctxt "x86-flag"
 msgid "Advanced Cryptography Engine v2"
-msgstr ""
+msgstr "Gelişmiş Şifreleme Motoru v2"
 
 #. /flag:ace2_en
 #: modules/devices/x86/x86_data.c:150
 msgctxt "x86-flag"
 msgid "ACE v2 enabled"
-msgstr ""
+msgstr "ACE v2 etkin"
 
 #. /flag:phe
 #: modules/devices/x86/x86_data.c:151
 msgctxt "x86-flag"
 msgid "PadLock Hash Engine"
-msgstr ""
+msgstr "PadLock Karma Motoru"
 
 #. /flag:phe_en
 #: modules/devices/x86/x86_data.c:152
 msgctxt "x86-flag"
 msgid "PHE enabled"
-msgstr ""
+msgstr "PHE etkin"
 
 #. /flag:pmm
 #: modules/devices/x86/x86_data.c:153
 msgctxt "x86-flag"
 msgid "PadLock Montgomery Multiplier"
-msgstr ""
+msgstr "PadLock Montgomery Çarpanı"
 
 #. /flag:pmm_en
 #: modules/devices/x86/x86_data.c:154
 msgctxt "x86-flag"
 msgid "PMM enabled"
-msgstr ""
+msgstr "PMM etkin"
 
 #. /flag:lahf_lm
 #: modules/devices/x86/x86_data.c:156
 msgctxt "x86-flag"
 msgid "Load AH from Flags (LAHF) and Store AH into Flags (SAHF) in long mode"
 msgstr ""
+"AH'yi Flags'den (LAHF) yükleyin ve AH'yi Flags'e (SAHF) uzun modda kaydedin"
 
 #. /flag:cmp_legacy
 #: modules/devices/x86/x86_data.c:157
 msgctxt "x86-flag"
 msgid "If yes HyperThreading not valid"
-msgstr ""
+msgstr "Evetse, HyperThreading geçerli değil"
 
 #. /flag:svm
 #: modules/devices/x86/x86_data.c:158
 msgctxt "x86-flag"
 msgid "\"Secure virtual machine\": AMD-V"
-msgstr ""
+msgstr "\"Güvenli sanal makine\": AMD-V"
 
 #. /flag:extapic
 #: modules/devices/x86/x86_data.c:159
 msgctxt "x86-flag"
 msgid "Extended APIC space"
-msgstr ""
+msgstr "Genişletilmiş APIC alanı"
 
 #. /flag:cr8_legacy
 #: modules/devices/x86/x86_data.c:160
 msgctxt "x86-flag"
 msgid "CR8 in 32-bit mode"
-msgstr ""
+msgstr "32 bit modunda CR8"
 
 #. /flag:abm
 #: modules/devices/x86/x86_data.c:161
 msgctxt "x86-flag"
 msgid "Advanced Bit Manipulation"
-msgstr ""
+msgstr "Gelişmiş Bit Manipülasyonu"
 
 #. /flag:sse4a
 #: modules/devices/x86/x86_data.c:162
 msgctxt "x86-flag"
 msgid "SSE-4A"
-msgstr ""
+msgstr "SSE-4A"
 
 #. /flag:misalignsse
 #: modules/devices/x86/x86_data.c:163
@@ -5036,12 +5050,15 @@ msgid ""
 "legacy SSE instructions operate on unaligned data. Also depends on CR0 and "
 "Alignment Checking bit"
 msgstr ""
+"bazı eski SSE talimatları hizalanmamış veriler üzerinde çalışırken bir genel "
+"koruma istisnasının (#GP) oluşturulup oluşturulmadığını belirtir. Ayrıca CR0 "
+"ve Hizalama Kontrol bitine bağlıdır"
 
 #. /flag:3dnowprefetch
 #: modules/devices/x86/x86_data.c:164
 msgctxt "x86-flag"
 msgid "3DNow prefetch instructions"
-msgstr ""
+msgstr "3BŞimdi önceden getirme talimatları"
 
 #. /flag:osvw
 #: modules/devices/x86/x86_data.c:165
@@ -5050,402 +5067,404 @@ msgid ""
 "indicates OS Visible Workaround, which allows the OS to work around "
 "processor errata."
 msgstr ""
+"işletim Sisteminin işlemci hataları etrafında çalışmasına izin veren İşletim "
+"Sistemi Görünür Geçici Çözümünü belirtir."
 
 #. /flag:ibs
 #: modules/devices/x86/x86_data.c:166
 msgctxt "x86-flag"
 msgid "Instruction Based Sampling"
-msgstr ""
+msgstr "Talimat Tabanlı Örnekleme"
 
 #. /flag:xop
 #: modules/devices/x86/x86_data.c:167
 msgctxt "x86-flag"
 msgid "extended AVX instructions"
-msgstr ""
+msgstr "genişletilmiş AVX talimatları"
 
 #. /flag:skinit
 #: modules/devices/x86/x86_data.c:168
 msgctxt "x86-flag"
 msgid "SKINIT/STGI instructions"
-msgstr ""
+msgstr "SKINIT / STGI talimatları"
 
 #. /flag:wdt
 #: modules/devices/x86/x86_data.c:169
 msgctxt "x86-flag"
 msgid "Watchdog timer"
-msgstr ""
+msgstr "Watchdog zamanlayıcı"
 
 #. /flag:lwp
 #: modules/devices/x86/x86_data.c:170
 msgctxt "x86-flag"
 msgid "Light Weight Profiling"
-msgstr ""
+msgstr "Hafif Profilleme"
 
 #. /flag:fma4
 #: modules/devices/x86/x86_data.c:171
 msgctxt "x86-flag"
 msgid "4 operands MAC instructions"
-msgstr ""
+msgstr "4 işlenen MAC talimatları"
 
 #. /flag:tce
 #: modules/devices/x86/x86_data.c:172
 msgctxt "x86-flag"
 msgid "translation cache extension"
-msgstr ""
+msgstr "çeviri önbellek uzantısı"
 
 #. /flag:nodeid_msr
 #: modules/devices/x86/x86_data.c:173
 msgctxt "x86-flag"
 msgid "NodeId MSR"
-msgstr ""
+msgstr "NodeId MSR"
 
 #. /flag:tbm
 #: modules/devices/x86/x86_data.c:174
 msgctxt "x86-flag"
 msgid "Trailing Bit Manipulation"
-msgstr ""
+msgstr "Sondaki Bit Manipülasyonu"
 
 #. /flag:topoext
 #: modules/devices/x86/x86_data.c:175
 msgctxt "x86-flag"
 msgid "Topology Extensions CPUID leafs"
-msgstr ""
+msgstr "Topoloji Uzantıları CPUID yaprakları"
 
 #. /flag:perfctr_core
 #: modules/devices/x86/x86_data.c:176
 msgctxt "x86-flag"
 msgid "Core Performance Counter Extensions"
-msgstr ""
+msgstr "Çekirdek Performans Sayacı Uzantıları"
 
 #. /flag:perfctr_nb
 #: modules/devices/x86/x86_data.c:177
 msgctxt "x86-flag"
 msgid "NB Performance Counter Extensions"
-msgstr ""
+msgstr "NB Performans Sayacı Uzantıları"
 
 #. /flag:bpext
 #: modules/devices/x86/x86_data.c:178
 msgctxt "x86-flag"
 msgid "data breakpoint extension"
-msgstr ""
+msgstr "veri kesme noktası uzantısı"
 
 #. /flag:ptsc
 #: modules/devices/x86/x86_data.c:179
 msgctxt "x86-flag"
 msgid "performance time-stamp counter"
-msgstr ""
+msgstr "performans zaman damgası sayacı"
 
 #. /flag:perfctr_l2
 #: modules/devices/x86/x86_data.c:180
 msgctxt "x86-flag"
 msgid "L2 Performance Counter Extensions"
-msgstr ""
+msgstr "L2 Performans Sayacı Uzantıları"
 
 #. /flag:mwaitx
 #: modules/devices/x86/x86_data.c:181
 msgctxt "x86-flag"
 msgid "MWAIT extension (MONITORX/MWAITX)"
-msgstr ""
+msgstr "MWAIT uzantısı (MONITORX / MWAITX)"
 
 #. /flag:cpb
 #: modules/devices/x86/x86_data.c:183
 msgctxt "x86-flag"
 msgid "AMD Core Performance Boost"
-msgstr ""
+msgstr "AMD Çekirdek Performans Artışı"
 
 #. /flag:epb
 #: modules/devices/x86/x86_data.c:184
 msgctxt "x86-flag"
 msgid "IA32_ENERGY_PERF_BIAS support"
-msgstr ""
+msgstr "IA32_ENERJİ_PERFORMANS_EĞİLİMİ desteği"
 
 #. /flag:hw_pstate
 #: modules/devices/x86/x86_data.c:185
 msgctxt "x86-flag"
 msgid "AMD HW-PState"
-msgstr ""
+msgstr "AMD HW-PState"
 
 #. /flag:proc_feedback
 #: modules/devices/x86/x86_data.c:186
 msgctxt "x86-flag"
 msgid "AMD ProcFeedbackInterface"
-msgstr ""
+msgstr "AMD Pro Geri Bildirim Arayüzü"
 
 #. /flag:intel_pt
 #: modules/devices/x86/x86_data.c:187
 msgctxt "x86-flag"
 msgid "Intel Processor Tracing"
-msgstr ""
+msgstr "Intel İşlemci İzleme"
 
 #. /flag:tpr_shadow
 #: modules/devices/x86/x86_data.c:189
 msgctxt "x86-flag"
 msgid "Intel TPR Shadow"
-msgstr ""
+msgstr "Intel TPR Gölgesi"
 
 #. /flag:vnmi
 #: modules/devices/x86/x86_data.c:190
 msgctxt "x86-flag"
 msgid "Intel Virtual NMI"
-msgstr ""
+msgstr "Intel Sanal NMI"
 
 #. /flag:flexpriority
 #: modules/devices/x86/x86_data.c:191
 msgctxt "x86-flag"
 msgid "Intel FlexPriority"
-msgstr ""
+msgstr "Intel Flex Önceliği"
 
 #. /flag:ept
 #: modules/devices/x86/x86_data.c:192
 msgctxt "x86-flag"
 msgid "Intel Extended Page Table"
-msgstr ""
+msgstr "Intel Genişletilmiş Sayfa Tablosu"
 
 #. /flag:vpid
 #: modules/devices/x86/x86_data.c:193
 msgctxt "x86-flag"
 msgid "Intel Virtual Processor ID"
-msgstr ""
+msgstr "Intel Sanal İşlemci Kimliği"
 
 #. /flag:vmmcall
 #: modules/devices/x86/x86_data.c:194
 msgctxt "x86-flag"
 msgid "prefer VMMCALL to VMCALL"
-msgstr ""
+msgstr "VMMCALL'u VMCALL'a tercih edin"
 
 #. /flag:fsgsbase
 #: modules/devices/x86/x86_data.c:196
 msgctxt "x86-flag"
 msgid "{RD/WR}{FS/GS}BASE instructions"
-msgstr ""
+msgstr "{RD/WR}{FS/GS}TABAN talimatları"
 
 #. /flag:tsc_adjust
 #: modules/devices/x86/x86_data.c:197
 msgctxt "x86-flag"
 msgid "TSC adjustment MSR"
-msgstr ""
+msgstr "TSC ayarı MSR"
 
 #. /flag:bmi1
 #: modules/devices/x86/x86_data.c:198
 msgctxt "x86-flag"
 msgid "1st group bit manipulation extensions"
-msgstr ""
+msgstr "1. grup bit manipülasyon uzantıları"
 
 #. /flag:hle
 #: modules/devices/x86/x86_data.c:199
 msgctxt "x86-flag"
 msgid "Hardware Lock Elision"
-msgstr ""
+msgstr "Donanım Kilidi Elision"
 
 #. /flag:avx2
 #: modules/devices/x86/x86_data.c:200
 msgctxt "x86-flag"
 msgid "AVX2 instructions"
-msgstr ""
+msgstr "AVX2 talimatları"
 
 #. /flag:smep
 #: modules/devices/x86/x86_data.c:201
 msgctxt "x86-flag"
 msgid "Supervisor Mode Execution Protection"
-msgstr ""
+msgstr "Süpervizör Modu Yürütme Koruması"
 
 #. /flag:bmi2
 #: modules/devices/x86/x86_data.c:202
 msgctxt "x86-flag"
 msgid "2nd group bit manipulation extensions"
-msgstr ""
+msgstr "2. grup bit işleme uzantıları"
 
 #. /flag:erms
 #: modules/devices/x86/x86_data.c:203
 msgctxt "x86-flag"
 msgid "Enhanced REP MOVSB/STOSB"
-msgstr ""
+msgstr "Gelişmiş REP MOVSB / STOSB"
 
 #. /flag:invpcid
 #: modules/devices/x86/x86_data.c:204
 msgctxt "x86-flag"
 msgid "Invalidate Processor Context ID"
-msgstr ""
+msgstr "İşlemci Bağlam Kimliğini Geçersiz Kıl"
 
 #. /flag:rtm
 #: modules/devices/x86/x86_data.c:205
 msgctxt "x86-flag"
 msgid "Restricted Transactional Memory"
-msgstr ""
+msgstr "Sınırlandırılmış İşlem Belleği"
 
 #. /flag:cqm
 #: modules/devices/x86/x86_data.c:206
 msgctxt "x86-flag"
 msgid "Cache QoS Monitoring"
-msgstr ""
+msgstr "Önbellek QoS İzleme"
 
 #. /flag:mpx
 #: modules/devices/x86/x86_data.c:207
 msgctxt "x86-flag"
 msgid "Memory Protection Extension"
-msgstr ""
+msgstr "Bellek Koruma Uzantısı"
 
 #. /flag:avx512f
 #: modules/devices/x86/x86_data.c:208
 msgctxt "x86-flag"
 msgid "AVX-512 foundation"
-msgstr ""
+msgstr "AVX-512 temeli"
 
 #. /flag:avx512dq
 #: modules/devices/x86/x86_data.c:209
 msgctxt "x86-flag"
 msgid "AVX-512 Double/Quad instructions"
-msgstr ""
+msgstr "AVX-512 Çift / Dörtlü talimatlar"
 
 #. /flag:rdseed
 #: modules/devices/x86/x86_data.c:210
 msgctxt "x86-flag"
 msgid "The RDSEED instruction"
-msgstr ""
+msgstr "RDSEED talimatı"
 
 #. /flag:adx
 #: modules/devices/x86/x86_data.c:211
 msgctxt "x86-flag"
 msgid "The ADCX and ADOX instructions"
-msgstr ""
+msgstr "ADCX ve ADOX talimatları"
 
 #. /flag:smap
 #: modules/devices/x86/x86_data.c:212
 msgctxt "x86-flag"
 msgid "Supervisor Mode Access Prevention"
-msgstr ""
+msgstr "Gözetmen Modu Erişim Engelleme"
 
 #. /flag:clflushopt
 #: modules/devices/x86/x86_data.c:213
 msgctxt "x86-flag"
 msgid "CLFLUSHOPT instruction"
-msgstr ""
+msgstr "CLFLUSHOPT talimatı"
 
 #. /flag:clwb
 #: modules/devices/x86/x86_data.c:214
 msgctxt "x86-flag"
 msgid "CLWB instruction"
-msgstr ""
+msgstr "CLWB talimatı"
 
 #. /flag:avx512pf
 #: modules/devices/x86/x86_data.c:215
 msgctxt "x86-flag"
 msgid "AVX-512 Prefetch"
-msgstr ""
+msgstr "AVX-512 Ön Getirme"
 
 #. /flag:avx512er
 #: modules/devices/x86/x86_data.c:216
 msgctxt "x86-flag"
 msgid "AVX-512 Exponential and Reciprocal"
-msgstr ""
+msgstr "AVX-512 Üstel ve Karşılıklı"
 
 #. /flag:avx512cd
 #: modules/devices/x86/x86_data.c:217
 msgctxt "x86-flag"
 msgid "AVX-512 Conflict Detection"
-msgstr ""
+msgstr "AVX-512 Çakışma Algılama"
 
 #. /flag:sha_ni
 #: modules/devices/x86/x86_data.c:218
 msgctxt "x86-flag"
 msgid "SHA1/SHA256 Instruction Extensions"
-msgstr ""
+msgstr "SHA1 / SHA256 Talimat Uzantıları"
 
 #. /flag:avx512bw
 #: modules/devices/x86/x86_data.c:219
 msgctxt "x86-flag"
 msgid "AVX-512 Byte/Word instructions"
-msgstr ""
+msgstr "AVX-512 Bayt / Kelime talimatları"
 
 #. /flag:avx512vl
 #: modules/devices/x86/x86_data.c:220
 msgctxt "x86-flag"
 msgid "AVX-512 128/256 Vector Length extensions"
-msgstr ""
+msgstr "AVX-512 128/256 Vektör Uzunluğu uzantıları"
 
 #. /flag:xsaveopt
 #: modules/devices/x86/x86_data.c:222
 msgctxt "x86-flag"
 msgid "Optimized XSAVE"
-msgstr ""
+msgstr "Optimize edilmiş XSAVE"
 
 #. /flag:xsavec
 #: modules/devices/x86/x86_data.c:223
 msgctxt "x86-flag"
 msgid "XSAVEC"
-msgstr ""
+msgstr "XSAVEC"
 
 #. /flag:xgetbv1
 #: modules/devices/x86/x86_data.c:224
 msgctxt "x86-flag"
 msgid "XGETBV with ECX = 1"
-msgstr ""
+msgstr "ECX = 1 ile XGETBV"
 
 #. /flag:xsaves
 #: modules/devices/x86/x86_data.c:225
 msgctxt "x86-flag"
 msgid "XSAVES/XRSTORS"
-msgstr ""
+msgstr "XSAVES/XRSTORS"
 
 #. /flag:cqm_llc
 #: modules/devices/x86/x86_data.c:227
 msgctxt "x86-flag"
 msgid "LLC QoS"
-msgstr ""
+msgstr "LLC QoS"
 
 #. /flag:cqm_occup_llc
 #: modules/devices/x86/x86_data.c:229
 msgctxt "x86-flag"
 msgid "LLC occupancy monitoring"
-msgstr ""
+msgstr "LLC doluluk izleme"
 
 #. /flag:cqm_mbm_total
 #: modules/devices/x86/x86_data.c:230
 msgctxt "x86-flag"
 msgid "LLC total MBM monitoring"
-msgstr ""
+msgstr "LLC toplam MBM izleme"
 
 #. /flag:cqm_mbm_local
 #: modules/devices/x86/x86_data.c:231
 msgctxt "x86-flag"
 msgid "LLC local MBM monitoring"
-msgstr ""
+msgstr "LLC yerel MBM izleme"
 
 #. /flag:clzero
 #: modules/devices/x86/x86_data.c:233
 msgctxt "x86-flag"
 msgid "CLZERO instruction"
-msgstr ""
+msgstr "CLZERO talimatı"
 
 #. /flag:irperf
 #: modules/devices/x86/x86_data.c:234
 msgctxt "x86-flag"
 msgid "instructions retired performance counter"
-msgstr ""
+msgstr "talimatlar emekli performans sayacı"
 
 #. /flag:dtherm
 #: modules/devices/x86/x86_data.c:236
 msgctxt "x86-flag"
 msgid "digital thermal sensor"
-msgstr ""
+msgstr "dijital sıcaklık sensörü"
 
 #. /flag:ida
 #: modules/devices/x86/x86_data.c:237
 msgctxt "x86-flag"
 msgid "Intel Dynamic Acceleration"
-msgstr ""
+msgstr "Intel Dinamik Hızlandırma"
 
 #. /flag:arat
 #: modules/devices/x86/x86_data.c:238
 msgctxt "x86-flag"
 msgid "Always Running APIC Timer"
-msgstr ""
+msgstr "Daima Çalışan APIC Zamanlayıcı"
 
 #. /flag:pln
 #: modules/devices/x86/x86_data.c:239
 msgctxt "x86-flag"
 msgid "Intel Power Limit Notification"
-msgstr ""
+msgstr "Intel Güç Sınırı Bildirimi"
 
 #. /flag:pts
 #: modules/devices/x86/x86_data.c:240
@@ -5457,164 +5476,164 @@ msgstr "Intel Paket Sıcaklık Durumu"
 #: modules/devices/x86/x86_data.c:241
 msgctxt "x86-flag"
 msgid "Intel Hardware P-states"
-msgstr ""
+msgstr "Intel Donanım P durumları"
 
 #. /flag:hwp_notify
 #: modules/devices/x86/x86_data.c:242
 msgctxt "x86-flag"
 msgid "HWP notification"
-msgstr ""
+msgstr "HWP bildirimi"
 
 #. /flag:hwp_act_window
 #: modules/devices/x86/x86_data.c:243
 msgctxt "x86-flag"
 msgid "HWP Activity Window"
-msgstr ""
+msgstr "HWP Etkinlik Penceresi"
 
 #. /flag:hwp_epp
 #: modules/devices/x86/x86_data.c:244
 msgctxt "x86-flag"
 msgid "HWP Energy Performance Preference"
-msgstr ""
+msgstr "HWP Enerji Performans Tercihi"
 
 #. /flag:hwp_pkg_req
 #: modules/devices/x86/x86_data.c:245
 msgctxt "x86-flag"
 msgid "HWP package-level request"
-msgstr ""
+msgstr "HWP paket düzeyinde istek"
 
 #. /flag:npt
 #: modules/devices/x86/x86_data.c:247
 msgctxt "x86-flag"
 msgid "AMD Nested Page Table support"
-msgstr ""
+msgstr "AMD İç İçe Sayfa Tablosu desteği"
 
 #. /flag:lbrv
 #: modules/devices/x86/x86_data.c:248
 msgctxt "x86-flag"
 msgid "AMD LBR Virtualization support"
-msgstr ""
+msgstr "AMD LBR Sanallaştırma desteği"
 
 #. /flag:svm_lock
 #: modules/devices/x86/x86_data.c:249
 msgctxt "x86-flag"
 msgid "AMD SVM locking MSR"
-msgstr ""
+msgstr "AMD SVM kilitleme MSR"
 
 #. /flag:nrip_save
 #: modules/devices/x86/x86_data.c:250
 msgctxt "x86-flag"
 msgid "AMD SVM next_rip save"
-msgstr ""
+msgstr "AMD SVM sonraki_rip kaydetme"
 
 #. /flag:tsc_scale
 #: modules/devices/x86/x86_data.c:251
 msgctxt "x86-flag"
 msgid "AMD TSC scaling support"
-msgstr ""
+msgstr "AMD TSC ölçeklendirme desteği"
 
 #. /flag:vmcb_clean
 #: modules/devices/x86/x86_data.c:252
 msgctxt "x86-flag"
 msgid "AMD VMCB clean bits support"
-msgstr ""
+msgstr "AMD VMCB temiz bit desteği"
 
 #. /flag:flushbyasid
 #: modules/devices/x86/x86_data.c:253
 msgctxt "x86-flag"
 msgid "AMD flush-by-ASID support"
-msgstr ""
+msgstr "AMD flush-by-ASID desteği"
 
 #. /flag:decodeassists
 #: modules/devices/x86/x86_data.c:254
 msgctxt "x86-flag"
 msgid "AMD Decode Assists support"
-msgstr ""
+msgstr "AMD Decode Assists desteği"
 
 #. /flag:pausefilter
 #: modules/devices/x86/x86_data.c:255
 msgctxt "x86-flag"
 msgid "AMD filtered pause intercept"
-msgstr ""
+msgstr "AMD filtreli duraklatma engellemesi"
 
 #. /flag:pfthreshold
 #: modules/devices/x86/x86_data.c:256
 msgctxt "x86-flag"
 msgid "AMD pause filter threshold"
-msgstr ""
+msgstr "AMD duraklatma filtresi eşiği"
 
 #. /flag:avic
 #: modules/devices/x86/x86_data.c:257
 msgctxt "x86-flag"
 msgid "Virtual Interrupt Controller"
-msgstr ""
+msgstr "Sanal Kesme Denetleyicisi"
 
 #. /flag:pku
 #: modules/devices/x86/x86_data.c:259
 msgctxt "x86-flag"
 msgid "Protection Keys for Userspace"
-msgstr ""
+msgstr "Kullanıcı Alanı için Koruma Anahtarları"
 
 #. /flag:ospke
 #: modules/devices/x86/x86_data.c:260
 msgctxt "x86-flag"
 msgid "OS Protection Keys Enable"
-msgstr ""
+msgstr "İşletim Sistemi Koruma Anahtarlarını Etkinleştir"
 
 #. /flag:overflow_recov
 #: modules/devices/x86/x86_data.c:262
 msgctxt "x86-flag"
 msgid "MCA overflow recovery support"
-msgstr ""
+msgstr "MCA taşma kurtarma desteği"
 
 #. /flag:succor
 #: modules/devices/x86/x86_data.c:263
 msgctxt "x86-flag"
 msgid "uncorrectable error containment and recovery"
-msgstr ""
+msgstr "düzeltilemez hata önleme ve kurtarma"
 
 #. /flag:smca
 #: modules/devices/x86/x86_data.c:264
 msgctxt "x86-flag"
 msgid "Scalable MCA"
-msgstr ""
+msgstr "Ölçeklenebilir MCA"
 
 #. /bug:f00f
 #: modules/devices/x86/x86_data.c:267
 msgctxt "x86-flag"
 msgid "Intel F00F bug"
-msgstr ""
+msgstr "Intel F00F hatası"
 
 #. /bug:fdiv
 #: modules/devices/x86/x86_data.c:268
 msgctxt "x86-flag"
 msgid "FPU FDIV"
-msgstr ""
+msgstr "FPU FDIV"
 
 #. /bug:coma
 #: modules/devices/x86/x86_data.c:269
 msgctxt "x86-flag"
 msgid "Cyrix 6x86 coma"
-msgstr ""
+msgstr "Cyrix 6x86 coma"
 
 #. /bug:tlb_mmatch
 #: modules/devices/x86/x86_data.c:270
 msgctxt "x86-flag"
 msgid "AMD Erratum 383"
-msgstr ""
+msgstr "AMD Erratum 383"
 
 #. /bug:apic_c1e
 #. /bug:amd_e400
 #: modules/devices/x86/x86_data.c:271 modules/devices/x86/x86_data.c:280
 msgctxt "x86-flag"
 msgid "AMD Erratum 400"
-msgstr ""
+msgstr "AMD Erratum 400"
 
 #. /bug:11ap
 #: modules/devices/x86/x86_data.c:272
 msgctxt "x86-flag"
 msgid "Bad local APIC aka 11AP"
-msgstr ""
+msgstr "Kötü yerel APIC, 11AP"
 
 #. /bug:fxsave_leak
 #: modules/devices/x86/x86_data.c:273
@@ -5671,13 +5690,13 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:283
 msgctxt "x86-flag"
 msgid "CPU is affected by Spectre variant 1 attack with conditional branches"
-msgstr "CPU, koşullu dallara sahip Spectre varyant 1 saldırısından etkilenir"
+msgstr "CPU, koşullu dallara sahip Hayalet varyant 1 saldırısından etkilenir"
 
 #. /bug:spectre_v2
 #: modules/devices/x86/x86_data.c:284
 msgctxt "x86-flag"
 msgid "CPU is affected by Spectre variant 2 attack with indirect branches"
-msgstr "CPU, dolaylı dallarla Spectre varyant 2 saldırısından etkilenir"
+msgstr "CPU, dolaylı dallarla Hayalet varyant 2 saldırısından etkilenir"
 
 #. /bug:spec_store_bypass
 #: modules/devices/x86/x86_data.c:285
@@ -5782,7 +5801,7 @@ msgstr "ARP Tablosu"
 
 #: modules/network.c:65
 msgid "DNS Servers"
-msgstr "DNS Serverleri"
+msgstr "DNS sunucuları"
 
 #: modules/network.c:66
 msgid "Statistics"
