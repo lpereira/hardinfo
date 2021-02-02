@@ -152,6 +152,16 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 	return http.StatusOK, nil
 }
 
+func cacheUpdateHours(path string) time.Duration {
+	if strings.HasPrefix(path, "https://raw.githubusercontent.com/lpereira/hardinfo") {
+		return 12 * time.Hour
+	}
+
+	// Don't hit the servers for things like PCI and USB IDs that often; updating once a week
+	// is more than sufficient.
+	return 7 * 24 * time.Hour
+}
+
 func handleGet(database *sql.DB, updateCacheRequest chan string, w http.ResponseWriter, req *http.Request) (int, error) {
 	stmt, err := database.Prepare("SELECT blob, timestamp FROM cached_blobs WHERE name=?")
 	if err != nil {
@@ -167,7 +177,7 @@ func handleGet(database *sql.DB, updateCacheRequest chan string, w http.Response
 		return http.StatusNotFound, fmt.Errorf("%s: file not found", req.URL.Path)
 	}
 
-	if time.Now().Sub(time.Unix(timeStamp, 0)) > 12*time.Hour {
+	if time.Now().Sub(time.Unix(timeStamp, 0)) > cacheUpdateHours(req.URL.Path) {
 		updateCacheRequest <- req.URL.Path
 	}
 
