@@ -379,42 +379,6 @@ gint bench_result_sort(gconstpointer a, gconstpointer b)
     return 0;
 }
 
-static GSList *benchmark_include_results_conf(const gchar *path,
-                                              bench_value r,
-                                              const gchar *benchmark)
-{
-    GKeyFile *conf;
-    gchar **machines;
-    gchar *results = g_strdup("");
-    GSList *result_list = NULL;
-    gint i;
-
-    DEBUG("Loading benchmark results from conf file %s", path);
-
-    conf = g_key_file_new();
-
-    g_key_file_load_from_file(conf, path, 0, NULL);
-    g_key_file_set_list_separator(conf, '|');
-
-    machines = g_key_file_get_keys(conf, benchmark, NULL, NULL);
-    for (i = 0; machines && machines[i]; i++) {
-        gchar **values;
-        bench_result *sbr;
-
-        values = g_key_file_get_string_list(conf, benchmark, machines[i], NULL,
-                                            NULL);
-        sbr = bench_result_benchmarkconf(benchmark, machines[i], values);
-        result_list = g_slist_append(result_list, sbr);
-
-        g_strfreev(values);
-    }
-
-    g_strfreev(machines);
-    g_key_file_free(conf);
-
-    return result_list;
-}
-
 struct append_machine_result_json_data {
     GSList **result_list;
     const gchar *benchmark_name;
@@ -473,23 +437,18 @@ out:
 
 static gchar *find_benchmark_conf(void)
 {
-    const gchar *files[] = {"benchmark.json", "benchmark.conf", NULL};
     const gchar *config_dir = g_get_user_config_dir();
-    gint i;
+    gchar *path;
 
-    for (i = 0; files[i]; i++) {
-        gchar *path;
+    path = g_build_filename(config_dir, "hardinfo", "benchmark.json", NULL);
+    if (g_file_test(path, G_FILE_TEST_EXISTS))
+        return path;
+    g_free(path);
 
-        path = g_build_filename(config_dir, "hardinfo", files[i], NULL);
-        if (g_file_test(path, G_FILE_TEST_EXISTS))
-            return path;
-        g_free(path);
-
-        path = g_build_filename(params.path_data, files[i], NULL);
-        if (g_file_test(path, G_FILE_TEST_EXISTS))
-            return path;
-        g_free(path);
-    }
+    path = g_build_filename(params.path_data, "benchmark.json", NULL);
+    if (g_file_test(path, G_FILE_TEST_EXISTS))
+        return path;
+    g_free(path);
 
     return NULL;
 }
@@ -550,14 +509,8 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
 
     path = find_benchmark_conf();
     if (path) {
-        if (g_str_has_suffix(path, ".json"))
-            result_list = benchmark_include_results_json(
-                path, this_machine_value, benchmark);
-        else if (g_str_has_suffix(path, ".conf"))
-            result_list = benchmark_include_results_conf(
-                path, this_machine_value, benchmark);
-        else
-            g_assert_not_reached();
+        result_list = benchmark_include_results_json(
+            path, this_machine_value, benchmark);
     }
 
     /* this result */
@@ -901,13 +854,7 @@ static gchar *run_benchmark(gchar *name)
                         strncpy(bench_results[i].user_note,
                                 params.bench_user_note, 255);
 
-                    if (CHK_RESULT_FORMAT("conf")) {
-                        bench_result *b =
-                            bench_result_this_machine(name, bench_results[i]);
-                        char *temp = bench_result_benchmarkconf_line(b);
-                        bench_result_free(b);
-                        return temp;
-                    } else if (CHK_RESULT_FORMAT("shell")) {
+                    if (CHK_RESULT_FORMAT("shell")) {
                         bench_result *b =
                             bench_result_this_machine(name, bench_results[i]);
                         char *temp = bench_result_more_info_complete(b);
