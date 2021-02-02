@@ -210,6 +210,7 @@ func fetch(url string) ([]byte, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Got non-200 response when fetching %s: %d\n", url, resp.StatusCode)
 		return nil, errors.New("Non-200 response")
 	}
 
