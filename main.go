@@ -153,13 +153,23 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 }
 
 func cacheUpdateHours(path string) time.Duration {
-	if strings.HasPrefix(path, "https://raw.githubusercontent.com/lpereira/hardinfo") {
+	switch path {
+	case "/benchmark.json":
+		// Rebuilding the benchmark.json file can take a while as the result
+		// set grows, so do it only once per day at most.
+		return 24 * time.Hour
+	case "/pci.ids", "/usb.ids":
+		// Don't hit the servers for things like PCI and USB IDs that often;
+		// updating once every two weeks is more than sufficient.  Since
+		// these are external servers, it's just neighborly to reduce their
+		// load as much as we can; it's not like this data is updated every
+		// day anyway.
+		return 14 * 24 * time.Hour
+	default:
+		// For everything else (e.g. stuff on GitHub), every 12 hours is
+		// fine.
 		return 12 * time.Hour
 	}
-
-	// Don't hit the servers for things like PCI and USB IDs that often; updating once a week
-	// is more than sufficient.
-	return 7 * 24 * time.Hour
 }
 
 func handleGet(database *sql.DB, updateCacheRequest chan string, w http.ResponseWriter, req *http.Request) (int, error) {
