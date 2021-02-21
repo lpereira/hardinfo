@@ -797,6 +797,7 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(string, "GpuDesc", this_machine->gpu_desc);
         ADD_JSON_VALUE(int, "NumCpus", this_machine->processors);
         ADD_JSON_VALUE(int, "NumCores", this_machine->cores);
+        ADD_JSON_VALUE(int, "NumNodes", this_machine->nodes);
         ADD_JSON_VALUE(int, "NumThreads", this_machine->threads);
         ADD_JSON_VALUE(string, "MachineId", this_machine->mid);
         ADD_JSON_VALUE(int, "PointerBits", this_machine->ptr_bits);
