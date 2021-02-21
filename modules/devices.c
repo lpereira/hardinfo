@@ -166,19 +166,20 @@ static gint proc_cmp_max_freq(Processor *a, Processor *b) {
 
 gchar *processor_describe_default(GSList * processors)
 {
-    int packs, cores, threads;
-    const gchar  *packs_fmt, *cores_fmt, *threads_fmt;
+    int packs, cores, threads, nodes;
+    const gchar  *packs_fmt, *cores_fmt, *threads_fmt, *nodes_fmt;
     gchar *ret, *full_fmt;
 
-    cpu_procs_cores_threads(&packs, &cores, &threads);
+    cpu_procs_cores_threads_nodes(&packs, &cores, &threads, &nodes);
 
     /* if topology info was available, else fallback to old method */
     if (cores > 0) {
         packs_fmt = ngettext("%d physical processor", "%d physical processors", packs);
         cores_fmt = ngettext("%d core", "%d cores", cores);
         threads_fmt = ngettext("%d thread", "%d threads", threads);
-        full_fmt = g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"), packs_fmt, cores_fmt, threads_fmt);
-        ret = g_strdup_printf(full_fmt, packs, cores, threads);
+        nodes_fmt = ngettext("%d NUMA node", "%d NUMA nodes", nodes);
+        full_fmt = g_strdup_printf(_(/*/NP procs; NC cores; NN nodes; NT threads*/ "%s; %s, %s; %s"), packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
+        ret = g_strdup_printf(full_fmt, packs, cores, nodes, threads);
         g_free(full_fmt);
         return ret;
     } else {

@@ -47,4 +47,6 @@ void cputopo_free(cpu_topology_data *cputd);
 
 gchar *cputopo_section_str(cpu_topology_data *cputd);
 
+int cpu_procs_cores_threads_nodes(int *p, int *c, int *t, int *n);
+
 #endif

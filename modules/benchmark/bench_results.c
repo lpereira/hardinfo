@@ -40,6 +40,7 @@ typedef struct {
     int processors;
     int cores;
     int threads;
+    int nodes;
     char *mid;
     int ptr_bits;             /* 32, 64... BENCH_PTR_BITS; 0 for unspecified */
     int is_su_data;           /* 1 = data collected as root */
@@ -183,7 +184,7 @@ bench_machine *bench_machine_this()
         m->machine_type = module_call_method("computer::getMachineType");
         free(tmp);
 
-        cpu_procs_cores_threads(&m->processors, &m->cores, &m->threads);
+        cpu_procs_cores_threads_nodes(&m->processors, &m->cores, &m->threads, &m->nodes);
         gen_machine_id(m);
     }
     return m;
@@ -355,6 +356,11 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
              json_get_string(machine, "UserNote"));
     filter_invalid_chars(b->bvalue.user_note);
 
+    int nodes = json_get_int(machine, "NumNodes");
+
+    if (nodes == 0)
+        nodes = 1;
+
     b->machine = bench_machine_new();
     *b->machine = (bench_machine){
         .board = json_get_string_dup(machine, "Board"),
@@ -367,6 +373,7 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
         .processors = json_get_int(machine, "NumCpus"),
         .cores = json_get_int(machine, "NumCores"),
         .threads = json_get_int(machine, "NumThreads"),
+        .nodes = nodes,
         .mid = json_get_string_dup(machine, "MachineId"),
         .ptr_bits = json_get_int(machine, "PointerBits"),
         .is_su_data = json_get_boolean(machine, "DataFromSuperUser"),

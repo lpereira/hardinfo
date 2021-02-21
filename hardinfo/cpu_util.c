@@ -71,37 +71,58 @@ gint get_cpu_int(const char* item, int cpuid, int null_val) {
 #define MAX_CORES_PER_PACK 256
 #define MAX_PACKS 128
 
-int cpu_procs_cores_threads(int *p, int *c, int *t) {
+int cpu_procs_cores_threads_nodes(int *p, int *c, int *t, int *n)
+{
     cpubits *threads, *cores, *packs;
     char *tmp;
     int i, m, pack_id, core_id;
+
     g_file_get_contents("/sys/devices/system/cpu/present", &tmp, NULL, NULL);
-    if (tmp != NULL) {
-        threads = cpubits_from_str(tmp);
-        cores = cpubits_from_str("");
-        packs = cpubits_from_str("");
-        m = cpubits_max(threads);
-        for (i = 0; i <= m; i++) {
-            pack_id = get_cpu_int("topology/physical_package_id", i, CPU_TOPO_NULL);
-            core_id = get_cpu_int("topology/core_id", i, CPU_TOPO_NULL);
-            if (pack_id < 0) pack_id = 0;
-            CPUBIT_SET(packs, pack_id);
-            if (core_id >= 0) { CPUBIT_SET(cores, (pack_id * MAX_CORES_PER_PACK) + core_id ); }
-        }
-        *t = cpubits_count(threads);
-        *c = cpubits_count(cores);
-        *p = cpubits_count(packs);
-        if (!*c) *c = 1;
-        if (!*p) *p = 1;
-        free(threads);
-        free(cores);
-        free(packs);
-        free(tmp);
-        return 1;
-    } else {
-        *p = *c = *t = -1;
+    if (tmp == NULL) {
+        *p = *c = *t = *n = -1;
         return 0;
     }
+
+    threads = cpubits_from_str(tmp);
+    cores = cpubits_from_str("");
+    packs = cpubits_from_str("");
+    m = cpubits_max(threads);
+    for (i = 0; i <= m; i++) {
+        pack_id = get_cpu_int("topology/physical_package_id", i, CPU_TOPO_NULL);
+        core_id = get_cpu_int("topology/core_id", i, CPU_TOPO_NULL);
+        if (pack_id < 0)
+            pack_id = 0;
+        CPUBIT_SET(packs, pack_id);
+        if (core_id >= 0) {
+            CPUBIT_SET(cores, (pack_id * MAX_CORES_PER_PACK) + core_id);
+        }
+    }
+
+    *t = cpubits_count(threads);
+    *c = cpubits_count(cores);
+    *p = cpubits_count(packs);
+
+    g_free(tmp);
+    g_file_get_contents("/sys/devices/system/node/possible", &tmp, NULL, NULL);
+    if (tmp != NULL) {
+        cpubits *nodes = cpubits_from_str(tmp);
+        if (nodes)
+            *n = cpubits_count(nodes);
+        free(nodes);
+    }
+
+    if (!*c)
+        *c = 1;
+    if (!*p)
+        *p = 1;
+    if (!*n)
+        *n = 1;
+
+    g_free(threads);
+    g_free(cores);
+    g_free(packs);
+    g_free(tmp);
+    return 1;
 }
 
 cpufreq_data *cpufreq_new(gint id)

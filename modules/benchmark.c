@@ -135,14 +135,15 @@ bench_value benchmark_crunch_for(float seconds,
                                  gpointer callback,
                                  gpointer callback_data)
 {
-    int cpu_procs, cpu_cores, cpu_threads, thread_number, stop = 0;
+    int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
+    int thread_number, stop = 0;
     GSList *threads = NULL, *t;
     GTimer *timer;
     bench_value ret = EMPTY_BENCH_VALUE;
 
     timer = g_timer_new();
 
-    cpu_procs_cores_threads(&cpu_procs, &cpu_cores, &cpu_threads);
+    cpu_procs_cores_threads_nodes(&cpu_procs, &cpu_cores, &cpu_threads, &cpu_nodes);
     if (n_threads > 0)
         ret.threads_used = n_threads;
     else if (n_threads < 0)
@@ -222,12 +223,14 @@ static gpointer benchmark_parallel_for_dispatcher(gpointer data)
 bench_value
 benchmark_parallel(gint n_threads, gpointer callback, gpointer callback_data)
 {
-    int cpu_procs, cpu_cores, cpu_threads;
-    cpu_procs_cores_threads(&cpu_procs, &cpu_cores, &cpu_threads);
+    int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
+    cpu_procs_cores_threads_nodes(&cpu_procs, &cpu_cores, &cpu_threads, &cpu_nodes);
+
     if (n_threads == 0)
         n_threads = cpu_threads;
     else if (n_threads == -1)
         n_threads = cpu_cores;
+
     return benchmark_parallel_for(n_threads, 0, n_threads, callback,
                                   callback_data);
 }
@@ -244,7 +247,7 @@ bench_value benchmark_parallel_for(gint n_threads,
                                    gpointer callback_data)
 {
     gchar *temp;
-    int cpu_procs, cpu_cores, cpu_threads;
+    int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
     guint iter_per_thread, iter, thread_number = 0;
     GSList *threads = NULL, *t;
     GTimer *timer;
@@ -253,7 +256,7 @@ bench_value benchmark_parallel_for(gint n_threads,
 
     timer = g_timer_new();
 
-    cpu_procs_cores_threads(&cpu_procs, &cpu_cores, &cpu_threads);
+    cpu_procs_cores_threads_nodes(&cpu_procs, &cpu_cores, &cpu_threads, &cpu_nodes);
 
     if (n_threads > 0)
         ret.threads_used = n_threads;

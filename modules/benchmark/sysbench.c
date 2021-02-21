@@ -230,8 +230,10 @@ void benchmark_sbcpu_single(void) {
 }
 
 void benchmark_sbcpu_all(void) {
-    int cpu_procs, cpu_cores, cpu_threads;
-    cpu_procs_cores_threads(&cpu_procs, &cpu_cores, &cpu_threads);
+    int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
+
+    cpu_procs_cores_threads_nodes(&cpu_procs, &cpu_cores, &cpu_threads, &cpu_nodes);
+
     struct sysbench_ctx ctx = {
         .test = "cpu",
         .threads = cpu_threads,
