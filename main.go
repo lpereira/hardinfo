@@ -37,6 +37,7 @@ type BenchmarkResult struct {
 	NumCpus     int
 	NumCores    int
 	NumThreads  int
+	NumNodes    int
 
 	MemoryInKiB         int
 	PhysicalMemoryInMiB int
@@ -78,8 +79,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, pointer_bits,
 		data_from_super_user, used_threads, benchmark_version, user_note,
-		elapsed_time, machine_data_version, legacy, machine_type, timestamp)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+		elapsed_time, machine_data_version, legacy, machine_type, num_nodes, timestamp)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 		strftime('%s', 'now'))`)
 	if err != nil {
 		return http.StatusInternalServerError, fmt.Errorf("Couldn't prepare statement: " + err.Error())
@@ -92,22 +93,24 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 			return http.StatusBadRequest, fmt.Errorf("MachineId looks invalid")
 		}
 
-		if !bench.Legacy {
-			if bench.PointerBits != 32 && bench.PointerBits != 64 {
-				return http.StatusBadRequest, fmt.Errorf("Unknown PointerBits value")
-			}
+		if bench.Legacy {
+			return http.StatusBadRequest, fmt.Errorf("Can't upload legacy results anymore")
+		}
 
-			if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 {
-				return http.StatusBadRequest, fmt.Errorf("Number of CPUs, cores, or threads is invalid")
-			}
+		if bench.PointerBits != 32 && bench.PointerBits != 64 {
+			return http.StatusBadRequest, fmt.Errorf("Unknown PointerBits value")
+		}
 
-			if bench.MemoryInKiB < 4*1024 {
-				return http.StatusBadRequest, fmt.Errorf("Total memory value is too low to be true")
-			}
+		if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 || bench.NumNodes < 1 {
+			return http.StatusBadRequest, fmt.Errorf("Number of CPUs, cores, NUMA nodes, or threads is invalid")
+		}
 
-			if bench.PhysicalMemoryInMiB != 0 && bench.PhysicalMemoryInMiB < 4 {
-				return http.StatusBadRequest, fmt.Errorf("Physical memory value is too low to be true")
-			}
+		if bench.MemoryInKiB < 4*1024 {
+			return http.StatusBadRequest, fmt.Errorf("Total memory value is too low to be true")
+		}
+
+		if bench.PhysicalMemoryInMiB != 0 && bench.PhysicalMemoryInMiB < 4 {
+			return http.StatusBadRequest, fmt.Errorf("Physical memory value is too low to be true")
 		}
 
 		if bench.BenchmarkResult < 0 {
@@ -139,7 +142,8 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 			bench.ElapsedTime,
 			bench.MachineDataVersion,
 			bench.Legacy,
-			bench.MachineType)
+			bench.MachineType,
+			bench.NumNodes)
 		if err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("Could not publish benchmark result: " + err.Error())
 		}
@@ -295,7 +299,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
 			gpu_desc, pointer_bits, data_from_super_user,
 			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version,
-			legacy, machine_type
+			legacy, machine_type, num_nodes
 		FROM benchmark_result
 		WHERE benchmark_type=? AND legacy=0
 		GROUP BY machine_id, pointer_bits
@@ -340,7 +344,8 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.ElapsedTime,
 				&result.MachineDataVersion,
 				&result.Legacy,
-				&result.MachineType)
+				&result.MachineType,
+				&result.NumNodes)
 			if err == nil {
 				resultMap[benchType] = append(resultMap[benchType], result)
 			} else {
