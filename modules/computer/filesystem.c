@@ -71,6 +71,8 @@ scan_filesystems(void)
 
                 gchar *strhash;
 
+                gboolean rw = strstr(tmp[3], "rw") != NULL;
+
                 strreplacechr(tmp[0], "#", '_');
                 strhash = g_strdup_printf("[%s]\n"
                         "%s=%s\n"
@@ -81,7 +83,7 @@ scan_filesystems(void)
                         "%s=%s\n",
                         tmp[0], /* path */
                         _("Filesystem"), tmp[2],
-                        _("Mounted As"), ( strstr(tmp[3], "rw") != NULL) ? _("Read-Write") : _("Read-Only"),
+                        _("Mounted As"), rw ? _("Read-Write") : _("Read-Only"),
                         _("Mount Point"), tmp[1],
                         _("Size"), strsize,
                         _("Used"), strused,
@@ -90,9 +92,10 @@ scan_filesystems(void)
                 moreinfo_add_with_prefix("COMP", key, strhash);
                 g_free(key);
 
-                fs_list = h_strdup_cprintf("$FS%d$%s=%.2f %% (%s of %s)|%s\n",
+                fs_list = h_strdup_cprintf("$FS%d$%s%s=%.2f %% (%s of %s)|%s\n",
                                           fs_list,
-                                          count, tmp[0], use_ratio, stravail, strsize, tmp[1]);
+                                          count, tmp[0], rw ? "" : "🔒",
+                                          use_ratio, stravail, strsize, tmp[1]);
 
                 g_free(strsize);
                 g_free(stravail);
