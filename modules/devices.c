@@ -177,9 +177,14 @@ gchar *processor_describe_default(GSList * processors)
         packs_fmt = ngettext("%d physical processor", "%d physical processors", packs);
         cores_fmt = ngettext("%d core", "%d cores", cores);
         threads_fmt = ngettext("%d thread", "%d threads", threads);
-        nodes_fmt = ngettext("%d NUMA node", "%d NUMA nodes", nodes);
-        full_fmt = g_strdup_printf(_(/*/NP procs; NC cores; NN nodes; NT threads*/ "%s; %s, %s; %s"), packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
-        ret = g_strdup_printf(full_fmt, packs, cores, nodes, threads);
+        if (nodes > 1) {
+            nodes_fmt = ngettext("%d NUMA node", "%d NUMA nodes", nodes);
+            full_fmt = g_strdup_printf(_(/*/NP procs; NC cores across NN nodes; NT threads*/ "%s; %s across %s; %s"), packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
+            ret = g_strdup_printf(full_fmt, packs, cores * nodes, nodes, threads);
+        } else {
+            full_fmt = g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"), packs_fmt, cores_fmt, threads_fmt);
+            ret = g_strdup_printf(full_fmt, packs, cores, nodes, threads);
+        }
         g_free(full_fmt);
         return ret;
     } else {
