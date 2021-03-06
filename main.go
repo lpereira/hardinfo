@@ -101,7 +101,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 			return http.StatusBadRequest, fmt.Errorf("Unknown PointerBits value")
 		}
 
-		if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 || bench.NumNodes < 1 {
+		if bench.NumCpus < 1 || bench.NumCores < 1 || bench.NumThreads < 1 || bench.NumNodes < 0 {
 			return http.StatusBadRequest, fmt.Errorf("Number of CPUs, cores, NUMA nodes, or threads is invalid")
 		}
 
