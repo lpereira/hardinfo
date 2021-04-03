@@ -58,6 +58,7 @@ struct _ProgramParameters {
   gboolean autoload_deps;
   gboolean run_xmlrpc_server;
   gboolean skip_benchmarks;
+  gboolean quiet;
 
   /*
    * OK to use the common parts of HTML(4.0) and Pango Markup

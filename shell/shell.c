@@ -245,7 +245,7 @@ void shell_status_pulse(void)
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
 	while (gtk_events_pending())
 	    gtk_main_iteration();
-    } else {
+    } else if (!params.quiet) {
 	static gint counter = 0;
 
 	fprintf(stderr, "\033[2K\033[40;37;1m %c\033[0m\r",
@@ -260,7 +260,7 @@ void shell_status_set_percentage(gint percentage)
 				      (float) percentage / 100.0);
 	while (gtk_events_pending())
 	    gtk_main_iteration();
-    } else {
+    } else if (!params.quiet) {
 	if (percentage < 1 || percentage >= 100) {
 	    fprintf(stderr, "\033[2K");
 	} else {
@@ -336,7 +336,7 @@ void shell_status_update(const gchar * message)
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
 	while (gtk_events_pending())
 	    gtk_main_iteration();
-    } else {
+    } else if (!params.quiet) {
 	fprintf(stderr, "\033[2K\033[40;37;1m %s\033[0m\r", message);
     }
 }

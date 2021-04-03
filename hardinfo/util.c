@@ -390,6 +390,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean autoload_deps = FALSE;
     static gboolean run_xmlrpc_server = FALSE;
     static gboolean skip_benchmarks = FALSE;
+    static gboolean quiet = FALSE;
     static gchar *report_format = NULL;
     static gchar *run_benchmark = NULL;
     static gchar *result_format = NULL;
@@ -398,6 +399,12 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gint max_bench_results = 10;
 
     static GOptionEntry options[] = {
+	{
+	 .long_name = "quiet",
+	 .short_name = 'q',
+	 .arg = G_OPTION_ARG_NONE,
+	 .arg_data = &quiet,
+	 .description = N_("do not print status messages to standard output")},
 	{
 	 .long_name = "generate-report",
 	 .short_name = 'r',
@@ -509,6 +516,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->run_xmlrpc_server = run_xmlrpc_server;
     param->skip_benchmarks = skip_benchmarks;
     param->force_all_details = force_all_details;
+    param->quiet = quiet;
     param->argv0 = *(argv)[0];
 
     if (report_format) {

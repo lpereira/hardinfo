@@ -723,7 +723,7 @@ report_create_inner_from_module_list(ReportContext * ctx, GSList * modules)
 	ShellModule *module = (ShellModule *) modules->data;
 	GSList *entries;
 
-	if (!params.gui_running)
+	if (!params.gui_running && !params.quiet)
 	    fprintf(stderr, "\033[40;32m%s\033[0m\n", module->name);
 
 	report_title(ctx, module->name);
@@ -732,7 +732,7 @@ report_create_inner_from_module_list(ReportContext * ctx, GSList * modules)
 	    ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
         if (entry->flags & MODULE_FLAG_HIDE) continue;
 
-	    if (!params.gui_running)
+	    if (!params.gui_running && !params.quiet)
 		fprintf(stderr, "\033[2K\033[40;32;1m %s\033[0m\n",
 			entry->name);
 
