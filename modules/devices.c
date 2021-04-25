@@ -857,6 +857,12 @@ void hi_module_init(void)
             .name = N_("Update SD card manufacturer information"),
             .file_name = "sdcard.ids",
         },
+#ifdef ARCH_x86
+        {
+            .name = N_("Update CPU flags database"),
+            .file_name = "cpuflags.json",
+        },
+#endif
     };
     gint i;
 
@@ -866,6 +872,11 @@ void hi_module_init(void)
     init_cups();
     sensor_init();
     udisks2_init();
+
+#ifdef ARCH_x86
+    void cpuflags_x86_init(void);
+    cpuflags_x86_init();
+#endif
 }
 
 void hi_module_deinit(void)

@@ -18,6 +18,7 @@
  *
  */
 
+#include <json-glib/json-glib.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -35,9 +36,13 @@
  *   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/arch/x86/include/asm/cpufeatures.h?id=refs/tags/v4.9
  *   hardinfo: modules/devices/x86/processor.c
  */
-static struct {
-    char *name, *meaning;
-} tab_flag_meaning[] = {
+
+struct flag_to_meaning {
+    char *name;
+    char *meaning;
+};
+
+static const struct flag_to_meaning builtin_tab_flag_meaning[] = {
 /* Intel-defined CPU features, CPUID level 0x00000001 (edx)
  * See also Wikipedia and table 2-27 in Intel Advanced Vector Extensions Programming Reference */
     { "fpu",     NC_("x86-flag", /*/flag:fpu*/  "Onboard FPU (floating point support)") },
@@ -301,32 +306,77 @@ static struct {
     { NULL, NULL},
 };
 
+static struct flag_to_meaning *tab_flag_meaning;
+
 static char all_flags[4096] = "";
 
-#define APPEND_FLAG(f) strcat(all_flags, f); strcat(all_flags, " ");
-const char *x86_flag_list() {
-    int i = 0, built = 0;
-    built = strlen(all_flags);
-    if (!built) {
-        while(tab_flag_meaning[i].name != NULL) {
-            APPEND_FLAG(tab_flag_meaning[i].name);
-            i++;
-        }
-    }
-    return all_flags;
+static void build_meaning_table_iter(JsonObject *object,
+                                     const gchar *member_name,
+                                     JsonNode *member_node,
+                                     gpointer user_data)
+{
+    int *i = user_data;
+
+    tab_flag_meaning[*i] = (struct flag_to_meaning) {
+        .name = g_strdup(member_name),
+        .meaning = g_strdup(json_node_get_string(member_node)),
+    };
+
+    (*i)++;
+}
+
+void cpuflags_x86_init(void)
+{
+    gchar *flag_json = g_build_filename(g_get_user_config_dir(), "hardinfo",
+                                        "cpuflags.json", NULL);
+    gboolean use_builtin_table = TRUE;
+
+    if (!g_file_test(flag_json, G_FILE_TEST_EXISTS))
+        goto use_builtin_table;
+
+    JsonParser *parser = json_parser_new();
+    if (!json_parser_load_from_file(parser, flag_json, NULL))
+        goto use_builtin_table_with_json;
+
+    JsonNode *root = json_parser_get_root(parser);
+    if (json_node_get_node_type(root) != JSON_NODE_OBJECT)
+        goto use_builtin_table_with_json;
+
+    JsonObject *x86_flags =
+        json_object_get_object_member(json_node_get_object(root), "x86");
+    if (!x86_flags)
+        goto use_builtin_table_with_json;
+
+    tab_flag_meaning =
+        g_new(struct flag_to_meaning, json_object_get_size(x86_flags) + 1);
+    int i = 0;
+    json_object_foreach_member(x86_flags, build_meaning_table_iter, &i);
+    tab_flag_meaning[i] = (struct flag_to_meaning){NULL, NULL};
+    use_builtin_table = FALSE;
+
+use_builtin_table_with_json:
+    g_object_unref(parser);
+use_builtin_table:
+    g_free(flag_json);
+
+    if (use_builtin_table)
+        tab_flag_meaning = (struct flag_to_meaning *)builtin_tab_flag_meaning;
 }
 
 const char *x86_flag_meaning(const char *flag) {
-    int i = 0;
-    if (flag)
-    while(tab_flag_meaning[i].name != NULL) {
+    int i;
+
+    if (!flag)
+        return NULL;
+
+    for (i = 0; tab_flag_meaning[i].name; i++) {
         if (strcmp(tab_flag_meaning[i].name, flag) == 0) {
             if (tab_flag_meaning[i].meaning != NULL)
                 return C_("x86-flag", tab_flag_meaning[i].meaning);
             else return NULL;
         }
-        i++;
     }
+
     return NULL;
 }
 
