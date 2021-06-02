@@ -24,7 +24,7 @@
 #include "socket.h"
 #include "udisks2_util.h"
 
-#ifdef HAS_LIBSENSORS
+#if defined(HAS_LIBSENSORS) && HAS_LIBSENSORS
 #include <sensors/sensors.h>
 #endif
 
