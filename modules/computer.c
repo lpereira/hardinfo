@@ -299,6 +299,7 @@ void scan_dev(gboolean reload)
        { N_("Gambas3 IDE"), "gambas3 --version", "\\d+\\.\\d+\\.\\d+", TRUE },
        { N_("Radare2"), "radare2 -v", "(?<=radare2 )(\\d+\\.?)+(-git)?", TRUE },
        { N_("ltrace"), "ltrace --version", "(?<=ltrace version )\\d+\\.\\d+\\.\\d+", TRUE },
+       { N_("Powershell"), "pwsh --version", "\\d+\\.\\d+\\.\\d+", TRUE },
     };
 
     g_free(dev_list);
