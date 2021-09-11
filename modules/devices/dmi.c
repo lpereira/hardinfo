@@ -90,8 +90,11 @@ gboolean dmi_get_info(void)
         } else if (group && info->id_str) {
             int state = 3;
 
-            if (strcmp(info->id_str, "chassis-type") == 0)
+            if (strcmp(info->id_str, "chassis-type") == 0) {
                 value = dmi_chassis_type_str(-1, 1);
+                if (value == NULL)
+                    state = (getuid() == 0) ? 0 : 1;
+            }
             else {
                 switch (dmi_str_status(info->id_str)) {
                 case 0:
