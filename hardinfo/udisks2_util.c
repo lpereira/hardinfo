@@ -474,7 +474,7 @@ gchar* get_udisks2_smart_attributes(udiskd* dsk, const char *drivepath){
     GError *error = NULL;
     const char* aidenf;
     guint8 aid;
-    gint16 avalue, aworst, athreshold, pretty_unit;
+    gint32 avalue, aworst, athreshold, pretty_unit;
     gint64 pretty;
     udisksa *lastp = NULL, *p;
 
