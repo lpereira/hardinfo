@@ -458,6 +458,78 @@ static void read_sensors_acpi(void) {
     }
 }
 
+// Sensors for Apple PowerPC devices using Windfarm driver.
+struct WindfarmSensorType {
+    const char *type;
+    const char *icon;
+    const char *file_regex;
+    const char *unit;
+    gboolean    with_decimal_p;
+};
+static const struct WindfarmSensorType windfarm_sensor_types[] = {
+    {"Fan", "fan", "^[a-z-]+-fan(-[0-9]+)?$", " RPM", FALSE},
+    {"Temperature", "therm", "^[a-z-]+-temp(-[0-9]+)?$", "\302\260C", TRUE},
+    {"Power", "bolt", "^[a-z-]+-power(-[0-9]+)?$", " W", TRUE},
+    {"Current", "bolt", "^[a-z-]+-current(-[0-9]+)?$", " A", TRUE},
+    {"Voltage", "bolt", "^[a-z-]+-voltage(-[0-9]+)?$", " V", TRUE},
+    { }
+};
+static void read_sensors_windfarm(void)
+{
+    const gchar *path_wf = "/sys/devices/platform/windfarm.0";
+    GDir *wf;
+    gchar *tmp = NULL;
+    gint v1, v2;
+    double value;
+
+    wf = g_dir_open(path_wf, 0, NULL);
+    if (wf) {
+        GRegex *regex;
+        GError *err = NULL;
+        const gchar *entry;
+        const struct WindfarmSensorType *sensor;
+
+        for (sensor = windfarm_sensor_types; sensor->type; sensor++) {
+            DEBUG("current windfarm sensor type=%s", sensor->type);
+            regex = g_regex_new(sensor->file_regex, 0, 0, &err);
+            if (err != NULL) {
+                g_free(err);
+                err = NULL;
+                continue;
+            }
+
+            g_dir_rewind(wf);
+
+            while ((entry = g_dir_read_name(wf))) {
+                if (g_regex_match(regex, entry, 0, NULL)) {
+                    gchar *path = g_strdup_printf("%s/%s", path_wf, entry);
+                    if (g_file_get_contents(path, &tmp, NULL, NULL)) {
+
+                        if (sensor->with_decimal_p) {
+                            // format source
+                            // https://elixir.free-electrons.com/linux/v5.14/source/drivers/macintosh/windfarm_core.c#L301
+                            sscanf(tmp, "%d.%03d", &v1, &v2);
+                            value = v1 + (v2 / 1000.0);
+                        } else {
+                            value = (double)atoi(tmp);
+                        }
+                        g_free(tmp);
+
+                        tmp = g_strdup(entry);
+                        add_sensor(sensor->type, g_strdelimit(tmp, "-", ' '),
+                                   "windfarm", value, sensor->unit,
+                                   sensor->icon);
+                        g_free(tmp);
+                    }
+                    g_free(path);
+                }
+            }
+            g_regex_unref(regex);
+        }
+        g_dir_close(wf);
+    }
+}
+
 static void read_sensors_sys_thermal(void) {
     const gchar *path_tz = "/sys/class/thermal";
 
@@ -673,6 +745,7 @@ void scan_sensors_do(void) {
         read_sensors_omnibook();
     }
 
+    read_sensors_windfarm();
     read_sensors_hddtemp();
     read_sensors_udisks2();
 }
