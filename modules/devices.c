@@ -308,7 +308,7 @@ gchar *get_storage_devices_simple(void)
                 continue;
 
             tmp = g_regex_replace(regex, field->value, -1, 0, "", 0, NULL); // remove html tags
-            storage_devs = h_strdup_cprintf("%s\n", storage_devs, tmp);
+            storage_devs = h_strdup_cprintf("%s\n", storage_devs, g_strchug(tmp));
             g_free(tmp);
         }
     }
