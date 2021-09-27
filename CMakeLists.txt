@@ -230,8 +230,8 @@ set_source_files_properties(
 foreach (_module ${HARDINFO_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
+	target_link_libraries(${_module} ${JSON_GLIB_LIBRARIES})
 endforeach()
-target_link_libraries(benchmark ${JSON_GLIB_LIBRARIES})
 
 find_library(LIBSENSORS_LIBRARY NAMES libsensors.so)
 if (LIBSENSORS_LIBRARY)
