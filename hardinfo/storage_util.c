@@ -4,6 +4,7 @@
 #include "hardinfo.h"
 
 gchar *sdcard_ids_file = NULL;
+gchar *oui_ids_file = NULL;
 
 // moved from udisks2_util.h
 void find_sdcard_ids_file() {
@@ -20,6 +21,62 @@ void find_sdcard_ids_file() {
         else
             g_free(file_search_order[n]);
     }
+}
+
+void find_oui_ids_file() {
+    if (oui_ids_file) return;
+    char *file_search_order[] = {
+        g_build_filename(g_get_user_config_dir(), "hardinfo", "ieee_oui.ids", NULL),
+        g_build_filename(params.path_data, "ieee_oui.ids", NULL),
+        NULL
+    };
+    int n;
+    for(n = 0; file_search_order[n]; n++) {
+        if (!oui_ids_file && !access(file_search_order[n], R_OK))
+            oui_ids_file = file_search_order[n];
+        else
+            g_free(file_search_order[n]);
+    }
+}
+
+gchar* get_oui_from_wwid(gchar* wwid){
+    gchar* ret = NULL;
+
+    if (g_str_has_prefix(wwid, "nna.")) {
+        if (strlen(wwid)*4 < 48)
+            return NULL;
+
+        switch (wwid[4]){
+            case '1':
+            case '2':
+                ret = g_strndup(wwid + 8, 6);
+                break;
+            case '5':
+            case '6':
+                ret = g_strndup(wwid + 5, 6);
+                break;
+        }
+    }
+    else if(g_str_has_prefix(wwid, "eui.")) {
+        if (strlen(wwid)*4 < 48)
+            return NULL;
+        ret = g_strndup(wwid+4, 6);
+    }
+
+    return ret;
+}
+
+gchar* get_oui_company(gchar* oui){
+    ids_query_result result = {};
+
+    if (!oui_ids_file)
+        find_oui_ids_file();
+
+    scan_ids_file(oui_ids_file, oui, &result, -1);
+    if (result.results[0])
+        return g_strdup(result.results[0]);
+
+    return NULL;
 }
 
 // moved from udisks2_util.h
@@ -147,6 +204,17 @@ GSList* get_udisks2_drives_ext(void){
 
         extdrive->vendors = vendor_list_append(extdrive->vendors, vendor_match(extdrive->d->vendor, NULL));
 
+        // get OUI from WWID
+        if (extdrive->d->wwid) {
+            extdrive->wwid_oui.oui = get_oui_from_wwid(extdrive->d->wwid);
+            if (extdrive->wwid_oui.oui) {
+                extdrive->wwid_oui.vendor = get_oui_company(extdrive->wwid_oui.oui);
+            }
+            if (extdrive->wwid_oui.vendor){
+                extdrive->vendors = vendor_list_append(extdrive->vendors, vendor_match(extdrive->wwid_oui.vendor, NULL));
+            }
+        }
+
         // NVMe PCI device
         if (strstr(extdrive->d->block_dev, "nvme")) {
             set_nvme_controller_info(extdrive);
@@ -169,6 +237,8 @@ u2driveext* u2drive_ext(udiskd * udisks_drive_data) {
 void u2driveext_free(u2driveext *u) {
     if (u) {
         udiskd_free(u->d);
+        g_free(u->wwid_oui.oui);
+        g_free(u->wwid_oui.vendor);
         pcid_free(u->nvme_controller);
         g_free(u);
     }
@@ -176,4 +246,5 @@ void u2driveext_free(u2driveext *u) {
 
 void storage_shutdown(){
     g_free(sdcard_ids_file);
+    g_free(oui_ids_file);
 }

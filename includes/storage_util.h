@@ -5,6 +5,10 @@
 typedef struct u2driveext {
     udiskd *d;
     pcid *nvme_controller;
+    struct{
+        gchar *oui;
+        gchar *vendor;
+    } wwid_oui;
     vendor_list vendors;
 } u2driveext;
 

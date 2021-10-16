@@ -35,6 +35,7 @@ typedef struct udiskd {
     gchar *revision;
     gchar *block_dev;
     gchar *serial;
+    gchar *wwid;
     gchar *connection_bus;
     gchar *partition_table;
     udiskp *partitions;

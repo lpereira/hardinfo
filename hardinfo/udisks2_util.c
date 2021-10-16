@@ -264,6 +264,7 @@ void udiskd_free(udiskd *u) {
         g_free(u->revision);
         g_free(u->block_dev);
         g_free(u->serial);
+        g_free(u->wwid);
         g_free(u->connection_bus);
         g_free(u->partition_table);
         udiskp_free(u->partitions);
@@ -481,6 +482,17 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block,
     v = get_dbus_property(drive, UDISKS2_DRIVE_INTERFACE, "Serial");
     if (v){
         u->serial = g_variant_dup_string(v, NULL);
+        g_variant_unref(v);
+    }
+    v = get_dbus_property(drive, UDISKS2_DRIVE_INTERFACE, "WWN");
+    if (v){
+        str = g_variant_get_string(v, NULL);
+        if (g_str_has_prefix(str, "0x")) {
+            u->wwid = g_strdup_printf("nna.%s", str+2);
+        }
+        else if (g_str_has_prefix(str, "nna.") || g_str_has_prefix(str, "eui.")) {
+            u->wwid = g_strdup(str);
+        }
         g_variant_unref(v);
     }
     v = get_dbus_property(drive, UDISKS2_DRIVE_INTERFACE, "ConnectionBus");

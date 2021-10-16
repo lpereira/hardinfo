@@ -87,7 +87,7 @@ gboolean __scan_udisks2_devices(void) {
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
     gchar *devid, *size, *tmp = NULL, *media_comp = NULL, *ven_tag = NULL;
     const gchar *url, *media_label, *alabel, *icon, *media_curr = NULL;
-    int n = 0, i, j;
+    int n = 0, i, j, m;
 
     // http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Drive.html#gdbus-property-org-freedesktop-UDisks2-Drive.MediaCompatibility
     static struct {
@@ -304,6 +304,33 @@ gboolean __scan_udisks2_devices(void) {
         if (disk->connection_bus && strlen(disk->connection_bus) > 0) {
             moreinfo = h_strdup_cprintf(_("Connection bus=%s\n"), moreinfo, disk->connection_bus);
         }
+
+        tmp = NULL;
+        if (disk->wwid) {
+            m = strlen(disk->wwid);
+            if (m > 2 && m % 2 == 0){
+                for (j = 4; j < m; j = j + 2) {
+                    tmp = h_strdup_cprintf("%s%c%c", tmp, j > 4 ? "-": "", disk->wwid[j], disk->wwid[j+1]);
+                }
+            }
+            moreinfo = h_strdup_cprintf("%s=%s\n", moreinfo,
+                                        g_str_has_prefix(disk->wwid, "nna.") ? _("WWN"):
+                                            (g_str_has_prefix(disk->wwid, "eui.") ? _("EUI "): "Unknown ID"),
+                                        tmp);
+            g_free(tmp);
+        }
+        else{
+            moreinfo = h_strdup_cprintf("%s=%s\n", moreinfo, _("WWN / EUI"), _("(None)"));
+        }
+
+        if (ext->wwid_oui.oui) {
+            moreinfo = h_strdup_cprintf(_("$^$%s=[%s] %s\n"),
+                                          moreinfo,
+                                         _("IEEE OUI"), ext->wwid_oui.oui,
+                                                        ext->wwid_oui.vendor ?
+                                                        ext->wwid_oui.vendor : _("(Unknown)"));
+        }
+
         if (ext->nvme_controller) {
             gchar *nvme = nvme_pci_sections(ext->nvme_controller);
             if (nvme)
