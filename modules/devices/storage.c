@@ -1,7 +1,7 @@
 /*
  *    HardInfo - Displays System Information
  *    Copyright (C) 2003-2006 Leandro A. F. Pereira <leandro@hardinfo.org>
- *    modified by Ondrej Čerman (2019)
+ *    modified by Ondrej Čerman (2019-2021)
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "udisks2_util.h"
+#include "storage_util.h"
 
 #define UNKIFNULL_AC(f) (f != NULL) ? f : _("(Unknown)");
 
@@ -79,6 +80,7 @@ gchar *nvme_pci_sections(pcid *p) {
 
 gboolean __scan_udisks2_devices(void) {
     GSList *node, *drives;
+    u2driveext *ext;
     udiskd *disk;
     udiskp *part;
     udisksa *attrib;
@@ -196,9 +198,10 @@ gboolean __scan_udisks2_devices(void) {
     moreinfo_del_with_prefix("DEV:UDISKS");
     udisks2_storage_list = g_strdup(_("\n[UDisks2]\n"));
 
-    drives = get_udisks2_all_drives_info();
+    drives = get_udisks2_drives_ext();
     for (node = drives; node != NULL; node = node->next) {
-        disk = (udiskd *)node->data;
+        ext = (u2driveext *)node->data;
+        disk = ext->d;
         devid = g_strdup_printf("UDISKS%d", n++);
 
         icon = NULL;
@@ -242,7 +245,7 @@ gboolean __scan_udisks2_devices(void) {
         }
 
         size = size_human_readable((gfloat) disk->size);
-        ven_tag = vendor_list_ribbon(disk->vendors, params.fmt_opts);
+        ven_tag = vendor_list_ribbon(ext->vendors, params.fmt_opts);
 
         udisks2_storage_list = h_strdup_cprintf("$%s$%s=%s|%s %s\n", udisks2_storage_list, devid, disk->block_dev, size, ven_tag ? ven_tag : "", disk->model);
         storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, disk->model, icon);
@@ -301,8 +304,8 @@ gboolean __scan_udisks2_devices(void) {
         if (disk->connection_bus && strlen(disk->connection_bus) > 0) {
             moreinfo = h_strdup_cprintf(_("Connection bus=%s\n"), moreinfo, disk->connection_bus);
         }
-        if (disk->nvme_controller) {
-            gchar *nvme = nvme_pci_sections(disk->nvme_controller);
+        if (ext->nvme_controller) {
+            gchar *nvme = nvme_pci_sections(ext->nvme_controller);
             if (nvme)
                 moreinfo = h_strdup_cprintf("%s", moreinfo, nvme);
             g_free(nvme);
@@ -428,7 +431,7 @@ gboolean __scan_udisks2_devices(void) {
         moreinfo = NULL;
         devid = NULL;
 
-        udiskd_free(disk);
+        u2driveext_free(ext);
     }
     g_slist_free(drives);
 

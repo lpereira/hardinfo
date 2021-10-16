@@ -304,6 +304,7 @@ add_executable(hardinfo
 	hardinfo/x_util.c
 	hardinfo/gpu_util.c
 	hardinfo/udisks2_util.c
+	hardinfo/storage_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c
@@ -345,6 +346,7 @@ add_executable(hardinfo
 	hardinfo/x_util.c
 	hardinfo/gpu_util.c
 	hardinfo/udisks2_util.c
+	hardinfo/storage_util.c
 	shell/callbacks.c
 	shell/iconcache.c
 	shell/menu.c

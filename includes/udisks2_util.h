@@ -1,5 +1,4 @@
 #include "vendor.h"
-#include "pci_util.h"
 
 typedef struct udiskp {
     gchar *block;
@@ -55,8 +54,6 @@ typedef struct udiskd {
     gint64 smart_bad_sectors;
     gint32 smart_temperature;
     udisksa *smart_attributes;
-    pcid *nvme_controller;
-    vendor_list vendors;
 } udiskd;
 
 typedef struct udiskt {

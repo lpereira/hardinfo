@@ -39,6 +39,7 @@
 #include "devices.h"
 #include "dt_util.h"
 #include "udisks2_util.h"
+#include "pci_util.h"
 
 gchar *callback_processors();
 gchar *callback_gpu();
@@ -883,6 +884,7 @@ void hi_module_deinit(void)
 {
     moreinfo_del_with_prefix("DEV");
     sensor_shutdown();
+    storage_shutdown();
     udisks2_shutdown();
     g_module_close(cups);
 }
