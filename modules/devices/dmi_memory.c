@@ -1016,7 +1016,7 @@ gboolean memory_devices_hinote(const char **msg) {
     note_cond_bullet(has_ee1004, note_state, want_ee1004);
     g_strstrip(note_state); /* remove last \n */
 
-    gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<DDR3_SDRAM)) && has_ee1004);
+    gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<(DDR3_SDRAM-1))) && has_ee1004);
 
     gboolean best_state = FALSE;
     if (has_dmi && has_root &&
