@@ -66,7 +66,7 @@ struct dmi_mem_socket;
 typedef struct {
     unsigned char bytes[512];
     char dev[32];  /* %1d-%04d\0 */
-    int spd_driver; /* 0 = eeprom, 1 = ee1004 */
+    const char *spd_driver;
     int spd_size;
 
     RamType type;
@@ -1007,7 +1007,7 @@ static int read_spd(char *spd_path, int offset, size_t size, int use_sysfs,
     return data_size;
 }
 
-static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_size) {
+static GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sysfs, int max_size) {
     GSList *eeprom, *dimm_list = NULL;
     int count = 0;
     int spd_size = 0;
@@ -1090,8 +1090,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
 
         if (s) {
             strncpy(s->dev, g_basename(spd_path), 31);
-            if (strstr(spd_path, "ee1004"))
-                s->spd_driver = 1;
+            s->spd_driver = driver;
             s->spd_size = spd_size;
             s->type = ram_type;
             spd_ram_types |= (1 << (ram_type-1));
@@ -1118,24 +1117,28 @@ static GSList *decode_dimms2(GSList *eeprom_list, gboolean use_sysfs, int max_si
 }
 
 struct SpdDriver {
+    const char *driver;
     const char *dir_path;
     const gint max_size;
     const gboolean use_sysfs;
+    const char *spd_name;
 };
 
 static const struct SpdDriver spd_drivers[] = {
-    { "/sys/bus/i2c/drivers/ee1004", 512, TRUE  },
-    { "/sys/bus/i2c/drivers/eeprom", 256, TRUE  },
-    { "/proc/sys/dev/sensors"      , 256, FALSE },
+    { "ee1004",      "/sys/bus/i2c/drivers/ee1004", 512, TRUE, "ee1004"},
+    { "at24",        "/sys/bus/i2c/drivers/at24"  , 256, TRUE, "spd"},
+    { "eeprom",      "/sys/bus/i2c/drivers/eeprom", 256, TRUE, "eeprom"},
+    { "eeprom-proc", "/proc/sys/dev/sensors"      , 256, FALSE, NULL},
     { NULL }
 };
 
 GSList *spd_scan() {
     GDir *dir = NULL;
     GSList *eeprom_list = NULL, *dimm_list = NULL;
-    gchar *dimm_list_entry, *dir_entry;
+    gchar *dimm_list_entry, *dir_entry, *name_file, *name;
     const struct SpdDriver *driver;
     gboolean driver_found = FALSE;
+    gboolean is_spd = FALSE;
 
     spd_ddr4_partial_data = FALSE;
     spd_no_driver = FALSE;
@@ -1148,9 +1151,27 @@ GSList *spd_scan() {
 
             driver_found = TRUE;
             while ((dir_entry = (char *)g_dir_read_name(dir))) {
-                if ((driver->use_sysfs && isdigit(dir_entry[0])) ||
-                    g_str_has_prefix(dir_entry, "eeprom-")) {
+                is_spd = FALSE;
 
+                if (driver->use_sysfs) {
+                    name_file = NULL;
+                    name = NULL;
+
+                    if (isdigit(dir_entry[0])) {
+                        name_file = g_build_filename(driver->dir_path, dir_entry, "name", NULL);
+                        g_file_get_contents(name_file, &name, NULL, NULL);
+
+                        is_spd = g_strcmp0(name, driver->spd_name);
+
+                        g_free(name_file);
+                        g_free(name);
+                    }
+                }
+                else {
+                    is_spd = g_str_has_prefix(dir_entry, "eeprom-");
+                }
+
+                if (is_spd){
                     dimm_list_entry = g_strdup_printf("%s/%s", driver->dir_path, dir_entry);
                     eeprom_list = g_slist_prepend(eeprom_list, dimm_list_entry);
                 }
@@ -1159,7 +1180,7 @@ GSList *spd_scan() {
             g_dir_close(dir);
 
             if (eeprom_list) {
-                dimm_list = decode_dimms2(eeprom_list, driver->use_sysfs, driver->max_size);
+                dimm_list = decode_dimms2(eeprom_list, driver->driver, driver->use_sysfs, driver->max_size);
                 g_slist_free(eeprom_list);
                 eeprom_list = NULL;
             }
@@ -1168,7 +1189,8 @@ GSList *spd_scan() {
     }
 
     if (!driver_found) {
-        if (!g_file_test("/sys/module/eeprom", G_FILE_TEST_EXISTS)) {
+        if (!g_file_test("/sys/module/eeprom", G_FILE_TEST_EXISTS) &&
+            !g_file_test("/sys/module/at24", G_FILE_TEST_EXISTS)) {
             spd_no_driver = TRUE; /* trigger hinote for no eeprom driver */
         } else {
             spd_no_support = TRUE; /* trigger hinote for unsupported system */
