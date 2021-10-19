@@ -640,8 +640,8 @@ gchar *make_spd_section(spd_data *spd) {
                     "%s=%s\n" /* mfg date */
                     "%s",
                     _("Serial Presence Detect (SPD)"),
-                    _("Source"), spd->dev, spd->spd_driver ? "ee1004" : "eeprom",
-                        (spd->type == DDR4_SDRAM && !spd->spd_driver) ? problem_marker() : "",
+                    _("Source"), spd->dev, spd->spd_driver,
+                        (spd->type == DDR4_SDRAM && strcmp(spd->spd_driver, "ee1004") != 0) ? problem_marker() : "",
                     _("SPD Revision"), spd->spd_rev_major, spd->spd_rev_minor,
                     _("Form Factor"), UNKIFNULL2(spd->form_factor),
                     _("Type"), UNKIFEMPTY2(spd->type_detail),
@@ -995,12 +995,13 @@ static gchar note_state[note_max_len] = "";
 gboolean memory_devices_hinote(const char **msg) {
     gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available");
     gchar *want_root   = _(" ... <i>and</i> HardInfo running with superuser privileges");
-    gchar *want_eeprom = _(" <b><i>eeprom</i></b> module loaded (for SDR, DDR, DDR2, DDR3)");
+    gchar *want_at24   = _(" <b><i>at24</i></b> (or eeprom) module loaded (for SDR, DDR, DDR2, DDR3)");
     gchar *want_ee1004 = _(" ... <i>or</i> <b><i>ee1004</i></b> module loaded <b>and configured!</b> (for DDR4)");
 
     gboolean has_root = (getuid() == 0);
     gboolean has_dmi = !no_handles;
-    gboolean has_eeprom = g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
+    gboolean has_at24eep = g_file_test("/sys/bus/i2c/drivers/at24", G_FILE_TEST_IS_DIR) ||
+                           g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
     gboolean has_ee1004 = g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_IS_DIR);
 
     *note_state = 0; /* clear */
@@ -1010,7 +1011,7 @@ gboolean memory_devices_hinote(const char **msg) {
     note_print(note_state, "<tt>   </tt>");
     note_cond_bullet(has_root, note_state, want_root);
     note_print(note_state, "<tt>2. </tt>");
-    note_cond_bullet(has_eeprom, note_state, want_eeprom);
+    note_cond_bullet(has_at24eep, note_state, want_at24);
     note_print(note_state, "<tt>   </tt>");
     note_cond_bullet(has_ee1004, note_state, want_ee1004);
     g_strstrip(note_state); /* remove last \n */
@@ -1019,7 +1020,7 @@ gboolean memory_devices_hinote(const char **msg) {
 
     gboolean best_state = FALSE;
     if (has_dmi && has_root &&
-        ((has_eeprom && !spd_ddr4_partial_data)
+        ((has_at24eep && !spd_ddr4_partial_data)
         || (has_ee1004 && !ddr3_ee1004) ) )
         best_state = TRUE;
 
