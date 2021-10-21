@@ -443,9 +443,9 @@ static void decode_ddr2_module_size(unsigned char *bytes, dmi_mem_size *size) {
     k = ((bytes[5] & 0x7) + 1) * bytes[17];
 
     if (i > 0 && i <= 12 && k > 0) {
-        if (*size) { *size = ((1 << i) * k); }
+        if (size) { *size = ((1 << i) * k); }
     } else {
-        if (*size) { *size = 0; }
+        if (size) { *size = 0; }
     }
 }
 
