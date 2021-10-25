@@ -422,7 +422,6 @@ static void decode_ddr2_module_speed(unsigned char *bytes, float *ddr_clock, int
     float ctime;
     float ddrclk;
     int tbits, pcclk;
-
     ctime = decode_ddr2_module_ctime(bytes[9]);
     ddrclk = 2 * (1000 / ctime);
 
@@ -449,25 +448,62 @@ static void decode_ddr2_module_size(unsigned char *bytes, dmi_mem_size *size) {
     }
 }
 
-static void decode_ddr2_module_timings(unsigned char *bytes, float *trcd, float *trp, float *tras,
-                                       float *tcl) {
-    float ctime;
-    float highest_cas = 0;
-    int i;
-
-    for (i = 0; i < 7; i++) {
-        if (bytes[18] & (1 << i)) { highest_cas = i; }
+static void decode_ddr2_module_type(unsigned char *bytes, const char **type) {
+    switch (bytes[20]) {
+        case 0x01: *type = "RDIMM (Registered DIMM)"; break;
+        case 0x02: *type = "UDIMM (Unbuffered DIMM)"; break;
+        case 0x04: *type = "SO-DIMM (Small Outline DIMM)"; break;
+        case 0x06: *type = "72b-SO-CDIMM (Small Outline Clocked DIMM, 72-bit data bus)"; break;
+        case 0x07: *type = "72b-SO-RDIMM (Small Outline Registered DIMM, 72-bit data bus)"; break;
+        case 0x08: *type = "Micro-DIMM"; break;
+        case 0x10: *type = "Mini-RDIMM (Mini Registered DIMM)"; break;
+        case 0x20: *type = "Mini-UDIMM (Mini Unbuffered DIMM)"; break;
+        default: *type = NULL;
     }
+}
 
-    ctime = decode_ddr2_module_ctime(bytes[9]);
+static void decode_ddr2_module_timings(float ctime, unsigned char *bytes, float *trcd, float *trp, float *tras) {
 
     if (trcd) { *trcd = ceil(((bytes[29] >> 2) + ((bytes[29] & 3) * 0.25)) / ctime); }
 
     if (trp) { *trp = ceil(((bytes[27] >> 2) + ((bytes[27] & 3) * 0.25)) / ctime); }
 
     if (tras) { *tras = ceil(bytes[30] / ctime); }
+}
 
-    if (tcl) { *tcl = highest_cas; }
+static gboolean decode_ddr2_module_ctime_for_casx(int casx_minus, unsigned char *bytes, float *ctime, float *tcl){
+    int highest_cas, i, bytei;
+    float ctimev = 0;
+
+    switch (casx_minus){
+        case 0:
+            bytei = 9;
+            break;
+        case 1:
+            bytei = 23;
+            break;
+        case 2:
+            bytei = 25;
+            break;
+        default:
+            return FALSE;
+    }
+
+    for (i = 0; i < 7; i++) {
+        if (bytes[18] & (1 << i)) { highest_cas = i; }
+    }
+
+    if ((bytes[18] & (1 << (highest_cas-casx_minus))) == 0)
+        return FALSE;
+
+    ctimev = decode_ddr2_module_ctime(bytes[bytei]);
+    if (ctimev == 0)
+        return FALSE;
+
+    if (tcl) { *tcl = highest_cas-casx_minus; }
+    if (ctime) { *ctime = ctimev; }
+
+    return TRUE;
 }
 
 static void decode_ddr2_module_detail(unsigned char *bytes, char *type_detail) {
@@ -480,16 +516,50 @@ static void decode_ddr2_module_detail(unsigned char *bytes, char *type_detail) {
 }
 
 static gchar *decode_ddr2_sdram_extra(unsigned char *bytes) {
-    float trcd, trp, tras, tcl;
+    float trcd, trp, tras, ctime, tcl;
+    const char* voltage;
+    gchar *out;
+    int i;
 
-    decode_ddr2_module_timings(bytes, &trcd, &trp, &tras, &tcl);
+    switch(bytes[8]){
+        case 0x0:
+            voltage = "TTL/5 V tolerant";
+            break;
+        case 0x1:
+            voltage = "LVTTL";
+            break;
+        case 0x2:
+            voltage = "HSTL 1.5 V";
+            break;
+        case 0x3:
+            voltage = "SSTL 3.3 V";
+            break;
+        case 0x4:
+            voltage = "SSTL 2.5 V";
+            break;
+        case 0x5:
+            voltage = "SSTL 1.8 V";
+            break;
+        default:
+            voltage = _("(Unknown)");
+    }
 
-    return g_strdup_printf("[%s]\n"
-                           "tCL=%.2f\n"
-                           "tRCD=%.2f\n"
-                           "tRP=%.2f\n"
-                           "tRAS=%.2f\n",
-                           _("Timings"), tcl, trcd, trp, tras);
+    /* expected to continue an [SPD] section */
+    out = g_strdup_printf("%s=%s\n"
+                          "[%s]\n",
+                          _("Voltage"), voltage,
+                          _("JEDEC Timings"));
+
+    for (i = 0; i <= 2; i++) {
+        if (!decode_ddr2_module_ctime_for_casx(i, bytes, &ctime, &tcl))
+            break;
+        decode_ddr2_module_timings(ctime, bytes,  &trcd, &trp, &tras);
+        out = h_strdup_cprintf("DDR2-%d=%.0f-%.0f-%.0f-%.0f\n",
+                            out,
+                           (int)(2 * (1000 / ctime)), tcl, trcd, trp, tras);
+    }
+
+    return out;
 }
 
 static void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int *pc3_speed) {
@@ -1048,6 +1118,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean 
             decode_module_manufacturer(bytes + 64, (char**)&s->vendor_str);
             decode_ddr2_module_size(bytes, &s->size_MiB);
             decode_ddr2_module_detail(bytes, s->type_detail);
+            decode_ddr2_module_type(bytes, &s->form_factor);
             break;
         case DDR3_SDRAM:
             s = spd_data_new();
