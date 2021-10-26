@@ -274,6 +274,10 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
         STR_IGNORE(s->voltage_conf_str, "Unknown");
 
         s->partno = dmidecode_match("Part Number", &dtm, &h);
+        STR_IGNORE(s->partno, "PartNum0");
+        STR_IGNORE(s->partno, "PartNum1");
+        STR_IGNORE(s->partno, "PartNum2");
+        STR_IGNORE(s->partno, "PartNum3");
         null_if_empty(&s->partno);
 
         s->data_width = dmidecode_match("Data Width", &dtm, &h);
@@ -283,6 +287,10 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
 
         s->mfgr = dmidecode_match("Manufacturer", &dtm, &h);
         STR_IGNORE(s->mfgr, unknown_mfgr_str);
+        STR_IGNORE(s->mfgr, "Manufacturer0");
+        STR_IGNORE(s->mfgr, "Manufacturer1");
+        STR_IGNORE(s->mfgr, "Manufacturer2");
+        STR_IGNORE(s->mfgr, "Manufacturer3");
         STR_IGNORE(s->mfgr, "Unknown");
         null_if_empty(&s->mfgr);
 
