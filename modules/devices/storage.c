@@ -192,6 +192,11 @@ gboolean __scan_udisks2_devices(void) {
         { "used-reserved-blocks-total",   _("Total Used Reserved Block Count") },
         { "program-fail-count-total",     _("Total Program Fail Count") },
         { "erase-fail-count-total",       _("Total Erase Fail Count") },
+        { "available-reserved-space",     _("Available Reserved Space") },
+        { "program-fail-count",           _("Program Fail Count") },
+        { "erase-fail-count",             _("Erase Fail Count") },
+        { "ta-increase-count",            _("TA Counter Increased") },
+        { "unused-reserved-blocks",       _("Total Unused Reserved Block Count") },
         { NULL, NULL }
     };
 
