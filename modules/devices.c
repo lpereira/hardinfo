@@ -184,7 +184,7 @@ gchar *processor_describe_default(GSList * processors)
             ret = g_strdup_printf(full_fmt, packs, cores * nodes, nodes, threads);
         } else {
             full_fmt = g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"), packs_fmt, cores_fmt, threads_fmt);
-            ret = g_strdup_printf(full_fmt, packs, cores, nodes, threads);
+            ret = g_strdup_printf(full_fmt, packs, cores, threads);
         }
         g_free(full_fmt);
         return ret;
