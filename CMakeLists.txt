@@ -66,8 +66,8 @@ if (OVRDTRROOT)
 	add_definitions(-DDTR_ROOT=${OVRDTRROOT})
 	message(STATUS "/proc/device-tree override: ${OVRDTRROOT}")
 endif()
-add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_LOCALEDIR}")
-message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_LOCALEDIR}")
+add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
+message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
 
