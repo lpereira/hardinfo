@@ -82,7 +82,7 @@ func (br *BenchmarkResult) buildCpuDesc() {
 		numaNodes = fmt.Sprintf("; %d NUMA nodes", br.NumNodes)
 	}
 
-	br.CpuConfig = numCpus + numCores + numThreads + numaNodes
+	br.CpuDesc = numCpus + numCores + numThreads + numaNodes
 }
 
 func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int, error) {
