@@ -107,7 +107,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 	}
 
 	stmt, err := tx.Prepare(`INSERT INTO benchmark_result (benchmark_type,
-		benchmark_result, extra_info, machine_id, board, cpu_name, cpu_desc,
+		benchmark_result, extra_info, machine_id, board, cpu_name, cpu_config,
 		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
 		memory_types, opengl_renderer, gpu_desc, pointer_bits,
 		data_from_super_user, used_threads, benchmark_version, user_note,
@@ -156,7 +156,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 			bench.MachineId,
 			bench.Board,
 			bench.CpuName,
-			bench.CpuDesc,
+			bench.CpuConfig,
 			bench.NumCpus,
 			bench.NumCores,
 			bench.NumThreads,
@@ -326,7 +326,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 	//       using select distinct to not serialize the same machine id twice
 	stmt, err := database.Prepare(`
 		SELECT extra_info, machine_id, AVG(benchmark_result) AS benchmark_result,
-			board, cpu_name, cpu_desc, num_cpus, num_cores, num_threads,
+			board, cpu_name, cpu_config, num_cpus, num_cores, num_threads,
 			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
 			gpu_desc, pointer_bits, data_from_super_user,
 			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version,
@@ -357,7 +357,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.BenchmarkResult,
 				&result.Board,
 				&result.CpuName,
-				&result.CpuDesc,
+				&result.CpuConfig,
 				&result.NumCpus,
 				&result.NumCores,
 				&result.NumThreads,
