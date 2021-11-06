@@ -33,11 +33,11 @@ type BenchmarkResult struct {
 	MachineType string
 	CpuName     string
 	CpuDesc     string
+	CpuConfig   string
 	NumCpus     int
 	NumCores    int
 	NumThreads  int
 	NumNodes    int
-	CpuConfig   string
 
 	MemoryInKiB         int
 	PhysicalMemoryInMiB int
@@ -53,7 +53,7 @@ type BenchmarkResult struct {
 	Legacy bool
 }
 
-func (br *BenchmarkResult) buildCpuConfig() {
+func (br *BenchmarkResult) buildCpuDesc() {
 	// This is being generated here so that older versions of HardInfo
 	// that do not build this string on the fly will have something to
 	// show.  Newer versions should have a similar logic, but will have
@@ -63,6 +63,8 @@ func (br *BenchmarkResult) buildCpuConfig() {
 	numCpus := ""
 	if br.NumCpus > 1 {
 		numCpus = fmt.Sprintf("%d CPUs", br.NumCpus)
+	} else {
+		numCpus = fmt.Sprintf("%d CPU", br.NumCpus)
 	}
 
 	numCores := ""
@@ -375,7 +377,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.MachineType,
 				&result.NumNodes)
 			if err == nil {
-				result.buildCpuConfig()
+				result.buildCpuDesc()
 				resultMap[benchType] = append(resultMap[benchType], result)
 			} else {
 				log.Print(err)
