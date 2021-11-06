@@ -60,27 +60,27 @@ func (br *BenchmarkResult) buildCpuConfig() {
 	// the structured data, so will be able to generate a string in the
 	// user's locale.
 
-	numCpus = ""
+	numCpus := ""
 	if br.NumCpus > 1 {
 		numCpus = fmt.Sprintf("%d CPUs", br.NumCpus)
 	}
 
-	numCores = ""
+	numCores := ""
 	if br.NumCores > 1 {
 		numCores = fmt.Sprintf("; %d cores", br.NumCores)
 	}
 
-	numThreads = ""
+	numThreads := ""
 	if br.NumThreads > 1 {
 		numThreads = fmt.Sprintf("; %d threads", br.NumThreads)
 	}
 
-	numaNodes = ""
+	numaNodes := ""
 	if br.NumNodes > 1 {
 		numaNodes = fmt.Sprintf("; %d NUMA nodes", br.NumNodes)
 	}
 
-	br.CpuConfig = numCpus + numCores + numThreads + numNodes
+	br.CpuConfig = numCpus + numCores + numThreads + numaNodes
 }
 
 func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int, error) {
