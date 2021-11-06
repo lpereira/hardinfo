@@ -344,7 +344,7 @@ gchar *hi_get_field(gchar *field)
 static void br_mi_add(char **results_list, bench_result *b, gboolean select)
 {
     static unsigned int ri = 0; /* to ensure key is unique */
-    gchar *rkey, *lbl, *elbl, *this_marker;
+    gchar *rkey, *lbl, *elbl, *this_marker, *cpu_conf_t;
 
     if (select) {
         this_marker = format_with_ansi_color(_("This Machine"), "0;30;43",
@@ -360,15 +360,18 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select)
                           b->legacy ? problem_marker() : "");
     elbl = key_label_escape(lbl);
 
+    cpu_conf_t = cpu_config_retranslate(b->machine->cpu_config, 0, 0);
+
     *results_list = h_strdup_cprintf("$@%s%s$%s=%.2f|%s\n", *results_list,
                                      select ? "*" : "", rkey, elbl,
-                                     b->bvalue.result, b->machine->cpu_config);
+                                     b->bvalue.result, cpu_conf_t);
 
     moreinfo_add_with_prefix("BENCH", rkey, bench_result_more_info(b));
 
     g_free(lbl);
     g_free(elbl);
     g_free(rkey);
+    g_free(cpu_conf_t);
     if (*this_marker)
         g_free(this_marker);
 }

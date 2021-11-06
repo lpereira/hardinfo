@@ -61,7 +61,7 @@ static char *cpu_config_retranslate(char *str, int force_en, int replacing)
 {
     char *new_str = NULL;
     char *mhz = (force_en) ? "MHz" : _("MHz");
-    char *c = str, *tmp;
+    char *c = str;
     int t;
     float f;
 
@@ -69,24 +69,20 @@ static char *cpu_config_retranslate(char *str, int force_en, int replacing)
         new_str = strdup("");
         if (strchr(str, 'x')) {
             while (c != NULL && sscanf(c, "%dx %f", &t, &f)) {
-                tmp = g_strdup_printf("%s%s%dx %.2f %s", new_str,
+                new_str = h_strdup_cprintf("%s%dx %.2f %s", new_str,
                                       strlen(new_str) ? " + " : "", t, f, mhz);
-                free(new_str);
-                new_str = tmp;
                 c = strchr(c + 1, '+');
                 if (c)
                     c++; /* move past the + */
             }
         } else {
             sscanf(c, "%f", &f);
-            tmp = g_strdup_printf("%s%s%dx %.2f %s", new_str,
+            new_str = h_strdup_cprintf("%s%dx %.2f %s", new_str,
                                   strlen(new_str) ? " + " : "", 1, f, mhz);
-            free(new_str);
-            new_str = tmp;
         }
 
         if (replacing)
-            free(str);
+            g_free(str);
     }
 
     return new_str;
@@ -136,6 +132,79 @@ static int cpu_config_is_close(char *str0, char *str1)
     return 0;
 }
 
+static char *cpu_desc_try_retranslate(char *str){
+    GRegex *regex;
+    GMatchInfo *match_info;
+    int packs, cores, nodes, threads;
+    const gchar *packs_fmt, *cores_fmt, *threads_fmt, *nodes_fmt;
+    gchar *tmp, *ret;
+
+    // The string depends on the platform and the kernel.
+    //
+    // It could be the CPU topology string like this:
+    //   - "1 physical processor; 2 cores; 2 threads"
+    //   - "1 physical processor; 16 cores across 2 NUMA nodes; 32 threads"
+    //
+    // .. or it could contain the count of cpu names, like this:
+    //   - "4x ARM Cortex-A72 r0p3 (AArch32)"
+    //
+    // We just need to retranslate the topology string, otherwise return input dup.
+
+    const gchar* pattern = "^([0-9]+) physical processors?; (?:([0-9]+) cores?|([0-9]+) cores across ([0-9]+) NUMA nodes?); ([0-9]+) threads?$";
+    regex = g_regex_new(pattern, 0, 0, NULL);
+    if (!regex) {
+        return g_strdup(str);
+    }
+
+    g_regex_match(regex, str, 0, &match_info);
+    if (!g_match_info_matches(match_info)) {
+        g_match_info_free(match_info);
+        g_regex_unref(regex);
+        return g_strdup(str);
+    }
+
+    tmp = g_match_info_fetch(match_info, 1);
+    packs = atoi(tmp);
+    g_free(tmp);
+
+    tmp = g_match_info_fetch(match_info, 2);
+    cores = atoi(tmp);
+    g_free(tmp);
+    if (cores == 0) {
+        tmp = g_match_info_fetch(match_info, 3);
+        cores = atoi(tmp);
+        g_free(tmp);
+    }
+
+    tmp = g_match_info_fetch(match_info, 4);
+    nodes = atoi(tmp);
+    g_free(tmp);
+
+    tmp = g_match_info_fetch(match_info, 5);
+    threads = atoi(tmp);
+    g_free(tmp);
+
+    g_match_info_free(match_info);
+    g_regex_unref(regex);
+
+    packs_fmt = ngettext("%d physical processor", "%d physical processors", packs);
+    cores_fmt = ngettext("%d core", "%d cores", cores);
+    threads_fmt = ngettext("%d thread", "%d threads", threads);
+
+    if (nodes > 1) {
+        nodes_fmt = ngettext("%d NUMA node", "%d NUMA nodes", nodes);
+        tmp = g_strdup_printf(_(/*/NP procs; NC cores across NN nodes; NT threads*/ "%s; %s across %s; %s"), packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
+        ret = g_strdup_printf(tmp, packs, cores, nodes, threads);
+    }
+    else {
+        tmp = g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"), packs_fmt, cores_fmt, threads_fmt);
+        ret = g_strdup_printf(tmp, packs, cores, threads);
+    }
+
+    g_free(tmp);
+    return ret;
+}
+
 static void gen_machine_id(bench_machine *m)
 {
     char *s;
@@ -165,6 +234,12 @@ bench_machine *bench_machine_this()
 {
     bench_machine *m = NULL;
     char *tmp;
+    char *lng;
+
+    lng = g_strdup(getenv("LANGUAGE"));
+
+    setenv("LANGUAGE", "en", 1);
+    setlocale(LC_ALL, "");
 
     m = bench_machine_new();
     if (m) {
@@ -187,6 +262,17 @@ bench_machine *bench_machine_this()
         cpu_procs_cores_threads_nodes(&m->processors, &m->cores, &m->threads, &m->nodes);
         gen_machine_id(m);
     }
+
+    if (lng != NULL) {
+        setenv("LANGUAGE", lng, 1);
+    }
+    else {
+        unsetenv("LANGUAGE");
+    }
+
+    setlocale(LC_ALL, "");
+    g_free(lng);
+
     return m;
 }
 
@@ -407,6 +493,14 @@ static char *bench_result_more_info_less(bench_result *b)
     if (b->machine->ptr_bits)
         snprintf(bits, 23, _("%d-bit"), b->machine->ptr_bits);
 
+    char *cpuConfigTransl = NULL;
+    if (b->machine->cpu_config != NULL)
+        cpuConfigTransl = cpu_config_retranslate(b->machine->cpu_config, 0, 0);
+
+    char *cpuDescTransl = NULL;
+    if (b->machine->cpu_desc != NULL)
+        cpuDescTransl = cpu_desc_try_retranslate(b->machine->cpu_desc);
+
     char *ret = g_strdup_printf(
         "[%s]\n"
         /* threads */ "%s=%d\n"
@@ -439,16 +533,19 @@ static char *bench_result_more_info_less(bench_result *b)
                   : "",
         _("Machine"),
         _("Board"), (b->machine->board != NULL) ? b->machine->board : _(unk),
-        _("Machine Type"), (b->machine->machine_type != NULL) ? b->machine->machine_type : _(unk),
+        _("Machine Type"), (b->machine->machine_type != NULL) ? _(b->machine->machine_type) : _(unk),
         _("CPU Name"), b->machine->cpu_name,
-        _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
-        _("CPU Config"), b->machine->cpu_config,
+        _("CPU Description"), (cpuDescTransl != NULL) ? cpuDescTransl : _(unk),
+        _("CPU Config"), cpuConfigTransl != NULL ? cpuConfigTransl: _(unk),
         _("Threads Available"), b->machine->threads,
         _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
         _("Memory"), memory,
         b->machine->ptr_bits ? _("Pointer Size") : "#AddySize", bits);
-    free(memory);
+
+    g_free(memory);
+    g_free(cpuConfigTransl);
+    g_free(cpuDescTransl);
     return ret;
 }
 
@@ -462,6 +559,14 @@ static char *bench_result_more_info_complete(bench_result *b)
     char bits[24] = "";
     if (b->machine->ptr_bits)
         snprintf(bits, 23, _("%d-bit"), b->machine->ptr_bits);
+
+    char *cpuConfigTransl = NULL;
+    if (b->machine->cpu_config != NULL)
+        cpuConfigTransl = cpu_config_retranslate(b->machine->cpu_config, 0, 0);
+
+    char *cpuDescTransl = NULL;
+    if (b->machine->cpu_desc != NULL)
+        cpuDescTransl = cpu_desc_try_retranslate(b->machine->cpu_desc);
 
     return g_strdup_printf(
         "[%s]\n"
@@ -502,13 +607,12 @@ static char *bench_result_more_info_complete(bench_result *b)
                   : "",
         _("Machine"), _("Board"),
         (b->machine->board != NULL) ? b->machine->board : _(unk),
-        _("Machine Type"), (b->machine->machine_type != NULL) ? b->machine->machine_type : _(unk),
-        _("CPU Name"),
-        b->machine->cpu_name, _("CPU Description"),
-        (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
-        _("CPU Config"), b->machine->cpu_config, _("Threads Available"),
-        b->machine->threads, _("GPU"),
-        (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
+        _("Machine Type"), (b->machine->machine_type != NULL) ? _(b->machine->machine_type) : _(unk),
+        _("CPU Name"), b->machine->cpu_name,
+        _("CPU Description"), (cpuDescTransl != NULL) ? cpuDescTransl : _(unk),
+        _("CPU Config"), cpuConfigTransl != NULL ? cpuConfigTransl: _(unk),
+        _("Threads Available"), b->machine->threads,
+        _("GPU"), (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
         _("OpenGL Renderer"),
         (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
         _("Memory"), b->machine->memory_kiB, _("kiB"), _("Physical Memory"),
@@ -517,6 +621,9 @@ static char *bench_result_more_info_complete(bench_result *b)
         ".machine_data_version", b->machine->machine_data_version,
         ".is_su_data", b->machine->is_su_data, _("Handles"), _("mid"),
         b->machine->mid, _("cfg_val"), cpu_config_val(b->machine->cpu_config));
+
+    g_free(cpuConfigTransl);
+    g_free(cpuDescTransl);
 }
 
 char *bench_result_more_info(bench_result *b)
