@@ -68,6 +68,8 @@ static Shell *shell = NULL;
 static GHashTable *update_tbl = NULL;
 static GSList *update_sfusrc = NULL;
 
+gchar *lginterval = NULL;
+
 /*
  * Code :) ********************************************************************
  */

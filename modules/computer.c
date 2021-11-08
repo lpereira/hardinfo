@@ -116,7 +116,6 @@ static ModuleEntry entries[] = {
 gchar *module_list = NULL;
 Computer *computer = NULL;
 gchar *meminfo = NULL;
-gchar *lginterval = NULL;
 
 gchar *hi_more_info(gchar * entry)
 {
@@ -370,6 +369,7 @@ gchar *callback_dev(void)
 
 gchar *callback_memory_usage()
 {
+    extern gchar *lginterval;
     return g_strdup_printf("[Memory]\n"
                "%s\n"
                "[$ShellParam$]\n"

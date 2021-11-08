@@ -127,7 +127,6 @@ gchar *input_list = NULL;
 gboolean storage_no_nvme = FALSE;
 gchar *storage_list = NULL;
 gchar *battery_list = NULL;
-gchar *lginterval = NULL;
 
 /* in dmi_memory.c */
 gchar *memory_devices_get_info();
