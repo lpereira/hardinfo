@@ -325,6 +325,35 @@ static gchar *json_get_string_dup(JsonObject *obj, const gchar *key)
     return g_strdup(json_get_string(obj, key));
 }
 
+static void append_cpu_config(JsonObject *object,
+                              const gchar *member_name,
+                              JsonNode *member_node,
+                              gpointer user_data)
+{
+    GString *output = user_data;
+
+    if (output->len)
+        g_string_append(output, ", ");
+
+    // FIXME: need to parse member_name as float in the C locale,
+    // and re-format that as float in the current locale
+    g_string_append_printf(output, "%ldx %s %s", json_node_get_int(member_node),
+                           member_name, _("MHz"));
+}
+
+static gchar *get_cpu_config(JsonObject *machine)
+{
+    JsonObject *cpu_config_map =
+        json_object_get_object_member(machine, "CpuConfigMap");
+
+    if (!cpu_config_map)
+        return json_get_string_dup(machine, "CpuConfig");
+
+    GString *output = g_string_new(NULL);
+    json_object_foreach_member(cpu_config_map, append_cpu_config, output);
+    return g_string_free(output, FALSE);
+}
+
 bench_result *bench_result_benchmarkjson(const gchar *bench_name,
                                          JsonNode *node)
 {
@@ -367,7 +396,7 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
         .memory_kiB = json_get_int(machine, "MemoryInKiB"),
         .cpu_name = json_get_string_dup(machine, "CpuName"),
         .cpu_desc = json_get_string_dup(machine, "CpuDesc"),
-        .cpu_config = json_get_string_dup(machine, "CpuConfig"),
+        .cpu_config = get_cpu_config(machine),
         .ogl_renderer = json_get_string_dup(machine, "OpenGlRenderer"),
         .gpu_desc = json_get_string_dup(machine, "GpuDesc"),
         .processors = json_get_int(machine, "NumCpus"),
