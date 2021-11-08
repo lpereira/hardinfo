@@ -18,6 +18,8 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include <stdlib.h>
+#include <locale.h>
 #include <inttypes.h>
 #include <json-glib/json-glib.h>
 
@@ -325,6 +327,16 @@ static gchar *json_get_string_dup(JsonObject *obj, const gchar *key)
     return g_strdup(json_get_string(obj, key));
 }
 
+static double parse_frequency(const char *freq)
+{
+    static locale_t locale;
+
+    if (!locale)
+        locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
+
+    return strtod_l(freq, NULL, locale);
+}
+
 static void append_cpu_config(JsonObject *object,
                               const gchar *member_name,
                               JsonNode *member_node,
@@ -335,10 +347,8 @@ static void append_cpu_config(JsonObject *object,
     if (output->len)
         g_string_append(output, ", ");
 
-    // FIXME: need to parse member_name as float in the C locale,
-    // and re-format that as float in the current locale
-    g_string_append_printf(output, "%ldx %s %s", json_node_get_int(member_node),
-                           member_name, _("MHz"));
+    g_string_append_printf(output, "%ldx %.2f %s", json_node_get_int(member_node),
+                           parse_frequency(member_name), _("MHz"));
 }
 
 static gchar *get_cpu_config(JsonObject *machine)
