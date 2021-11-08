@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2007 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2003-2007 L. A. F. Pereira <l@tia.mat.br>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -892,7 +892,7 @@ void hi_module_deinit(void)
 const ModuleAbout *hi_module_get_about(void)
 {
     const static ModuleAbout ma = {
-        .author = "Leandro A. F. Pereira",
+        .author = "L. A. F. Pereira",
         .description = N_("Gathers information about hardware devices"),
         .version = VERSION,
         .license = "GNU GPL version 2",

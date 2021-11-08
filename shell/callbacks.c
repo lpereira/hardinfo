@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2009 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2003-2009 L. A. F. Pereira <l@tia.mat.br>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ void cb_about()
     gchar *copyright = NULL;
     const gchar *authors[] = {
         _("Author:"),
-        "Leandro A. F. Pereira",
+        "L. A. F. Pereira",
         "",
         _("Contributors:"),
         "Agney Lopes Roth Ferraz",
@@ -194,7 +194,7 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
 #endif
 
-    copyright = g_strdup_printf("Copyright \302\251 2003-%d Leandro A. F. Pereira", HARDINFO_COPYRIGHT_LATEST_YEAR);
+    copyright = g_strdup_printf("Copyright \302\251 2003-%d L. A. F. Pereira", HARDINFO_COPYRIGHT_LATEST_YEAR);
 
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);

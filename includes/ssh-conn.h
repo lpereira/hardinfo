@@ -1,7 +1,7 @@
 /* 
    Remote Client
    HardInfo - Displays System Information
-   Copyright (C) 2003-2009 Leandro A. F. Pereira <leandro@hardinfo.org>
+   Copyright (C) 2003-2009 L. A. F. Pereira <l@tia.mat.br>
 
    Based on ssh-method.c from GnomeVFS
    Copyright (C) 1999 Free Software Foundation

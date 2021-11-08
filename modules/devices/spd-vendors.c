@@ -1,6 +1,6 @@
 /*
  * spd-decode.c, spd-vendors.c
- * Copyright (c) 2010 Leandro A. F. Pereira
+ * Copyright (c) 2010 L. A. F. Pereira
  * modified by Ondrej Čerman (2019)
  * modified by Burt P. (2019)
  *

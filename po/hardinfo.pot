@@ -433,7 +433,7 @@ msgstr ""
 #: hardinfo/hardinfo.c:50
 #, c-format
 msgid ""
-"Copyright (C) 2003-%d Leandro A. F. Pereira. See COPYING for details.\n"
+"Copyright (C) 2003-%d L. A. F. Pereira. See COPYING for details.\n"
 "\n"
 msgstr ""
 

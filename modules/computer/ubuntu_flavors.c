@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2019 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2003-2019 L. A. F. Pereira <l@tia.mat.br>
  *    This file Burt P. <pburt0@gmail.com>
  *
  *    This program is free software; you can redistribute it and/or modify

@@ -1,6 +1,6 @@
 /*
  *    HelpViewer - Simple Help file browser
- *    Copyright (C) 2009 Leandro A. F. Pereira <leandro@hardinfo.org>
+ *    Copyright (C) 2009 L. A. F. Pereira <l@tia.mat.br>
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by

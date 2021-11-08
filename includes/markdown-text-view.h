@@ -2,7 +2,7 @@
  * Markdown Text View
  * GtkTextView subclass that supports Markdown syntax
  *
- * Copyright (C) 2009 Leandro Pereira <leandro@hardinfo.org>
+ * Copyright (C) 2009 L.Pereira <l@tia.mat.br>
  * Portions Copyright (C) 2007-2008 Richard Hughes <richard@hughsie.com>
  * Portions Copyright (C) GTK+ Team (based on hypertext textview demo)
  *

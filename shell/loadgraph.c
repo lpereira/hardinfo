@@ -6,7 +6,7 @@
  *   - fixes autoscaling
  *   - add color
  *
- * Copyright (C) 2006 Leandro A. F. Pereira <leandro@hardinfo.org>
+ * Copyright (C) 2006 L. A. F. Pereira <l@tia.mat.br>
  *
  * The Simple Load Graph is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
