@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,11 +34,26 @@ type BenchmarkResult struct {
 	MachineType string
 	CpuName     string
 	CpuDesc     string
-	CpuConfig   string
 	NumCpus     int
 	NumCores    int
 	NumThreads  int
 	NumNodes    int
+
+	// This is still very messy: HardInfo sends data in an ad-hoc format
+	// that is parsed by this program, and stored in the database marshaled
+	// as JSON.  When writing back the benchmark.json data to be consumed by
+	// HardInfo, we parse this JSON and send out both the string->int map
+	// and the data marshaled in the same ad-hoc format used by HardInfo --
+	// this ensures that newer clients that know how to use the structured
+	// data can recreate the string and potentially translate it to the
+	// user's locale, while still giving useful output for older clients.
+	//
+	// Since the versions of HardInfo that are able to speak with this
+	// version of the server aren't completely released yet, the old format
+	// can be deprecated eventually once the new version is released.  For
+	// now, keep this confusing mess here.
+	CpuConfig    string
+	CpuConfigMap map[string]int
 
 	MemoryInKiB         int
 	PhysicalMemoryInMiB int
@@ -51,6 +67,59 @@ type BenchmarkResult struct {
 	DataFromSuperUser bool
 
 	Legacy bool
+}
+
+func (br *BenchmarkResult) makeCpuConfigMap() map[string]int {
+	// Converts a CpuConfig string from either the new style (JSON-formatted),
+	// or the ad-hoc format used by older versions of HardInfo, into a map
+	// data structure.
+	cpuConfigMap := make(map[string]int)
+	if err := json.Unmarshal([]byte(br.CpuConfig), &cpuConfigMap); err != nil {
+		// Possibly old-style CpuConfig value; try to make sense of it.
+		config := strings.ReplaceAll(br.CpuConfig, ",", ".")
+		config = strings.ReplaceAll(config, "МГц", "")
+		config = strings.ReplaceAll(config, "MHz", "")
+		config = strings.TrimSpace(config)
+
+		for _, c := range strings.Split(config, "+") {
+			countFreq := strings.Split(strings.TrimSpace(c), "x")
+			if len(countFreq) == 2 {
+				countFreq[1] = strings.TrimSpace(countFreq[1])
+				if count, err := strconv.Atoi(countFreq[0]); err == nil {
+					cpuConfigMap[countFreq[1]] = count
+				} else {
+					log.Printf("Could not parse %q: %q", countFreq[0], err)
+					cpuConfigMap[countFreq[1]] = 1
+				}
+			} else {
+				cpuConfigMap[countFreq[0]] = 1
+			}
+		}
+	}
+	return cpuConfigMap
+}
+
+func (br *BenchmarkResult) buildCpuConfigForLegacyHardInfo() {
+	cpuConfigMap := br.makeCpuConfigMap()
+	output := make([]string, 0)
+	for k, v := range cpuConfigMap {
+		output = append(output, fmt.Sprintf("%dx %s MHz", v, k))
+	}
+	// Still send the ad-hoc format back to HardInfo clients just in case.
+	br.CpuConfig = strings.Join(output, " + ")
+	// Newer HardInfos will use this map, so don't throw it away right now.
+	br.CpuConfigMap = cpuConfigMap
+}
+
+func (br *BenchmarkResult) marshalCpuConfigFromClient() string {
+	configMap := br.makeCpuConfigMap()
+	if out, err := json.Marshal(configMap); err == nil {
+		return string(out)
+	}
+	log.Printf("Couldn't marshal CpuConfigMap: %v", configMap)
+	// If we couldn't marshal for some reason, store whatever the client sent to us
+	// so we can analyze it later if needed.
+	return br.CpuConfig
 }
 
 func (br *BenchmarkResult) buildCpuDesc() {
@@ -108,10 +177,11 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 
 	stmt, err := tx.Prepare(`INSERT INTO benchmark_result (benchmark_type,
 		benchmark_result, extra_info, machine_id, board, cpu_name, cpu_config,
-		num_cpus, num_cores, num_threads, memory_in_kib, physical_memory_in_mib,
-		memory_types, opengl_renderer, gpu_desc, pointer_bits,
-		data_from_super_user, used_threads, benchmark_version, user_note,
-		elapsed_time, machine_data_version, legacy, machine_type, num_nodes, timestamp)
+		num_cpus, num_cores, num_threads, memory_in_kib,
+		physical_memory_in_mib, memory_types, opengl_renderer, gpu_desc,
+		pointer_bits, data_from_super_user, used_threads, benchmark_version,
+		user_note, elapsed_time, machine_data_version, legacy, machine_type,
+		num_nodes, timestamp)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 		strftime('%s', 'now'))`)
 	if err != nil {
@@ -156,7 +226,7 @@ func handlePost(database *sql.DB, w http.ResponseWriter, req *http.Request) (int
 			bench.MachineId,
 			bench.Board,
 			bench.CpuName,
-			bench.CpuConfig,
+			bench.marshalCpuConfigFromClient(),
 			bench.NumCpus,
 			bench.NumCores,
 			bench.NumThreads,
@@ -326,11 +396,10 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 	//       using select distinct to not serialize the same machine id twice
 	stmt, err := database.Prepare(`
 		SELECT extra_info, machine_id, AVG(benchmark_result) AS benchmark_result,
-			board, cpu_name, cpu_config, num_cpus, num_cores, num_threads,
-			memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
-			gpu_desc, pointer_bits, data_from_super_user,
-			used_threads, benchmark_version, user_note, elapsed_time, machine_data_version,
-			legacy, machine_type, num_nodes
+			board, cpu_name, cpu_config, num_cpus, num_cores,
+			num_threads, memory_in_kib, physical_memory_in_mib, memory_types, opengl_renderer,
+			gpu_desc, pointer_bits, data_from_super_user, used_threads, benchmark_version,
+			user_note, elapsed_time, machine_data_version, legacy, machine_type, num_nodes
 		FROM benchmark_result
 		WHERE benchmark_type=? AND legacy=0
 		GROUP BY machine_id, pointer_bits
@@ -378,6 +447,7 @@ func updateBenchmarkJsonCache(database *sql.DB) error {
 				&result.NumNodes)
 			if err == nil {
 				result.buildCpuDesc()
+				result.buildCpuConfigForLegacyHardInfo()
 				resultMap[benchType] = append(resultMap[benchType], result)
 			} else {
 				log.Print(err)
