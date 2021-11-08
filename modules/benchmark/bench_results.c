@@ -354,6 +354,45 @@ static gchar *get_cpu_config(JsonObject *machine)
     return g_string_free(output, FALSE);
 }
 
+static gchar *get_cpu_desc(JsonObject *machine)
+{
+    int num_cpus = json_get_int(machine, "NumCpus");
+
+    if (!num_cpus)
+        return json_get_string_dup(machine, "CpuDesc");
+
+    /* FIXME: This is adapted from processor_describe_default() in
+     * devices.c! */
+
+    int num_cores = json_get_int(machine, "NumCores");
+    int num_threads = json_get_int(machine, "NumThreads");
+    int num_nodes = json_get_int(machine, "NumNodes");
+    const char *packs_fmt =
+        ngettext("%d physical processor", "%d physical processors", num_cpus);
+    const char *cores_fmt = ngettext("%d core", "%d cores", num_cores);
+    const char *threads_fmt = ngettext("%d thread", "%d threads", num_threads);
+    char *full_fmt, *ret;
+
+    if (num_nodes > 1) {
+        const char *nodes_fmt =
+            ngettext("%d NUMA node", "%d NUMA nodes", num_nodes);
+
+        full_fmt = g_strdup_printf(
+            _(/*/NP procs; NC cores across NN nodes; NT threads*/
+              "%s; %s across %s; %s"),
+            packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
+        ret = g_strdup_printf(full_fmt, num_cpus, num_cores * num_nodes, num_nodes, num_threads);
+    } else {
+        full_fmt =
+            g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"),
+                            packs_fmt, cores_fmt, threads_fmt);
+        ret = g_strdup_printf(full_fmt, num_cpus, num_cores, num_threads);
+    }
+
+    free(full_fmt);
+    return ret;
+}
+
 bench_result *bench_result_benchmarkjson(const gchar *bench_name,
                                          JsonNode *node)
 {
@@ -395,7 +434,7 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
         .board = json_get_string_dup(machine, "Board"),
         .memory_kiB = json_get_int(machine, "MemoryInKiB"),
         .cpu_name = json_get_string_dup(machine, "CpuName"),
-        .cpu_desc = json_get_string_dup(machine, "CpuDesc"),
+        .cpu_desc = get_cpu_desc(machine),
         .cpu_config = get_cpu_config(machine),
         .ogl_renderer = json_get_string_dup(machine, "OpenGlRenderer"),
         .gpu_desc = json_get_string_dup(machine, "GpuDesc"),

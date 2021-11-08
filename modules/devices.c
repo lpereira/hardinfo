@@ -173,6 +173,8 @@ gchar *processor_describe_default(GSList * processors)
 
     cpu_procs_cores_threads_nodes(&packs, &cores, &threads, &nodes);
 
+    /* NOTE: If this is changed, look at get_cpu_desc() in bench_results.c! */
+
     /* if topology info was available, else fallback to old method */
     if (cores > 0) {
         packs_fmt = ngettext("%d physical processor", "%d physical processors", packs);
