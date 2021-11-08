@@ -70,6 +70,13 @@ type BenchmarkResult struct {
 }
 
 func (br *BenchmarkResult) makeCpuConfigMap() map[string]int {
+	if br.CpuConfigMap != nil {
+		// If we already have a CpuConfigMap, it probably came from
+		// a HardInfo client that knows how to generate one; no need
+		// to use the ad-hoc parsing here to re-generate it.
+		return br.CpuConfigMap
+	}
+
 	// Converts a CpuConfig string from either the new style (JSON-formatted),
 	// or the ad-hoc format used by older versions of HardInfo, into a map
 	// data structure.
