@@ -18,6 +18,7 @@
 
 #include <string.h>
 
+#include "cpu_util.h"
 #include "hardinfo.h"
 #include "devices.h"
 #include "usb_util.h"
