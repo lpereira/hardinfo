@@ -1,7 +1,7 @@
 /*
  * Christian Hergert's uber-graph (GPL3)
  * wrapped in an interface compatible with
- * Leandro A. F. Pereira's loadgraph (GPL2.1).
+ * L. A. F. Pereira's loadgraph (GPL2.1).
  */
 
 #include <string.h>
