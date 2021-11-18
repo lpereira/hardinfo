@@ -525,7 +525,7 @@ static void read_sensors_hddtemp(void) {
         gchar **disks;
         int i;
 
-        disks = g_strsplit(buffer, "\n", 0);
+        disks = g_strsplit(buffer, "||", 0);
         for (i = 0; disks[i]; i++) {
             gchar **fields = g_strsplit(disks[i] + 1, "|", 5);
 
@@ -536,7 +536,7 @@ static void read_sensors_hddtemp(void) {
              * 3 -> C
              */
             const gchar *unit = strcmp(fields[3], "C")
-                ? "\302\260C" : "\302\260F";
+                ? "\302\260F" : "\302\260C";
             add_sensor("Drive Temperature",
                        fields[1],
                        "hddtemp",
