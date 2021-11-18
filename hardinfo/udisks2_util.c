@@ -450,7 +450,7 @@ gpointer get_udisks2_temp(const char *blockdev, GDBusProxy *block,
     v = get_dbus_property(drive, UDISKS2_DRIVE_ATA_INTERFACE, "SmartTemperature");
     if (v) {
         disk_temp = udiskt_new();
-        disk_temp->temperature = (gint32) g_variant_get_double(v) - 273.15;
+        disk_temp->temperature = (gint32) (g_variant_get_double(v) - 273.15);
         g_variant_unref(v);
     }
 
