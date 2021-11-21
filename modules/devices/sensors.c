@@ -612,7 +612,7 @@ static void read_sensors_hddtemp(void) {
              * 3 -> C
              */
             const gchar *unit = strcmp(fields[3], "C")
-                ? "\302\260C" : "\302\260F";
+                ? "\302\260F" : "\302\260C";
             add_sensor("Drive Temperature",
                        fields[1],
                        "hddtemp",
