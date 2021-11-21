@@ -601,7 +601,7 @@ static void read_sensors_hddtemp(void) {
         gchar **disks;
         int i;
 
-        disks = g_strsplit(buffer, "\n", 0);
+        disks = g_strsplit(buffer, "||", 0);
         for (i = 0; disks[i]; i++) {
             gchar **fields = g_strsplit(disks[i] + 1, "|", 5);
 
