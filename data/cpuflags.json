@@ -234,6 +234,16 @@
     "pm:cpb": "core performance boost",
     "pm:eff_freq_ro": "Readonly aperf/mperf",
     "pm:proc_feedback": "processor feedback interface",
-    "pm:acc_power": "accumulated power mechanism"
+    "pm:acc_power": "accumulated power mechanism",
+    "cpuid": "CPUID instruction",
+    "aes": "AES instructions",
+    "ssbd": "Speculative Store Bypass Disable",
+    "ibrs": "Indirect Branch Restricted Speculation",
+    "ibpb": "Indirect Branch Predictor Barrier",
+    "stibp": "Single Thread Indirect Branch Predictor",
+    "ibrs_enhanced": "Enhanced Indirect Branch Restructed Speculation",
+    "ept_ad": "Intel Extended Page Table access-dirty bit",
+    "md_clear": "Microarchitectural Data Sampling mitigation",
+    "flush_l1d": "Unconditional L1D flushing"
   }
 }
