@@ -2842,11 +2842,11 @@ msgstr "DMI nicht verfügbar"
 
 #: modules/devices/dmi.c:158
 msgid "DMI is not avaliable. Perhaps this platform does not provide DMI."
-msgstr "DMI ist nicht verfügbar. Vielleicht stellt diese Plattform DMI nicht bereit"
+msgstr "DMI ist nicht verfügbar. Vielleicht stellt diese Plattform DMI nicht bereit."
 
 #: modules/devices/dmi.c:159
 msgid "DMI is not available; Perhaps try running HardInfo as root."
-msgstr "DMI nicht verfügbar; Vielleicht versuchen HardInfo als root zu starten"
+msgstr "DMI nicht verfügbar; Vielleicht versuchen HardInfo als root zu starten."
 
 #: modules/devices/dmi_memory.c:598
 msgid "Serial Presence Detect (SPD)"
