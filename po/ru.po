@@ -2,28 +2,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-20 01:37+0300\n"
-"PO-Revision-Date: \n"
-"Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
+"POT-Creation-Date: 2019-10-24 15:16-0500\n"
+"PO-Revision-Date: 2022-03-05 23:00+0300\n"
+"Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn\n"
 "Language-Team: \n"
-"Language: ru_UA\n"
+"Language: ru\n"
 "X-Poedit-Basepath: ../\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Russian\n"
-"X-Poedit-Country: UKRAINE\n"
+"X-Poedit-Country: Russia\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: hardinfo/cpu_util.c:29
 msgid "Little Endian"
-msgstr ""
+msgstr "Младший порядок байтов"
 
 #: hardinfo/cpu_util.c:31
 msgid "Big Endian"
-msgstr ""
+msgstr "Старший порядок байтов"
 
 #: hardinfo/cpu_util.c:204 hardinfo/cpu_util.c:215 modules/devices/gpu.c:218
 msgid "Frequency Scaling"
@@ -95,11 +95,11 @@ msgstr "Топология"
 
 #: hardinfo/cpu_util.c:249
 msgid "ID"
-msgstr ""
+msgstr "ИД"
 
 #: hardinfo/dmi_util.c:25
 msgid "BIOS Information"
-msgstr ""
+msgstr "Информация о BIOS"
 
 #: hardinfo/dmi_util.c:26 modules/devices/parisc/processor.c:157
 msgid "System"
@@ -107,7 +107,7 @@ msgstr "Система"
 
 #: hardinfo/dmi_util.c:27
 msgid "Base Board"
-msgstr ""
+msgstr "Основная плата"
 
 #: hardinfo/dmi_util.c:28 modules/devices/dmi.c:54
 msgid "Chassis"
@@ -128,11 +128,11 @@ msgstr "Процессор"
 
 #: hardinfo/dmi_util.c:30
 msgid "Memory Controller"
-msgstr ""
+msgstr "Контроллер памяти"
 
 #: hardinfo/dmi_util.c:31
 msgid "Memory Module"
-msgstr ""
+msgstr "Модуль памяти"
 
 #: hardinfo/dmi_util.c:32 modules/devices/e2k/processor.c:338
 #: modules/devices/parisc/processor.c:163 modules/devices/x86/processor.c:664
@@ -141,7 +141,7 @@ msgstr "Кэш"
 
 #: hardinfo/dmi_util.c:33
 msgid "Port Connector"
-msgstr ""
+msgstr "Разъем порта"
 
 #: hardinfo/dmi_util.c:34
 msgid "System Slots"
@@ -153,7 +153,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:36
 msgid "OEM Strings"
-msgstr ""
+msgstr "Строки OEM"
 
 #: hardinfo/dmi_util.c:37
 msgid "System Configuration Options"
@@ -161,7 +161,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:38
 msgid "BIOS Language"
-msgstr ""
+msgstr "Язык BIOS"
 
 #: hardinfo/dmi_util.c:39
 msgid "Group Associations"
@@ -177,7 +177,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:42
 msgid "Memory Device"
-msgstr ""
+msgstr "Устройство памяти"
 
 #: hardinfo/dmi_util.c:43
 msgid "32-bit Memory Error"
@@ -193,19 +193,19 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:46
 msgid "Built-in Pointing Device"
-msgstr ""
+msgstr "Встроенное указывающее устройство"
 
 #: hardinfo/dmi_util.c:47
 msgid "Portable Battery"
-msgstr ""
+msgstr "Съемная батарея"
 
 #: hardinfo/dmi_util.c:48
 msgid "System Reset"
-msgstr ""
+msgstr "Сброс системы"
 
 #: hardinfo/dmi_util.c:49
 msgid "Hardware Security"
-msgstr ""
+msgstr "Аппаратная безопасность"
 
 #: hardinfo/dmi_util.c:50
 msgid "System Power Controls"
@@ -213,15 +213,15 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:51
 msgid "Voltage Probe"
-msgstr ""
+msgstr "Датчик напряжения"
 
 #: hardinfo/dmi_util.c:52
 msgid "Cooling Device"
-msgstr ""
+msgstr "Устройство охлаждения"
 
 #: hardinfo/dmi_util.c:53
 msgid "Temperature Probe"
-msgstr ""
+msgstr "Температурный датчик"
 
 #: hardinfo/dmi_util.c:54
 msgid "Electrical Current Probe"
@@ -245,7 +245,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:59
 msgid "Management Device"
-msgstr ""
+msgstr "Устройство управления"
 
 #: hardinfo/dmi_util.c:60
 msgid "Management Device Component"
@@ -257,7 +257,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:62
 msgid "Memory Channel"
-msgstr ""
+msgstr "Канал памяти"
 
 #: hardinfo/dmi_util.c:63
 msgid "IPMI Device"
@@ -265,11 +265,11 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:64
 msgid "Power Supply"
-msgstr ""
+msgstr "Источник питания"
 
 #: hardinfo/dmi_util.c:65
 msgid "Additional Information"
-msgstr ""
+msgstr "Дополнительная информация"
 
 #: hardinfo/dmi_util.c:66
 msgid "Onboard Device"
@@ -297,11 +297,11 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:232
 msgid "Mini Tower"
-msgstr ""
+msgstr "Размер Mini Tower"
 
 #: hardinfo/dmi_util.c:233
 msgid "Tower"
-msgstr ""
+msgstr "Размер Tower"
 
 #: hardinfo/dmi_util.c:234
 msgid "Portable"
@@ -310,11 +310,11 @@ msgstr "Портативный компьютер"
 #: hardinfo/dmi_util.c:235 modules/computer.c:410 modules/computer.c:419
 #: modules/computer.c:441
 msgid "Laptop"
-msgstr ""
+msgstr "Лэптоп"
 
 #: hardinfo/dmi_util.c:236
 msgid "Notebook"
-msgstr ""
+msgstr "Ноутбук"
 
 #: hardinfo/dmi_util.c:237
 msgid "Handheld"
@@ -322,11 +322,11 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:238
 msgid "Docking Station"
-msgstr ""
+msgstr "Док-станция"
 
 #: hardinfo/dmi_util.c:239
 msgid "All-in-one"
-msgstr ""
+msgstr "Всё в одном"
 
 #: hardinfo/dmi_util.c:240
 msgid "Subnotebook"
@@ -414,7 +414,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:261
 msgid "Mini PC"
-msgstr ""
+msgstr "Мини ПК"
 
 #: hardinfo/dmi_util.c:262
 msgid "Stick PC"
@@ -454,7 +454,7 @@ msgid ""
 "  Compiled for:      %s\n"
 msgstr ""
 "Настройки компиляции:\n"
-"  Release version:    %s (%s)\n"
+"  Версия выпуска:    %s (%s)\n"
 "  BinReloc включен:   %s\n"
 "  Префикс данных:     %s\n"
 "  Префикс библиотеки: %s\n"
@@ -522,11 +522,11 @@ msgstr "Версия"
 #: hardinfo/hardinfo.c:129
 #, c-format
 msgid "Unknown benchmark ``%s'' or benchmark.so not loaded"
-msgstr ""
+msgstr "Неизвестный бенчмарк или benchmark.so не загрузился"
 
 #: hardinfo/hardinfo.c:159
 msgid "Don't know what to do. Exiting."
-msgstr "Неизвестно, что делать. Выход."
+msgstr "Не знаю, что делать. Выход."
 
 #: hardinfo/usb_util.c:291 modules/devices/devicetree.c:91
 #: modules/devices/devicetree.c:92 modules/devices/monitors.c:409
@@ -610,7 +610,7 @@ msgstr "Фатальная ошибка"
 
 #: hardinfo/util.c:407
 msgid "do not print status messages to standard output"
-msgstr ""
+msgstr "не выводить сообщения о состоянии на стандартный вывод"
 
 #: hardinfo/util.c:413
 msgid "creates a report and prints to standard output"
@@ -618,7 +618,7 @@ msgstr "создаёт отчёт и выводит на стандартный 
 
 #: hardinfo/util.c:419
 msgid "chooses a report format ([text], html)"
-msgstr ""
+msgstr "выберите формат отчета ([text], HTML)"
 
 #: hardinfo/util.c:425
 msgid "run benchmark; requires benchmark.so to be loaded"
@@ -630,7 +630,7 @@ msgstr ""
 
 #: hardinfo/util.c:437
 msgid "benchmark result format ([short], conf, shell)"
-msgstr ""
+msgstr "формат результата теста ([short], conf, shell)"
 
 #: hardinfo/util.c:443
 msgid ""
@@ -660,11 +660,11 @@ msgstr "показывает версию программы и выходит"
 
 #: hardinfo/util.c:481
 msgid "do not run benchmarks"
-msgstr ""
+msgstr "не запускать тесты"
 
 #: hardinfo/util.c:487
 msgid "show all details"
-msgstr ""
+msgstr "показать все подробности"
 
 #: hardinfo/util.c:492
 msgid "- System Profiler and Benchmark tool"
@@ -717,7 +717,7 @@ msgstr "Выполнено."
 
 #: hardinfo/vendor.c:255
 msgid "Update vendor list"
-msgstr ""
+msgstr "Обновить список поставщиков"
 
 #: hardinfo/vendor.c:438 modules/computer.c:599 modules/computer.c:793
 #: modules/computer/os.c:79 modules/computer/os.c:263 modules/computer/os.c:300
@@ -806,7 +806,7 @@ msgstr "VMWare, Inc. (значок USB из VMWare Workstation 6)"
 
 #: shell/callbacks.c:184
 msgid "epicbard (Fan icon, CC BY-SA 3.0)"
-msgstr ""
+msgstr "epicbard (Фан-значок, CC BY-SA 3.0)"
 
 #: shell/callbacks.c:202
 msgid "System information and benchmark tool"
@@ -820,7 +820,7 @@ msgid ""
 "\n"
 "This program is distributed in the hope that it will be useful, but WITHOUT "
 "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-"FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
+"FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for "
 "more details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
@@ -828,12 +828,12 @@ msgid ""
 "Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 msgstr ""
 "HardInfo — это свободное программное обеспечение; вы можете распространять "
-"его и/или изменять под условиями Общей общественной лицензии GNU, которая "
+"его и/или изменять под условиями Универсальной общественной лицензии GNU, которая "
 "была опубликована Фондом свободного программного обеспечения, версия 2.\n"
 "\n"
 "Эта программа распространятся в надежде, что она будет полезной, но БЕЗ "
 "КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ "
-"КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Общественной лицензии GNU.\n"
+"КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Универсальной общественной лицензии GNU.\n"
 "\n"
 "Вы должны были получить копию Общественной лицензии GNU вместе с этой "
 "программой; если нет, пишите в Фонд свободного программного обеспечения, "
@@ -922,7 +922,7 @@ msgstr "_Боковая панель"
 
 #: shell/menu.c:99
 msgid "Toggles side pane visibility"
-msgstr "Управляет боковой панелью"
+msgstr "Видимость боковой панели"
 
 #: shell/menu.c:102
 msgid "_Toolbar"
@@ -1015,12 +1015,12 @@ msgstr "Сайт поддержки"
 
 #: shell/shell.c:1575
 msgid "Wikipedia"
-msgstr ""
+msgstr "Википедия"
 
 #: shell/shell.c:1905
 #, c-format
 msgid "<b>%s → Summary</b>"
-msgstr "<b>%s → </b>"
+msgstr "<b>%s → Сводка</b>"
 
 #: shell/shell.c:2013
 msgid "Updating..."
@@ -1083,7 +1083,7 @@ msgstr ""
 
 #: shell/syncmanager.c:591
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Политика конфиденциальности"
 
 #: shell/syncmanager.c:613
 msgid "_Synchronize"
@@ -1256,9 +1256,9 @@ msgstr[2] "%d потоков"
 #, c-format
 msgid "%d NUMA node"
 msgid_plural "%d NUMA nodes"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d узел NUMA"
+msgstr[1] "%d узла NUMA"
+msgstr[2] "%d узлов NUMA"
 
 #. /NP procs; NC cores across NN nodes; NT threads
 #: modules/benchmark/bench_results.c:392 modules/devices.c:184
@@ -1270,7 +1270,7 @@ msgstr ""
 #: modules/benchmark/bench_results.c:397 modules/devices.c:187
 #, c-format
 msgid "%s; %s; %s"
-msgstr ""
+msgstr "%s; %s; %s"
 
 #: modules/benchmark/bench_results.c:473 modules/benchmark/bench_results.c:593
 #: modules/computer.c:941 modules/devices/dmi_memory.c:633
@@ -1289,7 +1289,7 @@ msgstr "КиБ"
 #: modules/benchmark/bench_results.c:486 modules/benchmark/bench_results.c:542
 #, c-format
 msgid "%d-bit"
-msgstr ""
+msgstr "%d-бит"
 
 #: modules/benchmark/bench_results.c:507 modules/benchmark/bench_results.c:570
 msgid "Benchmark Result"
@@ -2829,7 +2829,7 @@ msgstr ""
 
 #: modules/devices/devicetree.c:89
 msgid "Node"
-msgstr ""
+msgstr "Узел"
 
 #: modules/devices/devicetree.c:90
 msgid "Node Path"
@@ -2845,7 +2845,7 @@ msgstr ""
 
 #: modules/devices/devicetree.c:145 modules/devices/devicetree/pmac_data.c:79
 msgid "Platform"
-msgstr ""
+msgstr "Платформа"
 
 #: modules/devices/devicetree.c:146 modules/devices/devicetree.c:211
 #: modules/devices/gpu.c:249
@@ -2877,7 +2877,7 @@ msgstr ""
 
 #: modules/devices/devicetree.c:190
 msgid "More"
-msgstr ""
+msgstr "Больше"
 
 #: modules/devices/devicetree.c:271
 msgid "Messages"
@@ -2910,7 +2910,7 @@ msgstr ""
 
 #: modules/devices/devicetree/rpi_data.c:162
 msgid "Board Name"
-msgstr ""
+msgstr "Название платы"
 
 #: modules/devices/devicetree/rpi_data.c:163
 msgid "PCB Revision"
@@ -2962,7 +2962,7 @@ msgstr ""
 
 #: modules/devices/dmi.c:44
 msgid "BIOS"
-msgstr ""
+msgstr "BIOS"
 
 #: modules/devices/dmi.c:53 modules/devices/dmi.c:59
 msgid "Asset Tag"
@@ -3882,7 +3882,7 @@ msgstr ""
 #: modules/devices/spd-decode.c:313 modules/devices/spd-decode.c:397
 #: modules/devices/spd-decode.c:687
 msgid "Timings"
-msgstr ""
+msgstr "Тайминги"
 
 #: modules/devices/spd-decode.c:550 modules/devices/spd-decode.c:942
 #: modules/devices/spd-decode.c:984 modules/devices/x86/processor.c:717
@@ -3931,7 +3931,7 @@ msgstr ""
 
 #: modules/devices/spd-decode.c:940
 msgid "XMP Profile"
-msgstr ""
+msgstr "XMP-профиль"
 
 #: modules/devices/spd-decode.c:941 modules/devices/usb.c:176
 msgid "Speed"
@@ -3947,7 +3947,7 @@ msgstr ""
 
 #: modules/devices/storage.c:46 modules/devices/storage.c:55
 msgid "NVMe Controller"
-msgstr ""
+msgstr "NVMe-контроллер"
 
 #: modules/devices/storage.c:138
 msgid "Read Error Rate"
@@ -4003,7 +4003,7 @@ msgstr "Количество некорректируемых ошибок чт�
 
 #: modules/devices/storage.c:151
 msgid "Runtime Bad Block"
-msgstr ""
+msgstr "Время запуска плохого блока"
 
 #: modules/devices/storage.c:152
 msgid "End-to-End error"
@@ -4309,14 +4309,14 @@ msgstr ""
 #: modules/devices/storage.c:381
 msgid "%"
 msgid_plural "%"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%"
+msgstr[1] "%"
+msgstr[2] "%"
 
 #: modules/devices/storage.c:419
 #, c-format
 msgid "(%d) %s=<tt>%s</tt>\n"
-msgstr ""
+msgstr "(%d) %s=<tt>%s</tt>\n"
 
 #: modules/devices/storage.c:428
 #, c-format
@@ -4424,7 +4424,7 @@ msgstr "Протокол"
 
 #: modules/devices/usb.c:146 modules/network/net.c:451
 msgid "Mb/s"
-msgstr ""
+msgstr "Мб/с"
 
 #: modules/devices/usb.c:174
 msgid "Max Current"
@@ -5018,19 +5018,19 @@ msgstr "Прямой доступ к кэшу"
 #: modules/devices/x86/x86_data.c:137
 msgctxt "x86-flag"
 msgid "SSE-4.1"
-msgstr ""
+msgstr "SSE-4.1"
 
 #. /flag:sse4_2
 #: modules/devices/x86/x86_data.c:138
 msgctxt "x86-flag"
 msgid "SSE-4.2"
-msgstr ""
+msgstr "SSE-4.2"
 
 #. /flag:x2apic
 #: modules/devices/x86/x86_data.c:139
 msgctxt "x86-flag"
 msgid "x2APIC"
-msgstr ""
+msgstr "x2APIC"
 
 #. /flag:movbe
 #: modules/devices/x86/x86_data.c:140
@@ -5194,7 +5194,7 @@ msgstr "Дополнительное управление битами"
 #: modules/devices/x86/x86_data.c:167
 msgctxt "x86-flag"
 msgid "SSE-4A"
-msgstr ""
+msgstr "SSE-4A"
 
 #. /flag:misalignsse
 #: modules/devices/x86/x86_data.c:168
@@ -5829,7 +5829,7 @@ msgstr "SWAPGS без ввода зависит от GS"
 #: modules/devices/x86/x86_data.c:284
 msgctxt "x86-flag"
 msgid "IPI required to wake up remote CPU"
-msgstr "требуется IPI для удаленного пробуждения процессора"
+msgstr "Требуется IPI для удаленного пробуждения процессора"
 
 #. /bug:cpu_insecure & bug:cpu_meltdown
 #: modules/devices/x86/x86_data.c:286 modules/devices/x86/x86_data.c:287
@@ -5869,7 +5869,7 @@ msgstr ""
 #: modules/devices/x86/x86_data.c:294
 msgctxt "x86-flag"
 msgid "temperature sensor"
-msgstr "сенсор температуры"
+msgstr "датчик температуры"
 
 #. /flag:pm:fid
 #: modules/devices/x86/x86_data.c:295
@@ -5988,7 +5988,7 @@ msgstr ""
 
 #: modules/network.c:346
 msgid "Connections"
-msgstr ""
+msgstr "Соединения"
 
 #: modules/network.c:347
 msgid "Local Address"
@@ -6016,7 +6016,7 @@ msgstr ""
 
 #: modules/network.c:380
 msgid "Destination/Gateway"
-msgstr "Цель / Шлюз"
+msgstr "Цель/Шлюз"
 
 #: modules/network.c:380 modules/network/net.c:473
 msgid "Mask"
@@ -6033,7 +6033,7 @@ msgstr "Собирает информацию о сетевых подключе
 #: modules/network/net.c:72
 msgctxt "wi-op-mode"
 msgid "Auto"
-msgstr ""
+msgstr "Авто"
 
 #: modules/network/net.c:73
 msgctxt "wi-op-mode"
@@ -6069,7 +6069,7 @@ msgstr ""
 #: modules/network/net.c:270
 msgctxt "net-if-type"
 msgid "Ethernet"
-msgstr ""
+msgstr "Ethernet"
 
 #: modules/network/net.c:243
 msgctxt "net-if-type"
@@ -6186,15 +6186,15 @@ msgstr ""
 #: modules/network/net.c:275
 msgctxt "net-if-type"
 msgid "(Unknown)"
-msgstr ""
+msgstr "(Неизвестно)"
 
 #: modules/network/net.c:343 modules/network/net.c:353
 msgid "Network Interfaces"
-msgstr ""
+msgstr "Сетевые интерфейсы"
 
 #: modules/network/net.c:343
 msgid "None Found"
-msgstr ""
+msgstr "Не найдено"
 
 #: modules/network/net.c:409
 msgid "Network Adapter Properties"
@@ -6227,11 +6227,11 @@ msgstr "Отправлено байт"
 #: modules/network/net.c:435 modules/network/net.c:457
 #: modules/network/net.c:458
 msgid "dBm"
-msgstr ""
+msgstr "дБм"
 
 #: modules/network/net.c:435
 msgid "mW"
-msgstr ""
+msgstr "мВт"
 
 #: modules/network/net.c:449
 msgid "Wireless Properties"
@@ -6239,11 +6239,11 @@ msgstr ""
 
 #: modules/network/net.c:450
 msgid "Network Name (SSID)"
-msgstr ""
+msgstr "Название сети (SSID)"
 
 #: modules/network/net.c:451
 msgid "Bit Rate"
-msgstr ""
+msgstr "Битрейт"
 
 #: modules/network/net.c:452
 msgid "Transmission Power"
@@ -6259,7 +6259,7 @@ msgstr ""
 
 #: modules/network/net.c:471
 msgid "Internet Protocol (IPv4)"
-msgstr ""
+msgstr "Интернет-протокол (IPv4)"
 
 #: modules/network/net.c:472 modules/network/net.c:473
 #: modules/network/net.c:475
