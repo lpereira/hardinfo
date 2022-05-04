@@ -314,7 +314,7 @@ name Crucial (Micron)
 
 name Cypress Semiconductor
     name_short Cypress
-    url cypress.com
+    url infineon.com
     wikipedia Cypress Semiconductor
     ansi_color 0;36;107
     match_string Cypress
