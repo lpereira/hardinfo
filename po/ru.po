@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-20 01:37+0300\n"
+"POT-Creation-Date: 2022-05-04 22:08+1000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>\n"
 "Language-Team: \n"
@@ -3119,7 +3119,8 @@ msgstr " ... <i>и</i> запуск HardInfo с правами админист�
 msgid ""
 " <b><i>at24</i></b> (or eeprom) module loaded (for SDR, DDR, DDR2, DDR3)"
 msgstr ""
-" загруженный модуль <b><i>at24</i></b> (или eeprom) (для SDR, DDR, DDR2, DDR3)"
+" загруженный модуль <b><i>at24</i></b> (или eeprom) (для SDR, DDR, DDR2, "
+"DDR3)"
 
 #: modules/devices/dmi_memory.c:1007
 msgid ""
@@ -4179,7 +4180,8 @@ msgstr "Количество неудачных операций стирани�
 
 #: modules/devices/storage.c:198
 msgid "TA Counter Increased"
-msgstr "Rоличество некорректируемых ошибок при чтении собственного адреса сектора"
+msgstr ""
+"Rоличество некорректируемых ошибок при чтении собственного адреса сектора"
 
 #: modules/devices/storage.c:199
 msgid "Total Unused Reserved Block Count"
