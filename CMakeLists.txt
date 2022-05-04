@@ -1,6 +1,6 @@
 project(HardInfo)
-cmake_minimum_required(VERSION 2.6)
-cmake_policy(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12)
+cmake_policy(VERSION 2.8.12)
 
 set(HARDINFO_VERSION "0.6-alpha")
 option(HARDINFO_GTK3 "Attempt to build for GTK3 (0/off for GTK2)" 0)
