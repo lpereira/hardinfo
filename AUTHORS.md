@@ -27,7 +27,7 @@ Here is an incomplete list of contributors:
 * Yo <yoldc22@free.fr>
 * "jamesbond" (http://chiselapp.com/user/jamesbond/)
 * Ondrej Čerman <ocerman@sda1.eu>
-* Mike Hewitt <matrixmike@icloud.com>
+* Mike Hewitt <matroxmike@icloud.com>
 
 Includes code from or based on:
 
