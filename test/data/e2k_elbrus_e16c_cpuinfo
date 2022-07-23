@@ -1,0 +1,148 @@
+processor	: 0
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 1
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 2
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 3
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 4
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 5
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 6
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 7
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 8
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 9
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 10
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 11
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 12
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 13
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 2000
+bogomips	: 4000.00
+
+processor	: 14
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+processor	: 15
+vendor_id	: Elbrus-MCST
+cpu family	: 6
+model		: 11
+model name	: E16C
+revision	: 0
+cpu MHz		: 1000
+bogomips	: 2000.00
+
+cache0          : level=1 type=Instruction scope=Private size=128K line_size=256 associativity=4
+cache1          : level=1 type=Data scope=Private size=64K line_size=32 associativity=4
+cache2          : level=2 type=Unified scope=Private size=1024K line_size=64 associativity=4
+cache3          : level=3 type=Unified scope=Shared size=32768K line_size=64 associativity=16
