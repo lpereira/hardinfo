@@ -1,0 +1,21 @@
+processor       : 0
+vendor_id       : Elbrus-MCST
+cpu family      : 6
+model           : 12
+model name      : E2C3
+revision        : 0
+cpu MHz         : 500
+bogomips        : 1000.00
+
+processor       : 1
+vendor_id       : Elbrus-MCST
+cpu family      : 6
+model           : 12
+model name      : E2C3
+revision        : 0
+cpu MHz         : 2000
+bogomips        : 4000.00
+
+cache0          : level=1 type=Instruction scope=Private size=128K line_size=256 associativity=4
+cache1          : level=1 type=Data scope=Private size=64K line_size=32 associativity=4
+cache2          : level=2 type=Unified scope=Private size=2048K line_size=64 associativity=4
