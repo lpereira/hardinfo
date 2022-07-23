@@ -346,35 +346,30 @@ gchar *processor_get_info(GSList * processors)
 {
     Processor *processor;
 
-    if (g_slist_length(processors) > 1) {
-        gchar *ret, *tmp, *hashkey;
-        GSList *l;
+    gchar *ret, *tmp, *hashkey;
+    GSList *l;
 
-        tmp = g_strdup("");
+    tmp = g_strdup("");
 
-        for (l = processors; l; l = l->next) {
-            processor = (Processor *) l->data;
+    for (l = processors; l; l = l->next) {
+        processor = (Processor *) l->data;
 
-            tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s\n",
-                    tmp, processor->id,
-                    processor->model_name,
-                    processor->cpu_mhz, _("MHz"));
+        tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s\n",
+                tmp, processor->id,
+                processor->model_name,
+                processor->cpu_mhz, _("MHz"));
 
-            hashkey = g_strdup_printf("CPU%d", processor->id);
-            moreinfo_add_with_prefix("DEV", hashkey,
-                    processor_get_detailed_info(processor));
-            g_free(hashkey);
-        }
-
-        ret = g_strdup_printf("[$ShellParam$]\n"
-                    "ViewType=1\n"
-                    "[Processors]\n"
-                    "%s", tmp);
-        g_free(tmp);
-
-        return ret;
+        hashkey = g_strdup_printf("CPU%d", processor->id);
+        moreinfo_add_with_prefix("DEV", hashkey,
+                processor_get_detailed_info(processor));
+        g_free(hashkey);
     }
 
-    processor = (Processor *) processors->data;
-    return processor_get_detailed_info(processor);
+    ret = g_strdup_printf("[$ShellParam$]\n"
+                "ViewType=1\n"
+                "[Processors]\n"
+                "%s", tmp);
+    g_free(tmp);
+
+    return ret;
 }
