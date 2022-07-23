@@ -316,8 +316,8 @@ processor_get_detailed_info(Processor *processor)
     cache_info = __cache_get_info_as_string(processor);
 
     ret = g_strdup_printf("[%s]\n"
-                    "%s=%s\n"      /* name */
-                    "%s=%s\n"      /* vendor */
+                    "$^$%s=%s\n"   /* name */
+                    "$^$%s=%s\n"   /* vendor */
                     "%s=%d\n"      /* family */
                     "%s=%d\n"      /* model */
                     "%s=%d\n"      /* revision */
@@ -348,16 +348,23 @@ gchar *processor_get_info(GSList * processors)
 
     gchar *ret, *tmp, *hashkey;
     GSList *l;
+    gchar *icons=g_strdup("");
 
     tmp = g_strdup("");
 
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
 
-        tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s\n",
+        gchar *model_name = g_strdup_printf("MCST Elbrus %s", processor->model_name);
+        const Vendor *v = vendor_match(processor->vendor_id, NULL);
+        if (v)
+            tag_vendor(&model_name, 0, v->name_short ? v->name_short : v->name, v->ansi_color, params.fmt_opts);
+
+        tmp = g_strdup_printf("%s$CPU%d$cpu%d=%.2f %s|%s\n",
                 tmp, processor->id,
-                processor->model_name,
-                processor->cpu_mhz, _("MHz"));
+                processor->id,
+                processor->cpu_mhz, _("MHz"),
+                model_name);
 
         hashkey = g_strdup_printf("CPU%d", processor->id);
         moreinfo_add_with_prefix("DEV", hashkey,
@@ -367,9 +374,15 @@ gchar *processor_get_info(GSList * processors)
 
     ret = g_strdup_printf("[$ShellParam$]\n"
                 "ViewType=1\n"
+                "ColumnTitle$TextValue=%s\n"
+                "ColumnTitle$Value=%s\n"
+                "ColumnTitle$Extra1=%s\n"
+                "ShowColumnHeaders=true\n"
+                "%s"
                 "[Processors]\n"
-                "%s", tmp);
+                "%s", _("Device"), _("Frequency"), _("Model"), icons, tmp);
     g_free(tmp);
+    g_free(icons);
 
     return ret;
 }
