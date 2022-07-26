@@ -28,6 +28,7 @@ Here is an incomplete list of contributors:
 * "jamesbond" (http://chiselapp.com/user/jamesbond/)
 * Ondrej Čerman <ocerman@sda1.eu>
 * Mike Hewitt <matroxmike@icloud.com>
+* Boris Afonot <boris.afonot@gmail.com>
 
 Includes code from or based on:
 
