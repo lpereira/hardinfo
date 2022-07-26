@@ -35,6 +35,7 @@ do_test() {
 #do_test e2k data/e2k_elbrus_e1c+_cpuinfo
 #do_test e2k data/e2k_elbrus_e2c+_cpuinfo
 #do_test e2k data/e2k_elbrus_e8c_cpuinfo
+do_test e2k data/e2k_elbrus_801_pc_e8c_cpuinfo
 #do_test e2k data/e2k_elbrus_4x_e8c_cpuinfo
 #do_test e2k data/e2k_elbrus_e8c2_cpuinfo
 #do_test e2k data/e2k_elbrus_e16c_cpuinfo
