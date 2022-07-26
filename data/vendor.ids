@@ -699,7 +699,6 @@ name AO MCST
     match_string EL2S4
     match_string MBE1C-PC
     match_string MONOCUB
-    match_string E8C
     match_string E8C-SWTX
     match_string_prefix MBE8C-PC
     match_string Elbrus-MCST
@@ -708,39 +707,18 @@ name AO MCST
     name_short Information:
     url www.mcst.ru/elbrus-4c
     match_string E2S
-
-name AO MCST
-    name_short Information:
     url www.mcst.ru/elbrus-1c-plus
     match_string E1C+
-
-name AO MCST
-    name_short Information:
     url www.mcst.ru/elbrus-2c-plus
     match_string E2C+DSP
-
-name AO MCST
-    name_short Information:
     url www.mcst.ru/elbrus-8c
     match_string E8C
-
-name AO MCST
-    name_short Information:
-    url www.mcst.ru/elbrus-8cb
+    url www.mcst.ru/elbrus-8sv
     match_string E8C2
-
-name AO MCST
-    name_short Information:
     url www.mcst.ru/elbrus-12c
     match_string E12C
-
-name AO MCST
-    name_short Information:
     url www.mcst.ru/elbrus-16c
     match_string E16C
-
-name AO MCST
-    name_short Information:
     url www.mcst.ru/elbrus-2c3
     match_string E2C3
 

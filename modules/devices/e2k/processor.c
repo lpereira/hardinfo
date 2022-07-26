@@ -1,7 +1,7 @@
 /*
  *    HardInfo - Displays System Information
  *    Copyright (C) 2020 EntityFX <artem.solopiy@gmail.com> and MCST Elbrus Team 
- *
+ *    modified by Boris Afonot <boris.afonot@gmail.com> (2022)
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation, version 2.
@@ -348,14 +348,16 @@ gchar *processor_get_info(GSList * processors)
 
     gchar *ret, *tmp, *hashkey;
     GSList *l;
-    gchar *icons=g_strdup("");
 
     tmp = g_strdup("");
 
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
-
         gchar *model_name = g_strdup_printf("MCST Elbrus %s", processor->model_name);
+
+        if(!g_strcmp0(processor->vendor_id, "E8C"))
+            processor->vendor_id = g_strdup_printf("%s-SWTX", processor->vendor_id);
+
         const Vendor *v = vendor_match(processor->vendor_id, NULL);
         if (v)
             tag_vendor(&model_name, 0, v->name_short ? v->name_short : v->name, v->ansi_color, params.fmt_opts);
@@ -378,11 +380,9 @@ gchar *processor_get_info(GSList * processors)
                 "ColumnTitle$Value=%s\n"
                 "ColumnTitle$Extra1=%s\n"
                 "ShowColumnHeaders=true\n"
-                "%s"
                 "[Processors]\n"
-                "%s", _("Device"), _("Frequency"), _("Model"), icons, tmp);
+                "%s", _("Device"), _("Frequency"), _("Model"), tmp);
     g_free(tmp);
-    g_free(icons);
 
     return ret;
 }
