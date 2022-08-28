@@ -540,7 +540,7 @@ computer_get_os(void)
 
     os->entropy_avail = computer_get_entropy_avail();
 
-    if (g_strcmp0(os->distrocode, "ubuntu") == 0) {
+    if (g_strcmp0(os->distroid, "ubuntu") == 0) {
         GSList *flavs = ubuntu_flavors_scan();
         if (flavs) {
             /* just use the first one */

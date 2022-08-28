@@ -48,7 +48,8 @@ static const UbuntuFlavor *_find_flavor(const gchar *pkg) {
 }
 
 /* items are const; free with g_slist_free() */
-GSList *ubuntu_flavors_scan(void) {
+/* this function may not work properly when using non-english locale */
+GSList *ubuntu_flavors_scan_aptcache(void) {
     GSList *ret = NULL;
     gboolean spawned;
     gchar *out, *err, *p, *next_nl;
@@ -86,5 +87,51 @@ GSList *ubuntu_flavors_scan(void) {
         g_free(err);
     }
     g_free(cmd_line);
+    return ret;
+}
+
+GSList *ubuntu_flavors_scan_dpkgq(void) {
+    gboolean spawned;
+    GSList *ret = NULL;
+    gchar *out, *err, *p, *next_nl;
+    const UbuntuFlavor *f = NULL;
+    gchar *cmd_line = g_strdup("dpkg-query -W -f '${db:Status-Status}=${Package}\n'");
+    int i;
+
+    for (i = 0; ubuntu_flavors[i].base.name; i++) {
+        cmd_line = appfsp(cmd_line, "%s", ubuntu_flavors[i].package);
+    }
+    if (i == 0) {
+        g_free(cmd_line);
+        return NULL;
+    }
+
+    spawned = hardinfo_spawn_command_line_sync(cmd_line, &out, &err, NULL, NULL);
+    if (spawned) {
+        p = out;
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            if (g_str_has_prefix(p, "installed=")) {
+                f = _find_flavor(p + sizeof("installed=") - 1);
+                if (f) {
+                    ret = g_slist_append(ret, (void*)f);
+                }
+            }
+        }
+        g_free(out);
+        g_free(err);
+    }
+    g_free(cmd_line);
+    return ret;
+}
+
+/* free with g_slist_free() */
+GSList *ubuntu_flavors_scan(void) {
+    GSList *ret;
+    ret = ubuntu_flavors_scan_dpkgq();
+
+    if (ret == NULL)
+        ret = ubuntu_flavors_scan_aptcache();
+
     return ret;
 }
