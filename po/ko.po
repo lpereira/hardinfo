@@ -8,11 +8,11 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-20 23:07+0900\n"
-"PO-Revision-Date: 2022-09-20 22:55+0900\n"
+"PO-Revision-Date: 2022-09-21 11:53+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ko_KR\n"
-"X-Poedit-Basepath: ../\n"
+"X-Poedit-Basepath: ..\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -496,7 +496,7 @@ msgstr ""
 #: modules/devices/sh/processor.c:84 modules/devices/x86/processor.c:751
 #: modules/network.c:332
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
 #: hardinfo/hardinfo.c:78 modules/computer.c:365 modules/computer.c:598
 #: modules/computer.c:600 modules/computer.c:771 modules/computer/modules.c:226
@@ -504,7 +504,7 @@ msgstr ""
 #: modules/devices/dmi.c:57 modules/devices/firmware.c:75
 #: modules/devices/inputdevices.c:145 modules/devices/monitors.c:407
 msgid "Version"
-msgstr ""
+msgstr "버전"
 
 #: hardinfo/hardinfo.c:129
 #, c-format
@@ -804,7 +804,7 @@ msgstr ""
 
 #: shell/menu.c:43
 msgid "_Information"
-msgstr "정보"
+msgstr "정보(_I)"
 
 #: shell/menu.c:44
 msgid "_Remote"
@@ -812,7 +812,7 @@ msgstr ""
 
 #: shell/menu.c:45
 msgid "_View"
-msgstr ""
+msgstr "보기(_V)"
 
 #: shell/menu.c:46
 msgid "_Help"
@@ -820,11 +820,11 @@ msgstr "도움말(_H)"
 
 #: shell/menu.c:47
 msgid "About _Modules"
-msgstr ""
+msgstr "모듈 정보(_M)"
 
 #: shell/menu.c:51
 msgid "Generate _Report"
-msgstr ""
+msgstr "보고서 생성(_R)"
 
 #: shell/menu.c:52
 msgid "Generates a report with detailed system information"
@@ -832,7 +832,7 @@ msgstr ""
 
 #: shell/menu.c:56 shell/syncmanager.c:516
 msgid "Synchronize"
-msgstr ""
+msgstr "동기화"
 
 #: shell/menu.c:57
 msgid "Send benchmark results and receive updated data from the network"
@@ -844,7 +844,7 @@ msgstr ""
 
 #: shell/menu.c:66
 msgid "_Copy to Clipboard"
-msgstr ""
+msgstr "클립 보드에 복사(_C)"
 
 #: shell/menu.c:67
 msgid "Copy to clipboard"
@@ -852,19 +852,19 @@ msgstr ""
 
 #: shell/menu.c:71
 msgid "_Refresh"
-msgstr ""
+msgstr "새로고침(_R)"
 
 #: shell/menu.c:76
 msgid "_Open HardInfo Web Site"
-msgstr ""
+msgstr "HardInfo 웹사이트 열기(_O)"
 
 #: shell/menu.c:81
 msgid "_Report bug"
-msgstr ""
+msgstr "버그 신고(_R)"
 
 #: shell/menu.c:86
 msgid "_About HardInfo"
-msgstr ""
+msgstr "Hardinfo 정보(_A)"
 
 #: shell/menu.c:87
 msgid "Displays program version information"
@@ -872,11 +872,11 @@ msgstr ""
 
 #: shell/menu.c:91
 msgid "_Quit"
-msgstr ""
+msgstr "끝내기(_Q)"
 
 #: shell/menu.c:98
 msgid "_Side Pane"
-msgstr ""
+msgstr "사이드바(_S)"
 
 #: shell/menu.c:99
 msgid "Toggles side pane visibility"
@@ -884,7 +884,7 @@ msgstr ""
 
 #: shell/menu.c:102
 msgid "_Toolbar"
-msgstr ""
+msgstr "도구모음(_T)"
 
 #: shell/report.c:769 shell/report.c:777
 msgid "Save File"
@@ -892,7 +892,7 @@ msgstr ""
 
 #: shell/report.c:772 shell/report.c:1251 shell/syncmanager.c:604
 msgid "_Cancel"
-msgstr ""
+msgstr "취소(_C)"
 
 #: shell/report.c:774
 msgid "_Save"
@@ -928,25 +928,27 @@ msgstr ""
 
 #: shell/report.c:1118
 msgid "Generate Report"
-msgstr ""
+msgstr "보고서 생성"
 
 #: shell/report.c:1143
 msgid ""
 "<big><b>Generate Report</b></big>\n"
 "Please choose the information that you wish to view in your report:"
 msgstr ""
+"<big><b>보고서 생성</b></big>\n"
+"보고서에서 보고 싶은 정보를 선택하십시오:"
 
 #: shell/report.c:1215
 msgid "Select _None"
-msgstr ""
+msgstr "선택 안함(_N)"
 
 #: shell/report.c:1226
 msgid "Select _All"
-msgstr ""
+msgstr "모두 선택(_A)"
 
 #: shell/report.c:1261
 msgid "_Generate"
-msgstr ""
+msgstr "생성(_G)"
 
 #: shell/shell.c:408
 #, c-format
@@ -976,7 +978,7 @@ msgstr ""
 #: shell/shell.c:1905
 #, c-format
 msgid "<b>%s → Summary</b>"
-msgstr ""
+msgstr "<b>%s → 요약</b>"
 
 #: shell/shell.c:2013
 msgid "Updating..."
@@ -1058,7 +1060,7 @@ msgstr ""
 msgid ""
 "Benchmarking. Please do not move your mouse\n"
 "or press any keys."
-msgstr ""
+msgstr "벤치마킹. 마우스를 움직이거나 키를 누르지 마십시오."
 
 #: modules/benchmark.c:659
 msgid "Cancel"
@@ -1377,7 +1379,7 @@ msgstr ""
 
 #: modules/benchmark/benches.c:238
 msgid "Results in HIMarks. Higher is better."
-msgstr ""
+msgstr "HIMark의 결과. 높을수록 좋습니다."
 
 #: modules/benchmark/benches.c:244
 msgid "Results in seconds. Lower is better."
@@ -1385,7 +1387,7 @@ msgstr ""
 
 #: modules/computer.c:96 modules/devices/firmware.c:74
 msgid "Summary"
-msgstr ""
+msgstr "요약"
 
 #: modules/computer.c:97 modules/computer.c:553 modules/computer.c:1033
 msgid "Operating System"
@@ -1429,11 +1431,11 @@ msgstr ""
 
 #: modules/computer.c:111 modules/computer.c:830
 msgid "Users"
-msgstr ""
+msgstr "사용자"
 
 #: modules/computer.c:112
 msgid "Groups"
-msgstr ""
+msgstr "그룹"
 
 #: modules/computer.c:142
 #, c-format
@@ -1619,16 +1621,16 @@ msgstr ""
 
 #: modules/computer.c:384
 msgid "Field"
-msgstr ""
+msgstr "필드"
 
 #: modules/computer.c:384 modules/computer.c:695 modules/computer/modules.c:224
 #: modules/computer/modules.c:225 modules/devices/arm/processor.c:470
 msgid "Description"
-msgstr ""
+msgstr "설명"
 
 #: modules/computer.c:384 modules/devices.c:773
 msgid "Value"
-msgstr ""
+msgstr "값"
 
 #: modules/computer.c:404
 msgid "Single-board computer"
@@ -1721,7 +1723,7 @@ msgstr ""
 
 #: modules/computer.c:614
 msgid "Current Session"
-msgstr ""
+msgstr "현재 세션"
 
 #: modules/computer.c:615
 msgid "Computer Name"
@@ -1741,7 +1743,7 @@ msgstr ""
 
 #: modules/computer.c:622
 msgid "Misc"
-msgstr ""
+msgstr "기타"
 
 #: modules/computer.c:635
 msgid "HardInfo"
@@ -1801,11 +1803,11 @@ msgstr ""
 
 #: modules/computer.c:708
 msgid "Date & Time"
-msgstr ""
+msgstr "날짜 & 시간"
 
 #: modules/computer.c:709
 msgid "Kernel Version"
-msgstr ""
+msgstr "커널 버전"
 
 #: modules/computer.c:719
 msgid "Available Languages"
@@ -1813,7 +1815,7 @@ msgstr ""
 
 #: modules/computer.c:721
 msgid "Language Code"
-msgstr ""
+msgstr "언어 코드"
 
 #: modules/computer.c:733
 msgid "Mounted File Systems"
@@ -1846,7 +1848,7 @@ msgstr ""
 #: modules/devices/dmi_memory.c:804 modules/devices/inputdevices.c:141
 #: modules/devices/x86/processor.c:716
 msgid "Type"
-msgstr ""
+msgstr "유형"
 
 #: modules/computer.c:763
 msgid "Wayland"
@@ -1874,7 +1876,7 @@ msgstr ""
 #: modules/devices/storage.c:572 modules/devices/storage.c:771
 #: modules/devices/usb.c:171 modules/devices/x86/processor.c:655
 msgid "Vendor"
-msgstr ""
+msgstr "공급자"
 
 #: modules/computer.c:772
 msgid "Release Number"
@@ -2046,7 +2048,7 @@ msgstr ""
 
 #: modules/computer/languages.c:94
 msgid "Locale Information"
-msgstr ""
+msgstr "로케일 정보"
 
 #: modules/computer/languages.c:96 modules/devices/dmi_memory.c:651
 #: modules/devices/gpu.c:222
@@ -2067,7 +2069,7 @@ msgstr ""
 
 #: modules/computer/languages.c:102 modules/devices/dmi.c:45
 msgid "Date"
-msgstr ""
+msgstr "날짜"
 
 #: modules/computer/languages.c:103
 msgid "Codeset"
@@ -2645,7 +2647,7 @@ msgstr ""
 #: modules/devices/arm/processor.c:356 modules/devices/riscv/processor.c:190
 #: modules/devices/sparc/processor.c:78 modules/devices/x86/processor.c:667
 msgid "Capabilities"
-msgstr ""
+msgstr "기능"
 
 #: modules/devices/arm/processor.c:468
 msgid "SOC/Package"
@@ -2760,7 +2762,7 @@ msgstr ""
 #: modules/devices/dmi.c:42 modules/devices/dmi.c:52 modules/devices/dmi.c:58
 #: modules/devices/usb.c:181
 msgid "Serial Number"
-msgstr ""
+msgstr "일련번호"
 
 #: modules/devices/devicetree.c:165 modules/devices/devicetree/rpi_data.c:166
 msgid "RCode"
@@ -2844,7 +2846,7 @@ msgstr ""
 #: modules/devices/dmi.c:37 modules/devices/inputdevices.c:144
 #: modules/devices/usb.c:170
 msgid "Product"
-msgstr ""
+msgstr "제품"
 
 #: modules/devices/dmi.c:39 modules/devices/e2k/processor.c:332
 #: modules/devices/ia64/processor.c:164 modules/devices/sh/processor.c:86
@@ -2866,7 +2868,7 @@ msgstr ""
 #: modules/devices/dmi.c:119 modules/devices/dmi_memory.c:936
 #: modules/devices/x86/processor.c:696
 msgid "(Not available; Perhaps try running HardInfo as root.)"
-msgstr ""
+msgstr "(사용할 수 없습니다. 하드 정보를 루트로 실행해보십시오.)"
 
 #: modules/devices/dmi.c:160
 msgid "DMI Unavailable"
@@ -3161,7 +3163,7 @@ msgstr ""
 
 #: modules/devices/firmware.c:74
 msgid "DeviceId"
-msgstr ""
+msgstr "장치ID"
 
 #: modules/devices/firmware.c:74 modules/devices/firmware.c:187
 msgid "Guid"
@@ -3169,16 +3171,16 @@ msgstr ""
 
 #: modules/devices/firmware.c:74
 msgid "Plugin"
-msgstr ""
+msgstr "플러그인"
 
 #: modules/devices/firmware.c:74 modules/devices/firmware.c:205
 #: modules/network.c:380
 msgid "Flags"
-msgstr ""
+msgstr "플래그"
 
 #: modules/devices/firmware.c:75
 msgid "VendorId"
-msgstr ""
+msgstr "공급자ID"
 
 #: modules/devices/firmware.c:75
 msgid "VersionBootloader"
@@ -3186,7 +3188,7 @@ msgstr ""
 
 #: modules/devices/firmware.c:76 modules/devices/firmware.c:179
 msgid "Icon"
-msgstr ""
+msgstr "아이콘"
 
 #: modules/devices/firmware.c:76
 msgid "InstallDuration"
@@ -3194,7 +3196,7 @@ msgstr ""
 
 #: modules/devices/firmware.c:76 modules/devices/firmware.c:197
 msgid "Created"
-msgstr ""
+msgstr "생성일"
 
 #: modules/devices/firmware.c:244
 msgid "Firmware List"
@@ -3539,11 +3541,11 @@ msgstr ""
 
 #: modules/devices/printers.c:81
 msgid "⚬ Can do black and white printing=\n"
-msgstr ""
+msgstr "⚬ 흑백 인쇄 가능=\n"
 
 #: modules/devices/printers.c:83
 msgid "⚬ Can do color printing=\n"
-msgstr ""
+msgstr "⚬ 컬러 인쇄 가능=\n"
 
 #: modules/devices/printers.c:85
 msgid "⚬ Can do duplexing=\n"
@@ -3567,7 +3569,7 @@ msgstr ""
 
 #: modules/devices/printers.c:95
 msgid "⚬ Printer was automatically discovered and added=\n"
-msgstr ""
+msgstr "⚬ 프린터가 자동으로 검색되어 추가됨=\n"
 
 #: modules/devices/printers.c:110
 msgid "Idle"
@@ -3759,7 +3761,7 @@ msgstr ""
 
 #: modules/devices/spd-decode.c:312
 msgid "Refresh"
-msgstr ""
+msgstr "새로고침"
 
 #: modules/devices/spd-decode.c:313 modules/devices/spd-decode.c:397
 #: modules/devices/spd-decode.c:687
@@ -4271,7 +4273,7 @@ msgstr ""
 
 #: modules/devices/usb.c:138 modules/devices/usb.c:179 modules/network.c:347
 msgid "Protocol"
-msgstr ""
+msgstr "프로토콜"
 
 #: modules/devices/usb.c:146 modules/network/net.c:451
 msgid "Mb/s"
