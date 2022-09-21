@@ -57,7 +57,7 @@ msgstr "지사"
 #: modules/devices/gpu.c:165 modules/devices/pci.c:148
 #: modules/devices/usb.c:139
 msgid "Driver"
-msgstr "운전사"
+msgstr "드라이버"
 
 #: hardinfo/cpu_util.c:222 modules/computer.c:765
 #: modules/devices/arm/processor.c:256 modules/devices/e2k/processor.c:178
@@ -1206,7 +1206,7 @@ msgstr "기계"
 #: modules/benchmark/bench_results.c:519 modules/benchmark/bench_results.c:581
 #: modules/devices/devicetree.c:208 modules/devices/dmi.c:48
 msgid "Board"
-msgstr "판자"
+msgstr "보드"
 
 #: modules/benchmark/bench_results.c:520 modules/benchmark/bench_results.c:583
 #: modules/computer.c:551
@@ -1424,7 +1424,7 @@ msgstr "가동 시간"
 
 #: modules/computer.c:146 modules/computer.c:555
 msgid "Date/Time"
-msgstr "날짜 시간"
+msgstr "날짜/시간"
 
 #: modules/computer.c:151 modules/computer.c:623
 msgid "Load Average"
@@ -2110,7 +2110,7 @@ msgstr "버전 매직"
 
 #: modules/computer/modules.c:226
 msgid "In Linus' Tree"
-msgstr "리누스의 나무에서"
+msgstr ""
 
 #: modules/computer/modules.c:227
 msgid "Retpoline Enabled"
@@ -2206,17 +2206,17 @@ msgstr "(없음 또는 사용할 수 없음)"
 #. /bits of entropy for rng (low/poor value)
 #: modules/computer/os.c:309
 msgid "%d bits (low)"
-msgstr "%d비트(낮음)"
+msgstr "%d 비트(낮음)"
 
 #. /bits of entropy for rng (medium value)
 #: modules/computer/os.c:310
 msgid "%d bits (medium)"
-msgstr "%d비트(중간)"
+msgstr "%d 비트(중간)"
 
 #. /bits of entropy for rng (high/good value)
 #: modules/computer/os.c:311
 msgid "%d bits (healthy)"
-msgstr "%d비트(정상)"
+msgstr "%d 비트(정상)"
 
 #: modules/computer/os.c:562
 msgid "Not installed"
@@ -2569,7 +2569,7 @@ msgstr "빈 목록"
 #: modules/devices/arm/processor.c:240 modules/devices/gpu.c:160
 #: modules/devices/gpu.c:244 modules/devices/x86/processor.c:268
 msgid "Clocks"
-msgstr "시계"
+msgstr "클럭"
 
 #: modules/devices/arm/processor.c:286 modules/devices/arm/processor.c:299
 #: modules/devices/x86/processor.c:314 modules/devices/x86/processor.c:327
@@ -3252,7 +3252,7 @@ msgstr "DRM 장치"
 #: modules/devices/gpu.c:157 modules/devices/pci.c:144
 #: modules/devices/usb.c:136 modules/devices/usb.c:177
 msgid "Class"
-msgstr "수업"
+msgstr "클래스"
 
 #: modules/devices/gpu.c:166 modules/devices/pci.c:149
 msgid "In Use"
@@ -3314,7 +3314,7 @@ msgstr "버스"
 
 #: modules/devices/inputdevices.c:148
 msgid "Connected to"
-msgstr "에 연결됨"
+msgstr "연결됨"
 
 #: modules/devices/inputdevices.c:152
 msgid "InfraRed port"
@@ -4175,8 +4175,8 @@ msgid ""
 "[S.M.A.R.T. Attributes]\n"
 "Attribute=<tt>Value      / Normalized / Worst / Threshold</tt>\n"
 msgstr ""
-"[똑똑한. 속성]\n"
-"속성=<tt>값/정규화/최악/임계값</tt>\n"
+"[S.M.A.R.T. 속성]\n"
+"속성=<tt>값/정규화/최저/임계값</tt>\n"
 
 #: modules/devices/storage.c:381
 msgid "%"
@@ -4283,7 +4283,7 @@ msgstr ""
 
 #: modules/devices/usb.c:137 modules/devices/usb.c:178
 msgid "Sub-class"
-msgstr "아강"
+msgstr "서브클래스"
 
 #: modules/devices/usb.c:138 modules/devices/usb.c:179 modules/network.c:347
 msgid "Protocol"
@@ -5833,11 +5833,11 @@ msgstr "상태"
 
 #: modules/network.c:363
 msgid "Sent"
-msgstr "보냈다"
+msgstr "업로드"
 
 #: modules/network.c:363
 msgid "Received"
-msgstr "받았다"
+msgstr "다운로드 "
 
 #: modules/network.c:379
 msgid "IP routing table"
