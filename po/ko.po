@@ -8,8 +8,8 @@ msgstr ""
 "Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2022-09-28\n"
+"Last-Translator: Yunji Lee<yunlisa96@gmail.com>\n"
 "Language-Team: \n"
 
 #: hardinfo/cpu_util.c:29
