@@ -17,6 +17,8 @@ Capabilities: HardInfo currently detects most software and hardware detected by 
 Features: The remote sync was disabled due to server loss.
 Development: Currently done by contributors, a new dedicated maintainer is needed.
 
+Server code can be found in the "server" branch: https://github.com/lpereira/hardinfo/tree/server
+
 DEPENDENCIES
 ------------
 
