@@ -238,6 +238,32 @@ gchar *caches_summary(GSList * processors)
     return ret;
 }
 
+gchar *processor_get_full_name(gchar *model_name)
+{
+    gchar *full_name;
+
+    if(g_strcmp0(model_name ,"E2S") == 0)
+        full_name = g_strdup("Elbrus-4C");
+    else if(g_strcmp0(model_name ,"E1C+") == 0)
+        full_name = g_strdup("Elbrus-1C+");
+    else if(g_strcmp0(model_name ,"E2C+DSP") == 0)
+        full_name = g_strdup("Elbrus-2C+");
+    else if(g_strcmp0(model_name ,"E8C") == 0)
+        full_name = g_strdup("Elbrus-8C");    
+    else if(g_strcmp0(model_name ,"E8C2") == 0)
+        full_name = g_strdup("Elbrus-8CB");
+    else if(g_strcmp0(model_name ,"E12C") == 0)
+        full_name = g_strdup("Elbrus-12C");        
+    else if(g_strcmp0(model_name ,"E16C") == 0)
+        full_name = g_strdup("Elbrus-16C");
+    else if(g_strcmp0(model_name ,"E2C3") == 0)
+        full_name = g_strdup("Elbrus-2C3");        
+    else
+        full_name = model_name;
+
+    return full_name;
+}
+
 GSList *processor_scan(void)
 {
     GSList *procs = NULL, *l = NULL;
@@ -272,6 +298,10 @@ GSList *processor_scan(void)
         }
 
         if (processor) {
+            /* set full model name*/
+            if(g_str_has_prefix(tmp[0], "model name"))
+                tmp[1] = g_strdup(processor_get_full_name(tmp[1]));
+
             get_str("model name", processor->model_name);
             get_str("vendor_id", processor->vendor_id);
             get_int("cpu family", processor->family);
@@ -353,8 +383,9 @@ gchar *processor_get_info(GSList * processors)
 
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
-        gchar *model_name = g_strdup_printf("MCST Elbrus %s", processor->model_name);
+        gchar *model_name = g_strdup_printf("MCST %s", processor->model_name);
 
+        /* change vendor id of 8CB processor for correct parse from vendor.ids */
         if(!g_strcmp0(processor->vendor_id, "E8C"))
             processor->vendor_id = g_strdup_printf("%s-SWTX", processor->vendor_id);
 
