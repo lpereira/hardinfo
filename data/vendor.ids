@@ -706,21 +706,21 @@ name AO MCST
 name AO MCST
     name_short Information:
     url www.mcst.ru/elbrus-4c
-    match_string E2S
+    match_string Elbrus-4C
     url www.mcst.ru/elbrus-1c-plus
-    match_string E1C+
+    match_string Elbrus-1C+
     url www.mcst.ru/elbrus-2c-plus
-    match_string E2C+DSP
+    match_string Elbrus-2C+
     url www.mcst.ru/elbrus-8c
-    match_string E8C
+    match_string Elbrus-8C
     url www.mcst.ru/elbrus-8sv
-    match_string E8C2
+    match_string Elbrus-8CB
     url www.mcst.ru/elbrus-12c
-    match_string E12C
+    match_string Elbrus-12C
     url www.mcst.ru/elbrus-16c
-    match_string E16C
+    match_string Elbrus-16C
     url www.mcst.ru/elbrus-2c3
-    match_string E2C3
+    match_string Elbrus-2C3
 
 name MediaTek
     url www.mediatek.com
