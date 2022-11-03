@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-24 15:16-0500\n"
+"POT-Creation-Date: 2022-11-03 21:53+0000\n"
 "PO-Revision-Date: 2022-03-05 23:00+0300\n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn\n"
 "Language-Team: \n"
@@ -820,24 +820,13 @@ msgid ""
 "\n"
 "This program is distributed in the hope that it will be useful, but WITHOUT "
 "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-"FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for "
+"FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
 "more details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
 "this program; if not, write to the Free Software Foundation, Inc., 51 "
 "Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 msgstr ""
-"HardInfo — это свободное программное обеспечение; вы можете распространять "
-"его и/или изменять под условиями Универсальной общественной лицензии GNU, которая "
-"была опубликована Фондом свободного программного обеспечения, версия 2.\n"
-"\n"
-"Эта программа распространятся в надежде, что она будет полезной, но БЕЗ "
-"КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ "
-"КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Универсальной общественной лицензии GNU.\n"
-"\n"
-"Вы должны были получить копию Общественной лицензии GNU вместе с этой "
-"программой; если нет, пишите в Фонд свободного программного обеспечения, "
-"Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 
 #: shell/callbacks.c:222
 msgid "translator-credits"
@@ -1210,7 +1199,7 @@ msgstr "(Неизвестно)"
 #: modules/devices/arm/processor.c:303 modules/devices/arm/processor.c:345
 #: modules/devices/arm/processor.c:500 modules/devices.c:371
 #: modules/devices.c:379 modules/devices.c:407
-#: modules/devices/e2k/processor.c:335 modules/devices/e2k/processor.c:361
+#: modules/devices/e2k/processor.c:335 modules/devices/e2k/processor.c:366
 #: modules/devices/gpu.c:127 modules/devices/gpu.c:129
 #: modules/devices/gpu.c:135 modules/devices/gpu.c:137
 #: modules/devices/gpu.c:189 modules/devices/gpu.c:191
@@ -1907,11 +1896,12 @@ msgid "Usage"
 msgstr "Использование"
 
 #: modules/computer.c:737 modules/devices.c:797 modules/devices.c:811
-#: modules/devices/gpu.c:87 modules/devices/gpu.c:95 modules/devices/gpu.c:243
-#: modules/devices/pci.c:102 modules/devices/pci.c:110
-#: modules/devices/pci.c:154 modules/devices/storage.c:48
-#: modules/devices/storage.c:57 modules/devices/usb.c:172
-#: modules/devices/usb.c:184 modules/devices/x86/processor.c:812
+#: modules/devices/e2k/processor.c:383 modules/devices/gpu.c:87
+#: modules/devices/gpu.c:95 modules/devices/gpu.c:243 modules/devices/pci.c:102
+#: modules/devices/pci.c:110 modules/devices/pci.c:154
+#: modules/devices/storage.c:48 modules/devices/storage.c:57
+#: modules/devices/usb.c:172 modules/devices/usb.c:184
+#: modules/devices/x86/processor.c:812
 msgid "Device"
 msgstr "Устройство"
 
@@ -2349,8 +2339,8 @@ msgstr "Оболочка по умолчанию"
 #: modules/devices/alpha/processor.c:88 modules/devices.c:797
 #: modules/devices/devicetree.c:163 modules/devices/devicetree.c:209
 #: modules/devices/devicetree/pmac_data.c:80
-#: modules/devices/e2k/processor.c:333 modules/devices/gpu.c:118
-#: modules/devices/ia64/processor.c:165
+#: modules/devices/e2k/processor.c:333 modules/devices/e2k/processor.c:383
+#: modules/devices/gpu.c:118 modules/devices/ia64/processor.c:165
 #: modules/devices/loongarch64/processor.c:75
 #: modules/devices/m68k/processor.c:84 modules/devices/mips/processor.c:75
 #: modules/devices/monitors.c:402 modules/devices/parisc/processor.c:155
@@ -2364,7 +2354,8 @@ msgid "Platform String"
 msgstr "Строка платформы"
 
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:345
-#: modules/devices/e2k/processor.c:335 modules/devices/ia64/processor.c:167
+#: modules/devices/e2k/processor.c:335 modules/devices/e2k/processor.c:383
+#: modules/devices/ia64/processor.c:167
 #: modules/devices/loongarch64/processor.c:77
 #: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
 #: modules/devices/parisc/processor.c:158 modules/devices/ppc/processor.c:160
@@ -3119,7 +3110,8 @@ msgstr " ... <i>и</i> запуск HardInfo с правами админист�
 msgid ""
 " <b><i>at24</i></b> (or eeprom) module loaded (for SDR, DDR, DDR2, DDR3)"
 msgstr ""
-" загруженный модуль <b><i>at24</i></b> (или eeprom) (для SDR, DDR, DDR2, DDR3)"
+" загруженный модуль <b><i>at24</i></b> (или eeprom) (для SDR, DDR, DDR2, "
+"DDR3)"
 
 #: modules/devices/dmi_memory.c:1007
 msgid ""
@@ -4179,7 +4171,8 @@ msgstr "Количество неудачных операций стирани�
 
 #: modules/devices/storage.c:198
 msgid "TA Counter Increased"
-msgstr "Rоличество некорректируемых ошибок при чтении собственного адреса сектора"
+msgstr ""
+"Rоличество некорректируемых ошибок при чтении собственного адреса сектора"
 
 #: modules/devices/storage.c:199
 msgid "Total Unused Reserved Block Count"
@@ -6269,3 +6262,31 @@ msgstr ""
 #: modules/network/net.c:474
 msgid "Broadcast Address"
 msgstr "Широковещательный адрес"
+
+#~ msgid ""
+#~ "HardInfo is free software; you can redistribute it and/or modify it under "
+#~ "the terms of the GNU General Public License as published by the Free "
+#~ "Software Foundation, version 2.\n"
+#~ "\n"
+#~ "This program is distributed in the hope that it will be useful, but "
+#~ "WITHOUT ANY WARRANTY; without even the implied warranty of "
+#~ "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General "
+#~ "Public License for more details.\n"
+#~ "\n"
+#~ "You should have received a copy of the GNU General Public License along "
+#~ "with this program; if not, write to the Free Software Foundation, Inc., "
+#~ "51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+#~ msgstr ""
+#~ "HardInfo — это свободное программное обеспечение; вы можете "
+#~ "распространять его и/или изменять под условиями Универсальной "
+#~ "общественной лицензии GNU, которая была опубликована Фондом свободного "
+#~ "программного обеспечения, версия 2.\n"
+#~ "\n"
+#~ "Эта программа распространятся в надежде, что она будет полезной, но БЕЗ "
+#~ "КАКОЙ-ЛИБО ГАРАНТИИ; даже без предполагаемой гарантии ПРИГОДНОСТИ ДЛЯ "
+#~ "КОНКРЕТНЫХ ЦЕЛЕЙ. См. подробности в Универсальной общественной лицензии "
+#~ "GNU.\n"
+#~ "\n"
+#~ "Вы должны были получить копию Общественной лицензии GNU вместе с этой "
+#~ "программой; если нет, пишите в Фонд свободного программного обеспечения, "
+#~ "Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
