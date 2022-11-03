@@ -1620,12 +1620,12 @@ msgstr "用户名"
 
 #: modules/computer.c:540
 msgid "Resolution"
-msgstr "解决方案"
+msgstr "分辨率"
 
 #: modules/computer.c:540 modules/computer.c:748
 #, c-format
 msgid "%dx%d pixels"
-msgstr ""
+msgstr "%dx%d 像素"
 
 #: modules/computer.c:543
 msgid "Session Display Server"
@@ -1673,7 +1673,7 @@ msgstr "主目录"
 
 #: modules/computer.c:591
 msgid "Desktop Environment"
-msgstr ""
+msgstr "桌面环境"
 
 #: modules/computer.c:594
 msgid "Misc"
@@ -1689,15 +1689,15 @@ msgstr ""
 
 #: modules/computer.c:609
 msgid "Superuser"
-msgstr ""
+msgstr "超级用户"
 
 #: modules/computer.c:609
 msgid "User"
-msgstr ""
+msgstr "用户"
 
 #: modules/computer.c:613
 msgid "Health"
-msgstr ""
+msgstr "健康"
 
 #: modules/computer.c:614
 msgid "Available entropy in /dev/random"
@@ -1803,7 +1803,7 @@ msgstr "X 服务器"
 #: modules/devices/pci.c:95 modules/devices/usb.c:168
 #: modules/devices/x86/processor.c:653
 msgid "Vendor"
-msgstr "销售者"
+msgstr "供应商"
 
 #: modules/computer.c:744
 msgid "Release Number"
@@ -3439,7 +3439,7 @@ msgstr ""
 
 #: modules/devices/printers.c:200
 msgid "[Printers (CUPS)]\n"
-msgstr ""
+msgstr "[打印机 (CUPS)]\n"
 
 #: modules/devices/printers.c:263
 msgid ""
