@@ -66,6 +66,14 @@ void scan_printers_do(void);
 void scan_sensors_do(void);
 void sensor_init(void);
 void sensor_shutdown(void);
+void __scan_dtree(void);
+void scan_gpu_do(void);
+gboolean __scan_udisks2_devices(void);
+void __scan_ide_devices(void);
+void __scan_scsi_devices(void);
+void __scan_input_devices(void);
+void __scan_usb(void);
+void __scan_dmi(void);
 
 extern gchar *battery_list;
 extern gchar *input_icons;
