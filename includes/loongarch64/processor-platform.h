@@ -20,9 +20,12 @@
 #define __PROCESSOR_PLATFORM_H__
 
 struct _Processor {
-    gchar *model_name;
     gchar *vendor_id;
-    gfloat bogomips, cpu_mhz;
+    gchar *family;
+    gchar *model_name;
+    gint   revision;
+    gfloat cpu_mhz, bogomips;
+    gchar *features;
 };
 
 #endif	/* __PROCESSOR_PLATFORM_H__ */

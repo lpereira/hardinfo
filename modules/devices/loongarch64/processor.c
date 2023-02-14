@@ -40,9 +40,12 @@ processor_scan(void)
             tmp[1] = g_strstrip(tmp[1]);
 
             get_str("system type", processor->vendor_id);
-            get_str("model name", processor->model_name);
+            get_str("CPU Family", processor->family);
+            get_str("Model Name", processor->model_name);
+            get_int("CPU Revision", processor->revision);
             get_float("CPU MHz", processor->cpu_mhz);
             get_float("BogoMIPS", processor->bogomips);
+            get_str("Features", processor->features);
         }
         g_strfreev(tmp);
     }
@@ -66,16 +69,22 @@ processor_get_info(GSList *processors)
     Processor *processor = (Processor *)processors->data;
 
     return g_strdup_printf("[%s]\n"
-                        "%s=%s\n"
-                        "%s=%s\n"
+                        "%s=%s\n"      /* vendor */
+                        "%s=%s\n"      /* family */
+                        "%s=%s\n"      /* name */
+                        "%s=%d\n"      /* revision */
                         "%s=%.2f %s\n" /* frequency */
                         "%s=%.2f\n"    /* bogoMIPS */
+                        "%s=%s\n"      /* features */
                         "%s=%s\n",     /* byte order */
                     _("Processor"),
-                    _("Model"), processor->model_name,
                     _("System Type"), processor->vendor_id,
+                    _("Family"), processor->family,
+                    _("Model"), processor->model_name,
+                    _("Revision"), processor->revision,
                     _("Frequency"), processor->cpu_mhz, _("MHz"),
                     _("BogoMIPS"), processor->bogomips,
+                    _("Features"), processor->features,
                     _("Byte Order"), byte_order_str()
                    );
 }
