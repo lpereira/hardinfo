@@ -98,6 +98,13 @@ static int ignore_placeholder_strings(gchar **pstr) {
     DMI_IGNORE("Type1Family");
     DMI_IGNORE("123456789");
 
+    /* ASUS socket 775 MB */
+    DMI_IGNORE("Asset-1234567890");
+    DMI_IGNORE("MB-1234567890");
+    DMI_IGNORE("Chassis Serial Number");
+    DMI_IGNORE("Chassis Version");
+    DMI_IGNORE("Chassis Manufacture");
+
     /* Zotac version nonsense */
     p = chk;
     while (*p != 0) { *p = 'x'; p++; } /* all X */
