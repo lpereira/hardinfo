@@ -757,7 +757,7 @@ static void decode_module_part_number(unsigned char *bytes, char *part_number) {
     if (part_number) {
         bytes += 8 + 64;
 
-        while (*bytes++ && *bytes >= 32 && *bytes < 127) { *part_number++ = *bytes; }
+        while (*++bytes && *bytes >= 32 && *bytes < 127) { *part_number++ = *bytes; }
         *part_number = '\0';
     }
 }
