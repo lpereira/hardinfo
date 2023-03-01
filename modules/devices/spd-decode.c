@@ -858,34 +858,33 @@ static void decode_ddr4_module_size(unsigned char *bytes, dmi_mem_size *size) {
     *size = sdrcap / 8 * buswidth / sdrwidth * lranks_per_dimm;
 }
 
-static void decode_ddr3_module_date(unsigned char *bytes, int *week, int *year) {
-    if (bytes[120] == 0x0 || bytes[120] == 0xff ||
-        bytes[121] == 0x0 || bytes[121] == 0xff) {
+
+static void decode_ddr234_module_date(unsigned char weekb, unsigned char yearb, int *week, int *year) {
+    if (yearb == 0x0 || yearb == 0xff ||
+        weekb == 0x0 || weekb == 0xff) {
         return;
     }
-    *week = (bytes[121]>>4) & 0xf;
+    *week = (weekb>>4) & 0xf;
     *week *= 10;
-    *week += bytes[121] & 0xf;
-    *year = (bytes[120]>>4) & 0xf;
+    *week += weekb & 0xf;
+    *year = (yearb>>4) & 0xf;
     *year *= 10;
-    *year += bytes[120] & 0xf;
+    *year += yearb & 0xf;
     *year += 2000;
+}
+
+static void decode_ddr2_module_date(unsigned char *bytes, int *week, int *year) {
+    decode_ddr234_module_date(bytes[94], bytes[93], week, year);
+}
+
+static void decode_ddr3_module_date(unsigned char *bytes, int *week, int *year) {
+    decode_ddr234_module_date(bytes[121], bytes[120], week, year);
 }
 
 static void decode_ddr4_module_date(unsigned char *bytes, int spd_size, int *week, int *year) {
     if (spd_size < 324)
         return;
-    if (bytes[323] == 0x0 || bytes[323] == 0xff ||
-        bytes[324] == 0x0 || bytes[324] == 0xff) {
-        return;
-    }
-    *week = (bytes[324]>>4) & 0xf;
-    *week *= 10;
-    *week += bytes[324] & 0xf;
-    *year = (bytes[323]>>4) & 0xf;
-    *year *= 10;
-    *year += bytes[323] & 0xf;
-    *year += 2000;
+    decode_ddr234_module_date(bytes[324], bytes[323], week, year);
 }
 
 static void decode_ddr3_dram_manufacturer(unsigned char *bytes,
@@ -1119,6 +1118,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean 
             decode_ddr2_module_size(bytes, &s->size_MiB);
             decode_ddr2_module_detail(bytes, s->type_detail);
             decode_ddr2_module_type(bytes, &s->form_factor);
+            decode_ddr2_module_date(bytes, &s->week, &s->year);
             break;
         case DDR3_SDRAM:
             s = spd_data_new();
