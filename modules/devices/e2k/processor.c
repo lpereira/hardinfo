@@ -238,30 +238,26 @@ gchar *caches_summary(GSList * processors)
     return ret;
 }
 
-gchar *processor_get_full_name(gchar *model_name)
+static gchar *processor_get_full_name(const gchar *model_name)
 {
-    gchar *full_name;
-
     if(g_strcmp0(model_name ,"E2S") == 0)
-        full_name = g_strdup("Elbrus-4C");
+        return "Elbrus-4C";
     else if(g_strcmp0(model_name ,"E1C+") == 0)
-        full_name = g_strdup("Elbrus-1C+");
+        return "Elbrus-1C+";
     else if(g_strcmp0(model_name ,"E2C+DSP") == 0)
-        full_name = g_strdup("Elbrus-2C+");
+        return "Elbrus-2C+";
     else if(g_strcmp0(model_name ,"E8C") == 0)
-        full_name = g_strdup("Elbrus-8C");    
+        return "Elbrus-8C";    
     else if(g_strcmp0(model_name ,"E8C2") == 0)
-        full_name = g_strdup("Elbrus-8CB");
+        return "Elbrus-8CB";
     else if(g_strcmp0(model_name ,"E12C") == 0)
-        full_name = g_strdup("Elbrus-12C");        
+        return "Elbrus-12C";        
     else if(g_strcmp0(model_name ,"E16C") == 0)
-        full_name = g_strdup("Elbrus-16C");
+        return "Elbrus-16C";
     else if(g_strcmp0(model_name ,"E2C3") == 0)
-        full_name = g_strdup("Elbrus-2C3");        
+        return "Elbrus-2C3";        
     else
-        full_name = model_name;
-
-    return full_name;
+        return (gchar *)model_name;
 }
 
 GSList *processor_scan(void)
