@@ -294,11 +294,13 @@ GSList *processor_scan(void)
         }
 
         if (processor) {
-            /* set full model name*/
-            if(g_str_has_prefix(tmp[0], "model name"))
-                tmp[1] = g_strdup(processor_get_full_name(tmp[1]));
+            if (g_str_has_prefix(tmp[0], "model name")) {
+                const gchar *model_name = processor_get_full_name(tmp[1]);
+                processor->model_name = g_strdup(model_name);
+                g_strfreev(tmp);
+                continue;
+            }
 
-            get_str("model name", processor->model_name);
             get_str("vendor_id", processor->vendor_id);
             get_int("cpu family", processor->family);
             get_int("model", processor->model);
@@ -382,8 +384,11 @@ gchar *processor_get_info(GSList * processors)
         gchar *model_name = g_strdup_printf("MCST %s", processor->model_name);
 
         /* change vendor id of 8CB processor for correct parse from vendor.ids */
-        if(!g_strcmp0(processor->vendor_id, "E8C"))
-            processor->vendor_id = g_strdup_printf("%s-SWTX", processor->vendor_id);
+        if (!g_strcmp0(processor->vendor_id, "E8C")) {
+            gchar *orig_vendor_id = processor->vendor_id;
+            processor->vendor_id = g_strdup_printf("%s-SWTX", orig_vendor_id);
+            free(orig_vendor_id);
+        }
 
         const Vendor *v = vendor_match(processor->vendor_id, NULL);
         if (v)
