@@ -39,6 +39,7 @@
 #include "devices.h"
 #include "dt_util.h"
 #include "udisks2_util.h"
+#include "storage_util.h"
 #include "pci_util.h"
 
 gchar *callback_processors();

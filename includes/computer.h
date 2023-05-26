@@ -178,4 +178,8 @@ extern GHashTable *memlabels;
 void init_memory_labels(void);
 void scan_memory_do(void);
 
+void scan_boots_real(void);
+void scan_languages(OperatingSystem * os);
+void scan_groups_do(void);
+
 #endif				/* __COMPUTER_H__ */

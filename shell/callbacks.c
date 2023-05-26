@@ -27,8 +27,10 @@
 #include "report.h"
 #include "syncmanager.h"
 #include "xmlrpc-server.h"
+#include "uri_handler.h"
 
 #include "config.h"
+
 
 void cb_sync_manager()
 {
