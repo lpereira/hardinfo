@@ -18,7 +18,9 @@
 
 #include <string.h>
 #include <sys/utsname.h>
+#include <json-glib/json-glib.h>
 
+#include "syncmanager.h"
 #include "computer.h"
 #include "cpu_util.h" /* for STRIFNULL() */
 #include "hardinfo.h"
@@ -33,48 +35,184 @@
 GHashTable *_module_hash_table = NULL;
 static gchar *kernel_modules_dir = NULL;
 
+enum icons {
+    ICON_INVALID = 0,
+
+    ICON_AUDIO,
+    ICON_BLUETOOTH,
+    ICON_CAMERA_WEB,
+    ICON_CDROM,
+    ICON_CRYPTOHASH,
+    ICON_DEVICES,
+    ICON_HDD,
+    ICON_INPUTDEVICES,
+    ICON_JOYSTICK,
+    ICON_KEYBOARD,
+    ICON_MEDIA_FLOPPY,
+    ICON_MEDIA_REMOVABLE,
+    ICON_MEMORY,
+    ICON_MONITOR,
+    ICON_MOUSE,
+    ICON_NETWORK,
+    ICON_NETWORK_CONNECTIONS,
+    ICON_NETWORK_INTERFACE,
+    ICON_THERM,
+    ICON_USB,
+    ICON_WIRELESS,
+
+    ICON_MAX,
+};
+
+static const char *icon_table[ICON_MAX] = {
+    [ICON_AUDIO] = "audio",
+    [ICON_BLUETOOTH] = "bluetooth",
+    [ICON_CAMERA_WEB] = "camera-web",
+    [ICON_CDROM] = "cdrom",
+    [ICON_CRYPTOHASH] = "cryptohash",
+    [ICON_DEVICES] = "devices",
+    [ICON_HDD] = "hdd",
+    [ICON_INPUTDEVICES] = "inputdevices",
+    [ICON_JOYSTICK] = "joystick",
+    [ICON_KEYBOARD] = "keyboard",
+    [ICON_MEDIA_FLOPPY] = "media-floppy",
+    [ICON_MEDIA_REMOVABLE] = "media-removable",
+    [ICON_MEMORY] = "memory",
+    [ICON_MONITOR] = "monitor",
+    [ICON_MOUSE] = "mouse",
+    [ICON_NETWORK] = "network",
+    [ICON_NETWORK_CONNECTIONS] = "network-connections",
+    [ICON_NETWORK_INTERFACE] = "network-interface",
+    [ICON_THERM] = "therm",
+    [ICON_USB] = "usb",
+    [ICON_WIRELESS] = "wireless",
+};
+
 /* Keep this sorted by reverse strlen(dir)! */
 static const struct {
     const gchar *dir;
-    const gchar *icon;
+    enum icons icon;
 } modules_icons[] = {
-    { "drivers/input/joystick/", "joystick" },
-    { "drivers/input/keyboard/", "keyboard" },
-    { "drivers/media/usb/uvc/", "camera-web" },
-    { "drivers/net/wireless/", "wireless" },
-    { "drivers/net/ethernet/", "network-interface" },
-    { "drivers/input/mouse/", "mouse" },
-    { "drivers/bluetooth/", "bluetooth" },
-    { "drivers/media/v4l", "camera-web" },
-    { "arch/x86/crypto/", "cryptohash" },
-    { "drivers/crypto/", "cryptohash" },
-    { "net/bluetooth/", "bluetooth" },
-    { "drivers/input/", "inputdevices" },
-    { "drivers/cdrom/", "cdrom" },
-    { "drivers/hwmon/", "therm" },
-    { "drivers/iommu/", "memory" },
-    { "net/wireless/", "wireless" },
-    { "drivers/nvme/", "hdd" },
-    { "net/ethernet/", "network-interface" },
-    { "drivers/scsi/", "hdd" },
-    { "drivers/edac/", "memory" },
-    { "drivers/hid/", "inputdevices" },
-    { "drivers/gpu/", "monitor" },
-    { "drivers/i2c/", "memory" },
-    { "drivers/ata/", "hdd" },
-    { "drivers/usb/", "usb" },
-    { "drivers/pci/", "devices" },
-    { "drivers/net/", "network" },
-    { "drivers/mmc/", "media-removable" },
-    { "crypto/", "cryptohash" },
-    { "sound/", "audio" },
-    { "net/", "network-connections" },
-    { "fs/", "media-floppy" },
-    { }
+    {"drivers/input/joystick/", ICON_JOYSTICK},
+    {"drivers/input/keyboard/", ICON_KEYBOARD},
+    {"drivers/media/usb/uvc/", ICON_CAMERA_WEB},
+    {"drivers/net/wireless/", ICON_WIRELESS},
+    {"drivers/net/ethernet/", ICON_NETWORK_INTERFACE},
+    {"drivers/input/mouse/", ICON_MOUSE},
+    {"drivers/bluetooth/", ICON_BLUETOOTH},
+    {"drivers/media/v4l", ICON_CAMERA_WEB},
+    {"arch/x86/crypto/", ICON_CRYPTOHASH},
+    {"drivers/crypto/", ICON_CRYPTOHASH},
+    {"net/bluetooth/", ICON_BLUETOOTH},
+    {"drivers/input/", ICON_INPUTDEVICES},
+    {"drivers/cdrom/", ICON_CDROM},
+    {"drivers/hwmon/", ICON_THERM},
+    {"drivers/iommu/", ICON_MEMORY},
+    {"net/wireless/", ICON_WIRELESS},
+    {"drivers/nvme/", ICON_HDD},
+    {"net/ethernet/", ICON_NETWORK_INTERFACE},
+    {"drivers/scsi/", ICON_HDD},
+    {"drivers/edac/", ICON_MEMORY},
+    {"drivers/hid/", ICON_INPUTDEVICES},
+    {"drivers/gpu/", ICON_MONITOR},
+    {"drivers/i2c/", ICON_MEMORY},
+    {"drivers/ata/", ICON_HDD},
+    {"drivers/usb/", ICON_USB},
+    {"drivers/pci/", ICON_DEVICES},
+    {"drivers/net/", ICON_NETWORK},
+    {"drivers/mmc/", ICON_MEDIA_REMOVABLE},
+    {"crypto/", ICON_CRYPTOHASH},
+    {"sound/", ICON_AUDIO},
+    {"net/", ICON_NETWORK_CONNECTIONS},
+    {"fs/", ICON_MEDIA_FLOPPY},
+    {},
 };
 
-static const gchar* get_module_icon(const char *path)
+static GHashTable *module_icons;
+
+static void build_icon_table_iter(JsonObject *object,
+                                  const gchar *key,
+                                  JsonNode *value,
+                                  gpointer user_data)
 {
+    char *key_copy = g_strdup(key);
+    char *p;
+
+    for (p = key_copy; *p; p++) {
+        if (*p == '_')
+            *p = '-';
+    }
+
+    enum icons icon;
+    const gchar *value_str = json_node_get_string(value);
+    for (icon = ICON_INVALID; icon < ICON_MAX; icon++) {
+        const char *icon_name = icon_table[icon];
+
+        if (!icon_name)
+            continue;
+
+        if (g_str_equal(value_str, icon_name)) {
+            g_hash_table_insert(module_icons,
+                                key_copy, GINT_TO_POINTER(icon));
+            return;
+        }
+    }
+
+    g_free(key_copy);
+}
+
+void kernel_module_icon_init(void)
+{
+    gchar *icon_json;
+
+    static SyncEntry sync_entry = {
+        .name = N_("Update kernel module icon table"),
+        .file_name = "kernel-module-icons.json",
+    };
+    sync_manager_add_entry(&sync_entry);
+
+    icon_json = g_build_filename(g_get_user_config_dir(),
+                                 "hardinfo", "kernel-module-icons.json",
+                                 NULL);
+
+    module_icons = g_hash_table_new(g_str_hash, g_str_equal);
+
+    if (!g_file_test(icon_json, G_FILE_TEST_EXISTS))
+        goto out;
+
+    JsonParser *parser = json_parser_new();
+    if (!json_parser_load_from_file(parser, icon_json, NULL))
+        goto out_destroy_parser;
+
+    JsonNode *root = json_parser_get_root(parser);
+    if (json_node_get_node_type(root) != JSON_NODE_OBJECT)
+        goto out_destroy_parser;
+
+    JsonObject *icons = json_node_get_object(root);
+    if (!icons)
+        goto out_destroy_parser;
+
+    json_object_foreach_member(icons, build_icon_table_iter, NULL);
+
+out_destroy_parser:
+    g_object_unref(parser);
+
+out:
+    g_free(icon_json);
+}
+
+static const gchar* get_module_icon(const char *modname, const char *path)
+{
+    char *modname_temp = g_strdup(modname);
+    char *p;
+    for (p = modname_temp; *p; p++) {
+        if (*p == '_')
+            *p = '-';
+    }
+    gpointer icon = g_hash_table_lookup(module_icons, modname_temp);
+    g_free(modname_temp);
+    if (icon)
+        return icon_table[GPOINTER_TO_INT(icon)];
+
     if (path == NULL) /* modinfo couldn't find module path */
         return NULL;
 
@@ -93,7 +231,7 @@ static const gchar* get_module_icon(const char *path)
 
     for (i = 0; modules_icons[i].dir; i++) {
         if (g_str_has_prefix(path_no_prefix, modules_icons[i].dir))
-            return modules_icons[i].icon;
+            return icon_table[modules_icons[i].icon];
     }
 
     return NULL;
@@ -185,7 +323,7 @@ void scan_modules_do(void) {
         /* append this module to the list of modules */
         module_list = h_strdup_cprintf("$%s$%s=%s\n", module_list, hashkey, modname,
                                        description ? description : "");
-        icon = get_module_icon(filename);
+        icon = get_module_icon(modname, filename);
         module_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", module_icons, hashkey,
                                         modname, icon ? icon: "module");
 

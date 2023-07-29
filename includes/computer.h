@@ -178,4 +178,6 @@ extern GHashTable *memlabels;
 void init_memory_labels(void);
 void scan_memory_do(void);
 
+void kernel_module_icon_init(void);
+
 #endif				/* __COMPUTER_H__ */

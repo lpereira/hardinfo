@@ -1074,6 +1074,7 @@ void hi_module_init(void)
 {
     computer = g_new0(Computer, 1);
     init_memory_labels();
+    kernel_module_icon_init();
 }
 
 const ModuleAbout *hi_module_get_about(void)

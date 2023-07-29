@@ -134,6 +134,7 @@ set(HARDINFO_RESOURCES
 	"data/edid.ids"
 	"data/ieee_oui.ids"
 	"data/pci.ids.min"
+	"data/kernel-module-icons.json"
 )
 
 set(HARDINFO_MANPAGES
