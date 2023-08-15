@@ -200,22 +200,24 @@ static SoupURI *sync_manager_get_proxy(void)
     return soup_uri_new(conf);
 }
 
-static void sync_dialog_start_sync(SyncDialog *sd)
+static void ensure_soup_session(void)
 {
-    gint nactions;
-    SyncNetAction *actions;
-
     if (!session) {
         SoupURI *proxy = sync_manager_get_proxy();
 
         session = soup_session_new_with_options(
             SOUP_SESSION_TIMEOUT, 10, SOUP_SESSION_PROXY_URI, proxy, NULL);
-        /* Crashes if we unref the proxy? O_o */
-        /*if (proxy)
-           g_object_unref(proxy); */
     }
+}
 
-    loop = g_main_loop_new(NULL, TRUE);
+static void sync_dialog_start_sync(SyncDialog *sd)
+{
+    gint nactions;
+    SyncNetAction *actions;
+
+    ensure_soup_session();
+
+    loop = g_main_loop_new(NULL, FALSE);
 
     gtk_widget_hide(sd->button_sync);
     gtk_widget_hide(sd->button_priv_policy);
@@ -646,5 +648,46 @@ static void sync_dialog_destroy(SyncDialog *sd)
     gtk_widget_destroy(sd->dialog);
     sync_dialog_netarea_destroy(sd->sna);
     g_free(sd);
+}
+
+static gboolean sync_one(gpointer data)
+{
+    SyncNetAction *sna = data;
+
+    if (sna->entry->generate_contents_for_upload)
+        goto out;
+
+    DEBUG("Syncronizing: %s", sna->entry->name);
+
+    gchar *msg = g_strdup_printf(_("Synchronizing: %s"), _(sna->entry->name));
+    shell_status_update(msg);
+    shell_status_pulse();
+    g_free(msg);
+
+    send_request_for_net_action(sna);
+
+out:
+    g_main_loop_unref(loop);
+    idle_free(sna);
+
+    return FALSE;
+}
+
+void sync_manager_update_on_startup(void)
+{
+    GSList *entry;
+
+    ensure_soup_session();
+
+    loop = g_main_loop_new(NULL, FALSE);
+
+    for (entry = entries; entry; entry = entry->next) {
+        SyncNetAction *action = g_new0(SyncNetAction, 1);
+
+        action->entry = entry->data;
+        loop = g_main_loop_ref(loop);
+
+        g_idle_add(sync_one, action);
+    }
 }
 #endif /* HAS_LIBSOUP */

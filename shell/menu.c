@@ -102,6 +102,10 @@ static GtkToggleActionEntry toggle_entries[] = {
      N_("_Toolbar"), NULL,
      NULL,
      G_CALLBACK(cb_toolbar)},
+    {"SyncOnStartupAction", NULL,
+     N_("Synchronize on startup"), NULL,
+     NULL,
+     G_CALLBACK(cb_sync_on_startup)},
 };
 
 /* Implement a handler for GtkUIManager's "add_widget" signal. The UI manager

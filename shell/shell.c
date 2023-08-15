@@ -722,6 +722,29 @@ select_first_tree_item(gpointer data)
     return FALSE;
 }
 
+static void
+check_for_updates(void)
+{
+    GKeyFile *key_file = g_key_file_new();
+
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo",
+                                        "settings.ini", NULL);
+
+    g_key_file_load_from_file(
+        key_file, conf_path,
+        G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);
+
+    gboolean setting = g_key_file_get_boolean(key_file, "Sync", "OnStartup", NULL);
+    shell_action_set_active("SyncOnStartupAction", setting);
+
+    g_free(conf_path);
+    g_key_file_free(key_file);
+
+    if (setting) {
+        sync_manager_update_on_startup();
+    }
+}
+
 gboolean hardinfo_link(const gchar *uri) {
     /* Clicked link events pass through here on their
      * way to the default handler (xdg-open).
@@ -791,6 +814,8 @@ void shell_init(GSList * modules)
     shell_status_update(_("Loading modules..."));
 
     shell->tree->modules = modules ? modules : modules_load_all();
+
+    check_for_updates();
 
     g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));

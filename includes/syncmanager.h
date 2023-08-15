@@ -37,4 +37,6 @@ void sync_manager_clear_entries(void);
 void sync_manager_show(GtkWidget *parent);
 gint sync_manager_count_entries(void);
 
+void sync_manager_update_on_startup(void);
+
 #endif /* __SYNCMANAGER_H__ */

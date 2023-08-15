@@ -37,6 +37,24 @@ void cb_sync_manager()
     sync_manager_show(shell->window);
 }
 
+void cb_sync_on_startup()
+{
+    gboolean setting = shell_action_get_active("SyncOnStartupAction");
+    GKeyFile *key_file = g_key_file_new();
+
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo",
+                                        "settings.ini", NULL);
+
+    g_key_file_load_from_file(
+        key_file, conf_path,
+        G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);
+    g_key_file_set_boolean(key_file, "Sync", "OnStartup", setting);
+    g_key_file_save_to_file(key_file, conf_path, NULL);
+
+    g_free(conf_path);
+    g_key_file_free(key_file);
+}
+
 void cb_open_web_page()
 {
     uri_open("http://www.hardinfo.org");

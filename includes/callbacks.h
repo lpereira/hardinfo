@@ -40,5 +40,6 @@ void cb_manage_hosts();
 void cb_connect_host(GtkAction * action);
 void cb_local_computer();
 void cb_act_as_server();
+void cb_sync_on_startup();
 
 #endif	/* __CALLBACKS_H__ */
