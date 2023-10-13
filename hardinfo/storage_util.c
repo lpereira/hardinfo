@@ -100,7 +100,7 @@ void check_sdcard_vendor(u2driveext *e) {
     g_file_get_contents(oemid_path, &oemid, NULL, NULL);
     g_file_get_contents(manfid_path, &manfid, NULL, NULL);
 
-    unsigned int id = strtol(oemid, NULL, 16);
+    unsigned int id = oemid?strtol(oemid, NULL, 16):0;
     char c2 = id & 0xff, c1 = (id >> 8) & 0xff;
 
     qpath = g_strdup_printf("OEMID %02x%02x", (unsigned int)c1, (unsigned int)c2);
@@ -114,7 +114,7 @@ void check_sdcard_vendor(u2driveext *e) {
             isprint(c1) ? c1 : '.', isprint(c2) ? c2 : '.');
     g_free(qpath);
 
-    id = strtol(manfid, NULL, 16);
+    id = manfid?strtol(manfid, NULL, 16):0;
     qpath = g_strdup_printf("MANFID %06x", id);
     scan_ids_file(sdcard_ids_file, qpath, &result, -1);
     g_free(manfid);
