@@ -815,7 +815,9 @@ void shell_init(GSList * modules)
 
     shell->tree->modules = modules ? modules : modules_load_all();
 
+#ifdef HAS_LIBSOUP
     check_for_updates();
+#endif
 
     g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
