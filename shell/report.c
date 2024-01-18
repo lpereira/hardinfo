@@ -23,6 +23,7 @@
 #include <iconcache.h>
 #include <hardinfo.h>
 #include <config.h>
+#include "uri_handler.h"
 
 static ReportDialog *report_dialog_new(GtkTreeModel * model,
 				       GtkWidget * parent);

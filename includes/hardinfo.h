@@ -230,5 +230,6 @@ gg_strescape (const gchar *source,
 #define note_print(note_buff, str) note_printf((note_buff), "%s", str)
 gboolean note_cond_bullet(gboolean cond, gchar *note_buff, const gchar *desc_str);
 gboolean note_require_tool(const gchar *tool, gchar *note_buff, const gchar *desc_str);
+int cpu_procs_cores_threads(int *p, int *c, int *t);
 
 #endif				/* __HARDINFO_H__ */

@@ -149,7 +149,7 @@ gboolean dmi_get_info(void)
     return dmi_succeeded;
 }
 
-void __scan_dmi()
+void __scan_dmi(void)
 {
   gboolean dmi_ok;
 

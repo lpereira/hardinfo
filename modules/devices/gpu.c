@@ -24,8 +24,6 @@
 #include "devices.h"
 #include "gpu_util.h"
 
-void scan_gpu_do(void);
-
 gchar *gpu_list = NULL;
 gchar *gpu_summary = NULL;
 
