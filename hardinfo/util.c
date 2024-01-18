@@ -975,7 +975,15 @@ static GSList *modules_load(gchar ** module_list)
 	  }
 	}
       }
-      g_dir_close(dir);
+      GList* item = NULL;
+        while (item = g_list_first(filenames)) {
+            if (module = module_load((gchar *)item->data)) {
+                modules = g_slist_prepend(modules, module);
+            }
+            filenames = g_list_delete_link(filenames, item);
+        }
+        g_list_free_full (g_steal_pointer (&filenames), g_object_unref);
+        g_dir_close(dir);
     }
 
     modules = modules_check_deps(modules);
