@@ -14,7 +14,7 @@ Status
 ------
 
 Capabilities: HardInfo currently detects most software and hardware detected by the OS.
-Features: The remote sync was disabled due to server loss.
+Features: Online database for exchanging benchmark results.
 Development: Currently done by contributors, a new dedicated maintainer is needed.
 
 Server code can be found in the "server" branch: https://github.com/lpereira/hardinfo/tree/server
@@ -49,7 +49,6 @@ There are some variables that can be changed:
  * `CMAKE_INSTALL_PREFIX`: Sets the installation prefix.
    * `[Default: /usr/local]`: Distributions usually change this to `/usr`.
  * `HARDINFO_NOSYNC`: Disables network synchronization.
-   * `[Default: 1]`: Disabled by default due to the server being lost.
 
 To set a variable, use cmake's -D parameter. For example:
 
