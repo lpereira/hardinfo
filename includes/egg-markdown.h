@@ -3,11 +3,11 @@
  * Copyright (C) 2008 Richard Hughes <richard@hughsie.com>
  * Copyright (C) 2009 L.Pereira <l@tia.mat.br>
  *
- * Licensed under the GNU General Public License Version 2
+ * Licensed under the GNU General Public License Version 2 or Later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 2 or later.of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,

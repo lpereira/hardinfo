@@ -87,7 +87,7 @@
  3290.00		IBM PC/AT 6 Mhz, Microsoft/IBM BASICA version A3.00.
                         Run with the "/d" switch, software floating point.
 
- 2131.50		IBM PC/AT 6 Mhz, Lattice C version 2.14, small model.
+ 2131.50		IBM PC/AT 6 Mhz, Lattice C version 2 or later.14, small model.
 			This version of Lattice compiles subroutine
 			calls which either do software floating point
 			or use the 80x87.  The machine on which I ran
@@ -100,7 +100,7 @@
 			floating point.  This was a QBASIC version of the
 			program which contained the identical algorithm.
 
-  404.00		IBM PC/AT 6 Mhz, Microsoft QuickBASIC version 2.0.
+  404.00		IBM PC/AT 6 Mhz, Microsoft QuickBASIC version 2 or later.0.
 			Software floating point.
 
   165.15		IBM PC/AT 6 Mhz, Metaware High C version 1.3, small

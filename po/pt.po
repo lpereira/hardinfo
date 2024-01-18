@@ -802,7 +802,7 @@ msgstr "Informações do sistema e ferramenta de benchmark"
 msgid ""
 "HardInfo is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
-"Software Foundation, version 2.\n"
+"Software Foundation, version 2 or later.\n"
 "\n"
 "This program is distributed in the hope that it will be useful, but WITHOUT "
 "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
@@ -1174,7 +1174,7 @@ msgstr "Resultados em segundos. Menor é melhor."
 
 #. /or modify
 #. *    it under the terms of the GNU General Public License as published by
-#. *    the Free Software Foundation, version 2.
+#. *    the Free Software Foundation, version 2 or later.
 #. *
 #. *    This program is distributed in the hope that it will be useful,
 #. *    but WITHOUT ANY WARRANTY; without even the implied warranty of

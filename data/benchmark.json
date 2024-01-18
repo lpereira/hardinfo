@@ -630,7 +630,7 @@
       "UsedThreads": 2,
       "Board": "QEMU Standard PC (i440FX + PIIX, 1996) pc-i440fx-bionic",
       "MachineType": "Virtual (QEMU)",
-      "CpuName": "QEMU Virtual version 2.5+",
+      "CpuName": "QEMU Virtual version 2 or later.5+",
       "CpuDesc": "2 CPUs; 2 cores; 2 threads",
       "NumCpus": 2,
       "NumCores": 2,
