@@ -21,41 +21,38 @@ Server code can be found in the "server" branch: https://github.com/lpereira/har
 
 DEPENDENCIES
 ------------
-
-Required:
 - GTK+ 2.10 (or newer) - Prefer **GTK3**
 - GLib 2.10 (or newer)
 - Zlib (for zlib benchmark)
 - Json-glib
-- Libsoup 2.24 (or newer) - option for network synchronization but prefered for functionallity
+- Libsoup 2.24 (or newer) - optional - for network synchronization but prefered for functionallity
 
 BUILDING
 --------
 **Debian/Ubuntu/Mint/PopOS**
-sudo apt install git cmake build-essential
-sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev
-sudo apt install libgtk-3-dev libglib2.0-dev
-git clone https://github.com/hwspeedy/hardinfo
-cd hardinfo
-mkdir build
-cd build
-cmake ..
-make
-sudo make install
-hardinfo
+- sudo apt install git cmake build-essential
+- sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev
+- sudo apt install libgtk-3-dev libglib2.0-dev
+- git clone https://github.com/hwspeedy/hardinfo
+- cd hardinfo
+- mkdir build
+- cd build
+- cmake ..
+- make
+- sudo make install
+- hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
-sudo yum install git cmake gcc gcc-c++
-sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
-git clone https://github.com/hwspeedy/hardinfo
-cd hardinfo
-mkdir build
-cd build
-cmake ..   (NOTE: Centos 7 needs the cmake3 from epel)
-make
-sudo make install
-hardinfo
-
+- sudo yum install git cmake gcc gcc-c++
+- sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
+- git clone https://github.com/hwspeedy/hardinfo
+- cd hardinfo
+- mkdir build
+- cd build
+- cmake ..   (NOTE: Centos 7 needs the cmake3 from epel)
+- make
+- sudo make install
+- hardinfo
 
 
 There are some build variables that can be changed:
@@ -72,17 +69,14 @@ To set a variable, use cmake's -D parameter. For example:
 SETTING UP
 ----------
 Most hardware is detected automatically by HardInfo, however, some hardware 
-needs manual set up. They are:
-**sysbench**: is needed to run standard sysbench benchmarks
+needs manual set up.
 
-**lsscsi**: gives information about hard drives
-
-**lm-sensors**: If your computer is compatible with lm-sensors module, use by example the
+- **sysbench**: is needed to run standard sysbench benchmarks
+- **lsscsi**: gives information about hard drives
+- **lm-sensors**: If your computer is compatible with lm-sensors module, use by example the
 `sensors-detect` program included with the lm-sensors package of Debian based distros, and be sure
 to have the detected kernel modules loaded.
-
-**hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp
+- **hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp
 in daemon mode, using the default port.
-
-**eeprom module**: must be loaded to display info about your currently installed memory.
+- **eeprom module**: must be loaded to display info about your currently installed memory.
 Load with `modprobe eeprom` and refresh the module screen.
