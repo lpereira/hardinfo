@@ -23,12 +23,13 @@ DEPENDENCIES
 ------------
 
 Required:
-- GTK+ 2.10 (or newer)
+- GTK+ 2.10 (or newer) - Prefer GTK3
 - GLib 2.10 (or newer)
 - Zlib (for zlib benchmark)
+- Json-glib
 
 Optional (for synchronization/remote):
-- Libsoup 2.24 (or newer)
+- Libsoup 2.24 (or newer) - Prefer for functionallity
 
 BUILDING
 --------
