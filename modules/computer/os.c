@@ -157,14 +157,14 @@ detect_mate_version(void)
 static gchar *
 detect_window_manager(void)
 {
-    GdkScreen *screen = gdk_screen_get_default();
-    const gchar *windowman;
+
     const gchar *curdesktop;
+    const gchar* windowman;
+    GdkScreen *screen = gdk_screen_get_default();
 
-    if (!screen || !GDK_IS_SCREEN(screen))
-        return NULL;
-
-    windowman = gdk_x11_screen_get_window_manager_name(screen);
+    if (GDK_IS_X11_SCREEN(screen)) {
+        windowman = gdk_x11_screen_get_window_manager_name(screen);
+    } else return g_strdup("Not X11");
 
     if (g_str_equal(windowman, "Xfwm4"))
         return g_strdup("XFCE 4");
