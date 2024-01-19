@@ -1,4 +1,4 @@
-[![Test](https://github.com/hwspeedy/hardinfo/actions/workflows/test.yml/badge.svg)](https://github.com/hwspeedy/hardinfo/actions/workflows/test.yml)
+![image](https://github.com/hwspeedy/hardinfo/assets/17836636/8aa54d54-5b17-45b8-884e-99bcb2c906a5)[![Test](https://github.com/hwspeedy/hardinfo/actions/workflows/test.yml/badge.svg)](https://github.com/hwspeedy/hardinfo/actions/workflows/test.yml)
 [![GitHub release](https://img.shields.io/github/release/hwspeedy/hardinfo.svg)](https://github.com/hwspeedy/hardinfo/releases)
 
 HARDINFO
@@ -43,6 +43,7 @@ BUILDING
 - cmake ..
 - make
 - sudo make install
+- sudo apt install lm-sensors sysbench lsscsi
 - hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
@@ -55,6 +56,7 @@ BUILDING
 - cmake ..   (NOTE: Centos 7 needs the cmake3 from epel)
 - make
 - sudo make install
+- sudo yum install lm-sensors sysbench lsscsi
 - hardinfo
 
 
