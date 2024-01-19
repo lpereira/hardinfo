@@ -46,7 +46,7 @@ BUILDING
 - hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
-- sudo yum install git cmake gcc gcc-c++ 
+- sudo yum install git cmake gcc gcc-c++ gettext
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
