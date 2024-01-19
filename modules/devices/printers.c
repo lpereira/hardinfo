@@ -67,7 +67,7 @@ init_cups(void)
 
 	if (!g_module_symbol(cups, "cupsGetDests", (gpointer) & cups_dests_get)
 	    || !g_module_symbol(cups, "cupsFreeDests", (gpointer) & cups_dests_free)) {
-            g_module_close(cups);
+	    if(cups) g_module_close(cups);
 	    cups_init = FALSE;
 	}
     }
