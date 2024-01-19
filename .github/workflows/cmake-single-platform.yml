@@ -32,7 +32,7 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build 
+      run: cmake --build ${{github.workspace}}/build --target hardinfo
     
 #--config ${{env.BUILD_TYPE}}
 
