@@ -2363,31 +2363,40 @@ void key_get_components(const gchar *key,
 
     const gchar *np = g_utf8_strchr(key+1, -1, '$') + 1;
     if (*key == '$' && np) {
-        /* is flagged */
-        gchar *f = g_strdup(key);
-        *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
-        if (flags)
-            *flags = g_strdup(f);
-        if (tag)
-            *tag = key_mi_tag(f);
-        g_free(f);
+      /* is flagged */
+      gchar *f = g_strdup(key);
+      gchar *s = g_utf8_strchr(f+1, -1, '$');
+      if(s==NULL) {
+	DEBUG("key_get_components_ERROR NOT FOUND");
+      }else{
+	if((s-f+1)>strlen(key)) {
+	  DEBUG("key_get_components_ERROR NOT FOUND");
+	}else{
+	  *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
+	  if (flags)
+	    *flags = g_strdup(f);
+	  if (tag)
+	    *tag = key_mi_tag(f);
+	  g_free(f);
+	}
+      }
     } else
-        np = key;
-
+      np = key;
+    
     if (name)
-        *name = g_strdup(np);
+      *name = g_strdup(np);
     if (label) {
-        *label = g_strdup(np);
-        gchar *lbp = g_utf8_strchr(*label, -1, '#');
-        if (lbp)
-            *lbp = 0;
-        if (lbp && dis)
-            *dis = g_strdup(lbp + 1);
-
-        if (flags && *flags && strchr(*flags, '@')) {
-            gchar *ol = *label;
-            *label = g_strcompress(ol);
-            g_free(ol);
-        }
+      *label = g_strdup(np);
+      gchar *lbp = g_utf8_strchr(*label, -1, '#');
+      if (lbp)
+	*lbp = 0;
+      if (lbp && dis)
+	*dis = g_strdup(lbp + 1);
+      
+      if (flags && *flags && strchr(*flags, '@')) {
+	gchar *ol = *label;
+	*label = g_strcompress(ol);
+	g_free(ol);
+      }
     }
 }
