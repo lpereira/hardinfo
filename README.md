@@ -43,7 +43,7 @@ BUILDING
 - cmake ..
 - make
 - sudo make install
-- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode
+- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2
 - hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
@@ -58,7 +58,7 @@ BUILDING
 - cmake ..   (NOTE: Centos 7 needs the cmake3 from epel)
 - make
 - sudo make install
-- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode
+- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
 - hardinfo
 
 
@@ -79,6 +79,7 @@ Most hardware is detected automatically by HardInfo, however, some hardware
 needs manual set up.
 
 - **sysbench**: is needed to run standard sysbench benchmarks
+- **udisks2**: is needed to provide NVME++ informations.
 - **dmi-decode**: is needed to provide DMI informations - also requires root to use it.
 - **mesa-utils**: is needed to provide opengl and run standard sysbench benchmarks
 - **lsscsi**: gives information about hard drives
