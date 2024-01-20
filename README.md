@@ -47,8 +47,8 @@ BUILDING
 - hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
-* NOTE: older version only has libsoup-2.4-dev so use "cmake -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
-* NOTE: Centos 7 needs yum install cmake3 instead of cmake and use "cmake3 -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
+* NOTE: RPM has libsoup-2.4-dev not version 3.0 yet - hence use cmake -DHARDINFO_LIBSOUP3=0
+* NOTE: Centos 7 needs yum install cmake3 instead of cmake - use cmake3 instead of cmake
 - sudo yum install epel-release
 - sudo yum install git cmake gcc gcc-c++ gettext
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
@@ -56,7 +56,7 @@ BUILDING
 - cd hardinfo
 - mkdir build
 - cd build
-- cmake ..
+- cmake -DHARDINFO_LIBSOUP3=0 ..
 - make
 - sudo make install
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
