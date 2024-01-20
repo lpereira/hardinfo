@@ -85,8 +85,8 @@ To set a variable, use cmake's -D parameter. For example:
 `	build $ cmake .. -DCMAKE_BUILD_TYPE=Debug `
 
 
-SETTING UP
-----------
+SETTING UP ADDITIONAL TOOLS
+---------------------------
 Most hardware is detected automatically by HardInfo, however, some hardware 
 needs manual set up.
 
