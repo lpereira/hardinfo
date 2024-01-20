@@ -1,34 +1,18 @@
+- Create an updated release for GTK3 with online benchmarking (WIP - Ready for testing, thanx)
 
 - Report Generation
 
-    * Ability to create more detailed reports
-    * Public web page to host user's reports
+    * Public web page to host user's reports (WIP - https://hardinfo.bigbear.dk)
 
 - Benchmark
 
     * New benchmarks
-          o FPU+CPU
-          o Disk
+          o Iperf3?
 	  o Phoronix?
-    * Change current benchmarks
-          o Remove CPU Fibonacci
-          * Add CPU Rubik Cube solver? :P
-
-- More information
-
-    * PCMCIA/Cardbus information
-    * S.M.A.R.T.
-    * Show USB devices as a tree instead of a list
-    * x86info integration?
-
-- i18n, build system
-
-    * GNU gettext
+          o Add CPU Rubik Cube solver?
 
 - Misc
 
-    * Round benchmark results to two decimal places at most,
-      or get rid of decimal places altogether.
     * Add preferences window
 	* Save/restore
 		* Window position
