@@ -16,9 +16,9 @@ Features include:
 Status
 ------
 
-Capabilities: HardInfo currently detects most software and hardware detected by the OS.
-Features: Online database for exchanging benchmark results.
-Development: Currently done by contributors.
+- Capabilities: HardInfo currently detects most software and hardware detected by the OS.
+- Features: Online database for exchanging benchmark results.
+- Development: Currently done by contributors, hwspeedy maintains (Missing OK from previous maintainer!!)
 
 Server code can be found in the "server" branch: https://github.com/hwspeedy/hardinfo/tree/server
 
@@ -75,13 +75,12 @@ BUILDING
 
 
 
-There are some build variables that can be changed:
+There are some build variables that can be changed for debug or distro release:
  * `CMAKE_BUILD_TYPE`: Can either be ``Release`` or ``Debug``.
    * `[Default: Release]` ``Debug`` prints messages to console and is not recommended for general use.
  * `CMAKE_INSTALL_PREFIX`: Sets the installation prefix.
    * `[Default: /usr/local]`: Distributions usually change this to `/usr`.
- * `HARDINFO_NOSYNC`: Network sync is enabled if libsoup is detected. Disables network synchronization.
-
+ 
 To set a variable, use cmake's -D parameter. For example:
 `	build $ cmake .. -DCMAKE_BUILD_TYPE=Debug `
 
