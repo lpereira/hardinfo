@@ -2,7 +2,7 @@ project(HardInfo)
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6)
 
-set(HARDINFO_VERSION "0.6-alpha")
+set(HARDINFO_VERSION "1.00")
 option(HARDINFO_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
 set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")

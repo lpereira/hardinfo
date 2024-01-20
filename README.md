@@ -20,7 +20,7 @@ Capabilities: HardInfo currently detects most software and hardware detected by 
 Features: Online database for exchanging benchmark results.
 Development: Currently done by contributors.
 
-Server code can be found in the "server" branch: https://github.com/lpereira/hardinfo/tree/server
+Server code can be found in the "server" branch: https://github.com/hwspeedy/hardinfo/tree/server
 
 DEPENDENCIES
 ------------

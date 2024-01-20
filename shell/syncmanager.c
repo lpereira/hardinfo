@@ -589,7 +589,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     populate_store(store);
 
     priv_policy_btn = gtk_link_button_new_with_label(
-            "https://github.com/lpereira/hardinfo/wiki/Privacy-Policy",
+            "https://github.com/hwspeedy/hardinfo/wiki/Privacy-Policy",
             _("Privacy Policy"));
     gtk_widget_show(priv_policy_btn);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), priv_policy_btn, FALSE, FALSE, 0);

@@ -1,6 +1,6 @@
 #!bash
 
-# To help with https://github.com/lpereira/hardinfo/issues/100
+# To help with https://github.com/hwspeedy/hardinfo/issues/100
 # Saves the old label translations.
 #
 # This is not an automated magical tool, it is an ugly hack of a helper

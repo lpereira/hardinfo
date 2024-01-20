@@ -2,7 +2,7 @@
 
 Issues and Pull Requests via GitHub:
 
-* https://github.com/lpereira/hardinfo
+* https://github.com/hwspeedy/hardinfo
 
 If this is your first contribution, feel free to add your name to
 AUTHORS.md as a commit included in your pull request.

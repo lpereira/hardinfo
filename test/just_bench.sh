@@ -3,13 +3,6 @@
 #
 # bash just_bench.sh >whatever.conf
 #
-# hardinfo PR instructions:
-# crudini --merge ../data/benchmark.conf < whatever.conf
-# git checkout -b br_whatever
-# git add ../data/benchmark.conf
-# git commit -m "bench_result: whatever"
-# git push -u <github_fork_origin> br_whatever
-# https://github.com/lpereira/hardinfo/pulls
 
 USER_NOTE="$1"
 
