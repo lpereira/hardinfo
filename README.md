@@ -43,11 +43,13 @@ BUILDING
 - cmake ..
 - make
 - sudo make install
-- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmi-decode
+- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode
 - hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
-- sudo yum install git cmake gcc gcc-c++ gettext
+- sudo yum install epel-release
+- sudo yum install git cmake3 gcc gcc-c++ gettext (Centos 7 needs updated cmake3 from epel)
+- sudo yum install git cmake gcc gcc-c++ gettext (ALL Others)
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
@@ -56,7 +58,7 @@ BUILDING
 - cmake ..   (NOTE: Centos 7 needs the cmake3 from epel)
 - make
 - sudo make install
-- sudo yum install lm-sensors sysbench lsscsi mesa-utils dmi-decode
+- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode
 - hardinfo
 
 
