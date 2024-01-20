@@ -33,6 +33,7 @@ DEPENDENCIES
 BUILDING
 --------
 **Debian/Ubuntu/Mint/PopOS**
+NOTE: older version only has libsoup-2.4-dev so use "cmake -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
 - sudo apt install git cmake build-essential gettext
 - sudo apt install libjson-glib-dev zlib1g-dev libsoup-3.0-dev libgtk-3-dev libglib2.0-dev
 - git clone https://github.com/hwspeedy/hardinfo
@@ -46,6 +47,8 @@ BUILDING
 - hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
+NOTE: older version only has libsoup-2.4-dev so use "cmake -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
+NOTE: Centos 7 needs yum install cmake3 instead of cmake and use "cmake3 -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
 - sudo yum install epel-release
 - sudo yum install git cmake gcc gcc-c++ gettext
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
@@ -58,21 +61,6 @@ BUILDING
 - sudo make install
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
 - hardinfo
-
-**Centos 7 - Old but still very used**
-- sudo yum install epel-release
-- sudo yum install git cmake3 gcc gcc-c++ gettext
-- sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
-- git clone https://github.com/hwspeedy/hardinfo
-- cd hardinfo
-- mkdir build
-- cd build
-- cmake3 -DHARDINFO_LIBSOUP3=0 ..
-- make
-- sudo make install
-- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
-- hardinfo
-
 
 
 There are some build variables that can be changed for debug or distro release:
