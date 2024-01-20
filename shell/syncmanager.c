@@ -187,6 +187,7 @@ static SyncNetAction *sync_manager_get_selected_actions(gint *n)
     return actions;
 }
 
+#if !SOUP_CHECK_VERSION(3,0,0)
 static SoupURI *sync_manager_get_proxy(void)
 {
     const gchar *conf;
@@ -199,14 +200,19 @@ static SoupURI *sync_manager_get_proxy(void)
 
     return soup_uri_new(conf);
 }
+#endif
 
 static void ensure_soup_session(void)
 {
     if (!session) {
+#if !SOUP_CHECK_VERSION(3,0,0)
         SoupURI *proxy = sync_manager_get_proxy();
 
         session = soup_session_new_with_options(
             SOUP_SESSION_TIMEOUT, 10, SOUP_SESSION_PROXY_URI, proxy, NULL);
+#else
+        session = soup_session_new_with_options("timeout", 10, NULL);
+#endif
     }
 }
 
@@ -289,11 +295,22 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
         gchar *contents = sna->entry->generate_contents_for_upload(&size);
 
         msg = soup_message_new("POST", uri);
+
+#if !SOUP_CHECK_VERSION(3, 0, 0)
         soup_message_set_request(msg, "application/octet-stream",
                                  SOUP_MEMORY_TAKE, contents, size);
+#else
+        GBytes *cont = g_bytes_new_static(contents,size);
+        msg = soup_message_new("POST", uri);
+        soup_message_set_request_body_from_bytes(msg, "application/octet-stream", cont);
+#endif
     }
 
+#if SOUP_CHECK_VERSION(3, 0, 0)
+    soup_session_send_async(session, msg, G_PRIORITY_DEFAULT, NULL, got_response, sna);
+#else
     soup_session_send_async(session, msg, NULL, got_response, sna);
+#endif
     g_main_loop_run(loop);
 
     g_object_unref(msg);
