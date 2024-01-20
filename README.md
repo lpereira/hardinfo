@@ -33,7 +33,7 @@ DEPENDENCIES
 BUILDING
 --------
 **Debian/Ubuntu/Mint/PopOS**
-- sudo apt install git cmake build-essential
+- sudo apt install git cmake build-essential gettext
 - sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev
 - sudo apt install libgtk-3-dev libglib2.0-dev
 - git clone https://github.com/hwspeedy/hardinfo
@@ -43,10 +43,11 @@ BUILDING
 - cmake ..
 - make
 - sudo make install
+- sudo apt install lm-sensors sysbench lsscsi
 - hardinfo
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
-- sudo yum install git cmake gcc gcc-c++
+- sudo yum install git cmake gcc gcc-c++ gettext
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
@@ -55,6 +56,7 @@ BUILDING
 - cmake ..   (NOTE: Centos 7 needs the cmake3 from epel)
 - make
 - sudo make install
+- sudo yum install lm-sensors sysbench lsscsi
 - hardinfo
 
 

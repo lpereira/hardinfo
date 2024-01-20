@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install system dependencies
-      run: sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev
+      run: sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev gettext
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -32,7 +32,8 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --target hardinfo
+      run: cmake --build ${{github.workspace}}/build 
+      #--target hardinfo
     
 #--config ${{env.BUILD_TYPE}}
 
