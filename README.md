@@ -34,7 +34,7 @@ BUILDING
 --------
 **Debian/Ubuntu/Mint/PopOS**
 - sudo apt install git cmake build-essential gettext
-- sudo apt install libjson-glib-dev zlib1g-dev libsoup3.0-dev libgtk-3-dev libglib2.0-dev
+- sudo apt install libjson-glib-dev zlib1g-dev libsoup-3.0-dev libgtk-3-dev libglib2.0-dev
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
 - mkdir build
