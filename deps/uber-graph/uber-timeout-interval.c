@@ -131,8 +131,8 @@ _uber_timeout_interval_compare_expiration (const UberTimeoutInterval *a,
 
   b_difference = a->start_time - b->start_time;
 
-  comparison = ((gint) ((a->frame_count + 1) * a_delay)
-             - (gint) ((b->frame_count + 1) * b_delay + b_difference));
+  comparison = ((gint) (((gint64)a->frame_count + 1) * a_delay)
+		- (gint) (((gint64)b->frame_count + 1) * b_delay + b_difference));
 
   return (comparison < 0 ? -1
                          : comparison > 0 ? 1

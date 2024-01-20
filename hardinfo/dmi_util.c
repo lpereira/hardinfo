@@ -71,10 +71,10 @@ static const char *dmi_type_strings[] = {
  * returns -1 if error, 0 if ok, 1 if ignored */
 static int ignore_placeholder_strings(gchar **pstr) {
     gchar *chk, *p;
-    chk = g_strdup(*pstr);
-
     if (pstr == NULL || *pstr == NULL)
         return -1;
+    chk = g_strdup(*pstr);
+
 #define DMI_IGNORE(m) if (strcasecmp(m, *pstr) == 0) { g_free(chk); g_free(*pstr); *pstr = NULL; return 1; }
     DMI_IGNORE("To be filled by O.E.M.");
     DMI_IGNORE("Default String");

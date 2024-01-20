@@ -60,7 +60,8 @@ g_ring_sized_new (guint          element_size,
 	ring_impl = g_slice_new0(GRingImpl);
 	ring_impl->elt_size = element_size;
 	ring_impl->len = reserved_size;
-	ring_impl->data = g_malloc0_n(reserved_size, element_size);
+	if((guint64)reserved_size*element_size<4000000000L)
+  	  ring_impl->data = g_malloc0_n(reserved_size, element_size);
 	ring_impl->destroy = element_destroy;
 	ring_impl->ref_count = 1;
 
