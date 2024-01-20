@@ -16,6 +16,9 @@ if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
 endif()
 
+string (REGEX MATCH "\\.el[1-9]" os_version_suffix ${CMAKE_SYSTEM})
+message("--os_version_suffix:      ${os_version_suffix}")
+
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
 	set(HARDINFO_OS "linux")
 else()
@@ -80,7 +83,15 @@ add_definitions("-std=gnu89")
 add_definitions("-Wformat")
 add_definitions("-Wformat-security")
 
+set(RPM 0)
+if(${os_version_suffix} MATCHES ".el*")
+  set(RPM 1)
+  message(STATUS "Building for LibSoup 2.4 due to Fedora/Rehat/etc. not upgraded with libsoup 3.0")
+  set(HARDINFO_LIBSOUP3 0)
+endif()
+
 add_subdirectory(po)
+
 
 include(FindPkgConfig)
 if (HARDINFO_GTK3)
@@ -413,8 +424,7 @@ install(FILES pixmaps/hardinfo.png
 
 SET(CPACK_PACKAGE_VERSION ${HARDINFO_VERSION})
 SET(CPACK_GENERATOR "RPM;DEB")
-FIND_PROGRAM(rpm NAMES rpmbuild)
-if(${rpm})
+if(${RPM})
   SET(CPACK_GENERATOR "RPM")
 else()
   SET(CPACK_GENERATOR "DEB")
