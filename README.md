@@ -16,6 +16,8 @@ Features include:
 Status
 ------
 
+The License has been changed in 2024 from GPL2 to GPL2 or later due to the existance of some LGPL code. If you have any code in this repository that you would like removed, just open an issue and we will remove it, thanx.
+
 - Capabilities: HardInfo currently detects most software and hardware detected by the OS.
 - Features: Online database for exchanging benchmark results.
 - Development: Currently done by contributors, hwspeedy maintains (Missing OK from previous maintainer!!)
