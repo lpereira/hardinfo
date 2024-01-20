@@ -34,8 +34,7 @@ BUILDING
 --------
 **Debian/Ubuntu/Mint/PopOS**
 - sudo apt install git cmake build-essential gettext
-- sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev
-- sudo apt install libgtk-3-dev libglib2.0-dev
+- sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
 - mkdir build
@@ -48,14 +47,14 @@ BUILDING
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
 - sudo yum install epel-release
-- sudo yum install git cmake3 gcc gcc-c++ gettext (Centos 7 needs updated cmake3 from epel)
-- sudo yum install git cmake gcc gcc-c++ gettext (ALL Others)
+- sudo yum install git cmake3 gcc gcc-c++ gettext (**Centos 7** needs updated cmake3 from epel)
+- sudo yum install git cmake gcc gcc-c++ gettext (**ALL Others**)
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
 - mkdir build
 - cd build
-- cmake ..   (NOTE: Centos 7 needs the cmake3 from epel)
+- cmake ..   (NOTE: Centos 7 use **cmake3** from epel)
 - make
 - sudo make install
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
