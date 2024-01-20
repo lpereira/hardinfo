@@ -123,13 +123,13 @@ static int parity(int value) {
 }
 
 static void decode_sdr_module_size(unsigned char *bytes, dmi_mem_size *size) {
-    int i, k = 0;
+    unsigned short i, k = 0;
 
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
     if (bytes[5] <= 8 && bytes[17] <= 8) { k = bytes[5] * bytes[17]; }
 
-    if (i > 0 && i <= 12 && k > 0 && k<=65535) {
-        if (size) { *size = (1 << i) * k; }
+    if (i > 0 && i <= 12 && k > 0) {
+      if (size) { *size = (dmi_mem_size)k * (unsigned short)(1 << i); }
     } else {
         if (size) { *size = -1; }
     }
@@ -333,13 +333,13 @@ static void decode_ddr_module_speed(unsigned char *bytes, float *ddrclk, int *pc
 }
 
 static void decode_ddr_module_size(unsigned char *bytes, dmi_mem_size *size) {
-    int i, k;
+    unsigned short i, k;
 
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
     k = (bytes[5] <= 8 && bytes[17] <= 8) ? bytes[5] * bytes[17] : 0;
 
-    if (i > 0 && i <= 12 && k > 0 && k<=65535) {
-        if (size) { *size = (1 << i) * k; }
+    if (i > 0 && i <= 12 && k > 0) {
+      if (size) { *size = (dmi_mem_size)k * (unsigned short)(1 << i); }
     } else {
         if (size) { *size = -1; }
     }
@@ -436,13 +436,13 @@ static void decode_ddr2_module_speed(unsigned char *bytes, float *ddr_clock, int
 }
 
 static void decode_ddr2_module_size(unsigned char *bytes, dmi_mem_size *size) {
-    int i, k;
+    unsigned short i, k;
 
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
     k = ((bytes[5] & 0x7) + 1) * bytes[17];
 
-    if (i > 0 && i <= 12 && k > 0 && k<=65535) {
-        if (size) { *size = ((1 << i) * k); }
+    if (i > 0 && i <= 12 && k > 0) {
+      if (size) { *size = (dmi_mem_size)k * (unsigned short)(1 << i); }
     } else {
         if (size) { *size = 0; }
     }

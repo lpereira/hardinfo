@@ -21,7 +21,7 @@
 #include "g-ring.h"
 
 #ifndef g_malloc0_n
-#define g_malloc0_n(x,y) g_malloc0(x * y)
+#define g_malloc0_n(x,y) g_malloc0((gsize)x * y)
 #endif
 
 #define get_element(r,i) ((r)->data + ((r)->elt_size * i))
@@ -60,8 +60,7 @@ g_ring_sized_new (guint          element_size,
 	ring_impl = g_slice_new0(GRingImpl);
 	ring_impl->elt_size = element_size;
 	ring_impl->len = reserved_size;
-	if((guint64)reserved_size*element_size<4000000000L)
-  	  ring_impl->data = g_malloc0_n(reserved_size, element_size);
+	ring_impl->data = g_malloc0_n(reserved_size, element_size);
 	ring_impl->destroy = element_destroy;
 	ring_impl->ref_count = 1;
 
