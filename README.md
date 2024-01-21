@@ -63,15 +63,13 @@ Building
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
 - hardinfo
 
-
-There are some build variables that can be changed for debug or distro release:
- * `CMAKE_BUILD_TYPE`: Can either be ``Release`` or ``Debug``.
-   * `[Default: Release]` ``Debug`` prints messages to console and is not recommended for general use.
- * `CMAKE_INSTALL_PREFIX`: Sets the installation prefix.
-   * `[Default: /usr/local]`: Distributions usually change this to `/usr`.
- 
-To set a variable, use cmake's -D parameter. For example:
-`	build $ cmake .. -DCMAKE_BUILD_TYPE=Debug `
+Distro building
+---------------
+For distribution in the different distros flavours please use the cmake build system with CPack:
+- cmake -DCMAKE_INSTALL_PREFIX=/usr .. (Add any other defines for your flavour to hardinfo/CMakeLists.txt)
+- make package
+  
+Please: Submit your changes to CMakeLists.txt so we have an easy to use package for all distributions, thanx.
 
 
 Setting up addition tools
