@@ -95,7 +95,7 @@ string(REPLACE "/" "_" CPACK_SYSTEM_NAME ${distro}-${disversion}.${CMAKE_HOST_SY
 string(REPLACE " " "_" CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
 
 # currently all RPM flavours uses libsoup-2
-if(${distro} MATCHES "fedora" OR ${distro} MATCHES "redhat" OR ${distro} MATCHES "CentOS Stream")
+if(${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*")
   set(RPM 1)
   message(STATUS "Building for LibSoup 2.4 due to Fedora/Rehat/Centos... not upgraded with libsoup 3.0")
   set(HARDINFO_LIBSOUP3 0)
