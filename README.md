@@ -53,7 +53,7 @@ NOTE: If make package fails use make install
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
 * NOTE: Centos 7 needs yum install cmake3 instead of cmake - use cmake3 instead of cmake
 - sudo yum install epel-release
-- sudo yum install git cmake gcc gcc-c++ gettext
+- sudo yum install git cmake gcc gcc-c++ gettext rpmdevtools
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
