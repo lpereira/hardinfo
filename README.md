@@ -74,7 +74,7 @@ To set a variable, use cmake's -D parameter. For example:
 `	build $ cmake .. -DCMAKE_BUILD_TYPE=Debug `
 
 
-SETTING UP ADDITIONAL TOOLS
+Setting up addition tools
 ---------------------------
 Most hardware is detected automatically by HardInfo, however, some hardware 
 needs manual set up.
@@ -91,3 +91,12 @@ to have the detected kernel modules loaded.
 in daemon mode, using the default port.
 - **eeprom module**: must be loaded to display info about your currently installed memory.
 Load with `modprobe eeprom` and refresh the module screen.
+
+
+Privacy Policy
+---------------------------
+When using the Synchronize feature in HardInfo, some information may be stored indefinitely in our servers.
+
+This information is completely anonymous, and is comprised solely from the machine configuration (e.g. CPU manufacturer and model, number of cores, maximum frequency of cores, GPU manufacturer and model, etc.), version of benchmarking tools used, etc. You can opt out by unticking the "Send benchmark results" entry in the Synchronize window.
+
+Both the HardInfo client and its server components are open source GPL2 or Later and can be audited.
