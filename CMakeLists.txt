@@ -108,6 +108,11 @@ if(${distro}${disversion} MATCHES "Ubuntu20.04")
   set(HARDINFO_LIBSOUP3 0)
 endif()
 
+#Debian 11
+if(${distro}${disversion} MATCHES "Debian GNU/Linux11")
+  set(HARDINFO_LIBSOUP3 0)
+endif()
+
 #Fedora 39
 if(${distro}${disversion} MATCHES "Fedora Linux39")
   set(PACKAGE_MANPAGES 0)
@@ -475,7 +480,7 @@ if(HARDINFO_LIBSOUP3)
   SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0)")
 else()
   SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
-  if(${distro}${disversion} MATCHES "Ubuntu20.04")
+  if(${distro}${disversion} MATCHES "Ubuntu20.04" OR ${distro}${disversion} MATCHES "Debian GNU/Linux11")
     SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup2.4-1 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
   endif()
 endif()  
