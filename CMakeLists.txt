@@ -83,6 +83,8 @@ add_definitions("-std=gnu89")
 add_definitions("-Wformat")
 add_definitions("-Wformat-security")
 
+###################################DISTRO CHANGES#######################################
+#Please add all distro relates stuff here - currently all RPM flavours uses libsoup-2.4
 set(RPM 0)
 if(${os_version_suffix} MATCHES ".el*")
   set(RPM 1)
@@ -90,6 +92,8 @@ if(${os_version_suffix} MATCHES ".el*")
   set(HARDINFO_LIBSOUP3 0)
 endif()
 
+
+########################################################################################
 add_subdirectory(po)
 
 
@@ -422,6 +426,10 @@ install(FILES pixmaps/hardinfo.png
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
 
+###########################PACKAGE BUILDING FOR DISTROS######################################
+#Please update here for building packages
+#currently all recommends packages are turned off as it's wrong - please help.
+
 SET(CPACK_PACKAGE_VERSION ${HARDINFO_VERSION})
 SET(CPACK_GENERATOR "RPM;DEB")
 if(${RPM})
@@ -431,21 +439,21 @@ else()
 endif()
 SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy")
 SET(CPACK_RPM_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system. Currently it knows about PCI, ISA PnP, USB, IDE, SCSI, Serial and parallel port devices.")
-SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench udisk2 mesa-utils lsscsi lm-sensors")
+#SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench (>=1.0.0) udisk2 (>=1.0.0) mesa-utils (>=1.0.0) lsscsi (>=1.0.0) lm-sensors (>=1.0.0)")
 SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
 if(HARDINFO_LIBSOUP3)
-  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
+  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
 else()
-  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
+  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup-2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
 endif()
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system. Currently it knows about PCI, ISA PnP, USB, IDE, SCSI, Serial and parallel port devices.")
-SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench udisk2 mesa-utils lsscsi lm-sensors")
+#SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench (>=1.0.0) udisk2 (>=1.0.0) mesa-utils (>=1.0.0) lsscsi (>=1.0.0) lm-sensors (>=1.0.0)")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
 if(HARDINFO_LIBSOUP3)
-  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0)")
+  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0)")
 else()
-  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup-2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
+  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
 endif()  
 INCLUDE(CPack)
 
