@@ -82,18 +82,19 @@ add_definitions("-Wformat-security")
 
 ###################################DISTRO CHANGES###############################
 #Please add all distro relates stuff here
+SET(PACKAGE_MANPAGES 1)
 set(RPM 0)
 file(STRINGS /etc/os-release distro REGEX "^NAME=")
 string(REGEX REPLACE "NAME=\"(.*)\"" "\\1" distro "${distro}")
 file(STRINGS /etc/os-release disversion REGEX "^VERSION_ID=")
 string(REGEX REPLACE "VERSION_ID=" "" disversion "${disversion}")
 string(REGEX REPLACE "\"" "" disversion "${disversion}")
-message("-- Found Package Target ${distro}-${disversion}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
+string(REPLACE "/" "_" CPACK_SYSTEM_NAME ${distro}-${disversion}.${CMAKE_HOST_SYSTEM_PROCESSOR})
+string(REPLACE " " "_" CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
+message("-- Found Package Target ${CPACK_SYSTEM_NAME}")
 
 #flavour output
 set(HARDINFO_OS ${distro})
-string(REPLACE "/" "_" CPACK_SYSTEM_NAME ${distro}-${disversion}.${CMAKE_HOST_SYSTEM_PROCESSOR})
-string(REPLACE " " "_" CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
 
 # currently all RPM flavours uses libsoup-2
 if(${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*")
@@ -105,6 +106,11 @@ endif()
 #ubuntu 20.04
 if(${distro}${disversion} MATCHES "Ubuntu20.04")
   set(HARDINFO_LIBSOUP3 0)
+endif()
+
+#Fedora 39
+if(${distro}${disversion} MATCHES "Fedora Linux39")
+  set(PACKAGE_MANPAGES 0)
 endif()
 
 ################################################################################
@@ -171,11 +177,11 @@ set(HARDINFO_RESOURCES
 	"data/pci.ids.min"
 	"data/kernel-module-icons.json"
 )
-
+if(${PACKAGE_MANPAGES})
 set(HARDINFO_MANPAGES
 	"hardinfo.1"
 )
-
+endif()
 set(MODULE_computer_SOURCES
 	modules/computer.c
 	modules/computer/alsa.c
