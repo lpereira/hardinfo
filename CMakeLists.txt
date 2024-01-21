@@ -102,7 +102,7 @@ if(${distro} MATCHES "fedora" OR ${distro} MATCHES "redhat" OR ${distro} MATCHES
 endif()
 
 #ubuntu 20.04
-if(${distro}${disversion} MATCHES "ubuntu20.04")
+if(${distro}${disversion} MATCHES "Ubuntu20.04")
   set(HARDINFO_LIBSOUP3 0)
 endif()
 
@@ -468,6 +468,9 @@ if(HARDINFO_LIBSOUP3)
   SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0)")
 else()
   SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
+  if(${distro}${disversion} MATCHES "Ubuntu20.04")
+    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup2.4-1 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
+  endif()
 endif()  
 INCLUDE(CPack)
 
