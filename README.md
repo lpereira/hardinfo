@@ -44,7 +44,7 @@ Building and installing
 - mkdir build
 - cd build
 - cmake ..
-- make package   (This creates a package so you do not polute your installation and it can be updated by distro releases)
+- make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo apt install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
 - sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2
 - hardinfo
@@ -60,8 +60,7 @@ NOTE: If make package fails use make install
 - mkdir build
 - cd build
 - cmake ..
-- make
-- make package   (This creates a package so you do not polute your installation and it can be updated by distro releases)
+- make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo yum install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
 - hardinfo
