@@ -86,7 +86,8 @@ set(RPM 0)
 file(STRINGS /etc/os-release distro REGEX "^NAME=")
 string(REGEX REPLACE "NAME=\"(.*)\"" "\\1" distro "${distro}")
 file(STRINGS /etc/os-release disversion REGEX "^VERSION_ID=")
-string(REGEX REPLACE "VERSION_ID=\"(.*)\"" "\\1" disversion "${disversion}")
+string(REGEX REPLACE "VERSION_ID=" "" disversion "${disversion}")
+string(REGEX REPLACE "\"" "" disversion "${disversion}")
 message("-- Found Package Target ${distro}-${disversion}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 #flavour output
