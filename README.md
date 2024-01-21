@@ -1,5 +1,6 @@
 [![Test](https://github.com/hwspeedy/hardinfo/actions/workflows/test.yml/badge.svg)](https://github.com/hwspeedy/hardinfo/actions/workflows/test.yml)
 [![GitHub release](https://img.shields.io/github/release/hwspeedy/hardinfo.svg)](https://github.com/hwspeedy/hardinfo/releases)
+[![GitHub release](https://img.shields.io/badge/PreRelease-v1.0.1-blue.svg)](https://github.com/hwspeedy/hardinfo/releases)
 
 HARDINFO
 ========
