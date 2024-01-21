@@ -33,8 +33,8 @@ Dependencies
 - Json-glib
 - Libsoup 2.4 (or newer) - Prefer **Libsoup-3.0**
 
-Building
---------
+Building and installing
+-----------------------
 **Debian/Ubuntu/Mint/PopOS**
 * NOTE: older version only has libsoup-2.4-dev so use "cmake -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
 - sudo apt install git cmake build-essential gettext
@@ -44,10 +44,11 @@ Building
 - mkdir build
 - cd build
 - cmake ..
-- make
-- sudo make install
+- make package   (This creates a package so you do not polute your installation and it can be updated by distro releases)
+- sudo apt install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
 - sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2
 - hardinfo
+NOTE: If make package fails use make install
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
 * NOTE: Centos 7 needs yum install cmake3 instead of cmake - use cmake3 instead of cmake
@@ -60,9 +61,11 @@ Building
 - cd build
 - cmake ..
 - make
-- sudo make install
+- make package   (This creates a package so you do not polute your installation and it can be updated by distro releases)
+- sudo yum install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
 - hardinfo
+NOTE: If make package fails use make install
 
 Distro building
 ---------------
