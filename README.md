@@ -24,7 +24,7 @@ Status
 
 Server code can be found in the "server" branch: https://github.com/hwspeedy/hardinfo/tree/server
 
-DEPENDENCIES
+Dependencies
 ------------
 - GTK+ 2.10 (or newer) - Prefer **GTK3**
 - GLib 2.10 (or newer)
@@ -32,7 +32,7 @@ DEPENDENCIES
 - Json-glib
 - Libsoup 2.4 (or newer) - Prefer **Libsoup-3.0**
 
-BUILDING
+Building
 --------
 **Debian/Ubuntu/Mint/PopOS**
 * NOTE: older version only has libsoup-2.4-dev so use "cmake -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
@@ -94,7 +94,7 @@ Load with `modprobe eeprom` and refresh the module screen.
 
 
 Privacy Policy
----------------------------
+---------------
 When using the Synchronize feature in HardInfo, some information may be stored indefinitely in our servers.
 
 This information is completely anonymous, and is comprised solely from the machine configuration (e.g. CPU manufacturer and model, number of cores, maximum frequency of cores, GPU manufacturer and model, etc.), version of benchmarking tools used, etc. You can opt out by unticking the "Send benchmark results" entry in the Synchronize window.
