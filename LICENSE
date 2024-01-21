@@ -1,5 +1,6 @@
-		    GNU GENERAL PUBLIC LICENSE
-		       Version 2, June 1991 - OR LATER GPL version
+GPL-2.0+  :  GNU General Public License v2.0 or later
+
+SPDX-License-Identifier: GPL-2.0+
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.
                51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
