@@ -2,7 +2,7 @@ project(hardinfo)
 cmake_minimum_required(VERSION 2.8.12)
 cmake_policy(VERSION 2.8.12)
 
-set(HARDINFO_VERSION "1.0.0")
+set(HARDINFO_VERSION "1.0.1")
 option(HARDINFO_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 1)
 set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
@@ -15,9 +15,6 @@ if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
 	set(HARDINFO_DEBUG 1)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
 endif()
-
-string (REGEX MATCH "\\.el[1-9]" os_version_suffix ${CMAKE_SYSTEM})
-message("--os_version_suffix:      ${os_version_suffix}")
 
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
 	set(HARDINFO_OS "linux")
@@ -83,8 +80,11 @@ add_definitions("-std=gnu89")
 add_definitions("-Wformat")
 add_definitions("-Wformat-security")
 
-###################################DISTRO CHANGES#######################################
+###################################DISTRO CHANGES###############################
 #Please add all distro relates stuff here - currently all RPM flavours uses libsoup-2.4
+string (REGEX MATCH "\\.el[1-9]" os_version_suffix ${CMAKE_SYSTEM})
+message("-- os_version_suffix:      ${os_version_suffix}")
+
 set(RPM 0)
 if(${os_version_suffix} MATCHES ".el*")
   set(RPM 1)
@@ -93,7 +93,7 @@ if(${os_version_suffix} MATCHES ".el*")
 endif()
 
 
-########################################################################################
+################################################################################
 add_subdirectory(po)
 
 
@@ -426,7 +426,7 @@ install(FILES pixmaps/hardinfo.png
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
 
-###########################PACKAGE BUILDING FOR DISTROS######################################
+########################PACKAGE BUILDING FOR DISTROS###########################
 #Please update here for building packages
 #currently all recommends packages are turned off as it's wrong - please help.
 
