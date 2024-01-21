@@ -1,6 +1,6 @@
-project(hardinfo)
 cmake_minimum_required(VERSION 2.8.12)
 cmake_policy(VERSION 2.8.12)
+project(hardinfo)
 
 set(HARDINFO_VERSION "1.0.1")
 option(HARDINFO_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
@@ -81,17 +81,30 @@ add_definitions("-Wformat")
 add_definitions("-Wformat-security")
 
 ###################################DISTRO CHANGES###############################
-#Please add all distro relates stuff here - currently all RPM flavours uses libsoup-2.4
-string (REGEX MATCH "\\.el[1-9]" os_version_suffix ${CMAKE_SYSTEM})
-message("-- os_version_suffix:      ${os_version_suffix}")
-
+#Please add all distro relates stuff here
 set(RPM 0)
-if(${os_version_suffix} MATCHES ".el*")
+file(STRINGS /etc/os-release distro REGEX "^NAME=")
+string(REGEX REPLACE "NAME=\"(.*)\"" "\\1" distro "${distro}")
+file(STRINGS /etc/os-release disversion REGEX "^VERSION_ID=")
+string(REGEX REPLACE "VERSION_ID=\"(.*)\"" "\\1" disversion "${disversion}")
+message("-- found ${distro} ${disversion}")
+
+#flavour output
+set(HARDINFO_OS ${distro})
+string(REPLACE "/" "_" CPACK_SYSTEM_NAME ${distro}-${disversion})
+string(REPLACE " " "_" CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
+
+# currently all RPM flavours uses libsoup-2
+if(${distro} MATCHES "fedora" OR ${distro} MATCHES "redhat" OR ${distro} MATCHES "CentOS Stream")
   set(RPM 1)
-  message(STATUS "Building for LibSoup 2.4 due to Fedora/Rehat/etc. not upgraded with libsoup 3.0")
+  message(STATUS "Building for LibSoup 2.4 due to Fedora/Rehat/Centos... not upgraded with libsoup 3.0")
   set(HARDINFO_LIBSOUP3 0)
 endif()
 
+#ubuntu 20.04
+if(${distro}${disversion} MATCHES "ubuntu20.04")
+  set(HARDINFO_LIBSOUP3 0)
+endif()
 
 ################################################################################
 add_subdirectory(po)
@@ -431,29 +444,30 @@ install(FILES pixmaps/hardinfo.png
 #currently all recommends packages are turned off as it's wrong - please help.
 
 SET(CPACK_PACKAGE_VERSION ${HARDINFO_VERSION})
+SET(CPACK_PACKAGE_HOMEPAGE_URL "https://hardinfo.bigbear.dk")
 SET(CPACK_GENERATOR "RPM;DEB")
 if(${RPM})
   SET(CPACK_GENERATOR "RPM")
 else()
   SET(CPACK_GENERATOR "DEB")
 endif()
-SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy")
+SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy <hardinfo@bigbear.dk>")
 SET(CPACK_RPM_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system. Currently it knows about PCI, ISA PnP, USB, IDE, SCSI, Serial and parallel port devices.")
 #SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench (>=1.0.0) udisk2 (>=1.0.0) mesa-utils (>=1.0.0) lsscsi (>=1.0.0) lm-sensors (>=1.0.0)")
 SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
 if(HARDINFO_LIBSOUP3)
-  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
+  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup (>=3.0.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
 else()
-  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup-2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
+  SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib (>=1.0.0), libsoup (>=2.4.0), libgtk-3-0 (>=3.0.0), libglib2.0-0 (>=2.0.0)")
 endif()
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo@bigbear.dk>")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system. Currently it knows about PCI, ISA PnP, USB, IDE, SCSI, Serial and parallel port devices.")
 #SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench (>=1.0.0) udisk2 (>=1.0.0) mesa-utils (>=1.0.0) lsscsi (>=1.0.0) lm-sensors (>=1.0.0)")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
 if(HARDINFO_LIBSOUP3)
   SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-3.0-0 (>=3.0.0), libgtk-3-0 (>=3.0.0)")
 else()
-  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup-2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
+  SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0 (>=1.0.0), zlib1g (>=1.0.0), libsoup2.4-0 (>=2.4.0), libgtk-3-0 (>=3.0.0)")
 endif()  
 INCLUDE(CPack)
 
