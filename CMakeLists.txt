@@ -87,11 +87,11 @@ file(STRINGS /etc/os-release distro REGEX "^NAME=")
 string(REGEX REPLACE "NAME=\"(.*)\"" "\\1" distro "${distro}")
 file(STRINGS /etc/os-release disversion REGEX "^VERSION_ID=")
 string(REGEX REPLACE "VERSION_ID=\"(.*)\"" "\\1" disversion "${disversion}")
-message("-- found ${distro} ${disversion}")
+message("-- Found Package Target ${distro}-${disversion}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 #flavour output
 set(HARDINFO_OS ${distro})
-string(REPLACE "/" "_" CPACK_SYSTEM_NAME ${distro}-${disversion})
+string(REPLACE "/" "_" CPACK_SYSTEM_NAME ${distro}-${disversion}.${CMAKE_HOST_SYSTEM_PROCESSOR})
 string(REPLACE " " "_" CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
 
 # currently all RPM flavours uses libsoup-2
