@@ -16,12 +16,6 @@ Features include:
 
 Status
 ------
-
-**The Project License has been changed in 2024 from GPL2 to GPL2 or later**
-As we use GPL3 code.
-In order for this project to could evolve lpereira has agreed to change license of source code to GPL2+. (https://github.com/lpereira/hardinfo/issues/530).
-If you have any changes in this repository that you would like removed, just open an issue and we will remove it, thanx.
-
 - Capabilities: HardInfo currently detects most software and hardware detected by the OS.
 - Features: Online database for exchanging benchmark results.
 - Development: Currently done by contributors, hwspeedy maintains (Missing OK from previous maintainer!!)
@@ -98,6 +92,15 @@ in daemon mode, using the default port.
 - **eeprom module**: must be loaded to display info about your currently installed memory.
 Load with `modprobe eeprom` and refresh the module screen.
 
+License
+------
+The Project License has been changed in 2024 from GPL2 to **GPL2 or later**
+
+As we use GPL2.1 and GPL3 code and would like to future proof the project. Therefor lpereira has agreed to change license of source code to GPL2+. (https://github.com/lpereira/hardinfo/issues/530).
+
+If you have any changes in this repository that you would like removed, just open an issue and we will remove it, thanx.
+
+It is all about open source and creating together - Read more about GPL license here: https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
 
 Privacy Policy
 ---------------
