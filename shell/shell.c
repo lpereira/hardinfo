@@ -2389,7 +2389,7 @@ void key_get_components(const gchar *key,
         *label = g_strdup(np);
         gchar *lbp = g_utf8_strchr(*label, -1, '#');
         if (lbp)
-           *lbp = 0;
+            *lbp = 0;
         if (lbp && dis)
             *dis = g_strdup(lbp + 1);
 
