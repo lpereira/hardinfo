@@ -97,7 +97,7 @@ message("-- Found Package Target ${CPACK_SYSTEM_NAME}")
 set(HARDINFO_OS ${distro})
 
 # currently all RPM flavours uses libsoup-2
-if(${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*")
+if(${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*" OR ${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*")
   set(RPM 1)
   message(STATUS "Building for LibSoup 2.4 due to Fedora/Rehat/Centos... not upgraded with libsoup 3.0")
   set(HARDINFO_LIBSOUP3 0)
