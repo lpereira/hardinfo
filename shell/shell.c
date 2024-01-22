@@ -2382,21 +2382,21 @@ void key_get_components(const gchar *key,
       }
     } else
         np = key;
-    
+
     if (name)
         *name = g_strdup(np);
     if (label) {
         *label = g_strdup(np);
         gchar *lbp = g_utf8_strchr(*label, -1, '#');
         if (lbp)
-	    *lbp = 0;
+           *lbp = 0;
         if (lbp && dis)
             *dis = g_strdup(lbp + 1);
 
         if (flags && *flags && strchr(*flags, '@')) {
             gchar *ol = *label;
-	    *label = g_strcompress(ol);
-	    g_free(ol);
+            *label = g_strcompress(ol);
+            g_free(ol);
         }
-   }
+    }
 }
