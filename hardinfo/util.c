@@ -17,7 +17,7 @@
  */
 
 /*
- * Functions h_strdup_cprintf and h_strconcat are based on GLib version 2 or later.4.6
+ * Functions h_strdup_cprintf and h_strconcat are based on GLib version 2.4.6
  * Copyright (C) 1995-1997  Peter Mattis, Spencer Kimball and Josh MacDonald
  *
  * This library is free software; you can redistribute it and/or

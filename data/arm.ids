@@ -14,7 +14,7 @@
 # Comments start with '#'.
 #
 # This file can be distributed under the GNU General Public License
-# (version 2 or later.or higher).
+# (version 2 or higher).
 #
 # Based on lscpu-arm.c by Riku Voipio <riku.voipio@iki.fi>
 #

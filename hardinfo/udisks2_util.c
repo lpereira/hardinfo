@@ -36,7 +36,7 @@ GVariant* get_dbus_property(GDBusProxy* proxy, const gchar *interface,
     return v;
 }
 
-// this function works with udisks2 version 2 or later.7.2 or newer
+// this function works with udisks2 version 2.7.2 or newer
 GSList* get_block_dev_paths_from_udisks2(GDBusConnection* conn){
     GDBusProxy *proxy;
     GVariant *options, *v;
@@ -597,7 +597,7 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block,
         u->partition_table = g_variant_dup_string(v, NULL);
         g_variant_unref(v);
     }
-    // 'Partitions' property is available in udisks2 version 2 or later.7.2 or newer
+    // 'Partitions' property is available in udisks2 version 2.7.2 or newer
     v = get_dbus_property(block, UDISKS2_PART_TABLE_INTERFACE, "Partitions");
     if (v){
         g_variant_get(v, "ao", &iter);
