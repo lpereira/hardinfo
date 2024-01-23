@@ -1,6 +1,6 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2020 EntityFX <artem.solopiy@gmail.com> and MCST Elbrus Team GPL2-FIXME
+ *    Copyright (C) 2020 EntityFX <artem.solopiy@gmail.com> and MCST Elbrus Team GPL-FIXME
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
