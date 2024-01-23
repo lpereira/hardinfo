@@ -641,7 +641,7 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 			   -1);
     }
 
-    add_module_to_menu(module->name, module->icon);
+    //add_module_to_menu(module->name, module->icon);
 
     if (module->entries) {
 	ShellModuleEntry *entry;
