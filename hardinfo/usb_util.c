@@ -1,9 +1,9 @@
 /*
  *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2017 L. A. F. Pereira <l@tia.mat.br>
+ *    Copyright (C) 2003-2017 L. A. F. Pereira <l@tia.mat.br> GPL2+
  *    This file
- *    Copyright (C) 2017 Burt P. <pburt0@gmail.com>
- *    Copyright (C) 2019 Ondrej Čerman
+ *    Copyright (C) 2017 Burt P. <pburt0@gmail.com> GPL2+
+ *    Copyright (C) 2019 Ondrej Čerman - GPL-FIXME
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by

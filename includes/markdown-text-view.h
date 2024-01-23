@@ -6,7 +6,7 @@
  * Portions Copyright (C) 2007-2008 Richard Hughes <richard@hughsie.com>
  * Portions Copyright (C) GTK+ Team (based on hypertext textview demo)
  *
- * Licensed under the GNU General Public License Version 2 or Later
+ * Licensed under the GNU General Public License Version 2
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
