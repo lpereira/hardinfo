@@ -43,7 +43,7 @@ Building and installing
 - cmake ..
 - make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo apt install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
-- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2
+- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils
 - hardinfo
 
 NOTE: If make package fails use make install
@@ -60,7 +60,7 @@ NOTE: If make package fails use make install
 - cmake ..
 - make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo yum install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
-- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2
+- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils
 - hardinfo
 
 NOTE: If make package fails use make install
@@ -91,6 +91,7 @@ to have the detected kernel modules loaded.
 in daemon mode, using the default port.
 - **eeprom module**: must be loaded to display info about your currently installed memory.
 Load with `modprobe eeprom` and refresh the module screen.
+- **xdg-utils**: xdg_open is used to open your browser for bugs & homepage.
 
 License
 ------
