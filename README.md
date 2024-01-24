@@ -33,7 +33,7 @@ Dependencies
 Building and installing
 -----------------------
 **Debian/Ubuntu/Mint/PopOS**
-* NOTE: older version only has libsoup2.4-dev so use "cmake -DHARDINFO_LIBSOUP3=0 .." instead of "cmake .."
+* NOTE: older distro's only has libsoup2.4 - use libsoup2.4-dev instead of libsoup-3.0-dev 
 - sudo apt install git cmake build-essential gettext
 - sudo apt install libjson-glib-dev zlib1g-dev libsoup-3.0-dev libgtk-3-dev libglib2.0-dev
 - git clone https://github.com/hwspeedy/hardinfo
@@ -49,7 +49,7 @@ Building and installing
 NOTE: If make package fails use make install
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
-* NOTE: Centos 7 needs yum install cmake3 instead of cmake - use cmake3 instead of cmake
+* NOTE: Centos 7 needs epel-release and cmake3 instead of cmake - use cmake3 instead of cmake
 - sudo yum install epel-release  (only CentOS 7)
 - sudo yum install git cmake gcc gcc-c++ gettext rpmdevtools
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
