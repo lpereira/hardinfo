@@ -91,7 +91,7 @@ static void ids_query_result_set_str(ids_query_result *ret, int tabs, gchar *p) 
 long scan_ids_file(const gchar *file, const gchar *qpath, ids_query_result *result, long start_offset) {
     gchar **qparts = NULL;
     gchar buff[IDS_LOOKUP_BUFF_SIZE] = "";
-    ids_query_result ret = {};
+    ids_query_result ret;// = {};
     gchar *p = NULL;
 
     FILE *fd;
@@ -99,6 +99,8 @@ long scan_ids_file(const gchar *file, const gchar *qpath, ids_query_result *resu
     int qdepth;
     int qpartlen[IDS_LOOKUP_MAX_DEPTH];
     long last_root_fpos = -1, fpos, line = -1;
+   
+    memset(&ret,0,sizeof(ids_query_result));
 
     if (!qpath)
         return -1;

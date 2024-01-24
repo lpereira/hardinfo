@@ -74,9 +74,9 @@ const gchar *find_pci_ids_file() {
 char *pci_lookup_ids_vendor_str(uint32_t id) {
     gchar *ret = NULL;
 
-    ids_query_result result = {};
+    ids_query_result result;// = {};
     gchar *qpath;
-
+    memset(&result,0,sizeof(ids_query_result));
     if (!find_pci_ids_file())
         return FALSE;
 
@@ -92,9 +92,9 @@ char *pci_lookup_ids_vendor_str(uint32_t id) {
 
 static gboolean pci_lookup_ids(pcid *d) {
     gboolean ret = FALSE;
-    ids_query_result result = {};
+    ids_query_result result;// = {};
     gchar *qpath;
-
+    memset(&result,0,sizeof(ids_query_result));
     if (!find_pci_ids_file())
         return FALSE;
 
