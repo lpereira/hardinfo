@@ -32,7 +32,6 @@
  * Section overview.
  */
 
-G_DEFINE_TYPE(UberLabel, uber_label, GTK_TYPE_WIDGET)
 
 struct _UberLabelPrivate
 {
@@ -42,6 +41,8 @@ struct _UberLabelPrivate
 	GdkRGBA   color;
 	gboolean   in_block;
 };
+
+G_DEFINE_TYPE_WITH_PRIVATE(UberLabel, uber_label, GTK_TYPE_WIDGET)
 
 enum
 {
@@ -303,7 +304,6 @@ uber_label_class_init (UberLabelClass *klass) /* IN */
 	object_class = G_OBJECT_CLASS(klass);
 	object_class->finalize = uber_label_finalize;
 	object_class->set_property = uber_label_set_property;
-	g_type_class_add_private(object_class, sizeof(UberLabelPrivate));
 
 	g_object_class_install_property(object_class,
 	                                PROP_COLOR,
@@ -354,9 +354,8 @@ uber_label_init (UberLabel *label) /* IN */
 {
 	UberLabelPrivate *priv;
 
-	label->priv = G_TYPE_INSTANCE_GET_PRIVATE(label,
-	                                          UBER_TYPE_LABEL,
-	                                          UberLabelPrivate);
+	label->priv = uber_label_get_instance_private(label);
+
 	priv = label->priv;
 	priv->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	priv->block = gtk_drawing_area_new();
