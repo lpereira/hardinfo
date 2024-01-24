@@ -61,7 +61,7 @@ _uber_timeout_interval_prepare (gint64         current_time,
                                    UberTimeoutInterval *interval,
                                    gint                   *delay)
 {
-  gint elapsed_time, new_frame_num;
+  guint elapsed_time, new_frame_num;
 
   elapsed_time = _uber_timeout_interval_get_ticks (current_time, interval);
   new_frame_num = elapsed_time * interval->fps / 1000;

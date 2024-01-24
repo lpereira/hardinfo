@@ -254,7 +254,7 @@ void scan_dev(gboolean reload)
 {
     SCAN_START();
 
-    int i;
+    guint i;
     struct {
        gchar *compiler_name;
        gchar *version_command;
@@ -465,7 +465,7 @@ gchar *computer_get_virtualization(void)
         "/var/log/dmesg",
         NULL
     };
-    const static struct {
+    static const struct {
         gchar *str;
         gchar *vmtype;
     } vm_types[] = {

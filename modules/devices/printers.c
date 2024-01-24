@@ -181,7 +181,7 @@ const struct {
 void
 scan_printers_do(void)
 {
-    int num_dests, i, j;
+    guint num_dests, j, i;
     CUPSDest *dests;
     gchar *prn_id, *prn_moreinfo;
 
@@ -209,7 +209,7 @@ scan_printers_do(void)
 
 	    options = g_hash_table_new(g_str_hash, g_str_equal);
 
-	    for (j = 0; j < dests[i].num_options; j++) {
+	    for (j = 0; (int)j < dests[i].num_options; j++) {
 	      g_hash_table_insert(options,
 	                          g_strdup(dests[i].options[j].name),
 	                          g_strdup(dests[i].options[j].value));

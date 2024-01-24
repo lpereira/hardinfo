@@ -57,7 +57,7 @@ __scan_battery_apcupsd(void)
     GHashTable  *ups_data;
     FILE	*apcaccess;
     char	buffer[512], *apcaccess_path;
-    int		i;
+    guint		i;
 
     apcaccess_path = find_program("apcaccess");
     if (apcaccess_path && (apcaccess = popen(apcaccess_path, "r"))) {

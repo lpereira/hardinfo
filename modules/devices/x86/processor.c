@@ -685,7 +685,7 @@ gchar *processor_describe(GSList * processors) {
 gchar *dmi_socket_info() {
     gchar *ret;
     dmi_type dt = 4;
-    int i;
+    guint i;
     dmi_handle_list *hl = dmidecode_handles(&dt);
 
     if (!hl) {

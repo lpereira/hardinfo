@@ -86,13 +86,13 @@ g_ring_append_vals (GRing         *ring,
 	GRingImpl *ring_impl = (GRingImpl *)ring;
 	gpointer idx;
 	gint x;
-	gint i;
+	guint i;
 
 	g_return_if_fail(ring_impl != NULL);
 
 	for (i = 0; i < len; i++) {
-		x = ring->pos - i;
-		x = (x >= 0) ? x : ring->len + x;
+	        x = (int)ring->pos - i;
+		if (x < 0) x += ring->len;
 		idx = ring->data + (ring_impl->elt_size * x);
 		if (ring_impl->destroy && ring_impl->looped == TRUE) {
 			ring_impl->destroy(idx);
@@ -133,7 +133,7 @@ g_ring_foreach (GRing    *ring,
 	for (i = ring_impl->pos - 1; i >= 0; i--) {
 		func(get_element(ring_impl, i), user_data);
 	}
-	for (i = ring->len - 1; i >= ring_impl->pos; i--) {
+	for (i = ring->len - 1; i >= (int)ring_impl->pos; i--) {
 		func(get_element(ring_impl, i), user_data);
 	}
 }

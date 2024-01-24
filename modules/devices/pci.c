@@ -45,7 +45,7 @@ static const struct {
 
 static const gchar *find_icon_for_class(uint32_t class)
 {
-    int i;
+    guint i;
 
     for (i = 0; i < G_N_ELEMENTS(class2icon); i++) {
 	if (class2icon[i].class <= 0xff) {

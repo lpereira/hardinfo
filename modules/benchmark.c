@@ -755,7 +755,7 @@ static gchar *get_benchmark_results(gsize *len)
     JsonNode *root;
     bench_machine *this_machine;
     gchar *out;
-    gint i;
+    guint i;
 
     for (i = 0; i < G_N_ELEMENTS(entries); i++) {
         if (!entries[i].name || !entries[i].scan_callback)
@@ -905,7 +905,7 @@ void hi_module_init(void)
     sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
 
-    int i;
+    guint i;
     for (i = 0; i < G_N_ELEMENTS(entries) - 1 /* account for NULL */; i++)
         bench_results[i] = (bench_value)EMPTY_BENCH_VALUE;
 }

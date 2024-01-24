@@ -75,7 +75,7 @@ void stock_icon_register_pixbuf(GdkPixbuf * pixbuf, gchar * stock_id)
 
 void stock_icons_init(void)
 {
-    gint i;
+    guint i;
     guint n_stock_icons = G_N_ELEMENTS(stock_icons);
 
     DEBUG("initializing stock icons");

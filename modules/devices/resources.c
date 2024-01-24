@@ -72,7 +72,7 @@ void scan_device_resources(gboolean reload)
     SCAN_START();
     FILE *io;
     gchar buffer[256];
-    gint i;
+    guint i;
     gint zero_to_zero_addr = 0;
 
     struct {

@@ -76,7 +76,8 @@ message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_AR
 
 add_definitions("-std=gnu89")
 #add_definitions("-Wno-deprecated-declarations")
-#add_definitions("-Wextra")
+add_definitions("-Wextra")
+add_definitions("-Wno-missing-field-initializers")
 add_definitions("-Wformat")
 add_definitions("-Wformat-security")
 
