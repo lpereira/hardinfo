@@ -45,11 +45,6 @@ char *uidefs_str =
     "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">"
     "		<menuitem name=\"WebPage\" action=\"HomePageAction\"/>"
     "		<menuitem name=\"ReportBug\" action=\"ReportBugAction\"/>"
-    "		<separator/>"
-    "		<menu name=\"HelpMenuModules\" "
-    "action=\"HelpMenuModulesAction\">"
-    "			<separator name=\"LastSep\"/>"
-    "		</menu>"
     "		<menuitem name=\"About\" action=\"AboutAction\"/>"
     "	</menu>"
     "	</menubar>"
@@ -65,5 +60,13 @@ char *uidefs_str =
     "		</placeholder>"
     "	</toolbar>"
     "</ui>";
+
+/*DISABLED
+    "		<separator/>"
+    "		<menu name=\"HelpMenuModules\" "
+    "action=\"HelpMenuModulesAction\">"
+    "			<separator name=\"LastSep\"/>"
+    "		</menu>"
+*/
 
 #endif /* __UIDEFS_H__ */

@@ -19,6 +19,8 @@
 #ifndef __STOCK_H__
 #define __STOCK_H__
 
+#define HI_STOCK_CLIPBOARD	"hi-stock-clipboard"
+#define HI_STOCK_REFRESH	"hi-stock-refresh"
 #define HI_STOCK_REPORT		"hi-stock-report"
 #define HI_STOCK_INTERNET	"hi-stock-internet"
 #define HI_STOCK_MODULE		"hi-stock-module"
