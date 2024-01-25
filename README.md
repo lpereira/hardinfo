@@ -64,7 +64,7 @@ Building and installing
 Distro building
 ---------------
 For distribution in the different distros flavours please use the cmake build system with CPack:
-- cmake .. (Add any other defines for your flavour to hardinfo/CMakeLists.txt)
+- cmake ..       (Add any other defines for your flavour to CMakeLists.txt)
 - make package
   
 Please: Submit your changes to CMakeLists.txt so we have an easy to use package for all distributions, thanx.
