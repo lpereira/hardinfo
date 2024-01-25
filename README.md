@@ -42,7 +42,7 @@ Building and installing
 - cd build
 - cmake ..
 - make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo apt install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package or use TAB)
+- sudo apt install ./hardinfo-VERSION-DISTRO-ARCH.deb  (Use reinstall instead of install if already inst.)
 - sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils
 - hardinfo
 
@@ -57,7 +57,7 @@ Building and installing
 - cd build
 - cmake ..
 - make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo yum install ./hardinfo-VERSION-DISTRO-MACHINE.rpm  (See output from make package or use TAB)
+- sudo yum install ./hardinfo-VERSION-DISTRO-ARCH.rpm  (Use reinstall instead of install if already inst.)
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils
 - hardinfo
 
