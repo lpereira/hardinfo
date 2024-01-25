@@ -162,8 +162,12 @@ detect_window_manager(void)
     const gchar* windowman;
     GdkScreen *screen = gdk_screen_get_default();
 
+#if GTK_CHECK_VERSION(3,0,0)
     if (GDK_IS_X11_SCREEN(screen)) {
-        windowman = gdk_x11_screen_get_window_manager_name(screen);
+#else
+    if (screen && GDK_IS_SCREEN(screen)) {
+#endif
+        windowman = gdk_x11_screen_get_window_manager_name(screen); 
     } else return g_strdup("Not X11");
 
     if (g_str_equal(windowman, "Xfwm4"))
