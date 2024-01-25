@@ -42,11 +42,9 @@ Building and installing
 - cd build
 - cmake ..
 - make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo apt install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
+- sudo apt install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package or use TAB)
 - sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils
 - hardinfo
-
-NOTE: If make package fails use make install
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
 * NOTE: Centos 7 needs epel-release and cmake3 instead of cmake - use cmake3 instead of cmake
@@ -59,11 +57,9 @@ NOTE: If make package fails use make install
 - cd build
 - cmake ..
 - make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo yum install ./hardinfo-VERSION-DISTRO-MACHINE.deb  (See output from make package)
+- sudo yum install ./hardinfo-VERSION-DISTRO-MACHINE.rpm  (See output from make package or use TAB)
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils
 - hardinfo
-
-NOTE: If make package fails use make install
 
 Distro building
 ---------------
@@ -91,15 +87,13 @@ to have the detected kernel modules loaded.
 in daemon mode, using the default port.
 - **eeprom module**: must be loaded to display info about your currently installed memory.
 Load with `modprobe eeprom` and refresh the module screen.
-- **xdg-utils**: xdg_open is used to open your browser for bugs & homepage.
+- **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
 
 License
 ------
 The Project License has been changed in 2024 from GPL2 to **GPL2 or later**
 
-As we use LGPL2.1+ and GPL3 code. To future proof the project, lpereira has agreed to change license of source code also to GPL2+. (https://github.com/lpereira/hardinfo/issues/530).
-
-If you have any changes in this repository that you would like removed because of the source file license change, just open an issue and we will remove your part, thanx.
+Because we use LGPL2.1+ and GPL3 code. To future proof the project, lpereira and other developers has agreed to change license of source code also to GPL2+. (https://github.com/lpereira/hardinfo/issues/530) (https://github.com/lpereira/hardinfo/issues/707).
 
 It is all about open source and creating together - Read more about GPL license here: https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
 
