@@ -23,11 +23,11 @@ Server code can be found in the "server" branch: https://github.com/hwspeedy/har
 
 Dependencies
 ------------
-- GTK3 >=3.00 or GTK2+ >=2.20 - Prefer **GTK3**
+- GTK3 >=3.00 or GTK2+ >=2.20 - Prefer **GTK3** (GTK2+: cmake -DHARDINFO_GTK3=0 ..)
 - GLib >=2.24 
 - Zlib 
 - glib JSON
-- Libsoup2.4 >=2.42 or Libsoup-3.0 (EXPERIMENTAL)
+- Libsoup2.4 >=2.42 or Libsoup-3.0 (EXPERIMENTAL) (LS3: cmake -DHARDINFO_LIBSOUP3=1 ..)
 
 Building and installing
 -----------------------
