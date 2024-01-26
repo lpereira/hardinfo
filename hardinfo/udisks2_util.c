@@ -1,4 +1,5 @@
 #include <gio/gio.h>
+#include <string.h>
 #include "udisks2_util.h"
 
 #define UDISKS2_INTERFACE            "org.freedesktop.UDisks2"

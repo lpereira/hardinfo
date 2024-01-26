@@ -19,6 +19,8 @@
  */
 
 #include "format_early.h"
+#include <string.h>
+#include <stdlib.h>
 
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
