@@ -1,13 +1,15 @@
 Translators
 ===========
 
-Before starting translation the words/texts, we have in the program needs to be
-updated to the .po files. This is done by running ./updatepo.sh in the /po folder.
+Before starting translation of the words/texts, we have in the program, the po files
+needs to updated. This is done by running
+cd po            (Always be in the po folder)
+./updatepo.sh    (Updates po from source code and shows status)
 
 When done the .po files are ready to be changed, thanx for helping with translation.
 
-you can also see the status of the different languages including your own after
-editing, by running the ./updatepo.sh in /po folder - it looks like this:
+You can also see the status of the different languages including your own after
+editing - it looks like this:
 
 hardinfo.pot now has 1228 strings (no change), with 69 c-format strings
 (as of release-0.5-1527-g39d064f-dirty 39d064f52d54618442e9a056fd6350102360ec6d)
@@ -21,4 +23,30 @@ hardinfo.pot now has 1228 strings (no change), with 69 c-format strings
 - [ ] tr.po : (4 / 1228 remain untranslated, needs work/fuzzy: 0)
 - [ ] zh_CN.po : (859 / 1228 remain untranslated, needs work/fuzzy: 0)
 
-Thank you very much
+
+Editing:
+--------
+use the poedit program installed by:
+apt install poedit
+yum install poedit
+
+start the program:
+poedit ./xx.po   (xx=LANGUAGE-2LETTER-SMALL-CAPS)
+NOTE: only do translation and use find, save in the program
+
+
+New Language:
+-------------
+cp NEW.po xx.po  (xx=LANGUAGE-2LETTER-SMALL-CAPS)
+emacs ./xx.po    (edit the empty po and change all CHANGE-* accordingly)
+./updatepo.sh    (updates the po with all the words/text we have in the program and shows status)
+--ready to edit--
+
+
+Backup and submit
+-----------------
+git add xx.po   (If you have made a new language translation)
+git commit -a
+git push
+
+It is better to make a git push too much than loose all your great work.

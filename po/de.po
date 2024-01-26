@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-26 15:06+0100\n"
-"PO-Revision-Date: 2016-06-10 12:11+0200\n"
+"POT-Creation-Date: 2024-01-26 17:09+0100\n"
+"PO-Revision-Date: 2024-01-26 16:57+0100\n"
 "Last-Translator: Alexander Münch <git@thehacker.biz>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: hardinfo/cpu_util.c:29
 msgid "Little Endian"
@@ -343,7 +343,7 @@ msgstr ""
 
 #: hardinfo/dmi_util.c:250
 msgid "Main Server Chassis"
-msgstr "Hauptservergehäuse "
+msgstr "Hauptservergehäuse"
 
 #: hardinfo/dmi_util.c:251
 msgid "Expansion Chassis"
@@ -668,14 +668,14 @@ msgstr "Module \"%s\" ist von Modul \"%s\" abhängig, lade Modul?"
 #: hardinfo/util.c:929
 #, c-format
 msgid "Module \"%s\" depends on module \"%s\"."
-msgstr "Modul \"%s\" ist von Modul \"%s\" abhängig"
+msgstr "Modul \"%s\" ist von Modul \"%s\" abhängig."
 
 #: hardinfo/util.c:986
 #, c-format
 msgid "No module could be loaded. Check permissions on \"%s\" and try again."
 msgstr ""
 "Kein Modul konnte geladen werden. Überprüfe Berechtigung von \"%s\" und "
-"versuche es erneut"
+"versuche es erneut."
 
 #: hardinfo/util.c:990
 msgid ""
@@ -683,7 +683,7 @@ msgid ""
 "modules and try again with a valid module list."
 msgstr ""
 "Kein Modul konnte geladen werden. Bitte führe hardinfo -l aus um alle Module "
-"anzuzeigen und versuche es mit einer gültigen Liste erneut"
+"anzuzeigen und versuche es mit einer gültigen Liste erneut."
 
 #: hardinfo/util.c:1045
 #, c-format
@@ -722,7 +722,7 @@ msgstr ""
 #: shell/callbacks.c:160
 #, c-format
 msgid "No about information is associated with the %s module."
-msgstr "Keine 'Über' Information ist mit dem Modul %s verbunden"
+msgstr "Keine 'Über' Information ist mit dem Modul %s verbunden."
 
 #: shell/callbacks.c:251
 msgid "System information and benchmark tool"
@@ -1216,7 +1216,7 @@ msgid ""
 "comparable to current version. Some details are missing."
 msgstr ""
 "Dieses Ergebnis stammt von einer früheren Version von Hardinfo. Ergebnisse "
-"stimmen möglicherweise nicht mit der derzeitigen Version überein"
+"stimmen möglicherweise nicht mit der derzeitigen Version überein."
 
 #: modules/benchmark/bench_results.c:519 modules/benchmark/bench_results.c:582
 #: modules/devices/devicetree/pmac_data.c:81 modules/devices/sh/processor.c:85
@@ -2059,7 +2059,7 @@ msgstr "Geringer Speicher"
 
 #: modules/computer/memory_usage.c:112
 msgid "Free Low Memory"
-msgstr "freier geringer Speicher"
+msgstr "Freier geringer Speicher"
 
 #: modules/computer/memory_usage.c:113
 msgid "Virtual Memory"
@@ -2757,7 +2757,7 @@ msgstr ""
 
 #: modules/devices/devicetree.c:165
 msgid "No revision code available; unable to lookup model details."
-msgstr "Kein Revisionscode verfügbar; unfähig Modelldetails abzurufen"
+msgstr "Kein Revisionscode verfügbar; unfähig Modelldetails abzurufen."
 
 #: modules/devices/devicetree.c:190
 msgid "More"
@@ -2818,7 +2818,7 @@ msgstr "Speicher (Spezifikation)"
 
 #: modules/devices/devicetree/rpi_data.c:170
 msgid "Permanent overvolt bit"
-msgstr "Permanenter Überspannungsbit "
+msgstr "Permanenter Überspannungsbit"
 
 #: modules/devices/devicetree/rpi_data.c:170
 msgctxt "rpi-ov-bit"
@@ -2999,7 +2999,7 @@ msgstr " <b><i>dmidecode</i></b> Dienstprogramm verfügbar"
 
 #: modules/devices/dmi_memory.c:1005
 msgid " ... <i>and</i> HardInfo running with superuser privileges"
-msgstr "... <i>und</i> HardInfo läuft mit superuser Privilegien"
+msgstr " ... <i>und</i> HardInfo läuft mit superuser Privilegien"
 
 #: modules/devices/dmi_memory.c:1006
 msgid ""
