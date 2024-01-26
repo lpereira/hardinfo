@@ -84,7 +84,8 @@ add_definitions("-Wformat-security")
 SET(PACKAGE_MANPAGES 1)
 set(RPM 0)
 file(STRINGS /etc/os-release distro REGEX "^NAME=")
-string(REGEX REPLACE "NAME=\"(.*)\"" "\\1" distro "${distro}")
+string(REGEX REPLACE "NAME=" "" distro "${distro}")
+string(REGEX REPLACE "\"" "" distro "${distro}")
 file(STRINGS /etc/os-release disversion REGEX "^VERSION_ID=")
 string(REGEX REPLACE "VERSION_ID=" "" disversion "${disversion}")
 string(REGEX REPLACE "\"" "" disversion "${disversion}")
@@ -95,10 +96,9 @@ message("-- Found Package Target ${CPACK_SYSTEM_NAME}")
 #flavour output
 set(HARDINFO_OS ${distro})
 
-# currently all RPM flavours uses libsoup-2
+# currently all RPM flavours uses libsoup-2.4
 if(${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*" OR ${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*")
   set(RPM 1)
-  message(STATUS "Building for LibSoup 2.4 due to Fedora/Rehat/Centos... not upgraded with libsoup 3.0")
   set(HARDINFO_LIBSOUP3 0)
 endif()
 
@@ -112,7 +112,7 @@ if(${distro}${disversion} MATCHES "Debian GNU/Linux11")
   set(HARDINFO_LIBSOUP3 0)
 endif()
 
-#Fedora 39
+#Fedora 39 - bug with man pages - probably needs upgrade..
 if(${distro}${disversion} MATCHES "Fedora Linux39")
   set(PACKAGE_MANPAGES 0)
 endif()
@@ -451,41 +451,54 @@ install(FILES pixmaps/hardinfo.png
 )
 
 ########################PACKAGE BUILDING FOR DISTROS###########################
-#Package only supported for GTK3
 #Please update here for building packages
 
 SET(CPACK_PACKAGE_VERSION ${HARDINFO_VERSION})
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://hardinfo.bigbear.dk")
-SET(CPACK_GENERATOR "RPM;DEB")
 if(${RPM})
     SET(CPACK_GENERATOR "RPM")
 else()
     SET(CPACK_GENERATOR "DEB")
 endif()
 
+#RPM
 SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy <hardinfo@bigbear.dk>")
 SET(CPACK_RPM_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system.  It has online benchmarking to check your machine performance against other machines.")
 SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils")
 SET(CPACK_RPM_PACKAGE_LICENSE "GPL2+")
 SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
 if(HARDINFO_LIBSOUP3)
-    SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, libsoup (>=3.0), libgtk-3-0 (>=3.0), libglib2.0-0 (>=2.10)")
+    SET(PACKAGE_LS "libsoup (>=3.0)")
 else()
-    SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, libsoup (>=2.42), libgtk-3-0 (>=3.0), libglib2.0-0 (>=2.10)")
+    SET(PACKAGE_LS "libsoup (>=2.42)")
 endif()
+if(HARDINFO_GTK3)
+    SET(PACKAGE_GTK "libgtk-3-0 (>=3.0)")
+else()
+    SET(PACKAGE_GTK "libgtk-2-0 (>=2.20)")
+endif()
+SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAGE_GTK}, libglib2.0-0 (>=2.10)")
 
+#DEB
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo@bigbear.dk>")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system. It has online benchmarking to check your machine performance against other machines.")
 SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
 if(HARDINFO_LIBSOUP3)
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, libsoup-3.0-0 (>=3.0), libgtk-3-0 (>=3.0)")
+    SET(PACKAGE_LS "libsoup-3.0.0 (>=3.0)")
 else()
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, libsoup2.4-1 (>=2.42), libgtk-3-0 (>=3.0)")
+    SET(PACKAGE_LS "libsoup2.4-1 (>=2.42)")
     if(${distro}${disversion} MATCHES "Ubuntu20.04" OR ${distro}${disversion} MATCHES "Debian GNU/Linux11")
-        SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, libsoup2.4-0 (>=2.42), libgtk-3-0 (>=3.0)")
+        SET(PACKAGE_LS "libsoup2.4-0 (>=2.42)")
     endif()
-endif()  
+endif()
+if(HARDINFO_GTK3)
+    SET(PACKAGE_GTK "libgtk-3-0 (>=3.0)")
+else()
+    SET(PACKAGE_GTK "libgtk-2-0 (>=2.20)")
+endif()
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, ${PACKAGE_LS}, ${PACKAGE_GTK}")
+  
 
 INCLUDE(CPack)
 
