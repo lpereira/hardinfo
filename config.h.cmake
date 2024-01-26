@@ -14,12 +14,7 @@
 #define LIBPREFIX		"@CMAKE_INSTALL_FULL_LIBDIR@/hardinfo"
 #define PREFIX			"@CMAKE_INSTALL_DATAROOTDIR@/hardinfo"
 
-#cmakedefine LIBSOUP_FOUND
 #cmakedefine HARDINFO_DEBUG	@HARDINFO_DEBUG@
-
-#ifdef LIBSOUP_FOUND
-#	define HAS_LIBSOUP
-#endif	/* LIBSOUP_FOUND */
 
 #if defined(HARDINFO_DEBUG) && (HARDINFO_DEBUG==1)
 #	define RELEASE 0

@@ -24,18 +24,17 @@ Server code can be found in the "server" branch: https://github.com/hwspeedy/har
 
 Dependencies
 ------------
-- GTK+ 2.10 (or newer) - Prefer **GTK3**
-- GLib 2.10 (or newer)
-- Zlib (for zlib benchmark)
-- Json-glib
-- Libsoup 2.4 (or newer) - Prefer **Libsoup-3.0**
+- GTK3 >=3.00 or GTK2+ >=2.20 - Prefer **GTK3**
+- GLib >=2.24 
+- Zlib 
+- glib JSON
+- Libsoup2.4 >=2.42 or Libsoup-3.0 (EXPERIMENTAL)
 
 Building and installing
 -----------------------
 **Debian/Ubuntu/Mint/PopOS**
-* NOTE: older distro's only has libsoup2.4 - use libsoup2.4-dev instead of libsoup-3.0-dev 
 - sudo apt install git cmake build-essential gettext
-- sudo apt install libjson-glib-dev zlib1g-dev libsoup-3.0-dev libgtk-3-dev libglib2.0-dev
+- sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev
 - git clone https://github.com/hwspeedy/hardinfo
 - cd hardinfo
 - mkdir build
