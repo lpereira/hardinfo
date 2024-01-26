@@ -11,8 +11,7 @@ in a simple to use GUI.
 
 Features include:
 - Report generation (in either HTML or plain text)
-- Benchmark result synchronization
-- Ability to explore the information on remote computers
+- Online Benchmarking - compare your machine against other machines
 
 Status
 ------
