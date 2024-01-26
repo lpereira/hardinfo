@@ -440,7 +440,6 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_INT,
 	 .arg_data = &max_bench_results,
 	 .description = N_("maximum number of benchmark results to include (-1 for no limit, default is 50)")},
-#if NOT_DEFINED	
 	{
 	 .long_name = "list-modules",
 	 .short_name = 'l',
@@ -459,7 +458,6 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &autoload_deps,
 	 .description = N_("automatically load module dependencies")},
-#endif
 	{
 	 .long_name = "version",
 	 .short_name = 'v',
