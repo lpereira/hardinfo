@@ -32,7 +32,7 @@ yum install poedit
 
 start the program:
 poedit ./xx.po   (xx=LANGUAGE-2LETTER-SMALL-CAPS)
-NOTE: only do translation and use find, save in the program
+NOTE: only do translation and use find, validate, save in the program
 
 
 New Language:
@@ -45,8 +45,8 @@ emacs ./xx.po    (edit the empty po and change all CHANGE-* accordingly)
 
 Backup and submit
 -----------------
-git add xx.po   (If you have made a new language translation)
-git commit -a
-git push
+git add xx.po    (If you have made a new language translation)
+git commit xx.po (Just commit your change to local repo)
+git push         (Push it to github)
 
 It is better to make a git push too much than loose all your great work.
