@@ -243,12 +243,12 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
 #endif
 
-    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira\nCopyright \302\251 2024-%d HardInfo Project", HARDINFO_COPYRIGHT_LATEST_YEAR);
+    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira\nCopyright \302\251 2024-%d HardInfo Project\n\n\n\n", HARDINFO_COPYRIGHT_LATEST_YEAR);
 
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-				  _("System information and benchmark tool"));
+				  _("System Information and Benchmark"));
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
 			      icon_cache_get_pixbuf("hardinfo.png"));
 

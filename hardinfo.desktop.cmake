@@ -1,14 +1,8 @@
 [Desktop Entry]
-Name=System Profiler and Benchmark
-Name[de]=System Profiler und Benchmark
-Name[es]=Informacion y Rendimiento del Sistema
-Name[fr]=Informations et Benchmarks du Système
-Name[pt_BR]=Informações e Testes do Sistema
-Name[ru]=Информация о системе и тестирование
-Name[tr]=Sistem Bilgisi ve Karşılaştırma
-Comment=Displays system information
-Comment[de]=Anzeigen von Systeminformationen
-Comment[ru]=Показывает информацию о системе
+Name=Hardinfo
+Comment=System Information and Benchmark
+Comment[de]=Systeminformationen und Benchmark
+Comment[ru]=Информация о системе и тесты
 Exec=hardinfo
 Icon=hardinfo
 Terminal=false
