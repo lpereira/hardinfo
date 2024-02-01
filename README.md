@@ -5,7 +5,7 @@
 HARDINFO
 ========
 
-HardInfo is a system profiler and benchmark for Linux systems. It is able to
+HardInfo is a system information and benchmark for Linux systems. It is able to
 obtain information from both hardware and basic software, and organize it
 in a simple to use GUI.
 
