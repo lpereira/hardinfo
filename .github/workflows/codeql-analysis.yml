@@ -36,8 +36,8 @@ jobs:
         # a pull request then we can checkout the head.
         fetch-depth: 2
 
-    - name: Install dependencies
-      run: sudo apt-get install cmake libffi-dev libgtk2.0-dev liblzma-dev libselinux1-dev libsoup2.4-dev pciutils libjson-glib-dev
+    - name: Install system dependencies
+      run: sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev gettext
 
     # If this run was triggered by a pull request event, then checkout
     # the head of the pull request instead of the merge commit.
