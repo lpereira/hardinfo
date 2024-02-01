@@ -10,7 +10,7 @@
  *
  * The Simple Load Graph is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
- * License, version 2.1, as published by the Free Software Foundation.
+ * License, version 2 or later, as published by the Free Software Foundation.
  *
  * The Simple Load Graph is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
