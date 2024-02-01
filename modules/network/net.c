@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -146,7 +146,7 @@ void get_wireless_info(int fd, NetInfo *netinfo)
   if (ioctl(fd, SIOCGIWMODE, &wi_req) < 0) {
     netinfo->wi_mode = 0;
   } else {
-    if (wi_req.u.mode >= 0 && wi_req.u.mode < 6) {
+    if (wi_req.u.mode < 6) {
       netinfo->wi_mode = wi_req.u.mode;
     } else {
       netinfo->wi_mode = 6;

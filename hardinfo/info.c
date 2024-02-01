@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -172,7 +172,7 @@ void info_add_computed_group_wo_extra(struct Info *info, const gchar *name, cons
 
 void info_set_column_title(struct Info *info, const gchar *column, const gchar *title)
 {
-    int i;
+    guint i;
 
     for (i = 0; i < G_N_ELEMENTS(info_column_titles); i++) {
         if (g_str_equal(info_column_titles[i], column)) {
@@ -380,7 +380,7 @@ static void flatten_shell_param(GString *output, const struct InfoGroup *group, 
 
 static void flatten_shell_param_global(GString *output, const struct Info *info)
 {
-    int i;
+    guint i;
 
     g_string_append_printf(output, "ViewType=%d\n", info->view_type);
     g_string_append_printf(output, "ShowColumnHeaders=%s\n",
@@ -457,7 +457,7 @@ void info_remove_group(struct Info *info, guint index)
 struct InfoField *info_find_field(struct Info *info, const gchar *tag, const gchar *name) {
     struct InfoGroup *group;
     struct InfoField *field;
-    int gi,fi;
+    guint gi,fi;
     for (gi = 0; gi < info->groups->len; gi++) {
         struct InfoGroup *group = &g_array_index(info->groups, struct InfoGroup, gi);
         for (fi = 0; fi < group->fields->len; fi++) {

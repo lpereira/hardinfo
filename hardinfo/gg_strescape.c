@@ -18,6 +18,7 @@
  */
 
 #include <glib.h>
+#include <string.h>
 
 guchar excmap_def[256] = {1,0};
 static void make_excmap_def() {

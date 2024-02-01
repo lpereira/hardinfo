@@ -1,4 +1,4 @@
-#!bash
+#!/bin/bash
 
 GITVER=`git describe --always --dirty`
 GITHASH=`git rev-parse HEAD`
@@ -15,7 +15,7 @@ fi
 MSGTOTALOLD=`msgattrib --untranslated hardinfo.pot | grep -E "^msgstr \"\"" | wc -l`
 echo "hardinfo.pot has $MSGTOTALOLD strings"
 
-mv hardinfo.pot hardinfo.pot.old
+#mv hardinfo.pot hardinfo.pot.old
 echo "" > hardinfo.pot # empty existing file to join (-j) with
 for d in hardinfo/ shell/ modules/ includes/;
 do
@@ -38,18 +38,20 @@ echo "(as of $GITVER $GITHASH)"
 
 for f in *.po
 do
-    cp "$f" "$f.old"
+    if [ "$f" != "NEW.po" ]; then
+#        cp "$f" "$f.old"
 
-    msgmerge -q -N "$f" hardinfo.pot > tmp.po
+        msgmerge -q -N "$f" hardinfo.pot > tmp.po
 
-    # set/reset the X-Poedit-Basepath header
-    grep -v '"X-Poedit-Basepath\:[^"]*"' tmp.po | sed 's:\("Language\:[^"]*"\):\1\n"X-Poedit-Basepath\: ../\\n":' >"$f"
+        # set/reset the X-Poedit-Basepath header
+        grep -v '"X-Poedit-Basepath\:[^"]*"' tmp.po | sed 's:\("Language\:[^"]*"\):\1\n"X-Poedit-Basepath\: ../\\n":' >"$f"
 
-    rm -f tmp.po
+        rm -f tmp.po
 
-    # stats
-    UNMSG=`msgattrib --untranslated "$f" | grep -E "^msgstr \"\"" | wc -l`
-    FUZMSG=`msgattrib --translated "$f" | grep -E "^#,.*fuzzy" | wc -l`
-    DONE=" "; if [ $UNMSG -eq 0 ]; then DONE="x"; fi
-    echo "- [$DONE] $f : ($UNMSG / $MSGTOTAL remain untranslated, needs work/fuzzy: $FUZMSG)"
+        # stats
+        UNMSG=`msgattrib --untranslated "$f" | grep -E "^msgstr \"\"" | wc -l`
+        FUZMSG=`msgattrib --translated "$f" | grep -E "^#,.*fuzzy" | wc -l`
+        DONE=" "; if [ $UNMSG -eq 0 ]; then DONE="x"; fi
+        echo "- [$DONE] $f : ($UNMSG / $MSGTOTAL remain untranslated, needs work/fuzzy: $FUZMSG)"
+    fi
 done

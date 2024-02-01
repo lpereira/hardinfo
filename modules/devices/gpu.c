@@ -6,7 +6,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,8 +23,6 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "gpu_util.h"
-
-void scan_gpu_do(void);
 
 gchar *gpu_list = NULL;
 gchar *gpu_summary = NULL;

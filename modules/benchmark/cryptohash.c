@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,7 +29,7 @@
 /* 5000*65536/(1024*1024) = 312.5 -- old version used 312.0 so results
  * don't exactly compare. */
 
-void inline md5_step(char *data, glong srclen)
+inline void md5_step(char *data, glong srclen)
 {
     struct MD5Context ctx;
     guchar checksum[16];
@@ -39,7 +39,7 @@ void inline md5_step(char *data, glong srclen)
     MD5Final(checksum, &ctx);
 }
 
-void inline sha1_step(char *data, glong srclen)
+inline void sha1_step(char *data, glong srclen)
 {
     SHA1_CTX ctx;
     guchar checksum[20];

@@ -8,4 +8,4 @@ build/
 build-*/
 test/build-*
 po/*.old
-
+po/*.mo

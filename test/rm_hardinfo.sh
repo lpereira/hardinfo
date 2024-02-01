@@ -1,9 +1,6 @@
-#!bash
+#!/bin/bash
 
-# when you just want it all gone.
-#
-# it is not smart in any way, and will screw up your package manager
-# if hardinfo is installed as a package.
+# when you want to remove the hardinfo mess from a make install
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root."
@@ -26,5 +23,4 @@ remove_hardinfo() {
 }
 
 remove_hardinfo "/usr/local"
-remove_hardinfo "/usr"
 # add some other base install path here

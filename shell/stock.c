@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,11 +25,13 @@ static struct {
     gchar *filename;
     gchar *stock_id;
 } stock_icons[] = {
+    { "clipboard.png", HI_STOCK_CLIPBOARD},
+    { "refresh.png", HI_STOCK_REFRESH},
     { "report.png", HI_STOCK_REPORT},
     { "internet.png", HI_STOCK_INTERNET},
     { "module.png", HI_STOCK_MODULE},
     { "about-modules.png", HI_STOCK_ABOUT_MODULES},
-    { "syncmanager-small.png", HI_STOCK_SYNC_MENU},
+    { "server_sync.png", HI_STOCK_SYNC_MENU},
     { "face-grin.png", HI_STOCK_DONATE},
     { "server.png", HI_STOCK_SERVER},
 };
@@ -73,7 +75,7 @@ void stock_icon_register_pixbuf(GdkPixbuf * pixbuf, gchar * stock_id)
 
 void stock_icons_init(void)
 {
-    gint i;
+    guint i;
     guint n_stock_icons = G_N_ELEMENTS(stock_icons);
 
     DEBUG("initializing stock icons");

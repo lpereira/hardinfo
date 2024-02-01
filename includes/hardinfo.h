@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,7 +31,7 @@
 #include "info.h"
 #include "format_early.h"
 
-#define HARDINFO_COPYRIGHT_LATEST_YEAR 2023
+#define HARDINFO_COPYRIGHT_LATEST_YEAR 2024
 
 #ifndef LOCALEDIR
 #define LOCALEDIR "/usr/share/locale"
@@ -56,7 +56,6 @@ struct _ProgramParameters {
   gboolean gui_running;
   gboolean list_modules;
   gboolean autoload_deps;
-  gboolean run_xmlrpc_server;
   gboolean skip_benchmarks;
   gboolean quiet;
 
@@ -230,5 +229,6 @@ gg_strescape (const gchar *source,
 #define note_print(note_buff, str) note_printf((note_buff), "%s", str)
 gboolean note_cond_bullet(gboolean cond, gchar *note_buff, const gchar *desc_str);
 gboolean note_require_tool(const gchar *tool, gchar *note_buff, const gchar *desc_str);
+int cpu_procs_cores_threads(int *p, int *c, int *t);
 
 #endif				/* __HARDINFO_H__ */

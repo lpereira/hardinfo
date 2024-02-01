@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,7 +45,7 @@ static const struct {
 
 static const gchar *find_icon_for_class(uint32_t class)
 {
-    int i;
+    guint i;
 
     for (i = 0; i < G_N_ELEMENTS(class2icon); i++) {
 	if (class2icon[i].class <= 0xff) {
@@ -177,7 +177,7 @@ void scan_pci_do(void) {
     gchar *pci_icons = g_strdup("");
 
     pcid_list list = pci_get_device_list(0,0);
-    list = g_slist_sort(list, pcid_cmp_by_addy);
+    list = g_slist_sort(list, (GCompareFunc)pcid_cmp_by_addy);
     GSList *l = list;
 
     int c = 0;

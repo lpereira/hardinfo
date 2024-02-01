@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,6 +31,7 @@
 
 #include "appf.h"
 #include "benchmark.h"
+#include "cpu_util.h"
 
 #include "benchmark/bench_results.c"
 
@@ -740,7 +741,7 @@ const ModuleAbout *hi_module_get_about(void)
         .author = "L. A. F. Pereira",
         .description = N_("Perform tasks and compare with other systems"),
         .version = VERSION,
-        .license = "GNU GPL version 2",
+        .license = "GNU GPL version 2 or later.",
     };
 
     return &ma;
@@ -754,7 +755,7 @@ static gchar *get_benchmark_results(gsize *len)
     JsonNode *root;
     bench_machine *this_machine;
     gchar *out;
-    gint i;
+    guint i;
 
     for (i = 0; i < G_N_ELEMENTS(entries); i++) {
         if (!entries[i].name || !entries[i].scan_callback)
@@ -904,7 +905,7 @@ void hi_module_init(void)
     sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
 
-    int i;
+    guint i;
     for (i = 0; i < G_N_ELEMENTS(entries) - 1 /* account for NULL */; i++)
         bench_results[i] = (bench_value)EMPTY_BENCH_VALUE;
 }

@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,6 +32,7 @@
 #include "iconcache.h"
 #include "menu.h"
 #include "stock.h"
+#include "uri_handler.h"
 
 #include "callbacks.h"
 
@@ -405,12 +406,12 @@ void shell_set_title(Shell *shell, gchar *subtitle)
     if (subtitle) {
         gchar *tmp;
 
-        tmp = g_strdup_printf(_("%s - System Information"), subtitle);
+        tmp = g_strdup_printf(_("%s - System Information and Benchmark"), subtitle);
         gtk_window_set_title(GTK_WINDOW(shell->window), tmp);
 
         g_free(tmp);
     } else {
-        gtk_window_set_title(GTK_WINDOW(shell->window), _("System Information"));
+        gtk_window_set_title(GTK_WINDOW(shell->window), _("System Information and Benchmark"));
     }
 }
 
@@ -424,7 +425,7 @@ static void create_window(void)
     gtk_window_set_icon(GTK_WINDOW(shell->window),
 			icon_cache_get_pixbuf("hardinfo.png"));
     shell_set_title(shell, NULL);
-    gtk_window_set_default_size(GTK_WINDOW(shell->window), 800, 600);
+    gtk_window_set_default_size(GTK_WINDOW(shell->window), 1024, 800);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -517,7 +518,8 @@ static void menu_item_set_icon_always_visible(Shell *shell,
 
     path = g_strdup_printf("%s/%s", parent_path, item_id);
     menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
-    gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
+    
+    //gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
     g_free(path);
 }
 
@@ -570,7 +572,8 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
     merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
-			  "/menubar/HelpMenu/HelpMenuModules/LastSep",
+			  //  "/menubar/HelpMenu/HelpMenuModules/LastSep",
+			  "/menubar/HelpMenu/LastSep",
 			  about_module, about_module, GTK_UI_MANAGER_AUTO,
 			  TRUE);
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
@@ -640,7 +643,7 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 			   -1);
     }
 
-    add_module_to_menu(module->name, module->icon);
+    //add_module_to_menu(module->name, module->icon);
 
     if (module->entries) {
 	ShellModuleEntry *entry;
@@ -815,9 +818,7 @@ void shell_init(GSList * modules)
 
     shell->tree->modules = modules ? modules : modules_load_all();
 
-#ifdef HAS_LIBSOUP
     check_for_updates();
-#endif
 
     g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
@@ -836,11 +837,7 @@ void shell_init(GSList * modules)
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
 
-#ifndef HAS_LIBSOUP
-    shell_action_set_enabled("SyncManagerAction", FALSE);
-#else
     shell_action_set_enabled("SyncManagerAction", sync_manager_count_entries() > 0);
-#endif
 
     /* Should select Computer Summary (note: not Computer/Summary) */
     g_idle_add(select_first_tree_item, NULL);
@@ -2364,12 +2361,21 @@ void key_get_components(const gchar *key,
     if (*key == '$' && np) {
         /* is flagged */
         gchar *f = g_strdup(key);
-        *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
-        if (flags)
-            *flags = g_strdup(f);
-        if (tag)
-            *tag = key_mi_tag(f);
-        g_free(f);
+        gchar *s = g_utf8_strchr(f+1, -1, '$');
+        if(s==NULL) {
+	    DEBUG("ERROR NOT FOUND");
+        }else{
+ /*            if((s-f+1)>strlen(key)) {
+	    DEBUG("ERROR TOO LATE");
+        }else{*/
+	  *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
+	  if (flags)
+	    *flags = g_strdup(f);
+	  if (tag)
+	    *tag = key_mi_tag(f);
+	  g_free(f);
+	  //}
+	}
     } else
         np = key;
 

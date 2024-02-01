@@ -1,9 +1,52 @@
 Translators
 ===========
 
-IF POSSIBLE, run `bash updatepo.sh` in the po/ directory before begining.
-This will regenerate hardinfo.pot and update all the .po files.
-NOTHING IS LOST if this isn't done, but it prevents wasting time translating
-strings that have changed, or are no longer used.
+Before starting translation of the words/texts, we have in the program, the po files
+needs to updated. This is done by running
+cd po            (Always be in the po folder)
+./updatepo.sh    (Updates po from source code and shows status)
 
-DO NOT use `make pot`!
+When done the .po files are ready to be changed, thanx for helping with translation.
+
+You can also see the status of the different languages including your own after
+editing - it looks like this:
+
+hardinfo.pot now has 1228 strings (no change), with 69 c-format strings
+(as of release-0.5-1527-g39d064f-dirty 39d064f52d54618442e9a056fd6350102360ec6d)
+- [ ] de.po : (705 / 1228 remain untranslated, needs work/fuzzy: 2)
+- [ ] es.po : (293 / 1228 remain untranslated, needs work/fuzzy: 18)
+- [ ] fr.po : (722 / 1228 remain untranslated, needs work/fuzzy: 0)
+- [ ] ko.po : (62 / 1228 remain untranslated, needs work/fuzzy: 1)
+- [ ] pt_BR.po : (197 / 1228 remain untranslated, needs work/fuzzy: 0)
+- [ ] pt.po : (53 / 1228 remain untranslated, needs work/fuzzy: 0)
+- [ ] ru.po : (323 / 1228 remain untranslated, needs work/fuzzy: 0)
+- [ ] tr.po : (4 / 1228 remain untranslated, needs work/fuzzy: 0)
+- [ ] zh_CN.po : (859 / 1228 remain untranslated, needs work/fuzzy: 0)
+
+
+Editing:
+--------
+use the poedit program installed by:
+apt install poedit
+yum install poedit
+
+start the program:
+poedit ./xx.po   (xx=LANGUAGE-2LETTER-SMALL-CAPS)
+NOTE: only do translation and use find, validate, save in the program
+
+
+New Language:
+-------------
+cp NEW.po xx.po  (xx=LANGUAGE-2LETTER-SMALL-CAPS)
+emacs ./xx.po    (edit the empty po and change all CHANGE-* accordingly)
+./updatepo.sh    (updates the po with all the words/text we have in the program and shows status)
+--ready to edit--
+
+
+Backup and submit
+-----------------
+git add xx.po    (If you have made a new language translation)
+git commit xx.po (Just commit your change to local repo)
+git push         (Push it to github)
+
+It is better to make a git push too much than loose all your great work.

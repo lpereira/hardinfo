@@ -1,9 +1,9 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
  * Copyright (C) 2008 Richard Hughes <richard@hughsie.com>
- * Copyright (C) 2009 L.Pereira <l@tia.mat.br>
+ * Copyright (C) 2009 L.Pereira <l@tia.mat.br> 
  *
- * Licensed under the GNU General Public License Version 2
+ * Licensed under the GNU General Public License Version 2 or Later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

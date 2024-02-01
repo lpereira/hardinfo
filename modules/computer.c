@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -254,7 +254,7 @@ void scan_dev(gboolean reload)
 {
     SCAN_START();
 
-    int i;
+    guint i;
     struct {
        gchar *compiler_name;
        gchar *version_command;
@@ -465,7 +465,7 @@ gchar *computer_get_virtualization(void)
         "/var/log/dmesg",
         NULL
     };
-    const static struct {
+    static const struct {
         gchar *str;
         gchar *vmtype;
     } vm_types[] = {
@@ -668,10 +668,17 @@ gchar *callback_security(void)
                 continue;
 
             const gchar *icon = NULL;
+	    if (g_strstr_len(contents, -1, "Not affected") )
+	        icon = "circle_green_check.svg";
+
+            if (g_str_has_prefix(contents, "Mitigation:") ||
+                g_str_has_prefix(contents, "mitigation:"))
+                icon = "circle_yellow_exclaim.svg";
+
             if (g_strstr_len(contents, -1, "Vulnerable") ||
                 g_strstr_len(contents, -1, "vulnerable"))
-                icon = "dialog-warning.png";
-
+                icon = "circle_red_x.svg";
+		
             info_group_add_fields(vulns,
                                   info_field(g_strdup(vuln),
                                              idle_free(contents), .icon = icon,
@@ -1083,8 +1090,7 @@ const ModuleAbout *hi_module_get_about(void)
         .author = "L. A. F. Pereira",
         .description = N_("Gathers high-level computer information"),
         .version = VERSION,
-        .license = "GNU GPL version 2",
-    };
+        .license = "GNU GPL version 2 or later.",};
 
     return &ma;
 }

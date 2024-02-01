@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -177,6 +177,9 @@ void scan_users_do(void);
 extern GHashTable *memlabels;
 void init_memory_labels(void);
 void scan_memory_do(void);
+void scan_boots_real(void);
+void scan_languages(OperatingSystem *os);
+void scan_groups_do(void);
 
 void kernel_module_icon_init(void);
 

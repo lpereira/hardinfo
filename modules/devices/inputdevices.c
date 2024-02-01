@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,6 +20,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
+#include "usb_util.h"
 
 gchar *input_icons = NULL;
 
@@ -112,7 +113,7 @@ __scan_input_devices(void)
                 usb_lookup_ids_vendor_product_str(vendor, product, &vendor_str, &product_str);
             }
 
-            if (bus >= 0 && bus < sizeof(bus_types) / sizeof(gchar*)) {
+            if (bus >= 0 && (guint)bus < sizeof(bus_types) / sizeof(gchar*)) {
                 bus_str = bus_types[bus];
             }
 

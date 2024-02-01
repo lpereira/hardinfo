@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,6 +23,7 @@
 #include <iconcache.h>
 #include <hardinfo.h>
 #include <config.h>
+#include "uri_handler.h"
 
 static ReportDialog *report_dialog_new(GtkTreeModel * model,
 				       GtkWidget * parent);

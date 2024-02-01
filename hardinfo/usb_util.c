@@ -7,7 +7,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -273,7 +273,9 @@ static gboolean usb_get_device_lsusb(int bus, int dev, usbd *s) {
 static gboolean usb_get_interface_sysfs(int conf, int number,
                                         const char* devpath, usbi *intf){
     gchar *ifpath, *drvpath, *tmp;
-    ids_query_result result = {};
+    ids_query_result result;// = {};
+
+    memset(&result,0,sizeof(ids_query_result));
 
     ifpath = g_strdup_printf("%s:%d.%d", devpath, conf, number);
     if (!g_file_test(ifpath, G_FILE_TEST_EXISTS)){
@@ -335,9 +337,10 @@ static void find_usb_ids_file() {
 
 void usb_lookup_ids_vendor_product_str(gint vendor_id, gint product_id,
                                        gchar **vendor_str, gchar **product_str) {
-    ids_query_result result = {};
+    ids_query_result result;// = {};
     gchar *qpath;
 
+    memset(&result,0,sizeof(ids_query_result));
     if (!usb_ids_file)
         find_usb_ids_file();
     if (!usb_ids_file)
@@ -356,9 +359,10 @@ static gboolean usb_get_device_sysfs(int bus, int dev, const char* sysfspath, us
     usbi *intf;
     gboolean ok;
     int i, if_count = 0, conf = 0, ver;
-    ids_query_result result = {};
+    ids_query_result result;// = {};
     gchar *qpath;
 
+    memset(&result,0,sizeof(ids_query_result));
     if (sysfspath == NULL)
         return FALSE;
 

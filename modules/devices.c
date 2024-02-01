@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,10 +19,6 @@
 #ifndef __USE_XOPEN
 #define __USE_XOPEN
 #endif /* __USE_XOPEN */
-
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE
-#endif /* _XOPEN_SOURCE */
 
 #include <gtk/gtk.h>
 #include <config.h>
@@ -39,6 +35,7 @@
 #include "devices.h"
 #include "dt_util.h"
 #include "udisks2_util.h"
+#include "storage_util.h"
 #include "pci_util.h"
 
 gchar *callback_processors();
@@ -289,7 +286,7 @@ gchar *get_storage_devices_simple(void)
         return "";
     }
 
-    int i, fi;
+    guint i, fi;
     struct InfoGroup *group;
     struct InfoField *field;
     gchar *storage_devs = NULL, *tmp;
@@ -866,7 +863,7 @@ void hi_module_init(void)
         },
 #endif
     };
-    gint i;
+    guint i;
 
     for (i = 0; i < G_N_ELEMENTS(entries); i++)
         sync_manager_add_entry(&entries[i]);
@@ -887,16 +884,16 @@ void hi_module_deinit(void)
     sensor_shutdown();
     storage_shutdown();
     udisks2_shutdown();
-    g_module_close(cups);
+    if(cups) g_module_close(cups);
 }
 
 const ModuleAbout *hi_module_get_about(void)
 {
-    const static ModuleAbout ma = {
+    static const ModuleAbout ma = {
         .author = "L. A. F. Pereira",
         .description = N_("Gathers information about hardware devices"),
         .version = VERSION,
-        .license = "GNU GPL version 2",
+        .license = "GNU GPL version 2 or later.",
     };
 
     return &ma;

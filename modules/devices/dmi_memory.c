@@ -5,7 +5,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -393,13 +393,15 @@ static void dmi_fill_from_spd(dmi_mem_socket *s) {
         s->has_jedec_mfg_id = TRUE;
     }
 
-    if (!s->partno && s->spd->partno)
+    //Always true - FIXME
+    //if (!s->partno && s->spd->partno)
         s->partno = g_strdup(s->spd->partno);
 
     if (!s->form_factor && s->spd->form_factor)
         s->form_factor = g_strdup(s->spd->form_factor);
 
-    if (!s->type_detail && s->spd->type_detail)
+    //Always true - FIXME
+    //if (!s->type_detail && s->spd->type_detail)
         s->type_detail = g_strdup(s->spd->type_detail);
 }
 

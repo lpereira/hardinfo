@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,7 +26,7 @@
 #include "shell.h"
 #include "report.h"
 #include "syncmanager.h"
-#include "xmlrpc-server.h"
+#include "uri_handler.h"
 
 #include "config.h"
 
@@ -57,12 +57,12 @@ void cb_sync_on_startup()
 
 void cb_open_web_page()
 {
-    uri_open("http://www.hardinfo.org");
+    uri_open("https://hardinfo.bigbear.dk");
 }
 
 void cb_report_bug()
 {
-    uri_open("https://github.com/lpereira/hardinfo");
+    uri_open("https://github.com/hwspeedy/hardinfo");
 }
 
 void cb_refresh()
@@ -173,33 +173,64 @@ void cb_about()
     GtkWidget *about;
     gchar *copyright = NULL;
     const gchar *authors[] = {
-        _("Author:"),
-        "L. A. F. Pereira",
-        "",
-        _("Contributors:"),
+        "L. A. F. Pereira (2003-2023)",
+	"hwspeedy(2024-)",
         "Agney Lopes Roth Ferraz",
         "Andrey Esin",
         "Burt P.",
         "Ondrej Čerman",
+        "Stewart Adam",
+        "Pascal F. Martin",
+        "Burt P.",
+        "TotalCaesar659",
+        "Julian Ospald",
+	"Julien Lavergne",
+        "Fernando López",
+        "PICCORO Lenz McKAY",
+        "Alexander Münch",
+        "Simon Quigley",
+        "AsciiWolf",
+        "George Schneeloch",
+        "Mattia Rizzolo",
+        "Yo",
+        "jamesbond",
+        "Ondrej Čerman",
+        "Mike Hewitt",
+        "Boris Afonot",
+	"",
+	"Based on work by:",
+	"uber-graph by Christian Hergert and others.",
+	"BinReloc by Hongli Lai",
+	"decode-dimms by Philip Edelbrock",
+	"decode-dimms by Christian Zuckschwerdt",
+	"decode-dimms by Burkart Lingner",
+        "x86cpucaps by Osamu Kayasono",
+        "MD5 implementation by Colin Plumb",
+        "SHA1 implementation by Steve Reid",
+        "Blowfish implementation by Paul Kocher",
+        "Raytracing benchmark by John Walker",
+        "FFT benchmark by Scott Robert Ladd",
+        "Vendor list based on GtkSysInfo by Pissens Sebastien",
+        "DMI support based on code by Stewart Adam",
+        "SCSI support based on code by Pascal F. Martin",
+	"",
+	"Translated by:",
+	"Alexander Münch",
+	"micrococo",
+	"yolanteng0",
+	"Yunji Lee",
+	"Hugo Carvalho",
+	"Paulo Giovanni pereira",
+	"Sergey Rodin",
+	"Sabri Ünal",
+	"yetist",
         "",
-        _("Based on work by:"),
-        _("MD5 implementation by Colin Plumb (see md5.c for details)"),
-        _("SHA1 implementation by Steve Reid (see sha1.c for details)"),
-        _("Blowfish implementation by Paul Kocher (see blowfich.c for details)"),
-        _("Raytracing benchmark by John Walker (see fbench.c for details)"),
-        _("FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"),
-        _("Some code partly based on x86cpucaps by Osamu Kayasono"),
-        _("Vendor list based on GtkSysInfo by Pissens Sebastien"),
-        _("DMI support based on code by Stewart Adam"),
-        _("SCSI support based on code by Pascal F. Martin"),
-        NULL
-    };
-    const gchar *artists[] = {
+	"Artwork by:",
         "Jakub Szypulka",
-        _("Tango Project"),
-        _("The GNOME Project"),
-        _("VMWare, Inc. (USB icon from VMWare Workstation 6)"),
-        _("epicbard (Fan icon, CC BY-SA 3.0)"),
+        "Tango Project",
+        "The GNOME Project",
+        "epicbard",
+        "Roundicons",
         NULL
     };
 
@@ -212,19 +243,19 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
 #endif
 
-    copyright = g_strdup_printf("Copyright \302\251 2003-%d L. A. F. Pereira", HARDINFO_COPYRIGHT_LATEST_YEAR);
+    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira\nCopyright \302\251 2024-%d HardInfo Project\n\n\n\n", HARDINFO_COPYRIGHT_LATEST_YEAR);
 
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-				  _("System information and benchmark tool"));
+				  _("System Information and Benchmark"));
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
 			      icon_cache_get_pixbuf("hardinfo.png"));
 
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about),
 				 _("HardInfo is free software; you can redistribute it and/or modify "
 				 "it under the terms of the GNU General Public License as published by "
-				 "the Free Software Foundation, version 2.\n\n"
+				 "the Free Software Foundation, version 2 or later.\n\n"
 				 "This program is distributed in the hope that it will be useful, "
 				 "but WITHOUT ANY WARRANTY; without even the implied warranty of "
 				 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
@@ -235,9 +266,8 @@ void cb_about()
     gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(about), TRUE);
 
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about), authors);
-    gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
-    gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about),
-        _("translator-credits"));
+    //gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
+    //gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about), _("translator-credits"));
 
     gtk_dialog_run(GTK_DIALOG(about));
     gtk_widget_destroy(about);

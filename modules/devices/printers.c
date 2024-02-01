@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,6 +15,10 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
+
+#ifndef _XOPEN_SOURCE
+  #define _XOPEN_SOURCE
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,7 +67,7 @@ init_cups(void)
 
 	if (!g_module_symbol(cups, "cupsGetDests", (gpointer) & cups_dests_get)
 	    || !g_module_symbol(cups, "cupsFreeDests", (gpointer) & cups_dests_free)) {
-            g_module_close(cups);
+	    if(cups) g_module_close(cups);
 	    cups_init = FALSE;
 	}
     }
@@ -177,7 +181,7 @@ const struct {
 void
 scan_printers_do(void)
 {
-    int num_dests, i, j;
+    guint num_dests, j, i;
     CUPSDest *dests;
     gchar *prn_id, *prn_moreinfo;
 
@@ -205,7 +209,7 @@ scan_printers_do(void)
 
 	    options = g_hash_table_new(g_str_hash, g_str_equal);
 
-	    for (j = 0; j < dests[i].num_options; j++) {
+	    for (j = 0; (int)j < dests[i].num_options; j++) {
 	      g_hash_table_insert(options,
 	                          g_strdup(dests[i].options[j].name),
 	                          g_strdup(dests[i].options[j].value));

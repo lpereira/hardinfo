@@ -68,7 +68,6 @@
  * or a new #GtkStyle set, a full rendering of the graph will be required.
  */
 
-G_DEFINE_ABSTRACT_TYPE(UberGraph, uber_graph, GTK_TYPE_DRAWING_AREA)
 
 struct _UberGraphPrivate
 {
@@ -109,6 +108,8 @@ struct _UberGraphPrivate
 	GtkWidget       *align;         /* Alignment for labels. */
 	gint             fps_count;     /* Track actual FPS. */
 };
+
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(UberGraph, uber_graph, GTK_TYPE_DRAWING_AREA)
 
 static gboolean show_fps = FALSE;
 
@@ -2087,7 +2088,6 @@ uber_graph_class_init (UberGraphClass *klass) /* IN */
 	object_class->finalize = uber_graph_finalize;
 	object_class->get_property = uber_graph_get_property;
 	object_class->set_property = uber_graph_set_property;
-	g_type_class_add_private(object_class, sizeof(UberGraphPrivate));
 
 	widget_class = GTK_WIDGET_CLASS(klass);
 	widget_class->draw = uber_graph_draw;
@@ -2135,9 +2135,8 @@ uber_graph_init (UberGraph *graph) /* IN */
 	/*
 	 * Store pointer to private data allocation.
 	 */
-	graph->priv = G_TYPE_INSTANCE_GET_PRIVATE(graph,
-	                                          UBER_TYPE_GRAPH,
-	                                          UberGraphPrivate);
+	graph->priv = uber_graph_get_instance_private(graph);
+
 	priv = graph->priv;
 	/*
 	 * Enable required events.

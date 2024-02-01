@@ -40,7 +40,6 @@
  * Section overview.
  */
 
-G_DEFINE_TYPE(UberLineGraph, uber_line_graph, UBER_TYPE_GRAPH)
 
 typedef struct
 {
@@ -69,6 +68,9 @@ struct _UberLineGraphPrivate
 	GDestroyNotify     func_notify;
 };
 
+G_DEFINE_TYPE_WITH_PRIVATE(UberLineGraph, uber_line_graph, UBER_TYPE_GRAPH)
+
+
 enum
 {
 	PROP_0,
@@ -89,7 +91,7 @@ static inline void
 uber_line_graph_init_ring (GRing *ring) /* IN */
 {
 	gdouble val = UBER_LINE_GRAPH_NO_VALUE;
-	gint i;
+	guint i;
 
 	g_return_if_fail(ring != NULL);
 
@@ -131,7 +133,7 @@ uber_line_graph_color_changed (UberLabel     *label, /* IN */
 {
 	UberLineGraphPrivate *priv;
 	LineInfo *info;
-	gint i;
+	guint i;
 
 	g_return_if_fail(UBER_IS_LINE_GRAPH(graph));
 	g_return_if_fail(color != NULL);
@@ -326,7 +328,7 @@ uber_line_graph_get_next_data (UberGraph *graph) /* IN */
 	gboolean ret = FALSE;
 	LineInfo *line;
 	gdouble val;
-	gint i;
+	guint i;
 
 	g_return_val_if_fail(UBER_IS_LINE_GRAPH(graph), FALSE);
 
@@ -456,7 +458,7 @@ uber_line_graph_render_line (UberLineGraph *graph, /* IN */
 	gdouble y;
 	gdouble last_y;
 	gdouble val;
-	gint i;
+	guint i;
 
 	g_return_if_fail(UBER_IS_LINE_GRAPH(graph));
 
@@ -480,7 +482,7 @@ uber_line_graph_render_line (UberLineGraph *graph, /* IN */
 		/*
 		 * Retrieve data point.
 		 */
-		val = g_ring_get_index(line->raw_data, gdouble, i);
+                val = g_ring_get_index(line->raw_data, gdouble, (int)i);
 		/*
 		 * Once we get to UBER_LINE_GRAPH_NO_VALUE, we must be at the end of the data
 		 * sequence.  This may not always be true in the future.
@@ -544,7 +546,7 @@ uber_line_graph_render (UberGraph    *graph, /* IN */
 {
 	UberLineGraphPrivate *priv;
 	LineInfo *line;
-	gint i;
+	guint i;
 
 	g_return_if_fail(UBER_IS_LINE_GRAPH(graph));
 
@@ -580,7 +582,7 @@ uber_line_graph_render_fast (UberGraph    *graph, /* IN */
 	LineInfo *line;
 	gdouble last_y;
 	gdouble y;
-	gint i;
+	guint i;
 
 	g_return_if_fail(UBER_IS_LINE_GRAPH(graph));
 	g_return_if_fail(cr != NULL);
@@ -651,7 +653,7 @@ uber_line_graph_set_stride (UberGraph *graph,  /* IN */
 {
 	UberLineGraphPrivate *priv;
 	LineInfo *line;
-	gint i;
+	guint i;
 
 	g_return_if_fail(UBER_IS_LINE_GRAPH(graph));
 
@@ -791,7 +793,7 @@ uber_line_graph_set_line_width (UberLineGraph *graph, /* IN */
 
 	g_return_if_fail(UBER_IS_LINE_GRAPH(graph));
 	g_return_if_fail(line > 0);
-	g_return_if_fail(line <= graph->priv->lines->len);
+	g_return_if_fail(line <= (int)graph->priv->lines->len);
 
 	info = &g_array_index(graph->priv->lines, LineInfo, line - 1);
 	info->width = width;
@@ -815,8 +817,8 @@ uber_line_graph_downscale (UberGraph *graph) /* IN */
 	gdouble val = 0;
 	gdouble cur;
 	LineInfo *line;
-	gint i;
-	gint j;
+	guint i;
+	guint j;
 
 	g_return_val_if_fail(UBER_IS_LINE_GRAPH(graph), FALSE);
 
@@ -833,7 +835,7 @@ uber_line_graph_downscale (UberGraph *graph) /* IN */
 	for (i = 0; i < priv->lines->len; i++) {
 		line = &g_array_index(priv->lines, LineInfo, i);
 		for (j = 0; j < line->raw_data->len; j++) {
-			cur = g_ring_get_index(line->raw_data, gdouble, j);
+		  cur = g_ring_get_index(line->raw_data, gdouble, (int)j);
 			val = (cur > val) ? cur : val;
 		}
 	}
@@ -865,7 +867,7 @@ uber_line_graph_finalize (GObject *object) /* IN */
 {
 	UberLineGraphPrivate *priv;
 	LineInfo *line;
-	gint i;
+	guint i;
 
 	priv = UBER_LINE_GRAPH(object)->priv;
 	/*
@@ -956,7 +958,6 @@ uber_line_graph_class_init (UberLineGraphClass *klass) /* IN */
 	object_class->finalize = uber_line_graph_finalize;
 	object_class->get_property = uber_line_graph_get_property;
 	object_class->set_property = uber_line_graph_set_property;
-	g_type_class_add_private(object_class, sizeof(UberLineGraphPrivate));
 
 	graph_class = UBER_GRAPH_CLASS(klass);
 	graph_class->downscale = uber_line_graph_downscale;
@@ -1000,9 +1001,8 @@ uber_line_graph_init (UberLineGraph *graph) /* IN */
 	/*
 	 * Keep pointer to private data.
 	 */
-	graph->priv = G_TYPE_INSTANCE_GET_PRIVATE(graph,
-	                                          UBER_TYPE_LINE_GRAPH,
-	                                          UberLineGraphPrivate);
+	graph->priv = uber_line_graph_get_instance_private(graph);
+
 	priv = graph->priv;
 	/*
 	 * Initialize defaults.
@@ -1019,7 +1019,7 @@ uber_line_graph_clear (UberLineGraph *graph) /* IN */
 {
 	UberLineGraphPrivate *priv = graph->priv;
 	LineInfo *line;
-	gint i;
+	guint i;
 
 	for (i = 0; i < priv->lines->len; i++) {
 		line = &g_array_index(priv->lines, LineInfo, i);

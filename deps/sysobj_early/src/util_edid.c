@@ -323,8 +323,10 @@ static void did_block_decode(DisplayIDBlock *blk) {
     uint32_t a = blk->addy.offset; /* start of block, includes header */
     uint8_t *u8 = DPTR(blk->addy);
     int b = h;
-    edid_ven ven = {};
-    edid_output out = {};
+    edid_ven ven;// = {};
+    edid_output out;// = {};
+    memset(&ven,0,sizeof(edid_ven));
+    memset(&out,0,sizeof(edid_output));
     if (blk) {
         switch(blk->type) {
             case 0:     /* Product ID (1.x) */
@@ -443,7 +445,8 @@ static edid_output edid_output_from_svd(uint8_t index) {
     if (index >= 128 && index <= 192) index &= 0x7f; /* "native" flag for 0-64 */
     for(i = 0; i < (int)G_N_ELEMENTS(cea_standard_timings); i++) {
         if (cea_standard_timings[i].index == index) {
-            edid_output out = {};
+            edid_output out;// = {};
+            memset(&out,0,sizeof(edid_output));
             out.horiz_pixels = cea_standard_timings[i].horiz_active;
             out.vert_lines = cea_standard_timings[i].vert_active;
             if (strchr(cea_standard_timings[i].short_name, 'i'))
@@ -1153,7 +1156,7 @@ char *edid_cea_audio_describe(struct edid_sad *sad) {
             sad->format, _(edid_cea_audio_type(sad->format)) );
 
     gchar *ret = NULL;
-    gchar *tmp[3] = {};
+    gchar *tmp[3] = {NULL,NULL,NULL};
 #define appfreq(b, f) if (sad->freq_bits & (1 << b)) tmp[0] = appf(tmp[0], ", ", "%d", f);
 #define appdepth(b, d) if (sad->depth_bits & (1 << b)) tmp[1] = appf(tmp[1], ", ", "%d%s", d, _("-bit"));
     appfreq(0, 32);

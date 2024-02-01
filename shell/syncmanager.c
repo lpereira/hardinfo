@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,6 @@
 #include "iconcache.h"
 #include "syncmanager.h"
 
-#ifdef HAS_LIBSOUP
 #include <libsoup/soup.h>
 
 #include <stdarg.h>
@@ -61,7 +60,7 @@ static SoupSession *session = NULL;
 static GMainLoop *loop;
 static GQuark err_quark;
 
-#define API_SERVER_URI "https://api.hardinfo.org"
+#define API_SERVER_URI "http://hardinfo.bigbear.dk"
 
 #define LABEL_SYNC_DEFAULT                                                     \
     _("<big><b>Synchronize with Central Database</b></big>\n"                  \
@@ -88,47 +87,30 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction *sna, gint n);
     if (!sna->error) {                                                         \
         sna->error = g_error_new(err_quark, code, message, ##__VA_ARGS__);     \
     }
-#endif /* HAS_LIBSOUP */
 
 gint sync_manager_count_entries(void)
 {
-#ifdef HAS_LIBSOUP
     return g_slist_length(entries);
-#else
-    return 0;
-#endif
 }
 
 void sync_manager_add_entry(SyncEntry *entry)
 {
-#ifdef HAS_LIBSOUP
     DEBUG("registering syncmanager entry ''%s''", entry->name);
 
     entry->selected = TRUE;
     entries = g_slist_append(entries, entry);
-#else
-    DEBUG("libsoup support is disabled.");
-#endif /* HAS_LIBSOUP */
 }
 
 void sync_manager_clear_entries(void)
 {
-#ifdef HAS_LIBSOUP
     DEBUG("clearing syncmanager entries");
 
     g_slist_free(entries);
     entries = NULL;
-#else
-    DEBUG("libsoup support is disabled.");
-#endif /* HAS_LIBSOUP */
 }
 
 void sync_manager_show(GtkWidget *parent)
 {
-#ifndef HAS_LIBSOUP
-    g_warning(_("HardInfo was compiled without libsoup support. (Network "
-                "Updater requires it.)"));
-#else  /* !HAS_LIBSOUP */
     SyncDialog *sd = sync_dialog_new(parent);
 
     err_quark = g_quark_from_static_string("syncmanager");
@@ -146,10 +128,8 @@ void sync_manager_show(GtkWidget *parent)
     }
 
     sync_dialog_destroy(sd);
-#endif /* HAS_LIBSOUP */
 }
 
-#ifdef HAS_LIBSOUP
 static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
 {
     SyncDialog *sd = (SyncDialog *)data;
@@ -187,6 +167,7 @@ static SyncNetAction *sync_manager_get_selected_actions(gint *n)
     return actions;
 }
 
+#if !SOUP_CHECK_VERSION(3,0,0)
 static SoupURI *sync_manager_get_proxy(void)
 {
     const gchar *conf;
@@ -199,14 +180,19 @@ static SoupURI *sync_manager_get_proxy(void)
 
     return soup_uri_new(conf);
 }
+#endif
 
 static void ensure_soup_session(void)
 {
     if (!session) {
+#if !SOUP_CHECK_VERSION(3,0,0)
         SoupURI *proxy = sync_manager_get_proxy();
 
         session = soup_session_new_with_options(
             SOUP_SESSION_TIMEOUT, 10, SOUP_SESSION_PROXY_URI, proxy, NULL);
+#else
+        session = soup_session_new_with_options("timeout", 10, NULL);
+#endif
     }
 }
 
@@ -289,11 +275,22 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
         gchar *contents = sna->entry->generate_contents_for_upload(&size);
 
         msg = soup_message_new("POST", uri);
+
+#if !SOUP_CHECK_VERSION(3, 0, 0)
         soup_message_set_request(msg, "application/octet-stream",
                                  SOUP_MEMORY_TAKE, contents, size);
+#else
+        GBytes *cont = g_bytes_new_static(contents,size);
+        msg = soup_message_new("POST", uri);
+        soup_message_set_request_body_from_bytes(msg, "application/octet-stream", cont);
+#endif
     }
 
+#if SOUP_CHECK_VERSION(3, 0, 0)
+    soup_session_send_async(session, msg, G_PRIORITY_DEFAULT, NULL, got_response, sna);
+#else
     soup_session_send_async(session, msg, NULL, got_response, sna);
+#endif
     g_main_loop_run(loop);
 
     g_object_unref(msg);
@@ -589,7 +586,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     populate_store(store);
 
     priv_policy_btn = gtk_link_button_new_with_label(
-            "https://github.com/lpereira/hardinfo/wiki/Privacy-Policy",
+"https://github.com/hwspeedy/hardinfo?tab=readme-ov-file#privacy-policy",
             _("Privacy Policy"));
     gtk_widget_show(priv_policy_btn);
     gtk_box_pack_start(GTK_BOX(dialog1_vbox), priv_policy_btn, FALSE, FALSE, 0);
@@ -690,4 +687,3 @@ void sync_manager_update_on_startup(void)
         g_idle_add(sync_one, action);
     }
 }
-#endif /* HAS_LIBSOUP */

@@ -6,7 +6,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -64,7 +64,7 @@ static Vendor vendors_builtin[] = {
     if (vendor_die_on_error) exit(-1); }
 
 static vendor_list vendors = NULL;
-const vendor_list get_vendors_list() { return vendors; }
+vendor_list get_vendors_list() { return vendors; }
 gboolean vendor_die_on_error = FALSE;
 
 /* sort the vendor list by length of match_string,

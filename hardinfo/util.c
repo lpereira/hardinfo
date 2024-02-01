@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -388,7 +388,6 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gboolean show_version = FALSE;
     static gboolean list_modules = FALSE;
     static gboolean autoload_deps = FALSE;
-    static gboolean run_xmlrpc_server = FALSE;
     static gboolean skip_benchmarks = FALSE;
     static gboolean quiet = FALSE;
     static gchar *report_format = NULL;
@@ -396,7 +395,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     static gchar *result_format = NULL;
     static gchar *bench_user_note = NULL;
     static gchar **use_modules = NULL;
-    static gint max_bench_results = 10;
+    static gint max_bench_results = 50;
 
     static GOptionEntry options[] = {
 	{
@@ -440,7 +439,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .short_name = 'n',
 	 .arg = G_OPTION_ARG_INT,
 	 .arg_data = &max_bench_results,
-	 .description = N_("maximum number of benchmark results to include (-1 for no limit, default is 10)")},
+	 .description = N_("maximum number of benchmark results to include (-1 for no limit, default is 50)")},
 	{
 	 .long_name = "list-modules",
 	 .short_name = 'l',
@@ -459,14 +458,6 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_NONE,
 	 .arg_data = &autoload_deps,
 	 .description = N_("automatically load module dependencies")},
-#ifdef HAS_LIBSOUP
-	{
-	 .long_name = "xmlrpc-server",
-	 .short_name = 'x',
-	 .arg = G_OPTION_ARG_NONE,
-	 .arg_data = &run_xmlrpc_server,
-	 .description = N_("run in XML-RPC server mode")},
-#endif	/* HAS_LIBSOUP */
 	{
 	 .long_name = "version",
 	 .short_name = 'v',
@@ -513,7 +504,6 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->result_format = result_format;
     param->max_bench_results = max_bench_results;
     param->autoload_deps = autoload_deps;
-    param->run_xmlrpc_server = run_xmlrpc_server;
     param->skip_benchmarks = skip_benchmarks;
     param->force_all_details = force_all_details;
     param->quiet = quiet;
@@ -963,15 +953,27 @@ static GSList *modules_load(gchar ** module_list)
     g_free(filename);
 
     if (dir) {
-	while ((filename = (gchar *) g_dir_read_name(dir))) {
-	    if (g_strrstr(filename, "." G_MODULE_SUFFIX) &&
-		module_in_module_list(filename, module_list) &&
-		((module = module_load(filename)))) {
-		modules = g_slist_prepend(modules, module);
-	    }
+      GList *filenames = NULL;
+      while ((filename = (gchar *)g_dir_read_name(dir))) {
+	if (g_strrstr(filename, "." G_MODULE_SUFFIX) &&
+	    module_in_module_list(filename, module_list)) {
+	  if (g_strrstr(filename, "devices." G_MODULE_SUFFIX)) {
+	    filenames = g_list_prepend(filenames, filename);
+	  }
+	  else {
+	    filenames = g_list_append(filenames, filename);
+	  }
 	}
-
-	g_dir_close(dir);
+      }
+      GList* item = NULL;
+        while (item = g_list_first(filenames)) {
+            if (module = module_load((gchar *)item->data)) {
+                modules = g_slist_prepend(modules, module);
+            }
+            filenames = g_list_delete_link(filenames, item);
+        }
+        g_list_free_full (g_steal_pointer (&filenames), g_object_unref);
+        g_dir_close(dir);
     }
 
     modules = modules_check_deps(modules);

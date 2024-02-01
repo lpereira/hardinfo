@@ -18,4 +18,5 @@ GSList *get_udisks2_drives_ext();
 u2driveext* u2drive_ext(udiskd * udisks_drive_data);
 void u2driveext_free(u2driveext *u);
 
-void udisks2_shutdown();
+void udisks2_shutdown(void);
+void storage_shutdown(void);

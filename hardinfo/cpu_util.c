@@ -5,7 +5,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -101,7 +101,8 @@ int cpu_procs_cores_threads_nodes(int *p, int *c, int *t, int *n)
     *t = cpubits_count(threads);
     *c = cpubits_count(cores);
     *p = cpubits_count(packs);
-
+    *n = 1;
+    
     g_free(tmp);
     g_file_get_contents("/sys/devices/system/node/possible", &tmp, NULL, NULL);
     if (tmp != NULL) {
