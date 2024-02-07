@@ -1,13 +1,18 @@
-project(HardInfo)
-cmake_minimum_required(VERSION 2.6)
-cmake_policy(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12)
+cmake_policy(VERSION 2.8.12)
+project(hardinfo)
 
-set(HARDINFO_VERSION "0.6-alpha")
-option(HARDINFO_GTK3 "Attempt to build for GTK3 (0/off for GTK2)" 0)
+set(HARDINFO_VERSION "1.0.1")
+
+option(HARDINFO_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
+option(HARDINFO_LIBSOUP3 "Build for libsoup-3.0(EXPERIMENTAL) (0/off for libsoup-2.4)" 0)
+
 set(OVRARCH "" CACHE STRING "Override HARDINFO_ARCH value")
 set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
 set(OVRDTRROOT "" CACHE STRING "Specify a different path for /proc/device-tree")
-SET( CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
+set(OVRPACKAGE_FILENAME "" CACHE STRING "Override package filename")
+
+SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
 
 if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
@@ -51,8 +56,6 @@ elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "sh[3-5]")
 	set(HARDINFO_ARCH "sh")
 elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "(riscv|riscv32|riscv64)")
 	set(HARDINFO_ARCH "riscv")
-elseif(${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "e2k")
-        set(HARDINFO_ARCH "e2k")
 else()
 	message(FATAL_ERROR "Unsupported architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif()
@@ -74,25 +77,90 @@ message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 message(STATUS "Building HardInfo for architecture: ${HARDINFO_OS}-${HARDINFO_ARCH}")
 
 add_definitions("-std=gnu89")
-add_definitions("-Wno-deprecated-declarations")
+#add_definitions("-Wno-deprecated-declarations")
+#add_definitions("-Wextra")
+#add_definitions("-Wno-missing-field-initializers")
 add_definitions("-Wformat")
 add_definitions("-Wformat-security")
 
+set(PACKAGE_LIBSOUP2_MINVERSION 2.42)
+#Actually needed for save settings, steal_pointer - FIXME
+set(PACKAGE_LIBGLIB2_MINVERSION 2.44)
+#set(PACKAGE_LIBGLIB2_MINVERSION 2.28)
+
+###################################DISTRO CHANGES###############################
+#Please add all distro relates stuff here
+SET(PACKAGE_MANPAGES 1)
+set(RPM 0)
+file(STRINGS /etc/os-release distro REGEX "^NAME=")
+string(REGEX REPLACE "NAME=" "" distro "${distro}")
+string(REGEX REPLACE "\"" "" distro "${distro}")
+file(STRINGS /etc/os-release disversion REGEX "^VERSION_ID=")
+string(REGEX REPLACE "VERSION_ID=" "" disversion "${disversion}")
+string(REGEX REPLACE "\"" "" disversion "${disversion}")
+string(REPLACE "/" "_" CPACK_SYSTEM_NAME ${distro}-${disversion}.${CMAKE_HOST_SYSTEM_PROCESSOR})
+string(REPLACE " " "_" CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
+message("-- Found Package Target ${CPACK_SYSTEM_NAME}")
+if(OVRPACKAGE_FILENAME)
+    set(CPACK_SYSTEM_NAME ${OVRPACKAGE_FILENAME})
+endif()
+
+#flavour output
+set(HARDINFO_OS ${distro})
+
+# currently all RPM flavours uses libsoup-2.4
+if(${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*" OR ${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*")
+  set(RPM 1)
+  set(HARDINFO_LIBSOUP3 0)
+endif()
+
+#oracle 6
+if(${distro}${disversion} MATCHES "Oracle6*")
+    set(HARDINFO_LIBSOUP3 0)
+    set(HARDINFO_GTK3 0)
+    #old deprecated version - but ok
+    set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
+    #save settings disabled, steal_pointer disabled
+    set(PACKAGE_LIBGLIB2_MINVERSION 2.28.8)
+    message("-- Low GLIB2 version 2.28.0 - FIXME")
+endif()
+
+#ubuntu 20.04
+if(${distro}${disversion} MATCHES "Ubuntu20.04")
+    set(HARDINFO_LIBSOUP3 0)
+endif()
+
+#Debian 11
+if(${distro}${disversion} MATCHES "Debian GNU/Linux11")
+    set(HARDINFO_LIBSOUP3 0)
+endif()
+
+#Fedora 39 - bug with man pages - probably needs upgrade..
+if(${distro}${disversion} MATCHES "Fedora Linux39")
+  set(PACKAGE_MANPAGES 0)
+endif()
+
+################################################################################
 add_subdirectory(po)
+
 
 include(FindPkgConfig)
 if (HARDINFO_GTK3)
-	message(STATUS "Building for GTK3 (experimental!)")
-	pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.0 cairo>=1.0 cairo-png>=1.0 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
-	add_definitions(-DGTK_DISABLE_SINGLE_INCLUDES)
+    message(STATUS "Building for GTK3")
+    pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.0 cairo>=1.0 cairo-png>=1.0 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+    add_definitions(-DGTK_DISABLE_SINGLE_INCLUDES)
 else()
-	message(STATUS "Building for GTK2")
-	pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 glib-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
+    message(STATUS "Building for GTK2")
+    pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
 endif()
 
-pkg_check_modules(LIBSOUP libsoup-2.4>=2.42)
-pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0)
-
+if (HARDINFO_LIBSOUP3)
+    pkg_check_modules(LIBSOUP REQUIRED libsoup-3.0>=3.00)
+else()
+    pkg_check_modules(LIBSOUP REQUIRED libsoup-2.4>=${PACKAGE_LIBSOUP2_MINVERSION})
+endif()
+pkg_check_modules(GLIB2 REQUIRED glib-2.0>=${PACKAGE_LIBGLIB2_MINVERSION})
+pkg_check_modules(JSON_GLIB REQUIRED json-glib-1.0>=0.14.2)
 pkg_check_modules(X11 REQUIRED x11)
 
 include(FindZLIB REQUIRED)
@@ -136,11 +204,11 @@ set(HARDINFO_RESOURCES
 	"data/pci.ids.min"
 	"data/kernel-module-icons.json"
 )
-
+if(${PACKAGE_MANPAGES})
 set(HARDINFO_MANPAGES
 	"hardinfo.1"
 )
-
+endif()
 set(MODULE_computer_SOURCES
 	modules/computer.c
 	modules/computer/alsa.c
@@ -391,11 +459,11 @@ install(DIRECTORY pixmaps
 	PATTERN "*.{png,svg}"
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
-install(DIRECTORY doc
-	DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/hardinfo
-	PATTERN "*.{hlp,png}"
-	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
-)
+#install(DIRECTORY doc
+#	DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/hardinfo
+#	PATTERN "*.{hlp,png}"
+#	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+#)
 install(FILES ${HARDINFO_MANPAGES}
 	DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
@@ -404,3 +472,54 @@ install(FILES pixmaps/hardinfo.png
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
+
+########################PACKAGE BUILDING FOR DISTROS###########################
+#Please update here for building packages
+
+SET(CPACK_PACKAGE_VERSION ${HARDINFO_VERSION})
+SET(CPACK_PACKAGE_HOMEPAGE_URL "https://hardinfo.bigbear.dk")
+if(${RPM})
+    SET(CPACK_GENERATOR "RPM")
+else()
+    SET(CPACK_GENERATOR "DEB")
+endif()
+
+#RPM
+SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy <hardinfo@bigbear.dk>")
+SET(CPACK_RPM_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system.  It has online benchmarking to check your machine performance against other machines.")
+SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils")
+SET(CPACK_RPM_PACKAGE_LICENSE "GPL2+")
+SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
+if(HARDINFO_LIBSOUP3)
+    SET(PACKAGE_LS "libsoup (>=3.0)")
+else()
+    SET(PACKAGE_LS "libsoup (>=${PACKAGE_LIBSOUP2_MINVERSION})")
+endif()
+if(HARDINFO_GTK3)
+    SET(PACKAGE_GTK "libgtk-3-0 (>=3.0)")
+else()
+    SET(PACKAGE_GTK "libgtk-2-0 (>=2.20)")
+endif()
+SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAGE_GTK}, libglib2.0-0 (>=2.10)")
+
+#DEB
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo@bigbear.dk>")
+SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "HardInfo is a small application that displays information about your hardware and operating system. It has online benchmarking to check your machine performance against other machines.")
+SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils")
+SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hwspeedy/hardinfo")
+if(HARDINFO_LIBSOUP3)
+    SET(PACKAGE_LS "libsoup-3.0.0 (>=3.0)")
+else()
+    SET(PACKAGE_LS "libsoup2.4-1 (>=${PACKAGE_LIBSOUP2_MINVERSION})")
+    if(${distro}${disversion} MATCHES "Debian GNU/Linux11")
+        SET(PACKAGE_LS "libsoup2.4-0 (>=2.42)")
+    endif()
+endif()
+if(HARDINFO_GTK3)
+    SET(PACKAGE_GTK "libgtk-3-0 (>=3.0)")
+else()
+    SET(PACKAGE_GTK "libgtk-2-0 (>=2.20)")
+endif()
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, ${PACKAGE_LS}, ${PACKAGE_GTK}")
+
+INCLUDE(CPack)
