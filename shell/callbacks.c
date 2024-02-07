@@ -4,7 +4,7 @@
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2.
+ *    the Free Software Foundation, version 2 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -224,7 +224,7 @@ void cb_about()
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about),
 				 _("HardInfo is free software; you can redistribute it and/or modify "
 				 "it under the terms of the GNU General Public License as published by "
-				 "the Free Software Foundation, version 2.\n\n"
+				 "the Free Software Foundation, version 2 or later.\n\n"
 				 "This program is distributed in the hope that it will be useful, "
 				 "but WITHOUT ANY WARRANTY; without even the implied warranty of "
 				 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
