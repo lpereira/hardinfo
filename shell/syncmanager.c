@@ -252,7 +252,7 @@ static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
         goto out;
 
     if (sna->entry->file_name != NULL) {
-        gchar *path = g_build_filename(g_get_user_config_dir(), "hardinfo",
+        gchar *path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                        sna->entry->file_name, NULL);
         GFile *file = g_file_new_for_path(path);
         GFileOutputStream *output =

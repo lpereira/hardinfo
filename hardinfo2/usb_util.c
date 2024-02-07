@@ -320,7 +320,7 @@ static gboolean usb_get_interface_sysfs(int conf, int number,
 static void find_usb_ids_file() {
     if (usb_ids_file) return;
     char *file_search_order[] = {
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "usb.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "usb.ids", NULL),
         g_build_filename(params.path_data, "usb.ids", NULL),
         NULL
     };

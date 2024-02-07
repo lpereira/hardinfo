@@ -83,7 +83,7 @@ static GtkActionEntry entries[] = {
      G_CALLBACK(cb_report_bug)},
 
     {"AboutAction", "_About",
-     N_("_About HardInfo"), NULL,
+     N_("_About HardInfo2"), NULL,
      N_("Displays program version information"),
      G_CALLBACK(cb_about)},
 
@@ -128,7 +128,7 @@ void menu_init(Shell * shell)
 
     /* Create our objects */
     menu_box = shell->vbox;
-    action_group = gtk_action_group_new("HardInfo");
+    action_group = gtk_action_group_new("HardInfo2");
     menu_manager = gtk_ui_manager_new();
 
     shell->action_group = action_group;
@@ -138,7 +138,7 @@ void menu_init(Shell * shell)
      * menu_box -> window
      * actions -> action_group
      * action_group -> menu_manager */
-    gtk_action_group_set_translation_domain( action_group, "hardinfo" );//gettext
+    gtk_action_group_set_translation_domain( action_group, "hardinfo2" );//gettext
     gtk_action_group_add_actions(action_group, entries,
 				 G_N_ELEMENTS(entries), NULL);
     gtk_action_group_add_toggle_actions(action_group, toggle_entries,

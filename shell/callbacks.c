@@ -26,7 +26,6 @@
 #include "shell.h"
 #include "report.h"
 #include "syncmanager.h"
-#include "xmlrpc-server.h"
 
 #include "config.h"
 
@@ -42,7 +41,7 @@ void cb_sync_on_startup()
     gboolean setting = shell_action_get_active("SyncOnStartupAction");
     GKeyFile *key_file = g_key_file_new();
 
-    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo",
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                         "settings.ini", NULL);
 
     g_key_file_load_from_file(
@@ -57,12 +56,12 @@ void cb_sync_on_startup()
 
 void cb_open_web_page()
 {
-    uri_open("http://www.hardinfo.org");
+    uri_open("https://www.hardinfo2.org");
 }
 
 void cb_report_bug()
 {
-    uri_open("https://github.com/lpereira/hardinfo");
+    uri_open("https://github.com/hwspeedy/hardinfo2");
 }
 
 void cb_refresh()
@@ -207,22 +206,22 @@ void cb_about()
     gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(shell->window));
 
 #if GTK_CHECK_VERSION(2, 12, 0)
-    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), "HardInfo");
+    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), "Hardinfo2");
 #else
-    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "HardInfo");
+    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "Hardinfo2");
 #endif
 
-    copyright = g_strdup_printf("Copyright \302\251 2003-%d L. A. F. Pereira", HARDINFO_COPYRIGHT_LATEST_YEAR);
+    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira, 2024-%d Hardinfo2 project", HARDINFO2_COPYRIGHT_LATEST_YEAR);
 
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-				  _("System information and benchmark tool"));
+				  _("System Information and Benchmark"));
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
-			      icon_cache_get_pixbuf("hardinfo.png"));
+			      icon_cache_get_pixbuf("hardinfo2.png"));
 
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about),
-				 _("HardInfo is free software; you can redistribute it and/or modify "
+				 _("HardInfo2 is free software; you can redistribute it and/or modify "
 				 "it under the terms of the GNU General Public License as published by "
 				 "the Free Software Foundation, version 2 or later.\n\n"
 				 "This program is distributed in the hope that it will be useful, "

@@ -727,7 +727,7 @@ check_for_updates(void)
 {
     GKeyFile *key_file = g_key_file_new();
 
-    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo",
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                         "settings.ini", NULL);
 
     g_key_file_load_from_file(
@@ -753,7 +753,7 @@ gboolean hardinfo_link(const gchar *uri) {
      * jump to different pages in hardinfo.
      *
      * if (g_str_has_prefix(uri, "hardinfo:")) {
-     *       hardinfo_navigate(g_utf8_strchr(uri, strlen("hardinfo"), ':') + 1);
+     *       hardinfo_navigate(g_utf8_strchr(uri, strlen("hardinfo2"), ':') + 1);
      *       return TRUE;
      * }
      */

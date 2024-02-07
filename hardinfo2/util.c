@@ -307,11 +307,11 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	DEBUG("done, trying to use binreloc paths.");
 
 	tmp = gbr_find_data_dir(PREFIX);
-	params.path_data = g_build_filename(tmp, "hardinfo", NULL);
+	params.path_data = g_build_filename(tmp, "hardinfo2", NULL);
 	g_free(tmp);
 
 	tmp = gbr_find_lib_dir(PREFIX);
-	params.path_lib = g_build_filename(tmp, "hardinfo", NULL);
+	params.path_lib = g_build_filename(tmp, "hardinfo2", NULL);
 	g_free(tmp);
     }
 
@@ -319,7 +319,7 @@ gboolean binreloc_init(gboolean try_hardcoded)
     DEBUG("  lib: %s", params.path_lib);
     DEBUG(" data: %s", params.path_data);
 
-    /* Try to see if the uidefs.xml file isn't missing. This isn't the
+    /* Try to see if the benchmark test data file isn't missing. This isn't the
        definitive test, but it should do okay for most situations. */
     tmp = g_build_filename(params.path_data, "benchmark.data", NULL);
     if (!g_file_test(tmp, G_FILE_TEST_EXISTS)) {
@@ -546,7 +546,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     // TODO: fmt_opts: FMT_OPT_ATERM, FMT_OPT_HTML, FMT_OPT_PANGO...
     param->fmt_opts = FMT_OPT_NONE;
 
-    gchar *confdir = g_build_filename(g_get_user_config_dir(), "hardinfo", NULL);
+    gchar *confdir = g_build_filename(g_get_user_config_dir(), "hardinfo2", NULL);
     if (!g_file_test(confdir, G_FILE_TEST_EXISTS)) {
         mkdir(confdir, 0744);
     }
@@ -557,7 +557,7 @@ gboolean ui_init(int *argc, char ***argv)
 {
     DEBUG("initializing gtk+ UI");
 
-    g_set_application_name("HardInfo");
+    g_set_application_name("HardInfo2");
     g_log_set_handler(NULL,
 		      G_LOG_LEVEL_WARNING | G_LOG_FLAG_FATAL |
 		      G_LOG_LEVEL_ERROR, log_handler, NULL);
@@ -928,7 +928,7 @@ static GSList *modules_check_deps(GSList * modules)
 				modules = g_slist_prepend(modules, mod);
 			    modules = modules_check_deps(modules);	/* re-check dependencies */
 			} else {
-			    g_error("HardInfo cannot run without loading the additional module.");
+			    g_error("HardInfo2 cannot run without loading the additional module.");
 			    exit(1);
 			}
 
@@ -983,7 +983,7 @@ static GSList *modules_load(gchar ** module_list)
 		 params.path_lib);
 	} else {
 	    g_error
-		(_("No module could be loaded. Please use hardinfo -l to list all avai"
+		(_("No module could be loaded. Please use hardinfo2 -l to list all avai"
 		 "lable modules and try again with a valid module list."));
 
 	}

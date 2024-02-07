@@ -10,7 +10,7 @@ gchar *oui_ids_file = NULL;
 void find_sdcard_ids_file() {
     if (sdcard_ids_file) return;
     char *file_search_order[] = {
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "sdcard.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "sdcard.ids", NULL),
         g_build_filename(params.path_data, "sdcard.ids", NULL),
         NULL
     };
@@ -26,7 +26,7 @@ void find_sdcard_ids_file() {
 void find_oui_ids_file() {
     if (oui_ids_file) return;
     char *file_search_order[] = {
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "ieee_oui.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "ieee_oui.ids", NULL),
         g_build_filename(params.path_data, "ieee_oui.ids", NULL),
         NULL
     };

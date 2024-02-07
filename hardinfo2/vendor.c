@@ -264,11 +264,11 @@ void vendor_init(void)
 
     char *file_search_order[] = {
         /* new format */
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "vendor.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "vendor.ids", NULL),
         g_build_filename(params.path_data, "vendor.ids", NULL),
         /* old format */
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "vendor.conf", NULL),
-        g_build_filename(g_get_home_dir(), ".hardinfo", "vendor.conf", NULL), /* old place */
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "vendor.conf", NULL),
+        g_build_filename(g_get_home_dir(), ".hardinfo2", "vendor.conf", NULL), /* old place */
         g_build_filename(params.path_data, "vendor.conf", NULL),
         NULL
     };

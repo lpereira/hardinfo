@@ -31,7 +31,7 @@
 #include "info.h"
 #include "format_early.h"
 
-#define HARDINFO_COPYRIGHT_LATEST_YEAR 2023
+#define HARDINFO2_COPYRIGHT_LATEST_YEAR 2024
 
 #ifndef LOCALEDIR
 #define LOCALEDIR "/usr/share/locale"

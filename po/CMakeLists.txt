@@ -1,3 +1,3 @@
 include(Translations)
-add_translations_directory("hardinfo")
-add_translations_catalog("hardinfo" ../shell/ ../modules/ ../hardinfo/ ../remote/ ../help-viewer/ )
+add_translations_directory("hardinfo2")
+add_translations_catalog("hardinfo2" ../shell/ ../modules/ ../hardinfo/ ../remote/ ../help-viewer/ )

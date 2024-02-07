@@ -36,7 +36,7 @@ gchar *ieee_oui_ids_file = NULL;
 void find_edid_ids_file() {
     if (edid_ids_file) return;
     char *file_search_order[] = {
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "edid.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "edid.ids", NULL),
         g_build_filename(params.path_data, "edid.ids", NULL),
         NULL
     };
@@ -53,7 +53,7 @@ void find_edid_ids_file() {
 void find_ieee_oui_ids_file() {
     if (ieee_oui_ids_file) return;
     char *file_search_order[] = {
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "ieee_oui.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "ieee_oui.ids", NULL),
         g_build_filename(params.path_data, "ieee_oui.ids", NULL),
         NULL
     };

@@ -35,19 +35,19 @@ int main(int argc, char **argv)
     GSList *modules;
 
     setlocale(LC_ALL, "");
-    bindtextdomain("hardinfo", LOCALEDIR);
-    textdomain("hardinfo");
+    bindtextdomain("hardinfo2", LOCALEDIR);
+    textdomain("hardinfo2");
 
-    DEBUG("HardInfo version " VERSION ". Debug version.");
+    DEBUG("Hardinfo2 version " VERSION ". Debug version.");
 
     /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);
 
     /* show version information and quit */
     if (params.show_version) {
-        g_print("HardInfo version " VERSION "\n");
+        g_print("Hardinfo2 version " VERSION "\n");
         g_print
-            (_(/*/ %d will be latest year of copyright*/ "Copyright (C) 2003-%d L. A. F. Pereira. See COPYING for details.\n\n"), HARDINFO_COPYRIGHT_LATEST_YEAR );
+            (_(/*/ %d will be latest year of copyright*/ "Copyright (C) 2003-2023 L. A. F. Pereira. 2024-%d Hardinfo2 Project.\n\n"), HARDINFO2_COPYRIGHT_LATEST_YEAR );
 
 	g_print(_("Compile-time options:\n"
 		"  Release version:   %s (%s)\n"
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     /* initialize the binreloc library, so we can load program data */
     if (!binreloc_init(FALSE))
 	g_error(_("Failed to find runtime data.\n\n"
-		"\342\200\242 Is HardInfo correctly installed?\n"
+		"\342\200\242 Is HardInfo2 correctly installed?\n"
 		"\342\200\242 See if %s and %s exists and you have read permission."),
 		PREFIX, LIBPREFIX);
 

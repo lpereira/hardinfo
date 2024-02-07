@@ -327,7 +327,7 @@ static void build_meaning_table_iter(JsonObject *object,
 
 void cpuflags_x86_init(void)
 {
-    gchar *flag_json = g_build_filename(g_get_user_config_dir(), "hardinfo",
+    gchar *flag_json = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                         "cpuflags.json", NULL);
     gboolean use_builtin_table = TRUE;
 

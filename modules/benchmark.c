@@ -444,7 +444,7 @@ static gchar *find_benchmark_conf(void)
     const gchar *config_dir = g_get_user_config_dir();
     gchar *path;
 
-    path = g_build_filename(config_dir, "hardinfo", "benchmark.json", NULL);
+    path = g_build_filename(config_dir, "hardinfo2", "benchmark.json", NULL);
     if (g_file_test(path, G_FILE_TEST_EXISTS))
         return path;
     g_free(path);

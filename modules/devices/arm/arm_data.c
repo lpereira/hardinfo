@@ -127,7 +127,7 @@ gchar *arm_ids_file = NULL;
 void find_arm_ids_file() {
     if (arm_ids_file) return;
     char *file_search_order[] = {
-        g_build_filename(g_get_user_config_dir(), "hardinfo", "arm.ids", NULL),
+        g_build_filename(g_get_user_config_dir(), "hardinfo2", "arm.ids", NULL),
         g_build_filename(params.path_data, "arm.ids", NULL),
         NULL
     };
