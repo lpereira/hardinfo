@@ -423,7 +423,7 @@ static void create_window(void)
 
     shell->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_icon(GTK_WINDOW(shell->window),
-			icon_cache_get_pixbuf("hardinfo.png"));
+			icon_cache_get_pixbuf("hardinfo2.png"));
     shell_set_title(shell, NULL);
     gtk_window_set_default_size(GTK_WINDOW(shell->window), 1024, 800);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);

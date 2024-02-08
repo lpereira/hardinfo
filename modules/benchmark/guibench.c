@@ -108,7 +108,7 @@ static double test_icons(GtkWindow *window)
   gc = gdk_gc_new(GDK_DRAWABLE(gdk_window));
   timer = g_timer_new();
   
-  pixbufs[0] = icon_cache_get_pixbuf("hardinfo.png");
+  pixbufs[0] = icon_cache_get_pixbuf("hardinfo2.png");
   pixbufs[1] = icon_cache_get_pixbuf("syncmanager.png");
   pixbufs[2] = icon_cache_get_pixbuf("report-large.png");
   
