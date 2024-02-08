@@ -21,7 +21,7 @@ Status
 - Features: Online database for exchanging benchmark results.
 - Development: Currently done by contributors, hwspeedy maintains
 
-Server code can be found in the "server" branch: https://github.com/hwspeedy/hardinfo2/tree/server
+Server code can be found in the "server" branch: https://github.com/hardinfo2/hardinfo2/tree/server
 
 Dependencies
 ------------
@@ -36,7 +36,7 @@ Building and installing
 **Debian/Ubuntu/Mint/PopOS**
 - sudo apt install git cmake build-essential gettext
 - sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev
-- git clone https://github.com/hwspeedy/hardinfo2
+- git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
 - mkdir build
 - cd build
@@ -51,7 +51,7 @@ Building and installing
 - sudo yum install epel-release  (only CentOS 7)
 - sudo yum install git cmake gcc gcc-c++ gettext rpmdevtools
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
-- git clone https://github.com/hwspeedy/hardinfo2
+- git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
 - mkdir build
 - cd build
