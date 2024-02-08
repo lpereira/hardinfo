@@ -425,7 +425,7 @@ static void create_window(void)
     gtk_window_set_icon(GTK_WINDOW(shell->window),
 			icon_cache_get_pixbuf("hardinfo.png"));
     shell_set_title(shell, NULL);
-    gtk_window_set_default_size(GTK_WINDOW(shell->window), 800, 600);
+    gtk_window_set_default_size(GTK_WINDOW(shell->window), 1024, 800);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -518,7 +518,8 @@ static void menu_item_set_icon_always_visible(Shell *shell,
 
     path = g_strdup_printf("%s/%s", parent_path, item_id);
     menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
-    gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
+
+    //gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
     g_free(path);
 }
 
@@ -571,7 +572,8 @@ static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
     merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
     gtk_ui_manager_add_ui(shell->ui_manager,
                           merge_id,
-			  "/menubar/HelpMenu/HelpMenuModules/LastSep",
+			  //  "/menubar/HelpMenu/HelpMenuModules/LastSep",
+			  "/menubar/HelpMenu/LastSep",
 			  about_module, about_module, GTK_UI_MANAGER_AUTO,
 			  TRUE);
     shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
@@ -641,7 +643,7 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 			   -1);
     }
 
-    add_module_to_menu(module->name, module->icon);
+    //add_module_to_menu(module->name, module->icon);
 
     if (module->entries) {
 	ShellModuleEntry *entry;
@@ -2365,12 +2367,21 @@ void key_get_components(const gchar *key,
     if (*key == '$' && np) {
         /* is flagged */
         gchar *f = g_strdup(key);
-        *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
-        if (flags)
-            *flags = g_strdup(f);
-        if (tag)
-            *tag = key_mi_tag(f);
-        g_free(f);
+        gchar *s = g_utf8_strchr(f+1, -1, '$');
+        if(s==NULL) {
+	    DEBUG("key_get_components_ERROR NOT FOUND");
+        }else{
+	    if((s-f+1)>strlen(key)) {
+	    DEBUG("key_get_components_ERROR NOT FOUND");
+	}else{
+	  *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
+	  if (flags)
+	    *flags = g_strdup(f);
+	  if (tag)
+	    *tag = key_mi_tag(f);
+	  g_free(f);
+	}
+      }
     } else
         np = key;
 

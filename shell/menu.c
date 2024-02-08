@@ -41,10 +41,10 @@
 
 static GtkActionEntry entries[] = {
     {"InformationMenuAction", NULL, N_("_Information")},	/* name, stock id, label */
-    {"RemoteMenuAction", NULL, N_("_Remote")},
+    //    {"RemoteMenuAction", NULL, N_("_Remote")},
     {"ViewMenuAction", NULL, N_("_View")},
     {"HelpMenuAction", NULL, N_("_Help")},
-    {"HelpMenuModulesAction", HI_STOCK_ABOUT_MODULES, N_("About _Modules")},
+    //    {"HelpMenuModulesAction", HI_STOCK_ABOUT_MODULES, N_("About _Modules")},
     {"MainMenuBarAction", NULL, ""},
 
     {"ReportAction", HI_STOCK_REPORT,	/* name, stock id */
@@ -62,12 +62,12 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_sync_manager)},
 
-    {"CopyAction", GTK_STOCK_COPY,
+    {"CopyAction", HI_STOCK_CLIPBOARD,
      N_("_Copy to Clipboard"), "<control>C",
      N_("Copy to clipboard"),
      G_CALLBACK(cb_copy_to_clipboard)},
 
-    {"RefreshAction", GTK_STOCK_REFRESH,
+    {"RefreshAction", HI_STOCK_REFRESH,
      N_("_Refresh"), "F5",
      NULL,
      G_CALLBACK(cb_refresh)},

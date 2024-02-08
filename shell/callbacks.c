@@ -196,8 +196,8 @@ void cb_about()
         "Ondrej Čerman",
         "Mike Hewitt",
         "Boris Afonot",
-        "",
-        "Based on work by:",
+	"",
+	"Based on work by:",
 	"uber-graph by Christian Hergert and others.",
 	"BinReloc by Hongli Lai",
 	"decode-dimms by Philip Edelbrock",
@@ -213,9 +213,18 @@ void cb_about()
         "DMI support based on code by Stewart Adam",
         "SCSI support based on code by Pascal F. Martin",
 	"",
-        NULL
-    };
-    const gchar *artists[] = {
+	"Translated by:"
+	"Alexander Münch",
+	"micrococo",
+	"yolanteng0",
+	"Yunji Lee",
+	"Hugo Carvalho",
+	"Paulo Giovanni pereira",
+	"Sergey Rodin",
+	"Sabri Ünal",
+	"yetist",
+        "",
+	"Artwork by:"
         "Jakub Szypulka",
         "Tango Project",
         "The GNOME Project",
@@ -256,9 +265,8 @@ void cb_about()
     gtk_about_dialog_set_wrap_license(GTK_ABOUT_DIALOG(about), TRUE);
 
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about), authors);
-    gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
-    gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about),
-        _("translator-credits"));
+    //gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(about), artists);
+    //gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about), _("translator-credits"));
 
     gtk_dialog_run(GTK_DIALOG(about));
     gtk_widget_destroy(about);
