@@ -31,6 +31,7 @@
 
 #include "appf.h"
 #include "benchmark.h"
+#include "cpu_util.h"
 
 #include "benchmark/bench_results.c"
 

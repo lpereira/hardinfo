@@ -20,6 +20,7 @@
 
 #include "hardinfo.h"
 #include "devices.h"
+#include "usb_util.h"
 
 gchar *input_icons = NULL;
 

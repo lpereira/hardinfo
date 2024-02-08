@@ -19,6 +19,7 @@
 
 #include "hardinfo.h"
 #include "benchmark.h"
+#include "cpu_util.h"
 
 #define STATMSG "Performing Alexey Kopytov's sysbench memory benchmark"
 

@@ -26,6 +26,7 @@
 #include <vendor.h>
 
 #include <binreloc.h>
+#include "dmi_util.h"
 
 ProgramParameters params = { 0 };
 

@@ -22,6 +22,7 @@
 #include <locale.h>
 #include <inttypes.h>
 #include <json-glib/json-glib.h>
+#include "nice_name.h"
 
 /* in dmi_memory.c */
 uint64_t memory_devices_get_system_memory_MiB();

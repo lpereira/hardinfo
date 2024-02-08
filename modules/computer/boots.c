@@ -21,6 +21,8 @@
 #include "hardinfo.h"
 #include "computer.h"
 
+extern void scan_os(gboolean reload);
+
 void
 scan_boots_real(void)
 {
