@@ -111,8 +111,9 @@ gchar *monitor_vendor_str(monitor *m, gboolean include_value, gboolean link_name
     if (!m || !m->e) return NULL;
     edid_ven ven = m->e->ven;
     gchar v[20] = "", t[4] = "";
-    ids_query_result result = {};
+    ids_query_result result;// = {};
 
+    memset(&result,0,sizeof(ids_query_result));
     if (ven.type == VEN_TYPE_PNP) {
         strcpy(v, ven.pnp);
         strcpy(t, "PNP");
