@@ -21,7 +21,6 @@
 #include "iconcache.h"
 #include "syncmanager.h"
 
-#ifdef HAS_LIBSOUP
 #include <libsoup/soup.h>
 
 #include <stdarg.h>
@@ -88,47 +87,30 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction *sna, gint n);
     if (!sna->error) {                                                         \
         sna->error = g_error_new(err_quark, code, message, ##__VA_ARGS__);     \
     }
-#endif /* HAS_LIBSOUP */
 
 gint sync_manager_count_entries(void)
 {
-#ifdef HAS_LIBSOUP
     return g_slist_length(entries);
-#else
-    return 0;
-#endif
 }
 
 void sync_manager_add_entry(SyncEntry *entry)
 {
-#ifdef HAS_LIBSOUP
     DEBUG("registering syncmanager entry ''%s''", entry->name);
 
     entry->selected = TRUE;
     entries = g_slist_append(entries, entry);
-#else
-    DEBUG("libsoup support is disabled.");
-#endif /* HAS_LIBSOUP */
 }
 
 void sync_manager_clear_entries(void)
 {
-#ifdef HAS_LIBSOUP
     DEBUG("clearing syncmanager entries");
 
     g_slist_free(entries);
     entries = NULL;
-#else
-    DEBUG("libsoup support is disabled.");
-#endif /* HAS_LIBSOUP */
 }
 
 void sync_manager_show(GtkWidget *parent)
 {
-#ifndef HAS_LIBSOUP
-    g_warning(_("HardInfo was compiled without libsoup support. (Network "
-                "Updater requires it.)"));
-#else  /* !HAS_LIBSOUP */
     SyncDialog *sd = sync_dialog_new(parent);
 
     err_quark = g_quark_from_static_string("syncmanager");
@@ -146,10 +128,8 @@ void sync_manager_show(GtkWidget *parent)
     }
 
     sync_dialog_destroy(sd);
-#endif /* HAS_LIBSOUP */
 }
 
-#ifdef HAS_LIBSOUP
 static gboolean _cancel_sync(GtkWidget *widget, gpointer data)
 {
     SyncDialog *sd = (SyncDialog *)data;
@@ -706,4 +686,3 @@ void sync_manager_update_on_startup(void)
         g_idle_add(sync_one, action);
     }
 }
-#endif /* HAS_LIBSOUP */

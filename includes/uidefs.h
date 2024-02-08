@@ -11,7 +11,6 @@
     "<toolitem name=\"ReportBug\" action=\"ReportBugAction\" />"
 #endif /* !RELEASE */
 
-#ifdef HAS_LIBSOUP
 #define SYNC_MANAGER_MENU_ITEMS                                                \
     "<separator/>"                                                             \
     "<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" "             \
@@ -19,11 +18,6 @@
     "<menuitem name=\"SyncOnStartup\" action=\"SyncOnStartupAction\"/>"
 #define SYNC_MANAGER_TOOL_ITEMS                                                \
     "<toolitem name=\"SyncManager\" action=\"SyncManagerAction\"/>"
-
-#else /* !HAS_LIBSOUP */
-#define SYNC_MANAGER_MENU_ITEMS
-#define SYNC_MANAGER_TOOL_ITEMS
-#endif /* !HAS_LIBSOUP */
 
 char *uidefs_str =
     "<ui>"

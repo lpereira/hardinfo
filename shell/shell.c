@@ -818,9 +818,7 @@ void shell_init(GSList * modules)
 
     shell->tree->modules = modules ? modules : modules_load_all();
 
-#ifdef HAS_LIBSOUP
     check_for_updates();
-#endif
 
     g_slist_foreach(shell->tree->modules, shell_add_modules_to_gui, shell->tree);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->tree->view));
@@ -839,11 +837,7 @@ void shell_init(GSList * modules)
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
 
-#ifndef HAS_LIBSOUP
-    shell_action_set_enabled("SyncManagerAction", FALSE);
-#else
     shell_action_set_enabled("SyncManagerAction", sync_manager_count_entries() > 0);
-#endif
 
     /* Should select Computer Summary (note: not Computer/Summary) */
     g_idle_add(select_first_tree_item, NULL);

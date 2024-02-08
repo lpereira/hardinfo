@@ -213,7 +213,7 @@ void cb_about()
         "DMI support based on code by Stewart Adam",
         "SCSI support based on code by Pascal F. Martin",
 	"",
-	"Translated by:"
+	"Translated by:",
 	"Alexander Münch",
 	"micrococo",
 	"yolanteng0",
@@ -224,7 +224,7 @@ void cb_about()
 	"Sabri Ünal",
 	"yetist",
         "",
-	"Artwork by:"
+	"Artwork by:",
         "Jakub Szypulka",
         "Tango Project",
         "The GNOME Project",
