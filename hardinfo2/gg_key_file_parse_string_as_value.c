@@ -22,6 +22,7 @@
  */
 
 #include <glib.h>
+#include <string.h>
 
 gchar *
 gg_key_file_parse_string_as_value (const gchar *string, const gchar list_separator)
