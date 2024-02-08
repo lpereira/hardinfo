@@ -406,12 +406,12 @@ void shell_set_title(Shell *shell, gchar *subtitle)
     if (subtitle) {
         gchar *tmp;
 
-        tmp = g_strdup_printf(_("%s - System Information"), subtitle);
+        tmp = g_strdup_printf(_("%s - System Information and Benchmark"), subtitle);
         gtk_window_set_title(GTK_WINDOW(shell->window), tmp);
 
         g_free(tmp);
     } else {
-        gtk_window_set_title(GTK_WINDOW(shell->window), _("System Information"));
+        gtk_window_set_title(GTK_WINDOW(shell->window), _("System Information and Benchmark"));
     }
 }
 
