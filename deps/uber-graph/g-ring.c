@@ -21,7 +21,7 @@
 #include "g-ring.h"
 
 #ifndef g_malloc0_n
-#define g_malloc0_n(x,y) g_malloc0(x * y)
+#define g_malloc0_n(x,y) g_malloc0((gsize)x * y)
 #endif
 
 #define get_element(r,i) ((r)->data + ((r)->elt_size * i))
