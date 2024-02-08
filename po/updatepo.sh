@@ -1,4 +1,4 @@
-#!bash
+#!/bin/bash
 
 GITVER=`git describe --always --dirty`
 GITHASH=`git rev-parse HEAD`

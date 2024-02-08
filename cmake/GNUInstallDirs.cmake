@@ -125,7 +125,6 @@ Macros
 #]=======================================================================]
 
 cmake_policy(PUSH)
-cmake_policy(SET CMP0054 NEW) # if() quoted variables not dereferenced
 
 # Convert a cache variable to PATH type
 

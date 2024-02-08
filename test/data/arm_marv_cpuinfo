@@ -1,9 +1,0 @@
-Processor       : Feroceon 88FR131 rev 1 (v5l)
-BogoMIPS        : 1192.75
-Features        : swp half fastmult edsp
-CPU implementer : 0x56
-CPU architecture: 5TE
-CPU variant     : 0x2
-CPU part        : 0x131
-CPU revision    : 1
-

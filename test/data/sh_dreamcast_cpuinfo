@@ -1,9 +1,0 @@
-machine         : Sega Dreamcast
-processor       : 0
-cpu family      : sh4
-cpu type        : SH7750
-cache size      : 8K-bytes/16K-bytes
-bogomips        : 199.06
-cpu clock       : 199.49MHz
-bus clock       : 99.74MHz
-module clock : 49.87MHz
