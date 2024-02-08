@@ -668,9 +668,16 @@ gchar *callback_security(void)
                 continue;
 
             const gchar *icon = NULL;
+	    if (g_strstr_len(contents, -1, "Not affected") )
+	        icon = "circle_green_check.svg";
+
+            if (g_str_has_prefix(contents, "Mitigation:") ||
+                g_str_has_prefix(contents, "mitigation:"))
+                icon = "circle_yellow_exclaim.svg";
+
             if (g_strstr_len(contents, -1, "Vulnerable") ||
                 g_strstr_len(contents, -1, "vulnerable"))
-                icon = "dialog-warning.png";
+                icon = "circle_red_x.svg";
 
             info_group_add_fields(vulns,
                                   info_field(g_strdup(vuln),
