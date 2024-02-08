@@ -101,6 +101,7 @@ int cpu_procs_cores_threads_nodes(int *p, int *c, int *t, int *n)
     *t = cpubits_count(threads);
     *c = cpubits_count(cores);
     *p = cpubits_count(packs);
+    *n = 1;
 
     g_free(tmp);
     g_file_get_contents("/sys/devices/system/node/possible", &tmp, NULL, NULL);
