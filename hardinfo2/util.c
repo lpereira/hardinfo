@@ -963,15 +963,27 @@ static GSList *modules_load(gchar ** module_list)
     g_free(filename);
 
     if (dir) {
-	while ((filename = (gchar *) g_dir_read_name(dir))) {
-	    if (g_strrstr(filename, "." G_MODULE_SUFFIX) &&
-		module_in_module_list(filename, module_list) &&
-		((module = module_load(filename)))) {
-		modules = g_slist_prepend(modules, module);
-	    }
+      GList *filenames = NULL;
+      while ((filename = (gchar *)g_dir_read_name(dir))) {
+	if (g_strrstr(filename, "." G_MODULE_SUFFIX) &&
+	    module_in_module_list(filename, module_list)) {
+	  if (g_strrstr(filename, "devices." G_MODULE_SUFFIX)) {
+	    filenames = g_list_prepend(filenames, filename);
+	  }
+	  else {
+	    filenames = g_list_append(filenames, filename);
+	  }
 	}
-
-	g_dir_close(dir);
+      }
+      GList* item = NULL;
+        while (item = g_list_first(filenames)) {
+            if (module = module_load((gchar *)item->data)) {
+                modules = g_slist_prepend(modules, module);
+            }
+            filenames = g_list_delete_link(filenames, item);
+        }
+        g_list_free_full (g_steal_pointer (&filenames), g_object_unref);
+        g_dir_close(dir);
     }
 
     modules = modules_check_deps(modules);
