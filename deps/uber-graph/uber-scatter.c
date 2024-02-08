@@ -38,7 +38,6 @@
  * Section overview.
  */
 
-G_DEFINE_TYPE(UberScatter, uber_scatter, UBER_TYPE_GRAPH)
 
 struct _UberScatterPrivate
 {
@@ -51,6 +50,8 @@ struct _UberScatterPrivate
 	gpointer         func_user_data;
 	GDestroyNotify   func_destroy;
 };
+
+G_DEFINE_TYPE_WITH_PRIVATE(UberScatter, uber_scatter, UBER_TYPE_GRAPH)
 
 /**
  * uber_scatter_new:
@@ -388,7 +389,6 @@ uber_scatter_class_init (UberScatterClass *klass) /* IN */
 
 	object_class = G_OBJECT_CLASS(klass);
 	object_class->finalize = uber_scatter_finalize;
-	g_type_class_add_private(object_class, sizeof(UberScatterPrivate));
 
 	graph_class = UBER_GRAPH_CLASS(klass);
 	graph_class->render = uber_scatter_render;
@@ -411,9 +411,8 @@ uber_scatter_init (UberScatter *scatter) /* IN */
 {
 	UberScatterPrivate *priv;
 
-	scatter->priv = G_TYPE_INSTANCE_GET_PRIVATE(scatter,
-	                                            UBER_TYPE_SCATTER,
-	                                            UberScatterPrivate);
+	scatter->priv = uber_scatter_get_instance_private(scatter);
+
 	priv = scatter->priv;
 
 	priv->range.begin = 0.;

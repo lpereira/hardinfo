@@ -40,7 +40,6 @@
  * Section overview.
  */
 
-G_DEFINE_TYPE(UberLineGraph, uber_line_graph, UBER_TYPE_GRAPH)
 
 typedef struct
 {
@@ -68,6 +67,9 @@ struct _UberLineGraphPrivate
 	gpointer           func_data;
 	GDestroyNotify     func_notify;
 };
+
+G_DEFINE_TYPE_WITH_PRIVATE(UberLineGraph, uber_line_graph, UBER_TYPE_GRAPH)
+
 
 enum
 {
@@ -956,7 +958,6 @@ uber_line_graph_class_init (UberLineGraphClass *klass) /* IN */
 	object_class->finalize = uber_line_graph_finalize;
 	object_class->get_property = uber_line_graph_get_property;
 	object_class->set_property = uber_line_graph_set_property;
-	g_type_class_add_private(object_class, sizeof(UberLineGraphPrivate));
 
 	graph_class = UBER_GRAPH_CLASS(klass);
 	graph_class->downscale = uber_line_graph_downscale;
@@ -1000,9 +1001,8 @@ uber_line_graph_init (UberLineGraph *graph) /* IN */
 	/*
 	 * Keep pointer to private data.
 	 */
-	graph->priv = G_TYPE_INSTANCE_GET_PRIVATE(graph,
-	                                          UBER_TYPE_LINE_GRAPH,
-	                                          UberLineGraphPrivate);
+	graph->priv = uber_line_graph_get_instance_private(graph);
+
 	priv = graph->priv;
 	/*
 	 * Initialize defaults.

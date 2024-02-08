@@ -33,8 +33,6 @@
  * Section overview.
  */
 
-G_DEFINE_TYPE(UberHeatMap, uber_heat_map, UBER_TYPE_GRAPH)
-
 struct _UberHeatMapPrivate
 {
 	GRing           *raw_data;
@@ -44,6 +42,9 @@ struct _UberHeatMapPrivate
 	GDestroyNotify   func_destroy;
 	gpointer         func_user_data;
 };
+
+G_DEFINE_TYPE_WITH_PRIVATE(UberHeatMap, uber_heat_map, UBER_TYPE_GRAPH)
+
 
 /**
  * uber_heat_map_new:
@@ -322,7 +323,6 @@ uber_heat_map_class_init (UberHeatMapClass *klass) /* IN */
 
 	object_class = G_OBJECT_CLASS(klass);
 	object_class->finalize = uber_heat_map_finalize;
-	g_type_class_add_private(object_class, sizeof(UberHeatMapPrivate));
 
 	graph_class = UBER_GRAPH_CLASS(klass);
 	graph_class->render = uber_heat_map_render;
@@ -343,7 +343,5 @@ uber_heat_map_class_init (UberHeatMapClass *klass) /* IN */
 static void
 uber_heat_map_init (UberHeatMap *map) /* IN */
 {
-	map->priv = G_TYPE_INSTANCE_GET_PRIVATE(map,
-	                                        UBER_TYPE_HEAT_MAP,
-	                                        UberHeatMapPrivate);
+	map->priv = uber_heat_map_get_instance_private(map);
 }

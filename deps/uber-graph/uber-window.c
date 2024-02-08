@@ -30,7 +30,6 @@
  * Section overview.
  */
 
-G_DEFINE_TYPE(UberWindow, uber_window, GTK_TYPE_WINDOW)
 
 struct _UberWindowPrivate
 {
@@ -39,6 +38,7 @@ struct _UberWindowPrivate
 	GtkWidget *notebook;
 	GtkWidget *table;
 };
+G_DEFINE_TYPE_WITH_PRIVATE(UberWindow, uber_window, GTK_TYPE_WINDOW)
 
 /**
  * uber_window_new:
@@ -286,7 +286,6 @@ uber_window_class_init (UberWindowClass *klass) /* IN */
 
 	object_class = G_OBJECT_CLASS(klass);
 	object_class->finalize = uber_window_finalize;
-	g_type_class_add_private(object_class, sizeof(UberWindowPrivate));
 }
 
 /**
@@ -303,9 +302,7 @@ uber_window_init (UberWindow *window) /* IN */
 {
 	UberWindowPrivate *priv;
 
-	window->priv = G_TYPE_INSTANCE_GET_PRIVATE(window,
-	                                           UBER_TYPE_WINDOW,
-	                                           UberWindowPrivate);
+	window->priv = uber_window_get_instance_private(window);
 
 	/*
 	 * Initialize defaults.
