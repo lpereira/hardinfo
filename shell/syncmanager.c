@@ -64,7 +64,7 @@ static SoupSession *session = NULL;
 static GMainLoop *loop;
 static GQuark err_quark;
 
-#define API_SERVER_URI "https://api.hardinfo.org"
+#define API_SERVER_URI "http://hardinfo.bigbear.dk"
 
 #define LABEL_SYNC_DEFAULT                                                     \
     _("<big><b>Synchronize with Central Database</b></big>\n"                  \
@@ -260,6 +260,10 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
 #endif
 
     if (sna->entry->file_name != NULL) {
+        //check for missing config dirs
+        g_mkdir(g_get_user_config_dir(), 0766);
+        g_mkdir(g_build_filename(g_get_user_config_dir(),"hardinfo2",NULL), 0766);
+        //
         gchar *path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                        sna->entry->file_name, NULL);
         GFile *file = g_file_new_for_path(path);
