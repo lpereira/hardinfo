@@ -17,7 +17,7 @@
 
 
 typedef struct {
-    guint32 state[5];
+    guint32 state[20];
     guint32 count[2];
     guchar buffer[64];
 } SHA1_CTX;

@@ -47,7 +47,7 @@ A million repetitions of "a"
 
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
-void SHA1Transform(guint32 state[5], guchar buffer[64])
+void SHA1Transform(guint32 state[20], guchar buffer[64])
 {
     guint32 a, b, c, d, e;
     typedef union {
