@@ -165,8 +165,11 @@ bench_value benchmark_crunch_for(float seconds,
         pbt->callback = callback;
         pbt->stop = &stop;
 
-        thread = g_thread_new(
-            "dispatcher", (GThreadFunc)benchmark_crunch_for_dispatcher, pbt);
+#if GLIB_CHECK_VERSION(2,32,0)
+        thread = g_thread_new("dispatcher", (GThreadFunc)benchmark_crunch_for_dispatcher, pbt);
+#else
+        thread = g_thread_create((GThreadFunc)benchmark_crunch_for_dispatcher, pbt,TRUE,NULL);
+#endif
         threads = g_slist_prepend(threads, thread);
 
         DEBUG("thread %d launched as context %p", thread_number, thread);
@@ -301,8 +304,12 @@ bench_value benchmark_parallel_for(gint n_threads,
         pbt->data = callback_data;
         pbt->callback = callback;
 
-        thread = g_thread_new(
-            "dispatcher", (GThreadFunc)benchmark_parallel_for_dispatcher, pbt);
+#if GLIB_CHECK_VERSION(2,32,0)
+        thread = g_thread_new("dispatcher", (GThreadFunc)benchmark_parallel_for_dispatcher, pbt);
+#else
+        thread = g_thread_create((GThreadFunc)benchmark_parallel_for_dispatcher, pbt,TRUE,NULL);
+#endif
+
         threads = g_slist_prepend(threads, thread);
 
         DEBUG("thread %d launched as context %p", thread_number, thread);
@@ -409,16 +416,21 @@ static GSList *benchmark_include_results_json(const gchar *path,
     JsonNode *root;
     bench_result *this_machine = NULL;
     GSList *result_list = NULL;
+    GError *error=NULL;
 
     DEBUG("Loading benchmark results from JSON file %s", path);
 
     parser = json_parser_new();
-    if (!json_parser_load_from_file(parser, path, NULL))
-        goto out;
+    json_parser_load_from_file(parser, path, &error);
+    if(error){
+        DEBUG ("Unable to parse JSON %s %s", path, error->message);
+        g_error_free(error);
+        g_object_unref(parser);
+        return result_list;
+    }
 
     root = json_parser_get_root(parser);
-    if (json_node_get_node_type(root) != JSON_NODE_OBJECT)
-        goto out;
+    if (json_node_get_node_type(root) != JSON_NODE_OBJECT)  goto out;
 
     JsonObject *results = json_node_get_object(root);
     if (results) {
@@ -631,7 +643,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
         BenchmarkDialog *benchmark_dialog;
         GSpawnFlags spawn_flags = G_SPAWN_STDERR_TO_DEV_NULL;
         gchar *bench_status;
-
+        GtkWidget *content_area, *box, *label;
         bench_value r = EMPTY_BENCH_VALUE;
         bench_results[entry] = r;
 
@@ -644,29 +656,45 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
         g_free(bench_status);
 
         bench_image = icon_cache_get_image("benchmark.png");
-        gtk_widget_show(bench_image);
 
-        bench_dialog = gtk_message_dialog_new(
-            GTK_WINDOW(shell_get_main_shell()->transient_dialog), GTK_DIALOG_MODAL,
-            GTK_MESSAGE_INFO, GTK_BUTTONS_NONE,
-            _("Benchmarking. Please do not move your mouse\n"
-              "or press any keys."));
+	bench_dialog = gtk_dialog_new_with_buttons ("Benchmarking...",
+                                      GTK_WINDOW(shell_get_main_shell()->transient_dialog),
+                                      GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+                                      "Stop",
+                                      GTK_BUTTONS_CLOSE,
+                                      NULL);
 
-        gtk_widget_set_sensitive(
-            GTK_WIDGET(shell_get_main_shell()->transient_dialog), FALSE);
+	gtk_widget_set_sensitive(GTK_WIDGET(shell_get_main_shell()->transient_dialog), FALSE);
 
-        if (GTK_WINDOW(shell_get_main_shell()->transient_dialog) ==
-            GTK_WINDOW(shell_get_main_shell()->window)) {
-            gtk_dialog_add_buttons(GTK_DIALOG(bench_dialog), _("Cancel"),
-                                   GTK_RESPONSE_ACCEPT, NULL);
-        } else {
-            gtk_window_set_deletable(GTK_WINDOW(bench_dialog), FALSE);
-        }
+	content_area = gtk_dialog_get_content_area (GTK_DIALOG(bench_dialog));
 
-        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-        gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(bench_dialog),
-                                     bench_image);
-        G_GNUC_END_IGNORE_DEPRECATIONS
+#if GTK_CHECK_VERSION(3,0,0)
+	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+#else
+	box = gtk_hbox_new(FALSE, 1);
+#endif
+	label = gtk_label_new ("Please do not move your mouse\n"
+	    "or press any keys.");
+
+	gtk_widget_show (bench_image);
+
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_widget_set_halign (bench_image, GTK_ALIGN_START);
+#else
+        gtk_misc_set_alignment(GTK_MISC(bench_image), 0.0, 0.0);
+#endif
+
+	g_signal_connect_swapped (bench_dialog,
+				  "response",
+				  G_CALLBACK (gtk_widget_destroy),
+				  bench_dialog);
+
+	gtk_box_pack_start (GTK_BOX(box), bench_image, TRUE, TRUE, 10);
+	gtk_box_pack_start (GTK_BOX(box), label, TRUE, TRUE, 10);
+	gtk_container_add (GTK_CONTAINER(content_area), box);
+
+	gtk_window_set_deletable(GTK_WINDOW(bench_dialog), FALSE);
+	gtk_widget_show_all (bench_dialog);
 
         while (gtk_events_pending()) {
             gtk_main_iteration();
