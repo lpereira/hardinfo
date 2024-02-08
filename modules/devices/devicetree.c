@@ -240,15 +240,14 @@ static void add_keys(dtr *dt, char *np) {
     GDir *dir;
     dtr_obj *obj;
 
-    /* add self */
-    obj = dtr_obj_read(dt, np);
-    dt_path = dtr_obj_path(obj);
-    n_info = get_node(dt, dt_path);
-    mi_add(dt_path, n_info, 0);
-
     dir_path = g_strdup_printf("%s/%s", dtr_base_path(dt), np);
     dir = g_dir_open(dir_path, 0 , NULL);
-    if (dir) {
+    if(!dir){ /* add self */
+        obj = dtr_obj_read(dt, np);
+        dt_path = dtr_obj_path(obj);
+        n_info = get_node(dt, dt_path);
+        mi_add(dt_path, n_info, 0);
+    }else { //dir
         while((fn = g_dir_read_name(dir)) != NULL) {
             ftmp = g_strdup_printf("%s/%s", dir_path, fn);
             if ( g_file_test(ftmp, G_FILE_TEST_IS_DIR) ) {
@@ -256,13 +255,14 @@ static void add_keys(dtr *dt, char *np) {
                     ntmp = g_strdup_printf("/%s", fn);
                 else
                     ntmp = g_strdup_printf("%s/%s", np, fn);
-                add_keys(dt, ntmp);
+                if(strlen(ntmp)>0) add_keys(dt, ntmp);
                 g_free(ntmp);
             }
             g_free(ftmp);
         }
         g_dir_close(dir);
     }
+    g_free(dir_path);
 }
 
 static char *msg_section(dtr *dt, int dump) {
