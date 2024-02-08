@@ -20,10 +20,6 @@
 #define __USE_XOPEN
 #endif /* __USE_XOPEN */
 
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE
-#endif /* _XOPEN_SOURCE */
-
 #include <gtk/gtk.h>
 #include <config.h>
 #include <string.h>
@@ -888,7 +884,7 @@ void hi_module_deinit(void)
     sensor_shutdown();
     storage_shutdown();
     udisks2_shutdown();
-    g_module_close(cups);
+    if(cups) g_module_close(cups);
 }
 
 const ModuleAbout *hi_module_get_about(void)

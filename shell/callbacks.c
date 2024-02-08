@@ -173,34 +173,54 @@ void cb_about()
     GtkWidget *about;
     gchar *copyright = NULL;
     const gchar *authors[] = {
-        _("Author:"),
-        "L. A. F. Pereira",
-        "",
-        _("Contributors:"),
+        "L. A. F. Pereira (2003-2023)",
+	"hwspeedy(2024-)",
         "Agney Lopes Roth Ferraz",
         "Andrey Esin",
         "Burt P.",
         "Ondrej Čerman",
+        "Stewart Adam",
+        "Pascal F. Martin",
+        "TotalCaesar659",
+        "Julian Ospald",
+	"Julien Lavergne",
+        "Fernando López",
+        "PICCORO Lenz McKAY",
+        "Alexander Münch",
+        "Simon Quigley",
+        "AsciiWolf",
+        "George Schneeloch",
+        "Mattia Rizzolo",
+        "Yo",
+        "jamesbond",
+        "Ondrej Čerman",
+        "Mike Hewitt",
+        "Boris Afonot",
         "",
-        _("Based on work by:"),
-        _("MD5 implementation by Colin Plumb (see md5.c for details)"),
-        _("SHA1 implementation by Steve Reid (see sha1.c for details)"),
-        _("Blowfish implementation by Paul Kocher (see blowfich.c for details)"),
-        _("Raytracing benchmark by John Walker (see fbench.c for details)"),
-        _("FFT benchmark by Scott Robert Ladd (see fftbench.c for details)"),
-        _("Some code partly based on x86cpucaps by Osamu Kayasono"),
-        _("Vendor list based on GtkSysInfo by Pissens Sebastien"),
-        _("DMI support based on code by Stewart Adam"),
-        _("SCSI support based on code by Pascal F. Martin"),
+        "Based on work by:",
+	"uber-graph by Christian Hergert and others.",
+	"BinReloc by Hongli Lai",
+	"decode-dimms by Philip Edelbrock",
+	"decode-dimms by Christian Zuckschwerdt",
+	"decode-dimms by Burkart Lingner",
+        "x86cpucaps by Osamu Kayasono",
+        "MD5 implementation by Colin Plumb",
+        "SHA1 implementation by Steve Reid",
+        "Blowfish implementation by Paul Kocher",
+        "Raytracing benchmark by John Walker",
+        "FFT benchmark by Scott Robert Ladd",
+        "Vendor list based on GtkSysInfo by Pissens Sebastien",
+        "DMI support based on code by Stewart Adam",
+        "SCSI support based on code by Pascal F. Martin",
+	"",
         NULL
     };
     const gchar *artists[] = {
         "Jakub Szypulka",
-        _("Tango Project"),
-        _("The GNOME Project"),
-        _("VMWare, Inc. (USB icon from VMWare Workstation 6)"),
-        _("epicbard (Fan icon, CC BY-SA 3.0)"),
-        _("Roundicons"),
+        "Tango Project",
+        "The GNOME Project",
+        "epicbard",
+        "Roundicons",
         NULL
     };
 
@@ -213,7 +233,7 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "Hardinfo2");
 #endif
 
-    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira, 2024-%d Hardinfo2 project", HARDINFO2_COPYRIGHT_LATEST_YEAR);
+    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira\nCopyright \302\251 2024-%d Hardinfo2 Project\n\n\n\n", HARDINFO2_COPYRIGHT_LATEST_YEAR);
 
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);
