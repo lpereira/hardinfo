@@ -10,8 +10,9 @@
 #include "benchmark.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 0
-#define QUEENS 11
+#define BENCH_REVISION 2
+#define QUEENS 6
+#define CRUNCH_TIME 5
 
 int row[QUEENS];
 
@@ -39,13 +40,9 @@ int nqueens(int y) {
     return 0;
 }
 
-static gpointer nqueens_for(unsigned int start, unsigned int end, void *data, gint thread_number)
+static gpointer nqueens_for(void *data, gint thread_number)
 {
-    unsigned int i;
-
-    for (i = start; i <= end; i++) {
-        nqueens(0);
-    }
+    nqueens(0);
 
     return NULL;
 }
@@ -58,11 +55,13 @@ benchmark_nqueens(void)
     shell_view_set_enabled(FALSE);
     shell_status_update("Running N-Queens benchmark...");
 
-    r = benchmark_parallel_for(0, 0, 10, nqueens_for, NULL);
-    r.result = r.elapsed_time;
+    r = benchmark_crunch_for(CRUNCH_TIME, 0, nqueens_for, NULL);
+
     r.revision = BENCH_REVISION;
     snprintf(r.extra, 255, "q:%d", QUEENS);
 
+    r.result /= 25;
+    
     bench_results[BENCHMARK_NQUEENS] = r;
 }
 

@@ -59,9 +59,9 @@ static double random_double()
     return result;
 }
 
-static const int N = 800;
-static const int NM1 = 799;	// N - 1
-static const int NP1 = 801;	// N + 1
+static const int N = 100;
+static const int NM1 = 99;	// N - 1
+static const int NP1 = 101;	// N + 1
 
 static void lup_decompose(FFTBench *fftbench)
 {

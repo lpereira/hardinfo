@@ -24,6 +24,7 @@ enum BenchmarkEntries {
     BENCHMARK_MEMORY_SINGLE,
     BENCHMARK_MEMORY_DUAL,
     BENCHMARK_MEMORY_QUAD,
+    BENCHMARK_MEMORY_ALL,
     BENCHMARK_GUI,
     BENCHMARK_N_ENTRIES
 };
@@ -34,6 +35,7 @@ void benchmark_bfish_cores(void);
 void benchmark_memory_single(void);
 void benchmark_memory_dual(void);
 void benchmark_memory_quad(void);
+void benchmark_memory_all(void);
 void benchmark_sbcpu_single(void);
 void benchmark_sbcpu_all(void);
 void benchmark_sbcpu_quad(void);

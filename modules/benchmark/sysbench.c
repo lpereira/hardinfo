@@ -176,9 +176,13 @@ sysbench_failed:
 }
 
 void benchmark_memory_run(int threads, int result_index) {
+    int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
+
+    cpu_procs_cores_threads_nodes(&cpu_procs, &cpu_cores, &cpu_threads, &cpu_nodes);
+    
     struct sysbench_ctx ctx = {
         .test = "memory",
-        .threads = threads,
+        .threads = threads>0 ? threads : cpu_threads,
         .parms_test = "",
         .r = EMPTY_BENCH_VALUE};
 
@@ -214,6 +218,7 @@ void benchmark_memory_run(int threads, int result_index) {
 void benchmark_memory_single(void) { benchmark_memory_run(1, BENCHMARK_MEMORY_SINGLE); }
 void benchmark_memory_dual(void) { benchmark_memory_run(2, BENCHMARK_MEMORY_DUAL); }
 void benchmark_memory_quad(void) {  benchmark_memory_run(4, BENCHMARK_MEMORY_QUAD); }
+void benchmark_memory_all(void) {  benchmark_memory_run(0, BENCHMARK_MEMORY_ALL); }
 
 void benchmark_sbcpu_single(void) {
     struct sysbench_ctx ctx = {

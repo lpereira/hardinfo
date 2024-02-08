@@ -1,5 +1,5 @@
 /*
- *    HardInfo - Displays System Information
+ *    HardInfo - System Information and Benchmark
  *    Copyright (C) 2003-2017 L. A. F. Pereira <l@tia.mat.br>
  *
  *    This program is free software; you can redistribute it and/or modify
@@ -38,10 +38,10 @@ void SN(gboolean reload) { \
     BENCH_SCAN_SIMPLE(scan_##BF, BF, BID);
 
 // ID, NAME, FUNCTION, R (0 = lower is better, 1 = higher is better)
-BENCH_SIMPLE(BENCHMARK_FIB, "CPU Fibonacci", benchmark_fib, 0);
-BENCH_SIMPLE(BENCHMARK_NQUEENS, "CPU N-Queens", benchmark_nqueens, 0);
-BENCH_SIMPLE(BENCHMARK_FFT, "FPU FFT", benchmark_fft, 0);
-BENCH_SIMPLE(BENCHMARK_RAYTRACE, "FPU Raytracing", benchmark_raytrace, 0);
+BENCH_SIMPLE(BENCHMARK_FIB, "CPU Fibonacci", benchmark_fib, 1);
+BENCH_SIMPLE(BENCHMARK_NQUEENS, "CPU N-Queens", benchmark_nqueens, 1);
+BENCH_SIMPLE(BENCHMARK_FFT, "FPU FFT", benchmark_fft, 1);
+BENCH_SIMPLE(BENCHMARK_RAYTRACE, "FPU Raytracing (Single-thread)", benchmark_raytrace, 1);
 BENCH_SIMPLE(BENCHMARK_BLOWFISH_SINGLE, "CPU Blowfish (Single-thread)", benchmark_bfish_single, 1);
 BENCH_SIMPLE(BENCHMARK_BLOWFISH_THREADS, "CPU Blowfish (Multi-thread)", benchmark_bfish_threads, 1);
 BENCH_SIMPLE(BENCHMARK_BLOWFISH_CORES, "CPU Blowfish (Multi-core)", benchmark_bfish_cores, 1);
@@ -52,7 +52,8 @@ BENCH_SIMPLE(BENCHMARK_SBCPU_ALL, "SysBench CPU (Multi-thread)", benchmark_sbcpu
 BENCH_SIMPLE(BENCHMARK_SBCPU_QUAD, "SysBench CPU (Four threads)", benchmark_sbcpu_quad, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_SINGLE, "SysBench Memory (Single-thread)", benchmark_memory_single, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_DUAL, "SysBench Memory (Two threads)", benchmark_memory_dual, 1);
-BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory", benchmark_memory_quad, 1);
+BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory (Quad threads)", benchmark_memory_quad, 1);
+BENCH_SIMPLE(BENCHMARK_MEMORY_ALL, "SysBench Memory (Multi-thread)", benchmark_memory_all, 1);
 
 #if !GTK_CHECK_VERSION(3,0,0)
 BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
@@ -144,7 +145,7 @@ static ModuleEntry entries[] = {
         },
     [BENCHMARK_RAYTRACE] =
         {
-            N_("FPU Raytracing"),
+            N_("FPU Raytracing (Single-thread)"),
             "raytrace.png",
             callback_benchmark_raytrace,
             scan_benchmark_raytrace,
@@ -192,10 +193,18 @@ static ModuleEntry entries[] = {
         },
     [BENCHMARK_MEMORY_QUAD] =
         {
-            N_("SysBench Memory"),
+            N_("SysBench Memory (Quad threads)"),
             "memory.png",
             callback_benchmark_memory_quad,
             scan_benchmark_memory_quad,
+            MODULE_FLAG_HIDE,
+        },
+    [BENCHMARK_MEMORY_ALL] =
+        {
+            N_("SysBench Memory (Multi-thread)"),
+            "memory.png",
+            callback_benchmark_memory_all,
+            scan_benchmark_memory_all,
             MODULE_FLAG_NONE,
         },
 #if !GTK_CHECK_VERSION(3, 0, 0)
@@ -224,24 +233,21 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_MEMORY_SINGLE:
     case BENCHMARK_MEMORY_DUAL:
     case BENCHMARK_MEMORY_QUAD:
+    case BENCHMARK_MEMORY_ALL:
         return _("Alexey Kopytov's <i><b>sysbench</b></i> is required.\n"
                  "Results in MiB/second. Higher is better.");
 
     case BENCHMARK_CRYPTOHASH:
-        return _("Results in MiB/second. Higher is better.");
-
     case BENCHMARK_BLOWFISH_SINGLE:
     case BENCHMARK_BLOWFISH_THREADS:
     case BENCHMARK_BLOWFISH_CORES:
     case BENCHMARK_ZLIB:
     case BENCHMARK_GUI:
-        return _("Results in HIMarks. Higher is better.");
-
     case BENCHMARK_FFT:
     case BENCHMARK_RAYTRACE:
     case BENCHMARK_FIB:
     case BENCHMARK_NQUEENS:
-        return _("Results in seconds. Lower is better.");
+        return _("Results in HIMarks. Higher is better.");
     }
 
     return NULL;

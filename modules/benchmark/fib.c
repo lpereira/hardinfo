@@ -1,5 +1,5 @@
 /*
- *    HardInfo - Displays System Information
+ *    HardInfo - System Information and Benchmark
  *    Copyright (C) 2003-2007 L. A. F. Pereira <l@tia.mat.br>
  *
  *    This program is free software; you can redistribute it and/or modify
@@ -19,8 +19,9 @@
 #include "benchmark.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 0
-#define ANSWER 42
+#define BENCH_REVISION 2
+#define ANSWER 25
+#define CRUNCH_TIME 5
 
 gulong fib(gulong n)
 {
@@ -31,6 +32,14 @@ gulong fib(gulong n)
     return fib(n - 1) + fib(n - 2);
 }
 
+static gpointer fib_for(void *in_data, gint thread_number)
+{
+    fib(ANSWER);
+
+    return NULL;
+}
+
+
 void
 benchmark_fib(void)
 {
@@ -38,19 +47,12 @@ benchmark_fib(void)
     bench_value r = EMPTY_BENCH_VALUE;
 
     shell_view_set_enabled(FALSE);
-    shell_status_update("Calculating the 42nd Fibonacci number...");
+    shell_status_update("Calculating Fibonacci number...");
 
-    g_timer_reset(timer);
-    g_timer_start(timer);
+    r = benchmark_crunch_for(CRUNCH_TIME, 0, fib_for, NULL);
+    //r.threads_used = 1;
 
-    fib(ANSWER);
-
-    g_timer_stop(timer);
-    r.elapsed_time = g_timer_elapsed(timer, NULL);
-    g_timer_destroy(timer);
-
-    r.threads_used = 1;
-    r.result = r.elapsed_time;
+    r.result /= 100;
 
     r.revision = BENCH_REVISION;
     snprintf(r.extra, 255, "a:%d", ANSWER);

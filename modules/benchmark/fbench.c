@@ -277,9 +277,7 @@ static int itercount;			/* The iteration counter for the main loop
 				   optimise out the loop over the ray
 				   tracing code. */
 
-#ifndef ITERATIONS
-#define ITERATIONS 1000
-#endif
+#define ITERATIONS 300
 static int niter = ITERATIONS;		/* Iteration counter */
 
 #if 0
@@ -689,8 +687,6 @@ void fbench()
     spectral_line[6] = 4861.344;	/* F */
     spectral_line[7] = 4340.477;	/* G' */
     spectral_line[8] = 3968.494;	/* H */
-
-    niter = 3000;
 
     /* Load test case into working array */
 
