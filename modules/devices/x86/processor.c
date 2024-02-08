@@ -588,7 +588,7 @@ gchar *processor_get_capabilities_from_flags(gchar *strflags, gchar *lookup_pref
     old = flags;
 
     while (flags[j]) {
-        if ( sscanf(flags[j], "[%d]", &i) ) {
+        if ( sscanf(flags[j], "[%d]", &i)==1 ) {
             /* Some flags are indexes, like [13], and that looks like
              * a new section to hardinfo shell */
             tmp = h_strdup_cprintf("(%s%d)=\n", tmp,

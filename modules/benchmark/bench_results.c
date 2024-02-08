@@ -71,7 +71,7 @@ static char *cpu_config_retranslate(char *str, int force_en, int replacing)
     if (str != NULL) {
         new_str = strdup("");
         if (strchr(str, 'x')) {
-            while (c != NULL && sscanf(c, "%dx %f", &t, &f)) {
+	    while (c != NULL && (sscanf(c, "%dx %f", &t, &f)==2)) {
                 tmp = g_strdup_printf("%s%s%dx %.2f %s", new_str,
                                       strlen(new_str) ? " + " : "", t, f, mhz);
                 free(new_str);
@@ -103,7 +103,7 @@ static float cpu_config_val(char *str)
     float f, r = 0.0;
     if (str != NULL) {
         if (strchr(str, 'x')) {
-            while (c != NULL && sscanf(c, "%dx %f", &t, &f)) {
+	    while (c != NULL && (sscanf(c, "%dx %f", &t, &f)==2)) {
                 r += f * t;
                 c = strchr(c + 1, '+');
                 if (c)

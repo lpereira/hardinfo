@@ -100,7 +100,7 @@ int util_get_did(gchar *str, const gchar *lbl) {
     gchar tmpfmt[128] = "";
     gchar tmpchk[128] = "";
     sprintf(tmpfmt, "%s%s", lbl, "%d");
-    if ( sscanf(str, tmpfmt, &id) ) {
+    if ( sscanf(str, tmpfmt, &id)==1 ) {
         sprintf(tmpchk, tmpfmt, id);
         if ( SEQ(str, tmpchk) )
             return id;
