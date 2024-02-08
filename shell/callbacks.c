@@ -36,11 +36,37 @@ void cb_sync_manager()
 
     sync_manager_show(shell->window);
 }
+#if GLIB_CHECK_VERSION(2,40,0)
+#else
+//For compatibility with older glib
+gboolean g2_key_file_save_to_file (GKeyFile *key_file,
+              const gchar  *filename, GError **error)
+{
+  gchar *contents;
+  gboolean success;
+  gsize length;
+
+  g_return_val_if_fail (key_file != NULL, FALSE);
+  g_return_val_if_fail (filename != NULL, FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  contents = g_key_file_to_data (key_file, &length, NULL);
+  g_assert (contents != NULL);
+
+  success = g_file_set_contents (filename, contents, length, error);
+  g_free (contents);
+
+  return success;
+}
+#endif
 
 void cb_sync_on_startup()
 {
     gboolean setting = shell_action_get_active("SyncOnStartupAction");
     GKeyFile *key_file = g_key_file_new();
+
+    g_mkdir(g_get_user_config_dir(),0755);
+    g_mkdir(g_build_filename(g_get_user_config_dir(), "hardinfo", NULL),0755);
 
     gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                         "settings.ini", NULL);
@@ -49,8 +75,11 @@ void cb_sync_on_startup()
         key_file, conf_path,
         G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);
     g_key_file_set_boolean(key_file, "Sync", "OnStartup", setting);
+#if GLIB_CHECK_VERSION(2,40,0)
     g_key_file_save_to_file(key_file, conf_path, NULL);
-
+#else
+    g2_key_file_save_to_file(key_file, conf_path, NULL);
+#endif
     g_free(conf_path);
     g_key_file_free(key_file);
 }
