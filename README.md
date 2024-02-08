@@ -1,6 +1,6 @@
 [![Test](https://github.com/hardinfo2/hardinfo2/actions/workflows/test.yml/badge.svg)](https://github.com/hardinfo2/hardinfo2/actions/workflows/test.yml)
 [![GitHub release](https://img.shields.io/github/release/hardinfo2/hardinfo2.svg)](https://github.com/hardinfo2/hardinfo2/releases)
-[![GitHub release](https://img.shields.io/badge/PreRelease-v2.0.0-blue.svg)](https://github.com/hardinfo2/hardinfo2/releases/tag/release-2.0.0pre)
+[![GitHub release](https://img.shields.io/badge/PreRelease-v2.0.1-blue.svg)](https://github.com/hardinfo2/hardinfo2/releases/tag/release-2.0.1pre)
 
 HARDINFO2
 =========
