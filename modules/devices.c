@@ -286,7 +286,7 @@ gchar *get_storage_devices_simple(void)
         return "";
     }
 
-    int i, fi;
+    guint i, fi;
     struct InfoGroup *group;
     struct InfoField *field;
     gchar *storage_devs = NULL, *tmp;
@@ -863,7 +863,7 @@ void hi_module_init(void)
         },
 #endif
     };
-    gint i;
+    guint i;
 
     for (i = 0; i < G_N_ELEMENTS(entries); i++)
         sync_manager_add_entry(&entries[i]);
@@ -889,7 +889,7 @@ void hi_module_deinit(void)
 
 const ModuleAbout *hi_module_get_about(void)
 {
-    const static ModuleAbout ma = {
+    static const ModuleAbout ma = {
         .author = "L. A. F. Pereira",
         .description = N_("Gathers information about hardware devices"),
         .version = VERSION,

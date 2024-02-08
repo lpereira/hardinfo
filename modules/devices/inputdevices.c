@@ -113,7 +113,7 @@ __scan_input_devices(void)
                 usb_lookup_ids_vendor_product_str(vendor, product, &vendor_str, &product_str);
             }
 
-            if (bus >= 0 && bus < sizeof(bus_types) / sizeof(gchar*)) {
+            if (bus >= 0 && (guint)bus < sizeof(bus_types) / sizeof(gchar*)) {
                 bus_str = bus_types[bus];
             }
 

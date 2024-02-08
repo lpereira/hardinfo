@@ -64,7 +64,7 @@ static Vendor vendors_builtin[] = {
     if (vendor_die_on_error) exit(-1); }
 
 static vendor_list vendors = NULL;
-const vendor_list get_vendors_list() { return vendors; }
+vendor_list get_vendors_list() { return vendors; }
 gboolean vendor_die_on_error = FALSE;
 
 /* sort the vendor list by length of match_string,

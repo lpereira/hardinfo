@@ -43,7 +43,7 @@ struct _UberScatterPrivate
 {
 	GRing           *raw_data;
 	UberRange        range;
-	gint             stride;
+	guint            stride;
 	GdkRGBA          fg_color;
 	gboolean         fg_color_set;
 	UberScatterFunc  func;
@@ -173,8 +173,8 @@ uber_scatter_render (UberGraph     *graph, /* IN */
 	GArray *ar;
 	gdouble x;
 	gdouble y;
-	gint i;
-	gint j;
+	guint i;
+	guint j;
 
 	g_return_if_fail(UBER_IS_SCATTER(graph));
 
@@ -194,7 +194,7 @@ uber_scatter_render (UberGraph     *graph, /* IN */
 	 * Retrieve the current data set.
 	 */
 	for (i = 0; i < priv->raw_data->len; i++) {
-		if (!(ar = g_ring_get_index(priv->raw_data, GArray*, i))) {
+	  if (!(ar = g_ring_get_index(priv->raw_data, GArray*, (int)i))) {
 			continue;
 		}
 		x = epoch - (i * each) - (each / 2.);
@@ -244,7 +244,7 @@ uber_scatter_render_fast (UberGraph    *graph, /* IN */
 	GArray *ar;
 	gdouble x;
 	gdouble y;
-	gint i;
+	guint i;
 
 	g_return_if_fail(UBER_IS_SCATTER(graph));
 

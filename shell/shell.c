@@ -2369,19 +2369,19 @@ void key_get_components(const gchar *key,
         gchar *f = g_strdup(key);
         gchar *s = g_utf8_strchr(f+1, -1, '$');
         if(s==NULL) {
-	    DEBUG("key_get_components_ERROR NOT FOUND");
+	    DEBUG("ERROR NOT FOUND");
         }else{
-	    if((s-f+1)>strlen(key)) {
-	    DEBUG("key_get_components_ERROR NOT FOUND");
-	}else{
+ /*            if((s-f+1)>strlen(key)) {
+	    DEBUG("ERROR TOO LATE");
+        }else{*/
 	  *(g_utf8_strchr(f+1, -1, '$') + 1) = 0;
 	  if (flags)
 	    *flags = g_strdup(f);
 	  if (tag)
 	    *tag = key_mi_tag(f);
 	  g_free(f);
+	  //}
 	}
-      }
     } else
         np = key;
 
