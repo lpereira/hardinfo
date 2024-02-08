@@ -321,7 +321,7 @@ void vendor_init(void)
 
 void vendor_cleanup() {
     DEBUG("cleanup vendor list");
-    g_slist_free_full(vendors, (GDestroyNotify)vendor_free);
+    //FIXME CRASH g_slist_free_full(vendors, (GDestroyNotify)vendor_free);
 }
 
 void vendor_free(Vendor *v) {
