@@ -974,7 +974,10 @@ static GSList *modules_load(gchar ** module_list)
             }
             filenames = g_list_delete_link(filenames, item);
         }
+#if GLIB_CHECK_VERSION(2,44,0)
+	//FIXME change this to not use g_steal_pointer
         g_list_free_full (g_steal_pointer (&filenames), g_object_unref);
+#endif
         g_dir_close(dir);
     }
 

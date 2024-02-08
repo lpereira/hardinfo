@@ -21,6 +21,11 @@
 #include <stdio.h>
 #include "uri_handler.h"
 
+//compatibility
+#ifndef G_SPAWN_DEFAULT
+#define G_SPAWN_DEFAULT 0
+#endif
+
 static uri_handler uri_func = NULL;
 
 void uri_set_function(uri_handler f) {

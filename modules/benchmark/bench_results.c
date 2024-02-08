@@ -348,7 +348,7 @@ static void append_cpu_config(JsonObject *object,
     if (output->len)
         g_string_append(output, ", ");
 
-    g_string_append_printf(output, "%ldx %.2f %s", json_node_get_int(member_node),
+    g_string_append_printf(output, "%ldx %.2f %s", (long int)json_node_get_int(member_node),
                            parse_frequency(member_name), _("MHz"));
 }
 

@@ -279,7 +279,7 @@ void udiskd_free(udiskd *u) {
 
 udiskp* get_udisks2_partition_info(const gchar *part_path) {
     GVariant *v;
-    GDBusProxy *proxy;
+    GDBusProxy *proxy=NULL;
     GError *error = NULL;
     udiskp* partition;
     const gchar *str;
@@ -294,7 +294,8 @@ udiskp* get_udisks2_partition_info(const gchar *part_path) {
     proxy = g_dbus_proxy_new_sync(udisks2_conn, G_DBUS_PROXY_FLAGS_NONE,
                                       NULL, UDISKS2_INTERFACE, part_path,
                                       DBUS_PROPERTIES_INTERFACE, NULL, &error);
-    if (error == NULL) {
+
+    if ((proxy != NULL) && (error == NULL)) {
         v = get_dbus_property(proxy, UDISKS2_BLOCK_INTERFACE, "IdLabel");
         if (v) {
             str = g_variant_get_string(v, NULL);
@@ -628,7 +629,7 @@ GSList* get_udisks2_all_drives_info(void){
 
 void udisks2_init(){
     if (udisks2_conn == NULL){
-        udisks2_conn = get_udisks2_connection();
+      //FIXME udisks2_conn = get_udisks2_connection();
     }
 }
 

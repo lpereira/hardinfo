@@ -33,7 +33,17 @@ static struct {
 } af_stats;
 #endif
 
-static GMutex free_lock;
+//Compatibility
+#ifndef G_SOURCE_REMOVE
+  #define G_SOURCE_REMOVE FALSE
+#endif
+
+#ifndef G_SOURCE_CONTINUE
+  #define G_SOURCE_CONTINUE TRUE
+#endif
+
+
+static GMutex *free_lock = NULL;
 static GSList *free_list = NULL;
 static gboolean free_final = FALSE;
 static GTimer *auto_free_timer = NULL;
@@ -95,10 +105,15 @@ gpointer auto_free_ex_(gpointer p, GDestroyNotify f, const char *file, int line,
     z->line = line;
     z->func = func;
     z->stamp = af_elapsed();
-    g_mutex_lock(&free_lock);
+#if GLIB_CHECK_VERSION(2,32,0)
+    if(free_lock==NULL) {free_lock=g_new(GMutex,1);g_mutex_init(free_lock);}
+#else
+    if(free_lock==NULL) free_lock=g_mutex_new();
+#endif
+    g_mutex_lock(free_lock);
     free_list = g_slist_prepend(free_list, z);
     sysobj_stats.auto_free_len++;
-    g_mutex_unlock(&free_lock);
+    g_mutex_unlock(free_lock);
     return p;
 }
 
@@ -113,10 +128,15 @@ gpointer auto_free_on_exit_ex_(gpointer p, GDestroyNotify f, const char *file, i
     z->line = line;
     z->func = func;
     z->stamp = -1.0;
-    g_mutex_lock(&free_lock);
+#if GLIB_CHECK_VERSION(2,32,0)
+    if(free_lock==NULL) g_mutex_init(free_lock);
+#else
+    if(free_lock==NULL) free_lock=g_mutex_new();
+#endif
+    g_mutex_lock(free_lock);
     free_list = g_slist_prepend(free_list, z);
     sysobj_stats.auto_free_len++;
-    g_mutex_unlock(&free_lock);
+    g_mutex_unlock(free_lock);
     return p;
 }
 
@@ -140,7 +160,12 @@ static void free_auto_free_ex(gboolean thread_final) {
 
     if (!free_list) return;
 
-    g_mutex_lock(&free_lock);
+#if GLIB_CHECK_VERSION(2,32,0)
+    if(free_lock==NULL) {free_lock=g_new(GMutex,1);g_mutex_init(free_lock);}
+#else
+    if(free_lock==NULL) free_lock=g_mutex_new();
+#endif
+    g_mutex_lock(free_lock);
     if (DEBUG_AUTO_FREE)
         auto_free_msg("%llu total items in queue, but will free from thread %p only... ", sysobj_stats.auto_free_len, this_thread);
     for(l = free_list; l; l = n) {
@@ -174,7 +199,7 @@ static void free_auto_free_ex(gboolean thread_final) {
         auto_free_msg("... freed %llu (from thread %p)", fc, this_thread);
     sysobj_stats.auto_freed += fc;
     sysobj_stats.auto_free_len -= fc;
-    g_mutex_unlock(&free_lock);
+    g_mutex_unlock(free_lock);
 }
 
 void free_auto_free_thread_final() {

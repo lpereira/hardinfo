@@ -26,6 +26,10 @@
 #include <stdarg.h>
 #include <string.h>
 
+#ifndef SOUP_CHECK_VERSION
+    #define SOUP_CHECK_VERSION(a,b,c) 0
+#endif
+
 typedef struct _SyncDialog SyncDialog;
 typedef struct _SyncNetArea SyncNetArea;
 typedef struct _SyncNetAction SyncNetAction;
@@ -185,13 +189,19 @@ static SoupURI *sync_manager_get_proxy(void)
 static void ensure_soup_session(void)
 {
     if (!session) {
-#if !SOUP_CHECK_VERSION(3,0,0)
+#if SOUP_CHECK_VERSION(3,0,0)
+        session = soup_session_new_with_options("timeout", 10, NULL);
+#else
+#if SOUP_CHECK_VERSION(2,42,0)
         SoupURI *proxy = sync_manager_get_proxy();
 
         session = soup_session_new_with_options(
             SOUP_SESSION_TIMEOUT, 10, SOUP_SESSION_PROXY_URI, proxy, NULL);
 #else
-        session = soup_session_new_with_options("timeout", 10, NULL);
+        SoupURI *proxy = sync_manager_get_proxy();
+        session = soup_session_async_new_with_options(
+            SOUP_SESSION_TIMEOUT, 10, SOUP_SESSION_PROXY_URI, proxy, NULL);
+#endif
 #endif
     }
 }
@@ -226,16 +236,28 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     g_main_loop_unref(loop);
 }
 
+#if SOUP_CHECK_VERSION(2,42,0)
 static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
+#else
+static void got_response(SoupSession *source, SoupMessage *res, gpointer user_data)
+#endif
 {
     SyncNetAction *sna = user_data;
     GInputStream *is;
+#if SOUP_CHECK_VERSION(2,42,0)
+#else
+    const guint8 *buf=NULL;
+    gsize len,datawritten;
+    SoupBuffer *soupmsg=NULL;
+#endif
 
+#if SOUP_CHECK_VERSION(2,42,0)
     is = soup_session_send_finish(session, res, &sna->error);
     if (is == NULL)
         goto out;
     if (sna->error != NULL)
         goto out;
+#endif
 
     if (sna->entry->file_name != NULL) {
         gchar *path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
@@ -246,9 +268,21 @@ static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
                            NULL, &sna->error);
 
         if (output != NULL) {
+#if SOUP_CHECK_VERSION(2,42,0)
             g_output_stream_splice(G_OUTPUT_STREAM(output), is,
                                    G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET, NULL,
                                    &sna->error);
+#else
+            soupmsg=soup_message_body_flatten(res->response_body);
+            if(soupmsg){
+                soup_buffer_get_data(soupmsg,&buf,&len);
+                DEBUG("got file with len: %u", (unsigned int)len);
+                if(len>0){
+                    g_output_stream_write_all(G_OUTPUT_STREAM(output),buf,len,&datawritten,NULL,&sna->error);
+		    soup_buffer_free(soupmsg);
+	        }
+	    }
+#endif
         }
 
         g_free(path);
@@ -257,7 +291,9 @@ static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
 
 out:
     g_main_loop_quit(loop);
+#if SOUP_CHECK_VERSION(2,42,0)
     g_object_unref(is);
+#endif
 }
 
 static gboolean send_request_for_net_action(SyncNetAction *sna)
@@ -276,19 +312,23 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
 
         msg = soup_message_new("POST", uri);
 
-#if !SOUP_CHECK_VERSION(3, 0, 0)
-        soup_message_set_request(msg, "application/octet-stream",
-                                 SOUP_MEMORY_TAKE, contents, size);
-#else
+#if SOUP_CHECK_VERSION(3, 0, 0)
         GBytes *cont = g_bytes_new_static(contents,size);
         soup_message_set_request_body_from_bytes(msg, "application/octet-stream", cont);
+#else
+        soup_message_set_request(msg, "application/octet-stream",
+                                 SOUP_MEMORY_TAKE, contents, size);
 #endif
     }
 
 #if SOUP_CHECK_VERSION(3, 0, 0)
     soup_session_send_async(session, msg, G_PRIORITY_DEFAULT, NULL, got_response, sna);
 #else
+#if SOUP_CHECK_VERSION(2,42,0)
     soup_session_send_async(session, msg, NULL, got_response, sna);
+#else
+    soup_session_queue_message(session, msg, got_response, sna);
+#endif
 #endif
     g_main_loop_run(loop);
 
