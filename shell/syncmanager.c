@@ -64,7 +64,9 @@ static SoupSession *session = NULL;
 static GMainLoop *loop;
 static GQuark err_quark;
 
-#define API_SERVER_URI "http://hardinfo.bigbear.dk"
+//Note there are personal information involved and very old
+//linux systems does not work with HTTPS so use HTTP for now
+#define API_SERVER_URI "http://api.hardinfo2.org"
 
 #define LABEL_SYNC_DEFAULT                                                     \
     _("<big><b>Synchronize with Central Database</b></big>\n"                  \
