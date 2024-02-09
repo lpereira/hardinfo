@@ -21,7 +21,7 @@ Status
 - Features: Online database for exchanging benchmark results.
 - Development: Currently done by contributors, hwspeedy maintains
 
-Server code can be found here: [https://github.com/hardinfo2/hardinfo2/tree/server](https://github.com/hardinfo2/server)
+Server code can be found here: [https://github.com/hardinfo2/server](https://github.com/hardinfo2/server)
 
 Dependencies
 ------------
