@@ -102,8 +102,9 @@ gboolean dmi_get_info(void)
                     state = (getuid() == 0) ? 0 : 1;
                     break;
                 case -1:
-		  state = 2;
-		    break;
+                    state = 2;
+                    value = dmi_get_str_abs(info->id_str);
+                    break;
                 case 1:
                     value = dmi_get_str_abs(info->id_str);
                     break;
