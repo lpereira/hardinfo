@@ -73,7 +73,7 @@ static GtkActionEntry entries[] = {
      G_CALLBACK(cb_refresh)},
 
     {"HomePageAction", HI_STOCK_INTERNET,
-     N_("_Open HardInfo Web Site"), NULL,
+     N_("_Open HardInfo2 Web Site"), NULL,
      NULL,
      G_CALLBACK(cb_open_web_page)},
 

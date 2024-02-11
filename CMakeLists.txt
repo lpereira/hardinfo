@@ -506,7 +506,8 @@ install(FILES pixmaps/hardinfo2.png
 
 ########################PACKAGE BUILDING FOR DISTROS###########################
 #Please update here for building packages
-
+#keep package name as hardinfo to allow for upgrading in distro
+SET(CPACK_PACKAGE_NAME "hardinfo")
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://www.hardinfo2.org")
 if(${RPM})
     SET(CPACK_GENERATOR "RPM")

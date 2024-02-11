@@ -91,7 +91,7 @@ void cb_open_web_page()
 
 void cb_report_bug()
 {
-    uri_open("https://github.com/hwspeedy/hardinfo2");
+    uri_open("https://github.com/hardinfo2/hardinfo2/issues");
 }
 
 void cb_refresh()
