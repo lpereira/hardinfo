@@ -333,7 +333,7 @@ double guibench(void)
   gtk_widget_set_size_request(window, 800, 600);
   gtk_window_set_title(GTK_WINDOW(window), "guibench");
   
-  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS);
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
   gtk_widget_show(window);
   
   g_signal_connect(window, "key-press-event", G_CALLBACK(keypress_event), NULL);
