@@ -64,7 +64,7 @@ static SoupSession *session = NULL;
 static GMainLoop *loop;
 static GQuark err_quark;
 
-//Note there are personal information involved and very old
+//Note there are no personal information involved and very old
 //linux systems does not work with HTTPS so use HTTP for now
 #define API_SERVER_URI "http://api.hardinfo2.org"
 
@@ -419,24 +419,24 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[], gint n)
 
             gtk_label_set_markup(GTK_LABEL(status_labels[i]), error_str);
             if (sna[i].error) {
-                if (sna[i].error->code != 1) {
-                    /* the user has not cancelled something... */
+	      /*                if (sna[i].error->code != 1) {
+                    // the user has not cancelled something...
                     g_warning(_("Failed while performing \"%s\". Please file a "
                                 "bug report "
                                 "if this problem persists. (Use the "
                                 "Help\342\206\222Report"
                                 " bug option.)\n\nDetails: %s"),
                                 _(sna[i].entry->name), sna[i].error->message);
-                }
+                }*/
 
                 g_error_free(sna[i].error);
             } else {
-                g_warning(_("Failed while performing \"%s\". Please file a bug "
+	  /* g_warning(_("Failed while performing \"%s\". Please file a bug "
                             "report "
                             "if this problem persists. (Use the "
                             "Help\342\206\222Report"
                             " bug option.)"),
-                            _(sna[i].entry->name));
+                            _(sna[i].entry->name));*/
             }
             break;
         }
