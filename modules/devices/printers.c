@@ -42,7 +42,8 @@ struct _CUPSDest {
 
 static int (*cups_dests_get) (CUPSDest **dests) = NULL;
 static int (*cups_dests_free) (int num_dests, CUPSDest *dests) = NULL;
-static gboolean cups_init = FALSE;
+static void (*cups_set_server)(const char *server) = NULL;
+volatile static gboolean cups_init = FALSE;
 
 GModule *cups;
 
@@ -66,9 +67,11 @@ init_cups(void)
 	}
 
 	if (!g_module_symbol(cups, "cupsGetDests", (gpointer) & cups_dests_get)
-	    || !g_module_symbol(cups, "cupsFreeDests", (gpointer) & cups_dests_free)) {
-	    if(cups) g_module_close(cups);
+	    || !g_module_symbol(cups, "cupsFreeDests", (gpointer) & cups_dests_free)
+	    || !g_module_symbol(cups, "cupsSetServer", (gpointer) & cups_set_server)) {
+	    g_module_close(cups);
 	    cups_init = FALSE;
+	    return;
 	}
     }
 
@@ -190,11 +193,16 @@ scan_printers_do(void)
 
     if (!cups_init) {
         init_cups();
+    }
 
+    if(!cups_init) {
         printer_icons = g_strdup("");
         printer_list = g_strdup(_("[Printers]\n"
                                 "No suitable CUPS library found="));
         return;
+    }else{
+      //only list from our own cups, use ip for faster/secure answer
+      cups_set_server("127.0.0.1");
     }
 
     /* remove old devices from global device table */
