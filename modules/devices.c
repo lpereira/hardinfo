@@ -37,6 +37,7 @@
 #include "udisks2_util.h"
 #include "storage_util.h"
 #include "pci_util.h"
+#include <json-glib/json-glib.h>
 
 gchar *callback_processors();
 gchar *callback_gpu();
@@ -857,10 +858,12 @@ void hi_module_init(void)
             .file_name = "sdcard.ids",
         },
 #ifdef ARCH_x86
+#if JSON_CHECK_VERSION(0,20,0)
         {
             .name = N_("Update CPU flags database"),
             .file_name = "cpuflags.json",
         },
+#endif
 #endif
     };
     guint i;
