@@ -31,16 +31,54 @@
 
 #include "util_edid_svd_table.c"
 
-// TODO: find a better fix, I've seen a few EDID strings with bogus chars
-#if !GLIB_CHECK_VERSION(2,52,0)
-__attribute__ ((weak))
-gchar *g_utf8_make_valid(const gchar *s, const gssize l) {
-    if (l < 0)
-        return g_strdup(s);
-    else
-        return g_strndup(s, (gsize)l);
+#if GLIB_CHECK_VERSION(2,52,0)
+#else
+gchar *
+g2_utf8_make_valid (const gchar *str,
+                   gssize       len)
+{
+  GString *string;
+  const gchar *remainder, *invalid;
+  gsize remaining_bytes, valid_bytes;
+
+  g_return_val_if_fail (str != NULL, NULL);
+
+  if (len < 0)
+    len = strlen (str);
+
+  string = NULL;
+  remainder = str;
+  remaining_bytes = len;
+
+  while (remaining_bytes != 0)
+    {
+      if (g_utf8_validate (remainder, remaining_bytes, &invalid))
+	break;
+      valid_bytes = invalid - remainder;
+
+      if (string == NULL)
+	string = g_string_sized_new (remaining_bytes);
+
+      g_string_append_len (string, remainder, valid_bytes);
+      /* append U+FFFD REPLACEMENT CHARACTER */
+      g_string_append (string, "\357\277\275");
+
+      remaining_bytes -= valid_bytes + 1;
+      remainder = invalid + 1;
+    }
+
+  if (string == NULL)
+    return g_strndup (str, len);
+
+  g_string_append_len (string, remainder, remaining_bytes);
+  g_string_append_c (string, '\0');
+
+  g_assert (g_utf8_validate (string->str, -1, NULL));
+
+  return g_string_free (string, FALSE);
 }
 #endif
+
 
 #define NOMASK (~0U)
 #define BFMASK(LSB, MASK) (MASK << LSB)
@@ -89,7 +127,11 @@ char *rstr(edid *e, uint32_t offset, uint32_t len) {
     char *raw = malloc(len+1), *ret = NULL;
     strncpy(raw, (char*)&e->u8[offset], len);
     raw[len] = 0;
+#if GLIB_CHECK_VERSION(2,52,0)
     ret = g_utf8_make_valid(raw, len);
+#else
+    ret = g2_utf8_make_valid(raw, len);
+#endif
     g_free(raw);
     return ret;
 }
@@ -100,7 +142,11 @@ char *rstr_strip(edid *e, uint32_t offset, uint32_t len) {
     char *raw = malloc(len+1), *ret = NULL;
     strncpy(raw, (char*)&e->u8[offset], len);
     raw[len] = 0;
+#if GLIB_CHECK_VERSION(2,52,0)
     ret = g_strstrip(g_utf8_make_valid(raw, len));
+#else
+    ret = g_strstrip(g2_utf8_make_valid(raw, len));
+#endif
     g_free(raw);
     return ret;
 }
