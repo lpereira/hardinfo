@@ -41,8 +41,8 @@ Building and installing
 - mkdir build
 - cd build
 - cmake ..
-- make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo apt install ./hardinfo2-VERSION-DISTRO-ARCH.deb  (Use reinstall instead of install if already inst.)
+- make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
+- sudo apt install ./hardinfo_*  (Use reinstall instead of install if already inst.)
 - sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils
 - hardinfo2
 
@@ -56,11 +56,13 @@ Building and installing
 - mkdir build
 - cd build
 - cmake ..
-- make package   (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo yum install ./hardinfo2-VERSION-DISTRO-ARCH.rpm  (Use reinstall instead of install if already inst.)
+- make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
+- sudo yum install ./hardinfo-*  (Use reinstall instead of install if already inst.)
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils
 - hardinfo2
 
+**openSUSE**: use zypper instead of yum, use libsoup2-devel instead of libsoup-devel
+  
 Distro building
 ---------------
 For distribution in the different distros - please use the cmake build system with CPack:
@@ -87,6 +89,7 @@ in daemon mode, using the default port.
 Load with `modprobe eeprom` and refresh the module screen.
 - **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
 - **apcaccess**: apcaccess is used for battery information. (optional)
+- **lspci/lsusb**: is used for bus information - installed by distro. (optional)
 
 License
 ------
