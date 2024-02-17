@@ -389,7 +389,7 @@ parse_os_release(void)
     return (Distro) {};
 }
 
-static Distro
+/*static Distro
 parse_lsb_release(void)
 {
     gchar *pretty_name = NULL;
@@ -421,7 +421,7 @@ parse_lsb_release(void)
 
     g_free(id);
     return (Distro) {};
-}
+    }*/
 
 static Distro
 detect_distro(void)
@@ -473,9 +473,9 @@ detect_distro(void)
     if (distro.distro)
         return distro;
 
-    distro = parse_lsb_release();
+    /*distro = parse_lsb_release();
     if (distro.distro)
-        return distro;
+        return distro;*/
 
     for (i = 0; distro_db[i].file; i++) {
         if (!g_file_get_contents(distro_db[i].file, &contents, NULL, NULL))
