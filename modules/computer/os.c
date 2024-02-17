@@ -369,8 +369,10 @@ parse_os_release(void)
     for (line = split; *line; line++) {
         if (!strncmp(*line, "ID=", sizeof("ID=") - 1)) {
             id = g_strdup(*line + strlen("ID="));
-        } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1)) {
+        } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1) && codename == NULL) {
             codename = g_strdup(*line + strlen("CODENAME="));
+        } else if (!strncmp(*line, "VERSION_CODENAME=", sizeof("VERSION_CODENAME=") - 1) && codename == NULL) {
+            codename = g_strdup(*line + strlen("VERSION_CODENAME="));
         } else if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
             pretty_name = g_strdup(*line +
                                    strlen("PRETTY_NAME=\""));
@@ -395,7 +397,7 @@ parse_lsb_release(void)
     gchar *codename = NULL;
     gchar **split, *contents, **line;
 
-    if (!hardinfo_spawn_command_line_sync("/usr/bin/lsb_release -di", &contents, NULL, NULL, NULL))
+    if (!hardinfo_spawn_command_line_sync("/usr/bin/lsb_release -dic", &contents, NULL, NULL, NULL))
         return (Distro) {};
 
     split = g_strsplit(idle_free(contents), "\n", 0);
@@ -426,7 +428,7 @@ detect_distro(void)
 {
     static const struct {
         const gchar *file;
-        const gchar *codename;
+        const gchar *id;
         const gchar *override;
     } distro_db[] = {
 #define DB_PREFIX "/etc/"
@@ -482,27 +484,27 @@ detect_distro(void)
         if (distro_db[i].override) {
             g_free(contents);
             return (Distro) { .distro = g_strdup(distro_db[i].override),
-                              .codename = g_strdup(distro_db[i].codename) };
+                              .id = g_strdup(distro_db[i].id) };
         }
 
-        if (g_str_equal(distro_db[i].codename, "debian")) {
+        if (g_str_equal(distro_db[i].id, "debian")) {
             /* HACK: Some Debian systems doesn't include the distribuition
              * name in /etc/debian_release, so add them here. */
             if (isdigit(contents[0]) || contents[0] != 'D')
                 return (Distro) {
                     .distro = g_strdup_printf("Debian GNU/Linux %s", (char*)idle_free(contents)),
-                    .codename = g_strdup(distro_db[i].codename)
+                    .id = g_strdup(distro_db[i].id)
                 };
         }
 
-        if (g_str_equal(distro_db[i].codename, "fatdog")) {
+        if (g_str_equal(distro_db[i].id, "fatdog")) {
             return (Distro) {
                 .distro = g_strdup_printf("Fatdog64 [%.10s]", (char*)idle_free(contents)),
-                .codename = g_strdup(distro_db[i].codename)
+                .id = g_strdup(distro_db[i].id)
             };
         }
 
-        return (Distro) { .distro = contents, .codename = g_strdup(distro_db[i].codename) };
+        return (Distro) { .distro = contents, .id = g_strdup(distro_db[i].id) };
     }
 
     return (Distro) { .distro = g_strdup(_("Unknown")) };
@@ -542,7 +544,7 @@ computer_get_os(void)
 
     os->entropy_avail = computer_get_entropy_avail();
 
-    if (g_strcmp0(os->distrocode, "ubuntu") == 0) {
+    if (g_strcmp0(os->distroid, "ubuntu") == 0) {
         GSList *flavs = ubuntu_flavors_scan();
         if (flavs) {
             /* just use the first one */
