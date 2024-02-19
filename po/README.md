@@ -2,14 +2,16 @@ Translators
 ===========
 
 Before starting translation of the words/texts, that we have in the program, the po files
-needs to updated. This is done by running
-cd po            (Always be in the po folder)
-./updatepo.sh    (Updates po from source code and shows status)
+needs to be updated
+ - cd po            (Always be in the po folder)
+ - ./updatepo.sh    (Updates po from source code and shows status)
 
 When done the .po files are ready to be changed, thanx for helping with translation.
 
-You can also see the status of the different languages including your own after
-editing - it looks like this:
+Status
+------
+This is an example of status of the different languages including your own after
+editing - use the ./updatepo.sh
 
 hardinfo.pot now has 1228 strings (no change), with 69 c-format strings
 - [ ] de.po : (705 / 1228 remain untranslated, needs work/fuzzy: 2)
