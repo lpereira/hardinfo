@@ -21,6 +21,7 @@ enum BenchmarkEntries {
     BENCHMARK_SBCPU_SINGLE,
     BENCHMARK_SBCPU_ALL,
     BENCHMARK_SBCPU_QUAD,
+    BENCHMARK_IPERF3_SINGLE,
     BENCHMARK_MEMORY_SINGLE,
     BENCHMARK_MEMORY_DUAL,
     BENCHMARK_MEMORY_QUAD,
@@ -47,6 +48,7 @@ void benchmark_gui(void);
 void benchmark_nqueens(void);
 void benchmark_raytrace(void);
 void benchmark_zlib(void);
+void benchmark_iperf3_single(void);
 
 typedef struct {
     double result;

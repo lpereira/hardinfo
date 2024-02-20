@@ -47,6 +47,7 @@ BENCH_SIMPLE(BENCHMARK_BLOWFISH_THREADS, "CPU Blowfish (Multi-thread)", benchmar
 BENCH_SIMPLE(BENCHMARK_BLOWFISH_CORES, "CPU Blowfish (Multi-core)", benchmark_bfish_cores, 1);
 BENCH_SIMPLE(BENCHMARK_ZLIB, "CPU Zlib", benchmark_zlib, 1);
 BENCH_SIMPLE(BENCHMARK_CRYPTOHASH, "CPU CryptoHash", benchmark_cryptohash, 1);
+BENCH_SIMPLE(BENCHMARK_IPERF3_SINGLE, "Iperf3 localhost", benchmark_iperf3_single, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_SINGLE, "SysBench CPU (Single-thread)", benchmark_sbcpu_single, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_ALL, "SysBench CPU (Multi-thread)", benchmark_sbcpu_all, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_QUAD, "SysBench CPU (Four threads)", benchmark_sbcpu_quad, 1);
@@ -151,6 +152,14 @@ static ModuleEntry entries[] = {
             scan_benchmark_raytrace,
             MODULE_FLAG_NONE,
         },
+    [BENCHMARK_IPERF3_SINGLE] =
+        {
+            N_("Internal Network Speed"),
+            "memory.png",
+            callback_benchmark_iperf3_single,
+            scan_benchmark_iperf3_single,
+            MODULE_FLAG_NONE,
+        },
     [BENCHMARK_SBCPU_SINGLE] =
         {
             N_("SysBench CPU (Single-thread)"),
@@ -229,14 +238,15 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_SBCPU_ALL:
         return _("Alexey Kopytov's <i><b>sysbench</b></i> is required.\n"
                  "Results in events/second. Higher is better.");
-
     case BENCHMARK_MEMORY_SINGLE:
     case BENCHMARK_MEMORY_DUAL:
     case BENCHMARK_MEMORY_QUAD:
     case BENCHMARK_MEMORY_ALL:
         return _("Alexey Kopytov's <i><b>sysbench</b></i> is required.\n"
                  "Results in MiB/second. Higher is better.");
-
+    case BENCHMARK_IPERF3_SINGLE:
+        return _("<i><b>iperf3</b></i> is required.\n"
+                 "Results in Gbits/s. Higher is better.");
     case BENCHMARK_CRYPTOHASH:
     case BENCHMARK_BLOWFISH_SINGLE:
     case BENCHMARK_BLOWFISH_THREADS:

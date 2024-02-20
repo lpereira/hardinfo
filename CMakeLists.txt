@@ -84,9 +84,7 @@ add_definitions("-Wformat")
 add_definitions("-Wformat-security")
 
 set(PACKAGE_LIBSOUP2_MINVERSION 2.42)
-#Actually needed for save settings, steal_pointer - FIXME
-set(PACKAGE_LIBGLIB2_MINVERSION 2.44)
-#set(PACKAGE_LIBGLIB2_MINVERSION 2.28)
+set(PACKAGE_LIBGLIB2_MINVERSION 2.24)
 
 ###################################DISTRO CHANGES###############################
 #Please add all distro relates stuff here
@@ -148,9 +146,6 @@ if(${distro}${disversion} MATCHES "Oracle6*")
     set(HARDINFO2_GTK3 0)
     #old deprecated version - but ok
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
-    #save settings disabled, steal_pointer disabled
-    set(PACKAGE_LIBGLIB2_MINVERSION 2.28.8)
-    message("-- Low GLIB2 version 2.28.0")
 endif()
 
 #debian 8
@@ -304,6 +299,7 @@ set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark/sha1.c
 	modules/benchmark/zlib.c
 	modules/benchmark/sysbench.c
+	modules/benchmark/iperf3.c
 )
 set(MODULE_benchmark_SOURCES_GTK2
 	modules/benchmark/drawing.c
