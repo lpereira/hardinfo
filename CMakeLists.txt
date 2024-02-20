@@ -516,7 +516,7 @@ endif()
 #RPM
 SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_RPM_PACKAGE_DESCRIPTION "Hardinfo2 is a small application that displays information about your hardware and operating system.  It has online benchmarking to check your machine performance against other machines.")
-SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils")
+SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
 SET(CPACK_RPM_PACKAGE_LICENSE "GPL2+")
 SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 if(HARDINFO2_LIBSOUP3)
@@ -534,7 +534,7 @@ SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAG
 #DEB
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 is a small application that displays information about your hardware and operating system. It has online benchmarking to check your machine performance against other machines.")
-SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils")
+SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 if(HARDINFO2_LIBSOUP3)
     SET(PACKAGE_LS "libsoup-3.0.0 (>=3.0)")

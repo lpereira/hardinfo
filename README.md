@@ -88,6 +88,7 @@ in daemon mode, using the default port.
 - **eeprom module**: must be loaded to display info about your currently installed memory.
 Load with `modprobe eeprom` and refresh the module screen.
 - **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
+- **iperf3**: iperf3 is used to benchmark internal network speed.
 - **apcaccess**: apcaccess is used for battery information. (optional)
 - **lspci/lsusb**: is used for bus information - installed by distro. (optional)
 
