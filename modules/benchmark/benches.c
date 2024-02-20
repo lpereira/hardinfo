@@ -47,7 +47,7 @@ BENCH_SIMPLE(BENCHMARK_BLOWFISH_THREADS, "CPU Blowfish (Multi-thread)", benchmar
 BENCH_SIMPLE(BENCHMARK_BLOWFISH_CORES, "CPU Blowfish (Multi-core)", benchmark_bfish_cores, 1);
 BENCH_SIMPLE(BENCHMARK_ZLIB, "CPU Zlib", benchmark_zlib, 1);
 BENCH_SIMPLE(BENCHMARK_CRYPTOHASH, "CPU CryptoHash", benchmark_cryptohash, 1);
-BENCH_SIMPLE(BENCHMARK_IPERF3_SINGLE, "Iperf3 localhost", benchmark_iperf3_single, 1);
+BENCH_SIMPLE(BENCHMARK_IPERF3_SINGLE, "Internal Network Speed", benchmark_iperf3_single, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_SINGLE, "SysBench CPU (Single-thread)", benchmark_sbcpu_single, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_ALL, "SysBench CPU (Multi-thread)", benchmark_sbcpu_all, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_QUAD, "SysBench CPU (Four threads)", benchmark_sbcpu_quad, 1);
@@ -155,7 +155,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_IPERF3_SINGLE] =
         {
             N_("Internal Network Speed"),
-            "memory.png",
+            "network.png",
             callback_benchmark_iperf3_single,
             scan_benchmark_iperf3_single,
             MODULE_FLAG_NONE,
