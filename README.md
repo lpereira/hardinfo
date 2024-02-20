@@ -43,7 +43,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo apt install ./hardinfo_*  (Use reinstall instead of install if already inst.)
-- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils
+- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3
 - hardinfo2
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
@@ -58,7 +58,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo yum install ./hardinfo-*  (Use reinstall instead of install if already inst.)
-- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils
+- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, use libsoup2-devel instead of libsoup-devel
