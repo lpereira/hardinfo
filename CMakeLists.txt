@@ -148,12 +148,17 @@ if(${distro}${disversion} MATCHES "Oracle6*")
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
 endif()
 
+#debian 7
+if(${distro}${disversion} MATCHES "DebianGNULinux7")
+    set(HARDINFO2_LIBSOUP3 0)
+    set(HARDINFO2_GTK3 0)
+    #old deprecated version - but ok
+    set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
+endif()
+
 #debian 8
 if(${distro}${disversion} MATCHES "DebianGNULinux8")
     set(HARDINFO2_LIBSOUP3 0)
-    #save settings disabled, steal_pointer disabled
-    set(PACKAGE_LIBGLIB2_MINVERSION 2.42.1)
-    message("-- Low GLIB2 version 2.42.1")
 endif()
 
 #ubuntu 20.04
