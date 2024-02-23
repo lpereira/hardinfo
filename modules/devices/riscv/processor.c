@@ -43,7 +43,7 @@ processor_scan(void)
 #define CHECK_FOR(k) (g_str_has_prefix(tmp[0], k))
     while (fgets(buffer, 128, cpuinfo)) {
         gchar **tmp = g_strsplit(buffer, ":", 2);
-        if (tmp[0] && tmp[1]) {
+        if (tmp[0] && tmp[1] && !strstr(tmp[0],"isa-") ) {//just drop empty isa-ext
             tmp[0] = g_strstrip(tmp[0]);
             tmp[1] = g_strstrip(tmp[1]);
         } else {
@@ -53,7 +53,7 @@ processor_scan(void)
 
         //get_str("Processor", rep_pname);
 
-        if ( CHECK_FOR("hart") ) {
+        if ( CHECK_FOR("processor") ) {
             /* finish previous */
             if (processor) {
                 procs = g_slist_append(procs, processor);
