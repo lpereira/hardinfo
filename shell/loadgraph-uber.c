@@ -81,11 +81,12 @@ void load_graph_set_title(LoadGraph * lg, const gchar *title)
 
 void load_graph_clear(LoadGraph * lg)
 {
-    int i;
+  int i;
     if (lg != NULL) {
         for (i = 0; i < LG_MAX_LINES; i++) {
             lg->cur_value[i] = UBER_LINE_GRAPH_NO_VALUE;
         }
+        uber_line_graph_clear(UBER_LINE_GRAPH(lg->uber_widget));
         uber_graph_scale_changed(UBER_GRAPH(lg->uber_widget));
     }
 }
