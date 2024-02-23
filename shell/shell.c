@@ -861,6 +861,7 @@ static gboolean update_field(gpointer data)
     /* if the entry is still selected, update it */
     if (fu->entry->selected && fu->entry->fieldfunc) {
         gchar *value = fu->entry->fieldfunc(fu->field_name);
+	gdouble v;
 
         if (item->is_iter) {
             /*
@@ -872,7 +873,12 @@ static gboolean update_field(gpointer data)
                                                     item->iter)) {
 
                 load_graph_set_title(shell->loadgraph, fu->field_name);
-                load_graph_update(shell->loadgraph, atof(value));
+                v=atof(value);
+		//fix KiB->Bytes for UberGraph (GTK3)
+#if GTK_CHECK_VERSION(3, 0, 0)
+                if(strstr(value,"KiB")) v*=1024;
+#endif
+                load_graph_update(shell->loadgraph, v);
             }
 
             GtkTreeStore *store = GTK_TREE_STORE(shell->info_tree->model);
