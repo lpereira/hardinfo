@@ -210,8 +210,12 @@ GDBusConnection* get_udisks2_connection(void) {
         return NULL;
     }
 
+    if(!result) {
+       return NULL;
+    }else{
+       g_variant_unref(result);
+    }
     // OK, let's return connection to system bus
-    g_variant_unref(result);
     return conn;
 }
 
@@ -629,7 +633,7 @@ GSList* get_udisks2_all_drives_info(void){
 
 void udisks2_init(){
     if (udisks2_conn == NULL){
-       udisks2_conn = get_udisks2_connection();
+      udisks2_conn = get_udisks2_connection();
     }
 }
 
