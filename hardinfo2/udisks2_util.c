@@ -133,7 +133,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
             g_variant_unref(v);
             g_object_unref(block_proxy);
             continue;
-        }
+	    }
 
         // Skip loop devices
         v = get_dbus_property(block_proxy, UDISKS2_LOOP_INTERFACE, "BackingFile");
@@ -141,7 +141,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
             g_variant_unref(v);
             g_object_unref(block_proxy);
             continue;
-        }
+	    }
 
         block_dev = block_path + strlen(UDISKS2_BLOCK_DEVICES_PATH) + 1;
         drive_path = NULL;
@@ -629,7 +629,7 @@ GSList* get_udisks2_all_drives_info(void){
 
 void udisks2_init(){
     if (udisks2_conn == NULL){
-      //FIXME udisks2_conn = get_udisks2_connection();
+       udisks2_conn = get_udisks2_connection();
     }
 }
 

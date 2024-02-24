@@ -930,7 +930,7 @@ const gchar *hi_note_func(gint entry)
         if (storage_no_nvme) {
             return g_strdup(
                 _("Any NVMe storage devices present are not listed.\n"
-                  "<b><i>udisksd</i></b> is required for NVMe devices."));
+                  "<b><i>udisks2</i></b> is required for NVMe devices."));
         }
     }
     else if (entry == ENTRY_DMI_MEM){
