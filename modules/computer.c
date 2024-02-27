@@ -639,7 +639,8 @@ gchar *callback_security(void)
 
     info_add_group(
         info, _("Health"),
-        info_field_update(_("Available entropy in /dev/random"), 1000, .tag = g_strdup("entropy") ),
+        //info_field_update(_("Available entropy in /dev/random"), 1000, .tag = g_strdup("entropy") ),
+        info_field(_("Available entropy in /dev/random"), computer_get_entropy_avail() ),
         info_field_last());
 
     info_add_group(
