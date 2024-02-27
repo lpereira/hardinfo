@@ -237,7 +237,7 @@ set(HARDINFO2_RESOURCES
 	"data/arm.ids"
 	"data/edid.ids"
 	"data/ieee_oui.ids"
-	"data/pci.ids.min"
+	"data/pci.ids"
 	"data/kernel-module-icons.json"
 )
 if(${PACKAGE_MANPAGES})
