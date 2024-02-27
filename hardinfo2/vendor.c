@@ -76,50 +76,6 @@ int vendor_sort (const Vendor *ap, const Vendor *bp) {
     return lb-la;
 }
 
-static int read_from_vendor_conf(const char *path) {
-      GKeyFile *vendors_file;
-      gchar *tmp;
-      gint num_vendors, i, count = 0; /* num_vendors is file-reported, count is actual */
-
-      DEBUG("using vendor.conf format loader for %s", path);
-
-      vendors_file = g_key_file_new();
-      if (g_key_file_load_from_file(vendors_file, path, 0, NULL)) {
-        num_vendors = g_key_file_get_integer(vendors_file, "vendors", "number", NULL);
-
-        for (i = num_vendors - 1; i >= 0; i--) {
-          Vendor *v = g_new0(Vendor, 1);
-
-          tmp = g_strdup_printf("vendor%d", i);
-
-          v->match_string = g_key_file_get_string(vendors_file, tmp, "match_string", NULL);
-          if (v->match_string == NULL) {
-              /* try old name */
-              v->match_string = g_key_file_get_string(vendors_file, tmp, "id", NULL);
-          }
-          if (v->match_string) {
-              v->match_rule = g_key_file_get_integer(vendors_file, tmp, "match_case", NULL);
-              v->name = g_key_file_get_string(vendors_file, tmp, "name", NULL);
-              v->name_short = g_key_file_get_string(vendors_file, tmp, "name_short", NULL);
-              v->url  = g_key_file_get_string(vendors_file, tmp, "url", NULL);
-              v->url_support  = g_key_file_get_string(vendors_file, tmp, "url_support", NULL);
-
-              vendors = g_slist_prepend(vendors, v);
-              count++;
-          } else {
-              /* don't add if match_string is null */
-              g_free(v);
-          }
-
-          g_free(tmp);
-        }
-        g_key_file_free(vendors_file);
-        DEBUG("... found %d match strings", count);
-        return count;
-    }
-    g_key_file_free(vendors_file);
-    return 0;
-}
 
 static int read_from_vendor_ids(const char *path) {
 #define VEN_BUFF_SIZE 128
@@ -263,13 +219,8 @@ void vendor_init(void)
     sync_manager_add_entry(&se);
 
     char *file_search_order[] = {
-        /* new format */
         g_build_filename(g_get_user_config_dir(), "hardinfo2", "vendor.ids", NULL),
         g_build_filename(params.path_data, "vendor.ids", NULL),
-        /* old format */
-        g_build_filename(g_get_user_config_dir(), "hardinfo2", "vendor.conf", NULL),
-        g_build_filename(g_get_home_dir(), ".hardinfo2", "vendor.conf", NULL), /* old place */
-        g_build_filename(params.path_data, "vendor.conf", NULL),
         NULL
     };
 
@@ -286,14 +237,8 @@ void vendor_init(void)
 
     int fail = 1;
 
-    /* new format */
     if (path && strstr(path, "vendor.ids")) {
         fail = !read_from_vendor_ids(path);
-    }
-
-    /* old format */
-    if (path && strstr(path, "vendor.conf")) {
-        fail = !read_from_vendor_conf(path);
     }
 
     if (fail) {
