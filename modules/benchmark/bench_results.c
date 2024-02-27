@@ -354,8 +354,10 @@ static void append_cpu_config(JsonObject *object,
 
 static gchar *get_cpu_config(JsonObject *machine)
 {
-    JsonObject *cpu_config_map =
-        json_object_get_object_member(machine, "CpuConfigMap");
+    JsonObject *cpu_config_map=NULL;
+
+    if(json_object_has_member(machine, "CpuConfigMap"))
+        cpu_config_map=json_object_get_object_member(machine, "CpuConfigMap");
 
     if (!cpu_config_map)
         return json_get_string_dup(machine, "CpuConfig");
