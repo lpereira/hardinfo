@@ -10,13 +10,12 @@
 #include "benchmark.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 2
-#define QUEENS 6
+#define BENCH_REVISION 3
+#define QUEENS 9
 #define CRUNCH_TIME 5
 
-int row[QUEENS];
 
-bool safe(int x, int y) {
+bool safe(int x, int y,int *row) {
     int i;
     for (i = 1; i <= y; i++)
         if (row[y - i] == x || row[y - i] == x - i || row[y - i] == x + i)
@@ -24,13 +23,13 @@ bool safe(int x, int y) {
     return true;
 }
 
-int nqueens(int y) {
+int nqueens(int y,int *row) {
     int x;
 
     for (x = 0; x < QUEENS; x++) {
-        if (safe((row[y - 1] = x), y - 1)) {
-            if (y < QUEENS) {
-                nqueens(y + 1);
+      if (safe((row[y - 1] = x), y - 1, row)) {
+            if (y <= QUEENS) {
+	        nqueens(y + 1, row);
             } else {
                 break;
             }
@@ -42,7 +41,8 @@ int nqueens(int y) {
 
 static gpointer nqueens_for(void *data, gint thread_number)
 {
-    nqueens(0);
+    int row[QUEENS+1];
+    nqueens(1,row);
 
     return NULL;
 }
@@ -58,7 +58,7 @@ benchmark_nqueens(void)
     r = benchmark_crunch_for(CRUNCH_TIME, 0, nqueens_for, NULL);
 
     r.revision = BENCH_REVISION;
-    snprintf(r.extra, 255, "q:%d", QUEENS);
+    snprintf(r.extra, 255, "q:%d", QUEENS-1);
 
     r.result /= 25;
     
