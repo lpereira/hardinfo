@@ -932,8 +932,8 @@ void hi_module_init(void)
         },
     };
 
-    sync_manager_add_entry(&se[0]);
     sync_manager_add_entry(&se[1]);
+    sync_manager_add_entry(&se[0]);
 
     guint i;
     for (i = 0; i < G_N_ELEMENTS(entries) - 1 /* account for NULL */; i++)
