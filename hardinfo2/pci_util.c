@@ -46,12 +46,8 @@ const gchar *find_pci_ids_file() {
         }
     }
     char *file_search_order[] = {
-        g_strdup("/usr/share/hwdata/pci.ids"),
-        g_strdup("/usr/share/misc/pci.ids"),
         g_build_filename(g_get_user_config_dir(), "hardinfo2", "pci.ids", NULL),
         g_build_filename(params.path_data, "pci.ids", NULL),
-        //g_build_filename(g_get_user_config_dir(), "hardinfo2", "pci.ids.min", NULL),
-        //g_build_filename(params.path_data, "pci.ids.min", NULL),
         NULL
     };
     int n;
