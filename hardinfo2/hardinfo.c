@@ -41,9 +41,10 @@ int main(int argc, char **argv)
 
     DEBUG("Hardinfo2 version " VERSION ". Debug version.");
 
-#if GLIB_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,5)
 #else
-    if (!g_thread_supported ()) g_thread_init (NULL);
+    //if (!g_thread_supported ()) g_thread_init(NULL);
+    g_type_init ();
 #endif
 
     /* parse all command line parameters */
