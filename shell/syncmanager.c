@@ -218,7 +218,7 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     gint nactions;
     SyncNetAction *actions;
     gchar *path;
-    int fd=-1,len;
+    int fd=-1;
     gchar buf[101];
 
     path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
@@ -271,8 +271,8 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
     SyncNetAction *sna = user_data;
     GInputStream *is;
     gchar *path;
-    int fd,len,updateversion=0;
-    gchar buf[101];
+    int fd,updateversion=0;
+    gchar buffer[101];
 #if SOUP_CHECK_VERSION(2,42,0)
 #else
     const guint8 *buf=NULL;
@@ -323,8 +323,8 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
 	if(updateversion){
             fd = open(path,O_RDONLY);
             if(fd){
-                read(fd,buf,100);
-                sscanf(buf,"{\"update-version\":\"%u\",",&server_blobs_update_version);
+                read(fd,buffer,100);
+                sscanf(buffer,"{\"update-version\":\"%u\",",&server_blobs_update_version);
 		DEBUG("SERVER_BLOBS_UPDATE_VERSION=%u",server_blobs_update_version);
                 close(fd);
             }
@@ -550,7 +550,7 @@ static void sel_toggle(GtkCellRendererToggle *cellrenderertoggle,
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_model_get(model, &iter, 0, &active, 2, &se, -1);
 
-    if(path_str[0]==3+48) //only allow to disable sending benchmark results
+    if(strncmp(se->name,N_("Send benchmark results"),10)==0) //only allow to disable sending benchmark results
       se->selected = !active;
 
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, se->selected, -1);
