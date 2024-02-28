@@ -1160,7 +1160,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean 
         }
 
         if (s) {
-            strncpy(s->dev, g_basename(spd_path), 31);
+            strncpy(s->dev, g_path_get_basename(spd_path), 31);
             s->spd_driver = driver;
             s->spd_size = spd_size;
             s->type = ram_type;

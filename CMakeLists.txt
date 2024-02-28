@@ -15,11 +15,6 @@ set(DISTRO "" CACHE STRING "Distro build version eg. 1.el(rpm) or 1(deb)")
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
 
-if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
-	set(HARDINFO2_DEBUG 1)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
-endif()
-
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
 	set(HARDINFO2_OS "linux")
 else()
@@ -78,7 +73,7 @@ message(STATUS "Building HardInfo2 for architecture: ${HARDINFO2_OS}-${HARDINFO2
 
 add_definitions("-std=gnu89")
 #add_definitions("-Wno-deprecated-declarations")
-#add_definitions("-Wextra")
+add_definitions("-Wextra")
 add_definitions("-Wno-missing-field-initializers")
 add_definitions("-Wformat")
 add_definitions("-Wformat-security")
@@ -177,6 +172,13 @@ if(${distro}${disversion} MATCHES "FedoraLinux39")
 endif()
 
 ################################################################################
+if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
+	set(HARDINFO2_DEBUG 1)
+        if(${distro}${disversion} MATCHES "DebianGNULinux7")
+        else()
+	   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+        endif()
+endif()
 add_subdirectory(po)
 
 
@@ -333,7 +335,7 @@ set_source_files_properties(
 	hardinfo2/problem_marker.c
 	hardinfo2/hinote_util.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-deprecated-declarations -Wno-switch"
+	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-switch"
 )
 
 foreach (_module ${HARDINFO2_MODULES})

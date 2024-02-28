@@ -43,7 +43,7 @@ struct _CUPSDest {
 static int (*cups_dests_get) (CUPSDest **dests) = NULL;
 static int (*cups_dests_free) (int num_dests, CUPSDest *dests) = NULL;
 static void (*cups_set_server)(const char *server) = NULL;
-volatile static gboolean cups_init = FALSE;
+static volatile gboolean cups_init = FALSE;
 
 GModule *cups;
 

@@ -1065,7 +1065,7 @@ static void set_view_type(ShellViewType viewtype, gboolean reload)
     if (viewtype != shell->view_type)
         type_changed = TRUE;
 
-    if (viewtype < SHELL_VIEW_NORMAL || viewtype >= SHELL_VIEW_N_VIEWS)
+    if (viewtype >= SHELL_VIEW_N_VIEWS)
         viewtype = SHELL_VIEW_NORMAL;
 
     shell->normalize_percentage = TRUE;

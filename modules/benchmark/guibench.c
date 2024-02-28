@@ -68,7 +68,7 @@ static gchar *phrase = NULL;
 static gboolean keypress_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
   const int magic[] = { 0x1b, 0x33, 0x3a, 0x35, 0x51 };
-  const int states[] = { 0xff52, 0xff52, 0xff54, 0xff54,
+  const unsigned int states[] = { 0xff52, 0xff52, 0xff54, 0xff54,
                          0xff51, 0xff53, 0xff51, 0xff53,
                          0x62, 0x61 };
   static int state = 0;
@@ -80,7 +80,7 @@ static gboolean keypress_event(GtkWidget *widget, GdkEventKey *event, gpointer u
   }
   
   if (state == G_N_ELEMENTS(states)) {
-    int i;
+    unsigned int i;
     
     for (i = 0; i < G_N_ELEMENTS(magic); i++) {
       phrase[i + 6] = magic[i] ^ (states[i] & (states[i] >> 8));
