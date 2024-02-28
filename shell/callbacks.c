@@ -66,7 +66,7 @@ void cb_sync_on_startup()
     GKeyFile *key_file = g_key_file_new();
 
     g_mkdir(g_get_user_config_dir(),0755);
-    g_mkdir(g_build_filename(g_get_user_config_dir(), "hardinfo", NULL),0755);
+    g_mkdir(g_build_filename(g_get_user_config_dir(), "hardinfo2", NULL),0755);
 
     gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                         "settings.ini", NULL);

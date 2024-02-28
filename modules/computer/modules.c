@@ -171,7 +171,7 @@ void kernel_module_icon_init(void)
     sync_manager_add_entry(&sync_entry);
 
     icon_json = g_build_filename(g_get_user_config_dir(),
-                                 "hardinfo", "kernel-module-icons.json",
+                                 "hardinfo2", "kernel-module-icons.json",
                                  NULL);
 
     module_icons = g_hash_table_new(g_str_hash, g_str_equal);
