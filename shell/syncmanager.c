@@ -218,17 +218,23 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     gint nactions;
     SyncNetAction *actions;
     gchar *path;
-    int fd,len;
+    int fd=-1,len;
     gchar buf[101];
 
     path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                            "blobs-update-version.json", NULL);
     fd = open(path,O_RDONLY);
-    if(fd){
+    if(fd<0) {
+        free(path);
+        path = g_build_filename(params.path_data,"blobs-update-version.json", NULL);
+        fd = open(path,O_RDONLY);
+    }
+    if(fd>=0){
         read(fd,buf,100);
         sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
         close(fd);
     }
+    free(path);
     DEBUG("OUR2_BLOBS_UPDATE_VERSION=%u",our_blobs_update_version);
 
     ensure_soup_session();
@@ -739,16 +745,22 @@ void sync_manager_update_on_startup(void)
 {
     GSList *entry;
     gchar *path;
-    int fd;
+    int fd=-1;
     gchar buf[101];
     path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                            "blobs-update-version.json", NULL);
     fd = open(path,O_RDONLY);
-    if(fd){
+    if(fd<0) {
+        free(path);
+        path = g_build_filename(params.path_data,"blobs-update-version.json", NULL);
+        fd = open(path,O_RDONLY);
+    }
+    if(fd>=0){
         read(fd,buf,100);
         sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
         close(fd);
     }
+    free(path);
     DEBUG("OUR1_BLOBS_UPDATE_VERSION=%u",our_blobs_update_version);
 
     ensure_soup_session();
