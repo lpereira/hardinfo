@@ -840,28 +840,34 @@ void hi_module_init(void)
         {
             .name = N_("Update PCI ID listing"),
             .file_name = "pci.ids",
+	    .optional = TRUE,
         },
         {
             .name = N_("Update USB ID listing"),
             .file_name = "usb.ids",
+	    .optional = TRUE,
         },
         {
             .name = N_("Update EDID vendor codes"),
             .file_name = "edid.ids",
+	    .optional = TRUE,
         },
         {
             .name = N_("Update IEEE OUI vendor codes"),
             .file_name = "ieee_oui.ids",
+	    .optional = TRUE,
         },
         {
             .name = N_("Update SD card manufacturer information"),
             .file_name = "sdcard.ids",
+	    .optional = TRUE,
         },
 #ifdef ARCH_x86
 #if JSON_CHECK_VERSION(0,20,0)
         {
             .name = N_("Update CPU flags database"),
             .file_name = "cpuflags.json",
+	    .optional = TRUE,
         },
 #endif
 #endif

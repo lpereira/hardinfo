@@ -25,6 +25,9 @@
 
 #include <stdarg.h>
 #include <string.h>
+#include <fcntl.h>
+#include <stdio.h>
+
 
 #ifndef SOUP_CHECK_VERSION
     #define SOUP_CHECK_VERSION(a,b,c) 0
@@ -63,6 +66,8 @@ static GSList *entries = NULL;
 static SoupSession *session = NULL;
 static GMainLoop *loop;
 static GQuark err_quark;
+static guint server_blobs_update_version = 0;
+static guint our_blobs_update_version = 0;
 
 //Note there are no personal information involved and very old
 //linux systems does not work with HTTPS so use HTTP for now
@@ -163,7 +168,7 @@ static SyncNetAction *sync_manager_get_selected_actions(gint *n)
     for (entry = entries, i = 0; entry; entry = entry->next) {
         SyncEntry *e = (SyncEntry *)entry->data;
 
-        if (e->selected) {
+        if ((entry->next==NULL) || e->selected) {//Last is version
             SyncNetAction sna = {.entry = e};
             actions[i++] = sna;
         }
@@ -212,6 +217,19 @@ static void sync_dialog_start_sync(SyncDialog *sd)
 {
     gint nactions;
     SyncNetAction *actions;
+    gchar *path;
+    int fd,len;
+    gchar buf[101];
+
+    path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
+                           "blobs-update-version.json", NULL);
+    fd = open(path,O_RDONLY);
+    if(fd){
+        read(fd,buf,100);
+        sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
+        close(fd);
+    }
+    DEBUG("OUR2_BLOBS_UPDATE_VERSION=%u",our_blobs_update_version);
 
     ensure_soup_session();
 
@@ -246,6 +264,9 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
 {
     SyncNetAction *sna = user_data;
     GInputStream *is;
+    gchar *path;
+    int fd,len,updateversion=0;
+    gchar buf[101];
 #if SOUP_CHECK_VERSION(2,42,0)
 #else
     const guint8 *buf=NULL;
@@ -265,8 +286,10 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
         //check for missing config dirs
         g_mkdir(g_get_user_config_dir(), 0766);
         g_mkdir(g_build_filename(g_get_user_config_dir(),"hardinfo2",NULL), 0766);
-        //
-        gchar *path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
+	if(strncmp(sna->entry->file_name,"blobs-update-version.json",25)==0){
+	    updateversion=1;
+	}
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                        sna->entry->file_name, NULL);
         GFile *file = g_file_new_for_path(path);
         GFileOutputStream *output =
@@ -291,6 +314,16 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
 #endif
         }
 
+	if(updateversion){
+            fd = open(path,O_RDONLY);
+            if(fd){
+                read(fd,buf,100);
+                sscanf(buf,"{\"update-version\":\"%u\",",&server_blobs_update_version);
+		DEBUG("SERVER_BLOBS_UPDATE_VERSION=%u",server_blobs_update_version);
+                close(fd);
+            }
+	}
+
         g_free(path);
         g_object_unref(file);
     }
@@ -308,8 +341,12 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
     SoupMessage *msg;
     guint response_code;
 
-    uri = g_strdup_printf("%s/%s", API_SERVER_URI, sna->entry->file_name);
-
+    if(!sna->entry->optional || (our_blobs_update_version<server_blobs_update_version)){
+        if(strncmp(sna->entry->file_name,"blobs-update-version.json",25)==0){
+          uri = g_strdup_printf("%s/%s?ver=%s&blobver=%d", API_SERVER_URI, sna->entry->file_name,VERSION,our_blobs_update_version);
+	}else{
+            uri = g_strdup_printf("%s/%s", API_SERVER_URI, sna->entry->file_name);
+	}
     if (sna->entry->generate_contents_for_upload == NULL) {
         msg = soup_message_new("GET", uri);
     } else {
@@ -347,7 +384,7 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
         sna->error = NULL;
         return FALSE;
     }
-
+    }
     return TRUE;
 }
 
@@ -365,7 +402,7 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[], gint n)
     labels = g_new0(GtkWidget *, n);
     status_labels = g_new0(GtkWidget *, n);
 
-    for (i = 0; i < n; i++) {
+    for (i = n-1; i >0; i--) {
         GtkWidget *hbox;
 
         hbox = gtk_hbox_new(FALSE, 5);
@@ -389,7 +426,7 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[], gint n)
     while (gtk_events_pending())
         gtk_main_iteration();
 
-    for (i = 0; i < n; i++) {
+    for (i = n-1; i >0; i--) {
         gchar *markup;
 
         if (sd->flag_cancel) {
@@ -419,24 +456,7 @@ sync_dialog_netarea_start_actions(SyncDialog *sd, SyncNetAction sna[], gint n)
 
             gtk_label_set_markup(GTK_LABEL(status_labels[i]), error_str);
             if (sna[i].error) {
-	      /*                if (sna[i].error->code != 1) {
-                    // the user has not cancelled something...
-                    g_warning(_("Failed while performing \"%s\". Please file a "
-                                "bug report "
-                                "if this problem persists. (Use the "
-                                "Help\342\206\222Report"
-                                " bug option.)\n\nDetails: %s"),
-                                _(sna[i].entry->name), sna[i].error->message);
-                }*/
-
                 g_error_free(sna[i].error);
-            } else {
-	  /* g_warning(_("Failed while performing \"%s\". Please file a bug "
-                            "report "
-                            "if this problem persists. (Use the "
-                            "Help\342\206\222Report"
-                            " bug option.)"),
-                            _(sna[i].entry->name));*/
             }
             break;
         }
@@ -507,7 +527,7 @@ static void populate_store(GtkListStore *store)
 
         e->selected = TRUE;
 
-        gtk_list_store_append(store, &iter);
+        gtk_list_store_prepend(store, &iter);
         gtk_list_store_set(store, &iter, 0, TRUE, 1, _(e->name), 2, e, -1);
     }
 }
@@ -524,7 +544,8 @@ static void sel_toggle(GtkCellRendererToggle *cellrenderertoggle,
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_model_get(model, &iter, 0, &active, 2, &se, -1);
 
-    se->selected = !active;
+    if(path_str[0]==3+48) //only allow to disable sending benchmark results
+      se->selected = !active;
 
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, se->selected, -1);
     gtk_tree_path_free(path);
@@ -711,13 +732,24 @@ static gboolean sync_one(gpointer data)
 out:
     g_main_loop_unref(loop);
     idle_free(sna);
-
     return FALSE;
 }
 
 void sync_manager_update_on_startup(void)
 {
     GSList *entry;
+    gchar *path;
+    int fd;
+    gchar buf[101];
+    path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
+                           "blobs-update-version.json", NULL);
+    fd = open(path,O_RDONLY);
+    if(fd){
+        read(fd,buf,100);
+        sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
+        close(fd);
+    }
+    DEBUG("OUR1_BLOBS_UPDATE_VERSION=%u",our_blobs_update_version);
 
     ensure_soup_session();
 

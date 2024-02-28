@@ -231,6 +231,7 @@ set(HARDINFO2_MODULES
 set(HARDINFO2_RESOURCES
 	"data/benchmark.data"
 	"data/benchmark.json"
+	"data/blobs-update-version.json"
 	"data/vendor.ids"
 	"data/sdcard.ids"
 	"data/usb.ids"

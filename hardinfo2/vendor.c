@@ -207,16 +207,23 @@ static int read_from_vendor_ids(const char *path) {
 void vendor_init(void)
 {
     gchar *path;
-    static SyncEntry se = {
+    static SyncEntry se1;
+    static SyncEntry se2 = {
        .name = N_("Update vendor list"),
        .file_name = "vendor.ids",
+       .optional = TRUE,
     };
+
+    se1.name = N_("Check Update Version");
+    se1.file_name = g_strdup_printf("blobs-update-version.json");
+    se1.optional=FALSE;
 
     /* already initialized */
     if (vendors) return;
 
     DEBUG("initializing vendor list");
-    sync_manager_add_entry(&se);
+    sync_manager_add_entry(&se2);
+    sync_manager_add_entry(&se1);
 
     char *file_search_order[] = {
         g_build_filename(g_get_user_config_dir(), "hardinfo2", "vendor.ids", NULL),

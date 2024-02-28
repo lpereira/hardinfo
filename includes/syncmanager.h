@@ -30,6 +30,7 @@ struct _SyncEntry {
     gchar *(*generate_contents_for_upload)(gsize *size);
 
     gboolean selected;
+    gboolean optional;
 };
 
 void sync_manager_add_entry(SyncEntry *entry);

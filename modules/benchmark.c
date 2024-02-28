@@ -923,10 +923,12 @@ void hi_module_init(void)
             .name = N_("Send benchmark results"),
             .file_name = "benchmark.json",
             .generate_contents_for_upload = get_benchmark_results,
+	    .optional = FALSE,
         },
         {
             .name = N_("Receive benchmark results"),
             .file_name = "benchmark.json",
+	    .optional = FALSE,
         },
     };
 

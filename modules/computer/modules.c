@@ -167,6 +167,7 @@ void kernel_module_icon_init(void)
     static SyncEntry sync_entry = {
         .name = N_("Update kernel module icon table"),
         .file_name = "kernel-module-icons.json",
+	.optional = TRUE,
     };
     sync_manager_add_entry(&sync_entry);
 
