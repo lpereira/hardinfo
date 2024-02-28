@@ -504,8 +504,8 @@ static void sync_dialog_netarea_show(SyncDialog *sd)
     gtk_widget_show(GTK_WIDGET(sd->sna->vbox));
 
     gtk_label_set_markup(GTK_LABEL(sd->label), LABEL_SYNC_SYNCING);
-    gtk_window_set_default_size(GTK_WINDOW(sd->dialog), 0, 0);
-    gtk_window_reshow_with_initial_size(GTK_WINDOW(sd->dialog));
+    //gtk_window_set_default_size(GTK_WINDOW(sd->dialog), 0, 0);
+    //gtk_window_reshow_with_initial_size(GTK_WINDOW(sd->dialog));
 }
 
 static void sync_dialog_netarea_hide(SyncDialog *sd)
