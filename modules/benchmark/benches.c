@@ -79,6 +79,28 @@ void scan_gui(gboolean reload)
 }
 #endif
 
+//Note: Same order as entries, used for json to server
+static char *entries_english_name[] = {
+            "CPU Blowfish (Single-thread)",
+            "CPU Blowfish (Multi-thread)",
+            "CPU Blowfish (Multi-core)",
+            "CPU Zlib",
+            "CPU CryptoHash",
+            "CPU Fibonacci",
+            "CPU N-Queens",
+            "FPU FFT",
+            "FPU Raytracing (Single-thread)",
+            "Internal Network Speed",
+            "SysBench CPU (Single-thread)",
+            "SysBench CPU (Multi-thread)",
+            "SysBench CPU (Four threads)",
+            "SysBench Memory (Single-thread)",
+            "SysBench Memory (Two threads)",
+            "SysBench Memory (Quad threads)",
+            "SysBench Memory (Multi-thread)",
+            "GPU Drawing"};
+
+
 static ModuleEntry entries[] = {
     [BENCHMARK_BLOWFISH_SINGLE] =
         {

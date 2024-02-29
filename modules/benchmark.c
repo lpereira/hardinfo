@@ -807,7 +807,7 @@ static gchar *get_benchmark_results(gsize *len)
             continue;
         }
 
-        json_builder_set_member_name(builder, entries[i].name);
+        json_builder_set_member_name(builder, entries_english_name[i]);
 
         json_builder_begin_object(builder);
 
