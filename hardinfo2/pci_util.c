@@ -299,7 +299,7 @@ static gboolean pci_get_device_sysfs(uint32_t dom, uint32_t bus, uint32_t dev, u
         s->pcie_width_max = strtoul(tmp, NULL, 0);
         free(tmp);
     }
-    tmp = _sysfs_bus_pci(dom, bus, dev, func, "max_link_width");
+    tmp = _sysfs_bus_pci(dom, bus, dev, func, "current_link_width");
     if (tmp) {
         s->pcie_width_curr = strtoul(tmp, NULL, 0);
         free(tmp);
