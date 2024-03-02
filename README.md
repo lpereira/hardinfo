@@ -66,8 +66,8 @@ Building and installing
 Distro building
 ---------------
 For distribution in the different distros - please use the cmake build system with CPack:
-- cmake -DDISTRO=1.el8 -DMAINTAINER="name <email>" ..   (rpm style)
-- cmake -DDISTRO=1 -DMAINTAINER="name <email>" ..       (deb style)
+- cmake -DDISTRO=1.el8 -DMAINTAINER="name \<email\>" ..   (rpm style)
+- cmake -DDISTRO=1 -DMAINTAINER="name \<email\>" ..       (deb style)
 - make package
 - make package_source
 
