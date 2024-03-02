@@ -1,5 +1,5 @@
 [![Test](https://github.com/hardinfo2/hardinfo2/actions/workflows/test.yml/badge.svg)](https://github.com/hardinfo2/hardinfo2/actions/workflows/test.yml)
-[![GitHub release](https://img.shields.io/github/release/hardinfo2/hardinfo2.svg)](https://hardinfo2.org/github?latest_release)
+[![GitHub release](https://img.shields.io/github/v/release/hardinfo2/hardinfo2?display_name=release)](https://hardinfo2.org/github?latest_release)
 [![GitHub release](https://img.shields.io/github/v/release/hardinfo2/hardinfo2?include_prereleases&label=PreRelease&color=blue&display_name=release)](https://hardinfo2.org/github?latest_prerelease)
 
 HARDINFO2
@@ -66,9 +66,10 @@ Building and installing
 Distro building
 ---------------
 For distribution in the different distros - please use the cmake build system with CPack:
-- cmake -DDISTRO=1.el8 ..   (rpm style)
-- cmake -DDISTRO=1 ..       (deb style)
+- cmake -DDISTRO=1.el8 -DMAINTAINER="name <email>" ..   (rpm style)
+- cmake -DDISTRO=1 -DMAINTAINER="name <email>" ..       (deb style)
 - make package
+- make package_source
 
 Please add/change CMakeLists.txt for your distro, so we have an easy to use package for all distributions.
 
@@ -90,7 +91,7 @@ Load with `modprobe eeprom` and refresh the module screen.
 - **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
 - **iperf3**: iperf3 is used to benchmark internal network speed.
 - **apcaccess**: apcaccess is used for battery information. (optional)
-- **lspci/lsusb**: is used for bus information - installed by distro. (optional)
+- **lspci/lsusb**: is used for bus information - only used on old kernels and installed by distro. (optional)
 
 License
 ------
