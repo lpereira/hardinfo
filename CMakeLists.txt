@@ -134,6 +134,11 @@ else()
 endif()
 #Put it together
 string(REPLACE " " "_" CPACK_PACKAGE_FILE_NAME "hardinfo${PACKAGE_DELIMITER}${PACKAGE_DISTRO}${PACKAGE_ARCHITECTURE}")
+if(${RPM})
+  string(REPLACE " " "_" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo${PACKAGE_DELIMITER}${HARDINFO2_VERSION}.src")
+else()
+  string(REPLACE " " "_" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo-${HARDINFO2_VERSION}")
+endif()
 message("-- Found Package Target ${CPACK_PACKAGE_FILE_NAME}")
 message("-- Found Package Version ${CPACK_PACKAGE_VERSION}")
 
@@ -522,11 +527,16 @@ install(FILES pixmaps/hardinfo2.png
 #Please update here for building packages
 #keep package name as hardinfo to allow for upgrading in distro
 SET(CPACK_PACKAGE_NAME "hardinfo")
+SET(CPACK_SOURCE_PACKAGE_NAME "hardinfo")
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://www.hardinfo2.org")
 if(${RPM})
+    SET(CPACK_SOURCE_IGNORE_FILES "/build/;/.git/;/.github/;.gitignore;.gitmodules;*.po.old;*~;*.mo;*.dsc;/debian/")
+    SET(CPACK_SOURCE_GENERATOR "RPM")
     SET(CPACK_GENERATOR "RPM")
     SET(PACKAGE_GTK2 "libgtk-2-0")
 else()
+    SET(CPACK_SOURCE_IGNORE_FILES "/build/;/.git/;/.github/;.gitignore;.gitmodules;*.po.old;*~;*.mo")
+    SET(CPACK_SOURCE_GENERATOR "TGZ")
     SET(CPACK_GENERATOR "DEB")
     SET(PACKAGE_GTK2 "libgtk2.0-0")
 endif()
