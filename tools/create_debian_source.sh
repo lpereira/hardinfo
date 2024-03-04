@@ -12,6 +12,7 @@ debmake
 tar -czf ../hardinfo-$VERSION.debian.tar.gz debian
 cd ..
 mv hardinfo-$VERSION.tar.gz hardinfo-$VERSION.orig.tar.gz
+mv hardinfo-$VERSION.deb hardinfo-$VERSION.src.deb
 
 echo "Format: 3.0 (quilt)
 Source: hardinfo
@@ -34,5 +35,6 @@ echo "Files:">>./hardinfo-$VERSION.dsc
 md5sum hardinfo-$VERSION.*.tar.gz >>./hardinfo-$VERSION.dsc
 
 echo "Debian Source Package Files ready in build:"
+ls -l hardinfo-$VERSION.src.deb
 ls -l hardinfo-$VERSION.*.tar.gz
 ls -l hardinfo-$VERSION.dsc
