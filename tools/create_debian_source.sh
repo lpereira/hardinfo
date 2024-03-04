@@ -48,7 +48,7 @@ echo "Homepage: https://hardinfo2.org
 Standards-Version: 4.1.3
 Vcs-Browser: https://salsa.debian.org/hwspeedy/hardinfo2
 Vcs-Git: https://salsa.debian.org/hwspeedy/hardinfo2.git
-Build-Depends: cmake, debhelper (>= 11), libjson-glib-dev, zlib1g-dev, libsoup2.4-dev, libgtk-3-dev
+Build-Depends: cmake, debhelper (>= 11)
 Package-List:
  hardinfo deb x11 optional arch=any
 Checksums-Sha1:" >./hardinfo-$VERSION.dsc
