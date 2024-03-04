@@ -2,16 +2,31 @@
 VERSION=2.0.12
 cd ..
 rm -rf build
+yum -y remove hardinfo
+rm -rf ~/rpmbuild
+
 mkdir build
 cd build
-cmake ..
+cmake -DDISTRO=src ..
 make package_source
-cp ./_CPack_Packages/Linux-Source/RPM/SPECS/hardinfo.spec .
-mv hardinfo-$VERSION.tar.gz hardinfo-$VERSION.orig.tar.gz
-mv hardinfo-$VERSION-1.src.rpm hardinfo-$VERSION.src.rpm
-mv hardinfo.spec hardinfo-$VERSION.spec
+cp _CPackage_Packages/Linux-Source/RPM/SPECS/hardinfo.spec .
 
 echo "Fedora Source Package Files ready in build:"
-ls -l hardinfo-$VERSION.*.tar.gz
-ls -l hardinfo-$VERSION.src.rpm
-ls -l hardinfo-$VERSION.spec
+ls -l hardinfo-$VERSION*.src.rpm
+ls -l hardinfo.spec
+
+sleep 3
+
+#checking
+fedpkg --release f39 lint
+
+#install src package
+rpm --nomd5 -i ./hardinfo-$VERSION-1.src.rpm
+
+#create package from srpm
+cd ~/rpmbuild/SPECS
+rpmbuild -ba hardinfo.spec
+
+echo "Fedora binary build from Source Package Files ready:"
+ls -l ~/rpmbuild/RPMS/*
+yum -y install ~/rpmbuild/RPMS/hardinfo-$VERSION*
