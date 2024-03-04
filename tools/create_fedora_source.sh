@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=2.0.12
+VERSION=$(cat ../CMakeLists.txt |grep set\(HARDINFO2_VERSION|cut -d '"' -f 2)
 cd ..
 rm -rf build
 yum -y remove hardinfo

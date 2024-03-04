@@ -534,8 +534,8 @@ install(FILES pixmaps/hardinfo2.png
 SET(CPACK_PACKAGE_NAME "hardinfo")
 SET(CPACK_SOURCE_PACKAGE_NAME "hardinfo")
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://www.hardinfo2.org")
-set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
 if(${RPM})
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
     SET(CPACK_SOURCE_IGNORE_FILES "/build/;/.git/;/.github/;.gitignore;.gitmodules;*.po.old;*~;*.mo;")
     SET(CPACK_SOURCE_GENERATOR "RPM;TGZ")
     SET(CPACK_GENERATOR "RPM")
@@ -570,8 +570,7 @@ SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAG
 
 #DEB
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER ${PACKAGE_MAINTAINER})
-SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 is a small application that displays information about your 
-hardware and operating system. It has online benchmarking to check your machine performance against other machines.")
+SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
 SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 if(HARDINFO2_LIBSOUP3)
