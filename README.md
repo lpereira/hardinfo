@@ -25,7 +25,7 @@ Server code can be found here: [https://github.com/hardinfo2/server](https://git
 
 Dependencies
 ------------
-- GTK3 >=3.00 or GTK2+ >=2.20 - Prefer **GTK3** (GTK2+: cmake -DHARDINFO2_GTK3=0 ..)
+- GTK3 >=3.00 or GTK2+ >=2.20 - (GTK2+ DEPRECATED: cmake -DHARDINFO2_GTK3=0 ..)
 - GLib >=2.24
 - Zlib
 - glib JSON
@@ -42,7 +42,7 @@ Building and installing
 - cd build
 - cmake ..
 - make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo apt install ./hardinfo_*  (Use reinstall instead of install if already inst.)
+- sudo apt install ./hardinfo2_*  (Use reinstall instead of install if already inst.)
 - sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3
 - hardinfo2
 
@@ -57,22 +57,12 @@ Building and installing
 - cd build
 - cmake ..
 - make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo yum install ./hardinfo-*  (Use reinstall instead of install if already inst.)
+- sudo yum install ./hardinfo2-*  (Use reinstall instead of install if already inst.)
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, use libsoup2-devel instead of libsoup-devel
   
-Distro building
----------------
-For distribution in the different distros - please use the cmake build system with CPack:
-- cmake -DDISTRO=1.el8 -DMAINTAINER="name \<email\>" ..   (rpm style)
-- cmake -DDISTRO=1 -DMAINTAINER="name \<email\>" ..       (deb style)
-- make package
-- make package_source
-
-Please add/change CMakeLists.txt for your distro, so we have an easy to use package for all distributions.
-
 
 Setting up addition tools
 ---------------------------
