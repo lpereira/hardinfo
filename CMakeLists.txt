@@ -187,9 +187,9 @@ if(${distro}${disversion} MATCHES "DebianGNULinux11")
 endif()
 
 #Fedora 39 - bug with man pages - probably needs upgrade..
-if(${distro}${disversion} MATCHES "FedoraLinux39")
-  set(PACKAGE_MANPAGES 0)
-endif()
+#if(${distro}${disversion} MATCHES "FedoraLinux39")
+#  set(PACKAGE_MANPAGES 0)
+#endif()
 
 ################################################################################
 if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
