@@ -238,11 +238,14 @@ static const gchar* get_module_icon(const char *modname, const char *path)
     return NULL;
 }
 
+gint compar (gpointer a, gpointer b) {return strcmp( (char*)a, (char*)b );}
+
 void scan_modules_do(void) {
     FILE *lsmod;
     gchar buffer[1024];
     gchar *lsmod_path;
     gchar *module_icons;
+    GList *list=NULL,*a;
     const gchar *icon;
 
     if (!_module_hash_table) { _module_hash_table = g_hash_table_new(g_str_hash, g_str_equal); }
@@ -264,7 +267,13 @@ void scan_modules_do(void) {
 
     (void)fgets(buffer, 1024, lsmod); /* Discards the first line */
 
+    //Sort modules
     while (fgets(buffer, 1024, lsmod)) {
+        list=g_list_prepend(list,g_strdup(buffer));
+    }
+    list=g_list_sort(list,(GCompareFunc)compar);
+
+    while (list) {
         gchar *buf, *strmodule, *hashkey;
         gchar *author = NULL, *description = NULL, *license = NULL, *deps = NULL, *vermagic = NULL,
               *filename = NULL, *srcversion = NULL, *version = NULL, *retpoline = NULL,
@@ -274,9 +283,7 @@ void scan_modules_do(void) {
 
         shell_status_pulse();
 
-        buf = buffer;
-
-        sscanf(buf, "%s %ld", modname, &memory);
+        sscanf(list->data, "%s %ld", modname, &memory);
 
         hashkey = g_strdup_printf("MOD%s", modname);
         buf = g_strdup_printf("/sbin/modinfo %s 2>/dev/null", modname);
@@ -388,7 +395,14 @@ void scan_modules_do(void) {
         g_free(version);
         g_free(retpoline);
         g_free(intree);
+
+        //next and free
+        a=list;
+        list=list->next;
+        free(a->data);
+        g_list_free_1(a);
     }
+
     pclose(lsmod);
 
     g_free(lsmod_path);
