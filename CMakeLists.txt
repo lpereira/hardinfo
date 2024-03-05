@@ -121,7 +121,7 @@ if(DISTRO)
     set(CPACK_PACKAGE_VERSION "${HARDINFO2_VERSION}-${DISTRO_BUILD_VER}")
     set(PACKAGE_DISTRO "${HARDINFO2_VERSION}-${DISTRO}")
     if(${DISTRO_BUILD_VER} MATCHES "src")
-        SET(CPACK_RPM_USER_BINARY_SPECFILE "hardinfo.spec")
+        SET(CPACK_RPM_USER_BINARY_SPECFILE "hardinfo2.spec")
         set(CPACK_PACKAGE_VERSION "${HARDINFO2_VERSION}")
         set(PACKAGE_DISTRO "${HARDINFO2_VERSION}")
     endif()
@@ -138,11 +138,11 @@ else()
     set(PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 endif()
 #Put it together
-string(REPLACE " " "${PACKAGE_DELIMITER}" CPACK_PACKAGE_FILE_NAME "hardinfo${PACKAGE_DELIMITER}${PACKAGE_DISTRO}${PACKAGE_ARCHITECTURE}")
+string(REPLACE " " "${PACKAGE_DELIMITER}" CPACK_PACKAGE_FILE_NAME "hardinfo2${PACKAGE_DELIMITER}${PACKAGE_DISTRO}${PACKAGE_ARCHITECTURE}")
 if(${RPM})
-  string(REPLACE " " "-" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo-${PACKAGE_DISTRO}")
+  string(REPLACE " " "-" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo2-${PACKAGE_DISTRO}")
 else()
-  string(REPLACE " " "_" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo-${HARDINFO2_VERSION}")
+  string(REPLACE " " "_" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo2-${HARDINFO2_VERSION}")
 endif()
 message("-- Found Package Target ${CPACK_PACKAGE_FILE_NAME}")
 message("-- Found Package Version ${CPACK_PACKAGE_VERSION}")
@@ -530,9 +530,6 @@ install(FILES pixmaps/hardinfo2.png
 
 ########################PACKAGE BUILDING FOR DISTROS###########################
 #Please update here for building packages
-#keep package name as hardinfo to allow for upgrading in distro
-SET(CPACK_PACKAGE_NAME "hardinfo")
-SET(CPACK_SOURCE_PACKAGE_NAME "hardinfo")
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://www.hardinfo2.org")
 if(${RPM})
     set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
@@ -548,7 +545,7 @@ else()
 endif()
 
 #RPM
-SET(CPACK_RPM_PACKAGE_DEBUG 1)
+SET(CPACK_RPM_PACKAGE_OBSOLETES "hardinfo")
 SET(CPACK_RPM_PACKAGE_MAINTAINER ${PACKAGE_MAINTAINER})
 SET(CPACK_RPM_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
 SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
@@ -569,6 +566,8 @@ endif()
 SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAGE_GTK}, libglib2.0-0 (>=2.10)")
 
 #DEB
+SET(CPACK_DEBIAN_PACKAGE_REPLACES "hardinfo")
+SET(CPACK_DEBIAN_PACKAGE_BREAKS "hardinfo")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER ${PACKAGE_MAINTAINER})
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
 SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
