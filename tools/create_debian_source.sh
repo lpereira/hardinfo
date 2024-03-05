@@ -3,21 +3,22 @@ VERSION=$(cat ../CMakeLists.txt |grep set\(HARDINFO2_VERSION|cut -d '"' -f 2)
 cd ..
 rm -rf build
 sudo apt -y remove hardinfo
+sudo apt -y remove hardinfo2
 
 mkdir build
 cd build
 cmake -DDISTRO=src ..
 make package_source
 #rename cpack file
-mv hardinfo-$VERSION.deb hardinfo-$VERSION.src.deb
+mv hardinfo2-$VERSION.deb hardinfo2-$VERSION.src.deb
 
 #extract CPack source package
 mkdir cpacksrc
-dpkg-deb -R hardinfo-$VERSION.src.deb cpacksrc
+dpkg-deb -R hardinfo2-$VERSION.src.deb cpacksrc
 
 #extract source
-tar -xzf hardinfo-$VERSION.tar.gz
-cd hardinfo-$VERSION
+tar -xzf hardinfo2-$VERSION.tar.gz
+cd hardinfo2-$VERSION
 debmake
 #fixup
 cd debian
@@ -32,43 +33,43 @@ mv control.fixed control
 cd ..
 
 #create debian tar.gz
-tar -czf ../hardinfo-$VERSION.debian.tar.gz debian
+tar -czf ../hardinfo2-$VERSION.debian.tar.gz debian
 cd ..
 #rename cpack file
-mv hardinfo-$VERSION.tar.gz hardinfo-$VERSION.orig.tar.gz
+mv hardinfo2-$VERSION.tar.gz hardinfo2-$VERSION.orig.tar.gz
 
 #create dsc
 echo "Format: 3.0 (quilt)
-Source: hardinfo
-Binary: hardinfo
+Source: hardinfo2
+Binary: hardinfo2
 Architecture: any
-Version: $VERSION">./hardinfo-$VERSION.dsc
-grep Maintainer ./cpacksrc/DEBIAN/control >>./hardinfo-$VERSION.dsc
+Version: $VERSION">./hardinfo2-$VERSION.dsc
+grep Maintainer ./cpacksrc/DEBIAN/control >>./hardinfo2-$VERSION.dsc
 echo "Homepage: https://hardinfo2.org
 Standards-Version: 4.1.3
 Vcs-Browser: https://salsa.debian.org/hwspeedy/hardinfo2
 Vcs-Git: https://salsa.debian.org/hwspeedy/hardinfo2.git
 Build-Depends: cmake, debhelper (>= 11)
 Package-List:
- hardinfo deb x11 optional arch=any
-Checksums-Sha1:" >./hardinfo-$VERSION.dsc
-sha1sum hardinfo-$VERSION.*.tar.gz >>./hardinfo-$VERSION.dsc
+ hardinfo2 deb x11 optional arch=any
+Checksums-Sha1:" >./hardinfo2-$VERSION.dsc
+sha1sum hardinfo2-$VERSION.*.tar.gz >>./hardinfo2-$VERSION.dsc
 echo "Checksums-Sha256:">>./hardinfo-$VERSION.dsc
-sha256sum hardinfo-$VERSION.*.tar.gz >>./hardinfo-$VERSION.dsc
-echo "Files:">>./hardinfo-$VERSION.dsc
-md5sum hardinfo-$VERSION.*.tar.gz >>./hardinfo-$VERSION.dsc
+sha256sum hardinfo2-$VERSION.*.tar.gz >>./hardinfo2-$VERSION.dsc
+echo "Files:">>./hardinfo2-$VERSION.dsc
+md5sum hardinfo2-$VERSION.*.tar.gz >>./hardinfo2-$VERSION.dsc
 
 echo "Debian Source Package Files ready in build:"
-ls -l hardinfo-$VERSION.src.deb
-ls -l hardinfo-$VERSION.*.tar.gz
-ls -l hardinfo-$VERSION.dsc
+ls -l hardinfo2-$VERSION.src.deb
+ls -l hardinfo2-$VERSION.*.tar.gz
+ls -l hardinfo2-$VERSION.dsc
 
 #build from source
 sudo apt install debhelper
-cd hardinfo-$VERSION
+cd hardinfo2-$VERSION
 debuild -b -uc -us
 
 #test package
 ls ../hardinfo_*.deb
-sudo apt -y install ../hardinfo_*.deb
-apt info hardinfo
+sudo apt -y install ../hardinfo2_*.deb
+apt info hardinfo2
