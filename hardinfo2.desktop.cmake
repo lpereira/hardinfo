@@ -8,5 +8,5 @@ Icon=hardinfo2
 Terminal=false
 Type=Application
 StartupNotify=true
-Categories=System;Utilities;
+Categories=System;Utility;
 Keywords=linux;kernel;system;hardware;cpu;processor;capabilities;frequency;memory;ram;board;resources;sensors;devices;usb;pci;display;network;benchmark;test;
