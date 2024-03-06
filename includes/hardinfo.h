@@ -50,14 +50,12 @@ typedef struct _FileTypes		FileTypes;
 typedef struct _ProgramParameters	ProgramParameters;
 
 struct _ProgramParameters {
-  gboolean create_report;
-  gboolean force_all_details; /* for create_report, include any "moreinfo" that exists for any item */
-  gboolean show_version;
-  gboolean gui_running;
-  gboolean list_modules;
-  gboolean autoload_deps;
-  gboolean skip_benchmarks;
-  gboolean quiet;
+  gint create_report;
+  gint force_all_details; /* for create_report, include any "moreinfo" that exists for any item */
+  gint show_version;
+  gint gui_running;
+  gint skip_benchmarks;
+  gint quiet;
 
   /*
    * OK to use the common parts of HTML(4.0) and Pango Markup
@@ -65,13 +63,11 @@ struct _ProgramParameters {
    * Including the (b,big,i,s,sub,sup,small,tt,u) tags.
    * https://developer.gnome.org/pango/stable/PangoMarkupFormat.html
    */
-  gboolean markup_ok;
+  gint markup_ok;
   int fmt_opts;
 
   gint     report_format;
   gint     max_bench_results;
-
-  gchar  **use_modules;
   gchar   *run_benchmark;
   gchar   *bench_user_note;
   gchar   *result_format;
@@ -134,7 +130,6 @@ GSList	     *modules_get_list(void);
 GSList	     *modules_load_selected(void);
 GSList       *modules_load_all(void);
 void	      module_unload_all(void);
-const ModuleAbout  *module_get_about(ShellModule *module);
 gchar        *seconds_to_string(unsigned int seconds);
 
 gchar        *h_strdup_cprintf(const gchar *format, gchar *source, ...)
@@ -155,7 +150,7 @@ gchar        *module_entry_get_moreinfo(ShellModuleEntry * module_entry, gchar *
 gboolean binreloc_init(gboolean try_hardcoded);
 
 /* GTK UI stuff */
-gboolean ui_init(int *argc, char ***argv);
+gint     ui_init(int *argc, char ***argv);
 void     parameters_init(int *argc, char ***argv, ProgramParameters *params);
 extern   ProgramParameters params;
 

@@ -206,7 +206,7 @@ static int read_from_vendor_ids(const char *path) {
 
 void vendor_init(void)
 {
-    gchar *path;
+    gchar *path=NULL;
     static SyncEntry se1;
     static SyncEntry se2 = {
        .name = N_("Update vendor list"),

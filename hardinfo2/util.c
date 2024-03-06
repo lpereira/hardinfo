@@ -47,8 +47,6 @@
 #define TiB 1099511627776
 #define PiB 1125899906842624
 
-static GSList *modules_list = NULL;
-
 void sync_manager_clear_entries(void);
 
 gchar *find_program(gchar *program_name)
@@ -383,18 +381,15 @@ log_handler(const gchar * log_domain,
 
 void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 {
-    static gboolean create_report = FALSE;
-    static gboolean force_all_details = FALSE;
-    static gboolean show_version = FALSE;
-    static gboolean list_modules = FALSE;
-    static gboolean autoload_deps = FALSE;
-    static gboolean skip_benchmarks = FALSE;
-    static gboolean quiet = FALSE;
+    static gint create_report = FALSE;
+    static gint force_all_details = FALSE;
+    static gint show_version = FALSE;
+    static gint skip_benchmarks = FALSE;
+    static gint quiet = FALSE;
     static gchar *report_format = NULL;
     static gchar *run_benchmark = NULL;
     static gchar *result_format = NULL;
     static gchar *bench_user_note = NULL;
-    static gchar **use_modules = NULL;
     static gint max_bench_results = 50;
 
     static GOptionEntry options[] = {
@@ -421,7 +416,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .short_name = 'b',
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &run_benchmark,
-	 .description = N_("run benchmark; requires benchmark.so to be loaded")},
+	 .description = N_("run benchmark eg. -b 'FPU FFT'")},
 	{
 	 .long_name = "user-note",
 	 .short_name = 'u',
@@ -440,26 +435,6 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .arg = G_OPTION_ARG_INT,
 	 .arg_data = &max_bench_results,
 	 .description = N_("maximum number of benchmark results to include (-1 for no limit, default is 50)")},
-//#if NOT_DEFINED
-	{
-	 .long_name = "list-modules",
-	 .short_name = 'l',
-	 .arg = G_OPTION_ARG_NONE,
-	 .arg_data = &list_modules,
-	 .description = N_("lists modules")},
-	{
-	 .long_name = "load-module",
-	 .short_name = 'm',
-	 .arg = G_OPTION_ARG_STRING_ARRAY,
-	 .arg_data = &use_modules,
-	 .description = N_("specify module to load")},
-	{
-	 .long_name = "autoload-deps",
-	 .short_name = 'a',
-	 .arg = G_OPTION_ARG_NONE,
-	 .arg_data = &autoload_deps,
-	 .description = N_("automatically load module dependencies")},
-//#endif
 	{
 	 .long_name = "version",
 	 .short_name = 'v',
@@ -482,7 +457,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     };
     GOptionContext *ctx;
 
-    ctx = g_option_context_new(_("- System Profiler and Benchmark tool"));
+    ctx = g_option_context_new(_("- System Information and Benchmark"));
     g_option_context_set_ignore_unknown_options(ctx, FALSE);
     g_option_context_set_help_enabled(ctx, TRUE);
 
@@ -500,12 +475,9 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     param->create_report = create_report;
     param->report_format = REPORT_FORMAT_TEXT;
     param->show_version = show_version;
-    param->list_modules = list_modules;
-    param->use_modules = use_modules;
     param->run_benchmark = run_benchmark;
     param->result_format = result_format;
     param->max_bench_results = max_bench_results;
-    param->autoload_deps = autoload_deps;
     param->skip_benchmarks = skip_benchmarks;
     param->force_all_details = force_all_details;
     param->quiet = quiet;
@@ -545,7 +517,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     g_free(confdir);
 }
 
-gboolean ui_init(int *argc, char ***argv)
+gint ui_init(int *argc, char ***argv)
 {
     DEBUG("initializing gtk+ UI");
 
@@ -835,29 +807,6 @@ static gint module_cmp(gconstpointer m1, gconstpointer m2)
     return a->weight - b->weight;
 }
 
-#if 0
-static void module_entry_free(gpointer data, gpointer user_data)
-{
-    ShellModuleEntry *entry = (ShellModuleEntry *) data;
-
-    if (entry) {
-	g_free(entry->name);
-	g_object_unref(entry->icon);
-
-	g_free(entry);
-    }
-}
-#endif
-
-const ModuleAbout *module_get_about(ShellModule * module)
-{
-    if (module->aboutfunc) {
-    	return module->aboutfunc();
-    }
-
-    return NULL;
-}
-
 static GSList *modules_check_deps(GSList * modules)
 {
     GSList *mm;
@@ -886,7 +835,7 @@ static GSList *modules_check_deps(GSList * modules)
 		}
 
 		if (!found) {
-		    if (params.autoload_deps) {
+		  if (0){//params.autoload_deps) {
 			ShellModule *mod = module_load(deps[i]);
 
 			if (mod)
@@ -937,94 +886,23 @@ static GSList *modules_check_deps(GSList * modules)
     return modules;
 }
 
-
-GSList *modules_get_list()
-{
-    return modules_list;
-}
-
-//Compatibility
-#if GLIB_CHECK_VERSION(2,44,0)
-#else
-static inline gpointer
-g2_steal_pointer (gpointer pp)
-{
-  gpointer *ptr = (gpointer *) pp;
-  gpointer ref;
-
-  ref = *ptr;
-  *ptr = NULL;
-
-  return ref;
-}
-#endif
-
-static GSList *modules_load(gchar ** module_list)
-{
-    GDir *dir;
-    GSList *modules = NULL;
-    ShellModule *module;
-    gchar *filename;
-
-    filename = g_build_filename(params.path_lib, "modules", NULL);
-    dir = g_dir_open(filename, 0, NULL);
-    g_free(filename);
-
-    if (dir) {
-      GList *filenames = NULL;
-      while ((filename = (gchar *)g_dir_read_name(dir))) {
-	if (g_strrstr(filename, "." G_MODULE_SUFFIX) &&
-	    module_in_module_list(filename, module_list)) {
-	  if (g_strrstr(filename, "devices." G_MODULE_SUFFIX)) {
-	    filenames = g_list_prepend(filenames, filename);
-	  }
-	  else {
-	    filenames = g_list_append(filenames, filename);
-	  }
-	}
-      }
-      GList* item = NULL;
-        while (item = g_list_first(filenames)) {
-            if (module = module_load((gchar *)item->data)) {
-                modules = g_slist_prepend(modules, module);
-            }
-            filenames = g_list_delete_link(filenames, item);
-        }
-#if GLIB_CHECK_VERSION(2,44,0)
-        g_list_free_full (g_steal_pointer (&filenames), g_object_unref);
-#else
-        g_list_free_full (g2_steal_pointer (&filenames), g_object_unref);
-#endif
-        g_dir_close(dir);
-    }
-
-    modules = modules_check_deps(modules);
-
-    if (g_slist_length(modules) == 0) {
-	if (params.use_modules == NULL) {
-	    g_error
-		(_("No module could be loaded. Check permissions on \"%s\" and try again."),
-		 params.path_lib);
-	} else {
-	    g_error
-		(_("No module could be loaded. Please use hardinfo2 -l to list all avai"
-		 "lable modules and try again with a valid module list."));
-
-	}
-    }
-
-    modules_list = g_slist_sort(modules, module_cmp);
-    return modules_list;
-}
-
-GSList *modules_load_selected(void)
-{
-    return modules_load(params.use_modules);
-}
-
 GSList *modules_load_all(void)
 {
-    return modules_load(NULL);
+    GSList *modules = NULL;
+    ShellModule *module;
+    gchar *filenames[]={"devices.so","computer.so","benchmark.so","network.so"};
+    int i=0;
+
+    while(i<4) {
+       if (module = module_load(filenames[i])) {
+           modules = g_slist_prepend(modules, module);
+       }
+       i++;
+    }
+
+    //modules = modules_check_deps(modules);
+    modules = g_slist_sort(modules, module_cmp);
+    return modules;
 }
 
 gint tree_view_get_visible_height(GtkTreeView * tv)

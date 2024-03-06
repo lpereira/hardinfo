@@ -523,63 +523,6 @@ static void menu_item_set_icon_always_visible(Shell *shell,
     g_free(path);
 }
 
-static void add_module_to_menu(gchar * name, GdkPixbuf * pixbuf)
-{
-    GtkAction *action;
-    GtkWidget *menuitem;
-    gchar *about_module = g_strdup_printf("AboutModule%s", name);
-    gchar *path;
-    gint merge_id;
-
-    GtkActionEntry entries[] = {
-	{
-	 name,			/* name */
-	 name,			/* stockid */
-	 name,			/* label */
-	 NULL,			/* accelerator */
-	 NULL,			/* tooltip */
-	 NULL,			/* callback */
-	 },
-	{
-	 about_module,
-	 name,
-	 name,
-	 NULL,
-	 name,
-	 (GCallback) cb_about_module,
-	 },
-    };
-
-    stock_icon_register_pixbuf(pixbuf, name);
-
-    if ((action = gtk_action_group_get_action(shell->action_group, name))) {
-        gtk_action_group_remove_action(shell->action_group, action);
-    }
-
-    if ((action = gtk_action_group_get_action(shell->action_group, about_module))) {
-        gtk_action_group_remove_action(shell->action_group, action);
-    }
-
-    gtk_action_group_add_actions(shell->action_group, entries, 2, NULL);
-
-    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
-    gtk_ui_manager_add_ui(shell->ui_manager,
-                          merge_id,
-			  "/menubar/ViewMenu/LastSep",
-			  name, name, GTK_UI_MANAGER_MENU, TRUE);
-    shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
-
-    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
-    gtk_ui_manager_add_ui(shell->ui_manager,
-                          merge_id,
-			  //  "/menubar/HelpMenu/HelpMenuModules/LastSep",
-			  "/menubar/HelpMenu/LastSep",
-			  about_module, about_module, GTK_UI_MANAGER_AUTO,
-			  TRUE);
-    shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
-
-    menu_item_set_icon_always_visible(shell, "/menubar/ViewMenu", name);
-}
 
 static void
 add_module_entry_to_view_menu(gchar * module, gchar * name,
@@ -642,8 +585,6 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 	gtk_tree_store_set(store, &parent, TREE_COL_PBUF, module->icon,
 			   -1);
     }
-
-    //add_module_to_menu(module->name, module->icon);
 
     if (module->entries) {
 	ShellModuleEntry *entry;

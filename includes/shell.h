@@ -79,7 +79,6 @@ typedef enum {
 struct _Shell {
     GtkWidget		*window, *vbox;
     GtkWidget		*status, *progress;
-    GtkWidget		*remote_label;
     GtkWidget		*notebook;
     GtkWidget		*hbox, *vpaned;
 
@@ -216,11 +215,6 @@ void		shell_clear_field_updates(void);
 void		shell_set_title(Shell *shell, char *subtitle);
 
 void		shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree);
-
-void		shell_save_hosts_file(void);
-void		shell_update_remote_menu(void);
-
-void		shell_set_remote_label(Shell *shell, gchar *label);
 
 /* decode special information in keys
  *

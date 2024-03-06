@@ -253,7 +253,7 @@ bench_value benchmark_parallel_for(gint n_threads,
 {
     gchar *temp;
     int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
-    guint iter_per_thread, iter, thread_number = 0;
+    guint iter_per_thread=1, iter, thread_number = 0;
     GSList *threads = NULL, *t;
     GTimer *timer;
 
@@ -603,7 +603,6 @@ do_benchmark_handler(GIOChannel *source, GIOCondition condition, gpointer data)
     GIOStatus status;
     gchar *result;
     bench_value r = EMPTY_BENCH_VALUE;
-
     status = g_io_channel_read_line(source, &result, NULL, NULL, NULL);
     if (status != G_IO_STATUS_NORMAL) {
         DEBUG("error while reading benchmark result");
@@ -633,9 +632,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
         return;
 
     if (params.gui_running) {
-        gchar *argv[] = {params.argv0, "-b",           entries[entry].name,
-                         "-m",         "benchmark.so", "-a",
-                         NULL};
+        gchar *argv[] = {params.argv0, "-b",entries[entry].name,NULL};
         GPid bench_pid;
         gint bench_stdout;
         GtkWidget *bench_dialog;

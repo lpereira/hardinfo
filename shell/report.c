@@ -289,7 +289,7 @@ void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details
 
 static void report_table_shell_dump(ReportContext *ctx, gchar *key_file_str, int level)
 {
-    gchar *text, *p, *next_nl, *eq, *indent;
+    gchar *text=NULL, *p, *next_nl, *eq, *indent;
     gchar *key, *value;
 
     indent = g_strnfill(level * 4, ' ');

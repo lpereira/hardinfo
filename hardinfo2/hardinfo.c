@@ -68,8 +68,6 @@ int main(int argc, char **argv)
 
 	DEBUG("  Debugging is enabled.");
 
-	/* show also available modules */
-	params.list_modules = TRUE;
     }
 
     /* initialize the binreloc library, so we can load program data */
@@ -78,25 +76,6 @@ int main(int argc, char **argv)
 		"\342\200\242 Is HardInfo2 correctly installed?\n"
 		"\342\200\242 See if %s and %s exists and you have read permission."),
 		PREFIX, LIBPREFIX);
-
-    /* list all module names */
-    if (params.list_modules) {
-	g_print(_("Modules:\n"
-		"%-20s %-15s %-12s\n"), _("File Name"), _("Name"), _("Version"));
-
-	for (modules = modules_load_all(); modules;
-	     modules = modules->next) {
-	    ShellModule *module = (ShellModule *) modules->data;
-	    const ModuleAbout *ma = module_get_about(module);
-	    gchar *name = g_path_get_basename(g_module_name(module->dll));
-
-	    g_print("%-20s %-15s %-12s\n", name, module->name, ma->version);
-
-	    g_free(name);
-	}
-
-	return 0;
-    }
 
     if (!params.create_report && !params.run_benchmark) {
         /* we only try to open the UI if the user didn't ask for a report. */
@@ -112,15 +91,9 @@ int main(int argc, char **argv)
         }
     }
 
-    if (params.use_modules) {
-	/* load only selected modules */
-	DEBUG("loading user-selected modules");
-	modules = modules_load_selected();
-    } else {
 	/* load all modules */
 	DEBUG("loading all modules");
 	modules = modules_load_all();
-    }
 
     /* initialize vendor database */
     vendor_init();
@@ -133,7 +106,7 @@ int main(int argc, char **argv)
 
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
         if (!result) {
-          fprintf(stderr, _("Unknown benchmark ``%s'' or benchmark.so not loaded"), params.run_benchmark);
+          fprintf(stderr, _("Unknown benchmark ``%s''"), params.run_benchmark);
           exit_code = 1;
         } else {
           fprintf(stderr, "\n");

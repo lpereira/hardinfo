@@ -138,63 +138,6 @@ void cb_toolbar()
     shell_ui_manager_set_visible("/MainMenuBarAction", visible);
 }
 
-void cb_about_module(GtkAction * action)
-{
-    Shell *shell = shell_get_main_shell();
-    GSList *modules = shell->tree->modules;
-    const ModuleAbout *ma;
-    gchar *name;
-
-    g_object_get(G_OBJECT(action), "tooltip", &name, NULL);
-
-    for (; modules; modules = modules->next) {
-	ShellModule *sm = (ShellModule *) modules->data;
-
-	if (!g_str_equal(sm->name, name))
-	    continue;
-
-	if ((ma = module_get_about(sm))) {
-	    GtkWidget *about;
-	    gchar *text;
-
-	    about = gtk_about_dialog_new();
-
-	    gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(shell->window));
-
-	    text = g_strdup(sm->name);
-#if GTK_CHECK_VERSION(2, 12, 0)
-	    gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), text);
-#else
-	    gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), text);
-#endif
-	    g_free(text);
-
-	    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about),
-					 ma->version);
-
-	    text = g_strdup_printf(_("Written by %s\nLicensed under %s"),
-				   ma->author, ma->license);
-	    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), text);
-	    g_free(text);
-
-	    if (ma->description)
-		gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
-					      _(ma->description));
-
-	    gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), sm->icon);
-	    gtk_dialog_run(GTK_DIALOG(about));
-	    gtk_widget_destroy(about);
-	} else {
-	    g_warning
-		(_("No about information is associated with the %s module."),
-		 name);
-	}
-
-	break;
-    }
-
-    g_free(name);
-}
 
 void cb_about()
 {
