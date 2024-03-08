@@ -64,7 +64,7 @@ Building and installing
 **openSUSE**: use zypper instead of yum, use libsoup2-devel instead of libsoup-devel
 
 **ArchLinux/Garuda/Manjaro - AUR Package**
- - git clone https://aur.archlinux.org/hardinfo2.git
+ - git clone https://aur.archlinux.org/hardinfo2.git (hardinfo2-git.git for unstable master only developers)
  - cd hardinfo2
  - makepkg -cis
  - hardinfo2
