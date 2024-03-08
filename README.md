@@ -5,7 +5,7 @@
 HARDINFO2
 =========
 
-Hardinfo2 is based on hardinfo, which have not been released >10 years. Hardinfo2 is the reboot that was needed.
+Hardinfo2 is based on hardinfo, which has not been released >10 years. Hardinfo2 is the reboot that was needed.
 
 Hardinfo2 offers System Information and Benchmark for Linux Systems. It is able to
 obtain information from both hardware and basic software. It can benchmark your system and compare
@@ -62,7 +62,12 @@ Building and installing
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, use libsoup2-devel instead of libsoup-devel
-  
+
+**ArchLinux/Garuda/Manjaro - AUR Package**
+ - git clone https://aur.archlinux.org/hardinfo2.git
+ - cd hardinfo2
+ - makepkg -cis
+ - hardinfo2
 
 Setting up addition tools
 ---------------------------
