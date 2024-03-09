@@ -40,7 +40,7 @@ NOTE: In poedit please only do translation and use find, validate and save.
 
 New Language
 ------------
- - cp NEW.po xx.po  (xx=LANGUAGE-2LETTER-SMALL-CAPS)
+ - cp NEW xx.po  (xx=LANGUAGE-2LETTER-SMALL-CAPS)
  - emacs ./xx.po    (edit the empty po and change all CHANGE-* accordingly)
  - ./updatepo.sh    (updates the po with all the words/text we have in the program and shows status)
  - ready to edit - see above
