@@ -142,10 +142,10 @@ static int riscv_isa_next(const char *isap, char *flag) {
     }
 
     switch(*p) {
-        case 'S': case 's': /* supervisor extension */
-        case 'X': case 'x': /* custom extension */
+      //        case 'S': case 's': /* supervisor extension */
+      //        case 'X': case 'x': /* custom extension */
             /* custom supervisor extension (SX..) handled by S */
-            break;
+      //       break;
         default: /* single character (standard) extension */
             tag_len = 1;
             if (next_digit != p+1) ver_len = 0;
