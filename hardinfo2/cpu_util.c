@@ -113,7 +113,7 @@ int cpu_procs_cores_threads_nodes(int *p, int *c, int *t, int *n)
     }
 
     if (!*c)
-        *c = 1;
+      *c = *t; //if no cores, set to threads - probably SBC, best for benchmark
     if (!*p)
         *p = 1;
     if (!*n)
