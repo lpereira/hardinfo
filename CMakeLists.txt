@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.0.0)
 cmake_policy(VERSION 3.0.0)
 project(hardinfo2)
 
-set(HARDINFO2_VERSION "2.0.13")
+set(HARDINFO2_VERSION "2.0.14")
 
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0(EXPERIMENTAL) (0/off for libsoup-2.4)" 0)
 
+#old/unused deprecated - lets us know if anyone uses these below
 set(DISTRO "" CACHE STRING "Distro build version eg. 1.el(rpm) or 1(deb)")
 set(MAINTAINER "" CACHE STRING "Distro maintainer 'name <email>'")
-#old/unused deprecated - lets us know if anyone uses these below
 set(OVRARCH "" CACHE STRING "Override HARDINFO2_ARCH value")
 set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
 set(OVRDTRROOT "" CACHE STRING "Specify a different path for /proc/device-tree")
@@ -85,7 +85,6 @@ set(PACKAGE_LIBGLIB2_MINVERSION 2.24)
 
 ###################################DISTRO CHANGES###############################
 #Please add all distro relates stuff here
-SET(PACKAGE_MANPAGES 1)
 set(RPM 0)
 file(STRINGS /etc/os-release distro REGEX "^NAME=")
 string(REGEX REPLACE "NAME=" "" distro "${distro}")
@@ -186,10 +185,7 @@ if(${distro}${disversion} MATCHES "DebianGNULinux11")
     set(HARDINFO2_LIBSOUP3 0)
 endif()
 
-#Fedora 39 - bug with man pages - probably needs upgrade..
-#if(${distro}${disversion} MATCHES "FedoraLinux39")
-#  set(PACKAGE_MANPAGES 0)
-#endif()
+#Fedora 39 - bug with man pages - upgrade cmake to 3.28.x
 
 ################################################################################
 if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
@@ -263,11 +259,9 @@ set(HARDINFO2_RESOURCES
 	"data/pci.ids"
 	"data/kernel-module-icons.json"
 )
-if(${PACKAGE_MANPAGES})
 set(HARDINFO2_MANPAGES
 	"hardinfo2.1"
 )
-endif()
 set(MODULE_computer_SOURCES
 	modules/computer.c
 	modules/computer/alsa.c
