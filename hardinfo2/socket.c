@@ -40,7 +40,7 @@ Socket *sock_connect(gchar * host, gint port)
     if (sock > 0) {
 	memset(&server, 0, sizeof(server));
 	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = inet_addr(host);
+	inet_pton(AF_INET,host,&server.sin_addr.s_addr);
 	server.sin_port = htons(port);
 
 	if (connect(sock, (struct sockaddr *) (void *) &server, sizeof(server)) < 0) {

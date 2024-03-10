@@ -200,9 +200,9 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     if (ioctl(fd, SIOCGIFADDR, &ifr) < 0) {
     netinfo->ip[0] = 0;
     } else {
-    snprintf(netinfo->ip, sizeof(netinfo->ip), "%s",
-        inet_ntoa(((struct sockaddr_in *) &ifr.ifr_addr)->
-              sin_addr));
+        char ipstr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &((struct sockaddr_in *) &ifr.ifr_addr)->sin_addr, ipstr, INET_ADDRSTRLEN);
+        snprintf(netinfo->ip, sizeof(netinfo->ip), "%s",ipstr);
     }
 
     /* Mask Address */

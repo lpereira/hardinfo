@@ -151,7 +151,7 @@ void scan_dns(gboolean reload)
           ip = g_strstrip(buffer + sizeof("nameserver"));
 
           sa.sin_family = AF_INET;
-          sa.sin_addr.s_addr = inet_addr(ip);
+	  inet_pton(AF_INET,ip,&sa.sin_addr.s_addr);
 
           if (getnameinfo((struct sockaddr *)&sa, sizeof(sa), hbuf, sizeof(hbuf), NULL, 0, NI_NAMEREQD)) {
               __nameservers = h_strdup_cprintf("%s=\n",
