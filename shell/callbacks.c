@@ -18,6 +18,8 @@
 
 #include <stdlib.h>
 #include <gtk/gtk.h>
+#include <glib.h>
+#include <glib/gstdio.h>
 
 #include "hardinfo.h"
 #include "callbacks.h"

@@ -90,7 +90,7 @@ gchar *seconds_to_string(unsigned int seconds)
 {
     unsigned int hours, minutes, days;
     const gchar *days_fmt, *hours_fmt, *minutes_fmt, *seconds_fmt;
-    gchar *full_fmt, *ret = g_strdup("");
+    gchar *full_fmt=NULL, *ret = g_strdup("");
 
     minutes = seconds / 60;
     seconds %= 60;

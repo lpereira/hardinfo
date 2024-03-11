@@ -23,6 +23,9 @@
 
 #include <libsoup/soup.h>
 
+#include <glib.h>
+#include <glib/gstdio.h>
+
 #include <stdarg.h>
 #include <string.h>
 #include <fcntl.h>
