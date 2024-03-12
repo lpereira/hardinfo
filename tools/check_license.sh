@@ -29,7 +29,6 @@ echo ""
 
 #remaining licenses
 echo "Others:"
-echo "includes/loongarch64/processor-platform.h detected wrong - is GPL2+:"
 cat licenses_all.txt|grep -v 'General Public License v2.0 or later\|GNU Library General Public License v2 or later' \
     | grep -v 'GNU Lesser General Public License v2.1 or later'| grep -v 'GNU Lesser General Public License, Version 2.1' \
     | grep -v 'General Public License v3.0 or later' \

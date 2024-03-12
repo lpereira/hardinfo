@@ -2,9 +2,9 @@
  *    HardInfo - Displays System Information
  *    Copyright (C) 2003-2009 L. A. F. Pereira <l@tia.mat.br>
  *
+ *
  *    This program is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, version 2 or later.
+ *    it under the terms of the GNU General Public License v2.0 or later.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,6 +15,7 @@
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
+
 
 #include <config.h>
 #include <shell.h>
