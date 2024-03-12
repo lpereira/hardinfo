@@ -1,5 +1,6 @@
 /*
  * BinReloc - a library for creating relocatable executables
+ * Written by: Hongli Lai <h.lai@chello.nl>
  * Copyright: hardinfo2 project
  * http://autopackage.org/
  *
