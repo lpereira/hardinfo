@@ -1,5 +1,11 @@
 #!/bin/bash
+#tool script used by project maintainer to test debian releases
+# WIP - needs maintainer to create .dsc and debian directory - current takes from CPack
+
 VERSION=$(cat ../CMakeLists.txt |grep set\(HARDINFO2_VERSION|cut -d '"' -f 2)
+ARCH=$(uname -m)
+if [ $ARCH=="x86_64" ]; then ARCH=amd64; fi
+
 cd ..
 rm -rf build
 sudo apt -y remove hardinfo
@@ -11,22 +17,26 @@ cmake ..
 make package_source
 #rename cpack files
 mv hardinfo2_$VERSION*.deb hardinfo2-$VERSION.src.deb
-mv hardinfo2_$VERSION*.tar.gz hardinfo2-$VERSION.tar.gz
+rm hardinfo2_$VERSION*.tar.gz
 
 #extract CPack source package
 mkdir cpacksrc
 dpkg-deb -R hardinfo2-$VERSION.src.deb cpacksrc
 
+#create source package (NOTE: We use github tags as release-$VERSION)
+cd ../..
+tar -czf hardinfo2-$VERSION.tar.gz hardinfo2 --transform s/hardinfo2/hardinfo2-$VERSION/
+mv hardinfo2-$VERSION.tar.gz hardinfo2/build/
+cd hardinfo2/build
+
 #extract source
 tar -xzf hardinfo2-$VERSION.tar.gz
-#FIXME ubuntu...
-mv hardinfo2_$VERSION-Ubuntu-22.04_amd64 hardinfo2-$VERSION
 cd hardinfo2-$VERSION
 debmake
-#fixup
+#fixup source from cpack - FIXME
 cd debian
 grep Maintainer ../../cpacksrc/DEBIAN/control >control.fixed
-grep -v Homepage control |grep -v Description|grep -v auto-gen|grep -v Section|#rep -v debmake |grep -v Maintainer >>control.fixed
+grep -v Homepage control |grep -v Description|grep -v auto-gen|grep -v Section|grep -v debmake |grep -v Maintainer >>control.fixed
 echo "Homepage: https://hardinfo2.org">>control.fixed
 echo "Description: Hardinfo2 - System Information and Benchmark" >>control.fixed
 grep Recommends ../../cpacksrc/DEBIAN/control >>control.fixed
@@ -38,7 +48,7 @@ cd ..
 #create debian tar.gz
 tar -czf ../hardinfo2-$VERSION.debian.tar.gz debian
 cd ..
-#rename cpack file
+#rename source file
 mv hardinfo2-$VERSION.tar.gz hardinfo2-$VERSION.orig.tar.gz
 
 #create dsc
@@ -57,13 +67,12 @@ Package-List:
  hardinfo2 deb x11 optional arch=any
 Checksums-Sha1:" >./hardinfo2-$VERSION.dsc
 sha1sum hardinfo2-$VERSION.*.tar.gz >>./hardinfo2-$VERSION.dsc
-echo "Checksums-Sha256:">>./hardinfo_$VERSION.dsc
+echo "Checksums-Sha256:">>./hardinfo2-$VERSION.dsc
 sha256sum hardinfo2-$VERSION.*.tar.gz >>./hardinfo2-$VERSION.dsc
 echo "Files:">>./hardinfo2-$VERSION.dsc
 md5sum hardinfo2-$VERSION.*.tar.gz >>./hardinfo2-$VERSION.dsc
 
 echo "Debian Source Package Files ready in build:"
-ls -l hardinfo2-$VERSION.src.deb
 ls -l hardinfo2-$VERSION*.tar.gz
 ls -l hardinfo2-$VERSION.dsc
 
@@ -73,6 +82,6 @@ cd hardinfo2-$VERSION
 debuild -b -uc -us
 
 #test package
-ls ../hardinfo_*.deb
-sudo apt -y install ../hardinfo2_*.deb
+ls ../hardinfo2_*.deb
+sudo apt -y install ../hardinfo2_$VERSION-1_$ARCH.deb
 apt info hardinfo2

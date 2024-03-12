@@ -1,7 +1,8 @@
 #!/bin/bash
+#tool script used by project maintainer to test fedora/redhat releases
+
 VERSION=$(cat ../CMakeLists.txt |grep set\(HARDINFO2_VERSION|cut -d '"' -f 2)
 ARCH=$(uname -m)
-DIST=$(uname -r|cut -d '.' -f 4)
 
 #clean and prep
 yum -y install ninja-build
@@ -9,25 +10,29 @@ cd ..
 rm -rf build
 sudo yum -y remove hardinfo2
 rm -rf ~/rpmbuild
-
-#build source
 mkdir build
-cd build
-cmake -DDISTRO=src ..
-#fix for local build
-cat ../tools/hardinfo2.spec |grep -v Patch|sed '/URL:/c\URL:            ./'|sed '/Source0:/c\Source0:        hardinfo2-%{version}.tar.gz' |sed 's/hardinfo2-release/hardinfo2/g' >./hardinfo2.spec
-make package_source
 
-cp -f ../tools/hardinfo2.spec .
+#create source package
+cd ..
+tar -czf hardinfo2-release-$VERSION.tar.gz hardinfo2 --transform s/hardinfo2/hardinfo2-release-$VERSION/
+mv hardinfo2-release-$VERSION.tar.gz hardinfo2/build/
+cd hardinfo2/build
+wget https://src.fedoraproject.org/rpms/hardinfo2/raw/rawhide/f/hardinfo2.spec
+cp hardinfo2.spec ../tools/
+cat hardinfo2.spec |grep -v Patch|sed '/URL:/c\URL:            ./'|sed '/Source0:/c\Source0:        hardinfo2-release-%{version}.tar.gz' |sed '/Version:/c\Version: '"$VERSION"'' >./hardinfo2.spec
 
-echo "Fedora Source Package Files ready in build:"
-ls -l hardinfo2-$VERSION*.src.rpm
+echo "Fedora/redhat Source Package Files ready in build:"
+ls -l hardinfo2-release-$VERSION*.tar.gz
 ls -l hardinfo2.spec
 
 sleep 3
 
 #install src package
-sudo rpm --nomd5 -i ./hardinfo2-$VERSION-1.$DIST.src.rpm
+mkdir ~/rpmbuild
+mkdir ~/rpmbuild/SPECS
+mkdir ~/rpmbuild/SOURCES
+cp hardinfo2.spec ~/rpmbuild/SPECS/
+cp hardinfo2-release-$VERSION.tar.gz ~/rpmbuild/SOURCES/
 
 #create package from srpm
 cd ~/rpmbuild/SPECS
