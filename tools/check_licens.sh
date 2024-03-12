@@ -22,7 +22,11 @@ echo ""
 echo "GPL3.0+:"
 cat licenses_all.txt| grep 'General Public License v3.0 or later'
 echo ""
-   
+
+echo "No copyright:"
+cat licenses_all.txt| grep '*No copyright*'
+echo ""
+
 #remaining licenses
 echo "Others:"
 echo "includes/loongarch64/processor-platform.h detected wrong - is GPL2+:"
