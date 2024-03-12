@@ -85,7 +85,7 @@ string(REGEX REPLACE "\"" "" disversion "${disversion}")
 string(REGEX REPLACE "/" "" disversion "${disversion}")
 string(REGEX REPLACE " " "" disversion "${disversion}")
 #RPM Distro's
-if(${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*" OR ${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*")
+if(${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*" OR ${distro} MATCHES "Fedora*" OR ${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*")
   set(RPM 1)
 endif()
 #Package architecture
