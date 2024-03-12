@@ -1,8 +1,22 @@
 /*
-SHA-1 in C
-By Steve Reid <steve@edmweb.com>
-100% Public Domain
+ * SHA-1 in C
+ * Written by Steve Reid <steve@edmweb.com>
+ * Copyright by: hardinfo2 project
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License v2.0 or later.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ */
 
+/*
 Test Vectors (from FIPS PUB 180-1)
 "abc"
   A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D
