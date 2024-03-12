@@ -38,6 +38,7 @@ Building and installing
 - sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev
 - git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
+- ./tools/git_latest_release.sh (Switch to latest stable release, tools/git_unstable_master.sh for developers)
 - mkdir build
 - cd build
 - cmake ..
@@ -53,6 +54,7 @@ Building and installing
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
 - git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
+- ./tools/git_latest_release.sh (Switch to latest stable release, tools/git_unstable_master.sh for developers)
 - mkdir build
 - cd build
 - cmake ..
@@ -92,7 +94,7 @@ License
 ------
 The Project License has been changed in 2024 from GPL2 to **GPL2 or later**
 
-Because we use LGPL2.1+ and GPL3 code. To future proof the project, lpereira and other developers has agreed to change license of source code also to GPL2+. (https://github.com/lpereira/hardinfo/issues/530) (https://github.com/lpereira/hardinfo/issues/707).
+Because we use LGPL2.1+ and GPL3 code. To future proof the project, lpereira and other developers have agreed to change license of source code also to GPL2+. (https://github.com/lpereira/hardinfo/issues/530) (https://github.com/lpereira/hardinfo/issues/707).
 
 It is all about open source and creating together - Read more about GPL license here: https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
 
