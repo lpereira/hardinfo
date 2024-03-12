@@ -7,13 +7,6 @@ set(HARDINFO2_VERSION "2.0.16")
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0(EXPERIMENTAL) (0/off for libsoup-2.4)" 0)
 
-#old/unused deprecated - lets us know if anyone uses these below
-set(DISTRO "" CACHE STRING "Distro build version eg. 1.el(rpm) or 1(deb)")
-set(MAINTAINER "" CACHE STRING "Distro maintainer 'name <email>'")
-set(OVRARCH "" CACHE STRING "Override HARDINFO2_ARCH value")
-set(OVRCPUINFO "" CACHE STRING "Specify a different file for /proc/cpuinfo")
-set(OVRDTRROOT "" CACHE STRING "Specify a different path for /proc/device-tree")
-
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
 
@@ -57,17 +50,6 @@ else()
 	message(FATAL_ERROR "Unsupported architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif()
 
-if (OVRARCH)
-	set(HARDINFO2_ARCH ${OVRARCH})
-endif()
-if (OVRCPUINFO)
-	add_definitions(-DPROC_CPUINFO=${OVRCPUINFO})
-	message(STATUS "/proc/cpuinfo override: ${OVRCPUINFO}")
-endif()
-if (OVRDTRROOT)
-	add_definitions(-DDTR_ROOT=${OVRDTRROOT})
-	message(STATUS "/proc/device-tree override: ${OVRDTRROOT}")
-endif()
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 
@@ -83,8 +65,7 @@ add_definitions("-Wformat-security")
 set(PACKAGE_LIBSOUP2_MINVERSION 2.42)
 set(PACKAGE_LIBGLIB2_MINVERSION 2.24)
 
-###################################DISTRO CHANGES###############################
-#Please add all distro relates stuff here
+#########################CPack PACKAGING SETUP###############################
 set(RPM 0)
 file(STRINGS /etc/os-release distro REGEX "^NAME=")
 string(REGEX REPLACE "NAME=" "" distro "${distro}")
@@ -93,6 +74,13 @@ string(REGEX REPLACE "/" "" distro "${distro}")
 string(REGEX REPLACE " " "" distro "${distro}")
 file(STRINGS /etc/os-release disversion REGEX "^VERSION_ID=")
 string(REGEX REPLACE "VERSION_ID=" "" disversion "${disversion}")
+string(COMPARE EQUAL "${disversion}" "" result)
+if(result)
+  #sid/rawhide with no version - use project name
+  message("-- Found no distro version - Using codename")
+  file(STRINGS /etc/os-release disversion REGEX "^VERSION_CODENAME=")
+  string(REGEX REPLACE "VERSION_CODENAME=" "" disversion "${disversion}")
+endif()
 string(REGEX REPLACE "\"" "" disversion "${disversion}")
 string(REGEX REPLACE "/" "" disversion "${disversion}")
 string(REGEX REPLACE " " "" disversion "${disversion}")
@@ -111,39 +99,11 @@ else()
     set(PACKAGE_ARCHITECTURE "_amd64")
   endif()
 endif()
-#Package Distro build version - part of package name
 set(PACKAGE_DISTRO ${HARDINFO2_VERSION}-${distro}-${disversion}${CPACK_SYSTEM_NAME})
 SET(CPACK_PACKAGE_VERSION ${HARDINFO2_VERSION})
-if(DISTRO)
-    message("-- DISTRO BUILD")
-    string(REGEX REPLACE "[.].*" "" DISTRO_BUILD_VER ${DISTRO})
-    set(CPACK_PACKAGE_VERSION "${HARDINFO2_VERSION}-${DISTRO_BUILD_VER}")
-    set(PACKAGE_DISTRO "${HARDINFO2_VERSION}-${DISTRO}")
-    if(${DISTRO_BUILD_VER} MATCHES "src")
-        SET(CPACK_RPM_USER_BINARY_SPECFILE "hardinfo2.spec")
-        set(CPACK_PACKAGE_VERSION "${HARDINFO2_VERSION}")
-        set(PACKAGE_DISTRO "${HARDINFO2_VERSION}")
-    endif()
-    if(${HARDINFO2_GTK3})
-    else()
-        message(FATAL_ERROR "Distro-Building not supported with GTK2!!")
-    endif()
-    if(MAINTAINER)
-        set(PACKAGE_MAINTAINER ${MAINTAINER})
-    else()
-        set(PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
-    endif()
-else()
-    set(PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
-endif()
 #Put it together
 string(REPLACE " " "${PACKAGE_DELIMITER}" CPACK_PACKAGE_FILE_NAME "hardinfo2${PACKAGE_DELIMITER}${PACKAGE_DISTRO}${PACKAGE_ARCHITECTURE}")
-if(${RPM})
-  string(REPLACE " " "-" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo2-${PACKAGE_DISTRO}")
-else()
-  string(REPLACE " " "_" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo2-${HARDINFO2_VERSION}")
-endif()
-message("-- Found Package Target ${CPACK_PACKAGE_FILE_NAME}")
+string(REPLACE " " "${PACKAGE_DELIMITER}" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo2${PACKAGE_DELIMITER}${PACKAGE_DISTRO}${PACKAGE_ARCHITECTURE}")
 message("-- Found Package Version ${CPACK_PACKAGE_VERSION}")
 
 #flavour output
@@ -188,6 +148,7 @@ endif()
 #Fedora 39 - bug with man pages - upgrade cmake to 3.28.x
 
 ################################################################################
+
 if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
 	set(HARDINFO2_DEBUG 1)
         if(${distro}${disversion} MATCHES "DebianGNULinux7")
@@ -522,8 +483,8 @@ install(FILES pixmaps/hardinfo2.png
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
 
-########################PACKAGE BUILDING FOR DISTROS###########################
-#Please update here for building packages
+########################CPack PACKAGE BUILDING###########################
+
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://www.hardinfo2.org")
 if(${RPM})
     set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
@@ -540,13 +501,12 @@ endif()
 
 #RPM
 SET(CPACK_RPM_PACKAGE_OBSOLETES "hardinfo")
-SET(CPACK_RPM_PACKAGE_MAINTAINER ${PACKAGE_MAINTAINER})
+SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_RPM_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
 SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
 SET(CPACK_RPM_PACKAGE_LICENSE "GPL2+")
 SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 SET(CPACK_RPM_PACKAGE_URL "https://www.hardinfo2.org")
-#SET(CPACK_RPM_SOURCE_PKG_BUILD_PARAMS "-DDISTRO=1")
 if(HARDINFO2_LIBSOUP3)
     SET(PACKAGE_LS "libsoup (>=3.0)")
 else()
@@ -562,7 +522,7 @@ SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAG
 #DEB
 SET(CPACK_DEBIAN_PACKAGE_REPLACES "hardinfo")
 SET(CPACK_DEBIAN_PACKAGE_BREAKS "hardinfo")
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER ${PACKAGE_MAINTAINER})
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
 SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
