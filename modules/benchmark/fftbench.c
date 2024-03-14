@@ -69,7 +69,7 @@ static void lup_decompose(FFTBench *fftbench)
     double p, temp, **a;
 
     int *perm = (int *) malloc(sizeof(double) * N);
-    
+    free(fftbench->p);
     fftbench->p = perm;
     a = fftbench->a;
     
@@ -181,6 +181,7 @@ FFTBench *fft_bench_new(void)
     }
 
     fftbench->b = (double *) malloc(sizeof(double) * N);
+    fftbench->p = NULL;
 
     for (i = 0; i < N; ++i)
 	fftbench->b[i] = random_double();

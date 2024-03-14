@@ -21,7 +21,7 @@
 #include "fftbench.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 2
+#define BENCH_REVISION 3
 #define CRUNCH_TIME 5
 
 static gpointer fft_for(void *in_data, gint thread_number)
