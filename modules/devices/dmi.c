@@ -73,7 +73,7 @@ gboolean dmi_get_info(void)
     DMIInfo *info;
     gboolean dmi_succeeded = FALSE;
     guint i;
-    gchar *value;
+    gchar *value=NULL;
     const gchar *vendor;
 
     if (dmi_info) {

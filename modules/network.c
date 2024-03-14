@@ -196,8 +196,8 @@ void scan_route(gboolean reload)
 
       if ((route = popen(command_line, "r"))) {
         /* eat first two lines */
-        (void)fgets(buffer, 256, route);
-        (void)fgets(buffer, 256, route);
+        char *c=fgets(buffer, 256, route);
+        char *cc=fgets(buffer, 256, route);
 
         while (fgets(buffer, 256, route)) {
           buffer[15] = '\0';
@@ -236,7 +236,7 @@ void scan_arp(gboolean reload)
 
     if ((arp = fopen("/proc/net/arp", "r"))) {
       /* eat first line */
-      (void)fgets(buffer, 256, arp);
+      char *c=fgets(buffer, 256, arp);
 
       while (fgets(buffer, 256, arp)) {
         buffer[15] = '\0';

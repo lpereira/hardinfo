@@ -518,7 +518,7 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
                                                  ShellOrderType order_type)
 {
     bench_result *this_machine;
-    GSList *result_list, *li;
+    GSList *result_list=NULL, *li;
     gchar *results = g_strdup("");
     gchar *output;
     gchar *path;

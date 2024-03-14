@@ -63,7 +63,7 @@ computer_get_alsainfo(void)
         ai->cards = g_slist_append(ai->cards, ac);
 
         g_strfreev(tmp);
-        (void)fgets(buffer, 128, cards);  /* skip next line */
+        char *c=fgets(buffer, 128, cards);  /* skip next line */
     }
     fclose(cards);
 

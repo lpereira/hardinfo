@@ -312,7 +312,7 @@ __scan_battery_apm(void)
     if ((procapm = fopen("/proc/apm", "r"))) {
         int old_percentage = percentage;
         
-        (void)fscanf(procapm, "%s %s %s 0x%x %s %s %d%%",
+        int c=fscanf(procapm, "%s %s %s 0x%x %s %s %d%%",
                apm_drv_ver, apm_bios_ver, trash,
                &ac_bat, trash, trash, &percentage);
         fclose(procapm);

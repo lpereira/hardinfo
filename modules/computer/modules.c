@@ -265,7 +265,7 @@ void scan_modules_do(void) {
         return;
     }
 
-    (void)fgets(buffer, 1024, lsmod); /* Discards the first line */
+    char *c=fgets(buffer, 1024, lsmod); /* Discards the first line */
 
     //Sort modules
     while (fgets(buffer, 1024, lsmod)) {

@@ -632,7 +632,7 @@ void __scan_ide_devices(void)
 	    if (!proc_ide)
 	        continue;
 
-	    (void) fgets(buf, 128, proc_ide);
+	    char *cc=fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
 
 	    buf[strlen(buf) - 1] = 0;
@@ -648,7 +648,7 @@ void __scan_ide_devices(void)
 	        continue;
             }
 
-	    (void) fgets(buf, 128, proc_ide);
+	    char *c=fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
 	    buf[strlen(buf) - 1] = 0;
 
@@ -717,7 +717,7 @@ void __scan_ide_devices(void)
 	    if (g_file_test(device, G_FILE_TEST_EXISTS)) {
 		proc_ide = fopen(device, "r");
 		if (proc_ide) {
-                    (void) fscanf(proc_ide, "%d", &cache);
+                    int c=fscanf(proc_ide, "%d", &cache);
                     fclose(proc_ide);
                 } else {
                     cache = 0;
@@ -731,7 +731,7 @@ void __scan_ide_devices(void)
 
 		proc_ide = fopen(device, "r");
 		if (proc_ide) {
-                    (void) fgets(buf, 64, proc_ide);
+                    char *c=fgets(buf, 64, proc_ide);
                     for (tmp = buf; *tmp; tmp++) {
                         if (*tmp >= '0' && *tmp <= '9')
                             break;
@@ -739,7 +739,7 @@ void __scan_ide_devices(void)
 
                     pgeometry = g_strdup(g_strstrip(tmp));
 
-                    (void) fgets(buf, 64, proc_ide);
+                    char *cc=fgets(buf, 64, proc_ide);
                     for (tmp = buf; *tmp; tmp++) {
                         if (*tmp >= '0' && *tmp <= '9')
                             break;
