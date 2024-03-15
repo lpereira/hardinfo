@@ -156,7 +156,7 @@ gboolean fill_xrr_info(xrr_info *xrr) {
 
     x_screen ts;
     x_output to;
-    char output_id[128];
+    char output_id[64];
     char status[128];
     char alist[512];
 
@@ -195,7 +195,7 @@ gboolean fill_xrr_info(xrr_info *xrr) {
             /* looking for:
              * <output_id> (connected|disconnected|unknown connection) (primary|?) <%dx%d+%d+%d> (attribute_list) mm x mm
              */
-            ec = sscanf(p, "%127s %127[^(](%511[^)]", output_id, status, alist);
+            ec = sscanf(p, "%63s %127[^(](%511[^)]", output_id, status, alist);
             if (ec == 3) {
                 int is_output = 0, found_rect = 0, n = 0;
                 gchar **ot = g_strsplit(status, " ", 0);
@@ -228,7 +228,7 @@ gboolean fill_xrr_info(xrr_info *xrr) {
                 }
                 g_strfreev(ot);
                 if (is_output) {
-                    strncpy(to.name, output_id, 63);
+		  strncpy(to.name, output_id, 64);
                     xrr->output_count++;
                     if (xrr->outputs == NULL)
                         xrr->outputs = malloc(xrr->output_count * sizeof(x_output));

@@ -243,7 +243,7 @@ GSList *ids_file_all_get_all(const gchar *file, split_loc_function split_loc_fun
     ids_query_result *working = g_new0(ids_query_result, 1);
     gchar **qparts = g_new0(gchar*, IDS_LOOKUP_MAX_DEPTH + 1);
     for(tabs = IDS_LOOKUP_MAX_DEPTH-1; tabs>=0; tabs--)
-        qparts[tabs] = g_malloc0(IDS_LOOKUP_BUFF_SIZE);
+        qparts[tabs] = g_malloc0(IDS_LOOKUP_BUFF_SIZE+1);
     tabs = 0;
 
     if (!split_loc_func) split_loc_func = split_loc_default;
@@ -290,7 +290,7 @@ GSList *ids_file_all_get_all(const gchar *file, split_loc_function split_loc_fun
         // now  p = id, name = name
         // ids_msg("p: %s -- name: %s", p, name);
 
-        strncpy(qparts[tabs], p, IDS_LOOKUP_BUFF_SIZE-1);
+        strncpy(qparts[tabs], p, IDS_LOOKUP_BUFF_SIZE);
         ids_query_result_set_str(working, tabs, name);
         if (tabs < tabs_last)
             for(;tabs_last > tabs; tabs_last--) {
