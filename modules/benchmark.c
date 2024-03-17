@@ -835,7 +835,8 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(int, "MachineDataVersion",
                        this_machine->machine_data_version);
         ADD_JSON_VALUE(string, "MachineType", this_machine->machine_type);
-
+        ADD_JSON_VALUE(string, "LinuxKernel", this_machine->linux_kernel);
+        ADD_JSON_VALUE(string, "LinuxOS", this_machine->linux_os);
         ADD_JSON_VALUE(boolean, "Legacy", FALSE);
         ADD_JSON_VALUE(string, "ExtraInfo", bench_results[i].extra);
         ADD_JSON_VALUE(string, "UserNote", bench_results[i].user_note);
