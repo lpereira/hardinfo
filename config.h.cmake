@@ -16,12 +16,22 @@
 
 #cmakedefine HARDINFO2_DEBUG	@HARDINFO2_DEBUG@
 
-#if defined(HARDINFO2_DEBUG) && (HARDINFO2_DEBUG==1)
+#if defined(HARDINFO2_LIBSOUP3) && (HARDINFO2_LIBSOUP3==0)
+  #define HARDINFO2_LIBSOUP3 0
+#else
+  #define HARDINFO2_LIBSOUP3 1
+#endif
+
+#if defined(CMAKE_BUILD_TYPE) && (CMAKE_BUILD_TYPE==Release)
+  #define RELEASE 1
+#else
   #define RELEASE 0
+#endif
+
+#if defined(HARDINFO2_DEBUG) && (HARDINFO2_DEBUG==1)
   #define DEBUG(msg,...) fprintf(stderr, "*** %s:%d (%s) *** " msg "\n", \
         	           __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
-  #define RELEASE 1
   #define DEBUG(msg,...)
 #endif	/* HARDINFO2_DEBUG */
 
