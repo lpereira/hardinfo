@@ -5,7 +5,7 @@ project(hardinfo2)
 set(HARDINFO2_VERSION "2.0.16")
 
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
-option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0(EXPERIMENTAL) (0/off for libsoup-2.4)" 0)
+option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 0)
 
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
@@ -79,7 +79,7 @@ if(result)
   #sid/rawhide with no version - use project name
   message("-- Found no distro version - Using codename")
   file(STRINGS /etc/os-release disversion REGEX "^VERSION_CODENAME=")
-  string(REGEX REPLACE "VERSION_CODENAME=" "" disversion "${disversion}")
+  string(REGEX REPLACE "VERSION_CODENAME=" "" disversion "99_${disversion}")
 endif()
 string(REGEX REPLACE "\"" "" disversion "${disversion}")
 string(REGEX REPLACE "/" "" disversion "${disversion}")
@@ -105,47 +105,65 @@ SET(CPACK_PACKAGE_VERSION ${HARDINFO2_VERSION})
 string(REPLACE " " "${PACKAGE_DELIMITER}" CPACK_PACKAGE_FILE_NAME "hardinfo2${PACKAGE_DELIMITER}${PACKAGE_DISTRO}${PACKAGE_ARCHITECTURE}")
 string(REPLACE " " "${PACKAGE_DELIMITER}" CPACK_SOURCE_PACKAGE_FILE_NAME "hardinfo2${PACKAGE_DELIMITER}${PACKAGE_DISTRO}${PACKAGE_ARCHITECTURE}")
 message("-- Found Package Version ${CPACK_PACKAGE_VERSION}")
+message("-- Found distro description ${distro}${disversion}")
 
 #flavour output
 set(HARDINFO2_OS ${distro})
 
-# currently all RPM flavours uses libsoup-2.4
-if(${RPM})
-  set(HARDINFO2_LIBSOUP3 0)
+#fedora ->35
+if(${disversion} LESS 35.99)
+  if(${distro} MATCHES "Fedora*")
+    message("Fedora ->35 - LS24")
+    set(HARDINFO2_LIBSOUP3 0)
+  endif()
+endif()
+
+#centos/redhat/oracle/opensuse/suse ->9
+if(${disversion} LESS 9.99)
+  if(${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*")
+    message("Centos/Redhat/oracle/opensuse/suse/rocky/alma ->9 - LS24")
+    set(HARDINFO2_LIBSOUP3 0)
+  endif()
 endif()
 
 #centos/redhat/oracle/opensuse/suse 6
-if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*") AND (${disversion} MATCHES "6*"))
-    set(HARDINFO2_LIBSOUP3 0)
+if(${disversion} LESS 6.99)
+  if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*"))
+    message("RPM EL6 - GTK2 - deprecated - support will end at any time")
+    message("RPM EL6 - LS24 - deprecated version 2.34.3 - but ok")
     #old deprecated GTK2 - support will end at any time
     set(HARDINFO2_GTK3 0)
     #old deprecated version - but ok
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
+  endif()
 endif()
 
 #debian 7
 if(${distro}${disversion} MATCHES "DebianGNULinux7")
-    set(HARDINFO2_LIBSOUP3 0)
+    message("DEB 7 - GTK2 - deprecated - support will end at any time")
+    message("DEB 7 - LS24 - deprecated version 2.34.3 - but ok")
     #old deprecated GTK2 - support will end at any time
     set(HARDINFO2_GTK3 0)
     #old deprecated version - but ok
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
 endif()
 
-#debian 8
-if(${distro}${disversion} MATCHES "DebianGNULinux8")
+#debian ->11
+if(${disversion} LESS 11.99)
+  if(${distro} MATCHES "DebianGNULinux")
+    message("DEB ->11 - LS24")
     set(HARDINFO2_LIBSOUP3 0)
+  endif()
 endif()
 
 #ubuntu 20.04
-if(${distro}${disversion} MATCHES "Ubuntu20.04")
+if(${disversion} LESS 20.99)
+  if(${distro} MATCHES "Ubuntu")
+    message("Ubuntu ->20.xx - LS24")
     set(HARDINFO2_LIBSOUP3 0)
+  endif()
 endif()
 
-#Debian 11
-if(${distro}${disversion} MATCHES "DebianGNULinux11")
-    set(HARDINFO2_LIBSOUP3 0)
-endif()
 
 #Fedora 39 - bug with man pages - upgrade cmake to 3.28.x
 
@@ -171,7 +189,7 @@ else()
     pkg_check_modules(GTK REQUIRED gtk+-2.0>=2.10 gthread-2.0>=2.10 gmodule-export-2.0>=2.10)
 endif()
 
-if (HARDINFO2_LIBSOUP3)
+if (${HARDINFO2_LIBSOUP3})
     pkg_check_modules(LIBSOUP REQUIRED libsoup-3.0>=3.00)
 else()
     pkg_check_modules(LIBSOUP REQUIRED libsoup-2.4>=${PACKAGE_LIBSOUP2_MINVERSION})
@@ -459,7 +477,7 @@ configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
 configure_file(hardinfo2.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo2.desktop @ONLY)
 
 install(TARGETS hardinfo2 ${HARDINFO2_MODULES}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hardinfo2/modules
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
@@ -509,7 +527,7 @@ SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sens
 SET(CPACK_RPM_PACKAGE_LICENSE "GPL2+")
 SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 SET(CPACK_RPM_PACKAGE_URL "https://www.hardinfo2.org")
-if(HARDINFO2_LIBSOUP3)
+if(${HARDINFO2_LIBSOUP3})
     SET(PACKAGE_LS "libsoup (>=3.0)")
 else()
     SET(PACKAGE_LS "libsoup (>=${PACKAGE_LIBSOUP2_MINVERSION})")
@@ -528,8 +546,8 @@ SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
 SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3")
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
-if(HARDINFO2_LIBSOUP3)
-    SET(PACKAGE_LS "libsoup-3.0.0 (>=3.0)")
+if(${HARDINFO2_LIBSOUP3})
+    SET(PACKAGE_LS "libsoup-3.0-0 (>=3.0)")
 else()
     SET(PACKAGE_LS "libsoup2.4-1 (>=${PACKAGE_LIBSOUP2_MINVERSION})")
     if(${distro}${disversion} MATCHES "Debian GNU/Linux11")
