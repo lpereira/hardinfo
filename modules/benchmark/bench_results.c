@@ -432,7 +432,7 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
         .result = json_get_double(machine, "BenchmarkResult"),
         .elapsed_time = json_get_double(machine, "ElapsedTime"),
         .threads_used = json_get_int(machine, "UsedThreads"),
-        .revision = json_get_int(machine, "BenchmarkRevision"),
+        .revision = json_get_int(machine, "BenchmarkVersion"),//Revision
     };
 
     snprintf(b->bvalue.extra, sizeof(b->bvalue.extra), "%s",
@@ -468,8 +468,6 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
         .ram_types = json_get_string_dup(machine, "MemoryTypes"),
         .machine_data_version = json_get_int(machine, "MachineDataVersion"),
         .machine_type = json_get_string_dup(machine, "MachineType"),
-        .linux_kernel = json_get_string_dup(machine, "LinuxKernel"),
-        .linux_os = json_get_string_dup(machine, "LinuxOS"),
     };
 
     return b;
@@ -507,8 +505,6 @@ static char *bench_result_more_info_less(bench_result *b)
         "[%s]\n"
         /* board */ "%s=%s\n"
         /* machine_type */ "%s=%s\n"
-        /* linux_kernel */ "%s=%s\n"
-        /* linux_os */ "%s=%s\n"
         /* cpu   */ "%s=%s\n"
         /* cpudesc */ "%s=%s\n"
         /* cpucfg */ "%s=%s\n"
@@ -531,8 +527,6 @@ static char *bench_result_more_info_less(bench_result *b)
         _("Machine"),
         _("Board"), (b->machine->board != NULL) ? b->machine->board : _(unk),
         _("Machine Type"), (b->machine->machine_type != NULL) ? b->machine->machine_type : _(unk),
-        _("Linux Kernel"), (b->machine->linux_kernel != NULL) ? b->machine->linux_kernel : _(unk),
-        _("Linux OS"), (b->machine->linux_os != NULL) ? b->machine->linux_os : _(unk),
         _("CPU Name"), b->machine->cpu_name,
         _("CPU Description"), (b->machine->cpu_desc != NULL) ? b->machine->cpu_desc : _(unk),
         _("CPU Config"), b->machine->cpu_config,
