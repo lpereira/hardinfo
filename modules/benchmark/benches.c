@@ -28,7 +28,9 @@ gchar *CN() { \
 
 #define BENCH_SCAN_SIMPLE(SN, BF, BID) \
 void SN(gboolean reload) { \
-    SCAN_START(); \
+    static gboolean scanned = FALSE; \
+    if (reload || bench_results[BID].result<=0.0) scanned = FALSE; \
+    if (scanned) return; \
     do_benchmark(BF, BID); \
     SCAN_END(); \
 }
@@ -60,7 +62,9 @@ BENCH_SIMPLE(BENCHMARK_MEMORY_ALL, "SysBench Memory (Multi-thread)", benchmark_m
 BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
 void scan_gui(gboolean reload)
 {
-    SCAN_START();
+    static gboolean scanned = FALSE;
+    if (reload || bench_results[BID].result<=0.0) scanned = FALSE;
+    if (scanned) return;
 
     bench_value er = EMPTY_BENCH_VALUE;
 
