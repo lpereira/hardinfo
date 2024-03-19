@@ -43,7 +43,6 @@ static gpointer fib_for(void *in_data, gint thread_number)
 void
 benchmark_fib(void)
 {
-    GTimer *timer = g_timer_new();
     bench_value r = EMPTY_BENCH_VALUE;
 
     shell_view_set_enabled(FALSE);
