@@ -15,24 +15,27 @@
 #define PREFIX			"@CMAKE_INSTALL_DATAROOTDIR@/hardinfo2"
 
 #cmakedefine HARDINFO2_DEBUG	@HARDINFO2_DEBUG@
+#cmakedefine CMAKE_BUILD_TYPE 	@CMAKE_BUILD_TYPE@
+#cmakedefine HARDINFO2_LIBSOUP3 @HARDINFO2_LIBSOUP3@
 
-#if defined(HARDINFO2_LIBSOUP3) && (HARDINFO2_LIBSOUP3==0)
+#define ON 1
+#define OFF 0
+
+#if !defined(HARDINFO2_LIBSOUP3)
   #define HARDINFO2_LIBSOUP3 0
-#else
-  #define HARDINFO2_LIBSOUP3 1
-#endif
-
-#if defined(CMAKE_BUILD_TYPE) && (CMAKE_BUILD_TYPE==Release)
-  #define RELEASE 1
-#else
-  #define RELEASE 0
 #endif
 
 #if defined(HARDINFO2_DEBUG) && (HARDINFO2_DEBUG==1)
   #define DEBUG(msg,...) fprintf(stderr, "*** %s:%d (%s) *** " msg "\n", \
         	           __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+  #define RELEASE -1
 #else
   #define DEBUG(msg,...)
+  #if (CMAKE_BUILD_TYPE==Release)
+    #define RELEASE 1
+  #else
+    #define RELEASE 0
+  #endif
 #endif	/* HARDINFO2_DEBUG */
 
 #define ENABLE_BINRELOC 1
