@@ -28,9 +28,7 @@ gchar *CN() { \
 
 #define BENCH_SCAN_SIMPLE(SN, BF, BID) \
 void SN(gboolean reload) { \
-    static gboolean scanned = FALSE; \
-    if (reload || bench_results[BID].result<=0.0) scanned = FALSE; \
-    if (scanned) return; \
+    static gboolean scanned = FALSE; if (reload || bench_results[BID].result<=0.0) scanned = FALSE;if (scanned) return; \
     do_benchmark(BF, BID); \
     SCAN_END(); \
 }
@@ -58,19 +56,17 @@ BENCH_SIMPLE(BENCHMARK_MEMORY_DUAL, "SysBench Memory (Two threads)", benchmark_m
 BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory (Quad threads)", benchmark_memory_quad, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_ALL, "SysBench Memory (Multi-thread)", benchmark_memory_all, 1);
 
-#if !GTK_CHECK_VERSION(3,0,0)
-BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
-void scan_gui(gboolean reload)
+BENCH_CALLBACK(callback_benchmark_gui, "GPU Drawing", BENCHMARK_GUI, 1);
+void scan_benchmark_gui(gboolean reload)
 {
     static gboolean scanned = FALSE;
-    if (reload || bench_results[BID].result<=0.0) scanned = FALSE;
+    if (reload || bench_results[BENCHMARK_GUI].result<=0.0) scanned = FALSE;
     if (scanned) return;
 
     bench_value er = EMPTY_BENCH_VALUE;
 
     if (params.run_benchmark) {
         int argc = 0;
-
         ui_init(&argc, NULL);
     }
 
@@ -81,7 +77,6 @@ void scan_gui(gboolean reload)
     }
     SCAN_END();
 }
-#endif
 
 //Note: Same order as entries, used for json to server
 static char *entries_english_name[] = {
@@ -242,18 +237,14 @@ static ModuleEntry entries[] = {
             scan_benchmark_memory_all,
             MODULE_FLAG_NONE,
         },
-#if !GTK_CHECK_VERSION(3, 0, 0)
     [BENCHMARK_GUI] =
         {
             N_("GPU Drawing"),
-            "module.png",
-            callback_gui,
-            scan_gui,
-            MODULE_FLAG_NO_REMOTE | MODULE_FLAG_HIDE,
+            "monitor.png",
+            callback_benchmark_gui,
+            scan_benchmark_gui,
+            MODULE_FLAG_NO_REMOTE,
         },
-#else
-    [BENCHMARK_GUI] = {"#"},
-#endif
     {NULL}};
 
 const gchar *hi_note_func(gint entry)

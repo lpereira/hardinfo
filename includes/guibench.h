@@ -19,6 +19,6 @@
 #ifndef __GUIBENCH_H__
 #define __GUIBENCH_H__
 
-double guibench(void);
+double guibench(double *frameTime, int *frameCount);
 
 #endif	/* __GUIBENCH_H__ */

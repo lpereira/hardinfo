@@ -1,6 +1,6 @@
 /*
- *    HardInfo - Displays System Information
- *    Copyright (C) 2003-2009 L. A. F. Pereira <l@tia.mat.br>
+ *    hardinfo2 - System Information and Benchmark
+ *    Copyright (C) 2024-2024 hwspeedy - hardinfo2 project
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -17,337 +17,153 @@
  */
 
 #include <gtk/gtk.h>
+#include <cairo.h>
 
 #include "iconcache.h"
 #include "config.h"
 
-#define N_ITERATIONS 100000
-#define PHRASE "I \342\231\245 HardInfo"
+#define CRUNCH_TIME 3
 
-typedef double (*BenchCallback)(GtkWindow *window);
+static int count=0;
+static int testnumber=0;
+static GTimer *timer,*frametimer;
+static gdouble score = 0.0f;
+static GdkPixbuf *pixbufs[3];
+static GRand *r;
+double *frametime;
+int *framecount;
 
-static double test_lines(GtkWindow *window);
-static double test_shapes(GtkWindow *window);
-static double test_filled_shapes(GtkWindow *window);
-static double test_text(GtkWindow *window);
-static double test_icons(GtkWindow *window);
+gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
+#if GTK_CHECK_VERSION(3,0,0)
+   const int divfactor[5]={2231,2122,2113,2334,2332};
+#else //Note: OLD GTK does not do the same amount of work
+   const int divfactor[5]={12231,12122,12113,12334,12332};
+#endif
+   const int iterations[5]={100,300,100,300,100};
+   int i;
+   cairo_t * cr;
+   GdkWindow* window = gtk_widget_get_window(widget);
+   cairo_region_t * cairoRegion = cairo_region_create();
 
-/*
-Results on a AMD Athlon 3200+ (Barton), 1GB RAM,
-nVidia Geforce 6200 with nvidia Xorg driver,
-running Linux 2.6.28, Xorg 1.6.0, Ubuntu 9.04
-desktop, GNOME 2.26.1, composite enabled.
 
-Test                  Time       Iter/Sec       
-Line Drawing          3.9570     25271.7663 
-Shape Drawing         22.2499    4494.4065  
-Filled Shape Drawing  4.0377     24766.2806 
-Text Drawing          59.1565    1690.4309  
-Icon Blitting	      51.720941	 1933.4528
-
-Results are normalized according to these values.
-A guibench() result of 1000.0 is roughly equivalent
-to this same setup. 
-*/
-
-static struct {
-  BenchCallback callback;
-  gchar *title;
-  gdouble weight;
-} tests[] = {
-  { test_lines, "Line Drawing", 25271.77 },
-  { test_shapes, "Shape Drawing", 4494.49 },
-  { test_filled_shapes, "Filled Shape Drawing", 24766.28 },
-  { test_text, "Text Drawing", 1690.43  },
-  { test_icons, "Icon Blitting", 1933.45 },
-  { NULL, NULL }
-};
-
-static gchar *phrase = NULL;
-
-static gboolean keypress_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
-{
-  const int magic[] = { 0x1b, 0x33, 0x3a, 0x35, 0x51 };
-  const unsigned int states[] = { 0xff52, 0xff52, 0xff54, 0xff54,
-                         0xff51, 0xff53, 0xff51, 0xff53,
-                         0x62, 0x61 };
-  static int state = 0;
-  
-  if (event->keyval == states[state]) {
-    state++;
-  } else {
-    state = 0;
-  }
-  
-  if (state == G_N_ELEMENTS(states)) {
-    unsigned int i;
+#if GTK_CHECK_VERSION(3,0,0)
+   GdkDrawingContext * drawingContext;
     
-    for (i = 0; i < G_N_ELEMENTS(magic); i++) {
-      phrase[i + 6] = magic[i] ^ (states[i] & (states[i] >> 8));
-    }
-    
-    state = 0;
-  }
-  
-  return FALSE;
+   drawingContext = gdk_window_begin_draw_frame (window,cairoRegion);
+   cr = gdk_drawing_context_get_cairo_context (drawingContext);
+#else
+   cr = gdk_cairo_create(window);
+#endif
+
+   g_timer_continue(frametimer);
+   for (i = iterations[testnumber]; i >= 0; i--) {
+       switch(testnumber) {
+	  case 0 : //Line Drawing
+                cairo_move_to(cr, g_rand_int_range(r,0,1024), g_rand_int_range(r,0,800));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+		cairo_line_to(cr, g_rand_int_range(r,0,1024), g_rand_int_range(r,0,800));
+		cairo_stroke(cr);
+		break;
+	  case 1 : //Shape Drawing
+	        cairo_rectangle(cr,g_rand_int_range(r,0,1024-200),g_rand_int_range(r,0,800-200),g_rand_int_range(r,0,400),g_rand_int_range(r,0,300));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+		cairo_stroke(cr);
+		break;
+	  case 2 : //Filled Shape Drawing
+	        cairo_rectangle(cr,g_rand_int_range(r,0,1024-200),g_rand_int_range(r,0,800-200),g_rand_int_range(r,0,400),g_rand_int_range(r,0,300));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+		cairo_fill(cr);
+		break;
+	  case 3 : //Text Drawing
+                cairo_move_to(cr,g_rand_int_range(r,0,1024-100),g_rand_int_range(r,0,800));
+                cairo_set_font_size(cr,25);
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+                cairo_show_text(cr, "I \342\231\245 hardinfo2");
+		break;
+		//
+	  case 4 : //Icon Blitting
+                gdk_cairo_set_source_pixbuf (cr, pixbufs[g_rand_int_range(r,0,3)],g_rand_int_range(r,0,1024-64), g_rand_int_range(r,0,800-64));
+		cairo_paint(cr);
+	        break;
+	  }
+     }
+     g_timer_stop(frametimer);
+#if GTK_CHECK_VERSION(3,0,0)
+     gdk_window_end_draw_frame(window,drawingContext);
+#endif
+     count++;
+     if(g_timer_elapsed(timer, NULL)<CRUNCH_TIME) {
+         gtk_widget_queue_draw_area(widget,0,0,1024,800);
+     } else {
+         score += ((double)iterations[testnumber]*count/g_timer_elapsed(frametimer,NULL)) / divfactor[testnumber];
+	 frametime[testnumber]=g_timer_elapsed(frametimer,NULL);
+	 framecount[testnumber]=count;
+         DEBUG("GPU Test %d => %d =>score:%f (frametime=%f)",testnumber,count,score,g_timer_elapsed(frametimer,NULL));
+         count=0;
+	 testnumber++;
+	 //Done
+         if(testnumber>=5){
+	     gtk_main_quit();
+         } else {
+	     g_timer_start(frametimer);
+	     g_timer_stop(frametimer);
+             g_timer_start(timer);
+             gtk_widget_queue_draw_area(widget,0,0,1024,800);
+	 }
+     }
+
+     // cleanup
+     cairo_region_destroy(cairoRegion);
+
+     return FALSE;
 }
 
-static double test_icons(GtkWindow *window)
+
+double guibench(double *frameTime, int *frameCount)
 {
-  GdkPixbuf *pixbufs[3];
-  GdkGC *gc;
-  GRand *rand;
-  GTimer *timer;
-  double time;
-  GdkWindow *gdk_window = GTK_WIDGET(window)->window;
-  int icons;
-  
-  gdk_window_clear(gdk_window);
-  
-  rand = g_rand_new();
-  gc = gdk_gc_new(GDK_DRAWABLE(gdk_window));
-  timer = g_timer_new();
-  
-  pixbufs[0] = icon_cache_get_pixbuf("hardinfo2.png");
-  pixbufs[1] = icon_cache_get_pixbuf("syncmanager.png");
-  pixbufs[2] = icon_cache_get_pixbuf("report-large.png");
-  
-  g_timer_start(timer);
-  for (icons = N_ITERATIONS; icons >= 0; icons--) {
-    int x, y;
+    GtkWindow * window;
+    cairo_region_t *region;
+    cairo_t *cr;
 
-    x = g_rand_int_range(rand, 0, 800);
-    y = g_rand_int_range(rand, 0, 600);
+    frametime=frameTime;
+    framecount=frameCount;
     
-    gdk_draw_pixbuf(GDK_DRAWABLE(gdk_window), gc,
-                    pixbufs[icons % G_N_ELEMENTS(pixbufs)],
-                    0, 0, x, y, 48, 48,
-                    GDK_RGB_DITHER_NONE, 0, 0);
-    
-    while (gtk_events_pending()) {
-      gtk_main_iteration();
-    }
-  }
-  g_timer_stop(timer);
-  
-  time = g_timer_elapsed(timer, NULL);
-  
-  g_rand_free(rand);
-  gdk_gc_destroy(gc);
-  g_timer_destroy(timer);
-  
-  return time;
-}
+    DEBUG("GUIBENCH");
+    pixbufs[0] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("hardinfo2.png"),64,64,GDK_INTERP_BILINEAR);
+    pixbufs[1] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("syncmanager.png"),64,64,GDK_INTERP_BILINEAR);
+    pixbufs[2] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("report-large.png"),64,64,GDK_INTERP_BILINEAR);
 
-static double test_text(GtkWindow *window)
-{
-  GRand *rand;
-  GTimer *timer;
-  GdkGC *gc;
-  double time;
-  PangoLayout *layout;
-  PangoFontDescription *font;
-  GdkWindow *gdk_window = GTK_WIDGET(window)->window;
-  int strings;
-  
-  gdk_window_clear(gdk_window);
-  
-  rand = g_rand_new();
-  gc = gdk_gc_new(GDK_DRAWABLE(gdk_window));
-  timer = g_timer_new();
-  
-  font = pango_font_description_new();
-  layout = pango_layout_new(gtk_widget_get_pango_context(GTK_WIDGET(window)));
-  pango_layout_set_text(layout, phrase, -1);
-  
-  g_timer_start(timer);
-  for (strings = N_ITERATIONS; strings >= 0; strings--) {
-    int x, y, size;
+    r = g_rand_new();
 
-    x = g_rand_int_range(rand, 0, 800);
-    y = g_rand_int_range(rand, 0, 600);
-    size = g_rand_int_range(rand, 1, 96) * PANGO_SCALE;
-    
-    pango_font_description_set_size(font, size);
-    pango_layout_set_font_description(layout, font);
-    gdk_draw_layout(GDK_DRAWABLE(gdk_window), gc, x, y, layout);
-    
-    gdk_rgb_gc_set_foreground(gc, strings << 8);
+    // window setup
+    window = (GtkWindow*)gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size (window, 1024, 800);
+    gtk_window_set_position     (window, GTK_WIN_POS_CENTER);
+    gtk_window_set_title        (window, "GPU Benchmarking...");
+    g_signal_connect(window, "destroy", gtk_main_quit, NULL);
 
-    while (gtk_events_pending()) {
-      gtk_main_iteration();
-    }
-    
-  }
-  g_timer_stop(timer);
-  
-  time = g_timer_elapsed(timer, NULL);
-  
-  g_rand_free(rand);
-  gdk_gc_destroy(gc);
-  g_timer_destroy(timer);
-  g_object_unref(layout);
-  pango_font_description_free(font);
-  
-  return time;
-}
+    // create the are we can draw in
+    GtkDrawingArea* drawingArea;
+    drawingArea = (GtkDrawingArea*) gtk_drawing_area_new();
+    gtk_container_add(GTK_CONTAINER(window), (GtkWidget*)drawingArea);
+#if GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect((GtkWidget*)drawingArea, "draw", G_CALLBACK(on_draw), NULL);
+#else
+    g_signal_connect((GtkWidget*)drawingArea, "expose-event", G_CALLBACK(on_draw), NULL);
+#endif
+    frametimer = g_timer_new();
+    g_timer_stop(frametimer);
+    timer = g_timer_new();
+    gtk_widget_show_all ((GtkWidget*)window);
 
-static double test_filled_shapes(GtkWindow *window)
-{
-  GRand *rand;
-  GTimer *timer;
-  GdkGC *gc;
-  double time;
-  GdkWindow *gdk_window = GTK_WIDGET(window)->window;
-  int lines;
-  
-  gdk_window_clear(gdk_window);
-  
-  rand = g_rand_new();
-  gc = gdk_gc_new(GDK_DRAWABLE(gdk_window));
-  timer = g_timer_new();
-  
-  g_timer_start(timer);
-  for (lines = N_ITERATIONS; lines >= 0; lines--) {
-    int x1, y1;
-    
-    x1 = g_rand_int_range(rand, 0, 800);
-    y1 = g_rand_int_range(rand, 0, 600);
-    
-    gdk_rgb_gc_set_foreground(gc, lines << 8);
+    gtk_main();
 
-    gdk_draw_rectangle(GDK_DRAWABLE(gdk_window), gc, TRUE,
-                       x1, y1,
-                       g_rand_int_range(rand, 0, 400),
-                       g_rand_int_range(rand, 0, 300));
+    g_timer_destroy(timer);
+    g_timer_destroy(frametimer);
+    g_rand_free(r);
+    g_object_unref(pixbufs[0]);
+    g_object_unref(pixbufs[1]);
+    g_object_unref(pixbufs[2]);
 
-    while (gtk_events_pending()) {
-      gtk_main_iteration();
-    }
-  }
-  g_timer_stop(timer);
-  
-  time = g_timer_elapsed(timer, NULL);
-  
-  g_rand_free(rand);
-  gdk_gc_destroy(gc);
-  g_timer_destroy(timer);
-  
-  return time;
-}
-
-static double test_shapes(GtkWindow *window)
-{
-  GRand *rand;
-  GTimer *timer;
-  GdkGC *gc;
-  double time;
-  GdkWindow *gdk_window = GTK_WIDGET(window)->window;
-  int lines;
-  
-  gdk_window_clear(gdk_window);
-  
-  rand = g_rand_new();
-  gc = gdk_gc_new(GDK_DRAWABLE(gdk_window));
-  timer = g_timer_new();
-  
-  g_timer_start(timer);
-  for (lines = N_ITERATIONS; lines >= 0; lines--) {
-    int x1, y1;
-    
-    x1 = g_rand_int_range(rand, 0, 800);
-    y1 = g_rand_int_range(rand, 0, 600);
-    
-    gdk_rgb_gc_set_foreground(gc, lines << 8);
-
-    gdk_draw_rectangle(GDK_DRAWABLE(gdk_window), gc, FALSE,
-                       x1, y1,
-                       g_rand_int_range(rand, 0, 400),
-                       g_rand_int_range(rand, 0, 300));
-    while (gtk_events_pending()) {
-      gtk_main_iteration();
-    }
-  }
-  g_timer_stop(timer);
-  
-  time = g_timer_elapsed(timer, NULL);
-  
-  g_rand_free(rand);
-  gdk_gc_destroy(gc);
-  g_timer_destroy(timer);
-  
-  return time;
-}
-
-static double test_lines(GtkWindow *window)
-{
-  GRand *rand;
-  GTimer *timer;
-  GdkGC *gc;
-  double time;
-  GdkWindow *gdk_window = GTK_WIDGET(window)->window;
-  int lines;
-  
-  gdk_window_clear(gdk_window);
-  
-  rand = g_rand_new();
-  gc = gdk_gc_new(GDK_DRAWABLE(gdk_window));
-  timer = g_timer_new();
-  
-  g_timer_start(timer);
-  for (lines = N_ITERATIONS; lines >= 0; lines--) {
-    int x1, y1, x2, y2;
-    
-    x1 = g_rand_int_range(rand, 0, 800);
-    y1 = g_rand_int_range(rand, 0, 600);
-    x2 = g_rand_int_range(rand, 0, 800);
-    y2 = g_rand_int_range(rand, 0, 600);
-    
-    gdk_draw_line(GDK_DRAWABLE(gdk_window), gc, x1, y1, x2, y2);
-    gdk_rgb_gc_set_foreground(gc, lines << 8);
-    
-    while (gtk_events_pending()) {
-      gtk_main_iteration();
-    }
-  }
-  g_timer_stop(timer);
-  
-  time = g_timer_elapsed(timer, NULL);
-  
-  g_rand_free(rand);
-  gdk_gc_destroy(gc);
-  g_timer_destroy(timer);
-  
-  return time;
-}
-
-double guibench(void)
-{
-  GtkWidget *window;
-  gdouble score = 0.0f;
-  gint i;
-
-  phrase = g_strdup(PHRASE);
-
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_size_request(window, 800, 600);
-  gtk_window_set_title(GTK_WINDOW(window), "guibench");
-  
-  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
-  gtk_widget_show(window);
-  
-  g_signal_connect(window, "key-press-event", G_CALLBACK(keypress_event), NULL);
-
-  for (i = 0; tests[i].title; i++) {
-    double time;
-    
-    gtk_window_set_title(GTK_WINDOW(window), tests[i].title); 
-    time = tests[i].callback(GTK_WINDOW(window));
-    score += (N_ITERATIONS / time) / tests[i].weight;
-  }
-  
-  gtk_widget_destroy(window);
-  g_free(phrase);
-  
-  return (score / i) * 1000.0f;
+    return score;
 }
