@@ -1,3 +1,8 @@
+> [!WARNING]
+>
+> This repository is being *decomissioned* and will remain as a personal archive of HardInfo source code.  The development continues in the [@hardinfo2/hardinfo2](https://github.com/@hardinfo2/hardinfo2) repository.  This branch will soon become a mirror of the ``main`` branch from the ``hardinfo2`` repository.
+
+
 HARDINFO
 ========
 
