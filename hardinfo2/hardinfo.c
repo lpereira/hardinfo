@@ -59,16 +59,17 @@ int main(int argc, char **argv)
 
 	g_print(_("Compile-time options:\n"
 		"  Release version:   %s (%s)\n"
+		"  LibSoup version:   %s\n"
 		"  BinReloc enabled:  %s\n"
 		"  Data prefix:       %s\n"
 		"  Library prefix:    %s\n"
 		"  Compiled for:      %s\n"),
-		RELEASE ? _("Yes") : "No (" VERSION ")", ARCH,
+		RELEASE==1 ? "Yes (" VERSION ")" : (RELEASE==0?"No (" VERSION ")":"Debug (" VERSION ")"), ARCH,
+		HARDINFO2_LIBSOUP3 ? _("3.0") : "2.4",
 		ENABLE_BINRELOC ? _("Yes") : _("No"),
 		PREFIX, LIBPREFIX, PLATFORM);
 
-	DEBUG("  Debugging is enabled.");
-
+        return 0;
     }
 
     /* initialize the binreloc library, so we can load program data */
@@ -107,7 +108,7 @@ int main(int argc, char **argv)
 
         result = module_call_method_param("benchmark::runBenchmark", params.run_benchmark);
         if (!result) {
-          fprintf(stderr, _("Unknown benchmark ``%s''"), params.run_benchmark);
+          fprintf(stderr, _("Unknown benchmark ``%s''\n"), params.run_benchmark);
           exit_code = 1;
         } else {
           fprintf(stderr, "\n");
@@ -128,12 +129,21 @@ int main(int argc, char **argv)
 	/* generate report */
 	gchar *report;
 
+	if(params.bench_user_note) {//synchronize without sending benchmarks
+	    sync_manager_update_on_startup(0);
+	}
+
 	DEBUG("generating report");
 
 	report = report_create_from_module_list_format(modules,
 						       params.
 						       report_format);
 	g_print("%s", report);
+
+	if(params.bench_user_note) {//synchronize
+	    if(!params.skip_benchmarks)
+	       sync_manager_update_on_startup(1);
+	}
 
 	g_free(report);
     } else {

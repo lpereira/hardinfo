@@ -1,6 +1,6 @@
 .\" Manpage for hardinfo.
 .\" https://github.com/hwspeedy/hardinfo2/.
-.TH HARDINFO "1" "January 2024" "2.0" "User Commands"
+.TH HARDINFO "1" "Marts 2024" "2.0" "User Commands"
 .SH NAME
 \fBHardinfo2\fR \- System Information and Benchmark for Linux Systems.
 .SH USAGE
@@ -20,11 +20,35 @@ creates a report and prints to standard output
 \fB\-f\fR, \fB\-\-report\-format\fR
 chooses a report format (text, html)
 .TP
+\fB\-g\fR, \fB\-\-result\-format\fR
+chooses a result format (short, conf, shell)
+.TP
 \fB\-b\fR, \fB\-\-run\-benchmark\fR
-run benchmark
+run a specific benchmark eg. -b 'FPU FFT'  (Default all benchmarks runs when generate report)
+.TP
+\fB\-s\fR, \fB\-\-skip\-benchmark\fR
+Disables all benchmark runs.
+.TP
+\fB\-u\fR, \fB\-\-user\-note\fR
+adds a user note to data send to server. When added eg. -u 1 synchronization is activated.
 .TP
 \fB\-v\fR, \fB\-\-version\fR
 shows program version and quit
+.SH EXAMPLES
+examples of CLI command usage:\fR
+.TP
+hardinfo2 -b 'FPU FFT'
+runs only FPU FFT benchmark
+.TP
+hardinfo2 -u 1
+enable updates at startup and starts gui (can also be set in gui)
+.TP
+hardinfo2 -u SBC-DK -r
+updates data from server, generate CLI report and sends benchmark with user-note
+.TP
+hardinfo2 -r
+generates CLI report
+
 .SH COPYRIGHT
-\fBHardinfo2\fR its Copyright \(co 2003-2023 L. A. F. Pereira, 2024- Hardinfo2 Project\fR.
+\fBHardinfo2\fR is Copyright \(co 2003-2023 L. A. F. Pereira, 2024- Hardinfo2 Project\fR.
 This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

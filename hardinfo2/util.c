@@ -416,13 +416,13 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
 	 .short_name = 'b',
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &run_benchmark,
-	 .description = N_("run benchmark eg. -b 'FPU FFT'")},
+	 .description = N_("run single benchmark eg. -b 'FPU FFT' (Default all Benchmarks runs)")},
 	{
 	 .long_name = "user-note",
 	 .short_name = 'u',
 	 .arg = G_OPTION_ARG_STRING,
 	 .arg_data = &bench_user_note,
-	 .description = N_("note attached to benchmark results")},
+	 .description = N_("user note attached to benchmark results. (updating/synchronize with server)")},
 	{
 	 .long_name = "result-format",
 	 .short_name = 'g',

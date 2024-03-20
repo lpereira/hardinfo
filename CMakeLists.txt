@@ -5,7 +5,7 @@ project(hardinfo2)
 set(HARDINFO2_VERSION "2.0.16")
 
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
-option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 0)
+option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 1)
 
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
@@ -286,7 +286,7 @@ set(MODULE_network_SOURCES
 	modules/network/nfs.c
 	modules/network/samba.c
 )
-set(MODULE_benchmark_SOURCES_GTKANY
+set(MODULE_benchmark_SOURCES
 	modules/benchmark.c
 	modules/benchmark/bench_util.c
 	modules/benchmark/blowfish.c
@@ -303,16 +303,9 @@ set(MODULE_benchmark_SOURCES_GTKANY
 	modules/benchmark/zlib.c
 	modules/benchmark/sysbench.c
 	modules/benchmark/iperf3.c
-)
-set(MODULE_benchmark_SOURCES_GTK2
 	modules/benchmark/drawing.c
 	modules/benchmark/guibench.c
 )
-if (HARDINFO2_GTK3)
-	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY})
-else()
-	set(MODULE_benchmark_SOURCES ${MODULE_benchmark_SOURCES_GTKANY} ${MODULE_benchmark_SOURCES_GTK2})
-endif()
 
 set_source_files_properties(
 	modules/benchmark/blowfish.c

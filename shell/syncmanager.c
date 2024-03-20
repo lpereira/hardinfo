@@ -181,7 +181,20 @@ static SyncNetAction *sync_manager_get_selected_actions(gint *n)
     return actions;
 }
 
-#if !SOUP_CHECK_VERSION(3,0,0)
+#if SOUP_CHECK_VERSION(3,0,0)
+static const char *sync_manager_get_proxy(void)
+{
+    const gchar *conf;
+
+    if (!(conf = g_getenv("HTTP_PROXY"))) {
+        if (!(conf = g_getenv("http_proxy"))) {
+            return NULL;
+        }
+    }
+
+    return conf;
+}
+#else
 static SoupURI *sync_manager_get_proxy(void)
 {
     const gchar *conf;
@@ -194,17 +207,18 @@ static SoupURI *sync_manager_get_proxy(void)
 
     return soup_uri_new(conf);
 }
+
 #endif
 
 static void ensure_soup_session(void)
 {
     if (!session) {
 #if SOUP_CHECK_VERSION(3,0,0)
-        session = soup_session_new_with_options("timeout", 10, NULL);
+      const char *proxy=sync_manager_get_proxy();
+      session = soup_session_new_with_options("timeout", 10,"proxy-resolver", proxy,  NULL);
 #else
 #if SOUP_CHECK_VERSION(2,42,0)
         SoupURI *proxy = sync_manager_get_proxy();
-
         session = soup_session_new_with_options(
             SOUP_SESSION_TIMEOUT, 10, SOUP_SESSION_PROXY_URI, proxy, NULL);
 #else
@@ -233,7 +247,7 @@ static void sync_dialog_start_sync(SyncDialog *sd)
         fd = open(path,O_RDONLY);
     }
     if(fd>=0){
-        read(fd,buf,100);
+        int c=read(fd,buf,100);
         sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
         close(fd);
     }
@@ -264,6 +278,53 @@ static void sync_dialog_start_sync(SyncDialog *sd)
 
     g_main_loop_unref(loop);
 }
+
+
+static void got_msg(const guint8 *buf,int len, gpointer user_data)
+{
+    SyncNetAction *sna = user_data;
+    GInputStream *is;
+    gchar *path;
+    int fd,updateversion=0;
+    gchar buffer[101];
+    gsize datawritten;
+
+    if (sna->entry->file_name != NULL) {
+        //check for missing config dirs
+        g_mkdir(g_get_user_config_dir(), 0766);
+        g_mkdir(g_build_filename(g_get_user_config_dir(),"hardinfo2",NULL), 0766);
+	if(strncmp(sna->entry->file_name,"blobs-update-version.json",25)==0){
+	    updateversion=1;
+	}
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
+                                       sna->entry->file_name, NULL);
+        GFile *file = g_file_new_for_path(path);
+        GFileOutputStream *output = g_file_replace(file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
+                                                   NULL, &sna->error);
+
+        if(buf){
+            DEBUG("got file with len: %u", (unsigned int)len);
+            if(len>0){
+                g_output_stream_write_all(G_OUTPUT_STREAM(output),buf,len,&datawritten,NULL,&sna->error);
+            }
+        }
+
+	if(updateversion){
+            fd = open(path,O_RDONLY);
+            if(fd){
+	        int c=read(fd,buffer,100);
+                sscanf(buffer,"{\"update-version\":\"%u\",",&server_blobs_update_version);
+		DEBUG("SERVER_BLOBS_UPDATE_VERSION=%u",server_blobs_update_version);
+                close(fd);
+            }
+	}
+
+        g_free(path);
+        g_object_unref(file);
+    }
+
+}
+
 
 #if SOUP_CHECK_VERSION(2,42,0)
 static void got_response(GObject *source, GAsyncResult *res, gpointer user_data)
@@ -301,9 +362,8 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
         path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
                                        sna->entry->file_name, NULL);
         GFile *file = g_file_new_for_path(path);
-        GFileOutputStream *output =
-            g_file_replace(file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
-                           NULL, &sna->error);
+        GFileOutputStream *output = g_file_replace(file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
+                                                   NULL, &sna->error);
 
         if (output != NULL) {
 #if SOUP_CHECK_VERSION(2,42,0)
@@ -317,7 +377,7 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
                 DEBUG("got file with len: %u", (unsigned int)len);
                 if(len>0){
                     g_output_stream_write_all(G_OUTPUT_STREAM(output),buf,len,&datawritten,NULL,&sna->error);
-		    soup_buffer_free(soupmsg);
+                    soup_buffer_free(soupmsg);
 	        }
 	    }
 #endif
@@ -326,7 +386,7 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
 	if(updateversion){
             fd = open(path,O_RDONLY);
             if(fd){
-                read(fd,buffer,100);
+	        int c=read(fd,buffer,100);
                 sscanf(buffer,"{\"update-version\":\"%u\",",&server_blobs_update_version);
 		DEBUG("SERVER_BLOBS_UPDATE_VERSION=%u",server_blobs_update_version);
                 close(fd);
@@ -349,40 +409,79 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
     gchar *uri;
     SoupMessage *msg;
     guint response_code;
+    const guint8 *buf=NULL;
+    gsize len;
+    gchar *contents=NULL;
+    gsize size;
+#if !SOUP_CHECK_VERSION(3, 0, 0)
+    SoupBuffer *soupmsg=NULL;
+#endif
 
     if(!sna->entry->optional || (our_blobs_update_version<server_blobs_update_version)){
         if(strncmp(sna->entry->file_name,"blobs-update-version.json",25)==0){
-          uri = g_strdup_printf("%s/%s?ver=%s&blobver=%d", API_SERVER_URI, sna->entry->file_name,VERSION,our_blobs_update_version);
-	}else{
+          uri = g_strdup_printf("%s/%s?ver=%s&blobver=%d&rel=%d", API_SERVER_URI, sna->entry->file_name,VERSION,our_blobs_update_version,RELEASE);
+	} else if(strncmp(sna->entry->file_name,"benchmark.json",14)==0){
+	    if (sna->entry->generate_contents_for_upload == NULL) {//GET/Fetch
+	        if(params.bench_user_note){
+		  uri = g_strdup_printf("%s/%s?ver=%s&L=%d&rel=%d&MT=%s&BUN=%s", API_SERVER_URI,
+				        sna->entry->file_name, VERSION,
+		                        params.max_bench_results,RELEASE,
+					module_call_method("computer::getMachineType"),
+					params.bench_user_note);
+		} else {
+		  uri = g_strdup_printf("%s/%s?ver=%s&L=%d&rel=%d&&MT=%s", API_SERVER_URI,
+					sna->entry->file_name, VERSION,
+		                        params.max_bench_results, RELEASE,
+					module_call_method("computer::getMachineType"));
+		}
+	    } else {//POST/Send
+	      uri = g_strdup_printf("%s/%s?ver=%s&rel=%d", API_SERVER_URI,
+				    sna->entry->file_name, VERSION, RELEASE);
+	    }
+	} else {
             uri = g_strdup_printf("%s/%s", API_SERVER_URI, sna->entry->file_name);
 	}
     if (sna->entry->generate_contents_for_upload == NULL) {
         msg = soup_message_new("GET", uri);
     } else {
-        gsize size;
-        gchar *contents = sna->entry->generate_contents_for_upload(&size);
+        contents = sna->entry->generate_contents_for_upload(&size);
 
         msg = soup_message_new("POST", uri);
 
 #if SOUP_CHECK_VERSION(3, 0, 0)
-        GBytes *cont = g_bytes_new_static(contents,size);
-        soup_message_set_request_body_from_bytes(msg, "application/octet-stream", cont);
+        soup_message_set_request_body_from_bytes(msg, "application/octet-stream", g_bytes_new_static(contents,size));
 #else
         soup_message_set_request(msg, "application/octet-stream",
                                  SOUP_MEMORY_TAKE, contents, size);
 #endif
     }
-
+    if(params.gui_running){
 #if SOUP_CHECK_VERSION(3, 0, 0)
-    soup_session_send_async(session, msg, G_PRIORITY_DEFAULT, NULL, got_response, sna);
+      soup_session_send_async(session, msg, G_PRIORITY_DEFAULT, NULL, got_response, sna);
 #else
 #if SOUP_CHECK_VERSION(2,42,0)
-    soup_session_send_async(session, msg, NULL, got_response, sna);
+        soup_session_send_async(session, msg, NULL, got_response, sna);
 #else
-    soup_session_queue_message(session, msg, got_response, sna);
+        soup_session_queue_message(session, msg, got_response, sna);
 #endif
 #endif
-    g_main_loop_run(loop);
+
+    } else {//Blocking/Sync sending when no gui
+
+#if SOUP_CHECK_VERSION(3, 0, 0)
+    buf=g_bytes_unref_to_data(soup_session_send_and_read(session, msg, NULL, NULL), &len);
+    got_msg(buf,len,sna);
+#else
+        soup_session_send_message(session, msg);
+        soupmsg=soup_message_body_flatten(msg->response_body);
+        if(soupmsg){
+            soup_buffer_get_data(soupmsg,&buf,&len);
+            got_msg(buf,len,sna);
+	}
+#endif
+    }
+    if(params.gui_running)
+        g_main_loop_run(loop);
 
     g_object_unref(msg);
     g_free(uri);
@@ -725,17 +824,19 @@ static void sync_dialog_destroy(SyncDialog *sd)
 static gboolean sync_one(gpointer data)
 {
     SyncNetAction *sna = data;
-
-    if (sna->entry->generate_contents_for_upload)
-        goto out;
-
+    if (sna->entry->generate_contents_for_upload){
+        if(params.gui_running){
+           goto out;
+        }
+    }
     DEBUG("Syncronizing: %s", sna->entry->name);
 
-    gchar *msg = g_strdup_printf(_("Synchronizing: %s"), _(sna->entry->name));
-    shell_status_update(msg);
-    shell_status_pulse();
-    g_free(msg);
-
+    if(params.gui_running){
+        gchar *msg = g_strdup_printf(_("Synchronizing: %s"), _(sna->entry->name));
+        shell_status_update(msg);
+        shell_status_pulse();
+        g_free(msg);
+    }
     send_request_for_net_action(sna);
 
 out:
@@ -744,7 +845,7 @@ out:
     return FALSE;
 }
 
-void sync_manager_update_on_startup(void)
+void sync_manager_update_on_startup(int send_benchmark)//0:normal only get, 1:send benchmark
 {
     GSList *entry;
     gchar *path;
@@ -759,7 +860,7 @@ void sync_manager_update_on_startup(void)
         fd = open(path,O_RDONLY);
     }
     if(fd>=0){
-        read(fd,buf,100);
+        int c=read(fd,buf,100);
         sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
         close(fd);
     }
@@ -770,12 +871,25 @@ void sync_manager_update_on_startup(void)
 
     loop = g_main_loop_new(NULL, FALSE);
 
+    if(!params.gui_running) entries=g_slist_reverse(entries);//wrong direction for sync sending
     for (entry = entries; entry; entry = entry->next) {
         SyncNetAction *action = g_new0(SyncNetAction, 1);
 
         action->entry = entry->data;
-        loop = g_main_loop_ref(loop);
-
-        g_idle_add(sync_one, action);
+	if(params.gui_running){
+            loop = g_main_loop_ref(loop);
+            g_idle_add(sync_one, action);
+	} else {
+	  //if send benchmark - only send benchmark
+	  //if not send benchmark - sync everything else
+	    if( ((strncmp(action->entry->file_name,"benchmark.json",14)==0) &&
+		 (action->entry->generate_contents_for_upload) && send_benchmark) ||
+		((!(strncmp(action->entry->file_name,"benchmark.json",14)==0) ||
+		 (!action->entry->generate_contents_for_upload)) && (!send_benchmark)) ){
+            loop = g_main_loop_ref(loop);
+	    sync_one(action);
+	    }
+	}
     }
+    if(!params.gui_running) entries=g_slist_reverse(entries);//wrong direction for sync sending
 }

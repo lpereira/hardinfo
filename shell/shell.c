@@ -334,6 +334,7 @@ void shell_do_reload(void)
 
 void shell_status_update(const gchar * message)
 {
+    DEBUG("Shell_status_update %s",message);
     if (params.gui_running) {
 	gtk_label_set_markup(GTK_LABEL(shell->status), message);
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
@@ -684,8 +685,9 @@ check_for_updates(void)
     g_free(conf_path);
     g_key_file_free(key_file);
 
-    if (setting) {
-        sync_manager_update_on_startup();
+    //fetching data -u is used
+    if (setting || params.bench_user_note) {
+        sync_manager_update_on_startup(0);
     }
 }
 
@@ -1737,6 +1739,7 @@ module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
     shell_set_note_from_entry(entry);
 
     gdk_window_thaw_updates(gdk_window);
+
 }
 
 static void info_selected_show_extra(const gchar *tag)
@@ -2021,7 +2024,6 @@ static void module_selected(gpointer data)
             shell_show_detail_view();
         }
     }
-
     current = entry;
     updating = FALSE;
 }

@@ -603,6 +603,7 @@ do_benchmark_handler(GIOChannel *source, GIOCondition condition, gpointer data)
     GIOStatus status;
     gchar *result;
     bench_value r = EMPTY_BENCH_VALUE;
+
     status = g_io_channel_read_line(source, &result, NULL, NULL, NULL);
     if (status != G_IO_STATUS_NORMAL) {
         DEBUG("error while reading benchmark result");
@@ -657,8 +658,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 	bench_dialog = gtk_dialog_new_with_buttons ("Benchmarking...",
                                       GTK_WINDOW(shell_get_main_shell()->transient_dialog),
                                       GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-                                      "Stop",
-                                      GTK_BUTTONS_CLOSE,
+				      _("Stop"), GTK_RESPONSE_ACCEPT,
                                       NULL);
 
 	gtk_widget_set_sensitive(GTK_WIDGET(shell_get_main_shell()->transient_dialog), FALSE);
@@ -670,8 +670,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 #else
 	box = gtk_hbox_new(FALSE, 1);
 #endif
-	label = gtk_label_new ("Please do not move your mouse\n"
-	    "or press any keys.");
+	label = gtk_label_new ("Please do not move your mouse\nor press any keys.");
 
 	gtk_widget_show (bench_image);
 
@@ -680,11 +679,6 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 #else
         gtk_misc_set_alignment(GTK_MISC(bench_image), 0.0, 0.0);
 #endif
-
-	g_signal_connect_swapped (bench_dialog,
-				  "response",
-				  G_CALLBACK (gtk_widget_destroy),
-				  bench_dialog);
 
 	gtk_box_pack_start (GTK_BOX(box), bench_image, TRUE, TRUE, 10);
 	gtk_box_pack_start (GTK_BOX(box), label, TRUE, TRUE, 10);
@@ -720,16 +714,15 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
             switch (gtk_dialog_run(GTK_DIALOG(bench_dialog))) {
             case GTK_RESPONSE_NONE:
                 DEBUG("benchmark finished");
+                bench_results[entry] = benchmark_dialog->r;
                 break;
             case GTK_RESPONSE_ACCEPT:
                 DEBUG("cancelling benchmark");
-
                 gtk_widget_destroy(bench_dialog);
                 g_source_remove(watch_id);
                 kill(bench_pid, SIGINT);
             }
 
-            bench_results[entry] = benchmark_dialog->r;
 
             g_io_channel_unref(channel);
             shell_view_set_enabled(TRUE);
@@ -868,7 +861,7 @@ static gchar *run_benchmark(gchar *name)
 {
     int i;
 
-    DEBUG("name = %s", name);
+    DEBUG("run_benchmark = %s", name);
 
     for (i = 0; entries[i].name; i++) {
         if (g_str_equal(entries[i].name, name)) {

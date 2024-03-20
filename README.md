@@ -19,7 +19,7 @@ Status
 ------
 - Capabilities: Hardinfo2 currently detects most software and hardware detected by the OS.
 - Features: Online database for exchanging benchmark results.
-- Development: Currently done by contributors, hwspeedy maintains
+- Development: Currently done by community, hwspeedy maintains
 
 Server code can be found here: [https://github.com/hardinfo2/server](https://github.com/hardinfo2/server)
 
@@ -29,13 +29,14 @@ Dependencies
 - GLib >=2.24
 - Zlib
 - glib JSON
-- Libsoup2.4 >=2.42 or Libsoup-3.0 (EXPERIMENTAL) (LS3: cmake -DHARDINFO2_LIBSOUP3=1 ..)
+- Libsoup3 >=3.00 or Libsoup24>=2.42 (LS24: cmake -DHARDINFO2_LIBSOUP3=0 ..)
 
 Building and installing
 -----------------------
 **Debian/Ubuntu/Mint/PopOS**
-- sudo apt install git cmake build-essential gettext
+- sudo apt install git cmake build-essential gettext curl
 - sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev
+- sudo apt install libsoup-3.0-dev  (might fail if not available on distro - OK)
 - git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
 - ./tools/git_latest_release.sh (Switch to latest stable release, tools/git_unstable_master.sh for developers)
@@ -50,8 +51,9 @@ Building and installing
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
 * NOTE: Centos 7 needs epel-release and cmake3 instead of cmake - use cmake3 instead of cmake
 - sudo yum install epel-release  (only CentOS 7)
-- sudo yum install git cmake gcc gcc-c++ gettext rpmdevtools
+- sudo yum install git cmake gcc gcc-c++ gettext rpmdevtools curl
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
+- sudo yum install libsoup3-devel  (might fail if not available on distro - OK)
 - git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
 - ./tools/git_latest_release.sh (Switch to latest stable release, tools/git_unstable_master.sh for developers)
@@ -63,10 +65,10 @@ Building and installing
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3
 - hardinfo2
 
-**openSUSE**: use zypper instead of yum, use libsoup2-devel instead of libsoup-devel
+**openSUSE**: use zypper instead of yum, zypper --no-gpg-checks install ./hardinfo2-*
 
 **ArchLinux/Garuda/Manjaro - AUR Package**
- - git clone https://aur.archlinux.org/hardinfo2.git (hardinfo2-git.git for unstable master only developers)
+ - git clone https://aur.archlinux.org/hardinfo2 (hardinfo2-git for unstable master for developers)
  - cd hardinfo2
  - makepkg -cis
  - hardinfo2
@@ -94,7 +96,7 @@ License
 ------
 The Project License has been changed in 2024 from GPL2 to **GPL2 or later**
 
-Because we use LGPL2.1+ and GPL3 code. To future proof the project, lpereira and other developers have agreed to change license of source code also to GPL2+. (https://github.com/lpereira/hardinfo/issues/530) (https://github.com/lpereira/hardinfo/issues/707).
+Because we use LGPL2.1+ and GPL3+ code. To future proof the project, lpereira and other developers have agreed to change license of source code also to GPL2+. (https://github.com/lpereira/hardinfo/issues/530) (https://github.com/lpereira/hardinfo/issues/707).
 
 It is all about open source and creating together - Read more about GPL license here: https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
 
