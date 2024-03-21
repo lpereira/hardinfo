@@ -366,12 +366,13 @@ parse_os_release(void)
     for (line = split; *line; line++) {
         if (!strncmp(*line, "ID=", sizeof("ID=") - 1)) {
             id = g_strdup(*line + strlen("ID="));
-        } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1)) {
+        } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1) && codename == NULL) {
             codename = g_strdup(*line + strlen("CODENAME="));
         } else if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
-            pretty_name = g_strdup(*line +
-                                   strlen("PRETTY_NAME=\""));
+            pretty_name = g_strdup(*line + strlen("PRETTY_NAME=\""));
             strend(pretty_name, '"');
+        } else if (!strncmp(*line, "VERSION_CODENAME=", sizeof("VERSION_CODENAME=") - 1) && codename == NULL) {
+            codename = g_strdup(*line + strlen("VERSION_CODENAME="));
         }
     }
 
@@ -392,7 +393,7 @@ parse_lsb_release(void)
     gchar *codename = NULL;
     gchar **split, *contents, **line;
 
-    if (!hardinfo_spawn_command_line_sync("/usr/bin/lsb_release -di", &contents, NULL, NULL, NULL))
+    if (!hardinfo_spawn_command_line_sync("/usr/bin/lsb_release -dic", &contents, NULL, NULL, NULL))
         return (Distro) {};
 
     split = g_strsplit(idle_free(contents), "\n", 0);
@@ -539,7 +540,7 @@ computer_get_os(void)
 
     os->entropy_avail = computer_get_entropy_avail();
 
-    if (g_strcmp0(os->distrocode, "ubuntu") == 0) {
+    if (g_strcmp0(os->distroid, "ubuntu") == 0) {
         GSList *flavs = ubuntu_flavors_scan();
         if (flavs) {
             /* just use the first one */
