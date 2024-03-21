@@ -110,6 +110,9 @@ int cpu_procs_cores_threads_nodes(int *p, int *c, int *t, int *n)
             *n = cpubits_count(nodes);
         free(nodes);
     }
+    else {
+        *n = 1;
+    }
 
     if (!*c)
         *c = 1;
