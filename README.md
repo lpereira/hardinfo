@@ -28,8 +28,10 @@ DEPENDENCIES
 ------------
 
 Required:
-- GTK+ 2.10 (or newer)
-- GLib 2.10 (or newer)
+- Cmake 3.1 (or newer)
+- GTK+ 2.20 (or newer)
+- GLib 2.24 (or newer)
+- GLib JSON (for benchmarks)
 - Zlib (for zlib benchmark)
 
 Optional (for synchronization/remote):
