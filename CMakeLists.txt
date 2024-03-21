@@ -131,20 +131,16 @@ if(${disversion} LESS 6.99)
   if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*"))
     message("RPM EL6 - GTK2 - deprecated - support will end at any time")
     message("RPM EL6 - LS24 - deprecated version 2.34.3 - but ok")
-    #old deprecated GTK2 - support will end at any time
     set(HARDINFO2_GTK3 0)
-    #old deprecated version - but ok
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
   endif()
 endif()
 
 #debian 7
 if(${distro}${disversion} MATCHES "DebianGNULinux7")
-    message("DEB 7 - GTK2 - deprecated - support will end at any time")
+    message("DEB 7 - GTK2 to avoid c11 for ubergraph - deprecated - support will end at any time")
     message("DEB 7 - LS24 - deprecated version 2.34.3 - but ok")
-    #old deprecated GTK2 - support will end at any time
     set(HARDINFO2_GTK3 0)
-    #old deprecated version - but ok
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
 endif()
 

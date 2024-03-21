@@ -43,10 +43,10 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
    int i;
    cairo_t * cr;
    GdkWindow* window = gtk_widget_get_window(widget);
-   cairo_region_t * cairoRegion = cairo_region_create();
 
 
 #if GTK_CHECK_VERSION(3,0,0)
+   cairo_region_t * cairoRegion = cairo_region_create();
    GdkDrawingContext * drawingContext;
     
    drawingContext = gdk_window_begin_draw_frame (window,cairoRegion);
@@ -113,7 +113,9 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
      }
 
      // cleanup
+#if GTK_CHECK_VERSION(3,0,0)
      cairo_region_destroy(cairoRegion);
+#endif
 
      return FALSE;
 }
@@ -122,7 +124,6 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
 double guibench(double *frameTime, int *frameCount)
 {
     GtkWindow * window;
-    cairo_region_t *region;
     cairo_t *cr;
 
     frametime=frameTime;
