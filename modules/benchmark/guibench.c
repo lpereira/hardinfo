@@ -45,7 +45,7 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
    GdkWindow* window = gtk_widget_get_window(widget);
 
 
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,22,0)
    cairo_region_t * cairoRegion = cairo_region_create();
    GdkDrawingContext * drawingContext;
     
@@ -88,7 +88,7 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
 	  }
      }
      g_timer_stop(frametimer);
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,22,0)
      gdk_window_end_draw_frame(window,drawingContext);
 #endif
      count++;
@@ -113,7 +113,7 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
      }
 
      // cleanup
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,22,0)
      cairo_region_destroy(cairoRegion);
 #endif
 
