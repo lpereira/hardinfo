@@ -210,9 +210,9 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     if (ioctl(fd, SIOCGIFNETMASK, &ifr) < 0) {
     netinfo->mask[0] = 0;
     } else {
-    snprintf(netinfo->mask, sizeof(netinfo->mask), "%s",
-        inet_ntoa(((struct sockaddr_in *) &ifr.ifr_addr)->
-              sin_addr));
+        char ipstr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &((struct sockaddr_in *) &ifr.ifr_addr)->sin_addr, ipstr, INET_ADDRSTRLEN);
+        snprintf(netinfo->mask, sizeof(netinfo->mask), "%s",ipstr);
     }
 
     /* Broadcast Address */
@@ -220,9 +220,9 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     if (ioctl(fd, SIOCGIFBRDADDR, &ifr) < 0) {
     netinfo->broadcast[0] = 0;
     } else {
-    snprintf(netinfo->broadcast, sizeof(netinfo->broadcast), "%s",
-        inet_ntoa(((struct sockaddr_in *) &ifr.ifr_addr)->
-              sin_addr));
+        char ipstr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &((struct sockaddr_in *) &ifr.ifr_addr)->sin_addr, ipstr, INET_ADDRSTRLEN);
+        snprintf(netinfo->broadcast, sizeof(netinfo->broadcast), "%s",ipstr);
     }
 
 #ifdef HAS_LINUX_WE
