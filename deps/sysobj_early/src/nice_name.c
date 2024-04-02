@@ -35,12 +35,12 @@ gboolean str_shorten(gchar *str, const gchar *find, const gchar *replace) {
     gchar *p = strstr(str, find);
     if (p) {
         if(lr==lf){
-            strncpy(p, replace, lf);
+            memcpy(p, replace, lf);
         } else {
             if (lr > lf) lr = lf;
             gchar *buff = g_strnfill(lf, ' ');
-            if(lr) strncpy(buff, replace, lr);
-            strncpy(p, buff, lf);
+            if(lr) memcpy(buff, replace, lr);
+            memcpy(p, buff, lf);
             g_free(buff);
 	}
         return TRUE;
@@ -55,12 +55,12 @@ gboolean str_shorten_anycase(gchar *str, const gchar *find, const gchar *replace
     gchar *p = strcasestr(str, find);
     if (p) {
         if(lr==lf){
-            strncpy(p, replace, lf);
+            memcpy(p, replace, lf);
         } else {
             if (lr > lf) lr = lf;
             gchar *buff = g_strnfill(lf, ' ');
-            if(lr) strncpy(buff, replace, lr);
-            strncpy(p, buff, lf);
+            if(lr) memcpy(buff, replace, lr);
+            memcpy(p, buff, lf);
             g_free(buff);
 	}
         return TRUE;
