@@ -151,7 +151,7 @@ void init_memory_labels(void)
         { "Zswap",          N_("Memory consumed by the zswap backend (compressed size)") },
         { "Zswapped",       N_("Amount of anonymous memory stored in zswap (original size)") },
         { "Dirty",          N_("Memory waiting to be written back to disk") },
-        { "Writeback",      N_(" Memory which is actively being written back to disk") },
+        { "Writeback",      N_("Memory which is actively being written back to disk") },
         { "AnonPages",      N_("Non-file backed pages mapped into userspace page tables") },
         { "Mapped",         N_("Files which have been mmapped, such as libraries") },
         { "Shmem",          N_("Total memory used by shared memory (shmem) and tmpfs") },
