@@ -21,11 +21,14 @@
 
 GHashTable *memlabels = NULL;
 
+gint comparMem (gpointer a, gpointer b) {return strcmp( (char*)a, (char*)b );}
+
 void scan_memory_do(void)
 {
-    gchar **keys, *tmp, *tmp_label, *trans_val;
+    gchar **keys, *tmp, *memstr, *lgstr, *tmp_label, *trans_val;
     static gint offset = -1;
     gint i;
+    GList *list=NULL, *a;
 
     if (offset == -1) {
         /* gah. linux 2.4 adds three lines of data we don't need in
@@ -44,15 +47,9 @@ void scan_memory_do(void)
         }
     }
 
-    g_file_get_contents("/proc/meminfo", &meminfo, NULL, NULL);
-
-    keys = g_strsplit(meminfo, "\n", 0);
-
-    g_free(meminfo);
-    g_free(lginterval);
-
-    meminfo = g_strdup("");
-    lginterval = g_strdup("");
+    g_file_get_contents("/proc/meminfo", &tmp, NULL, NULL);
+    keys = g_strsplit(tmp, "\n", 0);
+    g_free(tmp);
 
     for (i = offset; keys[i]; i++) {
         gchar **newkeys = g_strsplit(keys[i], ":", 0);
@@ -70,8 +67,7 @@ void scan_memory_do(void)
         if (tmp)
             tmp_label = _(tmp);
         else
-            tmp_label = ""; /* or newkeys[0] */
-        /* although it doesn't matter... */
+	    tmp_label = newkeys[0];
 
         if (strstr(newkeys[1], "kB")) {
             trans_val = g_strdup_printf("%d %s", atoi(newkeys[1]), _("KiB") );
@@ -79,22 +75,50 @@ void scan_memory_do(void)
             trans_val = strdup(newkeys[1]);
         }
 
-        moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(trans_val));
+        /*add MemTotal for internal usage*/
+	if(strcmp(newkeys[0],"MemTotal")==0) moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
 
-        tmp = g_strconcat(meminfo, newkeys[0], "=", trans_val, "|", tmp_label, "\n", NULL);
-        g_free(meminfo);
-        meminfo = tmp;
+        list = g_list_prepend(list, g_strdup_printf("%s=%s", tmp_label, trans_val));
 
         g_free(trans_val);
-
-        tmp = g_strconcat(lginterval,
-                          "UpdateInterval$", newkeys[0], "=1000\n", NULL);
-        g_free(lginterval);
-        lginterval = tmp;
-
         g_strfreev(newkeys);
     }
     g_strfreev(keys);
+
+    //Sort memory information
+    list=g_list_sort(list,(GCompareFunc)comparMem);
+
+    //add memory information
+    memstr=strdup("");lgstr=strdup("");
+    while(list){
+        char **datas = g_strsplit(list->data,"=",2);
+        if (!datas[0]) {
+            g_strfreev(datas);
+            break;
+        }
+
+        moreinfo_add_with_prefix("DEV", datas[0], g_strdup(datas[1]));
+
+        tmp = g_strconcat(memstr, list->data, "\n", NULL);
+	g_free(memstr);
+	memstr=tmp;
+
+        tmp = g_strconcat(lgstr,"UpdateInterval$", datas[0], "=1000\n", NULL);
+        g_free(lgstr);
+        lgstr = tmp;
+
+	g_strfreev(datas);
+
+        //next and free
+        a=list;
+        list=list->next;
+        free(a->data);
+        g_list_free_1(a);
+    }
+
+    tmp=meminfo; meminfo = memstr; g_free(tmp);
+
+    tmp=lginterval; lginterval = lgstr; g_free(tmp);
 }
 
 void init_memory_labels(void)
