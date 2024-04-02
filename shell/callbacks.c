@@ -170,6 +170,7 @@ void cb_about()
         "Ondrej Čerman",
         "Mike Hewitt",
         "Boris Afonot",
+	"Amstelchen",
 	"",
 	"Based on work by:",
 	"uber-graph by Christian Hergert and others.",
@@ -204,6 +205,12 @@ void cb_about()
         "The GNOME Project",
         "epicbard",
         "Roundicons",
+	"",
+	"Packaging by:",
+	"Topazus (Fedora/Redhat branches)",
+	"Yochananmargos (Arch branches)",
+	"lucacastro/tsimonq2 (Debian/Ubuntu branches)",
+	"",
         NULL
     };
 
