@@ -19,6 +19,7 @@
  */
 
 #include <string.h>
+#include <ctype.h>
 #include <gtk/gtk.h>
 
 #include "vendor.h"

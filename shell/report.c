@@ -18,6 +18,7 @@
 
 #include <report.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <string.h>
 #include <shell.h>
 #include <iconcache.h>

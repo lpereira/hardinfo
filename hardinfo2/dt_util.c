@@ -22,6 +22,7 @@
  *   http://elinux.org/Device_Tree_Mysteries
  */
 #include <unistd.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include <inttypes.h> /* for PRIu64 */
 #include <endian.h>

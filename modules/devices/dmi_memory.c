@@ -20,6 +20,7 @@
 #define _GNU_SOURCE
 
 #include "hardinfo.h"
+#include <ctype.h>
 #include "devices.h"
 #include "vendor.h"
 #include <inttypes.h>

@@ -19,6 +19,7 @@
  */
 
 #include <stdlib.h>
+#include <ctype.h>
 #include <locale.h>
 #include <inttypes.h>
 #include <json-glib/json-glib.h>

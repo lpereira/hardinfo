@@ -18,6 +18,7 @@
  */
 
 #include "devices.h"
+#include <ctype.h>
 #include "util_sysobj.h"
 #include "util_edid.h"
 #include "util_ids.h"
