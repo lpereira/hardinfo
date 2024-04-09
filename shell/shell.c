@@ -360,9 +360,8 @@ static ShellNote *note_new(void)
     ShellNote *note;
     GtkWidget *hbox, *icon, *button;
     GtkWidget *border_box;
-    /* colors stolen from gtkinfobar.c */
-    GdkColor info_default_border_color     = { 0, 0xb800, 0xad00, 0x9d00 };
-    GdkColor info_default_fill_color       = { 0, 0xff00, 0xff00, 0xbf00 };
+    GdkColor info_default_border_color     = { 0, 0x0000, 0xad00, 0x9d00 };
+    GdkColor info_default_fill_color       = { 0, 0x0000, 0x0000, 0xbf00 };
 
     note = g_new0(ShellNote, 1);
     note->label = gtk_label_new("");
