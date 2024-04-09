@@ -374,10 +374,10 @@ static ShellNote *note_new(void)
     gtk_widget_show(border_box);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-    GdkRGBA info_default_text_color       = { .red = 1.0, .green = 1.0, .blue = 1.0, .alpha = 1.0 };
+    GdkRGBA info_default_text_color       = { .red = 0.7, .green = 0.7, .blue = 0.7, .alpha = 1.0 };
     gtk_widget_override_color(note->label, GTK_STATE_FLAG_NORMAL, &info_default_text_color);
 #else
-    GdkColor info_default_text_color       = { 0, 0xffff, 0xffff, 0xffff };
+    GdkColor info_default_text_color       = { 0, 0xafff, 0xafff, 0xafff };
     gtk_widget_modify_fg(note->label, GTK_STATE_NORMAL, &info_default_text_color);
 #endif
     gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
