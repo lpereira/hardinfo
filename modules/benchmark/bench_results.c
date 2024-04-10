@@ -440,10 +440,6 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
              json_get_string(machine, "ExtraInfo"));
     filter_invalid_chars(b->bvalue.extra);
 
-    snprintf(b->bvalue.user_note, sizeof(b->bvalue.user_note), "%s",
-             json_get_string(machine, "UserNote"));
-    filter_invalid_chars(b->bvalue.user_note);
-
     int nodes = json_get_int(machine, "NumNodes");
 
     if (nodes == 0)
@@ -501,7 +497,6 @@ static char *bench_result_more_info_less(bench_result *b)
         /* elapsed */ "%s=%0.4f %s\n"
         "%s=%s\n"
         "%s=%s\n"
-        "%s=%s\n"
         /* legacy */ "%s%s=%s\n"
         "[%s]\n"
         /* board */ "%s=%s\n"
@@ -518,8 +513,7 @@ static char *bench_result_more_info_less(bench_result *b)
         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
         *bench_str ? _("Revision") : "#Revision", bench_str,
         *b->bvalue.extra ? _("Extra Information") : "#Extra", b->bvalue.extra,
-        *b->bvalue.user_note ? _("User Note") : "#User Note",
-        b->bvalue.user_note, b->legacy ? problem_marker() : "",
+        b->legacy ? problem_marker() : "",
         b->legacy ? _("Note") : "#Note",
         b->legacy ? _("This result is from an old version of HardInfo. Results "
                       "might not be comparable to current version. Some "
@@ -558,7 +552,6 @@ static char *bench_result_more_info_complete(bench_result *b)
         /* result */ "%s=%0.2f\n"
         /* elapsed */ "%s=%0.4f %s\n"
         "%s=%s\n"
-        "%s=%s\n"
         /* legacy */ "%s%s=%s\n"
         "[%s]\n"
         /* board */ "%s=%s\n"
@@ -583,8 +576,7 @@ static char *bench_result_more_info_complete(bench_result *b)
         b->bvalue.threads_used, _("Result"), b->bvalue.result,
         _("Elapsed Time"), b->bvalue.elapsed_time, _("seconds"),
         *b->bvalue.extra ? _("Extra Information") : "#Extra", b->bvalue.extra,
-        *b->bvalue.user_note ? _("User Note") : "#User Note",
-        b->bvalue.user_note, b->legacy ? problem_marker() : "",
+        b->legacy ? problem_marker() : "",
         b->legacy ? _("Note") : "#Note",
         b->legacy ? _("This result is from an old version of HardInfo. Results "
                       "might not be comparable to current version. Some "

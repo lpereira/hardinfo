@@ -50,15 +50,12 @@ char *bench_value_to_str(bench_value r)
 {
     gboolean has_rev = r.revision >= 0;
     gboolean has_extra = r.extra && *r.extra != 0;
-    gboolean has_user_note = r.user_note && *r.user_note != 0;
     char *ret = g_strdup_printf("%lf; %lf; %d", r.result, r.elapsed_time,
                                 r.threads_used);
-    if (has_rev || has_extra || has_user_note)
+    if (has_rev || has_extra)
         ret = appf(ret, "; ", "%d", r.revision);
-    if (has_extra || has_user_note)
+    if (has_extra)
         ret = appf(ret, "; ", "%s", r.extra);
-    if (has_user_note)
-        ret = appf(ret, "; ", "%s", r.user_note);
     return ret;
 }
 
@@ -67,13 +64,13 @@ bench_value bench_value_from_str(const char *str)
     bench_value ret = EMPTY_BENCH_VALUE;
     char rstr[32] = "", estr[32] = "", *p;
     int t, c, v;
-    char extra[256], user_note[256];
+    char extra[256];
     if (str) {
         /* try to handle floats from locales that use ',' or '.' as decimal sep
          */
         c = sscanf(
-            str, "%[-+0-9.,]; %[-+0-9.,]; %d; %d; %255[^\r\n;|]; %255[^\r\n;|]",
-            rstr, estr, &t, &v, extra, user_note);
+            str, "%[-+0-9.,]; %[-+0-9.,]; %d; %d; %255[^\r\n;|]",
+            rstr, estr, &t, &v, extra);
         if (c >= 3) {
             if ((p = strchr(rstr, ','))) {
                 *p = '.';
@@ -90,9 +87,6 @@ bench_value bench_value_from_str(const char *str)
         }
         if (c >= 5) {
             strcpy(ret.extra, extra);
-        }
-        if (c >= 6) {
-            strcpy(ret.user_note, user_note);
         }
     }
     return ret;
@@ -614,9 +608,6 @@ do_benchmark_handler(GIOChannel *source, GIOCondition condition, gpointer data)
     }
 
     r = bench_value_from_str(result);
-    /* attach a user note */
-    if (params.bench_user_note)
-        strncpy(r.user_note, params.bench_user_note, 255);
     bench_dialog->r = r;
 
     gtk_widget_destroy(bench_dialog->dialog);
@@ -832,7 +823,7 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(string, "LinuxOS", this_machine->linux_os);
         ADD_JSON_VALUE(boolean, "Legacy", FALSE);
         ADD_JSON_VALUE(string, "ExtraInfo", bench_results[i].extra);
-        ADD_JSON_VALUE(string, "UserNote", bench_results[i].user_note);
+        ADD_JSON_VALUE(string, "UserNote", params.bench_user_note);	
         ADD_JSON_VALUE(double, "BenchmarkResult", bench_results[i].result);
         ADD_JSON_VALUE(double, "ElapsedTime", bench_results[i].elapsed_time);
         ADD_JSON_VALUE(int, "UsedThreads", bench_results[i].threads_used);
@@ -874,11 +865,6 @@ static gchar *run_benchmark(gchar *name)
     (params.result_format && strcmp(params.result_format, F) == 0)
 
                 if (params.run_benchmark) {
-                    /* attach the user note */
-                    if (params.bench_user_note)
-                        strncpy(bench_results[i].user_note,
-                                params.bench_user_note, 255);
-
                     if (CHK_RESULT_FORMAT("shell")) {
                         bench_result *b =
                             bench_result_this_machine(name, bench_results[i]);
