@@ -894,10 +894,12 @@ GSList *modules_load_all(void)
     int i=0;
 
     while(i<4) {
-       if (module = module_load(filenames[i])) {
-           modules = g_slist_prepend(modules, module);
-       }
-       i++;
+        if(i==2 && !params.gui_running && params.skip_benchmarks) {//skip benchmark reporting if no gui, report and skip benchmark
+        }else
+        if (module = module_load(filenames[i])) {
+            modules = g_slist_prepend(modules, module);
+        }
+        i++;
     }
 
     //modules = modules_check_deps(modules);
