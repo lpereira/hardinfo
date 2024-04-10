@@ -361,7 +361,7 @@ static ShellNote *note_new(void)
     GtkWidget *hbox, *icon, *button;
     GtkWidget *border_box;
     GdkColor info_default_border_color     = { 0, 0x0000, 0xad00, 0x9d00 };
-    GdkColor info_default_fill_color       = { 0, 0x0000, 0x0000, 0xbf00 };
+    GdkColor info_default_fill_color       = { 0, 0x4000, 0x6000, 0xff00 };
 
     note = g_new0(ShellNote, 1);
     note->label = gtk_label_new("");
