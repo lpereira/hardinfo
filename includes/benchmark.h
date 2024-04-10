@@ -56,7 +56,6 @@ typedef struct {
     int threads_used;
     int revision;
     char extra[256]; /* no \n, ; or | */
-    char user_note[256]; /* no \n, ; or | */
 } bench_value;
 
 #define EMPTY_BENCH_VALUE {-1.0f,0,0,-1,""}
