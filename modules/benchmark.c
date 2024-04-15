@@ -823,7 +823,11 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(string, "LinuxOS", this_machine->linux_os);
         ADD_JSON_VALUE(boolean, "Legacy", FALSE);
         ADD_JSON_VALUE(string, "ExtraInfo", bench_results[i].extra);
-        ADD_JSON_VALUE(string, "UserNote", params.bench_user_note);	
+	if(params.bench_user_note){
+            ADD_JSON_VALUE(string, "UserNote", params.bench_user_note);
+	}else{
+            ADD_JSON_VALUE(string, "UserNote", "");
+	}
         ADD_JSON_VALUE(double, "BenchmarkResult", bench_results[i].result);
         ADD_JSON_VALUE(double, "ElapsedTime", bench_results[i].elapsed_time);
         ADD_JSON_VALUE(int, "UsedThreads", bench_results[i].threads_used);
