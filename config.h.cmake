@@ -18,6 +18,7 @@
 #cmakedefine CMAKE_BUILD_TYPE 	@CMAKE_BUILD_TYPE@
 #cmakedefine HARDINFO2_LIBSOUP3 @HARDINFO2_LIBSOUP3@
 
+#define Release 1
 #define ON 1
 #define OFF 0
 
@@ -31,7 +32,7 @@
   #define RELEASE -1
 #else
   #define DEBUG(msg,...)
-  #if (CMAKE_BUILD_TYPE==Release)
+  #if defined(CMAKE_BUILD_TYPE) && (CMAKE_BUILD_TYPE==Release)
     #define RELEASE 1
   #else
     #define RELEASE 0
