@@ -613,34 +613,29 @@ char *dtr_elem_uint64(dt_uint64 e) {
 
 char *dtr_list_byte(uint8_t *bytes, unsigned long count) {
     char *ret, *dest;
-    char buff[4] = "";  /* max element: " 00\0" */
     uint32_t v;
     unsigned long i, l;
     l = count * 4 + 1;
-    ret = malloc(l);
+    dest = ret = malloc(l);
     memset(ret, 0, l);
-    strcpy(ret, "[");
-    dest = ret + 1;
+    *dest++='[';
     for (i = 0; i < count; i++) {
         v = bytes[i];
-        l = sprintf(buff, "%s%02x", (i) ? " " : "", v);
-        strncpy(dest, buff, l);
+        l = sprintf(dest, "%s%02x", (i) ? " " : "", v);
         dest += l;
     }
-    strcpy(dest, "]");
+    *dest++=']';
     return ret;
 }
 
 char *dtr_list_hex(dt_uint *list, unsigned long count) {
     char *ret, *dest;
-    char buff[12] = "";  /* max element: " 0x00000000\0" */
     unsigned long i, l;
     l = count * 12 + 1;
     dest = ret = malloc(l);
     memset(ret, 0, l);
     for (i = 0; i < count; i++) {
-        l = sprintf(buff, "%s0x%x", (i) ? " " : "", be32toh(list[i]));
-        strncpy(dest, buff, l);
+        l = sprintf(dest, "%s0x%x", (i) ? " " : "", be32toh(list[i]));
         dest += l;
     }
     return ret;
