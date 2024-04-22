@@ -704,7 +704,7 @@ gboolean hardinfo_link(const gchar *uri) {
      * TODO: In the future, links could be used to
      * jump to different pages in hardinfo.
      *
-     * if (g_str_has_prefix(uri, "hardinfo:")) {
+     * if (g_str_has_prefix(uri, "hardinfo2:")) {
      *       hardinfo_navigate(g_utf8_strchr(uri, strlen("hardinfo2"), ':') + 1);
      *       return TRUE;
      * }

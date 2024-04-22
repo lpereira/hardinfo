@@ -631,8 +631,8 @@ gchar *callback_security(void)
 
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
-    info_add_group(info, _("HardInfo"),
-                   info_field(_("HardInfo running as"),
+    info_add_group(info, _("HardInfo2"),
+                   info_field(_("HardInfo2 running as"),
                               (getuid() == 0) ? _("Superuser") : _("User")),
                    info_field_last());
 

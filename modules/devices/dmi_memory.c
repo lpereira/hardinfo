@@ -1005,7 +1005,7 @@ static gchar note_state[note_max_len] = "";
 
 gboolean memory_devices_hinote(const char **msg) {
     gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available");
-    gchar *want_root   = _(" ... <i>and</i> HardInfo running with superuser privileges");
+    gchar *want_root   = _(" ... <i>and</i> HardInfo2 running with superuser privileges");
     gchar *want_at24   = _(" <b><i>at24</i></b> (or eeprom) module loaded (for SDR, DDR, DDR2, DDR3)");
     gchar *want_ee1004 = _(" ... <i>or</i> <b><i>ee1004</i></b> module loaded <b>and configured!</b> (for DDR4)");
 

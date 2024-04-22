@@ -210,7 +210,7 @@ void cb_about()
 	"Packaging by:",
 	"Topazus (Fedora/Redhat branches)",
 	"Yochananmargos (Arch branches)",
-	"lucacastro/tsimonq2 (Debian/Ubuntu branches)",
+	"lucascastro/tsimonq2 (Debian/Ubuntu branches)",
 	"",
         NULL
     };
