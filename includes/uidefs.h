@@ -15,7 +15,8 @@
     "<separator/>"                                                             \
     "<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" "             \
     "always-show-image=\"true\"/>"                                             \
-    "<menuitem name=\"SyncOnStartup\" action=\"SyncOnStartupAction\"/>"
+    "<menuitem name=\"SyncOnStartup\" action=\"SyncOnStartupAction\"/>"        \
+    "<menuitem name=\"DisableTheme\" action=\"DisableThemeAction\"/>"
 #define SYNC_MANAGER_TOOL_ITEMS                                                \
     "<toolitem name=\"SyncManager\" action=\"SyncManagerAction\"/>"
 

@@ -41,5 +41,6 @@ void cb_connect_host(GtkAction * action);
 void cb_local_computer();
 void cb_act_as_server();
 void cb_sync_on_startup();
+void cb_disable_theme();
 
 #endif	/* __CALLBACKS_H__ */

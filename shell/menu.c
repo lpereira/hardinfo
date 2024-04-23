@@ -41,10 +41,8 @@
 
 static GtkActionEntry entries[] = {
     {"InformationMenuAction", NULL, N_("_Information")},	/* name, stock id, label */
-    //    {"RemoteMenuAction", NULL, N_("_Remote")},
     {"ViewMenuAction", NULL, N_("_View")},
     {"HelpMenuAction", NULL, N_("_Help")},
-    //    {"HelpMenuModulesAction", HI_STOCK_ABOUT_MODULES, N_("About _Modules")},
     {"MainMenuBarAction", NULL, ""},
 
     {"ReportAction", HI_STOCK_REPORT,	/* name, stock id */
@@ -106,6 +104,12 @@ static GtkToggleActionEntry toggle_entries[] = {
      N_("Synchronize on startup"), NULL,
      NULL,
      G_CALLBACK(cb_sync_on_startup)},
+#if GTK_CHECK_VERSION(3, 0, 0)
+    {"DisableThemeAction", NULL,
+     N_("Disable Theme at startup"), NULL,
+     NULL,
+     G_CALLBACK(cb_disable_theme)},
+#endif
 };
 
 /* Implement a handler for GtkUIManager's "add_widget" signal. The UI manager

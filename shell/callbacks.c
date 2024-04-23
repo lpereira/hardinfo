@@ -62,6 +62,31 @@ gboolean g2_key_file_save_to_file (GKeyFile *key_file,
 }
 #endif
 
+void cb_disable_theme()
+{
+    gboolean setting = shell_action_get_active("DisableThemeAction");
+    GKeyFile *key_file = g_key_file_new();
+
+    g_mkdir(g_get_user_config_dir(),0755);
+    g_mkdir(g_build_filename(g_get_user_config_dir(), "hardinfo2", NULL),0755);
+
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
+                                        "settings.ini", NULL);
+
+    g_key_file_load_from_file(
+        key_file, conf_path,
+        G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);
+    g_key_file_set_boolean(key_file, "Theme", "DisableTheme", setting);
+#if GLIB_CHECK_VERSION(2,40,0)
+    g_key_file_save_to_file(key_file, conf_path, NULL);
+#else
+    g2_key_file_save_to_file(key_file, conf_path, NULL);
+#endif
+    g_free(conf_path);
+    g_key_file_free(key_file);
+}
+
+
 void cb_sync_on_startup()
 {
     gboolean setting = shell_action_get_active("SyncOnStartupAction");
@@ -206,11 +231,12 @@ void cb_about()
         "The GNOME Project",
         "epicbard",
         "Roundicons",
+	"crstrbrt",
 	"",
 	"Packaging by:",
 	"Topazus (Fedora/Redhat branches)",
 	"Yochananmargos (Arch branches)",
-	"lucascastro/tsimonq2 (Debian/Ubuntu branches)",
+	"lucascastro (Debian/Ubuntu branches)",
 	"",
         NULL
     };

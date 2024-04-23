@@ -71,6 +71,8 @@ static GSList *update_sfusrc = NULL;
 
 gchar *lginterval = NULL;
 
+gboolean darkmode;
+gboolean disabletheme;
 /*
  * Code :) ********************************************************************
  */
@@ -425,6 +427,12 @@ void shell_set_title(Shell *shell, gchar *subtitle)
 static void create_window(void)
 {
     GtkWidget *vbox, *hbox;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GtkCssProvider *provider;
+    provider = gtk_css_provider_new();
+    GtkCssProvider *provider2;
+    provider2 = gtk_css_provider_new();
+#endif
 
     shell = g_new0(Shell, 1);
 
@@ -497,6 +505,30 @@ static void create_window(void)
 
     shell->notebook = gtk_notebook_new();
     gtk_paned_add2(GTK_PANED(shell->vpaned), shell->notebook);
+
+    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);
+
+    GKeyFile *key_file = g_key_file_new();
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2","settings.ini", NULL);
+    g_key_file_load_from_file(key_file, conf_path, G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);
+    disabletheme = g_key_file_get_boolean(key_file, "Theme", "DisableTheme", NULL);
+    g_free(conf_path);
+    g_key_file_free(key_file);
+    shell_action_set_active("DisableThemeAction", disabletheme);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    if(!disabletheme){
+       if(darkmode){
+           gtk_css_provider_load_from_data(provider, "window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg_dark.jpg\"); background-repeat: no-repeat; background-size:100% 100%; }", -1, NULL);
+       }else{
+           gtk_css_provider_load_from_data(provider, "window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg_light.jpg\"); background-repeat: no-repeat; background-size:100% 100%; }", -1, NULL);
+       }
+       gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+       gtk_css_provider_load_from_data(provider2, "* { background-color: rgba(0x60, 0x60, 0x60, 0.1); } * text { background-color: rgba(1, 1, 1, 1); }", -1, NULL);
+       gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_ui_manager_get_widget(shell->ui_manager,"/MainMenuBarAction")), GTK_STYLE_PROVIDER(provider2), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+#endif
 
     gtk_widget_show(shell->window);
     while (gtk_events_pending())
@@ -657,6 +689,7 @@ DetailView *detail_view_new(void)
     gtk_scrolled_window_add_with_viewport(
         GTK_SCROLLED_WINDOW(detail_view->scroll), detail_view->view);
 #endif
+
     gtk_widget_show_all(detail_view->scroll);
 
     return detail_view;
@@ -1486,6 +1519,10 @@ static void module_selected_show_info_list(GKeyFile *key_file,
                                            gchar **groups,
                                            gsize ngroups)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GtkCssProvider *provider;
+    provider = gtk_css_provider_new();
+#endif
     GtkTreeStore *store = GTK_TREE_STORE(shell->info_tree->model);
     gint i;
 
@@ -1496,6 +1533,12 @@ static void module_selected_show_info_list(GKeyFile *key_file,
 
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info_tree->view),
                                       FALSE);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    if(!disabletheme){
+        gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
+        gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+#endif
 
     for (i = 0; groups[i]; i++) {
         gchar **keys = g_key_file_get_keys(key_file, groups[i], NULL, NULL);
@@ -1609,8 +1652,11 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 gboolean has_ven = key_value_has_vendor_string(flags);
                 const Vendor *v = has_ven ? vendor_match(value, NULL) : NULL;
 
-                key_markup =
-                    g_strdup_printf("<span color=\"#666\">%s</span>", label);
+                if(darkmode){
+                    key_markup = g_strdup_printf("<span color=\"#46f\">%s</span>", label);
+		} else {
+                    key_markup = g_strdup_printf("<span color=\"#46f\">%s</span>", label);
+		}
 
                 GtkWidget *key_label = gtk_label_new(key_markup);
                 gtk_label_set_use_markup(GTK_LABEL(key_label), TRUE);
@@ -2069,6 +2115,7 @@ static ShellInfoTree *info_tree_new(void)
     info = g_new0(ShellInfoTree, 1);
 
     scroll = gtk_scrolled_window_new(NULL, NULL);
+
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW
 					(scroll), GTK_SHADOW_IN);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
@@ -2081,8 +2128,21 @@ static ShellInfoTree *info_tree_new(void)
                            G_TYPE_STRING, G_TYPE_STRING);
     model = GTK_TREE_MODEL(store);
     treeview = gtk_tree_view_new_with_model(model);
+
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
     gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), TRUE);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    if(!disabletheme){
+       //GdkRGBA info_default_text_color       = { .red = 0.2, .green = 0.3, .blue = 1.0, .alpha = 1.0 };
+       //gtk_widget_override_color(treeview, GTK_STATE_FLAG_SELECTED, &info_default_text_color);
+    }
+#else
+    if(!disabletheme){
+       //GdkColor info_default_text_color       = { 0, 0x4fff, 0x6fff, 0xffff };
+       //gtk_widget_modify_fg(treeview, GTK_STATE_SELECTED, &info_default_text_color);
+    }
+#endif
 
     info->col_progress = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
@@ -2166,6 +2226,10 @@ static ShellTree *tree_new()
     GtkCellRenderer *cr_text, *cr_pbuf;
     GtkTreeViewColumn *column;
     GtkTreeSelection *sel;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GtkCssProvider *provider;
+    provider = gtk_css_provider_new();
+#endif
 
     shelltree = g_new0(ShellTree, 1);
 
@@ -2175,6 +2239,7 @@ static ShellTree *tree_new()
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
 				   GTK_POLICY_NEVER,
 				   GTK_POLICY_AUTOMATIC);
+
 
     store = gtk_tree_store_new(TREE_NCOL, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 			       G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_BOOLEAN);
@@ -2186,6 +2251,18 @@ static ShellTree *tree_new()
     gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(treeview), FALSE);
     gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(treeview), 24);
 #endif
+
+/*#if GTK_CHECK_VERSION(3, 0, 0)
+    if(!disabletheme){
+        GdkRGBA info_default_text_color       = { .red = 0.2, .green = 0.3, .blue = 1.0, .alpha = 1.0 };
+        gtk_widget_override_color(treeview, GTK_STATE_FLAG_SELECTED, &info_default_text_color);
+    }
+#else
+    if(!disabletheme){
+        GdkColor info_default_text_color       = { 0, 0x4fff, 0x6fff, 0xffff };
+        gtk_widget_modify_fg(treeview, GTK_STATE_SELECTED, &info_default_text_color);
+    }
+#endif*/
 
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
@@ -2205,6 +2282,13 @@ static ShellTree *tree_new()
 		     NULL);
 
     gtk_container_add(GTK_CONTAINER(scroll), treeview);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    if(!disabletheme){
+        gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
+        gtk_style_context_add_provider(gtk_widget_get_style_context(treeview), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+#endif
 
     shelltree->scroll = scroll;
     shelltree->view = treeview;
