@@ -64,8 +64,18 @@ gboolean g2_key_file_save_to_file (GKeyFile *key_file,
 
 void cb_disable_theme()
 {
+    Shell *shell = shell_get_main_shell();
+    // *shelltree=shell->tree;
     gboolean setting = shell_action_get_active("DisableThemeAction");
     GKeyFile *key_file = g_key_file_new();
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GtkCssProvider *provider;
+    provider = gtk_css_provider_new();
+    GtkCssProvider *provider2;
+    provider2 = gtk_css_provider_new();
+    GtkCssProvider *provider3;
+    provider3 = gtk_css_provider_new();
+#endif
 
     g_mkdir(g_get_user_config_dir(),0755);
     g_mkdir(g_build_filename(g_get_user_config_dir(), "hardinfo2", NULL),0755);
@@ -84,6 +94,40 @@ void cb_disable_theme()
 #endif
     g_free(conf_path);
     g_key_file_free(key_file);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gboolean darkmode;
+    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);
+    if(!setting){//enable
+       if(darkmode){
+           gtk_css_provider_load_from_data(provider, "window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg_dark.jpg\"); background-repeat: no-repeat; background-size:100% 100%; }", -1, NULL);
+       }else{
+           gtk_css_provider_load_from_data(provider, "window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg_light.jpg\"); background-repeat: no-repeat; background-size:100% 100%; }", -1, NULL);
+       }
+       if(shell->window) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       //menubar
+       gtk_css_provider_load_from_data(provider2, "* { background-color: rgba(0x60, 0x60, 0x60, 0.1); } * text { background-color: rgba(1, 1, 1, 1); }", -1, NULL);
+       if(shell->ui_manager) gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_ui_manager_get_widget(shell->ui_manager,"/MainMenuBarAction")), GTK_STYLE_PROVIDER(provider2), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       //treeviewinfo
+       gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
+       if(shell->info_tree && shell->info_tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       //treeviewmain
+       gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
+       if(shell->tree && shell->tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    } else {//disable
+       gtk_css_provider_load_from_data(provider, "window.background {background-image: none; }", -1, NULL);
+       if(shell->window) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       //menubar
+       gtk_css_provider_load_from_data(provider2, "", -1, NULL);
+       if(shell->ui_manager) gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_ui_manager_get_widget(shell->ui_manager,"/MainMenuBarAction")), GTK_STYLE_PROVIDER(provider2), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       //treeviewinfo
+       gtk_css_provider_load_from_data(provider3, "", -1, NULL);
+       if(shell->info_tree && shell->info_tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       //treeviewmain
+       gtk_css_provider_load_from_data(provider3, "", -1, NULL);
+       if(shell->tree && shell->tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+#endif
 }
 
 

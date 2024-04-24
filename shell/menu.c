@@ -106,7 +106,7 @@ static GtkToggleActionEntry toggle_entries[] = {
      G_CALLBACK(cb_sync_on_startup)},
 #if GTK_CHECK_VERSION(3, 0, 0)
     {"DisableThemeAction", NULL,
-     N_("Disable Theme at startup"), NULL,
+     N_("Disable Theme"), NULL,
      NULL,
      G_CALLBACK(cb_disable_theme)},
 #endif
