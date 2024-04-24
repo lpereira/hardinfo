@@ -15,8 +15,7 @@
     "<separator/>"                                                             \
     "<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" "             \
     "always-show-image=\"true\"/>"                                             \
-    "<menuitem name=\"SyncOnStartup\" action=\"SyncOnStartupAction\"/>"        \
-    "<menuitem name=\"DisableTheme\" action=\"DisableThemeAction\"/>"
+    "<menuitem name=\"SyncOnStartup\" action=\"SyncOnStartupAction\"/>"
 #define SYNC_MANAGER_TOOL_ITEMS                                                \
     "<toolitem name=\"SyncManager\" action=\"SyncManagerAction\"/>"
 
@@ -33,6 +32,7 @@ char *uidefs_str =
     "	<menu name=\"ViewMenu\" action=\"ViewMenuAction\">"
     "		<menuitem name=\"SidePane\" action=\"SidePaneAction\"/>"
     "		<menuitem name=\"Toolbar\" action=\"ToolbarAction\"/>"
+    "<menuitem name=\"DisableTheme\" action=\"DisableThemeAction\"/>"
     "		<separator/>"
     "		<separator name=\"LastSep\"/>"
     "		<menuitem name=\"Refresh\" action=\"RefreshAction\"/>"
