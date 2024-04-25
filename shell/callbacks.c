@@ -127,6 +127,7 @@ void cb_disable_theme()
       if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
       if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
       if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+      if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
     }
 
     g_mkdir(g_get_user_config_dir(),0755);
