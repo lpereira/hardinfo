@@ -62,11 +62,56 @@ gboolean g2_key_file_save_to_file (GKeyFile *key_file,
 }
 #endif
 
+void cb_theme1()
+{
+  if(shell_action_get_active("Theme1Action")){
+    params.theme=1;
+    if(shell_action_get_active("DisableThemeAction")) shell_action_set_active("DisableThemeAction",FALSE);
+    if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
+    if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+    if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+  }
+  cb_disable_theme();
+}
+void cb_theme2()
+{
+  if(shell_action_get_active("Theme2Action")){
+    params.theme=2;
+    if(shell_action_get_active("DisableThemeAction")) shell_action_set_active("DisableThemeAction",FALSE);
+    if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
+    if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+    if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+  }
+  cb_disable_theme();
+}
+void cb_theme3()
+{
+  if(shell_action_get_active("Theme3Action")){
+    params.theme=3;
+    if(shell_action_get_active("DisableThemeAction")) shell_action_set_active("DisableThemeAction",FALSE);
+    if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
+    if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
+    if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+  }
+  cb_disable_theme();
+}
+void cb_theme4()
+{
+  if(shell_action_get_active("Theme4Action")){
+    params.theme=4;
+    if(shell_action_get_active("DisableThemeAction")) shell_action_set_active("DisableThemeAction",FALSE);
+    if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
+    if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
+    if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+  }
+  cb_disable_theme();
+}
+
 void cb_disable_theme()
 {
     Shell *shell = shell_get_main_shell();
     // *shelltree=shell->tree;
-    gboolean setting = shell_action_get_active("DisableThemeAction");
+    char theme_st[200];
     GKeyFile *key_file = g_key_file_new();
 #if GTK_CHECK_VERSION(3, 0, 0)
     GtkCssProvider *provider;
@@ -77,16 +122,21 @@ void cb_disable_theme()
     provider3 = gtk_css_provider_new();
 #endif
 
+    if(shell_action_get_active("DisableThemeAction")){
+      params.theme=-1;
+      if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
+      if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
+      if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+    }
+
     g_mkdir(g_get_user_config_dir(),0755);
     g_mkdir(g_build_filename(g_get_user_config_dir(), "hardinfo2", NULL),0755);
-
-    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2",
-                                        "settings.ini", NULL);
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2", "settings.ini", NULL);
 
     g_key_file_load_from_file(
         key_file, conf_path,
         G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);
-    g_key_file_set_boolean(key_file, "Theme", "DisableTheme", setting);
+    g_key_file_set_integer(key_file, "Theme", "ThemeNumber", params.theme);
 #if GLIB_CHECK_VERSION(2,40,0)
     g_key_file_save_to_file(key_file, conf_path, NULL);
 #else
@@ -98,12 +148,13 @@ void cb_disable_theme()
 #if GTK_CHECK_VERSION(3, 0, 0)
     gboolean darkmode;
     g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);
-    if(!setting){//enable
+    if(params.theme>0){//enable
        if(darkmode){
-           gtk_css_provider_load_from_data(provider, "window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg_dark.jpg\"); background-repeat: no-repeat; background-size:100% 100%; }", -1, NULL);
+	   sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
        }else{
-           gtk_css_provider_load_from_data(provider, "window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg_light.jpg\"); background-repeat: no-repeat; background-size:100% 100%; }", -1, NULL);
+           sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_light.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
        }
+       gtk_css_provider_load_from_data(provider, theme_st, -1, NULL);
        if(shell->window) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
        //menubar
        gtk_css_provider_load_from_data(provider2, "* { background-color: rgba(0x60, 0x60, 0x60, 0.1); } * text { background-color: rgba(1, 1, 1, 1); }", -1, NULL);

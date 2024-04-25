@@ -42,5 +42,9 @@ void cb_local_computer();
 void cb_act_as_server();
 void cb_sync_on_startup();
 void cb_disable_theme();
+void cb_theme1();
+void cb_theme2();
+void cb_theme3();
+void cb_theme4();
 
 #endif	/* __CALLBACKS_H__ */

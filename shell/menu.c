@@ -42,6 +42,9 @@
 static GtkActionEntry entries[] = {
     {"InformationMenuAction", NULL, N_("_Information")},	/* name, stock id, label */
     {"ViewMenuAction", NULL, N_("_View")},
+#if GTK_CHECK_VERSION(3, 0, 0)
+    {"ThemeMenuAction", NULL, N_("_Theme")},
+#endif
     {"HelpMenuAction", NULL, N_("_Help")},
     {"MainMenuBarAction", NULL, ""},
 
@@ -109,6 +112,22 @@ static GtkToggleActionEntry toggle_entries[] = {
      N_("Disable Theme"), NULL,
      NULL,
      G_CALLBACK(cb_disable_theme)},
+    {"Theme1Action", NULL,
+     N_("Theme Motherboard"), NULL,
+     NULL,
+     G_CALLBACK(cb_theme1)},
+    {"Theme2Action", NULL,
+     N_("Theme Graffiti PC"), NULL,
+     NULL,
+     G_CALLBACK(cb_theme2)},
+    {"Theme3Action", NULL,
+     N_("Theme Anime PC"), NULL,
+     NULL,
+     G_CALLBACK(cb_theme3)},
+    {"Theme4Action", NULL,
+     N_("Theme Tux Star"), NULL,
+     NULL,
+     G_CALLBACK(cb_theme4)},
 #endif
 };
 
