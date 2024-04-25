@@ -514,7 +514,7 @@ static void create_window(void)
     params.theme = g_key_file_get_integer(key_file, "Theme", "ThemeNumber", NULL);
     if(params.theme==0) params.theme=1;
     if(params.theme<-1) params.theme=-1;
-    if(params.theme>4) params.theme=-1;
+    if(params.theme>6) params.theme=-1;
 
     g_free(conf_path);
     g_key_file_free(key_file);
@@ -523,6 +523,8 @@ static void create_window(void)
     if(params.theme==2) shell_action_set_active("Theme2Action", TRUE);
     if(params.theme==3) shell_action_set_active("Theme3Action", TRUE);
     if(params.theme==4) shell_action_set_active("Theme4Action", TRUE);
+    if(params.theme==5) shell_action_set_active("Theme5Action", TRUE);
+    if(params.theme==6) shell_action_set_active("Theme6Action", TRUE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){
@@ -784,6 +786,8 @@ void shell_init(GSList * modules)
     shell_action_set_property("Theme2Action", "draw-as-radio", TRUE);
     shell_action_set_property("Theme3Action", "draw-as-radio", TRUE);
     shell_action_set_property("Theme4Action", "draw-as-radio", TRUE);
+    shell_action_set_property("Theme5Action", "draw-as-radio", TRUE);
+    shell_action_set_property("Theme6Action", "draw-as-radio", TRUE);
 
     shell->tree = tree_new();
     shell->info_tree = info_tree_new();

@@ -3,28 +3,19 @@
 
 #include "config.h"
 
-#if RELEASE
-#define DEBUG_TOOLBAR_ITEMS
-#else /* !RELEASE */
-#define DEBUG_TOOLBAR_ITEMS                                                    \
-    "<separator/>"                                                             \
-    "<toolitem name=\"ReportBug\" action=\"ReportBugAction\" />"
-#endif /* !RELEASE */
-
 #define SYNC_MANAGER_MENU_ITEMS                                                \
     "<separator/>"                                                             \
-    "<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" "             \
-    "always-show-image=\"true\"/>"                                             \
+    "<menuitem name=\"SyncManager\" action=\"SyncManagerAction\" always-show-image=\"true\"/>"           \
     "<menuitem name=\"SyncOnStartup\" action=\"SyncOnStartupAction\"/>"
 #define SYNC_MANAGER_TOOL_ITEMS                                                \
-    "<toolitem name=\"SyncManager\" action=\"SyncManagerAction\"/>"
+    "<toolitem name=\"SyncManager\" action=\"SyncManagerAction\" always-show-image=\"true\"/>"
 
 char *uidefs_str =
     "<ui>"
     "	<menubar>"
     "	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">"
-    "		<menuitem name=\"Report\" action=\"ReportAction\" />"
-    "		<menuitem name=\"Copy\" action=\"CopyAction\" />"
+    "		<menuitem name=\"Report\" action=\"ReportAction\" always-show-image=\"true\"/>"
+    "		<menuitem name=\"Copy\" action=\"CopyAction\" always-show-image=\"true\"/>"
     SYNC_MANAGER_MENU_ITEMS \
     "		<separator/>"
     "		<menuitem name=\"Quit\" action=\"QuitAction\" />"
@@ -38,14 +29,16 @@ char *uidefs_str =
     "            <menuitem name=\"Theme2\" action=\"Theme2Action\"/>"
     "            <menuitem name=\"Theme3\" action=\"Theme3Action\"/>"
     "            <menuitem name=\"Theme4\" action=\"Theme4Action\"/>"
+    "            <menuitem name=\"Theme5\" action=\"Theme5Action\"/>"
+    "            <menuitem name=\"Theme6\" action=\"Theme6Action\"/>"
     "	   </menu>"
     "		<separator/>"
     "		<separator name=\"LastSep\"/>"
     "		<menuitem name=\"Refresh\" action=\"RefreshAction\"/>"
     "	</menu>"
     "	<menu name=\"HelpMenu\" action=\"HelpMenuAction\">"
-    "		<menuitem name=\"WebPage\" action=\"HomePageAction\"/>"
-    "		<menuitem name=\"ReportBug\" action=\"ReportBugAction\"/>"
+    "		<menuitem name=\"WebPage\" action=\"HomePageAction\" always-show-image=\"true\"/>"
+    "		<menuitem name=\"ReportBug\" action=\"ReportBugAction\" always-show-image=\"true\"/>"
     "		<menuitem name=\"About\" action=\"AboutAction\"/>"
     "	</menu>"
     "	</menubar>"
@@ -56,7 +49,6 @@ char *uidefs_str =
     "			<toolitem name=\"Report\" action=\"ReportAction\"/>"
     "			<toolitem name=\"Copy\" action=\"CopyAction\"/>"
     "			<separator/>"
-    DEBUG_TOOLBAR_ITEMS \
     SYNC_MANAGER_TOOL_ITEMS \
     "		</placeholder>"
     "	</toolbar>"

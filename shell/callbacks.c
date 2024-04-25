@@ -70,6 +70,8 @@ void cb_theme1()
     if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
     if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
     if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+    if(shell_action_get_active("Theme5Action")) shell_action_set_active("Theme5Action",FALSE);
+    if(shell_action_get_active("Theme6Action")) shell_action_set_active("Theme6Action",FALSE);
   }
   cb_disable_theme();
 }
@@ -81,6 +83,8 @@ void cb_theme2()
     if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
     if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
     if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+    if(shell_action_get_active("Theme5Action")) shell_action_set_active("Theme5Action",FALSE);
+    if(shell_action_get_active("Theme6Action")) shell_action_set_active("Theme6Action",FALSE);
   }
   cb_disable_theme();
 }
@@ -92,6 +96,8 @@ void cb_theme3()
     if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
     if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
     if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+    if(shell_action_get_active("Theme5Action")) shell_action_set_active("Theme5Action",FALSE);
+    if(shell_action_get_active("Theme6Action")) shell_action_set_active("Theme6Action",FALSE);
   }
   cb_disable_theme();
 }
@@ -103,6 +109,34 @@ void cb_theme4()
     if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
     if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
     if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+    if(shell_action_get_active("Theme5Action")) shell_action_set_active("Theme5Action",FALSE);
+    if(shell_action_get_active("Theme6Action")) shell_action_set_active("Theme6Action",FALSE);
+  }
+  cb_disable_theme();
+}
+void cb_theme5()
+{
+  if(shell_action_get_active("Theme5Action")){
+    params.theme=5;
+    if(shell_action_get_active("DisableThemeAction")) shell_action_set_active("DisableThemeAction",FALSE);
+    if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
+    if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
+    if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+    if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+    if(shell_action_get_active("Theme6Action")) shell_action_set_active("Theme6Action",FALSE);
+  }
+  cb_disable_theme();
+}
+void cb_theme6()
+{
+  if(shell_action_get_active("Theme6Action")){
+    params.theme=6;
+    if(shell_action_get_active("DisableThemeAction")) shell_action_set_active("DisableThemeAction",FALSE);
+    if(shell_action_get_active("Theme1Action")) shell_action_set_active("Theme1Action",FALSE);
+    if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
+    if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
+    if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+    if(shell_action_get_active("Theme5Action")) shell_action_set_active("Theme5Action",FALSE);
   }
   cb_disable_theme();
 }
@@ -128,6 +162,8 @@ void cb_disable_theme()
       if(shell_action_get_active("Theme2Action")) shell_action_set_active("Theme2Action",FALSE);
       if(shell_action_get_active("Theme3Action")) shell_action_set_active("Theme3Action",FALSE);
       if(shell_action_get_active("Theme4Action")) shell_action_set_active("Theme4Action",FALSE);
+      if(shell_action_get_active("Theme5Action")) shell_action_set_active("Theme5Action",FALSE);
+      if(shell_action_get_active("Theme6Action")) shell_action_set_active("Theme6Action",FALSE);
     }
 
     g_mkdir(g_get_user_config_dir(),0755);

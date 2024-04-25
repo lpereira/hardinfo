@@ -46,5 +46,7 @@ void cb_theme1();
 void cb_theme2();
 void cb_theme3();
 void cb_theme4();
+void cb_theme5();
+void cb_theme6();
 
 #endif	/* __CALLBACKS_H__ */
