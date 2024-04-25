@@ -133,7 +133,7 @@ static GtkToggleActionEntry toggle_entries[] = {
      NULL,
      G_CALLBACK(cb_theme5)},
     {"Theme6Action", NULL,
-     N_("Theme Silicon Crypto"), NULL,
+     N_("Theme Silicon"), NULL,
      NULL,
      G_CALLBACK(cb_theme6)},
 #endif
