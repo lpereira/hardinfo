@@ -277,6 +277,8 @@ static void sync_dialog_start_sync(SyncDialog *sd)
     }
 
     g_main_loop_unref(loop);
+
+    shell_do_reload(FALSE);
 }
 
 
