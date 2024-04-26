@@ -190,9 +190,7 @@ gboolean shell_action_get_active(const gchar * action_name)
     GtkAction *action;
     GSList *proxies;
 
-    /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
-    if (!params.gui_running)
-	return FALSE;
+    if (!params.gui_running) return FALSE;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
@@ -217,9 +215,7 @@ void shell_action_set_active(const gchar * action_name, gboolean setting)
     GtkAction *action;
     GSList *proxies;
 
-    /* FIXME: Ugh. Are you sure there isn't any simpler way? O_o */
-    if (!params.gui_running)
-	return;
+    if (!params.gui_running) return;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
     if (action) {
@@ -287,7 +283,7 @@ void shell_view_set_enabled(gboolean setting)
 	shell->_pulses = 0;
 	widget_set_cursor(shell->window, GDK_LEFT_PTR);
     } else {
-	widget_set_cursor(shell->window, GDK_WATCH);
+        widget_set_cursor(shell->window, GDK_WATCH);
     }
 
     gtk_widget_set_sensitive(shell->hbox, setting);
@@ -305,16 +301,16 @@ void shell_status_set_enabled(gboolean setting)
 	return;
 
     if (setting)
-	gtk_widget_show(shell->progress);
+        gtk_widget_show(shell->progress);
     else {
-	gtk_widget_hide(shell->progress);
+        gtk_widget_hide(shell->progress);
 	shell_view_set_enabled(TRUE);
 
 	shell_status_update(_("Done."));
     }
 }
 
-void shell_do_reload(void)
+void shell_do_reload(gboolean reload)
 {
     if (!params.gui_running || !shell->selected)
 	return;
@@ -325,7 +321,7 @@ void shell_do_reload(void)
 
     shell_status_set_enabled(TRUE);
 
-    module_entry_reload(shell->selected);
+    if(reload) module_entry_reload(shell->selected);
     module_selected(NULL);
 
     shell_action_set_enabled("RefreshAction", TRUE);
@@ -338,6 +334,7 @@ void shell_status_update(const gchar * message)
     DEBUG("Shell_status_update %s",message);
     if (params.gui_running) {
 	gtk_label_set_markup(GTK_LABEL(shell->status), message);
+	gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(shell->progress),1);
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
 	while (gtk_events_pending())
 	    gtk_main_iteration();
@@ -463,11 +460,16 @@ static void create_window(void)
     gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 3);
 
     shell->progress = gtk_progress_bar_new();
-    gtk_widget_set_size_request(shell->progress, 80, 10);
+    //gtk_widget_set_size_request(shell->progress, 80, 10);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_widget_set_valign(GTK_WIDGET(shell->progress), GTK_ALIGN_CENTER);
+#else
+    gtk_misc_set_alignment(GTK_MISC(shell->progress), 0.0, 0.5);
+#endif
     gtk_widget_hide(shell->progress);
     gtk_box_pack_end(GTK_BOX(hbox), shell->progress, FALSE, FALSE, 5);
 
-    shell->status = gtk_label_new("");
+    shell->status = gtk_label_new("Starting...");
 #if GTK_CHECK_VERSION(3, 0, 0)
     gtk_widget_set_valign(GTK_WIDGET(shell->status), GTK_ALIGN_CENTER);
 #else
@@ -911,10 +913,10 @@ static gboolean update_field(gpointer data)
 }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-#define RANGE_SET_VALUE(...)
-#define RANGE_GET_VALUE(...) 0
+  #define RANGE_SET_VALUE(tree,scrollbar,value) gtk_range_set_value(GTK_RANGE(gtk_scrolled_window_get_##scrollbar(GTK_SCROLLED_WINDOW(shell->tree->scroll))), value)
+  #define RANGE_GET_VALUE(tree,scrollbar) gtk_range_get_value(GTK_RANGE(gtk_scrolled_window_get_##scrollbar(GTK_SCROLLED_WINDOW(shell->tree->scroll))))
 #else
-#define RANGE_SET_VALUE(tree, scrollbar, value)                                \
+  #define RANGE_SET_VALUE(tree, scrollbar, value)			       \
     do {                                                                       \
         GtkRange CONCAT(*range, __LINE__) =                                    \
             GTK_RANGE(GTK_SCROLLED_WINDOW(shell->tree->scroll)->scrollbar);    \
@@ -922,7 +924,7 @@ static gboolean update_field(gpointer data)
         gtk_adjustment_value_changed(GTK_ADJUSTMENT(                           \
             gtk_range_get_adjustment(CONCAT(range, __LINE__))));               \
     } while (0)
-#define RANGE_GET_VALUE(tree, scrollbar)                                       \
+  #define RANGE_GET_VALUE(tree, scrollbar)                                     \
     gtk_range_get_value(                                                       \
         GTK_RANGE(GTK_SCROLLED_WINDOW(shell->tree->scroll)->scrollbar))
 #endif
@@ -956,12 +958,8 @@ static gboolean reload_section(gpointer data)
         double pos_detail_scroll;
 
         /* save current position */
-#if GTK_CHECK_VERSION(3, 0, 0)
-        /* TODO:GTK3 */
-#else
         pos_info_scroll = RANGE_GET_VALUE(info_tree, vscrollbar);
         pos_detail_scroll = RANGE_GET_VALUE(detail_view, vscrollbar);
-#endif
 
         /* avoid drawing the window while we reload */
 #if GTK_CHECK_VERSION(2, 14, 0)
@@ -989,16 +987,10 @@ static gboolean reload_section(gpointer data)
             gtk_tree_path_free(path);
         } else {
             /* restore position */
-#if GTK_CHECK_VERSION(3, 0, 0)
-            /* TODO:GTK3 */
-#else
             RANGE_SET_VALUE(info_tree, vscrollbar, pos_info_scroll);
-#endif
         }
 
-#if !GTK_CHECK_VERSION(3, 0, 0)
         RANGE_SET_VALUE(detail_view, vscrollbar, pos_detail_scroll);
-#endif
 
         /* make the window drawable again */
 #if GTK_CHECK_VERSION(2, 14, 0)
@@ -2061,15 +2053,10 @@ static void module_selected(gpointer data)
 
         gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->info_tree->view));
 
-        /* urgh. why don't GTK do this when the model is cleared? */
-#if GTK_CHECK_VERSION(3, 0, 0)
-        /* TODO:GTK3 */
-#else
         RANGE_SET_VALUE(info_tree, vscrollbar, 0.0);
         RANGE_SET_VALUE(info_tree, hscrollbar, 0.0);
         RANGE_SET_VALUE(detail_view, vscrollbar, 0.0);
         RANGE_SET_VALUE(detail_view, hscrollbar, 0.0);
-#endif
 
         title = g_strdup_printf("%s - %s", shell->selected_module->name,
                                 entry->name);
