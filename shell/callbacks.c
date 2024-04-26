@@ -255,7 +255,7 @@ void cb_report_bug()
 
 void cb_refresh()
 {
-    shell_do_reload();
+    shell_do_reload(TRUE);
 }
 
 void cb_copy_to_clipboard()

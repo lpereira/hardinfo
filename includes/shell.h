@@ -181,7 +181,7 @@ struct _ShellFieldUpdateSource {
 };
 
 void		shell_init(GSList *modules);
-void		shell_do_reload(void);
+void		shell_do_reload(gboolean reload);
 
 Shell	       *shell_get_main_shell();
 
