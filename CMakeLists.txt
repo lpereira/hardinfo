@@ -144,6 +144,11 @@ if(${distro}${disversion} MATCHES "DebianGNULinux7")
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
 endif()
 
+#debian 8
+if(${distro}${disversion} MATCHES "DebianGNULinux8")
+    message("DEB 8 - GTK3 version 3.14.5 is low - Themes disabled")
+endif()
+
 #debian ->11
 if(${disversion} LESS 11.99)
   if(${distro} MATCHES "DebianGNULinux")

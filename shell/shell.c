@@ -316,7 +316,13 @@ void shell_do_reload(gboolean reload)
 
     params.aborting_benchmarks=0;
     if(reload) module_entry_reload(shell->selected);
-    if(!params.aborting_benchmarks) module_selected(NULL);
+    if(!params.aborting_benchmarks) {
+        module_selected(NULL);
+    } else {
+        shell_status_update("Ready.");
+        shell_status_set_enabled(FALSE);
+    }
+
     params.aborting_benchmarks=0;
 
     shell_action_set_enabled("RefreshAction", TRUE);
@@ -423,7 +429,7 @@ static void create_window(void)
 {
     GtkWidget *vbox, *hbox;
     char theme_st[200];
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 20, 0)
     GtkCssProvider *provider;
     provider = gtk_css_provider_new();
     GtkCssProvider *provider2;
@@ -519,6 +525,7 @@ static void create_window(void)
 
     g_free(conf_path);
     g_key_file_free(key_file);
+#if GTK_CHECK_VERSION(3, 20, 0)
     if(params.theme==-1) shell_action_set_active("DisableThemeAction", TRUE);
     if(params.theme==1) shell_action_set_active("Theme1Action", TRUE);
     if(params.theme==2) shell_action_set_active("Theme2Action", TRUE);
@@ -527,7 +534,6 @@ static void create_window(void)
     if(params.theme==5) shell_action_set_active("Theme5Action", TRUE);
     if(params.theme==6) shell_action_set_active("Theme6Action", TRUE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){
        if(darkmode){
 	   sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
@@ -781,6 +787,7 @@ void shell_init(GSList * modules)
     shell_action_set_property("ReportAction", "is-important", TRUE);
     shell_action_set_property("SyncManagerAction", "is-important", TRUE);
 
+#if GTK_CHECK_VERSION(3, 20, 0)
     shell_action_set_property("DisableThemeAction", "draw-as-radio", TRUE);
     shell_action_set_property("Theme1Action", "draw-as-radio", TRUE);
     shell_action_set_property("Theme2Action", "draw-as-radio", TRUE);
@@ -788,6 +795,7 @@ void shell_init(GSList * modules)
     shell_action_set_property("Theme4Action", "draw-as-radio", TRUE);
     shell_action_set_property("Theme5Action", "draw-as-radio", TRUE);
     shell_action_set_property("Theme6Action", "draw-as-radio", TRUE);
+#endif
 
     shell->tree = tree_new();
     shell->info_tree = info_tree_new();
@@ -1513,7 +1521,7 @@ static void module_selected_show_info_list(GKeyFile *key_file,
                                            gchar **groups,
                                            gsize ngroups)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 20, 0)
     GtkCssProvider *provider;
     provider = gtk_css_provider_new();
 #endif
@@ -1527,7 +1535,7 @@ static void module_selected_show_info_list(GKeyFile *key_file,
 
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info_tree->view), FALSE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 20, 0)
     if(params.theme>0){
         gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
         gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -2112,7 +2120,7 @@ static ShellInfoTree *info_tree_new(void)
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
     gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), TRUE);
 
-/*#if GTK_CHECK_VERSION(3, 0, 0)
+/*#if GTK_CHECK_VERSION(3, 20, 0)
     if(params.theme>0){
        //GdkRGBA info_default_text_color       = { .red = 0.2, .green = 0.3, .blue = 1.0, .alpha = 1.0 };
        //gtk_widget_override_color(treeview, GTK_STATE_FLAG_SELECTED, &info_default_text_color);
@@ -2206,7 +2214,7 @@ static ShellTree *tree_new()
     GtkCellRenderer *cr_text, *cr_pbuf;
     GtkTreeViewColumn *column;
     GtkTreeSelection *sel;
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 20, 0)
     GtkCssProvider *provider;
     provider = gtk_css_provider_new();
 #endif
@@ -2232,7 +2240,7 @@ static ShellTree *tree_new()
     gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(treeview), 24);
 #endif
 
-/*#if GTK_CHECK_VERSION(3, 0, 0)
+/*#if GTK_CHECK_VERSION(3, 20, 0)
     if(params.theme>0){
         GdkRGBA info_default_text_color       = { .red = 0.2, .green = 0.3, .blue = 1.0, .alpha = 1.0 };
         gtk_widget_override_color(treeview, GTK_STATE_FLAG_SELECTED, &info_default_text_color);
@@ -2263,7 +2271,7 @@ static ShellTree *tree_new()
 
     gtk_container_add(GTK_CONTAINER(scroll), treeview);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 20, 0)
     if(params.theme>0){
         gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
         gtk_style_context_add_provider(gtk_widget_get_style_context(treeview), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);

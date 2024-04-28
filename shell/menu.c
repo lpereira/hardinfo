@@ -42,7 +42,7 @@
 static GtkActionEntry entries[] = {
     {"InformationMenuAction", NULL, N_("_Information")},	/* name, stock id, label */
     {"ViewMenuAction", NULL, N_("_View")},
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 20, 0)
     {"ThemeMenuAction", NULL, N_("_Theme")},
 #endif
     {"HelpMenuAction", NULL, N_("_Help")},
