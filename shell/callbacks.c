@@ -368,6 +368,7 @@ void cb_about()
 	"squeegee",
 	"Rawdanitsu",
 	"Larry Ewing",
+	"2x910",
 	"",
 	"Packaging by:",
 	"Topazus (Fedora/Redhat branches)",
