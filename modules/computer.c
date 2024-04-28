@@ -454,6 +454,7 @@ static gchar *detect_machine_type(void)
 
 /* Table based off imvirt by Thomas Liske <liske@ibh.de>
    Copyright (c) 2008 IBH IT-Service GmbH under GPLv2. */
+char get_virtualization[100]={};
 gchar *computer_get_virtualization(void)
 {
     gboolean found = FALSE;
@@ -492,6 +493,8 @@ gchar *computer_get_virtualization(void)
         { NULL }
     };
     gchar *tmp;
+    //Caching for speedup
+    if(get_virtualization[0]!=0) return g_strdup(get_virtualization);
 
     DEBUG("Detecting virtual machine");
 
@@ -526,6 +529,7 @@ gchar *computer_get_virtualization(void)
               if (found) {
                   DEBUG("%s found (by reading file %s)",
                         vm_types[j].vmtype, files[i]);
+		  strcpy(get_virtualization,_(vm_types[j].vmtype));//Save
                   return g_strdup(_(vm_types[j].vmtype));
               }
          }
@@ -533,8 +537,10 @@ gchar *computer_get_virtualization(void)
     }
 
     DEBUG("no virtual machine detected; assuming physical machine");
-
-    return detect_machine_type();
+    char *c=detect_machine_type();
+    strcpy(get_virtualization,c);//Save
+    free(c);
+    return g_strdup(get_virtualization);
 }
 
 gchar *callback_summary(void)

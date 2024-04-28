@@ -134,28 +134,22 @@ void shell_action_set_property(const gchar * action_name,
 void shell_action_set_label(const gchar * action_name, gchar * label)
 {
 #if GTK_CHECK_VERSION(2,16,0)
-    if (params.gui_running && shell->action_group) {
+  if (params.gui_running && shell->action_group) {
 	GtkAction *action;
 
-	action =
-	    gtk_action_group_get_action(shell->action_group, action_name);
-	if (action) {
-	    gtk_action_set_label(action, label);
-	}
+	action = gtk_action_group_get_action(shell->action_group, action_name);
+	if (action) gtk_action_set_label(action, label);
     }
 #endif
 }
 
 void shell_action_set_enabled(const gchar * action_name, gboolean setting)
 {
-    if (params.gui_running && shell->action_group) {
+  if (params.gui_running && shell->action_group) {
 	GtkAction *action;
 
-	action =
-	    gtk_action_group_get_action(shell->action_group, action_name);
-	if (action) {
-	    gtk_action_set_sensitive(action, setting);
-	}
+	action = gtk_action_group_get_action(shell->action_group, action_name);
+	if (action) gtk_action_set_sensitive(action, setting);
     }
 }
 
@@ -167,9 +161,7 @@ gboolean shell_action_get_enabled(const gchar * action_name)
 	return FALSE;
 
     action = gtk_action_group_get_action(shell->action_group, action_name);
-    if (action) {
-	return gtk_action_get_sensitive(action);
-    }
+    if (action) return gtk_action_get_sensitive(action);
 
     return FALSE;
 }
@@ -276,6 +268,7 @@ void shell_status_set_percentage(gint percentage)
 
 void shell_view_set_enabled(gboolean setting)
 {
+    DEBUG("SHELL_VIEW=%s\n",setting?"Normal":"Busy");
     if (!params.gui_running)
 	return;
 
@@ -288,7 +281,6 @@ void shell_view_set_enabled(gboolean setting)
 
     gtk_widget_set_sensitive(shell->hbox, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
-    shell_action_set_enabled("ConnectToAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
     shell_action_set_enabled("CopyAction", setting);
     shell_action_set_enabled("ReportAction", setting);
@@ -297,6 +289,7 @@ void shell_view_set_enabled(gboolean setting)
 
 void shell_status_set_enabled(gboolean setting)
 {
+    DEBUG("SHELL_STATUS=%d\n",setting?1:0);
     if (!params.gui_running)
 	return;
 
@@ -321,8 +314,10 @@ void shell_do_reload(gboolean reload)
 
     shell_status_set_enabled(TRUE);
 
+    params.aborting_benchmarks=0;
     if(reload) module_entry_reload(shell->selected);
-    module_selected(NULL);
+    if(!params.aborting_benchmarks) module_selected(NULL);
+    params.aborting_benchmarks=0;
 
     shell_action_set_enabled("RefreshAction", TRUE);
     shell_action_set_enabled("CopyAction", TRUE);
@@ -336,8 +331,12 @@ void shell_status_update(const gchar * message)
 	gtk_label_set_markup(GTK_LABEL(shell->status), message);
 	gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(shell->progress),1);
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
-	while (gtk_events_pending())
-	    gtk_main_iteration();
+        //gtk_widget_set_sensitive(shell->window, TRUE);
+	//gtk_window_set_focus(shell->window,);
+	//gtk_widget_grab_focus(shell->window);
+	//gtk_widget_activate(shell->window);
+	//gtk_window_get_focus_visible(shell->window);
+	while (gtk_events_pending()) gtk_main_iteration();
     } else if (!params.quiet) {
 	fprintf(stderr, "\033[2K\033[40;37;1m %s\033[0m\r", message);
     }
@@ -544,8 +543,6 @@ static void create_window(void)
 #endif
 
     gtk_widget_show(shell->window);
-    while (gtk_events_pending())
-	gtk_main_iteration();
 }
 
 static void view_menu_select_entry(gpointer data, gpointer data2)
@@ -761,6 +758,7 @@ gboolean hardinfo_link(const gchar *uri) {
 
 void shell_set_transient_dialog(GtkWindow *dialog)
 {
+    //DEBUG("TRANSIENT_DIALOG CHANGED!!!!!");
     shell->transient_dialog = dialog ? dialog : GTK_WINDOW(shell->window);
 }
 
@@ -795,7 +793,7 @@ void shell_init(GSList * modules)
     shell->info_tree = info_tree_new();
     shell->loadgraph = load_graph_new(75);
     shell->detail_view = detail_view_new();
-    shell->transient_dialog = GTK_WINDOW(shell->window);
+    shell_set_transient_dialog(NULL);
 
     update_tbl = g_hash_table_new_full(g_str_hash, g_str_equal,
                                        g_free, destroy_update_tbl_value);
@@ -961,13 +959,6 @@ static gboolean reload_section(gpointer data)
         pos_info_scroll = RANGE_GET_VALUE(info_tree, vscrollbar);
         pos_detail_scroll = RANGE_GET_VALUE(detail_view, vscrollbar);
 
-        /* avoid drawing the window while we reload */
-#if GTK_CHECK_VERSION(2, 14, 0)
-        gdk_window_freeze_updates(gdk_window);
-#else
-        gdk_window_freeze_updates(shell->window->window);
-#endif
-
         /* gets the current selected path */
         if (gtk_tree_selection_get_selected(shell->info_tree->selection,
                                             &shell->info_tree->model, &iter)) {
@@ -992,12 +983,6 @@ static gboolean reload_section(gpointer data)
 
         RANGE_SET_VALUE(detail_view, vscrollbar, pos_detail_scroll);
 
-        /* make the window drawable again */
-#if GTK_CHECK_VERSION(2, 14, 0)
-        gdk_window_thaw_updates(gdk_window);
-#else
-        gdk_window_thaw_updates(shell->window->window);
-#endif
     }
 
     /* destroy the timeout: it'll be set up again */
@@ -1540,8 +1525,8 @@ static void module_selected_show_info_list(GKeyFile *key_file,
     g_object_ref(shell->info_tree->model);
     gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info_tree->view), NULL);
 
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info_tree->view),
-                                      FALSE);
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info_tree->view), FALSE);
+
 #if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){
         gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
@@ -1562,11 +1547,9 @@ static void module_selected_show_info_list(GKeyFile *key_file,
     }
 
     g_object_unref(shell->info_tree->model);
-    gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info_tree->view),
-                            shell->info_tree->model);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(shell->info_tree->view), shell->info_tree->model);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(shell->info_tree->view));
-    gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info_tree->view),
-                                     ngroups > 1);
+    gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(shell->info_tree->view), ngroups > 1);
 }
 
 static gboolean detail_activate_link (GtkLabel *label, gchar *uri, gpointer user_data) {
@@ -1749,8 +1732,6 @@ module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
     gsize ngroups;
     gint i;
 
-    gdk_window_freeze_updates(gdk_window);
-
     module_entry_scan(entry);
     if (!reload) {
         /* recreate the iter hash table */
@@ -1798,9 +1779,6 @@ module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
         }
     }
     shell_set_note_from_entry(entry);
-
-    gdk_window_thaw_updates(gdk_window);
-
 }
 
 static void info_selected_show_extra(const gchar *tag)
@@ -2036,8 +2014,7 @@ static void module_selected(gpointer data)
         memcpy(&parent, &iter, sizeof(iter));
     }
 
-    gtk_tree_model_get(model, &parent, TREE_COL_MODULE, &shell->selected_module,
-                       -1);
+    gtk_tree_model_get(model, &parent, TREE_COL_MODULE, &shell->selected_module, -1);
 
     /* Get the current selection and shows its related info */
     gtk_tree_model_get(model, &iter, TREE_COL_MODULE_ENTRY, &entry, -1);
@@ -2058,8 +2035,7 @@ static void module_selected(gpointer data)
         RANGE_SET_VALUE(detail_view, vscrollbar, 0.0);
         RANGE_SET_VALUE(detail_view, hscrollbar, 0.0);
 
-        title = g_strdup_printf("%s - %s", shell->selected_module->name,
-                                entry->name);
+        title = g_strdup_printf("%s - %s", shell->selected_module->name, entry->name);
         shell_set_title(shell, title);
         g_free(title);
 
@@ -2077,7 +2053,7 @@ static void module_selected(gpointer data)
         set_view_type(SHELL_VIEW_NORMAL, FALSE);
 
         if (shell->selected_module->summaryfunc) {
-            shell_show_detail_view();
+	    shell_show_detail_view();
         }
     }
     current = entry;

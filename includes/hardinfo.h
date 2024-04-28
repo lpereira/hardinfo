@@ -57,7 +57,7 @@ struct _ProgramParameters {
   gint skip_benchmarks;
   gint quiet;
   gint theme;
-
+  gint aborting_benchmarks;
   /*
    * OK to use the common parts of HTML(4.0) and Pango Markup
    * in the value part of a key/value.

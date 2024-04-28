@@ -20,22 +20,28 @@
 
 #define BENCH_CALLBACK(CN, BN, BID, R) \
 gchar *CN() { \
-    if (R)    \
+    DEBUG("BENCH CALLBACK %s\n",BN); \
+    params.aborting_benchmarks=0; \
+    if (R) \
         return benchmark_include_results_reverse(bench_results[BID], BN); \
-    else      \
-        return benchmark_include_results(bench_results[BID], BN); \
+    else \
+    return benchmark_include_results(bench_results[BID], BN); \
 }
 
-#define BENCH_SCAN_SIMPLE(SN, BF, BID) \
+#define BENCH_SCAN_SIMPLE(SN, BF, BID, BN)  \
 void SN(gboolean reload) { \
-    static gboolean scanned = FALSE; if (reload || bench_results[BID].result<=0.0) scanned = FALSE;if (scanned) return; \
-    do_benchmark(BF, BID); \
-    SCAN_END(); \
+    static gboolean scanned=FALSE; \
+    if(params.aborting_benchmarks) return; \
+    if (reload || bench_results[BID].result<=0.0) scanned = FALSE; \
+    if(reload){DEBUG("BENCH SCAN RELOAD %s\n",BN);} else if(scanned) {DEBUG("BENCH SCAN OK %s\n",BN);}else{DEBUG("BENCH SCAN %s\n",BN);} \
+    if (scanned) return; \
+    do_benchmark(BF, BID);			\
+    scanned = TRUE; \
 }
 
 #define BENCH_SIMPLE(BID, BN, BF, R) \
     BENCH_CALLBACK(callback_##BF, BN, BID, R); \
-    BENCH_SCAN_SIMPLE(scan_##BF, BF, BID);
+    BENCH_SCAN_SIMPLE(scan_##BF, BF, BID, BN);
 
 // ID, NAME, FUNCTION, R (0 = lower is better, 1 = higher is better)
 BENCH_SIMPLE(BENCHMARK_FIB, "CPU Fibonacci", benchmark_fib, 1);
@@ -59,7 +65,8 @@ BENCH_SIMPLE(BENCHMARK_MEMORY_ALL, "SysBench Memory (Multi-thread)", benchmark_m
 BENCH_CALLBACK(callback_benchmark_gui, "GPU Drawing", BENCHMARK_GUI, 1);
 void scan_benchmark_gui(gboolean reload)
 {
-    static gboolean scanned = FALSE;
+    static gboolean scanned=FALSE;
+    if(params.aborting_benchmarks) return;
     if (reload || bench_results[BENCHMARK_GUI].result<=0.0) scanned = FALSE;
     if (scanned) return;
 
@@ -75,7 +82,7 @@ void scan_benchmark_gui(gboolean reload)
     } else {
         bench_results[BENCHMARK_GUI] = er;
     }
-    SCAN_END();
+    scanned = TRUE;
 }
 
 //Note: Same order as entries, used for json to server
