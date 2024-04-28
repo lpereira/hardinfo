@@ -63,10 +63,11 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_sync_manager)},
 
-    {"CopyAction", HI_STOCK_CLIPBOARD,
+    //does not work correctly and value low
+    /*{"CopyAction", HI_STOCK_CLIPBOARD,
      N_("_Copy to Clipboard"), "<control>C",
      N_("Copy to clipboard"),
-     G_CALLBACK(cb_copy_to_clipboard)},
+     G_CALLBACK(cb_copy_to_clipboard)},*/
 
     {"RefreshAction", HI_STOCK_REFRESH,
      N_("_Refresh"), "F5",

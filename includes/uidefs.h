@@ -15,7 +15,7 @@ char *uidefs_str =
     "	<menubar>"
     "	<menu name=\"InformationMenu\" action=\"InformationMenuAction\">"
     "		<menuitem name=\"Report\" action=\"ReportAction\" always-show-image=\"true\"/>"
-    "		<menuitem name=\"Copy\" action=\"CopyAction\" always-show-image=\"true\"/>"
+  /*    "		<menuitem name=\"Copy\" action=\"CopyAction\" always-show-image=\"true\"/>"*/
     SYNC_MANAGER_MENU_ITEMS \
     "		<separator/>"
     "		<menuitem name=\"Quit\" action=\"QuitAction\" />"
@@ -47,7 +47,7 @@ char *uidefs_str =
     "			<toolitem name=\"Refresh\" action=\"RefreshAction\"/>"
     "			<separator/>"
     "			<toolitem name=\"Report\" action=\"ReportAction\"/>"
-    "			<toolitem name=\"Copy\" action=\"CopyAction\"/>"
+  /*    "			<toolitem name=\"Copy\" action=\"CopyAction\"/>"*/
     "			<separator/>"
     SYNC_MANAGER_TOOL_ITEMS \
     "		</placeholder>"

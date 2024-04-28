@@ -282,7 +282,7 @@ void shell_view_set_enabled(gboolean setting)
     gtk_widget_set_sensitive(shell->hbox, setting);
     shell_action_set_enabled("ViewMenuAction", setting);
     shell_action_set_enabled("RefreshAction", setting);
-    shell_action_set_enabled("CopyAction", setting);
+    //shell_action_set_enabled("CopyAction", setting);
     shell_action_set_enabled("ReportAction", setting);
     shell_action_set_enabled("SyncManagerAction", setting && sync_manager_count_entries() > 0);
 }
@@ -309,7 +309,7 @@ void shell_do_reload(gboolean reload)
 	return;
 
     shell_action_set_enabled("RefreshAction", FALSE);
-    shell_action_set_enabled("CopyAction", FALSE);
+    //shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_enabled("ReportAction", FALSE);
 
     shell_status_set_enabled(TRUE);
@@ -320,7 +320,7 @@ void shell_do_reload(gboolean reload)
     params.aborting_benchmarks=0;
 
     shell_action_set_enabled("RefreshAction", TRUE);
-    shell_action_set_enabled("CopyAction", TRUE);
+    //shell_action_set_enabled("CopyAction", TRUE);
     shell_action_set_enabled("ReportAction", TRUE);
 }
 
@@ -776,7 +776,7 @@ void shell_init(GSList * modules)
 
     create_window();
 
-    shell_action_set_property("CopyAction", "is-important", TRUE);
+    //shell_action_set_property("CopyAction", "is-important", TRUE);
     shell_action_set_property("RefreshAction", "is-important", TRUE);
     shell_action_set_property("ReportAction", "is-important", TRUE);
     shell_action_set_property("SyncManagerAction", "is-important", TRUE);
@@ -832,7 +832,7 @@ void shell_init(GSList * modules)
     shell_status_set_enabled(FALSE);
 
     shell_action_set_enabled("RefreshAction", FALSE);
-    shell_action_set_enabled("CopyAction", FALSE);
+    //shell_action_set_enabled("CopyAction", FALSE);
     shell_action_set_active("SidePaneAction", TRUE);
     shell_action_set_active("ToolbarAction", TRUE);
 
@@ -2040,14 +2040,14 @@ static void module_selected(gpointer data)
         g_free(title);
 
         shell_action_set_enabled("RefreshAction", TRUE);
-        shell_action_set_enabled("CopyAction", TRUE);
+        //shell_action_set_enabled("CopyAction", TRUE);
 
         shell_status_update(_("Done."));
         shell_status_set_enabled(FALSE);
     } else {
         shell_set_title(shell, NULL);
         shell_action_set_enabled("RefreshAction", FALSE);
-        shell_action_set_enabled("CopyAction", FALSE);
+        //shell_action_set_enabled("CopyAction", FALSE);
 
         gtk_tree_store_clear(GTK_TREE_STORE(shell->info_tree->model));
         set_view_type(SHELL_VIEW_NORMAL, FALSE);

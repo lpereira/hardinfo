@@ -258,12 +258,12 @@ void cb_refresh()
     shell_do_reload(TRUE);
 }
 
-void cb_copy_to_clipboard()
+/*void cb_copy_to_clipboard()
 {
     ShellModuleEntry *entry = shell_get_main_shell()->selected;
 
     if (entry) {
-	gchar *data = module_entry_function(entry);
+        gchar *data = module_entry_function(entry);
 	GtkClipboard *clip =
 	    gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE));
 	ReportContext *ctx = report_context_text_new(NULL);
@@ -280,6 +280,7 @@ void cb_copy_to_clipboard()
 	report_context_free(ctx);
     }
 }
+*/
 
 void cb_side_pane()
 {
