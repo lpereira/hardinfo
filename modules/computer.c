@@ -377,10 +377,11 @@ gchar *callback_memory_usage()
                "LoadGraphSuffix= kB\n"
                "RescanInterval=2000\n"
 	       "ColumnTitle$TextValue=%s\n"
+	       "ColumnTitle$Extra1=%s\n"
                "ColumnTitle$Value=%s\n"
                "ShowColumnHeaders=true\n"
                "%s\n", meminfo,
-               _("Description"), _("Value"), /* column labels */
+	       _("Field"), _("Description"), _("Value"), /* column labels */
                lginterval);
 }
 

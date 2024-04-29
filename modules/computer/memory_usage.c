@@ -76,9 +76,9 @@ void scan_memory_do(void)
         }
 
         /*add MemTotal for internal usage*/
-	if(strcmp(newkeys[0],"MemTotal")==0) moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
+	//if(strcmp(newkeys[0],"MemTotal")==0) moreinfo_add_with_prefix("DEV", newkeys[0], g_strdup(newkeys[1]));
 
-        list = g_list_prepend(list, g_strdup_printf("%s=%s", tmp_label, trans_val));
+        list = g_list_prepend(list, g_strdup_printf("%s=%s=%s\n", newkeys[0], trans_val, tmp_label));
 
         g_free(trans_val);
         g_strfreev(newkeys);
@@ -91,7 +91,7 @@ void scan_memory_do(void)
     //add memory information
     memstr=strdup("");lgstr=strdup("");
     while(list){
-        char **datas = g_strsplit(list->data,"=",2);
+        char **datas = g_strsplit(list->data,"=",3);
         if (!datas[0]) {
             g_strfreev(datas);
             break;
@@ -99,7 +99,7 @@ void scan_memory_do(void)
 
         moreinfo_add_with_prefix("DEV", datas[0], g_strdup(datas[1]));
 
-        tmp = g_strconcat(memstr, list->data, "\n", NULL);
+        tmp = g_strconcat(memstr, datas[0],"=",datas[1],"|",datas[2], "\n", NULL);
 	g_free(memstr);
 	memstr=tmp;
 
