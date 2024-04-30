@@ -170,10 +170,10 @@ gchar *hi_get_field(gchar * field)
 void scan_summary(gboolean reload)
 {
     SCAN_START();
-    gdk_window_freeze_updates(GDK_WINDOW(gtk_widget_get_window(shell_get_main_shell()->info_tree->view)));
+    //gdk_window_freeze_updates(GDK_WINDOW(gtk_widget_get_window(shell_get_main_shell()->info_tree->view)));
     module_entry_scan_all_except(entries, 0);
     computer->alsa = computer_get_alsainfo();
-    gdk_window_thaw_updates(GDK_WINDOW(gtk_widget_get_window(shell_get_main_shell()->info_tree->view)));
+    //gdk_window_thaw_updates(GDK_WINDOW(gtk_widget_get_window(shell_get_main_shell()->info_tree->view)));
     SCAN_END();
 }
 

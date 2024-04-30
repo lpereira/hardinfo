@@ -1360,6 +1360,9 @@ gchar *strwrap(const gchar *st, size_t w, gchar delimiter)
 
   if(!st) return NULL;
 
+  //disable wrap for CLI
+  if(params.create_report) return g_strdup(st);
+
   while(((len=strlen(ist)) > 0) && (((rst-retst)+w+2)<MAX_STRWRAP)){
     if(len>w) len=w;
     while((len>1) && (*(ist+len)!=0)&&(*(ist+len)!=delimiter)) len--;
