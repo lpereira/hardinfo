@@ -325,7 +325,6 @@ void cb_about()
         "Mattia Rizzolo",
         "Yo",
         "jamesbond",
-        "Ondrej Čerman",
         "Mike Hewitt",
         "Boris Afonot",
 	"Amstelchen",
