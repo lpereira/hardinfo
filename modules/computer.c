@@ -170,8 +170,10 @@ gchar *hi_get_field(gchar * field)
 void scan_summary(gboolean reload)
 {
     SCAN_START();
+    gdk_window_freeze_updates(GDK_WINDOW(gtk_widget_get_window(shell_get_main_shell()->info_tree->view)));
     module_entry_scan_all_except(entries, 0);
     computer->alsa = computer_get_alsainfo();
+    gdk_window_thaw_updates(GDK_WINDOW(gtk_widget_get_window(shell_get_main_shell()->info_tree->view)));
     SCAN_END();
 }
 
@@ -582,6 +584,7 @@ gchar *callback_summary(void)
     return info_flatten(info);
 }
 
+
 gchar *callback_os(void)
 {
     struct Info *info = info_new();
@@ -602,7 +605,7 @@ gchar *callback_os(void)
     struct InfoGroup *version_group =
     info_add_group(
         info, _("Version"), info_field(_("Kernel"), computer->os->kernel),
-        info_field(_("Command Line"), computer->os->kcmdline ?: _("Unknown")),
+        info_field(_("Command Line"), idle_free(strwrap(computer->os->kcmdline,80,' ')) ?: _("Unknown")),
         info_field(_("Version"), computer->os->kernel_version),
         info_field(_("C Library"), computer->os->libc),
         info_field(_("Distribution"), distro,
@@ -634,6 +637,7 @@ gchar *callback_os(void)
 
 gchar *callback_security(void)
 {
+    gchar *st;
     struct Info *info = info_new();
 
     info_set_view_type(info, SHELL_VIEW_DETAIL);
@@ -686,9 +690,11 @@ gchar *callback_security(void)
                 g_strstr_len(contents, -1, "vulnerable"))
                 icon = "circle_red_x.svg";
 
+	    st=strwrap(contents,90,',');
+	    g_free(contents);
             info_group_add_fields(vulns,
                                   info_field(g_strdup(vuln),
-                                             idle_free(contents), .icon = icon,
+                                             idle_free(st), .icon = icon,
                                              .free_name_on_flatten = TRUE),
                                   info_field_last());
         }

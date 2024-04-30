@@ -1347,3 +1347,36 @@ gboolean hardinfo_spawn_command_line_sync(const gchar *command_line,
     return g_spawn_command_line_sync(command_line, standard_output,
                                      standard_error, exit_status, error);
 }
+
+
+#define MAX_STRWRAP 10000
+gchar *strwrap(const gchar *st, size_t w, gchar delimiter)
+{
+  gchar retst[MAX_STRWRAP];
+  gchar *rst=retst;
+  const gchar *ist=st;
+  int first=1;
+  size_t len;
+
+  if(!st) return NULL;
+
+  while(((len=strlen(ist)) > 0) && (((rst-retst)+w+2)<MAX_STRWRAP)){
+    if(len>w) len=w;
+    while((len>1) && (*(ist+len)!=0)&&(*(ist+len)!=delimiter)) len--;
+    if(len==1) {len=strlen(ist);if(len>w) len=w;}
+    if(!first) {
+      *rst++=13;
+      strncpy(rst,ist,len);
+    }else{
+      strncpy(rst,ist,len);
+    }
+    rst+=len;
+    ist+=len;
+    if(*ist==delimiter) ist++;
+    if(*ist==0x20) ist++;
+    first=0;
+  }
+  *rst=0;
+
+  return g_strdup(retst);
+}

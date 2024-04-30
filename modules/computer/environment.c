@@ -25,14 +25,16 @@ void scan_env_var(gboolean reload)
     SCAN_START();
 
     gchar **envlist;
+    gchar *st;
     gint i;
 
     g_free(_env);
 
     _env = g_strdup_printf("[%s]\n", _("Environment Variables") );
     for (i = 0, envlist = g_listenv(); envlist[i]; i++) {
-      _env = h_strdup_cprintf("%s=%s\n", _env,
-                              envlist[i], g_getenv(envlist[i]));
+        st=strwrap(g_getenv(envlist[i]),80,':');
+        _env = h_strdup_cprintf("%s=%s\n", _env, envlist[i], st);
+        g_free(st);
     }
     g_strfreev(envlist);
 

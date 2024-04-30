@@ -227,4 +227,6 @@ gboolean note_cond_bullet(gboolean cond, gchar *note_buff, const gchar *desc_str
 gboolean note_require_tool(const gchar *tool, gchar *note_buff, const gchar *desc_str);
 int cpu_procs_cores_threads(int *p, int *c, int *t);
 
+gchar *strwrap(const gchar *st, size_t w, gchar delimiter);
+
 #endif				/* __HARDINFO_H__ */
