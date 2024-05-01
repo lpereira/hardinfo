@@ -51,6 +51,7 @@ typedef struct _NetInfo NetInfo;
 struct _NetInfo {
     char name[16];
     int mtu;
+    char speed[30];
     unsigned char mac[8];
     char ip[16];
     char mask[16];
@@ -171,7 +172,9 @@ void get_wireless_info(int fd, NetInfo *netinfo)
 void get_net_info(char *if_name, NetInfo * netinfo)
 {
     struct ifreq ifr;
-    int fd;
+    int fd,s;
+    gchar buf[256];
+    FILE *sysfs;
 
     fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
 
@@ -187,12 +190,25 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     netinfo->mtu = ifr.ifr_mtu;
     }
 
+    /* Speed */
+    netinfo->speed[0]=0;
+    sprintf(buf,"/sys/class/net/%s/speed",if_name);
+    sysfs = fopen(buf, "r");
+    s=0;
+    if (sysfs && (fgets(buf, sizeof(buf), sysfs)!=NULL)) sscanf(buf,"%d",&s);
+    if(if_name[0]=='l' && if_name[1]=='o')
+       sprintf(netinfo->speed,"Unlimited"); else
+       if(s==0) sprintf(netinfo->speed,"Not Connected"); else
+           if(s<1000) sprintf(netinfo->speed,"%d Mbit",s); else
+	     sprintf(netinfo->speed,"%g Gbit",(float)s/1000);
+    fclose(sysfs);
+
     /* HW Address */
     strcpy(ifr.ifr_name, if_name);
     if (ioctl(fd, SIOCGIFHWADDR, &ifr) < 0) {
-    memset(netinfo->mac, 0, 8);
+        memset(netinfo->mac, 0, 8);
     } else {
-    memcpy(netinfo->mac, ifr.ifr_ifru.ifru_hwaddr.sa_data, 8);
+        memcpy(netinfo->mac, ifr.ifr_ifru.ifru_hwaddr.sa_data, 8);
     }
 
     /* IP Address */
@@ -403,6 +419,7 @@ static void scan_net_interfaces_24(void)
                        "%s=%s\n" /* Interface Type */
                        "%s=%02x:%02x:%02x:%02x:%02x:%02x\n" /* MAC */
                        "%s=%d\n" /* MTU */
+                       "%s=%s\n" /* Speed */
                        "[%s]\n" /*Transfer Details*/
                        "%s=%.0lf (%.2f%s)\n" /* Bytes Received */
                        "%s=%.0lf (%.2f%s)\n" /* Bytes Sent */,
@@ -413,6 +430,7 @@ static void scan_net_interfaces_24(void)
                        ni.mac[2], ni.mac[3],
                        ni.mac[4], ni.mac[5],
                        _("MTU"), ni.mtu,
+                       _("Speed"), ni.speed,
                        _("Transfer Details"),
                        _("Bytes Received"), recv_bytes, recv_mb, _("MiB"),
                        _("Bytes Sent"), trans_bytes, trans_mb, _("MiB"));
