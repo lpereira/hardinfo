@@ -52,6 +52,7 @@ struct _NetInfo {
     char name[16];
     int mtu;
     char speed[30];
+    int carrier;
     unsigned char mac[8];
     char ip[16];
     char mask[16];
@@ -185,10 +186,18 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     /* MTU */
     strcpy(ifr.ifr_name, if_name);
     if (ioctl(fd, SIOCGIFMTU, &ifr) < 0) {
-    netinfo->mtu = 0;
+        netinfo->mtu = 0;
     } else {
-    netinfo->mtu = ifr.ifr_mtu;
+        netinfo->mtu = ifr.ifr_mtu;
     }
+
+    /* Carrier */
+    netinfo->speed[0]=0;
+    sprintf(buf,"/sys/class/net/%s/carrier",if_name);
+    sysfs = fopen(buf, "r");
+    netinfo->carrier=0;
+    if (sysfs && (fgets(buf, sizeof(buf), sysfs)!=NULL)) sscanf(buf,"%d",&netinfo->carrier);
+    fclose(sysfs);
 
     /* Speed */
     netinfo->speed[0]=0;
@@ -196,11 +205,12 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     sysfs = fopen(buf, "r");
     s=0;
     if (sysfs && (fgets(buf, sizeof(buf), sysfs)!=NULL)) sscanf(buf,"%d",&s);
-    if(if_name[0]=='l' && if_name[1]=='o')
-       sprintf(netinfo->speed,"Unlimited"); else
-       if(s==0) sprintf(netinfo->speed,"Not Connected"); else
-           if(s<1000) sprintf(netinfo->speed,"%d Mbit",s); else
-	     sprintf(netinfo->speed,"%g Gbit",(float)s/1000);
+    if(netinfo->carrier!=1)
+      sprintf(netinfo->speed,"Not Connected");
+        else if(s<=0)
+          sprintf(netinfo->speed,"Unlimited"); else
+            if(s<1000) sprintf(netinfo->speed,"%d Mbit",s); else
+	       sprintf(netinfo->speed,"%g Gbit",(float)s/1000);
     fclose(sysfs);
 
     /* HW Address */
