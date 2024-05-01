@@ -623,7 +623,7 @@ gchar *callback_os(void)
     info_add_group(info, _("Current Session"),
         info_field(_("Computer Name"), computer->os->hostname),
         info_field(_("User Name"), computer->os->username),
-        info_field(_("Language"), computer->os->language),
+        info_field(_("Language"), idle_free(strwrap(computer->os->language,80,';'))),
         info_field(_("Home Directory"), computer->os->homedir),
         info_field(_("Desktop Environment"), computer->os->desktop),
         info_field_last());
