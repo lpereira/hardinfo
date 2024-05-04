@@ -19,6 +19,8 @@
 #include "hardinfo.h"
 #include "computer.h"
 
+gint comparEnv (gpointer a, gpointer b) {return strcmp( (char*)a, (char*)b );}
+
 static gchar *_env = NULL;
 void scan_env_var(gboolean reload)
 {
@@ -27,16 +29,31 @@ void scan_env_var(gboolean reload)
     gchar **envlist;
     gchar *st;
     gint i;
+    GList *list=NULL, *a;
 
     g_free(_env);
 
+    //read environment to GList
     _env = g_strdup_printf("[%s]\n", _("Environment Variables") );
     for (i = 0, envlist = g_listenv(); envlist[i]; i++) {
         st=strwrap(g_getenv(envlist[i]),80,':');
-        _env = h_strdup_cprintf("%s=%s\n", _env, envlist[i], st);
+        list = g_list_prepend(list, g_strdup_printf("%s=%s\n", envlist[i], st));
         g_free(st);
     }
     g_strfreev(envlist);
+
+    //sort
+    list=g_list_sort(list,(GCompareFunc)comparEnv);
+
+    while(list){
+        _env = h_strdup_cprintf("%s", _env, (char *)list->data);
+
+        //next and free
+        a=list;
+        list=list->next;
+        free(a->data);
+        g_list_free_1(a);
+    }
 
     SCAN_END();
 }
