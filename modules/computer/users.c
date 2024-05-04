@@ -20,12 +20,15 @@
 #include "hardinfo.h"
 #include "computer.h"
 
-gchar *users = NULL;
+gint comparUsers (gpointer a, gpointer b) {return strcmp( (char*)a, (char*)b );}
 
+gchar *users = NULL;
 void
 scan_users_do(void)
 {
     struct passwd *passwd_;
+    GList *list=NULL, *a;
+
     passwd_ = getpwent();
     if (!passwd_)
         return;
@@ -49,13 +52,35 @@ scan_users_do(void)
                 _("Group ID"), (gint) passwd_->pw_gid,
                 _("Home Directory"), passwd_->pw_dir,
                 _("Default Shell"), passwd_->pw_shell);
-        moreinfo_add_with_prefix("COMP", key, val);
 
         strend(passwd_->pw_gecos, ',');
-        users = h_strdup_cprintf("$%s$%s=%s\n", users, key, passwd_->pw_name, passwd_->pw_gecos);
+        list = g_list_prepend(list, g_strdup_printf("%s,%s,%s,%s", key, passwd_->pw_name, passwd_->pw_gecos, val));
         passwd_ = getpwent();
         g_free(key);
     }
 
     endpwent();
+
+    //sort
+    list=g_list_sort(list,(GCompareFunc)comparUsers);
+
+
+    while (list) {
+        char **datas = g_strsplit(list->data,",",4);
+        if (!datas[0]) {
+            g_strfreev(datas);
+            break;
+        }
+
+        moreinfo_add_with_prefix("COMP", datas[0], datas[3]);
+
+        users = h_strdup_cprintf("$%s$%s=%s\n", users, datas[0], datas[1], datas[2]);
+
+        //next and free
+        a=list;
+        list=list->next;
+        free(a->data);
+        g_list_free_1(a);
+    }
+
 }
