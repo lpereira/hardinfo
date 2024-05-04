@@ -21,12 +21,13 @@
 #include "hardinfo.h"
 #include "computer.h"
 
-gchar *groups = NULL;
+gint comparGroups (gpointer a, gpointer b) {return strcmp( (char*)a, (char*)b );}
 
-void
-scan_groups_do(void)
+gchar *groups = NULL;
+void scan_groups_do(void)
 {
     struct group *group_;
+    GList *list=NULL, *a;
 
     setgrent();
     group_ = getgrent();
@@ -37,9 +38,22 @@ scan_groups_do(void)
     groups = g_strdup("");
 
     while (group_) {
-        groups = h_strdup_cprintf("%s=%d\n", groups, group_->gr_name, group_->gr_gid);
+        list=g_list_prepend(list,g_strdup_printf("%s=%d\n", group_->gr_name, group_->gr_gid));
         group_ = getgrent();
     }
     
     endgrent();
+
+    //sort
+    list=g_list_sort(list,(GCompareFunc)comparGroups);
+
+    while (list) {
+        groups = h_strdup_cprintf("%s", groups, (char *)list->data);
+
+        //next and free
+        a=list;
+        list=list->next;
+        free(a->data);
+        g_list_free_1(a);
+    }
 }
