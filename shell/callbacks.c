@@ -364,7 +364,7 @@ void cb_about()
         "epicbard",
         "Roundicons",
 	"ansimuz",
-	"squeegee",
+	"siqueegee",
 	"Rawdanitsu",
 	"Larry Ewing",
 	"2x910",
