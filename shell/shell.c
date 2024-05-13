@@ -512,8 +512,6 @@ static void create_window(void)
     shell->notebook = gtk_notebook_new();
     gtk_paned_add2(GTK_PANED(shell->vpaned), shell->notebook);
 
-    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &params.darkmode, NULL);
-
     GKeyFile *key_file = g_key_file_new();
     gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2","settings.ini", NULL);
     g_key_file_load_from_file(key_file, conf_path, G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);

@@ -19,12 +19,12 @@
 #include <gtk/gtk.h>
 #include <cairo.h>
 
-#include "hardinfo.h"
 #include "iconcache.h"
 #include "config.h"
 
 #define CRUNCH_TIME 3
 
+static int darkmode;
 static int count=0;
 static int testnumber=0;
 static GTimer *timer,*frametimer;
@@ -72,10 +72,10 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
 		break;
 	  case 2 : //Filled Shape Drawing
 	        cairo_rectangle(cr,g_rand_int_range(r,0,1024-200),g_rand_int_range(r,0,800-200),g_rand_int_range(r,0,400),g_rand_int_range(r,0,300));
-		if(!params.darkmode){
-		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.3,0.5),g_rand_double_range(r,0.3,0.5),g_rand_double_range(r,0.3,0.5));
+		if(darkmode){
+		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.0,0.3),g_rand_double_range(r,0.0,0.3),g_rand_double_range(r,0.0,0.3));
 		}else{
-		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.5,0.7),g_rand_double_range(r,0.5,0.7),g_rand_double_range(r,0.5,0.7));
+		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.7,0.9),g_rand_double_range(r,0.7,0.9),g_rand_double_range(r,0.7,0.9));
 		}
 		cairo_fill(cr);
 		break;
@@ -130,6 +130,9 @@ double guibench(double *frameTime, int *frameCount)
 {
     GtkWindow * window;
     cairo_t *cr;
+
+    //Get DarkMode state from system
+    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);
 
     frametime=frameTime;
     framecount=frameCount;
