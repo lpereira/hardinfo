@@ -57,6 +57,7 @@ struct _ProgramParameters {
   gint skip_benchmarks;
   gint quiet;
   gint theme;
+  gint darkmode;
   gint aborting_benchmarks;
   /*
    * OK to use the common parts of HTML(4.0) and Pango Markup

@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 #include <cairo.h>
 
+#include "hardinfo.h"
 #include "iconcache.h"
 #include "config.h"
 
@@ -60,24 +61,28 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
        switch(testnumber) {
 	  case 0 : //Line Drawing
                 cairo_move_to(cr, g_rand_int_range(r,0,1024), g_rand_int_range(r,0,800));
-		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8));
 		cairo_line_to(cr, g_rand_int_range(r,0,1024), g_rand_int_range(r,0,800));
 		cairo_stroke(cr);
 		break;
 	  case 1 : //Shape Drawing
 	        cairo_rectangle(cr,g_rand_int_range(r,0,1024-200),g_rand_int_range(r,0,800-200),g_rand_int_range(r,0,400),g_rand_int_range(r,0,300));
-		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8));
 		cairo_stroke(cr);
 		break;
 	  case 2 : //Filled Shape Drawing
 	        cairo_rectangle(cr,g_rand_int_range(r,0,1024-200),g_rand_int_range(r,0,800-200),g_rand_int_range(r,0,400),g_rand_int_range(r,0,300));
-		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+		if(!params.darkmode){
+		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.3,0.5),g_rand_double_range(r,0.3,0.5),g_rand_double_range(r,0.3,0.5));
+		}else{
+		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.5,0.7),g_rand_double_range(r,0.5,0.7),g_rand_double_range(r,0.5,0.7));
+		}
 		cairo_fill(cr);
 		break;
 	  case 3 : //Text Drawing
                 cairo_move_to(cr,g_rand_int_range(r,0,1024-100),g_rand_int_range(r,0,800));
                 cairo_set_font_size(cr,25);
-		cairo_set_source_rgb(cr,g_rand_double_range(r,0,1),g_rand_double_range(r,0,1),g_rand_double_range(r,0,1));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8));
                 cairo_show_text(cr, "I \342\231\245 hardinfo2");
 		break;
 		//

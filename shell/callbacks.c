@@ -183,10 +183,8 @@ void cb_disable_theme()
     g_key_file_free(key_file);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gboolean darkmode;
-    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);
     if(params.theme>0){//enable
-       if(darkmode){
+       if(params.darkmode){
 	   sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
        }else{
            sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_light.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);

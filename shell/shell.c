@@ -71,7 +71,6 @@ static GSList *update_sfusrc = NULL;
 
 gchar *lginterval = NULL;
 
-gboolean darkmode;
 /*
  * Code :) ********************************************************************
  */
@@ -513,7 +512,7 @@ static void create_window(void)
     shell->notebook = gtk_notebook_new();
     gtk_paned_add2(GTK_PANED(shell->vpaned), shell->notebook);
 
-    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);
+    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &params.darkmode, NULL);
 
     GKeyFile *key_file = g_key_file_new();
     gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2","settings.ini", NULL);
@@ -535,7 +534,7 @@ static void create_window(void)
     if(params.theme==6) shell_action_set_active("Theme6Action", TRUE);
 
     if(params.theme>0){
-       if(darkmode){
+       if(params.darkmode){
 	   sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
        }else{
            sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_light.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
@@ -1652,7 +1651,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 gboolean has_ven = key_value_has_vendor_string(flags);
                 const Vendor *v = has_ven ? vendor_match(value, NULL) : NULL;
 
-                if(darkmode){
+                if(params.darkmode){
                     key_markup = g_strdup_printf("<span color=\"#46f\">%s</span>", label);
 		} else {
                     key_markup = g_strdup_printf("<span color=\"#46f\">%s</span>", label);
