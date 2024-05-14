@@ -371,6 +371,8 @@ void cb_about()
 	"Topazus (Fedora/Redhat branches)",
 	"Yochananmargos (Arch branches)",
 	"lucascastro (Debian/Ubuntu branches)",
+	"daviddavid (Mageia)",
+	"Kieltux (Opensuse/Suse branches)",
 	"",
         NULL
     };
