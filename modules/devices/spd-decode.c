@@ -471,7 +471,7 @@ static void decode_ddr2_module_timings(float ctime, unsigned char *bytes, float 
 }
 
 static gboolean decode_ddr2_module_ctime_for_casx(int casx_minus, unsigned char *bytes, float *ctime, float *tcl){
-    int highest_cas, i, bytei;
+    int highest_cas = 0, i, bytei;
     float ctimev = 0;
 
     switch (casx_minus){
