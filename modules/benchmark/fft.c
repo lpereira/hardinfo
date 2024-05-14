@@ -17,6 +17,7 @@
  */
 
 #include "hardinfo.h"
+#include "cpu_util.h"
 #include "benchmark.h"
 #include "fftbench.h"
 
