@@ -494,7 +494,7 @@ static struct bench_window get_bench_window(GSList *result_list,
         }
     } else {
         window.min = 0;
-        window.max = len;
+        if(params.max_bench_results==0) window.max = 0; else window.max=size;
     }
 
     //DEBUG("...len: %d, loc: %d, win_size: %d, win: [%d..%d]\n", len, loc, size, window.min, window.max - 1);
