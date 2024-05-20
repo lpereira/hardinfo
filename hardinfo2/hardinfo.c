@@ -25,6 +25,7 @@
 #include <iconcache.h>
 #include <stock.h>
 #include <vendor.h>
+#include <syncmanager.h>
 
 #include <binreloc.h>
 #include "dmi_util.h"
