@@ -314,7 +314,7 @@ set_source_files_properties(
 	modules/benchmark/md5.c
 	modules/benchmark/sha1.c
 	PROPERTIES
-	COMPILE_FLAGS "-O0"
+	COMPILE_FLAGS "-O0 -Werror=implicit-function-declaration"
 )
 
 set_source_files_properties(
@@ -324,7 +324,7 @@ set_source_files_properties(
 	hardinfo2/problem_marker.c
 	hardinfo2/hinote_util.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-switch"
+	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-switch  -Werror=implicit-function-declaration"
 )
 
 foreach (_module ${HARDINFO2_MODULES})
@@ -352,7 +352,7 @@ add_library(sysobj_early STATIC
 	deps/sysobj_early/src/format_early.c
 	deps/sysobj_early/src/cpubits.c
 )
-set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function")
+set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function -Werror=implicit-function-declaration")
 target_link_libraries(sysobj_early m)
 
 if (HARDINFO2_GTK3)
@@ -369,7 +369,7 @@ add_library(uber-graph STATIC
 	deps/uber-graph/uber-timeout-interval.c
 	deps/uber-graph/uber-window.c
 )
-set_target_properties(uber-graph PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+set_target_properties(uber-graph PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations -Werror=implicit-function-declaration")
 endif()
 
 set_source_files_properties(
@@ -380,7 +380,7 @@ set_source_files_properties(
 	hardinfo2/x_util.c
 	hardinfo2/dt_util.c
 	PROPERTIES
-	COMPILE_FLAGS "-Wall -Wextra -Wno-parentheses -Wno-unused-function"
+	COMPILE_FLAGS "-Wall -Wextra -Wno-parentheses -Wno-unused-function -Werror=implicit-function-declaration"
 )
 
 if (HARDINFO2_GTK3)
@@ -424,7 +424,7 @@ target_link_libraries(hardinfo2
 	${X11_LIBRARIES}
 	${JSON_GLIB_LIBRARIES}
 )
-set_target_properties(hardinfo2 PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+set_target_properties(hardinfo2 PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations -Werror=implicit-function-declaration")
 else()
 add_executable(hardinfo2
 	hardinfo2/usb_util.c
