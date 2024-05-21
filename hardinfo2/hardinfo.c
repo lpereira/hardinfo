@@ -75,11 +75,14 @@ int main(int argc, char **argv)
 		"  Data prefix:       %s\n"
 		"  Library prefix:    %s\n"
 		"  Locale prefix :    %s\n"
+		"  Data hardcoded:    %s\n"
+		"  Library hardcoded: %s\n"
+		"  Locale hardcoded:  %s\n"
 		"  Compiled for:      %s\n"),
 		RELEASE==1 ? "Yes (" VERSION ")" : (RELEASE==0?"No (" VERSION ")":"Debug (" VERSION ")"), ARCH,
 		HARDINFO2_LIBSOUP3 ? _("3.0") : "2.4",
 		ENABLE_BINRELOC ? _("Yes") : _("No"),
-		params.path_data, params.path_lib, params.path_locale, PLATFORM);
+		params.path_data, params.path_lib, params.path_locale, PREFIX, LIBPREFIX,LOCALEDIR, PLATFORM);
         return 0;
     }
 

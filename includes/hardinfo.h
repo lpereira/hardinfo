@@ -33,10 +33,6 @@
 
 #define HARDINFO2_COPYRIGHT_LATEST_YEAR 2024
 
-/*#ifndef LOCALEDIR
-#define LOCALEDIR "/usr/share/locale"
-#endif*/
-
 typedef enum {
   MODULE_FLAG_NONE = 0,
   MODULE_FLAG_NO_REMOTE = 1<<0,
