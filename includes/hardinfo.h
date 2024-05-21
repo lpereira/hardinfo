@@ -33,9 +33,9 @@
 
 #define HARDINFO2_COPYRIGHT_LATEST_YEAR 2024
 
-#ifndef LOCALEDIR
+/*#ifndef LOCALEDIR
 #define LOCALEDIR "/usr/share/locale"
-#endif
+#endif*/
 
 typedef enum {
   MODULE_FLAG_NONE = 0,
@@ -75,6 +75,7 @@ struct _ProgramParameters {
   gchar   *result_format;
   gchar   *path_lib;
   gchar   *path_data;
+  gchar   *path_locale;
   gchar   *argv0;
 };
 

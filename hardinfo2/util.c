@@ -292,6 +292,7 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	/* We were asked to try hardcoded paths or BinReloc failed to initialize. */
 	params.path_data = g_strdup(PREFIX);
 	params.path_lib = g_strdup(LIBPREFIX);
+	params.path_locale = g_strdup(LOCALEDIR);
 
 	if (error) {
 	    g_error_free(error);
@@ -311,11 +312,16 @@ gboolean binreloc_init(gboolean try_hardcoded)
 	tmp = gbr_find_lib_dir(PREFIX);
 	params.path_lib = g_build_filename(tmp, "hardinfo2", NULL);
 	g_free(tmp);
+
+	tmp = gbr_find_locale_dir(PREFIX);
+	params.path_locale = g_build_filename(tmp, NULL);
+	g_free(tmp);
     }
 
     DEBUG("searching for runtime data on these locations:");
-    DEBUG("  lib: %s", params.path_lib);
-    DEBUG(" data: %s", params.path_data);
+    DEBUG("   lib: %s", params.path_lib);
+    DEBUG("  data: %s", params.path_data);
+    DEBUG("locale: %s", params.path_locale);
 
     /* Try to see if the benchmark test data file isn't missing. This isn't the
        definitive test, but it should do okay for most situations. */
@@ -325,9 +331,10 @@ gboolean binreloc_init(gboolean try_hardcoded)
 
 	g_free(params.path_data);
 	g_free(params.path_lib);
+	g_free(params.path_locale);
 	g_free(tmp);
 
-	params.path_data = params.path_lib = NULL;
+	params.path_data = params.path_lib =  params.path_locale = NULL;
 
 	if (try_hardcoded) {
 	    /* We tried the hardcoded paths, but still was unable to find the

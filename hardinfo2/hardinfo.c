@@ -37,10 +37,6 @@ int main(int argc, char **argv)
     int exit_code = 0;
     GSList *modules;
 
-    setlocale(LC_ALL, "");
-    bindtextdomain("hardinfo2", LOCALEDIR);
-    textdomain("hardinfo2");
-
     DEBUG("Hardinfo2 version " VERSION ". Debug version.");
 
 #if GLIB_CHECK_VERSION(2,32,5)
@@ -51,6 +47,20 @@ int main(int argc, char **argv)
 
     /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);
+
+    /* initialize the binreloc library, so we can load program data */
+#if(ENABLE_BINRELOC)
+    if (!binreloc_init(FALSE))
+         g_error("Failed to find runtime data. PREFIX=%s, LIB=%s, LOCALE=%s\n",PREFIX,LIBPREFIX,LOCALEDIR);
+#else
+    params.path_data=g_strdup(PREFIX);
+    params.path_lib=g_strdup(LIBPREFIX);
+    params.path_locale=g_strdup(LOCALEDIR);
+#endif
+
+    setlocale(LC_ALL, "");
+    bindtextdomain("hardinfo2", params.path_locale);
+    textdomain("hardinfo2");
 
     /* show version information and quit */
     if (params.show_version) {
@@ -64,21 +74,14 @@ int main(int argc, char **argv)
 		"  BinReloc enabled:  %s\n"
 		"  Data prefix:       %s\n"
 		"  Library prefix:    %s\n"
+		"  Locale prefix :    %s\n"
 		"  Compiled for:      %s\n"),
 		RELEASE==1 ? "Yes (" VERSION ")" : (RELEASE==0?"No (" VERSION ")":"Debug (" VERSION ")"), ARCH,
 		HARDINFO2_LIBSOUP3 ? _("3.0") : "2.4",
 		ENABLE_BINRELOC ? _("Yes") : _("No"),
-		PREFIX, LIBPREFIX, PLATFORM);
-
+		params.path_data, params.path_lib, params.path_locale, PLATFORM);
         return 0;
     }
-
-    /* initialize the binreloc library, so we can load program data */
-    if (!binreloc_init(FALSE))
-	g_error(_("Failed to find runtime data.\n\n"
-		"\342\200\242 Is HardInfo2 correctly installed?\n"
-		"\342\200\242 See if %s and %s exists and you have read permission."),
-		PREFIX, LIBPREFIX);
 
     if (!params.create_report && !params.run_benchmark) {
         /* we only try to open the UI if the user didn't ask for a report. */
