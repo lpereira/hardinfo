@@ -255,7 +255,7 @@ gboolean _sysfs_bus_pci_read_hex(uint32_t dom, uint32_t bus, uint32_t dev, uint3
     if (tmp && val) {
         int ec = sscanf(tmp, "%x", &tval);
         free(tmp);
-        if (ec) {
+        if (ec==1) {
             *val = tval;
             return TRUE;
         }
@@ -285,13 +285,13 @@ static gboolean pci_get_device_sysfs(uint32_t dom, uint32_t bus, uint32_t dev, u
     tmp = _sysfs_bus_pci(dom, bus, dev, func, "max_link_speed");
     if (tmp) {
         ec = sscanf(tmp, "%f GT/s", &tf);
-        if (ec) s->pcie_speed_max = tf;
+        if (ec==1) s->pcie_speed_max = tf;
         free(tmp);
     }
     tmp = _sysfs_bus_pci(dom, bus, dev, func, "current_link_speed");
     if (tmp) {
         ec = sscanf(tmp, "%f GT/s", &tf);
-        if (ec) s->pcie_speed_curr = tf;
+        if (ec==1) s->pcie_speed_curr = tf;
         free(tmp);
     }
     tmp = _sysfs_bus_pci(dom, bus, dev, func, "max_link_width");
