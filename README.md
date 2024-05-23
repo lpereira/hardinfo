@@ -23,6 +23,10 @@ Status
 
 Server code can be found here: [https://github.com/hardinfo2/server](https://github.com/hardinfo2/server)
 
+Packaging status
+--------------
+[![Packaging status](https://repology.org/badge/vertical-allrepos/hardinfo2.svg?columns=3)](https://repology.org/project/hardinfo2/versions)
+
 Dependencies
 ------------
 - GTK3 >=3.00 or GTK2+ >=2.20 - (GTK2+ DEPRECATED: cmake -DHARDINFO2_GTK3=0 ..)
