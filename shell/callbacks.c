@@ -326,6 +326,7 @@ void cb_about()
         "Mike Hewitt",
         "Boris Afonot",
 	"Amstelchen",
+	"lucascastro",
 	"More contributors in GitHub",
 	"",
 	"Based on work by:",
@@ -370,9 +371,10 @@ void cb_about()
 	"Packaging by:",
 	"Topazus (Fedora/Redhat branches)",
 	"Yochananmargos (Arch branches)",
-	"lucascastro (Debian/Ubuntu branches)",
-	"daviddavid (Mageia)",
+	"hosiet (Debian/Ubuntu branches)",
+	"david-geiger (Mageia)",
 	"Kieltux (Opensuse/Suse branches)",
+	"AngryPenguinPL (OpenMandriva)",
 	"",
         NULL
     };
