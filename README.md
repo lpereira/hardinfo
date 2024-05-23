@@ -81,20 +81,23 @@ Setting up addition tools
 ---------------------------
 Most hardware is detected automatically by Hardinfo2, but some might need manual set up.
 
+**Package installs these**
 - **sysbench**: is needed to run standard sysbench benchmarks.
 - **udisks2**: is needed to provide NVME++ informations.
 - **dmi-decode**: is needed to provide DMI informations.
 - **mesa-utils**: is needed to provide opengl and run standard sysbench benchmarks.
 - **lsscsi**: gives information about hard drives.
 - **lm-sensors**: is needed to provide sensors values.
+- **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
+- **iperf3**: iperf3 is used to benchmark internal network speed.
+
+**User can install/setup these depending on hardware**
 - **hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp
 in daemon mode, using the default port.
 - **eeprom module**: must be loaded to display info about your currently installed memory.
 Load with `modprobe eeprom` and refresh the module screen.
-- **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
-- **iperf3**: iperf3 is used to benchmark internal network speed.
-- **apcaccess**: apcaccess is used for battery information. (optional)
-- **lspci/lsusb**: is used for bus information - only used on old kernels and installed by distro. (optional)
+- **apcaccess**: apcaccess is used for battery information.
+- **lspci/lsusb**: is only used on old kernels without sysfs. 
 
 License
 ------
