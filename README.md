@@ -49,7 +49,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo apt install ./hardinfo2_*  (Use reinstall instead of install if already inst.)
-- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3
+- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd
 - hardinfo2
 
 **Fedore/Centos/RedHat/Rocky/Alma/Oracle**
@@ -66,7 +66,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
 - sudo yum install ./hardinfo2-*  (Use reinstall instead of install if already inst.)
-- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3
+- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, zypper --no-gpg-checks install ./hardinfo2-*
@@ -90,6 +90,7 @@ Most hardware is detected automatically by Hardinfo2, but some might need manual
 - **lm-sensors**: is needed to provide sensors values.
 - **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
 - **iperf3**: iperf3 is used to benchmark internal network speed.
+- **fwupd**: fwupd is used to read and display information about firmware in system.
 
 **User can install/setup these depending on hardware**
 - **hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp
@@ -103,7 +104,7 @@ License
 ------
 The Project License has been changed in 2024 from GPL2 to **GPL2 or later**
 
-Because we use LGPL2.1+ and GPL3+ code. To future proof the project, lpereira and other developers have agreed to change license of source code also to GPL2+. (https://github.com/lpereira/hardinfo/issues/530) (https://github.com/lpereira/hardinfo/issues/707).
+Because we use LGPL2.1+ and GPL3+ code. To future proof the project, lpereira and other developers have agreed to change license of source code also to GPL2+. (https://github.com/hardinfo2/hardinfo2/blob/master/tools/LICENSES/github_com_lpereira_hardinfo_issues_530.pdf) (https://github.com/hardinfo2/hardinfo2/blob/master/tools/LICENSES/github_com_lpereira_hardinfo_issues_707.pdf).
 
 It is all about open source and creating together - Read more about GPL license here: https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
 
