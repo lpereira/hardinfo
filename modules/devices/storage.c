@@ -720,7 +720,7 @@ void __scan_ide_devices(void)
 	    if (g_file_test(device, G_FILE_TEST_EXISTS)) {
 		proc_ide = fopen(device, "r");
 		if (proc_ide) {
-		    if(!fscanf(proc_ide, "%d", &cache)) cache=0;
+		    if(fscanf(proc_ide, "%d", &cache)!=1) cache=0;
                     fclose(proc_ide);
                 } else {
                     cache = 0;
