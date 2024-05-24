@@ -34,7 +34,7 @@ typedef struct {
     guchar buffer[64];
 } SHA1_CTX;
 
-void SHA1Transform(guint32 state[5], guchar buffer[64]);
+void SHA1Transform(guint32 state[20], guchar buffer[64]);
 void SHA1Init(SHA1_CTX* context);
 void SHA1Update(SHA1_CTX* context, guchar* data, unsigned int len);
 void SHA1Final(guchar digest[20], SHA1_CTX* context);

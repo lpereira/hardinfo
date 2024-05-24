@@ -85,7 +85,7 @@ void get_wireless_info(int fd, NetInfo *netinfo)
   FILE *wrls;
   char wbuf[256];
   struct iwreq wi_req;
-  int r, trash;
+  int trash;
 
   netinfo->is_wireless = FALSE;
 
@@ -181,7 +181,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
 
     /* IPv4 */
     ifr.ifr_addr.sa_family = AF_INET;
-    strncpy(netinfo->name, if_name, sizeof(netinfo->name));
+    memcpy(netinfo->name, if_name, sizeof(netinfo->name));
 
     /* MTU */
     strcpy(ifr.ifr_name, if_name);

@@ -86,7 +86,7 @@ gboolean __scan_udisks2_devices(void) {
     udisksa *attrib;
     gchar *udisks2_storage_list = NULL, *features = NULL, *moreinfo = NULL;
     gchar *devid, *size, *tmp = NULL, *media_comp = NULL, *ven_tag = NULL;
-    const gchar *url, *media_label, *alabel, *icon, *media_curr = NULL;
+    const gchar *media_label, *alabel, *icon, *media_curr = NULL;
     int n = 0, i, j, m;
 
     // http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Drive.html#gdbus-property-org-freedesktop-UDisks2-Drive.MediaCompatibility
@@ -496,9 +496,9 @@ void __scan_scsi_devices(void)
     scsi_storage_list = g_strdup(_("\n[SCSI Disks]\n"));
 
     int otype = 0;
-    if (proc_scsi = fopen("/proc/scsi/scsi", "r")) {
+    if ((proc_scsi = fopen("/proc/scsi/scsi", "r"))) {
         otype = 1;
-    } else if (proc_scsi = popen("lsscsi -c", "r")) {
+      } else if ((proc_scsi = popen("lsscsi -c", "r"))) {
         otype = 2;
     }
 
@@ -610,7 +610,7 @@ void __scan_scsi_devices(void)
 void __scan_ide_devices(void)
 {
     FILE *proc_ide;
-    gchar *device, *model, *media, *pgeometry = NULL, *lgeometry = NULL;
+    gchar *device, *model=NULL, *media=NULL, *pgeometry = NULL, *lgeometry = NULL;
     gchar iface;
     gint n = 0, i = 0, cache, nn = 0;
     gchar *capab = NULL, *speed = NULL, *driver = NULL, *ide_storage_list;
@@ -635,10 +635,11 @@ void __scan_ide_devices(void)
 	    char *cc=fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
 
-	    buf[strlen(buf) - 1] = 0;
+	    if(cc){
+	       buf[strlen(buf) - 1] = 0;
 
-	    model = g_strdup(buf);
-
+	       model = g_strdup(buf);
+	    }
 	    g_free(device);
 
 	    device = g_strdup_printf("/proc/ide/hd%c/media", iface);
@@ -650,9 +651,11 @@ void __scan_ide_devices(void)
 
 	    char *c=fgets(buf, 128, proc_ide);
 	    fclose(proc_ide);
-	    buf[strlen(buf) - 1] = 0;
+	    if(c){
+                 buf[strlen(buf) - 1] = 0;
 
-	    media = g_strdup(buf);
+	         media = g_strdup(buf);
+	    }
 	    if (g_str_equal(media, "cdrom")) {
 		/* obtain cd-rom drive information from cdrecord */
 		GTimer *timer;
@@ -717,7 +720,7 @@ void __scan_ide_devices(void)
 	    if (g_file_test(device, G_FILE_TEST_EXISTS)) {
 		proc_ide = fopen(device, "r");
 		if (proc_ide) {
-                    int c=fscanf(proc_ide, "%d", &cache);
+		    if(!fscanf(proc_ide, "%d", &cache)) cache=0;
                     fclose(proc_ide);
                 } else {
                     cache = 0;
@@ -732,20 +735,23 @@ void __scan_ide_devices(void)
 		proc_ide = fopen(device, "r");
 		if (proc_ide) {
                     char *c=fgets(buf, 64, proc_ide);
-                    for (tmp = buf; *tmp; tmp++) {
-                        if (*tmp >= '0' && *tmp <= '9')
-                            break;
-                    }
+		    if(c){
+                        for (tmp = buf; *tmp; tmp++) {
+                            if (*tmp >= '0' && *tmp <= '9')
+                                break;
+                        }
 
-                    pgeometry = g_strdup(g_strstrip(tmp));
+                        pgeometry = g_strdup(g_strstrip(tmp));
+		    }
 
                     char *cc=fgets(buf, 64, proc_ide);
-                    for (tmp = buf; *tmp; tmp++) {
-                        if (*tmp >= '0' && *tmp <= '9')
-                            break;
-                    }
-                    lgeometry = g_strdup(g_strstrip(tmp));
-
+		    if(cc){
+                       for (tmp = buf; *tmp; tmp++) {
+                           if (*tmp >= '0' && *tmp <= '9')
+                               break;
+                       }
+                       lgeometry = g_strdup(g_strstrip(tmp));
+		    }
                     fclose(proc_ide);
                 } else {
                     pgeometry = g_strdup("Unknown");

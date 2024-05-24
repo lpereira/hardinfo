@@ -32,7 +32,7 @@ static int iperf3_version() {
     if (spawned) {
         ret = 0;
         p = out;
-        while(next_nl = strchr(p, '\n')) {
+        while((next_nl = strchr(p, '\n'))) {
             *next_nl = 0;
             /* version */
             mc = sscanf(p, "iperf %d.%d", &v1, &v2);
@@ -75,7 +75,6 @@ static double _get_double(JsonParser *j, const char* path) {
 
 static bench_value iperf3_client() {
     bench_value ret = EMPTY_BENCH_VALUE;
-    int v1 = 0, v2 = 0, v3 = 0, mc = 0;
     gboolean spawned;
     gchar *out, *err;
     GError *e = NULL;

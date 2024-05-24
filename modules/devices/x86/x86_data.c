@@ -308,7 +308,7 @@ static const struct flag_to_meaning builtin_tab_flag_meaning[] = {
 
 static struct flag_to_meaning *tab_flag_meaning;
 
-static char all_flags[4096] = "";
+//static char all_flags[4096] = "";
 
 static void build_meaning_table_iter(JsonObject *object,
                                      const gchar *member_name,

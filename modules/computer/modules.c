@@ -227,7 +227,7 @@ static const gchar* get_module_icon(const char *modname, const char *path)
         return NULL;
 
     const gchar *path_no_prefix = path + strlen(kernel_modules_dir);
-    const size_t path_no_prefix_len = strlen(path_no_prefix);
+    //const size_t path_no_prefix_len = strlen(path_no_prefix);
     int i;
 
     for (i = 0; modules_icons[i].dir; i++) {
@@ -266,7 +266,7 @@ void scan_modules_do(void) {
     }
 
     char *c=fgets(buffer, 1024, lsmod); /* Discards the first line */
-
+    if(!c) return;
     //Sort modules
     while (fgets(buffer, 1024, lsmod)) {
         list=g_list_prepend(list,g_strdup(buffer));

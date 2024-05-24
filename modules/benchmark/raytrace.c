@@ -26,8 +26,6 @@ void fbench();	/* fbench.c */
 
 static gpointer parallel_raytrace(void *in_data, gint thread_number)
 {
-    unsigned int i;
-
     fbench();
 
     return NULL;

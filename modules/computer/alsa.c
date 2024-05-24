@@ -51,8 +51,8 @@ computer_get_alsainfo(void)
         return NULL;
 
     ai = g_new0(AlsaInfo, 1);
-
-    while (fgets(buffer, 128, cards)) {
+    char *c=(char *)1;
+    while (c && (c=fgets(buffer, 128, cards))) {
         gchar **tmp;
 
         ac = g_new0(AlsaCard, 1);
@@ -63,7 +63,7 @@ computer_get_alsainfo(void)
         ai->cards = g_slist_append(ai->cards, ac);
 
         g_strfreev(tmp);
-        char *c=fgets(buffer, 128, cards);  /* skip next line */
+        c=fgets(buffer, 128, cards);  /* skip next line */
     }
     fclose(cards);
 

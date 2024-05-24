@@ -48,7 +48,7 @@ int sysbench_version() {
     if (spawned) {
         ret = 0;
         p = out;
-        while(next_nl = strchr(p, '\n')) {
+        while((next_nl = strchr(p, '\n'))) {
             *next_nl = 0;
             /* version */
             mc = sscanf(p, "sysbench %d.%d.%d", &v1, &v2, &v3);
@@ -100,7 +100,7 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx, int expecting_version) {
     g_free(cmd_line);
     if (spawned) {
         p = out;
-        while(next_nl = strchr(p, '\n')) {
+        while((next_nl = strchr(p, '\n'))) {
             *next_nl = 0;
 
             if (strstr(p, "Usage:")) {
@@ -118,7 +118,7 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx, int expecting_version) {
             }
 
             /* total_time */
-            if (pp = strstr(p, "total time:")) {
+            if ((pp = strstr(p, "total time:"))) {
                 pp = strchr(pp, ':') + 1;
                 ctx->r.elapsed_time = strtof(pp, NULL);
             }
@@ -126,7 +126,7 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx, int expecting_version) {
             /* result */
             if (SEQ(ctx->test, "memory") ) {
                 // 57894.30 MiB transferred (5787.59 MiB/sec)
-                if (pp = strstr(p, " transferred (")) {
+	        if ((pp = strstr(p, " transferred ("))) {
                     pp = strchr(pp, '(') + 1;
                     ctx->r.result = strtof(pp, NULL);
                 }
@@ -139,7 +139,7 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx, int expecting_version) {
                     // total number of events:              873
 
                     /* should already have "total time:" */
-                    if (pp = strstr(p, " total number of events:")) {
+		    if ((pp = strstr(p, " total number of events:"))) {
                         pp = strchr(pp, ':') + 1;
                         ctx->r.result = strtof(pp, NULL);
                         ctx->r.result /= ctx->r.elapsed_time;
@@ -147,7 +147,7 @@ static gboolean sysbench_run(struct sysbench_ctx *ctx, int expecting_version) {
                 }
                 if (ctx->r.revision >= 1000000) {
                     //  events per second:  1674.97
-                    if (pp = strstr(p, " events per second:")) {
+		    if ((pp = strstr(p, " events per second:"))) {
                         pp = strchr(pp, ':') + 1;
                         ctx->r.result = strtof(pp, NULL);
                     }

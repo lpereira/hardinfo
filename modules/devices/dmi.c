@@ -74,7 +74,6 @@ gboolean dmi_get_info(void)
     gboolean dmi_succeeded = FALSE;
     guint i;
     gchar *value=NULL;
-    const gchar *vendor;
 
     if (dmi_info) {
         g_free(dmi_info);

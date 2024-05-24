@@ -292,7 +292,6 @@ gchar *get_storage_devices_simple(void)
     struct InfoGroup *group;
     struct InfoField *field;
     gchar *storage_devs = NULL, *tmp;
-    const gchar *dev_label, *model_wo_tags;
 
     GRegex *regex;
     regex = g_regex_new ("<.*>", 0, 0, NULL);

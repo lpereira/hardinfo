@@ -66,7 +66,7 @@ GSList *ubuntu_flavors_scan(void) {
             &out, &err, &exit_status, NULL);
     if (spawned) {
         p = out;
-        while(next_nl = strchr(p, '\n')) {
+        while((next_nl = strchr(p, '\n'))) {
             strend(p, '\n');
             int mc = 0;
             char pkg[32] = "";

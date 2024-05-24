@@ -538,7 +538,6 @@ static void read_sensors_sys_thermal(void) {
 
         if ((tz = g_dir_open(path_tz, 0, NULL))) {
             const gchar *entry;
-            gchar *temp = g_strdup("");
 
             while ((entry = g_dir_read_name(tz))) {
                 gchar *path = g_strdup_printf("%s/%s/temp", path_tz, entry);

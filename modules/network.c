@@ -197,9 +197,10 @@ void scan_route(gboolean reload)
       if ((route = popen(command_line, "r"))) {
         /* eat first two lines */
         char *c=fgets(buffer, 256, route);
-        char *cc=fgets(buffer, 256, route);
+	char *cc=NULL;
+	if(c) {cc=fgets(buffer, 256, route);}
 
-        while (fgets(buffer, 256, route)) {
+        if(cc) while (fgets(buffer, 256, route)) {
           buffer[15] = '\0';
           buffer[31] = '\0';
           buffer[47] = '\0';
@@ -238,7 +239,7 @@ void scan_arp(gboolean reload)
       /* eat first line */
       char *c=fgets(buffer, 256, arp);
 
-      while (fgets(buffer, 256, arp)) {
+      if(c) while (fgets(buffer, 256, arp)) {
         buffer[15] = '\0';
         buffer[58] = '\0';
 

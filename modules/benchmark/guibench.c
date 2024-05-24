@@ -129,7 +129,6 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
 double guibench(double *frameTime, int *frameCount)
 {
     GtkWindow * window;
-    cairo_t *cr;
 
     //Get DarkMode state from system
     g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);

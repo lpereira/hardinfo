@@ -41,7 +41,7 @@ scan_boots_real(void)
             &out, &err, NULL, NULL);
     if (spawned && out != NULL) {
         p = out;
-        while(next_nl = strchr(p, '\n')) {
+        while((next_nl = strchr(p, '\n'))) {
             strend(p, '\n');
             if (strstr(p, "system boot")) {
                 s = p;

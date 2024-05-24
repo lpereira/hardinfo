@@ -50,7 +50,6 @@ scan_samba(void)
 void
 scan_samba_usershares(void)
 {
-    FILE *usershare_list;
     gboolean spawned;
     int status;
     gchar *out, *err, *p, *next_nl;
@@ -63,7 +62,7 @@ scan_samba_usershares(void)
     if (spawned && status == 0 && out != NULL) {
         shell_status_update("Scanning SAMBA user shares...");
         p = out;
-        while(next_nl = strchr(p, '\n')) {
+        while((next_nl = strchr(p, '\n'))) {
             cmdline = g_strdup_printf("net usershare info '%s'",
                                       strend(p, '\n'));
             if (hardinfo_spawn_command_line_sync(cmdline,

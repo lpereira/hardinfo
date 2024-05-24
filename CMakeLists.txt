@@ -326,12 +326,13 @@ set_source_files_properties(
 	hardinfo2/problem_marker.c
 	hardinfo2/hinote_util.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-switch  -Werror=implicit-function-declaration"
+	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-switch -Werror=implicit-function-declaration"
 )
 
 foreach (_module ${HARDINFO2_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
+	set_target_properties(${_module} PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-function -Wno-missing-braces -Wno-switch -Werror=implicit-function-declaration")
 	target_link_libraries(${_module} ${JSON_GLIB_LIBRARIES})
 endforeach()
 

@@ -516,7 +516,6 @@ computer_get_os(void)
 {
     struct utsname utsbuf;
     OperatingSystem *os;
-    int i;
 
     os = g_new0(OperatingSystem, 1);
 

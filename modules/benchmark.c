@@ -245,7 +245,6 @@ bench_value benchmark_parallel_for(gint n_threads,
                                    gpointer callback,
                                    gpointer callback_data)
 {
-    gchar *temp;
     int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
     guint iter_per_thread=1, iter, thread_number = 0;
     GSList *threads = NULL, *t;
@@ -409,7 +408,6 @@ static GSList *benchmark_include_results_json(const gchar *path,
 {
     JsonParser *parser;
     JsonNode *root;
-    bench_result *this_machine = NULL;
     GSList *result_list = NULL;
     GError *error=NULL;
 
@@ -747,7 +745,6 @@ static gchar *get_benchmark_results(gsize *len)
     void (*scan_callback)(gboolean);
     JsonBuilder *builder;
     JsonGenerator *generator;
-    JsonNode *root;
     bench_machine *this_machine;
     gchar *out;
     guint i;

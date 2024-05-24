@@ -35,15 +35,14 @@
 static unsigned int zlib_errors = 0;
 
 static gpointer zlib_for(void *in_data, gint thread_number) {
-    char *compressed;
+    guchar *compressed;
     uLong bound = compressBound(BENCH_DATA_SIZE);
-    unsigned int i;
 
     compressed = malloc(bound);
     if (!compressed)
         return NULL;
 
-    char uncompressed[BENCH_DATA_SIZE];
+    guchar uncompressed[BENCH_DATA_SIZE];
     uLong compressedBound = bound;
     uLong destBound = sizeof(uncompressed);
 

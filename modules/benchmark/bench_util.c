@@ -54,5 +54,5 @@ char *md5_digest_str(const char *data, unsigned int len) {
     MD5Init(&ctx);
     MD5Update(&ctx, (guchar *)data, len);
     MD5Final(digest, &ctx);
-    return digest_to_str(digest, 16);
+    return digest_to_str((char *)digest, 16);
 }

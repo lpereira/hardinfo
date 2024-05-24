@@ -44,7 +44,6 @@ static gchar *get_node(dtr *dt, char *np) {
     gchar *nodes = NULL, *props = NULL, *ret = NULL;
     gchar *tmp = NULL, *pstr = NULL, *lstr = NULL;
     gchar *dir_path;
-    gchar *node_path;
     const gchar *fn;
     GDir *dir;
     dtr_obj *node, *child;

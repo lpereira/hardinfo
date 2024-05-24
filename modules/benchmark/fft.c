@@ -27,9 +27,7 @@
 
 static gpointer fft_for(void *in_data, gint thread_number)
 {
-    unsigned int i;
     FFTBench **benches = (FFTBench **)in_data;
-    FFTBench *fftbench = (FFTBench *)(benches[thread_number]);
 
     fft_bench_run(benches[thread_number]);
 
@@ -42,8 +40,7 @@ benchmark_fft(void)
     int cpu_procs, cpu_cores, cpu_threads, cpu_nodes;
     bench_value r = EMPTY_BENCH_VALUE;
 
-    int n_cores, i;
-    gchar *temp;
+    int i;
     FFTBench **benches=NULL;
 
     shell_view_set_enabled(FALSE);
