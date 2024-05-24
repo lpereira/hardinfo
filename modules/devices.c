@@ -38,6 +38,7 @@
 #include "storage_util.h"
 #include "pci_util.h"
 #include <json-glib/json-glib.h>
+#include "cpu_util.h"
 
 gchar *callback_processors();
 gchar *callback_gpu();
