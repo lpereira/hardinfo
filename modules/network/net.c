@@ -208,7 +208,7 @@ void get_net_info(char *if_name, NetInfo * netinfo)
     if(netinfo->carrier!=1)
       sprintf(netinfo->speed,"Not Connected");
         else if(s<=0)
-          sprintf(netinfo->speed,"Unlimited"); else
+          sprintf(netinfo->speed,"Not Specified"); else
             if(s<1000) sprintf(netinfo->speed,"%d Mbit",s); else
 	       sprintf(netinfo->speed,"%g Gbit",(float)s/1000);
     fclose(sysfs);
