@@ -174,7 +174,7 @@ static int riscv_isa_next(const char *isap, char *flag) {
 
 #define FSTR_SIZE 1024
 #define RV_CHECK_FOR(e) ( strncasecmp(ps, e, 2) == 0 )
-#define ADD_EXT_FLAG(ext) el = strlen(ext); strncpy(pd, ext, el); strncpy(pd + el, " ", 1); pd += el + 1;
+#define ADD_EXT_FLAG(ext) el = strlen(ext); strncpy(pd, ext, el); pd[el]=' '; pd[el+1]=0; pd += el + 1;
 char *riscv_isa_to_flags(const char *isa) {
     char *flags = NULL, *ps = (char*)isa, *pd = NULL;
     char flag_buf[64] = "";

@@ -229,7 +229,6 @@ static gint cmp_cpufreq_data(cpufreq_data *a, cpufreq_data *b) {
 }
 
 static gint cmp_cpufreq_data_ignore_affected(cpufreq_data *a, cpufreq_data *b) {
-        gint i = 0;
         cmp_clocks_test(cpukhz_max);
         cmp_clocks_test(cpukhz_min);
         return 0;
@@ -239,10 +238,10 @@ gchar *clocks_summary(GSList * processors)
 {
     gchar *ret = g_strdup_printf("[%s]\n", _("Clocks"));
     GSList *all_clocks = NULL, *uniq_clocks = NULL;
-    GSList *tmp, *l;
+    GSList *l;
     Processor *p;
     cpufreq_data *c, *cur = NULL;
-    gint cur_count = 0, i = 0;
+    gint cur_count = 0;
 
     /* create list of all clock references */
     for (l = processors; l; l = l->next) {

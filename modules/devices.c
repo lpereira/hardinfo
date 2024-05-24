@@ -408,15 +408,15 @@ gchar *get_processor_max_frequency(void)
 
 gchar *get_motherboard(void)
 {
-    gchar *board_name, *board_vendor, *board_version;
-    gchar *product_name, *product_vendor, *product_version;
-    gchar *board_part = NULL, *product_part = NULL;
-    const gchar *tmp;
-    int b = 0, p = 0;
-
-    gchar *ret;
+    gchar *board_vendor;
 
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
+    gchar *board_name, *board_version;
+    gchar *board_part = NULL, *product_part = NULL;
+    const gchar *tmp;
+    gchar *product_name, *product_vendor, *product_version;
+    int b = 0, p = 0;
+    gchar *ret;
     scan_dmi(FALSE);
 
     board_name = dmi_get_str("baseboard-product-name");

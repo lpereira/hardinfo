@@ -48,8 +48,8 @@ static gchar *benchmark_include_results(bench_value result,
 
 char *bench_value_to_str(bench_value r)
 {
-    gboolean has_rev = r.revision >= 0;
-    gboolean has_extra = r.extra && *r.extra != 0;
+  gboolean has_rev = (r.revision >= 0);
+  gboolean has_extra = (*r.extra != 0);
     char *ret = g_strdup_printf("%lf; %lf; %d", r.result, r.elapsed_time,
                                 r.threads_used);
     if (has_rev || has_extra)
@@ -597,13 +597,13 @@ do_benchmark_handler(GIOChannel *source, GIOCondition condition, gpointer data)
     if (status != G_IO_STATUS_NORMAL) {
         DEBUG("error while reading benchmark result");
         r.result = -1.0f;
-        if(bench_dialog && &bench_dialog->r) bench_dialog->r = r;
+        if(bench_dialog) bench_dialog->r = r;
 	gtk_dialog_response(GTK_DIALOG(bench_dialog->dialog),100);
         return FALSE;
     }
 
     if(result) r = bench_value_from_str(result);
-    if(result && bench_dialog && &bench_dialog->r) bench_dialog->r = r;
+    if(result && bench_dialog) bench_dialog->r = r;
 
     g_free(result);
     gtk_dialog_response(GTK_DIALOG(bench_dialog->dialog),GTK_RESPONSE_NONE);
