@@ -93,18 +93,18 @@ Most hardware is detected automatically by Hardinfo2, but some might need manual
 - **fwupd**: fwupd is used to read and display information about firmware in system.
 
 **User can install/setup these depending on hardware**
+- **eeprom module**: To display SPD info about your currently installed DIMMs memory.
+Load with `modprobe eeprom/at24/ee1004` and refresh the module screen.
 - **hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp
 in daemon mode, using the default port.
-- **eeprom module**: must be loaded to display info about your currently installed memory.
-Load with `modprobe eeprom` and refresh the module screen.
 - **apcaccess**: apcaccess is used for battery information.
-- **lspci/lsusb**: is only used on old kernels without sysfs. 
+- **pciutils/usbutils**: is only used on old kernels without sysfs.
 
 License
 ------
 The Project License has been changed in 2024 from GPL2 to **GPL2 or later**
 
-Because we use LGPL2.1+ and GPL3+ code. To future proof the project, lpereira and other developers have agreed to change license of source code also to GPL2+. (https://github.com/hardinfo2/hardinfo2/blob/master/tools/LICENSES/github_com_lpereira_hardinfo_issues_530.pdf) (https://github.com/hardinfo2/hardinfo2/blob/master/tools/LICENSES/github_com_lpereira_hardinfo_issues_707.pdf).
+Because we use LGPL2.1+ and GPL3+ code. To future proof the project, lpereira and other developers have agreed to change license of source code also to GPL2+. [530](https://github.com/hardinfo2/hardinfo2/blob/master/tools/LICENSES/github_com_lpereira_hardinfo_issues_530.pdf)  [707](https://github.com/hardinfo2/hardinfo2/blob/master/tools/LICENSES/github_com_lpereira_hardinfo_issues_707.pdf).
 
 It is all about open source and creating together - Read more about GPL license here: https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
 
