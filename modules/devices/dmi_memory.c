@@ -934,9 +934,7 @@ gchar *memory_devices_get_info() {
         g_free(ret);
         ret = g_strdup_printf("[%s]\n%s=%s\n" "[$ShellParam$]\nViewType=0\n",
                 _("Memory Device List"), _("Result"),
-                (getuid() == 0)
-                ? _("(Not available)")
-                : _("(Not available; Perhaps try running HardInfo as root.)") );
+                _("(Not available - See hint box below)"));
     } else {
         ret = h_strdup_cprintf(
             "[$ShellParam$]\nViewType=1\n"
@@ -1004,23 +1002,23 @@ gchar *memory_devices_get_system_memory_str() {
 static gchar note_state[note_max_len] = "";
 
 gboolean memory_devices_hinote(const char **msg) {
-    gchar *want_dmi    = _(" <b><i>dmidecode</i></b> utility available");
-    gchar *want_root   = _(" ... <i>and</i> HardInfo2 running with superuser privileges");
-    gchar *want_at24   = _(" <b><i>at24</i></b> (or eeprom) module loaded (for SDR, DDR, DDR2, DDR3)");
-    gchar *want_ee1004 = _(" ... <i>or</i> <b><i>ee1004</i></b> module loaded <b>and configured!</b> (for DDR4)");
+    gchar *want_dmi    = _(" <b><i>dmidecode</i></b> package installed");
+    gchar *want_root   = _(" sudo chmod a+r /sys/firmware/dmi/tables/*");
+    gchar *want_at24   = _(" sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)");
+    gchar *want_ee1004 = _(" sudo modprobe ee1004 (for DDR4)");
 
-    gboolean has_root = (getuid() == 0);
+    //gboolean has_root = (getuid() == 0);
     gboolean has_dmi = !no_handles;
     gboolean has_at24eep = g_file_test("/sys/bus/i2c/drivers/at24", G_FILE_TEST_IS_DIR) ||
                            g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
     gboolean has_ee1004 = g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_IS_DIR);
 
     *note_state = 0; /* clear */
-    note_printf(note_state, "%s\n", _("Memory information requires <b>one or both</b> of the following:"));
+    note_printf(note_state, "%s\n", _("Memory Information requires more Setup:"));
     note_print(note_state, "<tt>1. </tt>");
     note_cond_bullet(has_dmi, note_state, want_dmi);
     note_print(note_state, "<tt>   </tt>");
-    note_cond_bullet(has_root, note_state, want_root);
+    note_cond_bullet(has_dmi, note_state, want_root);
     note_print(note_state, "<tt>2. </tt>");
     note_cond_bullet(has_at24eep, note_state, want_at24);
     note_print(note_state, "<tt>   </tt>");
@@ -1030,7 +1028,7 @@ gboolean memory_devices_hinote(const char **msg) {
     gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<(DDR3_SDRAM-1))) && has_ee1004);
 
     gboolean best_state = FALSE;
-    if (has_dmi && has_root &&
+    if (has_dmi && /*has_root &&*/
         ((has_at24eep && !spd_ddr4_partial_data)
         || (has_ee1004 && !ddr3_ee1004) ) )
         best_state = TRUE;

@@ -310,8 +310,18 @@ char *dmidecode_read(const dmi_type *type) {
         snprintf(full_path, PATH_MAX, "dmidecode");
     }
 
-    spawned = hardinfo_spawn_command_line_sync(full_path,
-            &out, &err, &i, NULL);
+    spawned = hardinfo_spawn_command_line_sync(full_path, &out, &err, &i, NULL);
+
+    if (!spawned) {
+        if(type) {
+            snprintf(full_path, PATH_MAX, "/sbin/dmidecode -t %"PRId32, *type);
+        } else {
+            snprintf(full_path, PATH_MAX, "/sbin/dmidecode");
+        }
+        spawned = hardinfo_spawn_command_line_sync(full_path, &out, &err, &i, NULL);
+    }
+
+
     if (spawned) {
         if (i == 0)
             ret = out;
