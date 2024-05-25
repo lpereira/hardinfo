@@ -101,7 +101,7 @@ int main(int argc, char **argv)
     }
 
     //Get DarkMode state from system
-    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &params.darkmode, NULL);
+    if(params.gui_running) g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &params.darkmode, NULL);
 
     /* load all modules */
     DEBUG("loading all modules");
