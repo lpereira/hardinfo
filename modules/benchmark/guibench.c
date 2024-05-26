@@ -131,7 +131,18 @@ double guibench(double *frameTime, int *frameCount)
     GtkWindow * window;
 
     //Get DarkMode state from system
-    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &darkmode, NULL);
+    //get darkmode via gtk-theme has (d/D)ark as part of theme name from gsettings
+    GSettings *settings=g_settings_new("org.gnome.desktop.interface");
+    char *theme=g_settings_get_string(settings,"gtk-theme");
+    darkmode=0;
+    if(strstr(theme,"Dark")||strstr(theme,"dark")) darkmode=1;
+    g_free(theme);
+    g_object_unref(settings);
+    //get darkmode override from gtk-3.0/settings.ini - gtksettings
+    gint dark=-1;
+    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &dark, NULL);
+    if(dark==1) darkmode=1;
+    //if(dark==0) darkmode=0;
 
     frametime=frameTime;
     framecount=frameCount;
