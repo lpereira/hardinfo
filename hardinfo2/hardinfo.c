@@ -26,6 +26,7 @@
 #include <stock.h>
 #include <vendor.h>
 #include <syncmanager.h>
+#include <gio/gio.h>
 #include "callbacks.h"
 
 #include <binreloc.h>
