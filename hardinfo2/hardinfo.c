@@ -34,6 +34,7 @@
 
 ProgramParameters params = { 0 };
 
+#if GTK_CHECK_VERSION(3,0,0)
 gulong interface_changed_sh;
 GSettings *settings=NULL;
 
@@ -51,7 +52,7 @@ void interface_changed_cb(GSettings *settings, gchar *name, gpointer user_data) 
     if(params.theme==6) cb_theme6();
     g_free(theme);
 }
-
+#endif
 
 int main(int argc, char **argv)
 {
@@ -124,12 +125,14 @@ int main(int argc, char **argv)
     //Get DarkMode state from system
     if(params.gui_running) {
         //get darkmode via gtk-theme has (d/D)ark as part of theme name from gsettings
+	params.darkmode=0;
+#if GTK_CHECK_VERSION(3,0,0)
         settings=g_settings_new("org.gnome.desktop.interface");
         interface_changed_sh = g_signal_connect(settings, "changed", G_CALLBACK(interface_changed_cb), NULL);
 	char *theme=g_settings_get_string(settings,"gtk-theme");
-	params.darkmode=0;
 	if(strstr(theme,"Dark")||strstr(theme,"dark")) params.darkmode=1;
 	g_free(theme);
+#endif	
 	//get darkmode override from gtk-3.0/settings.ini - gtksettings
 	gint dark=-1;
         g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &dark, NULL);
@@ -199,8 +202,9 @@ int main(int argc, char **argv)
     vendor_cleanup();
     dmidecode_cache_free();
     free_auto_free_final();
+#if GTK_CHECK_VERSION(3,0,0)
     g_object_unref(settings);
-
+#endif
     DEBUG("finished");
     return exit_code;
 }

@@ -18,6 +18,8 @@
 
 #include <gtk/gtk.h>
 #include <cairo.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "iconcache.h"
 #include "config.h"
@@ -132,12 +134,14 @@ double guibench(double *frameTime, int *frameCount)
 
     //Get DarkMode state from system
     //get darkmode via gtk-theme has (d/D)ark as part of theme name from gsettings
+#if GTK_CHECK_VERSION(3,0,0)    
     GSettings *settings=g_settings_new("org.gnome.desktop.interface");
     char *theme=g_settings_get_string(settings,"gtk-theme");
     darkmode=0;
     if(strstr(theme,"Dark")||strstr(theme,"dark")) darkmode=1;
     g_free(theme);
     g_object_unref(settings);
+#endif
     //get darkmode override from gtk-3.0/settings.ini - gtksettings
     gint dark=-1;
     g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &dark, NULL);
