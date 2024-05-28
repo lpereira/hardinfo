@@ -132,21 +132,6 @@ double guibench(double *frameTime, int *frameCount)
 {
     GtkWindow * window;
 
-    //Get DarkMode state from system
-    //get darkmode via gtk-theme has (d/D)ark as part of theme name from gsettings
-#if GTK_CHECK_VERSION(3,0,0)    
-    GSettings *settings=g_settings_new("org.gnome.desktop.interface");
-    char *theme=g_settings_get_string(settings,"gtk-theme");
-    darkmode=0;
-    if(strstr(theme,"Dark")||strstr(theme,"dark")) darkmode=1;
-    g_free(theme);
-    g_object_unref(settings);
-#endif
-    //get darkmode override from gtk-3.0/settings.ini - gtksettings
-    gint dark=-1;
-    g_object_get(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", &dark, NULL);
-    if(dark==1) darkmode=1;
-    //if(dark==0) darkmode=0;
 
     frametime=frameTime;
     framecount=frameCount;
@@ -164,6 +149,13 @@ double guibench(double *frameTime, int *frameCount)
     gtk_window_set_position     (window, GTK_WIN_POS_CENTER);
     gtk_window_set_title        (window, "GPU Benchmarking...");
     g_signal_connect(window, "destroy", gtk_main_quit, NULL);
+
+    //Get DarkMode state from system
+    GtkStyleContext *sctx=gtk_widget_get_style_context(GTK_WIDGET(window));
+    GdkRGBA color;
+    gtk_style_context_lookup_color(sctx, "theme_bg_color", &color);
+    darkmode=0;
+    if((color.red+color.green+color.blue)<=1.5) darkmode=1;
 
     // create the are we can draw in
     GtkDrawingArea* drawingArea;

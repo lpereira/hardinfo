@@ -60,7 +60,7 @@ static void info_selected_show_extra(const gchar *tag);
 static gboolean reload_section(gpointer data);
 static gboolean rescan_section(gpointer data);
 static gboolean update_field(gpointer data);
-
+static GSettings *settings=NULL;
 /*
  * Globals ********************************************************************
  */
@@ -352,6 +352,107 @@ static void destroy_me(void)
     cb_quit();
 }
 
+int update=0;
+int schemeDark=0;
+int changed2dark=0;
+int newgnome=0;
+static void stylechange2_me(void)
+{
+#if GTK_CHECK_VERSION(3, 20, 0)
+    GtkCssProvider *provider;
+    provider = gtk_css_provider_new();
+#endif
+  if(update==1){
+    GtkStyleContext *sctx=gtk_widget_get_style_context(GTK_WIDGET(shell->window));
+    GdkRGBA color;
+    gtk_style_context_lookup_color(sctx, "theme_bg_color", &color);
+    gint darkmode=0;
+    if((color.red+color.green+color.blue)<=1.5) darkmode=1;
+    //
+    if(schemeDark & !darkmode) {
+        if(newgnome){
+            darkmode=1;
+            g_print("We need to change GTK_THEME to dark\n");
+            GtkSettings *set;
+	    set=gtk_settings_get_default();
+	    g_object_set(set,"gtk-theme-name","HighContrastInverse", NULL);
+	    changed2dark=1;
+	}
+    }
+    if(!schemeDark & darkmode & changed2dark) {
+        if(newgnome){
+	    darkmode=0;
+            g_print("We need to change GTK_THEME to light\n");
+            GtkSettings *set;
+	    set=gtk_settings_get_default();
+	    g_object_set(set,"gtk-theme-name","Adwaita", NULL);
+	    changed2dark=0;
+	}
+    }
+    //
+    if(darkmode!=params.darkmode){
+        params.darkmode=darkmode;
+        g_print("COLOR %f %f %f, schemeDark=%i -> DARKMODE=%d\n",color.red,color.green,color.blue,schemeDark, params.darkmode);
+        //update theme
+        cb_disable_theme();
+    }
+  }
+  update=0;
+}
+
+//gsettings
+static void stylechange3_me(void)
+{
+    gchar *theme=NULL;
+    int newDark=0,i=0;
+    gchar **keys;
+    if(!newgnome) keys=g_settings_list_keys(settings);
+    while(!newgnome && (keys[i]!=NULL)){
+        if(strcmp(keys[i],"color-scheme")==0) newgnome=1;
+	g_free(keys[i]);
+        i++;
+    }
+    //check Adwaita as new gnome uses it
+    theme = g_settings_get_string(settings, "gtk-theme");
+    if(!strstr(theme,"Adwaita")) newgnome=0;
+
+    //new gnome using only normal/dark mode
+    if(newgnome){
+       theme = g_settings_get_string(settings, "color-scheme");
+       if(strstr(theme,"Dark")||strstr(theme,"dark")) {
+	   newDark=1;
+       }
+    } else {//older gnome using themes with dark in theme-name
+       theme = g_settings_get_string(settings, "gtk-theme");//normal
+       if(strstr(theme,"Dark")||strstr(theme,"dark")) {
+           newDark=1;
+       }
+       g_free(theme);
+       theme = g_settings_get_string(settings, "icon-theme");//alternative
+       if(strstr(theme,"Dark")||strstr(theme,"dark")) {
+           newDark=1;
+       }
+    }
+    g_free(theme);
+    //
+    if(newDark){
+      if(schemeDark!=1) if(!update) update=1;
+        schemeDark=1;
+    }else{
+        if(schemeDark!=0) if(!update) update=1;
+        schemeDark=0;
+    }
+    g_print("schemeDark=%i -> Update=%d\n",schemeDark,update);
+    stylechange2_me();
+}
+
+//GTK-signal
+static void stylechange_me(void)
+{
+    update=1;
+    g_print("GTK style signal -> Update=%d\n",update);
+}
+
 static void close_note(GtkWidget * widget, gpointer user_data)
 {
     gtk_widget_hide(shell->note->event_box);
@@ -443,6 +544,13 @@ static void create_window(void)
     shell_set_title(shell, NULL);
     gtk_window_set_default_size(GTK_WINDOW(shell->window), 1280, 800);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
+    g_signal_connect(G_OBJECT(shell->window), "style-updated", stylechange_me, NULL);
+    g_signal_connect_after(G_OBJECT(shell->window), "draw", stylechange2_me, NULL);
+    update=-1;
+    settings=g_settings_new("org.gnome.desktop.interface");
+    g_signal_connect_after(settings,"changed",stylechange3_me,NULL);
+    stylechange3_me();
+    update=0;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -530,19 +638,6 @@ static void create_window(void)
     if(params.theme==4) shell_action_set_active("Theme4Action", TRUE);
     if(params.theme==5) shell_action_set_active("Theme5Action", TRUE);
     if(params.theme==6) shell_action_set_active("Theme6Action", TRUE);
-
-    if(params.theme>0){
-       if(params.darkmode){
-	   sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
-       }else{
-           sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_light.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
-       }
-       gtk_css_provider_load_from_data(provider, theme_st, -1, NULL);
-       gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-       gtk_css_provider_load_from_data(provider2, "* { background-color: rgba(0x60, 0x60, 0x60, 0.1); } * text { background-color: rgba(1, 1, 1, 1); }", -1, NULL);
-       gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_ui_manager_get_widget(shell->ui_manager,"/MainMenuBarAction")), GTK_STYLE_PROVIDER(provider2), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-    }
 #endif
 
     gtk_widget_show(shell->window);
