@@ -27,6 +27,8 @@ Packaging status
 --------------
 [![Packaging status](https://repology.org/badge/vertical-allrepos/hardinfo2.svg?columns=3)](https://repology.org/project/hardinfo2/versions)
 
+Prebuilds: [Downloads](https://hardinfo2.org/github?latest_prerelease)
+
 Dependencies
 ------------
 - GTK3 >=3.00 or GTK2+ >=2.20 - (GTK2+ DEPRECATED: cmake -DHARDINFO2_GTK3=0 ..)
