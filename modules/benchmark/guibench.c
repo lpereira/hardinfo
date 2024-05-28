@@ -20,6 +20,7 @@
 #include <cairo.h>
 #include <stdio.h>
 #include <string.h>
+#include <gio/gio.h>
 
 #include "iconcache.h"
 #include "config.h"
@@ -46,7 +47,6 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
    int i;
    cairo_t * cr;
    GdkWindow* window = gtk_widget_get_window(widget);
-
 
 #if GTK_CHECK_VERSION(3,22,0)
    cairo_region_t * cairoRegion = cairo_region_create();
@@ -132,7 +132,6 @@ double guibench(double *frameTime, int *frameCount)
 {
     GtkWindow * window;
 
-
     frametime=frameTime;
     framecount=frameCount;
     
@@ -151,11 +150,13 @@ double guibench(double *frameTime, int *frameCount)
     g_signal_connect(window, "destroy", gtk_main_quit, NULL);
 
     //Get DarkMode state from system
+#if GTK_CHECK_VERSION(3,0,0)
     GtkStyleContext *sctx=gtk_widget_get_style_context(GTK_WIDGET(window));
     GdkRGBA color;
     gtk_style_context_lookup_color(sctx, "theme_bg_color", &color);
     darkmode=0;
     if((color.red+color.green+color.blue)<=1.5) darkmode=1;
+#endif
 
     // create the are we can draw in
     GtkDrawingArea* drawingArea;

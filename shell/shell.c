@@ -22,6 +22,7 @@
 
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 
 #include "config.h"
 
@@ -352,16 +353,13 @@ static void destroy_me(void)
     cb_quit();
 }
 
+#if GTK_CHECK_VERSION(3, 0, 0)
 int update=0;
 int schemeDark=0;
 int changed2dark=0;
 int newgnome=0;
 static void stylechange2_me(void)
 {
-#if GTK_CHECK_VERSION(3, 20, 0)
-    GtkCssProvider *provider;
-    provider = gtk_css_provider_new();
-#endif
   if(update==1){
     GtkStyleContext *sctx=gtk_widget_get_style_context(GTK_WIDGET(shell->window));
     GdkRGBA color;
@@ -372,7 +370,7 @@ static void stylechange2_me(void)
     if(schemeDark & !darkmode) {
         if(newgnome){
             darkmode=1;
-            g_print("We need to change GTK_THEME to dark\n");
+            //g_print("We need to change GTK_THEME to dark\n");
             GtkSettings *set;
 	    set=gtk_settings_get_default();
 	    g_object_set(set,"gtk-theme-name","HighContrastInverse", NULL);
@@ -382,7 +380,7 @@ static void stylechange2_me(void)
     if(!schemeDark & darkmode & changed2dark) {
         if(newgnome){
 	    darkmode=0;
-            g_print("We need to change GTK_THEME to light\n");
+            //g_print("We need to change GTK_THEME to light\n");
             GtkSettings *set;
 	    set=gtk_settings_get_default();
 	    g_object_set(set,"gtk-theme-name","Adwaita", NULL);
@@ -392,7 +390,7 @@ static void stylechange2_me(void)
     //
     if(darkmode!=params.darkmode){
         params.darkmode=darkmode;
-        g_print("COLOR %f %f %f, schemeDark=%i -> DARKMODE=%d\n",color.red,color.green,color.blue,schemeDark, params.darkmode);
+        //g_print("COLOR %f %f %f, schemeDark=%i -> DARKMODE=%d\n",color.red,color.green,color.blue,schemeDark, params.darkmode);
         //update theme
         cb_disable_theme();
     }
@@ -442,7 +440,7 @@ static void stylechange3_me(void)
         if(schemeDark!=0) if(!update) update=1;
         schemeDark=0;
     }
-    g_print("schemeDark=%i -> Update=%d\n",schemeDark,update);
+    //g_print("schemeDark=%i -> Update=%d\n",schemeDark,update);
     stylechange2_me();
 }
 
@@ -450,8 +448,9 @@ static void stylechange3_me(void)
 static void stylechange_me(void)
 {
     update=1;
-    g_print("GTK style signal -> Update=%d\n",update);
+    //g_print("GTK style signal -> Update=%d\n",update);
 }
+#endif
 
 static void close_note(GtkWidget * widget, gpointer user_data)
 {
@@ -544,6 +543,7 @@ static void create_window(void)
     shell_set_title(shell, NULL);
     gtk_window_set_default_size(GTK_WINDOW(shell->window), 1280, 800);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
+#if GTK_CHECK_VERSION(3, 0, 0)
     g_signal_connect(G_OBJECT(shell->window), "style-updated", stylechange_me, NULL);
     g_signal_connect_after(G_OBJECT(shell->window), "draw", stylechange2_me, NULL);
     update=-1;
@@ -551,6 +551,7 @@ static void create_window(void)
     g_signal_connect_after(settings,"changed",stylechange3_me,NULL);
     stylechange3_me();
     update=0;
+#endif
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
