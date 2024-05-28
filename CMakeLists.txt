@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 cmake_policy(VERSION 3.0.2)
 project(hardinfo2)
 
-set(HARDINFO2_VERSION "2.1.9")
+set(HARDINFO2_VERSION "2.1.10")
 
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 1)
