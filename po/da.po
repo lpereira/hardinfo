@@ -1,16 +1,16 @@
-# Danish translations for PACKAGE package
-# Danish translation for PACKAGE.
+# Danish translations for hardinfo2 package
+# Danish translation for hardinfo2.
 # Copyright (C) HardInfo Project
-# This file is distributed under the same license as the PACKAGE package.
-# nozendk
+# This file is distributed under the same license as the hardinfo2 package.
+# hwspeedy
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-30 14:38+0200\n"
+"POT-Creation-Date: 2024-05-30 15:01+0200\n"
 "PO-Revision-Date: 2024-05-17 12:11+0200\n"
-"Last-Translator: nozendk\n"
+"Last-Translator: hwspeedy\n"
 "Language-Team: \n"
 "Language: da\n"
 "X-Poedit-Basepath: ../\n"
