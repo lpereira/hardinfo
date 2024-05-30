@@ -686,7 +686,18 @@ msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "this program; if not, write to the Free Software Foundation, Inc., 51 "
 "Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
-msgstr "HardInfo2 er gratis software; "
+msgstr ""
+"HardInfo2 er gratis software; du kan videredistribuere det og/eller ændre "
+"det i henhold til betingelserne i GNU General Public License som udgivet af "
+"Free Software Foundation, version 2 eller nyere.\n"
+"\n"
+"Dette program distribueres i håb om, at det vil være nyttigt, men UDEN NOGEN "
+"GARANTI; uden selv den underforståede garanti for SALGBARHED eller EGNETHED "
+"TIL ET BESTEMT FORMÅL.  Se GNU General Public License for flere detaljer.\n"
+"\n"
+"Du skulle have modtaget en kopi af GNU General Public License sammen med dette "
+"program; hvis ikke, skriv til Free Software Foundation, Inc., 51 Franklin St, "
+"Fifth Floor, Boston, MA 02110-1301 USA"
 
 #: shell/menu.c:43
 msgid "_Information"
@@ -694,7 +705,7 @@ msgstr "_Oplysninger"
 
 #: shell/menu.c:44
 msgid "_View"
-msgstr "_Se"
+msgstr "_Visning"
 
 #: shell/menu.c:46
 msgid "_Theme"
@@ -991,11 +1002,11 @@ msgstr "SysBench Memory (To tråde)"
 
 #: modules/benchmark/benches.c:233
 msgid "SysBench Memory (Quad threads)"
-msgstr "SysBench Memory (Fire threads)"
+msgstr "SysBench Memory (Fire tråde)"
 
 #: modules/benchmark/benches.c:241
 msgid "SysBench Memory (Multi-thread)"
-msgstr ""
+msgstr "SysBench Memory (Multi-tråd)"
 
 #: modules/benchmark/benches.c:249
 msgid "GPU Drawing"
@@ -4521,7 +4532,7 @@ msgstr "Cache"
 #: modules/devices/x86/processor.c:417 modules/devices/x86/processor.c:434
 #, c-format
 msgid "Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
-msgstr "Nieveau %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
+msgstr "Niveau %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
 
 #: modules/devices/x86/processor.c:648
 msgid "Model Name"
