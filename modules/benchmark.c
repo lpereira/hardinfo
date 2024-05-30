@@ -652,7 +652,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 #else
 	box = gtk_hbox_new(FALSE, 1);
 #endif
-	label = gtk_label_new ("Please do not move your mouse\nor press any keys.");
+	label = gtk_label_new (_("Please do not move your mouse\nor press any keys."));
 
 #if GTK_CHECK_VERSION(3,0,0)
 	gtk_widget_set_halign (bench_image, GTK_ALIGN_START);

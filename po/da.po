@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-30 14:18+0200\n"
+"POT-Creation-Date: 2024-05-30 14:38+0200\n"
 "PO-Revision-Date: 2024-05-17 12:11+0200\n"
 "Last-Translator: nozendk\n"
 "Language-Team: \n"
@@ -1277,6 +1277,14 @@ msgstr ""
 #: modules/benchmark.c:643
 msgid "Stop"
 msgstr ""
+
+#: modules/benchmark.c:655
+msgid ""
+"Please do not move your mouse\n"
+"or press any keys."
+msgstr ""
+"Venligst ikke flytte musen\n"
+"eller trykke på taster."
 
 #: modules/benchmark.c:725
 msgid "Benchmarks"
