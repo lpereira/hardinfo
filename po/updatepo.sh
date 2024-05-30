@@ -15,7 +15,6 @@ fi
 MSGTOTALOLD=`msgattrib --untranslated hardinfo2.pot | grep -E "^msgstr \"\"" | wc -l`
 echo "hardinfo2.pot has $MSGTOTALOLD strings"
 
-mv hardinfo2.pot hardinfo2.pot.old
 echo "" > hardinfo2.pot # empty existing file to join (-j) with
 for d in hardinfo2/ shell/ modules/ includes/;
 do
@@ -38,8 +37,7 @@ echo "(as of $GITVER $GITHASH)"
 
 for f in *.po
 do
-    cp "$f" "$f.old"
-
+    
     msgmerge -q -N "$f" hardinfo2.pot > tmp.po
 
     # set/reset the X-Poedit-Basepath header
