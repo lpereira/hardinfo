@@ -65,7 +65,7 @@ static const int NM1 = 99;	// N - 1
 
 static void lup_decompose(FFTBench *fftbench)
 {
-    int i, j, k, k2, t;
+    int i, j, k, k2=0, t;
     double p, temp, **a;
 
     int *perm = (int *) malloc(sizeof(double) * N);

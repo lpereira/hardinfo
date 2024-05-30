@@ -58,7 +58,6 @@ message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 message(STATUS "Building HardInfo2 for architecture: ${HARDINFO2_OS}-${HARDINFO2_ARCH}")
 
 add_definitions("-std=gnu89")
-#add_definitions("-Wno-deprecated-declarations")
 add_definitions("-Wextra")
 add_definitions("-Wno-missing-field-initializers")
 add_definitions("-Wformat")
@@ -279,7 +278,6 @@ set(MODULE_devices_SOURCES
 	modules/devices/printers.c
 	modules/devices/resources.c
 	modules/devices/sensors.c
-#	modules/devices/spd-decode.c
 	modules/devices/storage.c
 	modules/devices/usb.c
 )
@@ -316,7 +314,7 @@ set_source_files_properties(
 	modules/benchmark/md5.c
 	modules/benchmark/sha1.c
 	PROPERTIES
-	COMPILE_FLAGS "-O0 -Werror=implicit-function-declaration"
+	COMPILE_FLAGS "-O0 -Wall -Wextra -Werror=implicit-function-declaration"
 )
 
 set_source_files_properties(
@@ -326,7 +324,7 @@ set_source_files_properties(
 	hardinfo2/problem_marker.c
 	hardinfo2/hinote_util.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-switch -Werror=implicit-function-declaration"
+	COMPILE_FLAGS "-Wall -Wextra -Wno-unused-function -Wno-switch -Werror=implicit-function-declaration"
 )
 
 foreach (_module ${HARDINFO2_MODULES})
@@ -355,7 +353,7 @@ add_library(sysobj_early STATIC
 	deps/sysobj_early/src/format_early.c
 	deps/sysobj_early/src/cpubits.c
 )
-set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function -Werror=implicit-function-declaration")
+set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wno-parentheses -Wno-unused-function -Werror=implicit-function-declaration")
 target_link_libraries(sysobj_early m)
 
 if (HARDINFO2_GTK3)
@@ -372,7 +370,7 @@ add_library(uber-graph STATIC
 	deps/uber-graph/uber-timeout-interval.c
 	deps/uber-graph/uber-window.c
 )
-set_target_properties(uber-graph PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations -Werror=implicit-function-declaration")
+set_target_properties(uber-graph PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Werror=implicit-function-declaration")
 endif()
 
 set_source_files_properties(
