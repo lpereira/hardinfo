@@ -65,7 +65,7 @@ msgstr "Guvernør"
 #: modules/devices/gpu.c:163 modules/devices/pci.c:148
 #: modules/devices/usb.c:139
 msgid "Driver"
-msgstr "Chauffør"
+msgstr "Driver"
 
 #: hardinfo2/cpu_util.c:223 modules/computer.c:785
 #: modules/devices/arm/processor.c:255 modules/devices/x86/processor.c:283
@@ -75,7 +75,7 @@ msgstr "(Ikke tilgængelig)"
 
 #: hardinfo2/cpu_util.c:231 hardinfo2/cpu_util.c:233
 msgid "Socket"
-msgstr "Stikkontakt"
+msgstr "Sokkel"
 
 #: hardinfo2/cpu_util.c:236 hardinfo2/cpu_util.c:238 modules/devices/gpu.c:159
 #: modules/devices/gpu.c:243
@@ -1831,7 +1831,7 @@ msgstr ""
 
 #: modules/computer.c:800
 msgid "Screens"
-msgstr ""
+msgstr "Skærme"
 
 #: modules/computer.c:806
 msgid "Disconnected"
@@ -1860,7 +1860,7 @@ msgstr ""
 
 #: modules/computer.c:831
 msgid "Renderer"
-msgstr "Gender"
+msgstr "Gengiver"
 
 #: modules/computer.c:832
 msgid "Direct Rendering"
