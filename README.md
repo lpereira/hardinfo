@@ -35,7 +35,7 @@ Dependencies
 - GLib >=2.24
 - Zlib
 - glib JSON
-- Libsoup3 >=3.00 or Libsoup24>=2.42 (LS24: cmake -DHARDINFO2_LIBSOUP3=0 ..)
+- Libsoup3 >=3.00 or Libsoup24 >=2.42 (LS24: cmake -DHARDINFO2_LIBSOUP3=0 ..)
 
 Building and installing
 -----------------------
@@ -49,13 +49,13 @@ Building and installing
 - mkdir build
 - cd build
 - cmake ..
-- make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo apt install ./hardinfo2_*  (Use reinstall instead of install if already inst.)
+- make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
+- sudo apt install ./hardinfo2_*  (Use reinstall instead of install if already installed)
 - sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd
 - hardinfo2
 
-**Fedore/Centos/RedHat/Rocky/Alma/Oracle**
-* NOTE: Centos 7 needs epel-release and cmake3 instead of cmake - use cmake3 instead of cmake
+**Fedora/CentOS/RedHat/Rocky/Alma/Oracle**
+* NOTE: CentOS 7 needs epel-release and cmake3 instead of cmake - use cmake3 instead of cmake
 - sudo yum install epel-release  (only CentOS 7)
 - sudo yum install git cmake gcc gcc-c++ gettext rpmdevtools curl
 - sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
@@ -66,8 +66,8 @@ Building and installing
 - mkdir build
 - cd build
 - cmake ..
-- make package -j (Creates package so you do not polute your distro and it can be updated by distro releases)
-- sudo yum install ./hardinfo2-*  (Use reinstall instead of install if already inst.)
+- make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
+- sudo yum install ./hardinfo2-*  (Use reinstall instead of install if already installed)
 - sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd
 - hardinfo2
 
