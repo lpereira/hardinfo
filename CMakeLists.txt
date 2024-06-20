@@ -156,6 +156,10 @@ if(${disversion} LESS 11.99)
     message("DEB ->11 - LS24")
     set(HARDINFO2_LIBSOUP3 0)
   endif()
+  if(${distro} MATCHES "RaspbianGNULinux")
+    message("DEB ->11 - LS24")
+    set(HARDINFO2_LIBSOUP3 0)
+  endif()
 endif()
 
 #ubuntu 20.04
