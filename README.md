@@ -25,7 +25,7 @@ Server code can be found here: [https://github.com/hardinfo2/server](https://git
 
 Packaging status
 --------------
-[![Packaging status](https://repology.org/badge/vertical-allrepos/hardinfo2.svg?columns=3)](https://repology.org/project/hardinfo2/versions)
+[![Packaging status](https://hardinfo2.org/repology.svg)](https://hardinfo2.org/repology.svg)
 
 Prebuilds: [Downloads](https://hardinfo2.org/github?latest_prerelease)
 
