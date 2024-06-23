@@ -161,6 +161,13 @@ if(${disversion} LESS 11.99)
     set(HARDINFO2_LIBSOUP3 0)
   endif()
 endif()
+#pureos ->10 (debian 11 or less)
+if(${disversion} LESS 10.99)
+  if(${distro} MATCHES "PureOS")
+    message("PureOS ->10 - LS24")
+    set(HARDINFO2_LIBSOUP3 0)
+  endif()
+endif()
 
 #ubuntu 20.04
 if(${disversion} LESS 20.99)
