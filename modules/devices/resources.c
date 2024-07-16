@@ -17,7 +17,6 @@
  */
 
 #include <string.h>
-
 #include "devices.h"
 
 static gchar *_resources = NULL;
@@ -71,8 +70,8 @@ void scan_device_resources(gboolean reload)
 {
     SCAN_START();
     FILE *io;
-    gchar buffer[256];
-    guint i;
+    gchar buffer[512];
+    guint i,t;
     gint zero_to_zero_addr = 0;
 
     struct {
@@ -81,7 +80,8 @@ void scan_device_resources(gboolean reload)
     } resources[] = {
       { "/proc/ioports", "[I/O Ports]\n" },
       { "/proc/iomem", "[Memory]\n" },
-      { "/proc/dma", "[DMA]\n" }
+      { "/proc/dma", "[DMA]\n" },
+      { "/proc/interrupts", "[IRQ]\n" }
     };
 
     g_free(_resources);
@@ -90,30 +90,43 @@ void scan_device_resources(gboolean reload)
     for (i = 0; i < G_N_ELEMENTS(resources); i++) {
       if ((io = fopen(resources[i].file, "r"))) {
         _resources = h_strconcat(_resources, resources[i].description, NULL);
-
-        while (fgets(buffer, 256, io)) {
+        t=0;
+        while (fgets(buffer, 512, io)) {
           gchar **temp = g_strsplit(buffer, ":", 2);
-          gchar *name = _resource_obtain_name(temp[1]);
+	  if((i!=3) || (temp[1]!=NULL)){//discard CPU numbers
+	    gchar *name=NULL;
+	    if(i==3){
+	      //Discard irq counts
+	      int a=0;
+	      while(*(temp[1]+a)==' ' || (*(temp[1]+a)>='0' && *(temp[1]+a)<='9')) a++;
+              name = _resource_obtain_name(temp[1]+a);
+	    } else {
+              name = _resource_obtain_name(temp[1]);
+	    }
 
-          if (strstr(temp[0], "0000-0000"))
-            zero_to_zero_addr++;
+            if( ((i==0) && strstr(temp[0], "0000-0000")) || ((i==1) && strstr(temp[0], "000000-000000")) ){
+              zero_to_zero_addr++;
+	      t++;
+	      char str[512];
+	      sprintf(str,"%d:%s",t,temp[0]);
+	      g_free(temp[0]);
+	      temp[0]=strdup(str);
+	    }
 
-          if (params.markup_ok)
-            _resources = h_strdup_cprintf("<tt>%s</tt>=%s\n", _resources,
-                                          temp[0], name);
-          else
-            _resources = h_strdup_cprintf(">%s=%s\n", _resources,
-                                          temp[0], name);
-
+            if (params.markup_ok)
+              _resources = h_strdup_cprintf("<tt>%s</tt>=%s\n", _resources, temp[0], name);
+            else
+              _resources = h_strdup_cprintf(">%s=%s\n", _resources, temp[0], name);
+            g_free(name);
+	  }
           g_strfreev(temp);
-          g_free(name);
         }
 
         fclose(io);
       }
     }
 
-    _require_root = zero_to_zero_addr > 16;
+    _require_root = zero_to_zero_addr > 2;
 
     SCAN_END();
 }
