@@ -70,14 +70,14 @@ static struct {
     /* arm64/hw_cap */
     { "fp",       NC_("arm-flag", /*/flag:fp*/       "Floating-point on AArch64 (arch>=8)") },
     { "asimd",    NC_("arm-flag", /*/flag:asimd*/    "Advanced SIMD/NEON on AArch64 (arch>=8)") },
-    { "atomics",  NULL },
-    { "fphp",     NULL },
-    { "asimdhp",  NULL },
-    { "cpuid",    NULL },
-    { "asimdrdm", NULL },
-    { "jscvt",    NULL },
-    { "fcma",     NC_("arm-flag", /*/flag:fcma*/     "Complex number SIMD on Arch64 (arch>=8)") },
-    { "lrcpc",    NC_("arm-flag", /*/flag:lrcpc*/    "Weak release consistency on Arch64 (arch>=8)") },
+    { "atomics",  NC_("arm-flag", /*/flag:atomics*/  "Atomic instructions on AArch64 (arch>=8)") },
+    { "fphp",     NC_("arm-flag", /*/flag:fphp*/     "Half precision floating point on AArch64 (arch>=8)") },
+    { "asimdhp",  NC_("arm-flag", /*/flag:asimdhp*/  "Advanced SIMD with BFloat16 on AArch64 (arch>=8)") },
+    { "cpuid",    NC_("arm-flag", /*/flag:cpuid*/    "CPU features can be read on AArch64 (arch>=8)") },
+    { "asimdrdm", NC_("arm-flag", /*/flag:asimdrdm*/ "Advanced SIMD rounding Double MulAcc on AArch64 (arch>=8)") },
+    { "jscvt",    NC_("arm-flag", /*/flag:jscvt*/    "JacaScript conversion on AArch64 (arch>=8)") },
+    { "fcma",     NC_("arm-flag", /*/flag:fcma*/     "Complex number SIMD on AArch64 (arch>=8)") },
+    { "lrcpc",    NC_("arm-flag", /*/flag:lrcpc*/    "Weak release consistency on AArch64 (arch>=8)") },
     { NULL, NULL }
 };
 
