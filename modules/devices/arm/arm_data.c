@@ -62,22 +62,22 @@ static struct {
     { "idivt",    NC_("arm-flag", /*/flag:idivt*/    "SDIV and UDIV hardware division in Thumb mode") },
     { "lpae",     NC_("arm-flag", /*/flag:lpae*/     "40-bit Large Physical Address Extension") },
     /* arm/hw_cap2 */
-    { "pmull",    NC_("arm-flag", /*/flag:pmull*/    "64x64->128-bit F2m multiplication (arch>8)") },
-    { "aes",      NC_("arm-flag", /*/flag:aes*/      "Crypto:AES (arch>8)") },
-    { "sha1",     NC_("arm-flag", /*/flag:sha1*/     "Crypto:SHA1 (arch>8)") },
-    { "sha2",     NC_("arm-flag", /*/flag:sha2*/     "Crypto:SHA2 (arch>8)") },
-    { "crc32",    NC_("arm-flag", /*/flag:crc32*/    "CRC32 checksum instructions (arch>8)") },
+    { "pmull",    NC_("arm-flag", /*/flag:pmull*/    "64x64->128-bit F2m multiplication (arch>=8)") },
+    { "aes",      NC_("arm-flag", /*/flag:aes*/      "Crypto:AES (arch>=8)") },
+    { "sha1",     NC_("arm-flag", /*/flag:sha1*/     "Crypto:SHA1 (arch>=8)") },
+    { "sha2",     NC_("arm-flag", /*/flag:sha2*/     "Crypto:SHA2 (arch>=8)") },
+    { "crc32",    NC_("arm-flag", /*/flag:crc32*/    "CRC32 checksum instructions (arch>=8)") },
     /* arm64/hw_cap */
-    { "fp",       NULL },
-    { "asimd",    NC_("arm-flag", /*/flag:asimd*/    "Advanced SIMD/NEON on AArch64 (arch>8)") },
+    { "fp",       NC_("arm-flag", /*/flag:fp*/       "Floating-point on AArch64 (arch>=8)") },
+    { "asimd",    NC_("arm-flag", /*/flag:asimd*/    "Advanced SIMD/NEON on AArch64 (arch>=8)") },
     { "atomics",  NULL },
     { "fphp",     NULL },
     { "asimdhp",  NULL },
     { "cpuid",    NULL },
     { "asimdrdm", NULL },
     { "jscvt",    NULL },
-    { "fcma",     NULL },
-    { "lrcpc",    NULL },
+    { "fcma",     NC_("arm-flag", /*/flag:fcma*/     "Complex number SIMD on Arch64 (arch>=8)") },
+    { "lrcpc",    NC_("arm-flag", /*/flag:lrcpc*/    "Weak release consistency on Arch64 (arch>=8)") },
     { NULL, NULL }
 };
 
