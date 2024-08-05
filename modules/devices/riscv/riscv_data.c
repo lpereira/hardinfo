@@ -34,27 +34,33 @@
 static struct {
     char *name, *meaning;
 } tab_ext_meaning[] = {
-    { "RV32",  NC_("rv-ext", /*/ext:RV32*/  "RISC-V 32-bit") },
-    { "RV64",  NC_("rv-ext", /*/ext:RV64*/  "RISC-V 64-bit") },
-    { "RV128", NC_("rv-ext", /*/ext:RV128*/ "RISC-V 128-bit") },
-    { "E",     NC_("rv-ext", /*/ext:E*/ "Base embedded integer instructions (15 registers)") },
-    { "I",     NC_("rv-ext", /*/ext:I*/ "Base integer instructions (31 registers)") },
-    { "M",     NC_("rv-ext", /*/ext:M*/ "Hardware integer multiply and divide") },
-    { "A",     NC_("rv-ext", /*/ext:A*/ "Atomic memory operations") },
-    { "C",     NC_("rv-ext", /*/ext:C*/ "Compressed 16-bit instructions") },
-    { "F",     NC_("rv-ext", /*/ext:F*/ "Floating-point instructions, single-precision") },
-    { "D",     NC_("rv-ext", /*/ext:D*/ "Floating-point instructions, double-precision") },
-    { "Q",     NC_("rv-ext", /*/ext:Q*/ "Floating-point instructions, quad-precision") },
-    { "B",     NC_("rv-ext", /*/ext:B*/ "Bit manipulation instructions") },
-    { "V",     NC_("rv-ext", /*/ext:V*/ "Vector operations") },
-    { "Zk",    NC_("rv-ext", /*/ext:Zk*/ "Scalar Cryptography") },
-    { "S",     NC_("rv-ext", /*/ext:S*/ "Supervisor-level Instructions") },
-    { "U",     NC_("rv-ext", /*/ext:U*/ "User Mode") },
-    { "T",     NC_("rv-ext", /*/ext:T*/ "Transactional memory") },
-    { "P",     NC_("rv-ext", /*/ext:P*/ "Packed SIMD instructions") },
-    { "L",     NC_("rv-ext", /*/ext:L*/ "Decimal floating-point instructions") },
-    { "J",     NC_("rv-ext", /*/ext:J*/ "Dynamically translated languages") },
-    { "N",     NC_("rv-ext", /*/ext:N*/ "User-level interrupts") },
+    { "RV32",    NC_("rv-ext", /*/ext:RV32*/  "RISC-V 32-bit") },
+    { "RV64",    NC_("rv-ext", /*/ext:RV64*/  "RISC-V 64-bit") },
+    { "RV128",   NC_("rv-ext", /*/ext:RV128*/ "RISC-V 128-bit") },
+    { "E",       NC_("rv-ext", /*/ext:E*/ "Base embedded integer instructions (15 registers)") },
+    { "I",       NC_("rv-ext", /*/ext:I*/ "Base integer instructions (31 registers)") },
+    { "M",       NC_("rv-ext", /*/ext:M*/ "Hardware integer multiply and divide") },
+    { "A",       NC_("rv-ext", /*/ext:A*/ "Atomic memory operations") },
+    { "C",       NC_("rv-ext", /*/ext:C*/ "Compressed 16-bit instructions") },
+    { "F",       NC_("rv-ext", /*/ext:F*/ "Floating-point instructions, single-precision") },
+    { "D",       NC_("rv-ext", /*/ext:D*/ "Floating-point instructions, double-precision") },
+    { "Q",       NC_("rv-ext", /*/ext:Q*/ "Floating-point instructions, quad-precision") },
+    { "B",       NC_("rv-ext", /*/ext:B*/ "Bit manipulation instructions") },
+    { "V",       NC_("rv-ext", /*/ext:V*/ "Vector operations") },
+    { "zk",      NC_("rv-ext", /*/ext:Zk*/ "Scalar Cryptography") },
+    { "zicntr",  NC_("rv-ext", /*/ext:ZI*/ "Base Counters and Timers") },
+    { "zicsr",   NC_("rv-ext", /*/ext:ZI*/ "Control and Status Register") },
+    { "zifencei",NC_("rv-ext", /*/ext:ZI*/ "Instruction-Fetch Fence") },
+    { "zihpm",   NC_("rv-ext", /*/ext:ZI*/ "Hardware performance counters") },
+    { "zba",     NC_("rv-ext", /*/ext:ZB*/ "Accell Index addresses") },
+    { "zbb",     NC_("rv-ext", /*/ext:ZB*/ "Basic bit-manipulation") },
+    { "S",       NC_("rv-ext", /*/ext:S*/ "Supervisor-level Instructions") },
+    { "U",       NC_("rv-ext", /*/ext:U*/ "User Mode") },
+    { "T",       NC_("rv-ext", /*/ext:T*/ "Transactional memory") },
+    { "P",       NC_("rv-ext", /*/ext:P*/ "Packed SIMD instructions") },
+    { "L",       NC_("rv-ext", /*/ext:L*/ "Decimal floating-point instructions") },
+    { "J",       NC_("rv-ext", /*/ext:J*/ "Dynamically translated languages") },
+    { "N",       NC_("rv-ext", /*/ext:N*/ "User-level interrupts") },
     { NULL, NULL }
 };
 
@@ -142,10 +148,9 @@ static int riscv_isa_next(const char *isap, char *flag) {
     }
 
     switch(*p) {
-      //        case 'S': case 's': /* supervisor extension */
-      //        case 'X': case 'x': /* custom extension */
-            /* custom supervisor extension (SX..) handled by S */
-      //       break;
+      //case 'X': case 'x': /* custom extension */
+        case 'Z': case 'z': /* custom extension */
+             break;
         default: /* single character (standard) extension */
             tag_len = 1;
             if (next_digit != p+1) ver_len = 0;
@@ -174,11 +179,11 @@ static int riscv_isa_next(const char *isap, char *flag) {
 
 #define FSTR_SIZE 1024
 #define RV_CHECK_FOR(e) ( strncasecmp(ps, e, 2) == 0 )
-#define ADD_EXT_FLAG(ext) el = strlen(ext); strncpy(pd, ext, el); pd[el]=' '; pd[el+1]=0; pd += el + 1;
+#define ADD_EXT_FLAG(ext,el) memcpy(pd, ext, el); pd[el]=' '; pd[el+1]=0; pd += el + 1;
 char *riscv_isa_to_flags(const char *isa) {
     char *flags = NULL, *ps = (char*)isa, *pd = NULL;
-    char flag_buf[64] = "";
-    int isa_len = 0, tl = 0, el = 0; /* el used in macro */
+    char flag_buf[256] = "";
+    int isa_len = 0, tl = 0;
 
     if (isa) {
         isa_len = strlen(isa);
@@ -190,21 +195,21 @@ char *riscv_isa_to_flags(const char *isa) {
             if ( RV_CHECK_FOR("RV") )
             { ps += 2; }
             if ( RV_CHECK_FOR("32") )
-            { ADD_EXT_FLAG("RV32"); ps += 2; }
+	      { ADD_EXT_FLAG("RV32",4); ps += 2; }
             else if ( RV_CHECK_FOR("64") )
-            { ADD_EXT_FLAG("RV64"); ps += 2; }
+	      { ADD_EXT_FLAG("RV64",4); ps += 2; }
             else if ( RV_CHECK_FOR("128") )
-            { ADD_EXT_FLAG("RV128"); ps += 3; }
-
+	      { ADD_EXT_FLAG("RV128",5); ps += 3; }
             while( (tl = riscv_isa_next(ps, flag_buf)) ) {
+	        DEBUG("RISCV ISA: %s (len=%d)",flag_buf,tl);
                 if (flag_buf[0] == 'G') { /* G = IMAFD */
-                    flag_buf[0] = 'I'; ADD_EXT_FLAG(flag_buf);
-                    flag_buf[0] = 'M'; ADD_EXT_FLAG(flag_buf);
-                    flag_buf[0] = 'A'; ADD_EXT_FLAG(flag_buf);
-                    flag_buf[0] = 'F'; ADD_EXT_FLAG(flag_buf);
-                    flag_buf[0] = 'D'; ADD_EXT_FLAG(flag_buf);
+		    flag_buf[0] = 'I'; ADD_EXT_FLAG(flag_buf,1);
+                    flag_buf[0] = 'M'; ADD_EXT_FLAG(flag_buf,1);
+                    flag_buf[0] = 'A'; ADD_EXT_FLAG(flag_buf,1);
+                    flag_buf[0] = 'F'; ADD_EXT_FLAG(flag_buf,1);
+                    flag_buf[0] = 'D'; ADD_EXT_FLAG(flag_buf,1);
                 } else {
-                    ADD_EXT_FLAG(flag_buf);
+		    ADD_EXT_FLAG(flag_buf,tl);
                 }
                 ps += tl;
                 if (ps - isa >= isa_len) break; /* just in case */
