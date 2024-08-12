@@ -171,24 +171,21 @@ gchar *processor_describe_default(GSList * processors)
 
     cpu_procs_cores_threads_nodes(&packs, &cores, &threads, &nodes);
 
-    /* NOTE: If this is changed, look at get_cpu_desc() in bench_results.c! */
-
-    /* if topology info was available, else fallback to old method */
     if (cores > 0) {
         packs_fmt = ngettext("%d physical processor", "%d physical processors", packs);
         cores_fmt = ngettext("%d core", "%d cores", cores);
         threads_fmt = ngettext("%d thread", "%d threads", threads);
         if (nodes > 1) {
             nodes_fmt = ngettext("%d NUMA node", "%d NUMA nodes", nodes);
-            full_fmt = g_strdup_printf(_(/*/NP procs; NC cores across NN nodes; NT threads*/ "%s; %s across %s; %s"), packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
-            ret = g_strdup_printf(full_fmt, packs, cores * nodes, nodes, threads);
+            full_fmt = g_strdup_printf("%s; %s across %s; %s", packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
+            ret = g_strdup_printf(full_fmt, packs, cores, nodes, threads);
         } else {
-            full_fmt = g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"), packs_fmt, cores_fmt, threads_fmt);
+	    full_fmt = g_strdup_printf("%s; %s; %s", packs_fmt, cores_fmt, threads_fmt);
             ret = g_strdup_printf(full_fmt, packs, cores, threads);
         }
         g_free(full_fmt);
         return ret;
-    } else {
+    } else { //fallback to old method
         return processor_describe_by_counting_names(processors);
     }
 }
