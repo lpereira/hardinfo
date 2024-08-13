@@ -692,7 +692,7 @@ gchar *dmi_socket_info() {
                 _("Socket Information"), _("Result"),
                 (getuid() == 0)
                 ? _("(Not available)")
-                : _("(Not available; Perhaps try running HardInfo as root.)") );
+                : _("(Not available; Perhaps try running hardinfo2 as root.)") );
     } else {
         ret = g_strdup("");
         for(i = 0; i < hl->count; i++) {

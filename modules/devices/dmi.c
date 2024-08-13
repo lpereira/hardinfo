@@ -118,7 +118,7 @@ gboolean dmi_get_info(void)
             case 1: /* no value, no root */
                 dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info, _(info->name),
                                             _("(Not available; Perhaps try "
-                                              "running HardInfo as root.)"));
+                                              "running hardinfo2 as root.)"));
                 break;
             case 2: /* ignored value */
                 if (params.markup_ok)
@@ -161,7 +161,7 @@ void __scan_dmi(void)
                         _("DMI Unavailable"),
                         (getuid() == 0)
                             ? _("DMI is not avaliable. Perhaps this platform does not provide DMI.")
-                            : _("DMI is not available; Perhaps try running HardInfo as root.") );
+                            : _("DMI is not available; Perhaps try running hardinfo2 as root.") );
 
   }
 }
