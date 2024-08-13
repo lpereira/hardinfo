@@ -1002,16 +1002,18 @@ gchar *memory_devices_get_system_memory_str() {
 static gchar note_state[note_max_len] = "";
 
 gboolean memory_devices_hinote(const char **msg) {
-    gchar *want_dmi    = _(" <b><i>dmidecode</i></b> package installed");
-    gchar *want_root   = _(" sudo chmod a+r /sys/firmware/dmi/tables/*");
-    gchar *want_at24   = _(" sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)");
-    gchar *want_ee1004 = _(" sudo modprobe ee1004 (for DDR4)");
+    gchar *want_dmi    = _("<b><i>dmidecode</i></b> package installed");
+    gchar *want_root   = _("sudo chmod a+r /sys/firmware/dmi/tables/*");
+    gchar *want_at24   = _("sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)");
+    gchar *want_ee1004 = _("sudo modprobe ee1004 (for DDR4)");
+    gchar *want_spd5118 = _("sudo modprobe spd5118 (for DDR5)");
 
     //gboolean has_root = (getuid() == 0);
     gboolean has_dmi = !no_handles;
     gboolean has_at24eep = g_file_test("/sys/bus/i2c/drivers/at24", G_FILE_TEST_IS_DIR) ||
                            g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
     gboolean has_ee1004 = g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_IS_DIR);
+    gboolean has_spd5118 = g_file_test("/sys/bus/i2c/drivers/spd5118", G_FILE_TEST_IS_DIR);
 
     *note_state = 0; /* clear */
     note_printf(note_state, "%s\n", _("Memory Information requires more Setup:"));
@@ -1023,10 +1025,13 @@ gboolean memory_devices_hinote(const char **msg) {
     note_cond_bullet(has_at24eep, note_state, want_at24);
     note_print(note_state, "<tt>   </tt>");
     note_cond_bullet(has_ee1004, note_state, want_ee1004);
+    note_print(note_state, "<tt>   </tt>");
+    note_cond_bullet(has_spd5118, note_state, want_spd5118);
     g_strstrip(note_state); /* remove last \n */
 
     gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<(DDR3_SDRAM-1))) && has_ee1004);
 
+    //FIXME: Below is not updated for DDR5 and DDR5 SPD is not decoded!!
     gboolean best_state = FALSE;
     if (has_dmi && /*has_root &&*/
         ((has_at24eep && !spd_ddr4_partial_data)
