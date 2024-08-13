@@ -69,7 +69,7 @@ static gchar *_resource_obtain_name(gchar *name)
 void scan_device_resources(gboolean reload)
 {
     SCAN_START();
-    FILE *io;
+    FILE *io,*iotmp;
     gchar buffer[512];
     guint i,t;
     gint zero_to_zero_addr = 0;
@@ -78,8 +78,8 @@ void scan_device_resources(gboolean reload)
       gchar *file;
       gchar *description;
     } resources[] = {
-      { "/proc/ioports", "[I/O Ports]\n" },
-      { "/proc/iomem", "[Memory]\n" },
+      { "/proc/ioports", "[I/O Ports]\n" },//requires root for addresses
+      { "/proc/iomem", "[Memory]\n" },//requires root for addresses
       { "/proc/dma", "[DMA]\n" },
       { "/proc/interrupts", "[IRQ]\n" }
     };
@@ -91,6 +91,21 @@ void scan_device_resources(gboolean reload)
       if ((io = fopen(resources[i].file, "r"))) {
         _resources = h_strconcat(_resources, resources[i].description, NULL);
         t=0;
+	//check /tmp/hardinfo2_(iomem/ioports) exists and use if not root
+        if(getuid() != 0){//not root access
+	  if(i==0) {
+	    if((iotmp = fopen("/tmp/hardinfo2_ioports", "r"))){
+	      fclose(io);
+	      io = iotmp;iotmp=NULL;
+	    }
+	  }
+	  if(i==1) {
+	    if((iotmp = fopen("/tmp/hardinfo2_iomem", "r"))){
+	      fclose(io);
+	      io = iotmp;iotmp=NULL;
+	    }
+	  }
+	}
         while (fgets(buffer, 512, io)) {
           gchar **temp = g_strsplit(buffer, ":", 2);
 	  if((i!=3) || (temp[1]!=NULL)){//discard CPU numbers
