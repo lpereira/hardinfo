@@ -1,5 +1,5 @@
 /*
- *    HardInfo - Displays System Information
+ *    HardInfo2 - System Information and Benchmark
  *    Copyright (C) 2003-2009 L. A. F. Pereira <l@tia.mat.br>
  *
  *    This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ static guint our_blobs_update_version = 0;
 #define LABEL_SYNC_DEFAULT                                                     \
     _("<big><b>Synchronize with Central Database</b></big>\n"                  \
       "The following information may be synchronized\n"                         \
-      "with the HardInfo central database.")
+      "with the HardInfo2 central database.")
 #define LABEL_SYNC_SYNCING                                                     \
     _("<big><b>Synchronizing</b></big>\n"                                      \
       "This may take some time.")
