@@ -1,0 +1,5 @@
+#/bin/sh
+systemctl daemon-reload
+systemctl enable hardinfo2
+systemctl start hardinfo2
+echo "Service Installed..."

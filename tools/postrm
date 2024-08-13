@@ -1,0 +1,3 @@
+#/bin/sh
+systemctl disable hardinfo2
+echo "Service Removed..."

@@ -4,6 +4,7 @@ project(hardinfo2)
 
 set(HARDINFO2_VERSION "2.1.12")
 
+option(HARDINFO2_SERVICE "Build with service support" 1)
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 1)
 
@@ -484,6 +485,17 @@ endif()
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
 configure_file(hardinfo2.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo2.desktop @ONLY)
 
+if(HARDINFO2_SERVICE)
+#    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION ${CMAKE_INSTALL_LIBDIR}/systemd/system/)
+if(${RPM})
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION /usr/lib/systemd/system/)
+else()
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION /lib/systemd/system/)
+endif()
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/postinst ${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/postrm ${CMAKE_CURRENT_BINARY_DIR}/packaging/postrm)
+endif()
+
 install(TARGETS hardinfo2 ${HARDINFO2_MODULES}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hardinfo2/modules
@@ -510,6 +522,7 @@ install(FILES pixmaps/hardinfo2.png
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
+
 
 ########################CPack PACKAGE BUILDING###########################
 
@@ -546,6 +559,11 @@ else()
     SET(PACKAGE_GTK "${PACKAGE_GTK2} (>=2.20)")
 endif()
 SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAGE_GTK}, libglib2.0-0 (>=2.10)")
+#RPM-SERVICE
+if(HARDINFO2_SERVICE)
+    SET(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst")
+    SET(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/packaging/postrm")
+endif()
 
 #DEB
 SET(CPACK_DEBIAN_PACKAGE_REPLACES "hardinfo")
@@ -565,5 +583,9 @@ else()
     SET(PACKAGE_GTK "${PACKAGE_GTK2} (>=2.20)")
 endif()
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, ${PACKAGE_LS}, ${PACKAGE_GTK}")
+#DEB-SERVICE
+if(HARDINFO2_SERVICE)
+    SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst;${CMAKE_CURRENT_BINARY_DIR}/packaging/postrm")
+endif()
 
 INCLUDE(CPack)
