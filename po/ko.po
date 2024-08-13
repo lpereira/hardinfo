@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-30 15:01+0200\n"
+"POT-Creation-Date: 2024-08-13 14:20+0200\n"
 "PO-Revision-Date: 2022-09-28\n"
 "Last-Translator: Yunji Lee<yunlisa96@gmail.com>\n"
 "Language-Team: \n"
@@ -55,15 +55,16 @@ msgstr "ns"
 msgid "Governor"
 msgstr "거버너"
 
-#: hardinfo2/cpu_util.c:211 hardinfo2/cpu_util.c:217 modules/devices.c:772
+#: hardinfo2/cpu_util.c:211 hardinfo2/cpu_util.c:217 modules/devices.c:769
 #: modules/devices/gpu.c:163 modules/devices/pci.c:148
 #: modules/devices/usb.c:139
 msgid "Driver"
 msgstr "드라이버"
 
 #: hardinfo2/cpu_util.c:223 modules/computer.c:785
-#: modules/devices/arm/processor.c:255 modules/devices/x86/processor.c:283
-#: modules/devices/x86/processor.c:387 modules/devices/x86/processor.c:525
+#: modules/devices/arm/processor.c:255 modules/devices/e2k/processor.c:178
+#: modules/devices/x86/processor.c:283 modules/devices/x86/processor.c:387
+#: modules/devices/x86/processor.c:525
 msgid "(Not Available)"
 msgstr "(사용할 수 없습니다)"
 
@@ -111,7 +112,8 @@ msgstr "시스템 장치"
 
 #: hardinfo2/dmi_util.c:29 modules/computer.c:556 modules/computer.c:1054
 #: modules/devices/alpha/processor.c:87 modules/devices/arm/processor.c:340
-#: modules/devices.c:99 modules/devices/ia64/processor.c:159
+#: modules/devices.c:99 modules/devices/e2k/processor.c:357
+#: modules/devices/ia64/processor.c:159
 #: modules/devices/loongarch64/processor.c:80
 #: modules/devices/m68k/processor.c:83 modules/devices/mips/processor.c:74
 #: modules/devices/parisc/processor.c:154 modules/devices/ppc/processor.c:157
@@ -129,8 +131,8 @@ msgstr "메모리 컨트롤러"
 msgid "Memory Module"
 msgstr "메모리 모듈"
 
-#: hardinfo2/dmi_util.c:32 modules/devices/parisc/processor.c:163
-#: modules/devices/x86/processor.c:663
+#: hardinfo2/dmi_util.c:32 modules/devices/e2k/processor.c:366
+#: modules/devices/parisc/processor.c:163 modules/devices/x86/processor.c:663
 msgid "Cache"
 msgstr "캐시"
 
@@ -634,8 +636,8 @@ msgstr ""
 
 #: hardinfo2/vendor.c:391 modules/computer.c:608 modules/computer.c:813
 #: modules/computer/os.c:80 modules/computer/os.c:267 modules/computer/os.c:304
-#: modules/computer/os.c:511 modules/computer/os.c:581 modules/devices.c:403
-#: modules/devices.c:549 modules/devices/firmware.c:149
+#: modules/computer/os.c:511 modules/computer/os.c:581 modules/devices.c:400
+#: modules/devices.c:546 modules/devices/firmware.c:149
 #: modules/devices/printers.c:106 modules/devices/printers.c:113
 #: modules/devices/printers.c:123 modules/devices/printers.c:138
 #: modules/devices/printers.c:147 modules/devices/printers.c:256
@@ -865,8 +867,11 @@ msgstr "업데이트 중..."
 msgid ""
 "<big><b>Synchronize with Central Database</b></big>\n"
 "The following information may be synchronized\n"
-"with the HardInfo central database."
+"with the HardInfo2 central database."
 msgstr ""
+"<big><b>중앙 데이터베이스와 동기화</b></big>\n"
+"다음 정보가 동기화될 수 있습니다.\n"
+"HardInfo2 중앙 데이터베이스와 함께."
 
 #: shell/syncmanager.c:84
 msgid ""
@@ -1003,7 +1008,7 @@ msgstr "HIMark의 결과입니다. 높을수록 좋습니다."
 #. * line references
 #: modules/benchmark/bench_results.c:34 modules/computer.c:41
 #: modules/computer/display.c:40 modules/computer/display.c:57
-#: modules/computer/os.c:290 modules/computer/os.c:350 modules/devices.c:532
+#: modules/computer/os.c:290 modules/computer/os.c:350 modules/devices.c:529
 #: modules/devices/dmi_memory.c:57 modules/devices/dmi_memory.c:58
 #: modules/devices/dmi_memory.c:634 modules/devices/dmi_memory.c:777
 #: modules/devices/dmi_memory.c:912 modules/devices/gpu.c:40
@@ -1026,12 +1031,13 @@ msgstr "(알 수 없음)"
 #: modules/benchmark/bench_results.c:69 modules/benchmark/bench_results.c:359
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:289
 #: modules/devices/arm/processor.c:302 modules/devices/arm/processor.c:344
-#: modules/devices/arm/processor.c:499 modules/devices.c:369
-#: modules/devices.c:377 modules/devices.c:405 modules/devices/gpu.c:125
-#: modules/devices/gpu.c:127 modules/devices/gpu.c:133
-#: modules/devices/gpu.c:135 modules/devices/gpu.c:187
-#: modules/devices/gpu.c:189 modules/devices/ia64/processor.c:167
-#: modules/devices/ia64/processor.c:196
+#: modules/devices/arm/processor.c:499 modules/devices.c:366
+#: modules/devices.c:374 modules/devices.c:402
+#: modules/devices/e2k/processor.c:363 modules/devices/e2k/processor.c:400
+#: modules/devices/gpu.c:125 modules/devices/gpu.c:127
+#: modules/devices/gpu.c:133 modules/devices/gpu.c:135
+#: modules/devices/gpu.c:187 modules/devices/gpu.c:189
+#: modules/devices/ia64/processor.c:167 modules/devices/ia64/processor.c:196
 #: modules/devices/loongarch64/processor.c:85
 #: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
 #: modules/devices/parisc/processor.c:158
@@ -1045,38 +1051,38 @@ msgstr "(알 수 없음)"
 msgid "MHz"
 msgstr "MHz"
 
-#: modules/benchmark/bench_results.c:391 modules/devices.c:178
+#: modules/benchmark/bench_results.c:391 modules/devices.c:175
 #, c-format
 msgid "%d physical processor"
 msgid_plural "%d physical processors"
 msgstr[0] "%d개의 물리적 프로세서"
 
-#: modules/benchmark/bench_results.c:392 modules/devices.c:179
+#: modules/benchmark/bench_results.c:392 modules/devices.c:176
 #, c-format
 msgid "%d core"
 msgid_plural "%d cores"
 msgstr[0] "%d 코어"
 
-#: modules/benchmark/bench_results.c:393 modules/devices.c:180
+#: modules/benchmark/bench_results.c:393 modules/devices.c:177
 #, c-format
 msgid "%d thread"
 msgid_plural "%d threads"
 msgstr[0] "%d 스레드"
 
-#: modules/benchmark/bench_results.c:398 modules/devices.c:182
+#: modules/benchmark/bench_results.c:398 modules/devices.c:179
 #, c-format
 msgid "%d NUMA node"
 msgid_plural "%d NUMA nodes"
 msgstr[0] "%d NUMA 노드"
 
 #. /NP procs; NC cores across NN nodes; NT threads
-#: modules/benchmark/bench_results.c:402 modules/devices.c:183
+#: modules/benchmark/bench_results.c:402
 #, c-format
 msgid "%s; %s across %s; %s"
 msgstr "%s; %s에서 %s; %s"
 
 #. /NP procs; NC cores; NT threads
-#: modules/benchmark/bench_results.c:407 modules/devices.c:186
+#: modules/benchmark/bench_results.c:407
 #, c-format
 msgid "%s; %s; %s"
 msgstr "%s; %s; %s"
@@ -1117,8 +1123,8 @@ msgid "seconds"
 msgstr "초"
 
 #: modules/benchmark/bench_results.c:513 modules/computer/languages.c:101
-#: modules/devices/arm/processor.c:354 modules/devices/gpu.c:157
-#: modules/devices/ia64/processor.c:166
+#: modules/devices/arm/processor.c:354 modules/devices/e2k/processor.c:362
+#: modules/devices/gpu.c:157 modules/devices/ia64/processor.c:166
 #: modules/devices/loongarch64/processor.c:84 modules/devices/pci.c:146
 #: modules/devices/ppc/processor.c:159
 msgid "Revision"
@@ -1521,7 +1527,7 @@ msgstr "필드"
 msgid "Description"
 msgstr "설명"
 
-#: modules/computer.c:386 modules/devices.c:771
+#: modules/computer.c:386 modules/devices.c:768
 msgid "Value"
 msgstr "값"
 
@@ -1694,11 +1700,11 @@ msgstr "로드된 모듈"
 #: modules/computer.c:714 modules/computer.c:742 modules/computer.c:863
 #: modules/computer/languages.c:95 modules/computer/modules.c:370
 #: modules/devices/arm/processor.c:468 modules/devices/dmi.c:38
-#: modules/devices/dmi.c:49 modules/devices/gpu.c:249
-#: modules/devices/ia64/processor.c:160 modules/devices/inputdevices.c:141
-#: modules/devices/monitors.c:403 modules/devices/monitors.c:505
-#: modules/devices/sh/processor.c:84 modules/devices/x86/processor.c:750
-#: modules/network.c:333
+#: modules/devices/dmi.c:49 modules/devices/e2k/processor.c:358
+#: modules/devices/gpu.c:249 modules/devices/ia64/processor.c:160
+#: modules/devices/inputdevices.c:141 modules/devices/monitors.c:403
+#: modules/devices/monitors.c:505 modules/devices/sh/processor.c:84
+#: modules/devices/x86/processor.c:750 modules/network.c:333
 msgid "Name"
 msgstr "이름"
 
@@ -1730,12 +1736,13 @@ msgstr "마운트 포인트"
 msgid "Usage"
 msgstr "사용량"
 
-#: modules/computer.c:757 modules/devices.c:795 modules/devices.c:809
-#: modules/devices/gpu.c:85 modules/devices/gpu.c:93 modules/devices/gpu.c:241
-#: modules/devices/pci.c:102 modules/devices/pci.c:110
-#: modules/devices/pci.c:154 modules/devices/storage.c:48
-#: modules/devices/storage.c:57 modules/devices/usb.c:172
-#: modules/devices/usb.c:184 modules/devices/x86/processor.c:811
+#: modules/computer.c:757 modules/devices.c:792 modules/devices.c:806
+#: modules/devices/e2k/processor.c:416 modules/devices/gpu.c:85
+#: modules/devices/gpu.c:93 modules/devices/gpu.c:241 modules/devices/pci.c:102
+#: modules/devices/pci.c:110 modules/devices/pci.c:154
+#: modules/devices/storage.c:48 modules/devices/storage.c:57
+#: modules/devices/usb.c:172 modules/devices/usb.c:184
+#: modules/devices/x86/processor.c:811
 msgid "Device"
 msgstr "장치"
 
@@ -1743,7 +1750,7 @@ msgstr "장치"
 msgid "Session"
 msgstr "세션"
 
-#: modules/computer.c:780 modules/devices.c:772 modules/devices.c:809
+#: modules/computer.c:780 modules/devices.c:769 modules/devices.c:806
 #: modules/devices/dmi.c:56 modules/devices/dmi_memory.c:658
 #: modules/devices/dmi_memory.c:807 modules/devices/inputdevices.c:142
 #: modules/devices/x86/processor.c:715
@@ -1762,13 +1769,13 @@ msgstr "현재 표시 이름"
 msgid "X Server"
 msgstr "X 서버"
 
-#: modules/computer.c:790 modules/computer.c:830 modules/devices.c:809
+#: modules/computer.c:790 modules/computer.c:830 modules/devices.c:806
 #: modules/devices/dmi.c:40 modules/devices/dmi.c:46 modules/devices/dmi.c:50
 #: modules/devices/dmi.c:55 modules/devices/dmi_memory.c:808
-#: modules/devices/dmi_memory.c:950 modules/devices/firmware.c:75
-#: modules/devices/firmware.c:167 modules/devices/firmware.c:172
-#: modules/devices/firmware.c:219 modules/devices/gpu.c:84
-#: modules/devices/gpu.c:92 modules/devices/gpu.c:240
+#: modules/devices/dmi_memory.c:950 modules/devices/e2k/processor.c:359
+#: modules/devices/firmware.c:75 modules/devices/firmware.c:167
+#: modules/devices/firmware.c:172 modules/devices/firmware.c:219
+#: modules/devices/gpu.c:84 modules/devices/gpu.c:92 modules/devices/gpu.c:240
 #: modules/devices/ia64/processor.c:161 modules/devices/inputdevices.c:144
 #: modules/devices/monitors.c:402 modules/devices/pci.c:101
 #: modules/devices/pci.c:109 modules/devices/storage.c:47
@@ -1929,7 +1936,7 @@ msgstr "읽기-쓰기"
 msgid "Read-Only"
 msgstr "읽기 전용"
 
-#: modules/computer/filesystem.c:90 modules/devices.c:795
+#: modules/computer/filesystem.c:90 modules/devices.c:792
 #: modules/devices/dmi_memory.c:664 modules/devices/dmi_memory.c:811
 #: modules/devices/dmi_memory.c:843 modules/devices/dmi_memory.c:882
 #: modules/devices/dmi_memory.c:949
@@ -2385,10 +2392,11 @@ msgstr "사용자 ID"
 msgid "Default Shell"
 msgstr "기본 셸"
 
-#: modules/devices/alpha/processor.c:88 modules/devices.c:795
+#: modules/devices/alpha/processor.c:88 modules/devices.c:792
 #: modules/devices/devicetree.c:162 modules/devices/devicetree.c:208
-#: modules/devices/devicetree/pmac_data.c:80 modules/devices/gpu.c:116
-#: modules/devices/ia64/processor.c:165
+#: modules/devices/devicetree/pmac_data.c:80
+#: modules/devices/e2k/processor.c:361 modules/devices/e2k/processor.c:416
+#: modules/devices/gpu.c:116 modules/devices/ia64/processor.c:165
 #: modules/devices/loongarch64/processor.c:83
 #: modules/devices/m68k/processor.c:84 modules/devices/mips/processor.c:75
 #: modules/devices/monitors.c:404 modules/devices/parisc/processor.c:155
@@ -2402,6 +2410,7 @@ msgid "Platform String"
 msgstr "플랫폼 문자열"
 
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:344
+#: modules/devices/e2k/processor.c:363 modules/devices/e2k/processor.c:416
 #: modules/devices/ia64/processor.c:167
 #: modules/devices/loongarch64/processor.c:85
 #: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
@@ -2412,15 +2421,16 @@ msgid "Frequency"
 msgstr "주파수"
 
 #: modules/devices/alpha/processor.c:91 modules/devices/arm/processor.c:345
-#: modules/devices/ia64/processor.c:168 modules/devices/m68k/processor.c:88
-#: modules/devices/mips/processor.c:78 modules/devices/parisc/processor.c:159
-#: modules/devices/ppc/processor.c:161 modules/devices/s390/processor.c:134
-#: modules/devices/sh/processor.c:90 modules/devices/x86/processor.c:659
+#: modules/devices/e2k/processor.c:364 modules/devices/ia64/processor.c:168
+#: modules/devices/m68k/processor.c:88 modules/devices/mips/processor.c:78
+#: modules/devices/parisc/processor.c:159 modules/devices/ppc/processor.c:161
+#: modules/devices/s390/processor.c:134 modules/devices/sh/processor.c:90
+#: modules/devices/x86/processor.c:659
 msgid "BogoMips"
 msgstr ""
 
 #: modules/devices/alpha/processor.c:92 modules/devices/arm/processor.c:346
-#: modules/devices/ia64/processor.c:169
+#: modules/devices/e2k/processor.c:365 modules/devices/ia64/processor.c:169
 #: modules/devices/loongarch64/processor.c:88
 #: modules/devices/m68k/processor.c:89 modules/devices/mips/processor.c:79
 #: modules/devices/parisc/processor.c:160 modules/devices/ppc/processor.c:162
@@ -2567,38 +2577,93 @@ msgstr "40비트 대형 물리적 주소 확장"
 #. /flag:pmull
 #: modules/devices/arm/arm_data.c:65
 msgctxt "arm-flag"
-msgid "64x64->128-bit F2m multiplication (arch>8)"
-msgstr "64x64->128비트 F2m 증식(arch>8)"
+msgid "64x64->128-bit F2m multiplication (arch>=8)"
+msgstr "64x64->128비트 F2m 증식(arch>=8)"
 
 #. /flag:aes
 #: modules/devices/arm/arm_data.c:66
 msgctxt "arm-flag"
-msgid "Crypto:AES (arch>8)"
-msgstr "암호화:AES (arch>8)"
+msgid "Crypto:AES (arch>=8)"
+msgstr "암호화:AES (arch>=8)"
 
 #. /flag:sha1
 #: modules/devices/arm/arm_data.c:67
 msgctxt "arm-flag"
-msgid "Crypto:SHA1 (arch>8)"
-msgstr "암호화:SHA1(arch>8)"
+msgid "Crypto:SHA1 (arch>=8)"
+msgstr "암호화:SHA1(arch>=8)"
 
 #. /flag:sha2
 #: modules/devices/arm/arm_data.c:68
 msgctxt "arm-flag"
-msgid "Crypto:SHA2 (arch>8)"
-msgstr "암호화:SHA2 (arch>8)"
+msgid "Crypto:SHA2 (arch>=8)"
+msgstr "암호화:SHA2 (arch>=8)"
 
 #. /flag:crc32
 #: modules/devices/arm/arm_data.c:69
 msgctxt "arm-flag"
-msgid "CRC32 checksum instructions (arch>8)"
-msgstr "CRC32 체크섬 명령어(arch>8)"
+msgid "CRC32 checksum instructions (arch>=8)"
+msgstr "CRC32 체크섬 명령어(arch>=8)"
+
+#. /hw_cap
+#. /flag:fp
+#: modules/devices/arm/arm_data.c:71
+msgctxt "arm-flag"
+msgid "Floating-point on AArch64 (arch>=8)"
+msgstr ""
 
 #. /flag:asimd
 #: modules/devices/arm/arm_data.c:72
 msgctxt "arm-flag"
-msgid "Advanced SIMD/NEON on AArch64 (arch>8)"
-msgstr "AArch64의 고급 SIMD/NEON(arch>8)"
+msgid "Advanced SIMD/NEON on AArch64 (arch>=8)"
+msgstr "AArch64의 고급 SIMD/NEON(arch>=8)"
+
+#. /flag:atomics
+#: modules/devices/arm/arm_data.c:73
+msgctxt "arm-flag"
+msgid "Atomic instructions on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:fphp
+#: modules/devices/arm/arm_data.c:74
+msgctxt "arm-flag"
+msgid "Half precision floating point on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:asimdhp
+#: modules/devices/arm/arm_data.c:75
+msgctxt "arm-flag"
+msgid "Advanced SIMD with BFloat16 on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:cpuid
+#: modules/devices/arm/arm_data.c:76
+msgctxt "arm-flag"
+msgid "CPU features can be read on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:asimdrdm
+#: modules/devices/arm/arm_data.c:77
+msgctxt "arm-flag"
+msgid "Advanced SIMD rounding Double MulAcc on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:jscvt
+#: modules/devices/arm/arm_data.c:78
+msgctxt "arm-flag"
+msgid "JacaScript conversion on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:fcma
+#: modules/devices/arm/arm_data.c:79
+msgctxt "arm-flag"
+msgid "Complex number SIMD on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:lrcpc
+#: modules/devices/arm/arm_data.c:80
+msgctxt "arm-flag"
+msgid "Weak release consistency on AArch64 (arch>=8)"
+msgstr ""
 
 #: modules/devices/arm/processor.c:143
 msgid "ARM Processor"
@@ -2801,55 +2866,55 @@ msgstr "장치 트리"
 msgid "Resources"
 msgstr "자원"
 
-#: modules/devices.c:771
+#: modules/devices.c:768
 msgid "Sensor"
 msgstr "센서"
 
-#: modules/devices.c:829 modules/devices/dmi_memory.c:883
+#: modules/devices.c:826 modules/devices/dmi_memory.c:883
 msgid "Devices"
 msgstr "장치"
 
-#: modules/devices.c:841
+#: modules/devices.c:838
 msgid "Update PCI ID listing"
 msgstr "PCI ID 목록 업데이트"
 
-#: modules/devices.c:846
+#: modules/devices.c:843
 msgid "Update USB ID listing"
 msgstr "USB ID 목록 업데이트"
 
-#: modules/devices.c:851
+#: modules/devices.c:848
 msgid "Update EDID vendor codes"
 msgstr "EDID 공급업체 코드 업데이트"
 
-#: modules/devices.c:856
+#: modules/devices.c:853
 msgid "Update IEEE OUI vendor codes"
 msgstr "IEEE OUI 공급업체 코드 업데이트"
 
-#: modules/devices.c:861
+#: modules/devices.c:858
 msgid "Update SD card manufacturer information"
 msgstr "SD 카드 제조업체 정보 업데이트"
 
-#: modules/devices.c:868
+#: modules/devices.c:865
 msgid "Update CPU flags database"
 msgstr "CPU 플래그 데이터베이스 업데이트"
 
-#: modules/devices.c:903
+#: modules/devices.c:900
 msgid "Gathers information about hardware devices"
 msgstr "하드웨어 장치에 대한 정보 수집"
 
-#: modules/devices.c:924
+#: modules/devices.c:921
 msgid "A copy of <i><b>pci.ids</b></i> is not available on the system."
 msgstr "시스템에서 <i><b>pci.ids</b></i> 사본을 사용할 수 없습니다."
 
-#: modules/devices.c:927
+#: modules/devices.c:924
 msgid "A full <i><b>pci.ids</b></i> is not available on the system."
 msgstr "전체 <i><b>pci.ids</b></i>는 시스템에서 사용할 수 없습니다."
 
-#: modules/devices.c:932
+#: modules/devices.c:929
 msgid "Resource information requires superuser privileges"
 msgstr "리소스 정보에는 수퍼유저 권한이 필요합니다."
 
-#: modules/devices.c:938
+#: modules/devices.c:935
 msgid ""
 "Any NVMe storage devices present are not listed.\n"
 "<b><i>udisks2</i></b> is required for NVMe devices."
@@ -2987,7 +3052,8 @@ msgstr "설정되지 않음"
 msgid "Product"
 msgstr "제품"
 
-#: modules/devices/dmi.c:39 modules/devices/ia64/processor.c:164
+#: modules/devices/dmi.c:39 modules/devices/e2k/processor.c:360
+#: modules/devices/ia64/processor.c:164
 #: modules/devices/loongarch64/processor.c:82 modules/devices/sh/processor.c:86
 msgid "Family"
 msgstr "제품군"
@@ -3005,7 +3071,7 @@ msgid "Asset Tag"
 msgstr "자산 태그"
 
 #: modules/devices/dmi.c:120 modules/devices/x86/processor.c:695
-msgid "(Not available; Perhaps try running HardInfo as root.)"
+msgid "(Not available; Perhaps try running hardinfo2 as root.)"
 msgstr ""
 
 #: modules/devices/dmi.c:161
@@ -3017,7 +3083,7 @@ msgid "DMI is not avaliable. Perhaps this platform does not provide DMI."
 msgstr "DMI를 사용할 수 없습니다. 아마도 이 플랫폼은 DMI를 제공하지 않습니다."
 
 #: modules/devices/dmi.c:164
-msgid "DMI is not available; Perhaps try running HardInfo as root."
+msgid "DMI is not available; Perhaps try running hardinfo2 as root."
 msgstr ""
 
 #: modules/devices/dmi_memory.c:56
@@ -3146,27 +3212,11 @@ msgstr "직렬 프레즌스 검출(SPD) 요약"
 msgid "(Not available - See hint box below)"
 msgstr ""
 
-#: modules/devices/dmi_memory.c:1005
-msgid " <b><i>dmidecode</i></b> package installed"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1006
-msgid " sudo chmod a+r /sys/firmware/dmi/tables/*"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1007
-msgid " sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1008
-msgid " sudo modprobe ee1004 (for DDR4)"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1017
+#: modules/devices/dmi_memory.c:1019
 msgid "Memory Information requires more Setup:"
 msgstr ""
 
-#: modules/devices/dmi_memory.c:1043
+#: modules/devices/dmi_memory.c:1048
 msgid ""
 "\"More often than not, information contained in the DMI tables is "
 "inaccurate,\n"
@@ -3174,6 +3224,43 @@ msgid ""
 msgstr ""
 "\"DMI 테이블에 포함된 정보가 부정확한 경우가 많습니다.\n"
 "불완전하거나 단순히 잘못되었습니다.\" -<i><b>dmidecode</b></i> 매뉴얼 페이지"
+
+#: modules/devices/e2k/processor.c:30 modules/devices/x86/processor.c:149
+msgid "Cache information not available=\n"
+msgstr "캐시 정보를 사용할 수 없음=\n"
+
+#: modules/devices/e2k/processor.c:36 modules/devices/x86/processor.c:155
+#, c-format
+msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
+msgstr "수준 %d(%s)=%d 방향 집합 연관, %d 집합, %dKB 크기\n"
+
+#. /cache type, as appears in: Level 1 (Data)
+#: modules/devices/e2k/processor.c:51
+msgctxt "cache-type"
+msgid "Data"
+msgstr "데이터"
+
+#. /cache type, as appears in: Level 1 (Instruction)
+#: modules/devices/e2k/processor.c:52
+msgctxt "cache-type"
+msgid "Instruction"
+msgstr "설명"
+
+#. /cache type, as appears in: Level 2 (Unified)
+#: modules/devices/e2k/processor.c:53
+msgctxt "cache-type"
+msgid "Unified"
+msgstr "통합"
+
+#: modules/devices/e2k/processor.c:157 modules/devices/x86/processor.c:366
+msgid "Caches"
+msgstr "캐시"
+
+#: modules/devices/e2k/processor.c:208 modules/devices/e2k/processor.c:225
+#: modules/devices/x86/processor.c:417 modules/devices/x86/processor.c:434
+#, c-format
+msgid "Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
+msgstr "수준 %d(%s)#%d=%dx %dKB(%dKB), %d-방향 집합 연관, %d 집합\n"
 
 #: modules/devices/firmware.c:36
 msgid "Device cannot be removed easily"
@@ -3796,44 +3883,80 @@ msgctxt "rv-ext"
 msgid "Scalar Cryptography"
 msgstr ""
 
-#. /ext:S
+#. /ext:ZI
 #: modules/devices/riscv/riscv_data.c:51
+msgctxt "rv-ext"
+msgid "Base Counters and Timers"
+msgstr ""
+
+#. /ext:ZI
+#: modules/devices/riscv/riscv_data.c:52
+msgctxt "rv-ext"
+msgid "Control and Status Register"
+msgstr ""
+
+#. /ext:ZI
+#: modules/devices/riscv/riscv_data.c:53
+msgctxt "rv-ext"
+msgid "Instruction-Fetch Fence"
+msgstr ""
+
+#. /ext:ZI
+#: modules/devices/riscv/riscv_data.c:54
+msgctxt "rv-ext"
+msgid "Hardware performance counters"
+msgstr ""
+
+#. /ext:ZB
+#: modules/devices/riscv/riscv_data.c:55
+msgctxt "rv-ext"
+msgid "Accell Index addresses"
+msgstr ""
+
+#. /ext:ZB
+#: modules/devices/riscv/riscv_data.c:56
+msgctxt "rv-ext"
+msgid "Basic bit-manipulation"
+msgstr ""
+
+#. /ext:S
+#: modules/devices/riscv/riscv_data.c:57
 msgctxt "rv-ext"
 msgid "Supervisor-level Instructions"
 msgstr ""
 
 #. /ext:U
-#: modules/devices/riscv/riscv_data.c:52
+#: modules/devices/riscv/riscv_data.c:58
 msgctxt "rv-ext"
 msgid "User Mode"
 msgstr ""
 
 #. /ext:T
-#: modules/devices/riscv/riscv_data.c:53
+#: modules/devices/riscv/riscv_data.c:59
 msgctxt "rv-ext"
 msgid "Transactional memory"
 msgstr "트랜잭션 메모리"
 
 #. /ext:P
-#: modules/devices/riscv/riscv_data.c:54
+#: modules/devices/riscv/riscv_data.c:60
 msgctxt "rv-ext"
 msgid "Packed SIMD instructions"
 msgstr "포장된 SIMD 명령"
 
 #. /ext:L
-#: modules/devices/riscv/riscv_data.c:55
+#: modules/devices/riscv/riscv_data.c:61
 msgctxt "rv-ext"
 msgid "Decimal floating-point instructions"
 msgstr "10진수 부동 소수점 명령어"
 
 #. /ext:J
-#: modules/devices/riscv/riscv_data.c:56
+#: modules/devices/riscv/riscv_data.c:62
 msgctxt "rv-ext"
 msgid "Dynamically translated languages"
 msgstr "동적으로 번역된 언어"
 
 #. /ext:N
-#: modules/devices/riscv/riscv_data.c:57
+#: modules/devices/riscv/riscv_data.c:63
 msgctxt "rv-ext"
 msgid "User-level interrupts"
 msgstr "사용자 수준 인터럽트"
@@ -4463,24 +4586,6 @@ msgstr "장치 버전"
 #: modules/devices/usb.c:222
 msgid "No USB devices found."
 msgstr "USB 장치를 찾을 수 없습니다."
-
-#: modules/devices/x86/processor.c:149
-msgid "Cache information not available=\n"
-msgstr "캐시 정보를 사용할 수 없음=\n"
-
-#: modules/devices/x86/processor.c:155
-#, c-format
-msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
-msgstr "수준 %d(%s)=%d 방향 집합 연관, %d 집합, %dKB 크기\n"
-
-#: modules/devices/x86/processor.c:366
-msgid "Caches"
-msgstr "캐시"
-
-#: modules/devices/x86/processor.c:417 modules/devices/x86/processor.c:434
-#, c-format
-msgid "Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
-msgstr "수준 %d(%s)#%d=%dx %dKB(%dKB), %d-방향 집합 연관, %d 집합\n"
 
 #: modules/devices/x86/processor.c:648
 msgid "Model Name"
@@ -6297,8 +6402,8 @@ msgstr "브로드캐스트 주소"
 #~ msgid "Copy to clipboard"
 #~ msgstr "클립 보드에 복사"
 
-#~ msgid " <b><i>dmidecode</i></b> utility available"
-#~ msgstr " <b><i>dmidecode</i></b> 유틸리티 사용 가능"
+#~ msgid "<b><i>dmidecode</i></b> utility available"
+#~ msgstr "<b><i>dmidecode</i></b> 유틸리티 사용 가능"
 
 #~ msgid " ... <i>and</i> HardInfo2 running with superuser privileges"
 #~ msgstr " ... <i>및</i> 수퍼유저 권한으로 실행되는 HardInfo2"
@@ -6317,18 +6422,6 @@ msgstr "브로드캐스트 주소"
 #~ msgid "Memory information requires <b>one or both</b> of the following:"
 #~ msgstr "메모리 정보에는 다음 중 <b>하나 또는 둘 다</b>가 필요합니다."
 
-#~ msgctxt "cache-type"
-#~ msgid "Data"
-#~ msgstr "데이터"
-
-#~ msgctxt "cache-type"
-#~ msgid "Instruction"
-#~ msgstr "설명"
-
-#~ msgctxt "cache-type"
-#~ msgid "Unified"
-#~ msgstr "통합"
-
 #, c-format
 #~ msgid ""
 #~ "Written by %s\n"
@@ -6340,15 +6433,6 @@ msgstr "브로드캐스트 주소"
 #, c-format
 #~ msgid "No about information is associated with the %s module."
 #~ msgstr "%s 모듈과 연결된 정보가 없습니다."
-
-#~ msgid ""
-#~ "<big><b>Synchronize with Central Database</b></big>\n"
-#~ "The following information may be synchronized\n"
-#~ "with the HardInfo2 central database."
-#~ msgstr ""
-#~ "<big><b>중앙 데이터베이스와 동기화</b></big>\n"
-#~ "다음 정보가 동기화될 수 있습니다.\n"
-#~ "HardInfo2 중앙 데이터베이스와 함께."
 
 #~ msgid "User Note"
 #~ msgstr "사용자 노트"

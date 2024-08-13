@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-30 15:01+0200\n"
+"POT-Creation-Date: 2024-08-13 14:20+0200\n"
 "PO-Revision-Date: 2018-06-22 16:23+0800\n"
 "Last-Translator: yetist <yetist@gmail.com>\n"
 "Language-Team: Chinese\n"
@@ -61,15 +61,16 @@ msgstr "ns"
 msgid "Governor"
 msgstr ""
 
-#: hardinfo2/cpu_util.c:211 hardinfo2/cpu_util.c:217 modules/devices.c:772
+#: hardinfo2/cpu_util.c:211 hardinfo2/cpu_util.c:217 modules/devices.c:769
 #: modules/devices/gpu.c:163 modules/devices/pci.c:148
 #: modules/devices/usb.c:139
 msgid "Driver"
 msgstr "驱动"
 
 #: hardinfo2/cpu_util.c:223 modules/computer.c:785
-#: modules/devices/arm/processor.c:255 modules/devices/x86/processor.c:283
-#: modules/devices/x86/processor.c:387 modules/devices/x86/processor.c:525
+#: modules/devices/arm/processor.c:255 modules/devices/e2k/processor.c:178
+#: modules/devices/x86/processor.c:283 modules/devices/x86/processor.c:387
+#: modules/devices/x86/processor.c:525
 msgid "(Not Available)"
 msgstr ""
 
@@ -117,7 +118,8 @@ msgstr ""
 
 #: hardinfo2/dmi_util.c:29 modules/computer.c:556 modules/computer.c:1054
 #: modules/devices/alpha/processor.c:87 modules/devices/arm/processor.c:340
-#: modules/devices.c:99 modules/devices/ia64/processor.c:159
+#: modules/devices.c:99 modules/devices/e2k/processor.c:357
+#: modules/devices/ia64/processor.c:159
 #: modules/devices/loongarch64/processor.c:80
 #: modules/devices/m68k/processor.c:83 modules/devices/mips/processor.c:74
 #: modules/devices/parisc/processor.c:154 modules/devices/ppc/processor.c:157
@@ -135,8 +137,8 @@ msgstr ""
 msgid "Memory Module"
 msgstr ""
 
-#: hardinfo2/dmi_util.c:32 modules/devices/parisc/processor.c:163
-#: modules/devices/x86/processor.c:663
+#: hardinfo2/dmi_util.c:32 modules/devices/e2k/processor.c:366
+#: modules/devices/parisc/processor.c:163 modules/devices/x86/processor.c:663
 msgid "Cache"
 msgstr "缓存"
 
@@ -638,8 +640,8 @@ msgstr ""
 
 #: hardinfo2/vendor.c:391 modules/computer.c:608 modules/computer.c:813
 #: modules/computer/os.c:80 modules/computer/os.c:267 modules/computer/os.c:304
-#: modules/computer/os.c:511 modules/computer/os.c:581 modules/devices.c:403
-#: modules/devices.c:549 modules/devices/firmware.c:149
+#: modules/computer/os.c:511 modules/computer/os.c:581 modules/devices.c:400
+#: modules/devices.c:546 modules/devices/firmware.c:149
 #: modules/devices/printers.c:106 modules/devices/printers.c:113
 #: modules/devices/printers.c:123 modules/devices/printers.c:138
 #: modules/devices/printers.c:147 modules/devices/printers.c:256
@@ -867,7 +869,7 @@ msgstr "正在更新..."
 msgid ""
 "<big><b>Synchronize with Central Database</b></big>\n"
 "The following information may be synchronized\n"
-"with the HardInfo central database."
+"with the HardInfo2 central database."
 msgstr ""
 
 #: shell/syncmanager.c:84
@@ -999,7 +1001,7 @@ msgstr ""
 #. * line references
 #: modules/benchmark/bench_results.c:34 modules/computer.c:41
 #: modules/computer/display.c:40 modules/computer/display.c:57
-#: modules/computer/os.c:290 modules/computer/os.c:350 modules/devices.c:532
+#: modules/computer/os.c:290 modules/computer/os.c:350 modules/devices.c:529
 #: modules/devices/dmi_memory.c:57 modules/devices/dmi_memory.c:58
 #: modules/devices/dmi_memory.c:634 modules/devices/dmi_memory.c:777
 #: modules/devices/dmi_memory.c:912 modules/devices/gpu.c:40
@@ -1022,12 +1024,13 @@ msgstr "(未知)"
 #: modules/benchmark/bench_results.c:69 modules/benchmark/bench_results.c:359
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:289
 #: modules/devices/arm/processor.c:302 modules/devices/arm/processor.c:344
-#: modules/devices/arm/processor.c:499 modules/devices.c:369
-#: modules/devices.c:377 modules/devices.c:405 modules/devices/gpu.c:125
-#: modules/devices/gpu.c:127 modules/devices/gpu.c:133
-#: modules/devices/gpu.c:135 modules/devices/gpu.c:187
-#: modules/devices/gpu.c:189 modules/devices/ia64/processor.c:167
-#: modules/devices/ia64/processor.c:196
+#: modules/devices/arm/processor.c:499 modules/devices.c:366
+#: modules/devices.c:374 modules/devices.c:402
+#: modules/devices/e2k/processor.c:363 modules/devices/e2k/processor.c:400
+#: modules/devices/gpu.c:125 modules/devices/gpu.c:127
+#: modules/devices/gpu.c:133 modules/devices/gpu.c:135
+#: modules/devices/gpu.c:187 modules/devices/gpu.c:189
+#: modules/devices/ia64/processor.c:167 modules/devices/ia64/processor.c:196
 #: modules/devices/loongarch64/processor.c:85
 #: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
 #: modules/devices/parisc/processor.c:158
@@ -1041,38 +1044,38 @@ msgstr "(未知)"
 msgid "MHz"
 msgstr "MHz"
 
-#: modules/benchmark/bench_results.c:391 modules/devices.c:178
+#: modules/benchmark/bench_results.c:391 modules/devices.c:175
 #, c-format
 msgid "%d physical processor"
 msgid_plural "%d physical processors"
 msgstr[0] ""
 
-#: modules/benchmark/bench_results.c:392 modules/devices.c:179
+#: modules/benchmark/bench_results.c:392 modules/devices.c:176
 #, c-format
 msgid "%d core"
 msgid_plural "%d cores"
 msgstr[0] ""
 
-#: modules/benchmark/bench_results.c:393 modules/devices.c:180
+#: modules/benchmark/bench_results.c:393 modules/devices.c:177
 #, c-format
 msgid "%d thread"
 msgid_plural "%d threads"
 msgstr[0] "%d 线程"
 
-#: modules/benchmark/bench_results.c:398 modules/devices.c:182
+#: modules/benchmark/bench_results.c:398 modules/devices.c:179
 #, c-format
 msgid "%d NUMA node"
 msgid_plural "%d NUMA nodes"
 msgstr[0] ""
 
 #. /NP procs; NC cores across NN nodes; NT threads
-#: modules/benchmark/bench_results.c:402 modules/devices.c:183
+#: modules/benchmark/bench_results.c:402
 #, c-format
 msgid "%s; %s across %s; %s"
 msgstr ""
 
 #. /NP procs; NC cores; NT threads
-#: modules/benchmark/bench_results.c:407 modules/devices.c:186
+#: modules/benchmark/bench_results.c:407
 #, c-format
 msgid "%s; %s; %s"
 msgstr ""
@@ -1113,8 +1116,8 @@ msgid "seconds"
 msgstr ""
 
 #: modules/benchmark/bench_results.c:513 modules/computer/languages.c:101
-#: modules/devices/arm/processor.c:354 modules/devices/gpu.c:157
-#: modules/devices/ia64/processor.c:166
+#: modules/devices/arm/processor.c:354 modules/devices/e2k/processor.c:362
+#: modules/devices/gpu.c:157 modules/devices/ia64/processor.c:166
 #: modules/devices/loongarch64/processor.c:84 modules/devices/pci.c:146
 #: modules/devices/ppc/processor.c:159
 msgid "Revision"
@@ -1517,7 +1520,7 @@ msgstr "域"
 msgid "Description"
 msgstr "描述"
 
-#: modules/computer.c:386 modules/devices.c:771
+#: modules/computer.c:386 modules/devices.c:768
 msgid "Value"
 msgstr "亮度"
 
@@ -1690,11 +1693,11 @@ msgstr "已加载的模块"
 #: modules/computer.c:714 modules/computer.c:742 modules/computer.c:863
 #: modules/computer/languages.c:95 modules/computer/modules.c:370
 #: modules/devices/arm/processor.c:468 modules/devices/dmi.c:38
-#: modules/devices/dmi.c:49 modules/devices/gpu.c:249
-#: modules/devices/ia64/processor.c:160 modules/devices/inputdevices.c:141
-#: modules/devices/monitors.c:403 modules/devices/monitors.c:505
-#: modules/devices/sh/processor.c:84 modules/devices/x86/processor.c:750
-#: modules/network.c:333
+#: modules/devices/dmi.c:49 modules/devices/e2k/processor.c:358
+#: modules/devices/gpu.c:249 modules/devices/ia64/processor.c:160
+#: modules/devices/inputdevices.c:141 modules/devices/monitors.c:403
+#: modules/devices/monitors.c:505 modules/devices/sh/processor.c:84
+#: modules/devices/x86/processor.c:750 modules/network.c:333
 msgid "Name"
 msgstr "名称"
 
@@ -1726,12 +1729,13 @@ msgstr "挂载点"
 msgid "Usage"
 msgstr "使用"
 
-#: modules/computer.c:757 modules/devices.c:795 modules/devices.c:809
-#: modules/devices/gpu.c:85 modules/devices/gpu.c:93 modules/devices/gpu.c:241
-#: modules/devices/pci.c:102 modules/devices/pci.c:110
-#: modules/devices/pci.c:154 modules/devices/storage.c:48
-#: modules/devices/storage.c:57 modules/devices/usb.c:172
-#: modules/devices/usb.c:184 modules/devices/x86/processor.c:811
+#: modules/computer.c:757 modules/devices.c:792 modules/devices.c:806
+#: modules/devices/e2k/processor.c:416 modules/devices/gpu.c:85
+#: modules/devices/gpu.c:93 modules/devices/gpu.c:241 modules/devices/pci.c:102
+#: modules/devices/pci.c:110 modules/devices/pci.c:154
+#: modules/devices/storage.c:48 modules/devices/storage.c:57
+#: modules/devices/usb.c:172 modules/devices/usb.c:184
+#: modules/devices/x86/processor.c:811
 msgid "Device"
 msgstr "设备"
 
@@ -1739,7 +1743,7 @@ msgstr "设备"
 msgid "Session"
 msgstr "会话"
 
-#: modules/computer.c:780 modules/devices.c:772 modules/devices.c:809
+#: modules/computer.c:780 modules/devices.c:769 modules/devices.c:806
 #: modules/devices/dmi.c:56 modules/devices/dmi_memory.c:658
 #: modules/devices/dmi_memory.c:807 modules/devices/inputdevices.c:142
 #: modules/devices/x86/processor.c:715
@@ -1758,13 +1762,13 @@ msgstr "当前显示名称"
 msgid "X Server"
 msgstr "X 服务器"
 
-#: modules/computer.c:790 modules/computer.c:830 modules/devices.c:809
+#: modules/computer.c:790 modules/computer.c:830 modules/devices.c:806
 #: modules/devices/dmi.c:40 modules/devices/dmi.c:46 modules/devices/dmi.c:50
 #: modules/devices/dmi.c:55 modules/devices/dmi_memory.c:808
-#: modules/devices/dmi_memory.c:950 modules/devices/firmware.c:75
-#: modules/devices/firmware.c:167 modules/devices/firmware.c:172
-#: modules/devices/firmware.c:219 modules/devices/gpu.c:84
-#: modules/devices/gpu.c:92 modules/devices/gpu.c:240
+#: modules/devices/dmi_memory.c:950 modules/devices/e2k/processor.c:359
+#: modules/devices/firmware.c:75 modules/devices/firmware.c:167
+#: modules/devices/firmware.c:172 modules/devices/firmware.c:219
+#: modules/devices/gpu.c:84 modules/devices/gpu.c:92 modules/devices/gpu.c:240
 #: modules/devices/ia64/processor.c:161 modules/devices/inputdevices.c:144
 #: modules/devices/monitors.c:402 modules/devices/pci.c:101
 #: modules/devices/pci.c:109 modules/devices/storage.c:47
@@ -1923,7 +1927,7 @@ msgstr "读/写模式"
 msgid "Read-Only"
 msgstr "只读模式"
 
-#: modules/computer/filesystem.c:90 modules/devices.c:795
+#: modules/computer/filesystem.c:90 modules/devices.c:792
 #: modules/devices/dmi_memory.c:664 modules/devices/dmi_memory.c:811
 #: modules/devices/dmi_memory.c:843 modules/devices/dmi_memory.c:882
 #: modules/devices/dmi_memory.c:949
@@ -2379,10 +2383,11 @@ msgstr "用户标识"
 msgid "Default Shell"
 msgstr "默认 Shell"
 
-#: modules/devices/alpha/processor.c:88 modules/devices.c:795
+#: modules/devices/alpha/processor.c:88 modules/devices.c:792
 #: modules/devices/devicetree.c:162 modules/devices/devicetree.c:208
-#: modules/devices/devicetree/pmac_data.c:80 modules/devices/gpu.c:116
-#: modules/devices/ia64/processor.c:165
+#: modules/devices/devicetree/pmac_data.c:80
+#: modules/devices/e2k/processor.c:361 modules/devices/e2k/processor.c:416
+#: modules/devices/gpu.c:116 modules/devices/ia64/processor.c:165
 #: modules/devices/loongarch64/processor.c:83
 #: modules/devices/m68k/processor.c:84 modules/devices/mips/processor.c:75
 #: modules/devices/monitors.c:404 modules/devices/parisc/processor.c:155
@@ -2396,6 +2401,7 @@ msgid "Platform String"
 msgstr ""
 
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:344
+#: modules/devices/e2k/processor.c:363 modules/devices/e2k/processor.c:416
 #: modules/devices/ia64/processor.c:167
 #: modules/devices/loongarch64/processor.c:85
 #: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
@@ -2406,15 +2412,16 @@ msgid "Frequency"
 msgstr "频率"
 
 #: modules/devices/alpha/processor.c:91 modules/devices/arm/processor.c:345
-#: modules/devices/ia64/processor.c:168 modules/devices/m68k/processor.c:88
-#: modules/devices/mips/processor.c:78 modules/devices/parisc/processor.c:159
-#: modules/devices/ppc/processor.c:161 modules/devices/s390/processor.c:134
-#: modules/devices/sh/processor.c:90 modules/devices/x86/processor.c:659
+#: modules/devices/e2k/processor.c:364 modules/devices/ia64/processor.c:168
+#: modules/devices/m68k/processor.c:88 modules/devices/mips/processor.c:78
+#: modules/devices/parisc/processor.c:159 modules/devices/ppc/processor.c:161
+#: modules/devices/s390/processor.c:134 modules/devices/sh/processor.c:90
+#: modules/devices/x86/processor.c:659
 msgid "BogoMips"
 msgstr "BogoMips"
 
 #: modules/devices/alpha/processor.c:92 modules/devices/arm/processor.c:346
-#: modules/devices/ia64/processor.c:169
+#: modules/devices/e2k/processor.c:365 modules/devices/ia64/processor.c:169
 #: modules/devices/loongarch64/processor.c:88
 #: modules/devices/m68k/processor.c:89 modules/devices/mips/processor.c:79
 #: modules/devices/parisc/processor.c:160 modules/devices/ppc/processor.c:162
@@ -2561,37 +2568,92 @@ msgstr ""
 #. /flag:pmull
 #: modules/devices/arm/arm_data.c:65
 msgctxt "arm-flag"
-msgid "64x64->128-bit F2m multiplication (arch>8)"
+msgid "64x64->128-bit F2m multiplication (arch>=8)"
 msgstr ""
 
 #. /flag:aes
 #: modules/devices/arm/arm_data.c:66
 msgctxt "arm-flag"
-msgid "Crypto:AES (arch>8)"
+msgid "Crypto:AES (arch>=8)"
 msgstr ""
 
 #. /flag:sha1
 #: modules/devices/arm/arm_data.c:67
 msgctxt "arm-flag"
-msgid "Crypto:SHA1 (arch>8)"
+msgid "Crypto:SHA1 (arch>=8)"
 msgstr ""
 
 #. /flag:sha2
 #: modules/devices/arm/arm_data.c:68
 msgctxt "arm-flag"
-msgid "Crypto:SHA2 (arch>8)"
+msgid "Crypto:SHA2 (arch>=8)"
 msgstr ""
 
 #. /flag:crc32
 #: modules/devices/arm/arm_data.c:69
 msgctxt "arm-flag"
-msgid "CRC32 checksum instructions (arch>8)"
+msgid "CRC32 checksum instructions (arch>=8)"
+msgstr ""
+
+#. /hw_cap
+#. /flag:fp
+#: modules/devices/arm/arm_data.c:71
+msgctxt "arm-flag"
+msgid "Floating-point on AArch64 (arch>=8)"
 msgstr ""
 
 #. /flag:asimd
 #: modules/devices/arm/arm_data.c:72
 msgctxt "arm-flag"
-msgid "Advanced SIMD/NEON on AArch64 (arch>8)"
+msgid "Advanced SIMD/NEON on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:atomics
+#: modules/devices/arm/arm_data.c:73
+msgctxt "arm-flag"
+msgid "Atomic instructions on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:fphp
+#: modules/devices/arm/arm_data.c:74
+msgctxt "arm-flag"
+msgid "Half precision floating point on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:asimdhp
+#: modules/devices/arm/arm_data.c:75
+msgctxt "arm-flag"
+msgid "Advanced SIMD with BFloat16 on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:cpuid
+#: modules/devices/arm/arm_data.c:76
+msgctxt "arm-flag"
+msgid "CPU features can be read on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:asimdrdm
+#: modules/devices/arm/arm_data.c:77
+msgctxt "arm-flag"
+msgid "Advanced SIMD rounding Double MulAcc on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:jscvt
+#: modules/devices/arm/arm_data.c:78
+msgctxt "arm-flag"
+msgid "JacaScript conversion on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:fcma
+#: modules/devices/arm/arm_data.c:79
+msgctxt "arm-flag"
+msgid "Complex number SIMD on AArch64 (arch>=8)"
+msgstr ""
+
+#. /flag:lrcpc
+#: modules/devices/arm/arm_data.c:80
+msgctxt "arm-flag"
+msgid "Weak release consistency on AArch64 (arch>=8)"
 msgstr ""
 
 #: modules/devices/arm/processor.c:143
@@ -2764,55 +2826,55 @@ msgstr "设备树"
 msgid "Resources"
 msgstr "资源"
 
-#: modules/devices.c:771
+#: modules/devices.c:768
 msgid "Sensor"
 msgstr "传感器"
 
-#: modules/devices.c:829 modules/devices/dmi_memory.c:883
+#: modules/devices.c:826 modules/devices/dmi_memory.c:883
 msgid "Devices"
 msgstr "设备"
 
-#: modules/devices.c:841
+#: modules/devices.c:838
 msgid "Update PCI ID listing"
 msgstr ""
 
-#: modules/devices.c:846
+#: modules/devices.c:843
 msgid "Update USB ID listing"
 msgstr ""
 
-#: modules/devices.c:851
+#: modules/devices.c:848
 msgid "Update EDID vendor codes"
 msgstr ""
 
-#: modules/devices.c:856
+#: modules/devices.c:853
 msgid "Update IEEE OUI vendor codes"
 msgstr ""
 
-#: modules/devices.c:861
+#: modules/devices.c:858
 msgid "Update SD card manufacturer information"
 msgstr ""
 
-#: modules/devices.c:868
+#: modules/devices.c:865
 msgid "Update CPU flags database"
 msgstr ""
 
-#: modules/devices.c:903
+#: modules/devices.c:900
 msgid "Gathers information about hardware devices"
 msgstr ""
 
-#: modules/devices.c:924
+#: modules/devices.c:921
 msgid "A copy of <i><b>pci.ids</b></i> is not available on the system."
 msgstr ""
 
-#: modules/devices.c:927
+#: modules/devices.c:924
 msgid "A full <i><b>pci.ids</b></i> is not available on the system."
 msgstr ""
 
-#: modules/devices.c:932
+#: modules/devices.c:929
 msgid "Resource information requires superuser privileges"
 msgstr ""
 
-#: modules/devices.c:938
+#: modules/devices.c:935
 msgid ""
 "Any NVMe storage devices present are not listed.\n"
 "<b><i>udisks2</i></b> is required for NVMe devices."
@@ -2950,7 +3012,8 @@ msgstr ""
 msgid "Product"
 msgstr "产品"
 
-#: modules/devices/dmi.c:39 modules/devices/ia64/processor.c:164
+#: modules/devices/dmi.c:39 modules/devices/e2k/processor.c:360
+#: modules/devices/ia64/processor.c:164
 #: modules/devices/loongarch64/processor.c:82 modules/devices/sh/processor.c:86
 msgid "Family"
 msgstr "家族"
@@ -2968,7 +3031,7 @@ msgid "Asset Tag"
 msgstr ""
 
 #: modules/devices/dmi.c:120 modules/devices/x86/processor.c:695
-msgid "(Not available; Perhaps try running HardInfo as root.)"
+msgid "(Not available; Perhaps try running hardinfo2 as root.)"
 msgstr ""
 
 #: modules/devices/dmi.c:161
@@ -2980,7 +3043,7 @@ msgid "DMI is not avaliable. Perhaps this platform does not provide DMI."
 msgstr ""
 
 #: modules/devices/dmi.c:164
-msgid "DMI is not available; Perhaps try running HardInfo as root."
+msgid "DMI is not available; Perhaps try running hardinfo2 as root."
 msgstr ""
 
 #: modules/devices/dmi_memory.c:56
@@ -3109,31 +3172,52 @@ msgstr ""
 msgid "(Not available - See hint box below)"
 msgstr ""
 
-#: modules/devices/dmi_memory.c:1005
-msgid " <b><i>dmidecode</i></b> package installed"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1006
-msgid " sudo chmod a+r /sys/firmware/dmi/tables/*"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1007
-msgid " sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1008
-msgid " sudo modprobe ee1004 (for DDR4)"
-msgstr ""
-
-#: modules/devices/dmi_memory.c:1017
+#: modules/devices/dmi_memory.c:1019
 msgid "Memory Information requires more Setup:"
 msgstr ""
 
-#: modules/devices/dmi_memory.c:1043
+#: modules/devices/dmi_memory.c:1048
 msgid ""
 "\"More often than not, information contained in the DMI tables is "
 "inaccurate,\n"
 "incomplete or simply wrong.\" -<i><b>dmidecode</b></i> manual page"
+msgstr ""
+
+#: modules/devices/e2k/processor.c:30 modules/devices/x86/processor.c:149
+msgid "Cache information not available=\n"
+msgstr ""
+
+#: modules/devices/e2k/processor.c:36 modules/devices/x86/processor.c:155
+#, c-format
+msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
+msgstr ""
+
+#. /cache type, as appears in: Level 1 (Data)
+#: modules/devices/e2k/processor.c:51
+msgctxt "cache-type"
+msgid "Data"
+msgstr "数据"
+
+#. /cache type, as appears in: Level 1 (Instruction)
+#: modules/devices/e2k/processor.c:52
+msgctxt "cache-type"
+msgid "Instruction"
+msgstr ""
+
+#. /cache type, as appears in: Level 2 (Unified)
+#: modules/devices/e2k/processor.c:53
+msgctxt "cache-type"
+msgid "Unified"
+msgstr ""
+
+#: modules/devices/e2k/processor.c:157 modules/devices/x86/processor.c:366
+msgid "Caches"
+msgstr "缓存"
+
+#: modules/devices/e2k/processor.c:208 modules/devices/e2k/processor.c:225
+#: modules/devices/x86/processor.c:417 modules/devices/x86/processor.c:434
+#, c-format
+msgid "Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
 msgstr ""
 
 #: modules/devices/firmware.c:36
@@ -3757,44 +3841,80 @@ msgctxt "rv-ext"
 msgid "Scalar Cryptography"
 msgstr ""
 
-#. /ext:S
+#. /ext:ZI
 #: modules/devices/riscv/riscv_data.c:51
+msgctxt "rv-ext"
+msgid "Base Counters and Timers"
+msgstr ""
+
+#. /ext:ZI
+#: modules/devices/riscv/riscv_data.c:52
+msgctxt "rv-ext"
+msgid "Control and Status Register"
+msgstr ""
+
+#. /ext:ZI
+#: modules/devices/riscv/riscv_data.c:53
+msgctxt "rv-ext"
+msgid "Instruction-Fetch Fence"
+msgstr ""
+
+#. /ext:ZI
+#: modules/devices/riscv/riscv_data.c:54
+msgctxt "rv-ext"
+msgid "Hardware performance counters"
+msgstr ""
+
+#. /ext:ZB
+#: modules/devices/riscv/riscv_data.c:55
+msgctxt "rv-ext"
+msgid "Accell Index addresses"
+msgstr ""
+
+#. /ext:ZB
+#: modules/devices/riscv/riscv_data.c:56
+msgctxt "rv-ext"
+msgid "Basic bit-manipulation"
+msgstr ""
+
+#. /ext:S
+#: modules/devices/riscv/riscv_data.c:57
 msgctxt "rv-ext"
 msgid "Supervisor-level Instructions"
 msgstr ""
 
 #. /ext:U
-#: modules/devices/riscv/riscv_data.c:52
+#: modules/devices/riscv/riscv_data.c:58
 msgctxt "rv-ext"
 msgid "User Mode"
 msgstr ""
 
 #. /ext:T
-#: modules/devices/riscv/riscv_data.c:53
+#: modules/devices/riscv/riscv_data.c:59
 msgctxt "rv-ext"
 msgid "Transactional memory"
 msgstr ""
 
 #. /ext:P
-#: modules/devices/riscv/riscv_data.c:54
+#: modules/devices/riscv/riscv_data.c:60
 msgctxt "rv-ext"
 msgid "Packed SIMD instructions"
 msgstr ""
 
 #. /ext:L
-#: modules/devices/riscv/riscv_data.c:55
+#: modules/devices/riscv/riscv_data.c:61
 msgctxt "rv-ext"
 msgid "Decimal floating-point instructions"
 msgstr ""
 
 #. /ext:J
-#: modules/devices/riscv/riscv_data.c:56
+#: modules/devices/riscv/riscv_data.c:62
 msgctxt "rv-ext"
 msgid "Dynamically translated languages"
 msgstr ""
 
 #. /ext:N
-#: modules/devices/riscv/riscv_data.c:57
+#: modules/devices/riscv/riscv_data.c:63
 msgctxt "rv-ext"
 msgid "User-level interrupts"
 msgstr "用户级中断"
@@ -4383,24 +4503,6 @@ msgstr "设备版本"
 #: modules/devices/usb.c:222
 msgid "No USB devices found."
 msgstr "没找到 USB 设备"
-
-#: modules/devices/x86/processor.c:149
-msgid "Cache information not available=\n"
-msgstr ""
-
-#: modules/devices/x86/processor.c:155
-#, c-format
-msgid "Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"
-msgstr ""
-
-#: modules/devices/x86/processor.c:366
-msgid "Caches"
-msgstr "缓存"
-
-#: modules/devices/x86/processor.c:417 modules/devices/x86/processor.c:434
-#, c-format
-msgid "Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"
-msgstr ""
 
 #: modules/devices/x86/processor.c:648
 msgid "Model Name"
@@ -6207,10 +6309,6 @@ msgstr "广播地址"
 
 #~ msgid "Copy to clipboard"
 #~ msgstr "复制到剪贴板"
-
-#~ msgctxt "cache-type"
-#~ msgid "Data"
-#~ msgstr "数据"
 
 #~ msgid "Total Memory"
 #~ msgstr "总内存"
