@@ -1,8 +1,12 @@
 #/bin/sh
-if [ -e /bin/systemctl ]
-then
+if [ -e /bin/systemctl ] ; then
+#Fedora runs prerm after postinstl - reinstall(1), remove(0)
+  if [ $1 -eq 1 ] ; then
+    echo "Service Reinstall... (SystemD)"
+  else
     systemctl disable hardinfo2
     echo "Service Removed... (SystemD)"
+  fi
 else
     chkconfig hardinfo2 off
     chkconfig --del hardinfo2
