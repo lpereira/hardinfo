@@ -1,5 +1,5 @@
 #/bin/sh
-if [ -e /etc/systemd ]
+if [ -e /bin/systemctl ]
 then
     systemctl daemon-reload
     systemctl enable hardinfo2

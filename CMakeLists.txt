@@ -148,6 +148,7 @@ if(${distro}${disversion} MATCHES "DebianGNULinux7")
     message("DEB 7 - LS24 - deprecated version 2.34.3 - but ok")
     set(HARDINFO2_GTK3 0)
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
+    set(HARDINFO2_SYSTEMV 1)
 endif()
 
 #debian 8

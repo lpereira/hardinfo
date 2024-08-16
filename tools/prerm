@@ -1,5 +1,5 @@
 #/bin/sh
-if [ -e /etc/systemd ]
+if [ -e /bin/systemctl ]
 then
     systemctl disable hardinfo2
     echo "Service Removed... (SystemD)"
