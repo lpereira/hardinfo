@@ -1,0 +1,55 @@
+#!/bin/sh
+# Hardinfo2   support for root access
+# chkconfig: - 99 10
+# description: hardinfo2 support for root access
+
+### BEGIN INIT INFO
+# Provides: hardinfo2
+# Required-Start: $local_fs
+# Required-Stop: $local_fs
+# Should-Start: $syslog
+# Should-Stop: $syslog
+# Short-Description: start and stop hardinfo2
+# Description: hardinfo2 support for root access
+### END INIT INFO
+
+
+start() {
+    /bin/sh -c "cat /proc/iomem >/tmp/hardinfo2_iomem;chmod a+r /tmp/hardinfo2_iomem;cat /proc/ioports >/tmp/hardinfo2_ioports;chmod a+r /tmp/hardinfo2_ioports;chmod a+r /sys/firmware/dmi/tables/*;modprobe spd5118;modprobe ee1004;modprobe at24 || true"
+   return 0
+}
+
+stop() {
+   return 0
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+	status $prog
+	;;
+  restart|force-reload)
+	stop
+	start
+	;;
+  try-restart|condrestart)
+	if status $prog > /dev/null; then
+	    stop
+	    start
+	fi
+	;;
+  reload)
+	exit 3
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|status|restart|try-restart|force-reload}"
+	exit 2
+esac
+
+exit 0

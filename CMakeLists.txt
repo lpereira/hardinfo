@@ -9,6 +9,7 @@ option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 1)
 
 SET(CMAKE_INSTALL_PREFIX "/usr")
+SET(HARDINFO2_SYSTEMV 0)
 
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
@@ -137,6 +138,7 @@ if(${disversion} LESS 6.99)
     message("RPM EL6 - LS24 - deprecated version 2.34.3 - but ok")
     set(HARDINFO2_GTK3 0)
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
+    set(HARDINFO2_SYSTEMV 1)
   endif()
 endif()
 
@@ -486,14 +488,17 @@ configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
 configure_file(hardinfo2.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo2.desktop @ONLY)
 
 if(HARDINFO2_SERVICE)
-#    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION ${CMAKE_INSTALL_LIBDIR}/systemd/system/)
-if(${RPM})
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION /usr/lib/systemd/system/)
-else()
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION /lib/systemd/system/)
-endif()
+    if(${HARDINFO2_SYSTEMV})
+        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2 DESTINATION /etc/init.d/)
+    else()
+        if(${RPM})
+            install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION /usr/lib/systemd/system/)
+        else()
+            install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION /lib/systemd/system/)
+        endif()
+    endif()
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/postinst ${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/postrm ${CMAKE_CURRENT_BINARY_DIR}/packaging/postrm)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/prerm ${CMAKE_CURRENT_BINARY_DIR}/packaging/prerm)
 endif()
 
 install(TARGETS hardinfo2 ${HARDINFO2_MODULES}
@@ -562,7 +567,7 @@ SET(CPACK_RPM_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib, ${PACKAGE_LS}, ${PACKAG
 #RPM-SERVICE
 if(HARDINFO2_SERVICE)
     SET(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst")
-    SET(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/packaging/postrm")
+    SET(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/packaging/prerm")
 endif()
 
 #DEB
@@ -585,7 +590,7 @@ endif()
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, ${PACKAGE_LS}, ${PACKAGE_GTK}")
 #DEB-SERVICE
 if(HARDINFO2_SERVICE)
-    SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst;${CMAKE_CURRENT_BINARY_DIR}/packaging/postrm")
+    SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst;${CMAKE_CURRENT_BINARY_DIR}/packaging/prerm")
 endif()
 
 INCLUDE(CPack)

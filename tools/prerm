@@ -1,0 +1,10 @@
+#/bin/sh
+if [ -e /etc/systemd ]
+then
+    systemctl disable hardinfo2
+    echo "Service Removed... (SystemD)"
+else
+    chkconfig hardinfo2 off
+    chkconfig --del hardinfo2
+    echo "Service Removed... (SystemV)"
+fi
