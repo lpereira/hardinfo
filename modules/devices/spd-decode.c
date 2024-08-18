@@ -50,13 +50,14 @@ typedef enum {
     DDR2_SDRAM        = 10,
     DDR3_SDRAM        = 11,
     DDR4_SDRAM        = 12,
-    N_RAM_TYPES       = 13
+    DDR5_SDRAM        = 13,
+    N_RAM_TYPES       = 14
 } RamType;
 
 static const char *ram_types[] = {"Unknown",   "Direct Rambus",    "Rambus",     "FPM DRAM",
                                   "EDO",       "Pipelined Nibble", "SDR SDRAM",  "Multiplexed ROM",
                                   "DDR SGRAM", "DDR SDRAM",        "DDR2 SDRAM", "DDR3 SDRAM",
-                                  "DDR4 SDRAM"};
+                                  "DDR4 SDRAM", "DDR5 SDRAM"};
 #define GET_RAM_TYPE_STR(rt) (ram_types[(rt < N_RAM_TYPES) ? rt : 0])
 
 #include "spd-vendors.c"
@@ -992,6 +993,12 @@ static gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
     return out;
 }
 
+
+/*FIXME DDR4->DDR5*/
+static gchar *decode_ddr5_sdram_extra(unsigned char *bytes, int spd_size) {
+    return decode_ddr4_sdram_extra(bytes,spd_size);
+}
+
 static void decode_ddr4_part_number(unsigned char *bytes, int spd_size, char *part_number) {
     int i;
     if (!part_number) return;
@@ -1034,6 +1041,7 @@ static int decode_ram_type(unsigned char *bytes) {
         case 8: return DDR2_SDRAM;
         case 11: return DDR3_SDRAM;
         case 12: return DDR4_SDRAM;
+        case 13: return DDR5_SDRAM;
         }
     }
 
@@ -1147,6 +1155,19 @@ static GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean 
             s->ddr4_no_ee1004 = s->ddr4_no_ee1004 || (spd_size < 512);
             spd_ddr4_partial_data = spd_ddr4_partial_data || s->ddr4_no_ee1004;
             break;
+        case DDR5_SDRAM: //FIXME FROM DDR4->DDR5
+            s = spd_data_new();
+            memcpy(s->bytes, bytes, 512);
+            decode_ddr4_part_number(bytes, spd_size, s->partno);
+            decode_ddr4_module_manufacturer(bytes, spd_size, (char**)&s->vendor_str,
+                &s->vendor_bank, &s->vendor_index);
+            decode_ddr4_dram_manufacturer(bytes, spd_size, (char**)&s->dram_vendor_str,
+                &s->dram_vendor_bank, &s->dram_vendor_index);
+            decode_ddr4_module_size(bytes, &s->size_MiB);
+            decode_ddr4_module_type(bytes, &s->form_factor);
+            decode_ddr4_module_detail(bytes, s->type_detail);
+            decode_ddr4_module_date(bytes, spd_size, &s->week, &s->year);
+            break;
         case UNKNOWN:
             break;
         default:
@@ -1173,6 +1194,7 @@ static GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean 
                 break;
             case DDR3_SDRAM:
             case DDR4_SDRAM:
+            case DDR5_SDRAM:
                 s->spd_rev_major = bytes[1] >> 4;
                 s->spd_rev_minor = bytes[1] & 0xf;
                 break;
@@ -1195,10 +1217,11 @@ struct SpdDriver {
 };
 
 static const struct SpdDriver spd_drivers[] = {
-    { "ee1004",      "/sys/bus/i2c/drivers/ee1004", 512, TRUE, "ee1004"},
-    { "at24",        "/sys/bus/i2c/drivers/at24"  , 256, TRUE, "spd"},
-    { "eeprom",      "/sys/bus/i2c/drivers/eeprom", 256, TRUE, "eeprom"},
-    { "eeprom-proc", "/proc/sys/dev/sensors"      , 256, FALSE, NULL},
+    { "spd5118",     "/sys/bus/i2c/drivers/spd5118", 1024, TRUE, "spd5118"},
+    { "ee1004",      "/sys/bus/i2c/drivers/ee1004" ,  512, TRUE, "ee1004"},
+    { "at24",        "/sys/bus/i2c/drivers/at24"   ,  256, TRUE, "spd"},
+    { "eeprom",      "/sys/bus/i2c/drivers/eeprom" ,  256, TRUE, "eeprom"},
+    { "eeprom-proc", "/proc/sys/dev/sensors"       ,  256, FALSE, NULL},
     { NULL }
 };
 

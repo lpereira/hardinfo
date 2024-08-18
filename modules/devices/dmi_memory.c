@@ -254,6 +254,7 @@ dmi_mem_socket *dmi_mem_socket_new(dmi_handle h) {
             if (SEQ(s->type, "DDR2")) s->ram_type = DDR2_SDRAM;
             if (SEQ(s->type, "DDR3")) s->ram_type = DDR3_SDRAM;
             if (SEQ(s->type, "DDR4")) s->ram_type = DDR4_SDRAM;
+            if (SEQ(s->type, "DDR5")) s->ram_type = DDR5_SDRAM;
             if (SEQ(s->type, "DRDRAM")) s->ram_type = DIRECT_RAMBUS;
             if (SEQ(s->type, "RDRAM")) s->ram_type = RAMBUS;
             if (s->ram_type)
@@ -579,7 +580,8 @@ dmi_mem_new_last_chance:
         if (dtree_mem_str) {
             int rt = 0;
             m->system_memory_MiB = dmi_read_memory_str_to_MiB(dtree_mem_str);
-            if (strstr(dtree_mem_str, "DDR4"))        rt = DDR4_SDRAM;
+            if (strstr(dtree_mem_str, "DDR5"))        rt = DDR5_SDRAM;
+            else if (strstr(dtree_mem_str, "DDR4"))   rt = DDR4_SDRAM;
             else if (strstr(dtree_mem_str, "DDR3"))   rt = DDR3_SDRAM;
             else if (strstr(dtree_mem_str, "DDR2"))   rt = DDR2_SDRAM;
             else if (strstr(dtree_mem_str, "DDR"))    rt = DDR_SDRAM;
@@ -625,6 +627,9 @@ gchar *make_spd_section(spd_data *spd) {
                 break;
             case DDR4_SDRAM:
                 full_spd = decode_ddr4_sdram_extra(spd->bytes, spd->spd_size);
+		break;
+            case DDR5_SDRAM:
+                full_spd = decode_ddr5_sdram_extra(spd->bytes, spd->spd_size);
                 break;
             default:
                 DEBUG("blug for type: %d %s\n", spd->type, ram_types[spd->type]);
@@ -651,7 +656,7 @@ gchar *make_spd_section(spd_data *spd) {
                     "%s=%s\n" /* mfg date */
                     "%s",
                     _("Serial Presence Detect (SPD)"),
-                    _("Source"), spd->dev, spd->spd_driver,
+                    _("Source"), spd->dev, spd->spd_driver, /*FIXME DDR5 changes?*/
                         (spd->type == DDR4_SDRAM && strcmp(spd->spd_driver, "ee1004") != 0) ? problem_marker() : "",
                     _("SPD Revision"), spd->spd_rev_major, spd->spd_rev_minor,
                     _("Form Factor"), UNKIFNULL2(spd->form_factor),
