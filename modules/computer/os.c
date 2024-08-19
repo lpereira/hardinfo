@@ -384,9 +384,11 @@ parse_os_release(void)
     g_strfreev(split);
 
     //remove " from codename, allow empty codename
-    if(strlen(codename)>=2 && codename[0]=='"') codename=strreplace(codename,"\"","");
-    if(strlen(codename)<1) {g_free(codename);codename=NULL;}
-
+    if(codename){
+        if(strlen(codename)>=2 && codename[0]=='"') codename=strreplace(codename,"\"","");
+        if(strlen(codename)<1) {g_free(codename);codename=NULL;}
+    }
+    
     if (pretty_name)
         return (Distro) { .distro = pretty_name, .codename = codename, .id = id };
 
