@@ -383,6 +383,10 @@ parse_os_release(void)
 
     g_strfreev(split);
 
+    //remove " from codename, allow empty codename
+    if(strlen(codename)>=2 && codename[0]=='"') codename=strreplace(codename,"\"","");
+    if(strlen(codename)<1) {g_free(codename);codename=NULL;}
+
     if (pretty_name)
         return (Distro) { .distro = pretty_name, .codename = codename, .id = id };
 
@@ -390,39 +394,6 @@ parse_os_release(void)
     return (Distro) {};
 }
 
-/*static Distro
-parse_lsb_release(void)
-{
-    gchar *pretty_name = NULL;
-    gchar *id = NULL;
-    gchar *codename = NULL;
-    gchar **split, *contents, **line;
-
-    if (!hardinfo_spawn_command_line_sync("/usr/bin/lsb_release -dic", &contents, NULL, NULL, NULL))
-        return (Distro) {};
-
-    split = g_strsplit(idle_free(contents), "\n", 0);
-    if (!split)
-        return (Distro) {};
-
-    for (line = split; *line; line++) {
-        if (!strncmp(*line, "Distributor ID:\t", sizeof("Distributor ID:\t") - 1)) {
-            id = g_utf8_strdown(*line + strlen("Distributor ID:\t"), -1);
-        } else if (!strncmp(*line, "Codename:\t", sizeof("Codename:\t") - 1)) {
-            codename = g_utf8_strdown(*line + strlen("Codename:\t"), -1);
-        } else if (!strncmp(*line, "Description:\t", sizeof("Description:\t") - 1)) {
-            pretty_name = g_strdup(*line + strlen("Description:\t"));
-        }
-    }
-
-    g_strfreev(split);
-
-    if (pretty_name)
-        return (Distro) { .distro = pretty_name, .codename = codename, .id = id };
-
-    g_free(id);
-    return (Distro) {};
-    }*/
 
 static Distro
 detect_distro(void)
@@ -473,10 +444,6 @@ detect_distro(void)
     distro = parse_os_release();
     if (distro.distro)
         return distro;
-
-    /*distro = parse_lsb_release();
-    if (distro.distro)
-        return distro;*/
 
     for (i = 0; distro_db[i].file; i++) {
         if (!g_file_get_contents(distro_db[i].file, &contents, NULL, NULL))
