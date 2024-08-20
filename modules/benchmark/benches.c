@@ -54,6 +54,9 @@ BENCH_SIMPLE(BENCHMARK_BLOWFISH_CORES, "CPU Blowfish (Multi-core)", benchmark_bf
 BENCH_SIMPLE(BENCHMARK_ZLIB, "CPU Zlib", benchmark_zlib, 1);
 BENCH_SIMPLE(BENCHMARK_CRYPTOHASH, "CPU CryptoHash", benchmark_cryptohash, 1);
 BENCH_SIMPLE(BENCHMARK_IPERF3_SINGLE, "Internal Network Speed", benchmark_iperf3_single, 1);
+#if(HARDINFO2_QT5)
+BENCH_SIMPLE(BENCHMARK_OPENGL, "Open GL GPU Drawing", benchmark_opengl, 1);
+#endif
 BENCH_SIMPLE(BENCHMARK_SBCPU_SINGLE, "SysBench CPU (Single-thread)", benchmark_sbcpu_single, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_ALL, "SysBench CPU (Multi-thread)", benchmark_sbcpu_all, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_QUAD, "SysBench CPU (Four threads)", benchmark_sbcpu_quad, 1);
@@ -104,7 +107,11 @@ static char *entries_english_name[] = {
             "SysBench Memory (Two threads)",
             "SysBench Memory (Quad threads)",
             "SysBench Memory (Multi-thread)",
-            "GPU Drawing"};
+            "GPU Drawing"
+#if(HARDINFO2_QT5)
+	    ,"OpenGL GPU Drawing"
+#endif
+};
 
 
 static ModuleEntry entries[] = {
@@ -252,6 +259,16 @@ static ModuleEntry entries[] = {
             scan_benchmark_gui,
             MODULE_FLAG_NO_REMOTE,
         },
+#if(HARDINFO2_QT5)
+    [BENCHMARK_OPENGL] =
+        {
+            N_("OpenGL GPU Drawing"),
+            "monitor.png",
+            callback_benchmark_opengl,
+            scan_benchmark_opengl,
+            MODULE_FLAG_NO_REMOTE,
+        },
+#endif
     {NULL}};
 
 const gchar *hi_note_func(gint entry)
@@ -282,6 +299,10 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_FIB:
     case BENCHMARK_NQUEENS:
         return _("Results in HIMarks. Higher is better.");
+#if(HARDINFO2_QT5)
+    case BENCHMARK_OPENGL:
+        return _("Results in FPS. Higher is better.");
+#endif
     }
 
     return NULL;

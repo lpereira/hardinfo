@@ -36,12 +36,13 @@ Dependencies
 - Zlib
 - glib JSON
 - Libsoup3 >=3.00 or Libsoup24 >=2.42 (LS24: cmake -DHARDINFO2_LIBSOUP3=0 ..)
+- Qt5 >=5.10 (Optional for now)
 
 Building and installing
 -----------------------
 **Debian/Ubuntu/Mint/PopOS**
 - sudo apt install git cmake build-essential gettext curl
-- sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev
+- sudo apt install libjson-glib-dev zlib1g-dev libsoup2.4-dev libgtk-3-dev libglib2.0-dev libqt5opengl5-dev qtbase5-dev
 - sudo apt install libsoup-3.0-dev  (might fail if not available on distro - OK)
 - git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
@@ -58,7 +59,7 @@ Building and installing
 * NOTE: CentOS 7 needs epel-release and cmake3 instead of cmake - use cmake3 instead of cmake
 - sudo yum install epel-release  (only CentOS 7)
 - sudo yum install git cmake gcc gcc-c++ gettext rpmdevtools curl
-- sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel
+- sudo yum install json-glib-devel zlib-devel libsoup-devel gtk3-devel qt5-qtbase-devel
 - sudo yum install libsoup3-devel  (might fail if not available on distro - OK)
 - git clone https://github.com/hardinfo2/hardinfo2
 - cd hardinfo2
@@ -72,6 +73,7 @@ Building and installing
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, zypper --no-gpg-checks install ./hardinfo2-*
+libqt5-qtbase-devel instead of qt5-qtbase-devel
 
 **ArchLinux/Garuda/Manjaro - AUR Package**
  - git clone https://aur.archlinux.org/hardinfo2 (hardinfo2-git for unstable master for developers)

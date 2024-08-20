@@ -27,6 +27,9 @@ enum BenchmarkEntries {
     BENCHMARK_MEMORY_QUAD,
     BENCHMARK_MEMORY_ALL,
     BENCHMARK_GUI,
+#if(HARDINFO2_QT5)
+    BENCHMARK_OPENGL,
+#endif
     BENCHMARK_N_ENTRIES
 };
 
@@ -49,6 +52,9 @@ void benchmark_nqueens(void);
 void benchmark_raytrace(void);
 void benchmark_zlib(void);
 void benchmark_iperf3_single(void);
+#if(HARDINFO2_QT5)
+void benchmark_opengl(void);
+#endif
 
 typedef struct {
     double result;

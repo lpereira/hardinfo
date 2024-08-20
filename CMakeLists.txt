@@ -7,6 +7,7 @@ set(HARDINFO2_VERSION "2.1.12")
 option(HARDINFO2_SERVICE "Build with service support" 1)
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 1)
+option(HARDINFO2_QT5 "Build opengl benchmark for QT5 " 1)
 
 SET(CMAKE_INSTALL_PREFIX "/usr")
 SET(HARDINFO2_SYSTEMV 0)
@@ -61,7 +62,7 @@ message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 
 message(STATUS "Building HardInfo2 for architecture: ${HARDINFO2_OS}-${HARDINFO2_ARCH}")
 
-add_definitions("-std=gnu89")
+#add_definitions("-std=gnu89")
 add_definitions("-Wextra")
 add_definitions("-Wno-missing-field-initializers")
 add_definitions("-Wformat")
@@ -135,25 +136,46 @@ endif()
 if(${disversion} LESS 6.99)
   if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*"))
     message("RPM EL6 - GTK2 - deprecated - support will end at any time")
-    message("RPM EL6 - LS24 - deprecated version 2.34.3 - but ok")
     set(HARDINFO2_GTK3 0)
+    message("RPM EL6 - LS24 - deprecated version 2.34.3 - but ok")
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
     set(HARDINFO2_SYSTEMV 1)
+    message("RPM EL6 - no QT5 - Disabling opengl benchmarks")
+    set(HARDINFO2_QT5 0)
   endif()
+endif()
+
+#Fedora 23
+if(${distro}${disversion} MATCHES "Fedora23")
+    message("FC23 - no QT5 - Disabling opengl benchmarks")
+    set(HARDINFO2_QT5 0)
 endif()
 
 #debian 7
 if(${distro}${disversion} MATCHES "DebianGNULinux7")
     message("DEB 7 - GTK2 to avoid c11 for ubergraph - deprecated - support will end at any time")
     message("DEB 7 - LS24 - deprecated version 2.34.3 - but ok")
+    message("DEB 7 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_GTK3 0)
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
     set(HARDINFO2_SYSTEMV 1)
+    set(HARDINFO2_QT5 0)
 endif()
 
 #debian 8
 if(${distro}${disversion} MATCHES "DebianGNULinux8")
     message("DEB 8 - GTK3 version 3.14.5 is low - Themes disabled")
+    message("DEB 8 - no QT5 - Disabling opengl benchmarks")
+    set(HARDINFO2_QT5 0)
+endif()
+
+#debian 9
+if(${distro}${disversion} MATCHES "DebianGNULinux99")
+else()
+    if(${distro}${disversion} MATCHES "DebianGNULinux9")
+        message("DEB 9 - QT5 too low - Disabling opengl benchmarks")
+        set(HARDINFO2_QT5 0)
+    endif()
 endif()
 
 #debian ->11
@@ -175,6 +197,12 @@ if(${disversion} LESS 10.99)
   endif()
 endif()
 
+#ubuntu 16
+if(${distro}${disversion} MATCHES "Ubuntu16")
+    message("Ubuntu 16 - no QT5 - Disabling opengl benchmarks")
+    set(HARDINFO2_QT5 0)
+endif()
+
 #ubuntu 20.04
 if(${disversion} LESS 20.99)
   if(${distro} MATCHES "Ubuntu")
@@ -182,7 +210,6 @@ if(${disversion} LESS 20.99)
     set(HARDINFO2_LIBSOUP3 0)
   endif()
 endif()
-
 
 #Fedora 39 - bug with man pages - upgrade cmake to 3.28.x
 
@@ -195,8 +222,12 @@ if(${CMAKE_BUILD_TYPE} MATCHES [Dd]ebug)
 	   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
         endif()
 endif()
+
 add_subdirectory(po)
 
+if(HARDINFO2_QT5)
+  add_subdirectory(deps/qgears2)
+endif()
 
 include(FindPkgConfig)
 if (HARDINFO2_GTK3)
@@ -304,6 +335,29 @@ set(MODULE_network_SOURCES
 	modules/network/nfs.c
 	modules/network/samba.c
 )
+if(HARDINFO2_QT5)
+set(MODULE_benchmark_SOURCES
+	modules/benchmark.c
+	modules/benchmark/bench_util.c
+	modules/benchmark/blowfish.c
+	modules/benchmark/blowfish2.c
+	modules/benchmark/cryptohash.c
+	modules/benchmark/fbench.c
+	modules/benchmark/fftbench.c
+	modules/benchmark/fft.c
+	modules/benchmark/fib.c
+	modules/benchmark/md5.c
+	modules/benchmark/nqueens.c
+	modules/benchmark/raytrace.c
+	modules/benchmark/sha1.c
+	modules/benchmark/zlib.c
+	modules/benchmark/sysbench.c
+	modules/benchmark/iperf3.c
+	modules/benchmark/opengl.c
+	modules/benchmark/drawing.c
+	modules/benchmark/guibench.c
+)
+else()
 set(MODULE_benchmark_SOURCES
 	modules/benchmark.c
 	modules/benchmark/bench_util.c
@@ -324,6 +378,7 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/drawing.c
 	modules/benchmark/guibench.c
 )
+endif()
 
 set_source_files_properties(
 	modules/benchmark/blowfish.c
@@ -337,7 +392,6 @@ set_source_files_properties(
 set_source_files_properties(
 	modules/devices/monitors.c
 	modules/devices/dmi_memory.c
-#	modules/devices/spd-decode.c
 	hardinfo2/problem_marker.c
 	hardinfo2/hinote_util.c
 	PROPERTIES
