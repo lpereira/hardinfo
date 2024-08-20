@@ -55,7 +55,7 @@ BENCH_SIMPLE(BENCHMARK_ZLIB, "CPU Zlib", benchmark_zlib, 1);
 BENCH_SIMPLE(BENCHMARK_CRYPTOHASH, "CPU CryptoHash", benchmark_cryptohash, 1);
 BENCH_SIMPLE(BENCHMARK_IPERF3_SINGLE, "Internal Network Speed", benchmark_iperf3_single, 1);
 #if(HARDINFO2_QT5)
-BENCH_SIMPLE(BENCHMARK_OPENGL, "Open GL GPU Drawing", benchmark_opengl, 1);
+BENCH_SIMPLE(BENCHMARK_OPENGL, "GPU OpenGL Drawing", benchmark_opengl, 1);
 #endif
 BENCH_SIMPLE(BENCHMARK_SBCPU_SINGLE, "SysBench CPU (Single-thread)", benchmark_sbcpu_single, 1);
 BENCH_SIMPLE(BENCHMARK_SBCPU_ALL, "SysBench CPU (Multi-thread)", benchmark_sbcpu_all, 1);
@@ -109,7 +109,7 @@ static char *entries_english_name[] = {
             "SysBench Memory (Multi-thread)",
             "GPU Drawing"
 #if(HARDINFO2_QT5)
-	    ,"OpenGL GPU Drawing"
+	    ,"GPU OpenGL Drawing"
 #endif
 };
 
@@ -262,7 +262,7 @@ static ModuleEntry entries[] = {
 #if(HARDINFO2_QT5)
     [BENCHMARK_OPENGL] =
         {
-            N_("OpenGL GPU Drawing"),
+            N_("GPU OpenGL Drawing"),
             "monitor.png",
             callback_benchmark_opengl,
             scan_benchmark_opengl,
