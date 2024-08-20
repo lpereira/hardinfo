@@ -9,3 +9,5 @@ build-*/
 test/build-*
 po/*.old
 po/*.mo
+deps/qgears2/moc_qgears.cpp
+deps/qgears2/moc_qglgears.cpp

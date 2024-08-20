@@ -73,6 +73,7 @@ int main(int argc, char **argv)
     }
     widget->setAutoFillBackground(true);
     widget->setPalette(pal);
+    widget->setWindowFlags(Qt::FramelessWindowHint);
 
     widget->show();
     app.exec();
