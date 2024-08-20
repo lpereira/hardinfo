@@ -618,7 +618,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
         return;
 
     if (params.gui_running && !params.run_benchmark) {
-        gchar *argv[] = {params.argv0, "-b",entries[entry].name,NULL};
+      gchar *argv[] = {params.argv0, "-b",entries[entry].name,"-n",params.darkmode?"1":"0",NULL};
         GPid bench_pid;
         gint bench_stdout;
         GtkWidget *bench_dialog = NULL;

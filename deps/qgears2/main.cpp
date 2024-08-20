@@ -21,12 +21,16 @@ RenderType renderer = Render;
 
 int main(int argc, char **argv)
 {
+    int dark=0;
     QApplication app(argc, argv);
     CommonRenderer::Mode mode = CommonRenderer::GEARSFANCY;
     for (int i = 1; i < argc; ++i)
     {
         if (!strcmp("-gl", argv[i])) {
             renderer = OpenGL;
+        }else
+        if (!strcmp("-dark", argv[i])) {
+            dark = 1;
         }
         else {
             if (i == (argc-1)) {
@@ -59,6 +63,16 @@ int main(int argc, char **argv)
         //qDebug()<<"setting mode to "<<mode;
         rendererWidget->setMode(mode);
     }
+
+    QPalette pal = QPalette();
+    // set background color - light/dark mode
+    if(dark){
+        pal.setColor(QPalette::Window, Qt::black);
+    }else{
+        pal.setColor(QPalette::Window, Qt::white);
+    }
+    widget->setAutoFillBackground(true);
+    widget->setPalette(pal);
 
     widget->show();
     app.exec();

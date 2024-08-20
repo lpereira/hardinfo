@@ -281,7 +281,6 @@ void CommonRenderer::gears(QPaintDevice *device)
     //painter.setBrush(QColor(255, 255, 0, 0));
     if (painter.paintEngine()->hasFeature(QPaintEngine::PorterDuff))
         painter.setCompositionMode(QPainter::CompositionMode_Source);
-    painter.fillRect(0, 0, device->width(), device->height(),  Qt::gray);
     {
         painter.setRenderHint(QPainter::Antialiasing, true);
         if (painter.paintEngine()->hasFeature(QPaintEngine::PorterDuff))

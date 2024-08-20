@@ -26,7 +26,7 @@
 /* if anything changes in this block, increment revision */
 #define BENCH_REVISION 1
 
-static bench_value opengl_bench(int opengl) {
+static bench_value opengl_bench(int opengl, int darkmode) {
     bench_value ret = EMPTY_BENCH_VALUE;
     gboolean spawned;
     gchar *out=NULL, *err=NULL;
@@ -35,9 +35,9 @@ static bench_value opengl_bench(int opengl) {
 
     char cmd_line[100];
     if(opengl) {
-        sprintf(cmd_line, "%s/modules/qgears2 -gl",params.path_lib);
+        sprintf(cmd_line, "%s/modules/qgears2 -gl %s",params.path_lib, (darkmode ? "-dark" : ""));
     } else {
-        sprintf(cmd_line, "%s/modules/qgears2",params.path_lib);
+        sprintf(cmd_line, "%s/modules/qgears2 %s",params.path_lib, (darkmode ? "-dark" : ""));
     }
 
     spawned = g_spawn_command_line_sync(cmd_line, &out, &err, NULL, NULL);
@@ -61,10 +61,10 @@ void benchmark_opengl(void) {
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing opengl benchmark (single thread)...");
 
-    r = opengl_bench(1);
+    r = opengl_bench(1,params.max_bench_results);
 
     if(r.threads_used!=1) {
-        r = opengl_bench(0);
+        r = opengl_bench(0,params.max_bench_results);
     }
     
     bench_results[BENCHMARK_OPENGL] = r;
