@@ -3,16 +3,16 @@ message(STATUS "qgears2 module being added...")
 find_package(Qt5 REQUIRED Core Gui Widgets OpenGL)
 include(FindPkgConfig)
 
-execute_process(COMMAND moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qgears.h -o ../deps/qgears2/moc_qgears.cpp)
-execute_process(COMMAND moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qglgears.h -o ../deps/qgears2/moc_qglgears.cpp)
-execute_process(COMMAND /usr/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qgears.h -o ../deps/qgears2/moc_qgears.cpp)
-execute_process(COMMAND /usr/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qglgears.h -o ../deps/qgears2/moc_qglgears.cpp)
-execute_process(COMMAND /usr/lib/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qgears.h -o ../deps/qgears2/moc_qgears.cpp)
-execute_process(COMMAND /usr/lib/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qglgears.h -o ../deps/qgears2/moc_qglgears.cpp)
-execute_process(COMMAND /usr/lib64/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qgears.h -o ../deps/qgears2/moc_qgears.cpp)
-execute_process(COMMAND /usr/lib64/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qglgears.h -o ../deps/qgears2/moc_qglgears.cpp)
-execute_process(COMMAND /usr/lib/i386-linux-gnu/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qgears.h -o ../deps/qgears2/moc_qgears.cpp)
-execute_process(COMMAND /usr/lib/i386-linux-gnu/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ../deps/qgears2/qglgears.h -o ../deps/qgears2/moc_qglgears.cpp)
+execute_process(COMMAND moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qgears.cpp)
+execute_process(COMMAND moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qglgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qglgears.cpp)
+execute_process(COMMAND /usr/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qgears.cpp)
+execute_process(COMMAND /usr/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qglgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qglgears.cpp)
+execute_process(COMMAND /usr/lib/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qgears.cpp)
+execute_process(COMMAND /usr/lib/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qglgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qglgears.cpp)
+execute_process(COMMAND /usr/lib64/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qgears.cpp)
+execute_process(COMMAND /usr/lib64/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qglgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qglgears.cpp)
+execute_process(COMMAND /usr/lib/i386-linux-gnu/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qgears.cpp)
+execute_process(COMMAND /usr/lib/i386-linux-gnu/qt5/bin/moc -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/qglgears.h -o ${CMAKE_CURRENT_BINARY_DIR}/moc_qglgears.cpp)
 
 include_directories(
   .
@@ -28,8 +28,8 @@ add_executable(qgears2
   commonrenderer.cpp
   qglgears.cpp
   fdclock.cpp
-  moc_qgears.cpp
-  moc_qglgears.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/moc_qgears.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/moc_qglgears.cpp
 )
 
 set_target_properties(qgears2 PROPERTIES COMPILE_FLAGS "-pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC")
