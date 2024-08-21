@@ -1,8 +1,8 @@
 #/bin/sh
 if [ $1 != '' ] ; then
-  REINSTALL=0
-else
   REINSTALL=$1
+else
+  REINSTALL=0
 fi
 
 if [ -e /bin/systemctl ] ; then
