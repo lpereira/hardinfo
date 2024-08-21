@@ -75,6 +75,7 @@ int main(int argc, char **argv)
     widget->setPalette(pal);
     widget->setWindowFlags(Qt::FramelessWindowHint);
 
+    widget->setWindowTitle("hardinfo2 - OpenGL");
     widget->show();
     app.exec();
 }

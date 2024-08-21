@@ -27,6 +27,9 @@ QGLGears::QGLGears()
     : QGLWidget(QGLFormat(QGL::SampleBuffers), 0)
 {
     setFixedSize(1024, 800);
+    setMinimumSize(1024, 800);
+    setMaximumSize(1024, 800);
+    setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 }
 
 void QGLGears::paintEvent(QPaintEvent *)
