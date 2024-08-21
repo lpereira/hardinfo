@@ -36,7 +36,7 @@ Dependencies
 - Zlib
 - glib JSON
 - Libsoup3 >=3.00 or Libsoup24 >=2.42 (LS24: cmake -DHARDINFO2_LIBSOUP3=0 ..)
-- Qt5 >=5.10 (Optional for now)
+- Qt5 >=5.10 (disable QT5/OpenGL: cmake -DHARDINFO2_QT5=0 ..)
 
 Building and installing
 -----------------------
@@ -95,10 +95,9 @@ Most hardware is detected automatically by Hardinfo2, but some might need manual
 - **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
 - **iperf3**: iperf3 is used to benchmark internal network speed.
 - **fwupd**: fwupd is used to read and display information about firmware in system.
+- **Service**: Service loads SPD modules (at24/ee1004/spd5118) to display SPD info for your DIMMs memory. Show addresses for iomem+ioports.
 
 **User can install/setup these depending on hardware**
-- **eeprom module**: To display SPD info about your currently installed DIMMs memory.
-Load with `modprobe eeprom/at24/ee1004` and refresh the module screen.
 - **hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp
 in daemon mode, using the default port.
 - **apcaccess**: apcaccess is used for battery information.
