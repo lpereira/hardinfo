@@ -45,8 +45,8 @@
 	c08 Cortex-A8
 	c09 Cortex-A9
 	c0d Cortex-A17 # Originally A12
-	c0f Cortex-A15
 	c0e Cortex-A17
+	c0f Cortex-A15
 	c14 Cortex-R4
 	c15 Cortex-R5
 	c17 Cortex-R7
@@ -65,9 +65,23 @@
 	d08 Cortex-A72
 	d09 Cortex-A73
 	d0a Cortex-A75
+	d0b Cortex-A76
+	d0c Neoverse-N1
+	d0d Cortex-A77
 	d13 Cortex-R52
 	d20 Cortex-M23
 	d21 Cortex-M33
+	d40 Neoverse-V1
+	d41 Cortex-A78
+	d42 Cortex-A78AE
+	d44 Cortex-X1
+	d46 Cortex-A510
+	d47 Cortex-A710
+	d48 Cortex-X2
+	d49 Neoverse-N2
+	d4a Neoverse-E1
+	d4b Cortex-A78C
+	d4d Cortex-A715
 42 Broadcom
 	00f Brahma B15
 	100 Brahma B53
@@ -84,6 +98,7 @@
 4e nVidia
 	000 Denver
 	003 Denver 2
+	004 Carmel
 50 APM
 	000 X-Gene
 51 Qualcomm
@@ -96,6 +111,11 @@
 	211 Kryo
 	800 Falkor V1/Kryo
 	801 Kryo V2
+	802 Kryo 3xx gold
+	803 Kryo 3xx silver
+	805 Kryo 5xx silver
+	804 Kryo 4xx/5xx gold
+	805 Kryo 4xx/5xx silver
 	c00 Falkor
 	c01 Saphira
 53 Samsung
