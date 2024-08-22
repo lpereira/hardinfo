@@ -21,41 +21,32 @@
 #include "benchmark.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 2
+#define BENCH_REVISION 3
 #define BENCH_DATA_SIZE 65536
 #define CRUNCH_TIME 5
 #define BENCH_DATA_MD5 "c25cf5c889f7bead2ff39788eedae37b"
 #define STEPS 250
 
-inline void md5_step(char *data, glong srclen)
-{
-    struct MD5Context ctx;
-    guchar checksum[16];
-
-    MD5Init(&ctx);
-    MD5Update(&ctx, (guchar *)data, srclen);
-    MD5Final(checksum, &ctx);
-}
-
-inline void sha1_step(char *data, glong srclen)
-{
-    SHA1_CTX ctx;
-    guchar checksum[20];
-
-    SHA1Init(&ctx);
-    SHA1Update(&ctx, (guchar*)data, srclen);
-    SHA1Final(checksum, &ctx);
-}
 
 static gpointer cryptohash_for(void *in_data, gint thread_number)
 {
     unsigned int i;
+    struct MD5Context md5_ctx;
+    guchar md5_checksum[16];
+    SHA1_CTX sha1_ctx;
+    guchar sha1_checksum[20];
 
     for (i = 0;i <= STEPS; i++) {
         if (i & 1) {
-            md5_step(in_data, BENCH_DATA_SIZE);
+	    //md5_step(in_data, BENCH_DATA_SIZE);
+            MD5Init(&md5_ctx);
+            MD5Update(&md5_ctx, (guchar *)in_data, BENCH_DATA_SIZE);
+            MD5Final(md5_checksum, &md5_ctx);
         } else {
-            sha1_step(in_data, BENCH_DATA_SIZE);
+	    //sha1_step(in_data, BENCH_DATA_SIZE);
+            SHA1Init(&sha1_ctx);
+            SHA1Update(&sha1_ctx, (guchar*)in_data, BENCH_DATA_SIZE);
+            SHA1Final(sha1_checksum, &sha1_ctx);
         }
     }
 
