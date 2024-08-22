@@ -9,8 +9,8 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# Version: 2024.01.30
-# Date:    2024-01-30 20:34:02
+# Version: 2024.07.04
+# Date:    2024-07-04 20:34:02
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -209,6 +209,7 @@
 	0012  DeskJet 1125C Printer Port
 	0024  KU-0316 Keyboard
 	002a  LaserJet P1102
+	0036  CCID Smartcard Keyboard KUS0133
 	0053  DeskJet 2620 All-in-One Printer
 	0101  ScanJet 4100c
 	0102  PhotoSmart S20
@@ -2399,8 +2400,10 @@
 	02e3  Xbox One Elite Controller
 	02e6  Xbox Wireless Adapter for Windows
 	02ea  Xbox One Controller
+	02f3  Xbox One Chatpad
 	02fd  Xbox One S Controller [Bluetooth]
 	02fe  Xbox Wireless Adapter for Windows
+	0306  Surface Pro 7 SD Card Reader
 	0400  Windows Powered Pocket PC 2002
 	0401  Windows Powered Pocket PC 2002
 	0402  Windows Powered Pocket PC 2002
@@ -4990,7 +4993,7 @@
 	0a28  INDI AV-IN Device
 	1301  Network Controller
 	1302  i3 Gateway
-	1303  3 Micro Module
+	1303  i3 Micro Module
 	1304  i3 Module
 	1305  i3 Multi Sensing Module
 04c1  U.S. Robotics (3Com)
@@ -5049,6 +5052,7 @@
 	072d  Revio KD410Z
 04ca  Lite-On Technology Corp.
 	0020  USB Keyboard
+	003a  Multimedia Keyboard
 	004b  Keyboard
 	004f  SK-9020 keyboard
 	008a  Acer Wired Mouse Model SM-9023
@@ -6430,6 +6434,7 @@
 	2060  PT-E550W P-touch Label Printer
 	2061  PT-P700 P-touch Label Printer
 	2064  PT-P700 P-touch Label Printer RemovableDisk
+	2065  PT-P750W P-Touch Label Writer
 	2074  PT-D600 P-touch Label Printer
 	209b  QL-800 Label Printer
 	209c  QL-810W Label Printer
@@ -7436,6 +7441,7 @@
 	03dd  PTH-460 [Intuos Pro BT (S)] tablet
 	03ec  DTH134 [DTH134] touchscreen
 	03ed  DTC121 [DTC121] touchscreen
+	03f0  DTH135 [Movink 13]
 	0400  PenPartner 4x5
 	4001  TPC4001
 	4004  TPC4004
@@ -8243,6 +8249,7 @@
 	1093  Rugged
 	1094  Rugged THB
 	1095  Rugged
+	1105  Mobile Drive (RLSD: 2022)
 	a601  HardDrive
 	a602  CD R/W
 05a0  Vetronix Corp.
@@ -9045,6 +9052,7 @@
 	0752  micros Reader
 	0760  USB 2.0 Card Reader/Writer
 	0761  Genesys Mass Storage Device
+	0769  SPR2801S [Lightspeeur 2801]
 	0780  USBFS DFU Adapter
 	07a0  Pen Flash
 	0880  Wasp (SL-6612)
@@ -9283,6 +9291,8 @@
 # typo?
 	4004  Minolta Dimage Scan Elite II AF-2920 (2888)
 0639  Chrontel, Inc.
+	7213  CH7213
+	7231  CH7213
 063a  Techwin Corp.
 063b  Taugagreining HF
 063c  Yamaichi Electronics Co., Ltd (Sakura)
@@ -10892,7 +10902,7 @@
 	0056  Agfa AP1100 Photo Printer
 	005d  Mobile Mass Storage
 	005f  Laser Pro LL [MFPrinter]
-	0062  XG-76NA 802.11bg
+	0062  XG-76NA / XG-760N 802.11b/g Wireless adapter
 	0078  Laser Pro Monochrome MFP
 079d  Alfadata Computer Corp.
 	0201  GamePort Adapter
@@ -11163,6 +11173,7 @@
 	1228  MPEG-2 Capture Device (M038)
 	1830  AVerTV Volar Video Capture (H830)
 	1871  TD310 DVB-T/T2/C dongle
+	2553  Live Gamer Ultra 2.1
 	3835  AVerTV Volar Green HD (A835B)
 	850a  AverTV Volar Black HD (A850)
 	850b  AverTV Red HD+ (A850T)
@@ -11174,6 +11185,7 @@
 	b300  A300 DVB-T TV receiver
 	b800  MR800 FM Radio
 	c039  DVD EZMaker 7
+	d553  Live Gamer Ultra Pro-RGB
 	e880  MPEG-2 Capture Device (E880)
 	e882  MPEG-2 Capture Device (E882)
 07cb  Kingmax Technology, Inc.
@@ -11443,6 +11455,7 @@
 0826  Data Transit
 0827  BroadLogic, Inc.
 0828  Sato Corp.
+	a003  WS408 Label Printer
 0829  DirecTV Broadband, Inc. (Telocity)
 082d  Handspring
 	0100  Visor
@@ -12081,6 +12094,12 @@
 	04b2  NC interface
 	04b3  keyboard front panel Cockpit
 	04b4  SCR_CCID
+	04b5  Camera
+	04b6  Cockpit Touchkeypad
+	04b7  Cockpit Touchkeypad Bootloader
+	04b8  MediSET USB4-W
+	04b9  MediSET USB4-R
+	04ba  MediSET USB4-G
 	2701  ShenZhen SANZHAI Technology Co.,Ltd Spy Pen VGA
 0909  Audio-Technica Corp.
 	001b  ATR2100-USB
@@ -12188,6 +12207,7 @@
 	4cda  Fenix 6 Sapphire
 	4cdb  Fenix 6
 0920  Echelon Co.
+	5550  U60 FT Network Interface
 	7500  Network Interface
 0921  GoHubs, Inc.
 	1001  GoCOM232 Serial
@@ -12272,7 +12292,7 @@
 	0a0b  WLU5053 802.11abgn Wireless Module [Broadcom BCM43236B]
 	0a13  AX88179 Gigabit Ethernet [Toshiba]
 	0b05  PX1220E-1G25 External hard drive
-	0b09  PX1396E-3T01 External hard drive
+	0b09  PX139xE 3.5 External HDD
 	0b1a  STOR.E ALU 2S
 	1300  Wireless Broadband (CDMA EV-DO) SM-Bus Minicard Status Port
 	1301  Wireless Broadband (CDMA EV-DO) Minicard Status Port
@@ -12406,6 +12426,8 @@
 	010f  nanoKONTROL studio controller
 	0117  nanoKONTROL2 MIDI Controller
 	012f  SQ-1
+	0154  NTS-1 digital kit mkII
+	0203  KRONOS
 	0f03  K-Series K61P MIDI studio controller
 0945  Pasco Scientific
 0948  Kronauer music in digital
@@ -12477,7 +12499,8 @@
 	7140  T124 [Tegra K1/Logan 32-bit]
 	7210  SHIELD Controller
 	7321  Switch [Tegra Erista] recovery mode
-	7423  T234 [Orin NX] recovery mode
+	7323  T234 [Orin NX 16GB] recovery mode
+	7423  T234 [Orin NX 8GB] recovery mode
 	7721  T210 [TX1 Tegra Erista] recovery mode
 	7820  T20 [Tegra 2] recovery mode
 	7c18  T186 [TX2 Tegra Parker] recovery mode
@@ -12678,6 +12701,8 @@
 09d8  ELATEC GmbH
 	0320  TWN3 Multi125
 	0406  TWN4 MIFARE NFC
+	0410  TWN4 HID
+	0420  TWN4 CDC
 09d9  KRF Tech, Ltd
 09da  A4Tech Co., Ltd.
 	0006  Optical Mouse WOP-35 / Trust 450L Optical Mouse
@@ -12686,6 +12711,7 @@
 	0018  Trust Human Interface Device
 	001a  Wireless Mouse & RXM-15 Receiver
 	002a  Wireless Optical Mouse NB-30
+	0103  Oscar X-710BK Gaming Mouse
 	022b  Wireless Mouse (Battery Free)
 	024f  RF Receiver and G6-20D Wireless Optical Mouse
 	0260  KV-300H Isolation Keyboard
@@ -12693,12 +12719,16 @@
 	09da  Bloody V8 Mouse
 	1068  Bloody A90 Mouse
 	112c  Bloody V5 Mouse
+	2268  Keyboard (FK11)
+	2690  PK-635G
 	3a60  Bloody V8M Core 2 Mouse
 	8090  X-718BK Oscar Optical Gaming Mouse
 	9033  X-718BK Optical Mouse
 	9066  F3 V-Track Gaming Mouse
-	9090  XL-730K / XL-750BK / XL-755BK Mice
+	9090  XL-730K / XL-747H / XL-750BK / XL-755BK Mice
 	f613  Bloody V7M Mouse
+	f6cc  B314 Light Strike Gaming Keyboard
+	fa44  B930 Light Strike RGB Mechanical Gaming Keyboard
 09db  Measurement Computing Corp.
 	0075  MiniLab 1008
 	0076  PMD-1024
@@ -12715,11 +12745,13 @@
 09e6  Silutia, Inc.
 09e7  Real 3D, Inc.
 09e8  AKAI  Professional M.I. Corp.
+	0029  APC40 mkII
 	0045  MPK Mini Mk II MIDI Controller
 	0062  MPD16 MIDI Pad Controller Unit
 	006d  EWI electronic wind instrument
 	0071  MPK25 MIDI Keyboard
 	0076  LPK25 MIDI Keyboard
+	007c  MPK Mini MIDI Controller
 09e9  Chen-Source, Inc.
 09eb  IM Networks, Inc.
 	4331  iRhythm Tuner Remote
@@ -12783,6 +12815,9 @@
 	1010  Bluetooth Device
 	1011  Bluetooth Device
 	1012  Bluetooth Device
+	1243  CSRA64210 [TaoTronics Headset BH-22 in charging mode]
+	4007  Mpow HC5 Headset in charging mode - HID / Mass Storage
+	4010  Mpow HC5 Headset in charging mode - USB Hub
 	ffff  USB Bluetooth Device in DFU State
 0a13  Telebyte, Inc.
 0a14  Spacelabs Medical, Inc.
@@ -12826,6 +12861,7 @@
 0a35  Radikal Technologies
 	002a  SAC - Software Assigned Controller
 	008a  SAC Hub
+0a38  IRIS sa
 0a39  Gilat Satellite Networks, Ltd
 0a3a  PentaMedia Co., Ltd
 	0163  KN-W510U 1.0 Wireless LAN Adapter
@@ -12950,6 +12986,7 @@
 	217f  BCM2045B (BDC-2.1)
 	2198  Bluetooth 3.0 Device
 	219b  Bluetooth 2.1 Device
+	219c  BCM2070 Bluetooth
 	21b1  HP Bluetooth Module
 	21b4  BCM2070 Bluetooth 2.1 + EDR
 	21b9  BCM2070 Bluetooth 2.1 + EDR
@@ -12973,6 +13010,8 @@
 	5802  BCM5880 Secure Applications Processor with fingerprint touch sensor
 	5803  BCM5880 Secure Applications Processor with secure keyboard
 	5804  BCM5880 Secure Applications Processor with fingerprint swipe sensor
+	5832  BCM5880 Secure Applications Processor Smartcard reader
+	5843  BCM58200 ControlVault 3 (FingerPrint sensor + Contacted SmartCard)
 	6300  Pirelli Remote NDIS Device
 	6410  BCM20703A1 Bluetooth 4.1 + LE
 	bd11  BCM4320 802.11bg Wireless Adapter
@@ -12989,11 +13028,14 @@
 	0009  LP2844 Printer
 	0027  ZTC LP2844-Z-200dpi
 	0050  P120i / WM120i
+	0062  GK420d Label Printer
+	0065  ZM400 Label Printer
 	0080  GK420d Label Printer
 	0081  GK420t Label Printer
 	0084  GX420d Desktop Label Printer
 	008b  HC100 wristbands Printer
 	008c  ZP 450 Printer
+	00a1  TLP2824 Plus
 	00d1  GC420d Label Printer
 	0110  ZD500 Desktop Label Printer
 	011c  ZD410 Direct Thermal Label Printer
@@ -13004,6 +13046,7 @@
 	0010  MPMan MP-F40 MP3 Player
 0a66  ClearCube Technology
 0a67  Medeli Electronics Co., Ltd
+	ffff  LCS Audio
 0a68  Comaide Corp.
 0a69  Chroma ate, Inc.
 0a6b  Green House Co., Ltd
@@ -13215,10 +13258,11 @@
 0ac9  Micro Solutions, Inc.
 	0000  Backpack CD-ReWriter
 	0001  BACKPACK  2 Cable
-	0010  BACKPACK
+	0010  BACKPACK CD Drive
 	0011  Backpack 40GB Hard Drive
 	0110  BACKPACK
 	0111  BackPack
+	10ff  BACKPACK
 	1234  BACKPACK
 0aca  OPEN Networks Ltd
 	1060  OPEN NT1 Plus II
@@ -13277,7 +13321,7 @@
 	3102  MemoryStick Card Reader
 	3201  MMC/SD+MemoryStick Card Reader
 	3216  HS Card Reader
-	3260  7-in-1 Card Reader
+	3260  ND3260 7-in-1 Card Reader
 	5010  ND5010 Card Reader
 0af0  Option
 	5000  UMTS Card
@@ -13351,6 +13395,7 @@
 	17a0  Xonar U3 sound card
 	17a1  Eee Note EA800 (mass storage mode)
 	17ab  USB-N13 802.11n Network Adapter (rev. B1) [Realtek RTL8192CU]
+	17b5  Broadcom BCM20702A0 Bluetooth
 	17ba  N10 Nano 802.11n Network Adapter [Realtek RTL8192CU]
 	17c2  ROG Spitfire
 	17c7  WL-330NUL
@@ -21442,6 +21487,8 @@
 20a0  Clay Logic
 	0006  flirc
 	4107  GPF Crypto Stick V1.2
+	4108  Nitrokey Pro
+	4109  Nitrokey Storage
 	4123  IKALOGIC SCANALOGIC 2
 	414a  MDE SPI Interface
 	415a  OpenPilot
@@ -21450,7 +21497,16 @@
 	41e5  BlinkStick
 	4211  Nitrokey Start
 	4223  ATSAMD21 [castAR]
+	4230  Nitrokey HSM
+	4287  Nitrokey FIDO U2F
 	428d  Electrosense wideband converter
+	42b1  Nitrokey FIDO2
+	42b2  Nitrokey 3A Mini/3A NFC/3C NFC
+	42b4  Nitrokey Pro Bootloader
+	42da  MuteMe
+	42dd  Nitrokey 3A NFC Bootloader/3C NFC Bootloader
+	42e8  Nitrokey 3A Mini Bootloader
+	42ec  RP2040 [PicoWifi]
 20b1  XMOS Ltd
 	10ad  XUSB Loader
 	f7d1  XTAG2 - JTAG Adapter
@@ -22171,7 +22227,7 @@
 2581  Plug-up
 	1807  Generic HID Smartcard
 	1808  WinUSB Smartcard
-	f1d0  FIDO U2F Security Key
+	f1d0  Nitrokey U2F
 258d  Sequans Communications
 259a  TriQuint Semiconductor
 25a7  Areson Technology Corp
