@@ -543,18 +543,16 @@ configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
 configure_file(hardinfo2.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo2.desktop @ONLY)
 
 if(HARDINFO2_SERVICE)
-    #fix for debian moving lib to (arch)-gnu-linux
-    if(${CMAKE_INSTALL_LIBDIR} MATCHES ${CMAKE_HOST_SYSTEM_PROCESSOR})
-        SET(CMAKE_INSTALL_SERVICEDIR "/usr/lib")
-    else()
-        SET(CMAKE_INSTALL_SERVICEDIR ${CMAKE_INSTALL_LIBDIR})
-    endif()
+    #cannot use CMAKE_INSTALL_LIBDIR due to distros with dual lib (arch)-gnu-linux,lib64
+    set(CMAKE_INSTALL_SERVICEDIR "/usr/lib")
+    message("ServiceDir=" ${CMAKE_INSTALL_SERVICEDIR})
 
     if(${HARDINFO2_SYSTEMV})
-        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2 DESTINATION /etc/init.d/)
+        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2 DESTINATION /etc/init.d/
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     else()
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2.service DESTINATION ${CMAKE_INSTALL_SERVICEDIR}/systemd/system/)
-      endif()
+    endif()
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/postinst ${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/prerm ${CMAKE_CURRENT_BINARY_DIR}/packaging/prerm)
 endif()

@@ -1,6 +1,5 @@
 #/bin/sh
-if [ -e /bin/systemctl ]
-then
+if [ -e /bin/systemctl ] ; then
     systemctl daemon-reload
     systemctl enable hardinfo2
     systemctl start hardinfo2
@@ -8,5 +7,6 @@ then
 else
     chkconfig --add hardinfo2
     chkconfig hardinfo2 on
+    /etc/rc.d/init.d/hardinfo2 start
     echo "Service Installed... (SystemV)"
 fi
