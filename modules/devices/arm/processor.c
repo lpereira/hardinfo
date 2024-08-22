@@ -374,7 +374,10 @@ gchar *processor_name(GSList *processors) {
         char *vendor;
         char *soc;
     } dt_compat_searches[] = {
-        { "brcm,bcm2838", "Broadcom", "BCM2838" }, // RPi 4
+        { "hardkernel,odroid-c2", "Amlogic", "S905" }, // C2
+        { "amlogic,a311d", "Amlogic", "A311D" }, // VIM3
+        { "brcm,bcm2712", "Broadcom", "BCM2712" }, // RPi 5
+        { "brcm,bcm2711", "Broadcom", "BCM2711" }, // RPi 4
         { "brcm,bcm2837", "Broadcom", "BCM2837" }, // RPi 3
         { "brcm,bcm2836", "Broadcom", "BCM2836" }, // RPi 2
         { "brcm,bcm2835", "Broadcom", "BCM2835" }, // RPi 1
