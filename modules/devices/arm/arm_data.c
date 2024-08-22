@@ -78,6 +78,13 @@ static struct {
     { "jscvt",    NC_("arm-flag", /*/flag:jscvt*/    "JacaScript conversion on AArch64 (arch>=8)") },
     { "fcma",     NC_("arm-flag", /*/flag:fcma*/     "Complex number SIMD on AArch64 (arch>=8)") },
     { "lrcpc",    NC_("arm-flag", /*/flag:lrcpc*/    "Weak release consistency on AArch64 (arch>=8)") },
+    { "dcpop",    NC_("arm-flag", /*/flag:dcpop*/    "Data cache clean to Point of Persistence on AArch64 (arch>=8)") },
+    { "sha3",     NC_("arm-flag", /*/flag:sha3*/     "SHA-3 instructions on AArch64 (arch>=8)") },
+    { "sm3",      NC_("arm-flag", /*/flag:sm3*/      "SM3 instructions on AArch64 (arch>=8)") },
+    { "sm4",      NC_("arm-flag", /*/flag:sm4*/      "SM4 instructions on AArch64 (arch>=8)") },
+    { "asimddp",  NC_("arm-flag", /*/flag:asimddp*/  "SIMD Dot Product on AArch64 (arch>=8)") },
+    { "sha512",   NC_("arm-flag", /*/flag:sha512*/   "SHA512 instructions on AArch64 (arch>=8)") },
+    { "sve",      NC_("arm-flag", /*/flag:sve*/      "Scalable Vector Extension on AArch64 (arch>=8)") },
     { NULL, NULL }
 };
 
