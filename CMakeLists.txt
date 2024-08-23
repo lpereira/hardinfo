@@ -217,6 +217,11 @@ if(${disversion} LESS 20.99)
   endif()
 endif()
 
+#PCLinuxOS
+if(${distro} MATCHES "PCLinux")
+    set(HARDINFO2_SYSTEMV 1)
+endif()
+
 #Fedora 39 - bug with man pages - upgrade cmake to 3.28.x
 
 ################################################################################
