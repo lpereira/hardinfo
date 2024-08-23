@@ -430,6 +430,7 @@ detect_distro(void)
         { DB_PREFIX "distro-release", "fl" },
         { DB_PREFIX "vine-release", "vine" },
         { DB_PREFIX "PartedMagic-version", "pmag" },
+        { DB_PREFIX "NIXOS", "nixos", "NixOS Linux" },
          /*
          * RedHat must be the *last* one to be checked, since
          * some distros (like Mandrake) includes a redhat-relase
