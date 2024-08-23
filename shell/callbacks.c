@@ -145,7 +145,7 @@ void cb_disable_theme()
 {
     Shell *shell = shell_get_main_shell();
     // *shelltree=shell->tree;
-    char theme_st[200];
+    char theme_st[400];
     GKeyFile *key_file = g_key_file_new();
 #if GTK_CHECK_VERSION(3, 0, 0)
     GtkCssProvider *provider;
@@ -185,9 +185,9 @@ void cb_disable_theme()
 #if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){//enable
        if(params.darkmode){
-	   sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
+	   sprintf(theme_st,"window.background {background-image: url(\"%s/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.path_data,params.theme);
        }else{
-           sprintf(theme_st,"window.background {background-image: url(\"/usr/share/hardinfo2/pixmaps/bg%d_light.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.theme);
+	   sprintf(theme_st,"window.background {background-image: url(\"%s/pixmaps/bg%d_light.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.path_data,params.theme);
        }
        gtk_css_provider_load_from_data(provider, theme_st, -1, NULL);
        if(shell->window) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
