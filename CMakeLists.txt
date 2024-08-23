@@ -550,7 +550,7 @@ configure_file(hardinfo2.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo2.desktop @ON
 
 if(HARDINFO2_SERVICE)
     #cannot use CMAKE_INSTALL_LIBDIR due to distros with dual lib (arch)-gnu-linux,lib64
-    set(CMAKE_INSTALL_SERVICEDIR "/usr/lib")
+    set(CMAKE_INSTALL_SERVICEDIR "/usr/lib" CACHE PATH "Path where the systemd service file gets installed")
     message("ServiceDir=" ${CMAKE_INSTALL_SERVICEDIR})
 
     if(${HARDINFO2_SYSTEMV})
