@@ -1,12 +1,21 @@
 #/bin/sh
-if [ -e /bin/systemctl ] ; then
+if [ -e /bin/wslinfo ] ; then
+  #No WSL service - SPD+DMI not supported
+  cat /proc/iomem >/tmp/hardinfo2_iomem
+  chmod a+r /tmp/hardinfo2_iomem
+  cat /proc/ioports >/tmp/hardinfo2_ioports
+  chmod a+r /tmp/hardinfo2_ioports
+  echo "Service Installed... (SystemV-WSL)"
+else
+  if [ -e /bin/systemctl ] ; then
     systemctl daemon-reload
     systemctl enable hardinfo2
     systemctl start hardinfo2
     echo "Service Installed... (SystemD)"
-else
+  else
     chkconfig --add hardinfo2
     chkconfig hardinfo2 on
-    /etc/rc.d/init.d/hardinfo2 start
+    /etc/init.d/hardinfo2 start
     echo "Service Installed... (SystemV)"
+  fi
 fi

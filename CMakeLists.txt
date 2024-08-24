@@ -222,6 +222,13 @@ if(${distro} MATCHES "PCLinux")
     set(HARDINFO2_SYSTEMV 1)
 endif()
 
+#WSL 1/2
+if(EXISTS "/bin/wslinfo")
+    message("WSL Detected")
+    set(HARDINFO2_SYSTEMV 1)
+endif()
+
+
 #Fedora 39 - bug with man pages - upgrade cmake to 3.28.x
 
 ################################################################################
