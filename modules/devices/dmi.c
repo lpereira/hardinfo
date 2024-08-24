@@ -112,14 +112,15 @@ gboolean dmi_get_info(void)
 
             switch (state) {
             case 0: /* no value, root */
+            case 1: /* no value, no root */
                 dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info, _(info->name),
                                             _("(Not available)"));
                 break;
-            case 1: /* no value, no root */
+/*            case 1: // no value, no root
                 dmi_info = h_strdup_cprintf("%s=%s\n", dmi_info, _(info->name),
                                             _("(Not available; Perhaps try "
                                               "running hardinfo2 as root.)"));
-                break;
+                break;*/
             case 2: /* ignored value */
                 if (params.markup_ok)
                     dmi_info = h_strdup_cprintf("%s=<s>%s</s>\n", dmi_info,
@@ -159,7 +160,8 @@ void __scan_dmi(void)
   if (!dmi_ok) {
     dmi_info = g_strdup_printf("[%s]\n%s=\n",
                         _("DMI Unavailable"),
-                        (getuid() == 0)
+//                        (getuid() == 0)
+			    (1)
                             ? _("DMI is not avaliable. Perhaps this platform does not provide DMI.")
                             : _("DMI is not available; Perhaps try running hardinfo2 as root.") );
 

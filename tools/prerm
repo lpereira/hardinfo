@@ -6,7 +6,7 @@ else
 fi
 
 if [ -e /bin/wslinfo ] ; then
-  echo "Service Removed... (SystemV-WSL)
+  echo "Service Removed... (SystemV-WSL)"
 else
   if [ -e /bin/systemctl ] ; then
     #Fedora runs prerm after postinstl - reinstall(1), remove(0)
