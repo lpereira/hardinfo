@@ -375,6 +375,9 @@ void cb_about()
 	"david-geiger (Mageia)",
 	"Kieltux (Opensuse/Suse branches)",
 	"AngryPenguinPL (OpenMandriva)",
+	"quincyf467 (Gentoo)",
+	"terryn94 (PCLinuxOS)",
+	"bjornfor (NixOS+NIX packages)",
 	"",
         NULL
     };
