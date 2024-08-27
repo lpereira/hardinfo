@@ -175,12 +175,13 @@ static void free_auto_free_ex(gboolean thread_final) {
         double age = now - z->stamp;
         if (free_final || (z->thread == this_thread && (thread_final || age > AF_DELAY_SECONDS) ) ) {
             if (DEBUG_AUTO_FREE == 2) {
-                char fptr[128] = "", *fname;
+                char fptr[128] = "", *fname=NULL;
                 for(int i = 0; i < (int)G_N_ELEMENTS(free_function_tab); i++)
                     if (z->f_free == free_function_tab[i].fptr)
                         fname = free_function_tab[i].name;
                 if (!fname) {
-                    snprintf(fname, 127, "%p", z->f_free);
+		    //FIXME - This must an error when debugging
+		    //FIXME snprintf(fname, 127, "%p", z->f_free);
                     fname = fptr;
                 }
                 if (z->file || z->func)

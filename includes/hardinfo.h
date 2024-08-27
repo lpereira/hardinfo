@@ -116,9 +116,10 @@ gchar    *file_chooser_build_filename(GtkWidget *chooser, gchar *extension);
 gpointer  file_types_get_data_by_name(FileTypes *file_types, gchar *name);
 
 /* Misc utility functions */
-#if !(RELEASE == 1)
-#define DEBUG_AUTO_FREE 2
-#endif
+//DISABLED DEBUG_AUTO_FREE as debian does not use Release
+//#if !(RELEASE == 1)
+//#define DEBUG_AUTO_FREE 2
+//#endif
 #include "auto_free.h"
 #define idle_free(ptr) auto_free(ptr)
 
