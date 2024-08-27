@@ -239,8 +239,10 @@ static void make_nice_name(gpud *s) {
          * chip and device id for a zillion "different products" */
         char *full_name = strdup(device_str);
         /* Try and shorten it to the chip code name only, at least */
-        char *b = strchr(full_name, '[');
-        if (b) *b = '\0';
+        if(full_name) {
+	  char *b = strchr(full_name, '[');
+          if (b) *b = '\0';
+	}
         s->nice_name = g_strdup_printf("%s %s", "AMD/ATI", g_strstrip(full_name));
         free(full_name);
     } else {

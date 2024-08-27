@@ -97,6 +97,7 @@ gboolean fill_glx_info(glx_info *glx) {
 
 glx_info *glx_create() {
     glx_info *s = malloc(sizeof(glx_info));
+    if(!s) return NULL;
     memset(s, 0, sizeof(glx_info));
     return s;
 }
@@ -281,15 +282,16 @@ gboolean fill_basic_xlib(xinfo *xi) {
 
 	    if(!xi->xrr) {
 	      xi->xrr=malloc(sizeof(xrr_info));
-	      memset(xi->xrr,0,sizeof(xrr_info));
+	      if(xi->xrr) memset(xi->xrr,0,sizeof(xrr_info));
 	    }
-
-            xi->xrr->screen_count++;
-            if (xi->xrr->screens == NULL)
-                xi->xrr->screens = malloc(xi->xrr->screen_count * sizeof(x_screen));
-            else
-                xi->xrr->screens = realloc(xi->xrr->screens, xi->xrr->screen_count * sizeof(x_screen));
-            memcpy(&xi->xrr->screens[xi->xrr->screen_count-1], &ts, sizeof(x_screen));
+            if(xi->xrr) {
+                xi->xrr->screen_count++;
+                if (xi->xrr->screens == NULL)
+                   xi->xrr->screens = malloc(xi->xrr->screen_count * sizeof(x_screen));
+                else
+                   xi->xrr->screens = realloc(xi->xrr->screens, xi->xrr->screen_count * sizeof(x_screen));
+                memcpy(&xi->xrr->screens[xi->xrr->screen_count-1], &ts, sizeof(x_screen));
+	    }
         }
         return TRUE;
     }
@@ -298,6 +300,7 @@ gboolean fill_basic_xlib(xinfo *xi) {
 
 xrr_info *xrr_create() {
     xrr_info *xrr = malloc(sizeof(xrr_info));
+    if(!xrr) return NULL;
     memset(xrr, 0, sizeof(xrr_info));
     return xrr;
 }
@@ -315,15 +318,16 @@ void xrr_free(xrr_info *xrr) {
 xinfo *xinfo_get_info() {
     int fail = 0;
     xinfo *xi = malloc(sizeof(xinfo));
+    if(!xi) return NULL;
     memset(xi, 0, sizeof(xinfo));
     xi->glx = glx_create();
     xi->xrr = xrr_create();
 
     if ( !fill_xinfo(xi) )
         fail++;
-    if ( !fill_xrr_info(xi->xrr) )
+    if ( !xi->xrr || !fill_xrr_info(xi->xrr) )
         fail++;
-    if ( !fill_glx_info(xi->glx) )
+    if ( !xi->glx || !fill_glx_info(xi->glx) )
         fail++;
 
     if (fail) {
