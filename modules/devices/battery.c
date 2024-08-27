@@ -315,8 +315,8 @@ __scan_battery_apm(void)
         int c=fscanf(procapm, "%s %s %s 0x%x %s %s %d%%",
                apm_drv_ver, apm_bios_ver, trash,
                &ac_bat, trash, trash, &percentage);
-	if(c!=7) return;
         fclose(procapm);
+	if(c!=7) return;
         
         if (last_time == 0) {
             last_time = time(NULL);
