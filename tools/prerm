@@ -1,15 +1,17 @@
 #/bin/sh
-if [ $1 != '' ] ; then
-  REINSTALL=$1
-else
-  REINSTALL=0
+REINSTALL=0
+if [ $# -eq 1 ] ; then
+  #Fedora runs prerm after postinst - reinstall(1), remove(0)
+  #Debian in newer versions sometimes has param remove
+  if [ "$1" = "1" ] ; then
+    REINSTALL=1
+  fi
 fi
 
 if [ -e /bin/wslinfo ] ; then
   echo "Service Removed... (SystemV-WSL)"
 else
   if [ -e /bin/systemctl ] ; then
-    #Fedora runs prerm after postinstl - reinstall(1), remove(0)
     if [ $REINSTALL -eq 1 ] ; then
       echo "Service Reinstall... (SystemD)"
     else
