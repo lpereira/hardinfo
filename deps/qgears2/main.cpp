@@ -58,6 +58,10 @@ int main(int argc, char **argv)
         widget = new QGears(true);
         break;
     }
+    if(!widget){
+       fprintf(stderr, "OpenGL might be unsupported\n");
+       exit(1);
+    }
     CommonRenderer *rendererWidget = dynamic_cast<CommonRenderer*>(widget);
     if (rendererWidget) {
         //qDebug()<<"setting mode to "<<mode;
