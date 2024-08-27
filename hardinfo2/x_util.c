@@ -267,7 +267,7 @@ gboolean fill_basic_xlib(xinfo *xi) {
             xi->release_number = g_strdup_printf("%d", rn);
         }
 
-        if (!xi->xrr->screen_count) {
+        if (!xi->xrr || !xi->xrr->screen_count) {
             s = DefaultScreen(display);
             w = XDisplayWidth(display, s);
             h = XDisplayHeight(display, s);
@@ -278,6 +278,11 @@ gboolean fill_basic_xlib(xinfo *xi) {
             ts.number = s;
             ts.px_width = w;
             ts.px_height = h;
+
+	    if(!xi->xrr) {
+	      xi->xrr=malloc(sizeof(xrr_info));
+	      memset(xi->xrr,0,sizeof(xrr_info));
+	    }
 
             xi->xrr->screen_count++;
             if (xi->xrr->screens == NULL)
