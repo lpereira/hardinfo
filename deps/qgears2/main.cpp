@@ -13,8 +13,7 @@
 enum RenderType
 {
     Render,
-    OpenGL,
-    Image
+    OpenGL
 };
 
 RenderType renderer = Render;
@@ -22,6 +21,7 @@ RenderType renderer = Render;
 int main(int argc, char **argv)
 {
     int dark=0;
+    QWidget *widget = NULL;
     QApplication app(argc, argv);
     CommonRenderer::Mode mode = CommonRenderer::GEARSFANCY;
     for (int i = 1; i < argc; ++i)
@@ -40,25 +40,12 @@ int main(int argc, char **argv)
         }
     }
 
-    QWidget *widget = 0;
-
-    switch (renderer) {
-    case OpenGL:
-#ifndef QT_NO_OPENGL
+    if(renderer==OpenGL){
         widget = new QGLGears();
-#else
-        qWarning("OpenGL not supported!");
-        exit(1);
-#endif
-        break;
-    case Render:
-        widget = new QGears(false);
-        break;
-    case Image:
-        widget = new QGears(true);
-        break;
+    } else {
+        widget = new QGears();
     }
-    if(!widget){
+    if(widget == NULL){
        fprintf(stderr, "OpenGL might be unsupported\n");
        exit(1);
     }

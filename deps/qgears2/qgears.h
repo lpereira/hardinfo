@@ -34,12 +34,11 @@ class QGears : public QWidget,
 {
     Q_OBJECT
 public:
-    QGears(bool imageBased);
+    QGears();
 
 protected:
     virtual void paintEvent(QPaintEvent *e);
 private:
-    bool m_imageBased;
 };
 
 #endif

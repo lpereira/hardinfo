@@ -20,7 +20,6 @@
  */
 
 #include "qglgears.h"
-#ifndef QT_NO_OPENGL
 #include <QTimer>
 
 QGLGears::QGLGears()
@@ -38,4 +37,3 @@ void QGLGears::paintEvent(QPaintEvent *)
     renderTo(this);
     QTimer::singleShot(0, this, SLOT(repaint()));
 }
-#endif

@@ -345,8 +345,7 @@ void CommonRenderer::setMode(Mode m)
 enum RenderType
 {
     Render,
-    OpenGL,
-    Image
+    OpenGL
 };
 
 extern RenderType renderer;

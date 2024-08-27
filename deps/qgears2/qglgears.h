@@ -22,7 +22,6 @@
 #ifndef QGLGEARS_H
 #define QGLGEARS_H
 
-#ifndef QT_NO_OPENGL
 #include <QGLWidget>
 
 
@@ -42,5 +41,4 @@ protected:
     virtual void paintEvent(QPaintEvent *e);
 };
 
-#endif
 #endif
