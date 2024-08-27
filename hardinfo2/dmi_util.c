@@ -346,6 +346,7 @@ dmi_handle_list *dmi_handle_list_add(dmi_handle_list *hl, dmi_handle_ext new_han
         new_handle_ext.type_str = dmi_type_strings[new_handle_ext.type];
     if (!hl) {
         hl = malloc(sizeof(dmi_handle_list));
+	if(!hl) return NULL;
         hl->count = 1;
         hl->handles = malloc(sizeof(dmi_handle) * hl->count);
         hl->handles_ext = malloc(sizeof(dmi_handle_ext) * hl->count);
