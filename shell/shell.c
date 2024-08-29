@@ -396,7 +396,6 @@ static void stylechange2_me(void)
         cb_disable_theme();
     }
     //
-    shell_do_reload(false);
   }
   update=0;
 }
@@ -444,6 +443,7 @@ static void stylechange3_me(void)
         schemeDark=0;
     }
     //g_print("schemeDark=%i -> Update=%d\n",schemeDark,update);
+    shell_do_reload(false);
     stylechange2_me();
 }
 
