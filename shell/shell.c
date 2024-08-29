@@ -23,6 +23,7 @@
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
 #include <gio/gio.h>
+#include <stdbool.h>
 
 #include "config.h"
 
@@ -394,6 +395,8 @@ static void stylechange2_me(void)
         //update theme
         cb_disable_theme();
     }
+    //
+    shell_do_reload(false);
   }
   update=0;
 }
@@ -1630,8 +1633,13 @@ static void module_selected_show_info_list(GKeyFile *key_file,
 
 #if GTK_CHECK_VERSION(3, 20, 0)
     if(params.theme>0){
+      if(params.darkmode){
+        gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } treeview:selected { background-color: rgba(0x60, 0x80, 0xff, 1); } ", -1, NULL);
+        gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+      }else{
         gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
         gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+      }
     }
 #endif
 
@@ -1746,9 +1754,9 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
                 const Vendor *v = has_ven ? vendor_match(value, NULL) : NULL;
 
                 if(params.darkmode){
-                    key_markup = g_strdup_printf("<span color=\"#46f\">%s</span>", label);
+                    key_markup = g_strdup_printf("<span color=\"#8af\">%s</span>", label);
 		} else {
-                    key_markup = g_strdup_printf("<span color=\"#46f\">%s</span>", label);
+                    key_markup = g_strdup_printf("<span color=\"#24f\">%s</span>", label);
 		}
 
                 GtkWidget *key_label = gtk_label_new(key_markup);

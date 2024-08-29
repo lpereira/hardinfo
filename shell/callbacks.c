@@ -191,15 +191,27 @@ void cb_disable_theme()
        }
        gtk_css_provider_load_from_data(provider, theme_st, -1, NULL);
        if(shell->window) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-       //menubar
-       gtk_css_provider_load_from_data(provider2, "* { background-color: rgba(0x60, 0x60, 0x60, 0.1); } * text { background-color: rgba(1, 1, 1, 1); }", -1, NULL);
-       if(shell->ui_manager) gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_ui_manager_get_widget(shell->ui_manager,"/MainMenuBarAction")), GTK_STYLE_PROVIDER(provider2), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-       //treeviewinfo
-       gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
-       if(shell->info_tree && shell->info_tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-       //treeviewmain
-       gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
-       if(shell->tree && shell->tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       if(params.darkmode){
+           //menubar
+           gtk_css_provider_load_from_data(provider2, "* { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } * text { background-color: rgba(1, 1, 1, 1); }", -1, NULL);
+           if(shell->ui_manager) gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_ui_manager_get_widget(shell->ui_manager,"/MainMenuBarAction")), GTK_STYLE_PROVIDER(provider2), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+           //treeviewinfo
+           gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } treeview:selected { background-color: rgba(0x60, 0x80, 0xff, 1); } ", -1, NULL);
+           if(shell->info_tree && shell->info_tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+           //treeviewmain
+           gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } treeview:selected { background-color: rgba(0x60, 0x80, 0xff, 1); } ", -1, NULL);
+           if(shell->tree && shell->tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       }else{
+           //menubar
+           gtk_css_provider_load_from_data(provider2, "* { background-color: rgba(0x60, 0x60, 0x60, 0.1); } * text { background-color: rgba(1, 1, 1, 1); }", -1, NULL);
+           if(shell->ui_manager) gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_ui_manager_get_widget(shell->ui_manager,"/MainMenuBarAction")), GTK_STYLE_PROVIDER(provider2), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+           //treeviewinfo
+           gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x30, 0x50, 0xff, 1); } ", -1, NULL);
+           if(shell->info_tree && shell->info_tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+           //treeviewmain
+           gtk_css_provider_load_from_data(provider3, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x30, 0x50, 0xff, 1); } ", -1, NULL);
+           if(shell->tree && shell->tree->view) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->tree->view), GTK_STYLE_PROVIDER(provider3), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+       }
     } else {//disable
        gtk_css_provider_load_from_data(provider, "window.background {background-image: none; }", -1, NULL);
        if(shell->window) gtk_style_context_add_provider(gtk_widget_get_style_context(shell->window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
