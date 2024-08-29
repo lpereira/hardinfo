@@ -357,40 +357,96 @@ parse_os_release(void)
 {
     gchar *pretty_name = NULL;
     gchar *id = NULL;
+    gchar *version = NULL;
     gchar *codename = NULL;
     gchar **split, *contents, **line;
+    int armbian=0,raspberry=0;
 
-    if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
-        return (Distro) {};
+    //check for rpi
+    if (g_file_get_contents("/etc/rpi-issue", &contents, NULL, NULL)){
+        raspberry=1;
+        g_free(contents);
+    }
 
-    split = g_strsplit(idle_free(contents), "\n", 0);
+    //armbian overrides the /etc/os-release, which is normally a link
+    if (g_file_get_contents("/etc/armbian-release", &contents, NULL, NULL)){
+        g_free(contents);
+        if (!g_file_get_contents("/etc/os-release", &contents, NULL, NULL))
+            return (Distro) {};
+	armbian=1;
+    } else {
+        if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
+            return (Distro) {};
+    }
+
+    split = g_strsplit(contents, "\n", 0);
+    g_free(contents);
     if (!split)
         return (Distro) {};
 
     for (line = split; *line; line++) {
         if (!strncmp(*line, "ID=", sizeof("ID=") - 1)) {
             id = g_strdup(*line + strlen("ID="));
+        } else if (!strncmp(*line, "VERSION_ID=", sizeof("VERSION_ID=") - 1)) {
+            version = g_strdup(*line + strlen("VERSION_ID="));
+	    contents=version;
+	    version = strreplace(version,"\"","");
+	    g_free(contents);
         } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1) && codename == NULL) {
             codename = g_strdup(*line + strlen("CODENAME="));
         } else if (!strncmp(*line, "VERSION_CODENAME=", sizeof("VERSION_CODENAME=") - 1) && codename == NULL) {
             codename = g_strdup(*line + strlen("VERSION_CODENAME="));
         } else if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
-            pretty_name = g_strdup(*line +
-                                   strlen("PRETTY_NAME=\""));
-            strend(pretty_name, '"');
+            pretty_name = g_strdup(*line + strlen("PRETTY_NAME="));
+	    contents=pretty_name;
+            pretty_name = strreplace(pretty_name,"\"","");
+	    g_free(contents);
         }
     }
 
     g_strfreev(split);
 
-    //remove " from codename, allow empty codename
+    //remove codename from pretty name
+    if(pretty_name && codename){
+        contents=pretty_name;
+        pretty_name=strreplace(pretty_name,codename,"");
+	g_strstrip(pretty_name);
+	g_free(contents);
+    }
+
+    //read debian version & flavour it
+    if (pretty_name && version && g_str_equal(id, "debian")) {
+        if (g_file_get_contents("/etc/debian_version", &contents, NULL, NULL)){
+            if (isdigit(contents[0])){
+	        if(raspberry){
+		    char *t=pretty_name;
+		    pretty_name=g_strdup_printf("Raspberry Pi - Debian %s",contents);
+		    g_free(t);
+	        } else if(armbian){
+		    char *t=pretty_name;
+		    pretty_name=g_strdup_printf("%s - Debian %s",t,contents);
+		    g_free(t);
+		} else {
+		    char *t=pretty_name;
+	            pretty_name=strreplace(t,version,contents);
+		    g_free(t);
+		}
+            }
+            g_free(contents);
+        }
+    }
+
+    //remove " from codename, allow empty codename, remove newline
     if(codename){
+        codename=strreplace(codename,"\n","");
         if(strlen(codename)>=2 && codename[0]=='"') codename=strreplace(codename,"\"","");
         if(strlen(codename)<1) {g_free(codename);codename=NULL;}
     }
-    
-    if (pretty_name)
+
+    if (pretty_name){
+        g_strstrip(pretty_name);
         return (Distro) { .distro = pretty_name, .codename = codename, .id = id };
+    }
 
     g_free(id);
     return (Distro) {};
