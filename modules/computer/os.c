@@ -409,15 +409,16 @@ parse_os_release(void)
     //remove codename from pretty name
     if(pretty_name && codename){
         gchar *t;
-        contents=pretty_name;
-	t=g_strdup_printf(" (%s)",contents);
-        pretty_name=strreplace(t,codename,"");
-	g_free(t);
-	t=g_strdup_printf(" %s",contents);
-        pretty_name=strreplace(t,codename,"");
-	g_free(t);
+	t=g_strdup_printf(" (%s)",codename);
+	contents=pretty_name;
+        pretty_name=strreplace(contents,t,"");
+	g_free(t);g_free(contents);
+	//
+	t=g_strdup_printf(" %s",codename);
+	contents=pretty_name;
+        pretty_name=strreplace(contents,t,"");
+	g_free(t);g_free(contents);
 	g_strstrip(pretty_name);
-	g_free(contents);
     }
 
     //read debian version & flavour it
