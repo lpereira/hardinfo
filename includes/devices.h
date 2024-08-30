@@ -75,6 +75,7 @@ void __scan_input_devices(void);
 void __scan_usb(void);
 void __scan_dmi(void);
 
+extern gchar *powerstate;
 extern gchar *battery_list;
 extern gchar *input_icons;
 extern gchar *input_list;

@@ -244,6 +244,30 @@ __scan_battery_sysfs_add_battery(const gchar *name)
     if (!path)
         return;
 
+    if(name[0]=='A'){//AC Supply
+        status=read_contents(path, "online");
+	if(status==NULL) status=g_strdup("1");
+	if(!strcmp(status,"1")) {
+	    g_free(status);
+	    status=g_strdup("Attached");
+	}else{
+	    g_free(powerstate);powerstate=g_strdup("BAT");
+	    g_free(status);status=g_strdup("Not attached");
+	}
+        battery_list = h_strdup_cprintf(_("\n[AC Power Supply: %s]\n"
+            "Online=%s\n"
+            "AC Power Type=%s\n"
+	    ),
+            battery_list,
+            name,
+            status,
+	    read_contents(path, "type")
+            );
+	g_free(status);
+    }
+
+    if(name[0]=='B'){//Battery
+
     status = read_contents(path, "status");
     capacity = read_contents(path, "capacity");
     capacity_level = read_contents(path, "capacity_level");
@@ -268,6 +292,10 @@ __scan_battery_sysfs_add_battery(const gchar *name)
         model_name,
         serial_number);
 
+    if(!strcmp(status,"Discharging")) {
+        g_free(powerstate);powerstate=g_strdup("BAT");
+    }
+
     free(status);
     free(capacity);
     free(capacity_level);
@@ -275,6 +303,7 @@ __scan_battery_sysfs_add_battery(const gchar *name)
     free(manufacturer);
     free(model_name);
     free(serial_number);
+    }
 }
 
 static void
@@ -288,8 +317,7 @@ __scan_battery_sysfs(void)
         return;
 
     while ((entry = g_dir_read_name(dir))) {
-        if (g_str_has_prefix(entry, "BAT"))
-            __scan_battery_sysfs_add_battery(entry);
+        __scan_battery_sysfs_add_battery(entry);
     }
 
     g_dir_close(dir);
@@ -369,6 +397,7 @@ __scan_battery_apm(void)
 void
 scan_battery_do(void)
 {
+    g_free(powerstate);powerstate=g_strdup("AC");
     g_free(battery_list);
     battery_list = g_strdup("");
 
@@ -376,11 +405,15 @@ scan_battery_do(void)
     __scan_battery_acpi();
     __scan_battery_apm();
     __scan_battery_apcupsd();
-    
+
     if (*battery_list == '\0') {
         g_free(battery_list);
         
-        battery_list = g_strdup(_("[No batteries]\n"
-                                "No batteries found on this system=\n"));
+        battery_list = g_strdup_printf("[Power Status]\n Power State=%s\n%s",powerstate,
+				       _("[No batteries]\nNo batteries found on this system=\n"));
+    }else{
+        gchar *t=battery_list;
+        battery_list = g_strdup_printf("[Power Status]\n Power State=%s\n%s",powerstate,t);
+	g_free(t);
     }
 }

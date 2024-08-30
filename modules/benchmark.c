@@ -815,6 +815,7 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(double, "ElapsedTime", bench_results[i].elapsed_time);
         ADD_JSON_VALUE(int, "UsedThreads", bench_results[i].threads_used);
         ADD_JSON_VALUE(int, "BenchmarkVersion", bench_results[i].revision);
+        ADD_JSON_VALUE(string, "PowerState", this_machine->power_state);
 
 #undef ADD_JSON_VALUE
 

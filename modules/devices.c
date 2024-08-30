@@ -126,6 +126,7 @@ gchar *input_list = NULL;
 gboolean storage_no_nvme = FALSE;
 gchar *storage_list = NULL;
 gchar *battery_list = NULL;
+gchar *powerstate=NULL;
 
 /* in dmi_memory.c */
 gchar *memory_devices_get_info();
@@ -340,6 +341,13 @@ gchar *get_processor_count(void)
     scan_processors(FALSE);
 
     return g_strdup_printf("%d", g_slist_length(processors));
+}
+
+gchar *get_power_state(void)
+{
+    scan_battery(FALSE);
+    if(!powerstate) return g_strdup("AC");
+    return g_strdup(powerstate);
 }
 
 /* TODO: maybe move into processor.c along with processor_name() etc.
@@ -561,6 +569,7 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getInputDevices", get_input_devices},
         {"getMotherboard", get_motherboard},
         {"getGPUList", get_gpu_summary},
+        {"getPowerState", get_power_state},
         {NULL},
     };
 

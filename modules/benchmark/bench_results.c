@@ -54,6 +54,7 @@ typedef struct {
     char *machine_type;
     char *linux_kernel;       /*kernelarch*/
     char *linux_os;           /*distroversion*/
+    char *power_state;
 } bench_machine;
 
 typedef struct {
@@ -190,6 +191,7 @@ bench_machine *bench_machine_this()
         m->machine_type = module_call_method("computer::getMachineType");
 	m->linux_kernel = module_call_method("computer::getOSKernel");
 	m->linux_os = module_call_method("computer::getOS");
+	m->power_state= module_call_method("devices::getPowerState");
         free(tmp);
 
         cpu_procs_cores_threads_nodes(&m->processors, &m->cores, &m->threads, &m->nodes);
