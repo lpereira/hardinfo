@@ -408,8 +408,14 @@ parse_os_release(void)
 
     //remove codename from pretty name
     if(pretty_name && codename){
+        gchar *t;
         contents=pretty_name;
-        pretty_name=strreplace(pretty_name,codename,"");
+	t=g_strdup_printf(" (%s)",contents);
+        pretty_name=strreplace(t,codename,"");
+	g_free(t);
+	t=g_strdup_printf(" %s",contents);
+        pretty_name=strreplace(t,codename,"");
+	g_free(t);
 	g_strstrip(pretty_name);
 	g_free(contents);
     }
@@ -419,15 +425,15 @@ parse_os_release(void)
         if (g_file_get_contents("/etc/debian_version", &contents, NULL, NULL)){
             if (isdigit(contents[0])){
 	        if(raspberry){
-		    char *t=pretty_name;
+		    gchar *t=pretty_name;
 		    pretty_name=g_strdup_printf("Raspberry Pi - Debian %s",contents);
 		    g_free(t);
 	        } else if(armbian){
-		    char *t=pretty_name;
+		    gchar *t=pretty_name;
 		    pretty_name=g_strdup_printf("%s - Debian %s",t,contents);
 		    g_free(t);
 		} else {
-		    char *t=pretty_name;
+		    gchar *t=pretty_name;
 	            pretty_name=strreplace(t,version,contents);
 		    g_free(t);
 		}

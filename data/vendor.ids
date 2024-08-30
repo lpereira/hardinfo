@@ -163,6 +163,12 @@ name Arm Holdings
     ansi_color 0;36;107
     match_string ARM
 
+name Armbian
+    name_short Armbian
+    url www.armbian.com
+    ansi_color ff;0;0
+    match_string armbian
+
 name ASMedia Technology
     name_short ASMedia
     url www.asmedia.com.tw

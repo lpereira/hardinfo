@@ -63,6 +63,7 @@ message(STATUS "LOCALEDIR = ${CMAKE_INSTALL_FULL_LOCALEDIR}")
 message(STATUS "Building HardInfo2 for architecture: ${HARDINFO2_OS}-${HARDINFO2_ARCH}")
 
 #add_definitions("-std=gnu89")
+#add_definitions("-fanalyzer")
 add_definitions("-Wextra")
 add_definitions("-Wno-missing-field-initializers")
 add_definitions("-Wformat")

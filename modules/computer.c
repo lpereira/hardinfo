@@ -398,14 +398,8 @@ static gchar *detect_machine_type(void)
 
     chassis = dtr_get_string("/model", 0);
     if (chassis) {
-        if (strstr(chassis, "Raspberry Pi") != NULL
-            || strstr(chassis, "ODROID") != NULL
-            || strstr(chassis, "Firefly ROC") != NULL
-            /* FIXME: consider making a table when adding more models */ ) {
-                g_free(chassis);
-                return g_strdup(_("Single-board computer"));
-        }
-        g_free(chassis);
+         g_free(chassis);
+         return g_strdup(_("Single-board computer"));
     }
 
     if (g_file_test("/proc/pmu/info", G_FILE_TEST_EXISTS))
