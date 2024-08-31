@@ -406,6 +406,13 @@ parse_os_release(void)
 
     g_strfreev(split);
 
+    //remove " from codename, allow empty codename, remove newline
+    if(codename){
+        codename=strreplace(codename,"\n","");
+        if(strlen(codename)>=2 && codename[0]=='"') codename=strreplace(codename,"\"","");
+        if(strlen(codename)<1) {g_free(codename);codename=NULL;}
+    }
+
     //remove codename from pretty name
     if(pretty_name && codename){
         gchar *t;
@@ -441,13 +448,6 @@ parse_os_release(void)
             }
             g_free(contents);
         }
-    }
-
-    //remove " from codename, allow empty codename, remove newline
-    if(codename){
-        codename=strreplace(codename,"\n","");
-        if(strlen(codename)>=2 && codename[0]=='"') codename=strreplace(codename,"\"","");
-        if(strlen(codename)<1) {g_free(codename);codename=NULL;}
     }
 
     if (pretty_name){
