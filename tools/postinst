@@ -12,10 +12,14 @@ else
     systemctl enable hardinfo2
     systemctl start hardinfo2
     echo "Service Installed... (SystemD)"
-  else
+  elif [ -e /sbin/chkconfig ] ; then
     chkconfig --add hardinfo2
     chkconfig hardinfo2 on
     /etc/init.d/hardinfo2 start
     echo "Service Installed... (SystemV)"
+  else
+    update-rc.d hardinfo2 defaults 95 10
+    /etc/init.d/hardinfo2 start
+    echo "Service Installed... (SystemV-rc)"
   fi
 fi

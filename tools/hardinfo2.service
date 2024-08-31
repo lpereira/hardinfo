@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c "cat /proc/iomem >/tmp/hardinfo2_iomem;chmod a+r /tmp/hardinfo2_iomem;cat /proc/ioports >/tmp/hardinfo2_ioports;chmod a+r /tmp/hardinfo2_ioports;chmod a+r /sys/firmware/dmi/tables/*;modprobe spd5118;modprobe ee1004;modprobe at24 || true"
+ExecStart=/bin/sh -c "cat /proc/iomem >/tmp/hardinfo2_iomem;chmod a+r /tmp/hardinfo2_iomem;cat /proc/ioports >/tmp/hardinfo2_ioports;chmod a+r /tmp/hardinfo2_ioports;chmod a+r /sys/firmware/dmi/tables/*;modprobe -q spd5118;modprobe -q ee1004;modprobe -q at24 || true"
 
 [Install]
 WantedBy=basic.target

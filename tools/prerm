@@ -18,9 +18,12 @@ else
       systemctl disable hardinfo2
       echo "Service Removed... (SystemD)"
     fi
-  else
+  elif [ -e /sbin/chkconfig ] ; then
     chkconfig hardinfo2 off
     chkconfig --del hardinfo2
     echo "Service Removed... (SystemV)"
+  else
+    update-rc.d hardinfo2 remove
+    echo "Service Removed... (SystemV-rc)"
   fi
 fi
