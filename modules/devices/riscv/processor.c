@@ -21,9 +21,56 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "cpu_util.h"
+#include "dt_util.h"
 
 #include "riscv_data.h"
 #include "riscv_data.c"
+
+
+gchar *processor_name(GSList * processors) {
+    /* compatible contains a list of compatible hardware, so be careful
+     * with matching order.
+     * ex: "ti,omap3-beagleboard-xm", "ti,omap3450", "ti,omap3";
+     * matches "omap3 family" first.
+     * ex: "brcm,bcm2837", "brcm,bcm2836";
+     * would match 2836 when it is a 2837.
+     */
+#define UNKSOC "(Unknown)" /* don't translate this */
+    const struct {
+        char *search_str;
+        char *vendor;
+        char *soc;
+    } dt_compat_searches[] = {
+        { "thead,light-lpi4a", "T-Head", "TH1520" },
+        { "starfive,visionfive-2", "StarFive", "JH7110" },
+        { "starfive,jh7110", "StarFive", "JH7110" },
+	//
+        { "allwinner,", "Allwinner", UNKSOC },
+        { "thead,", "T-Head", UNKSOC },
+        { "allwinner,", "Allwinner", UNKSOC },
+        { NULL, NULL }
+    };
+    gchar *ret = NULL;
+    gchar *compat = NULL;
+    int i;
+
+    compat = dtr_get_string("/compatible", 1);
+
+    if (compat != NULL) {
+        i = 0;
+        while(dt_compat_searches[i].search_str != NULL) {
+            if (strstr(compat, dt_compat_searches[i].search_str) != NULL) {
+                ret = g_strdup_printf("RISC-V %s %s", dt_compat_searches[i].vendor, dt_compat_searches[i].soc);
+                break;
+            }
+            i++;
+        }
+    }
+    g_free(compat);
+    if(!ret) g_strdup("RISC-V Processor");
+    return ret;
+}
+
 
 GSList *
 processor_scan(void)
@@ -149,10 +196,6 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
     return tmp;
 }
 
-gchar *processor_name(GSList * processors) {
-    return processor_name_default(processors);
-}
-
 gchar *processor_describe(GSList * processors) {
     return processor_describe_default(processors);
 }
@@ -206,6 +249,8 @@ gchar *processor_get_info(GSList * processors)
 
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
+
+        processor->model_name=processor_name(processors);
 
         tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s\n",
                   tmp, processor->id,
