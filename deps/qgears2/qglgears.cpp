@@ -23,8 +23,13 @@
 #include <QTimer>
 
 QGLGears::QGLGears()
-    : QGLWidget(QGLFormat(QGL::SampleBuffers), 0)
+  : QGLWidget(QGLFormat(QGL::SampleBuffers), 0)
 {
+    QGLFormat newFormat;
+    newFormat.setSampleBuffers(0);
+    newFormat.setSwapInterval(0);
+    QGLGears::setFormat(newFormat);
+
     setFixedSize(1024, 800);
     setMinimumSize(1024, 800);
     setMaximumSize(1024, 800);
