@@ -135,7 +135,36 @@ static void _gpu_pci_dev(gpud* gpu) {
             mem_freq = g_strdup_printf("%0.2f %s", (double) gpu->mem_khz_max / 1000, _("MHz"));
     }
 
+    //Add GPU name from renderer - this is only correct for 1 GPU systems, which are most builds
+    gchar *t=NULL,*g=module_call_method("computer::getOGLRenderer");
+    if(g) {
+        int i=1;
+	if(strlen(g)>7 && g[0]=='l' && g[1]=='l' && g[2]=='v' && g[3]=='m' && g[4]=='p' && g[5]=='i' && g[6]=='p' && g[7]=='e'){
+	    //Software - no hw accelleration drivers
+	    if(strstr(vendor_device_str,"ntegrat")){//Integrated
+	        gpuname=g_strdup_printf("GPU=Integrated (%s)\n",module_call_method("devices::getProcessorName"));
+	    } else {
+	        gpuname=g_strdup_printf("GPU=Software (%s)\n",module_call_method("devices::getProcessorName"));
+	    }
+	} else if(strlen(g)>10 && g[0]=='D' && g[1]=='3' && g[2]=='D' && g[3]=='1' && g[4]=='2'){
+	    t=g+7;
+            while(g[i]){
+	        if((g[i]==')')) g[i]=0;
+	        i++;
+            }
+            gpuname=g_strdup_printf("GPU=%s (D3D12)\n",t);
+	} else {
+            while(g[i]){
+	        if((g[i-1]==' ') && (g[i]=='(')) g[i-1]=0;
+	        i++;
+            }
+            gpuname=g_strdup_printf("GPU=%s\n",g);
+	}
+        g_free(g);
+    }else gpuname=g_strdup("GPU=Unknown\n");
+
     str = g_strdup_printf("[%s]\n"
+	     /* GPU */	     "%s\n"
              /* Location */  "%s=%s\n"
              /* DRM Dev */   "%s=%s\n"
              /* Class */     "%s=[%04x] %s\n"
@@ -150,6 +179,7 @@ static void _gpu_pci_dev(gpud* gpu) {
              /* Driver */    "%s=%s\n"
              /* Modules */   "%s=%s\n",
                 _("Device Information"),
+		gpuname,
                 _("Location"), gpu->location,
                 _("DRM Device"), drm_path,
                 _("Class"), p->class, p->class_str,
@@ -223,7 +253,11 @@ int _dt_soc_gpu(gpud *gpu) {
 
     gpu_summary_add((gpu->nice_name) ? gpu->nice_name : name);
     gpu_list = h_strdup_cprintf("$!%s$%s=%s\n", gpu_list, key, key, name);
+
+    gpuname=g_strdup_printf("GPU=Integrated (%s)\n",module_call_method("devices::getProcessorName"));
+
     gchar *str = g_strdup_printf("[%s]\n"
+             /* GPU */       "%s"
              /* Location */  "%s=%s\n"
              /* Vendor */  "$^$%s=%s\n"
              /* Device */  "%s=%s\n"
@@ -236,17 +270,18 @@ int _dt_soc_gpu(gpud *gpu) {
              /* Status */  "%s=%s\n"
              /* Name */    "%s=%s\n",
                 _("Device Information"),
+		gpuname,
                 _("Location"), gpu->location,
-                _("Vendor"), vendor,
-                _("Device"), device,
+                _("Vendor"),   vendor,
+                _("Device"),   device,
                 _("Clocks"),
-                _("Core"), freq,
+                _("Core"),     freq,
                 opp_str,
                 _("Device Tree Node"),
-                _("Path"), gpu->dt_path,
+                _("Path"),     gpu->dt_path,
                 _("Compatible"), gpu->dt_compat,
-                _("Status"), gpu->dt_status,
-                _("Name"), gpu->dt_name
+                _("Status"),   gpu->dt_status,
+                _("Name"),     gpu->dt_name
                 );
     moreinfo_add_with_prefix("DEV", key, str); /* str now owned by morinfo */
     g_free(freq);

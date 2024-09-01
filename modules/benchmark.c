@@ -816,6 +816,7 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(int, "UsedThreads", bench_results[i].threads_used);
         ADD_JSON_VALUE(int, "BenchmarkVersion", bench_results[i].revision);
         ADD_JSON_VALUE(string, "PowerState", this_machine->power_state);
+        ADD_JSON_VALUE(string, "GPU", this_machine->gpu_name);
 
 #undef ADD_JSON_VALUE
 

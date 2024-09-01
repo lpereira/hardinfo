@@ -444,7 +444,8 @@ static gchar *detect_machine_type(void)
         g_dir_close(dir);
     }
 
-    /* FIXME: check if batteries are found using /proc/apm */
+    if(strstr(module_call_method("devices::getGPUname"),"D3D12"))
+        return g_strdup("WSL2");
 
     return g_strdup(_("Unknown physical machine type"));
 }

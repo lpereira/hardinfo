@@ -127,6 +127,7 @@ gboolean storage_no_nvme = FALSE;
 gchar *storage_list = NULL;
 gchar *battery_list = NULL;
 gchar *powerstate=NULL;
+gchar *gpuname=NULL;
 
 /* in dmi_memory.c */
 gchar *memory_devices_get_info();
@@ -349,6 +350,12 @@ gchar *get_power_state(void)
     if(!powerstate) return g_strdup("AC");
     return g_strdup(powerstate);
 }
+gchar *get_gpuname(void)
+{
+    scan_gpu(FALSE);
+    if(!gpuname) return g_strdup("Error");
+    return g_strdup(gpuname);
+}
 
 /* TODO: maybe move into processor.c along with processor_name() etc.
  * Could mention the big.LITTLE cluster arangement for ARM that kind of thing.
@@ -533,9 +540,13 @@ gchar *get_motherboard(void)
         ret = board_part;
     else if (product_part)
         ret = product_part;
-    else
-        ret = g_strdup(_("(Unknown)"));
-
+    else {
+        if(strstr(module_call_method("devices::getGPUname"),"D3D12")){
+	    ret = g_strdup(_("WSL2"));
+        } else {
+            ret = g_strdup(_("(Unknown)"));
+	}
+    }
     g_free(board_name);
     g_free(board_vendor);
     g_free(board_version);
@@ -570,6 +581,7 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getMotherboard", get_motherboard},
         {"getGPUList", get_gpu_summary},
         {"getPowerState", get_power_state},
+        {"getGPUname", get_gpuname},
         {NULL},
     };
 
