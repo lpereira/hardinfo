@@ -506,6 +506,10 @@ gchar *computer_get_virtualization(void)
         g_free(tmp);
         return g_strdup(_("Virtual (VirtualBox)"));
     }
+    if (strstr(tmp, "VMware") != NULL) {
+        g_free(tmp);
+        return g_strdup(_("Virtual (VMware)"));
+    }
     g_free(tmp);
 
     for (i = 0; files[i+1]; i++) {

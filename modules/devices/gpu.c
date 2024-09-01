@@ -141,7 +141,7 @@ static void _gpu_pci_dev(gpud* gpu) {
         int i=1;
 	if( strstr(module_call_method("computer::getMachineType"),"irtual") ){//virtual
 	    gpuname=g_strdup_printf("GPU=%s\n",module_call_method("computer::getMachineType"));
-	    } else if(strlen(g)>7 && g[0]=='l' && g[1]=='l' && g[2]=='v' && g[3]=='m' && g[4]=='p' && g[5]=='i' && g[6]=='p' && g[7]=='e'){
+	} else if(strlen(g)>7 && g[0]=='l' && g[1]=='l' && g[2]=='v' && g[3]=='m' && g[4]=='p' && g[5]=='i' && g[6]=='p' && g[7]=='e'){
 	    //Software - no hw accelleration drivers
 	    if(strstr(vendor_device_str,"ntegrat")){//Integrated
 	        gpuname=g_strdup_printf("GPU=Integrated (%s)\n",module_call_method("devices::getProcessorName"));
