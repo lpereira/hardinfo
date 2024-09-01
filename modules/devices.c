@@ -541,7 +541,7 @@ gchar *get_motherboard(void)
     else if (product_part)
         ret = product_part;
     else {
-        if(strstr(module_call_method("devices::getGPUname"),"D3D12")){
+        if(strstr(module_call_method("computer::getOSKernel"),"WSL2")){
 	    ret = g_strdup(_("WSL2"));
         } else {
             ret = g_strdup(_("(Unknown)"));

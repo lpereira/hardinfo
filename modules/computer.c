@@ -444,7 +444,7 @@ static gchar *detect_machine_type(void)
         g_dir_close(dir);
     }
 
-    if(strstr(module_call_method("devices::getGPUname"),"D3D12"))
+    if(strstr(module_call_method("computer::getOSKernel"),"WSL2"))
         return g_strdup("WSL2");
 
     return g_strdup(_("Unknown physical machine type"));

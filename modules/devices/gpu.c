@@ -139,21 +139,23 @@ static void _gpu_pci_dev(gpud* gpu) {
     gchar *t=NULL,*g=module_call_method("computer::getOGLRenderer");
     if(g) {
         int i=1;
-	if(strlen(g)>7 && g[0]=='l' && g[1]=='l' && g[2]=='v' && g[3]=='m' && g[4]=='p' && g[5]=='i' && g[6]=='p' && g[7]=='e'){
+	if( strstr(module_call_method("computer::getMachineType"),"irtual") ){//virtual
+	    gpuname=g_strdup_printf("GPU=%s\n",module_call_method("computer::getMachineType"));
+	    } else if(strlen(g)>7 && g[0]=='l' && g[1]=='l' && g[2]=='v' && g[3]=='m' && g[4]=='p' && g[5]=='i' && g[6]=='p' && g[7]=='e'){
 	    //Software - no hw accelleration drivers
 	    if(strstr(vendor_device_str,"ntegrat")){//Integrated
 	        gpuname=g_strdup_printf("GPU=Integrated (%s)\n",module_call_method("devices::getProcessorName"));
-	    } else {
+	    } else {//software render
 	        gpuname=g_strdup_printf("GPU=Software (%s)\n",module_call_method("devices::getProcessorName"));
 	    }
-	} else if(strlen(g)>10 && g[0]=='D' && g[1]=='3' && g[2]=='D' && g[3]=='1' && g[4]=='2'){
+	} else if(strlen(g)>10 && g[0]=='D' && g[1]=='3' && g[2]=='D' && g[3]=='1' && g[4]=='2'){//WSL2
 	    t=g+7;
             while(g[i]){
 	        if((g[i]==')')) g[i]=0;
 	        i++;
             }
             gpuname=g_strdup_printf("GPU=%s (D3D12)\n",t);
-	} else {
+	} else {//Graphics cards
             while(g[i]){
 	        if((g[i-1]==' ') && (g[i]=='(')) g[i-1]=0;
 	        i++;
@@ -161,7 +163,7 @@ static void _gpu_pci_dev(gpud* gpu) {
             gpuname=g_strdup_printf("GPU=%s\n",g);
 	}
         g_free(g);
-    }else gpuname=g_strdup("GPU=Unknown\n");
+    }else gpuname=g_strdup("GPU=Unknown\n");//unknown as no renderer
 
     str = g_strdup_printf("[%s]\n"
 	     /* GPU */	     "%s\n"
