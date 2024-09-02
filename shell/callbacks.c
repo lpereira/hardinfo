@@ -382,7 +382,7 @@ void cb_about()
 	"",
 	"Packaging by:",
 	"Topazus (Fedora/Redhat branches)",
-	"Yochananmargos (Arch branches)",
+	"Yochananmargos (Arch+Manjaro)",
 	"hosiet (Debian/Ubuntu branches)",
 	"david-geiger (Mageia)",
 	"Kieltux (Opensuse/Suse branches)",
