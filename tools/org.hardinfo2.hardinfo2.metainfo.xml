@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.hardinfo2.hardinfo2</id>
+  
+  <name>Hardinfo2</name>
+  <summary>System information and benchmark</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+  
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+    <control>tablet</control>
+  </supports>
+  
+  <description>
+    <p>
+      Hardinfo2 offers System Information and Benchmark for Linux Systems. It is able to obtain information from both hardware and basic software. It can benchmark your system and compare to other machines online.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">hardinfo2.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://hardinfo2.org/img/hardinfo8.webp</image>
+    </screenshot>
+    <screenshot>
+      <image>https://hardinfo2.org/img/hardinfo3.webp</image>
+    </screenshot>
+    <screenshot>
+      <image>https://hardinfo2.org/img/hardinfo6.webp</image>
+    </screenshot>
+  </screenshots>
+</component>
