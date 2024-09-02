@@ -155,6 +155,10 @@ static void _gpu_pci_dev(gpud* gpu) {
 	        i++;
             }
             gpuname=g_strdup_printf("GPU=%s (D3D12)\n",t);
+	} else if(strlen(g)>3 && g[0]=='N' && g[1]=='V' && g[2]!='i' && product && strstr(product,"[") && strstr(product,"]")){//nvidea with NVXXX
+	    char *t=strstr(product,"[")+1;
+	    char *tt=strstr(product,"]");*tt='\0';
+	    gpuname=g_strdup_printf("GPU=NVidia %s (%s)\n",t,g);
 	} else {//Graphics cards
             while(g[i]){
 	        if((g[i-1]==' ') && (g[i]=='(')) g[i-1]=0;
