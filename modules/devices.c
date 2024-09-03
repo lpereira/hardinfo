@@ -354,6 +354,10 @@ gchar *get_gpuname(void)
 {
     scan_gpu(FALSE);
     if(!gpuname) return g_strdup("Error");
+    if(strlen(gpuname)>4 && gpuname[3]=='=') {
+      gchar *t=strreplace(g_strdup(gpuname+4),"\n","");
+      return t;
+    }
     return g_strdup(gpuname);
 }
 
