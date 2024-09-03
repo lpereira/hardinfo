@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <fcntl.h>
 
 #include "hardinfo.h"
 #include "callbacks.h"
@@ -311,9 +312,13 @@ void cb_toolbar()
 
 void cb_about()
 {
+    gchar *path;
+    unsigned int latest_ver=0,u1=0,u2=0,u3=0,a1=0,a2=0,a3=0,app_ver=0;
+    int fd=-1;
     Shell *shell = shell_get_main_shell();
     GtkWidget *about;
     gchar *copyright = NULL;
+    gchar *version;
     const gchar *authors[] = {
         "L. A. F. Pereira (2003-2023)",
 	"hwspeedy(2024-)",
@@ -405,7 +410,34 @@ void cb_about()
 
     copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira\nCopyright \302\251 2024-%d Hardinfo2 Project\n\n\n\n", HARDINFO2_COPYRIGHT_LATEST_YEAR);
 
-    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
+    path = g_build_filename(g_get_user_config_dir(), "hardinfo2","blobs-update-version.json", NULL);
+    fd = open(path,O_RDONLY);
+    if(fd>=0){
+        char *buf=NULL;
+	struct stat st;
+	stat(path,&st);
+	if(st.st_size>0){
+	    buf=g_malloc(st.st_size+1);
+	    if(buf){
+	        int i=read(fd, buf, st.st_size);
+	        if(i>0){
+		    buf[st.st_size]=0;
+		    char *s=strstr(buf,"\"latest-program-version\"");
+	            if(s && sscanf(s,"\"latest-program-version\":\"%u.%u.%u\"",&u1,&u2,&u3)==3) latest_ver=u1*10000+u2*100+u3;
+	        }
+	    }
+        }
+        close(fd);
+	g_free(buf);
+    }
+    free(path);
+    if(sscanf(VERSION,"%u.%u.%u",&a1,&a2,&a3)==3) app_ver=a1*10000+a2*100+a3;
+    if(app_ver && (latest_ver > app_ver)){
+        version=g_strdup_printf("%s (Update available: %u.%u.%u)",VERSION,u1,u2,u3);
+    }else{
+      version=VERSION;
+    }
+    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), version);
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				  _("System Information and Benchmark"));
