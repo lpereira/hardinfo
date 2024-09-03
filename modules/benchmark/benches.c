@@ -307,12 +307,14 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_BLOWFISH_THREADS:
     case BENCHMARK_BLOWFISH_CORES:
     case BENCHMARK_ZLIB:
-    case BENCHMARK_GUI:
     case BENCHMARK_FFT:
     case BENCHMARK_RAYTRACE:
     case BENCHMARK_FIB:
     case BENCHMARK_NQUEENS:
         return _("Results in HIMarks. Higher is better.");
+    case BENCHMARK_GUI:
+        return _("Results in HIMarks. Higher is better.\n"
+		 "Many Desktop Environments only uses software.");
 #if(HARDINFO2_QT5)
     case BENCHMARK_OPENGL:
         return _("Results in FPS. Higher is better.");
