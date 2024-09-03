@@ -357,9 +357,15 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select)
 
     rkey = g_strdup_printf("%s__%d", b->machine->mid, ri++);
 
-    lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
+    if(!strstr(b->name,"GPU")){//CPU
+        lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
                           b->machine->cpu_name,
                           b->legacy ? problem_marker() : "");
+    } else {//GPU
+        lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
+                          b->machine->gpu_name,
+                          b->legacy ? problem_marker() : "");
+    }
     elbl = key_label_escape(lbl);
 
     *results_list = h_strdup_cprintf("$@%s%s$%s=%.2f|%s\n", *results_list,
@@ -546,8 +552,8 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
         bench_result_free(br); /* no longer needed */
     }
     g_slist_free(result_list);
-
-    output = g_strdup_printf("[$ShellParam$]\n"
+    if(!strstr(benchmark,"GPU")){//CPU
+        output = g_strdup_printf("[$ShellParam$]\n"
                              "Zebra=1\n"
                              "OrderType=%d\n"
                              "ViewType=4\n"
@@ -558,7 +564,18 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
                              "[%s]\n%s",
                              order_type, _("CPU Config"), _("Results"),
                              _("CPU"), benchmark, results);
-
+      } else {//GPU
+        output = g_strdup_printf("[$ShellParam$]\n"
+                             "Zebra=1\n"
+                             "OrderType=%d\n"
+                             "ViewType=4\n"
+                             "ColumnTitle$Progress=%s\n"  /* Results */
+                             "ColumnTitle$TextValue=%s\n" /* GPU */
+                             "ShowColumnHeaders=true\n"
+                             "[%s]\n%s",
+                             order_type, _("Results"),
+                             _("GPU"), benchmark, results);
+      }
     g_free(path);
     g_free(results);
 
