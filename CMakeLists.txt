@@ -231,7 +231,6 @@ endif()
 #WSL 1/2
 if(EXISTS "/bin/wslinfo")
     message("WSL Detected")
-    set(HARDINFO2_SYSTEMV 1)
 endif()
 
 
