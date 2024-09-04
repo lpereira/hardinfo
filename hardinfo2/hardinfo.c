@@ -27,6 +27,8 @@
 #include <vendor.h>
 #include <syncmanager.h>
 #include <gio/gio.h>
+#include <glib/gstdio.h>
+#include <stdbool.h>
 #include "callbacks.h"
 
 #include <binreloc.h>
@@ -34,10 +36,39 @@
 
 ProgramParameters params = { 0 };
 
+#if GLIB_CHECK_VERSION(2,40,0)
+#else
+//For compatibility with older glib
+gboolean g2_key_file_save_to_file (GKeyFile *key_file,
+              const gchar  *filename, GError **error)
+{
+  gchar *contents;
+  gboolean success;
+  gsize length;
+
+  g_return_val_if_fail (key_file != NULL, FALSE);
+  g_return_val_if_fail (filename != NULL, FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  contents = g_key_file_to_data (key_file, &length, NULL);
+  g_assert (contents != NULL);
+
+  success = g_file_set_contents (filename, contents, length, error);
+  g_free (contents);
+
+  return success;
+}
+#endif
+
 int main(int argc, char **argv)
 {
     int exit_code = 0;
     GSList *modules;
+    gboolean cleanUserData;
+    char *appver;
+    gchar *path;
+    GKeyFile *key_file = g_key_file_new();
+    gchar *conf_path = g_build_filename(g_get_user_config_dir(), "hardinfo2", "settings.ini", NULL);
 
     DEBUG("Hardinfo2 version " VERSION ". Debug version.");
 
@@ -63,6 +94,40 @@ int main(int argc, char **argv)
     setlocale(LC_ALL, "");
     bindtextdomain("hardinfo2", params.path_locale);
     textdomain("hardinfo2");
+
+    //Remove ids and json files when starting new program version or first time
+    g_key_file_load_from_file(
+        key_file, conf_path,
+        G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, NULL);
+    cleanUserData=false;
+    appver = g_key_file_get_string(key_file, "Application", "Version", NULL);
+    if(appver){
+        if(strcmp(appver,VERSION)) cleanUserData=true;
+    } else {appver="OLD";cleanUserData=true;}
+
+    if(cleanUserData){
+        DEBUG("Cleaning User Data.... (%s<>%s)\n",appver,VERSION);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","blobs-update-version.json", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","benchmark.json", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","cpuflags.json", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","kernel-module-icons.json", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","arm.ids", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","ieee_oui.ids", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","edid.ids", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","pci.ids", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","sdcard.ids", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","usb.ids", NULL);g_remove(path);g_free(path);
+        path = g_build_filename(g_get_user_config_dir(), "hardinfo2","vendor.ids", NULL);g_remove(path);g_free(path);
+	//update settings.ini
+	g_key_file_set_string(key_file, "Application", "Version", VERSION);
+#if GLIB_CHECK_VERSION(2,40,0)
+	g_key_file_save_to_file(key_file, conf_path, NULL);
+#else
+	g2_key_file_save_to_file(key_file, conf_path, NULL);
+#endif
+    }
+    g_free(conf_path);
+    g_key_file_free(key_file);
 
     /* show version information and quit */
     if (params.show_version) {
