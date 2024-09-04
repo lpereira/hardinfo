@@ -49,4 +49,11 @@ void cb_theme4();
 void cb_theme5();
 void cb_theme6();
 
+#if GLIB_CHECK_VERSION(2,40,0)
+#else
+//For compatibility with older glib
+gboolean g2_key_file_save_to_file (GKeyFile *key_file,
+				   const gchar  *filename, GError **error);
+#endif
+
 #endif	/* __CALLBACKS_H__ */
