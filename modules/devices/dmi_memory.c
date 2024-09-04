@@ -1011,7 +1011,7 @@ gboolean memory_devices_hinote(const char **msg) {
     gchar *want_root   = "sudo chmod a+r /sys/firmware/dmi/tables/*";
     gchar *want_at24   = "sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)";
     gchar *want_ee1004 = "sudo modprobe ee1004 (for DDR4)";
-    gchar *want_spd5118 = "sudo modprobe spd5118 (for DDR5)";
+    gchar *want_spd5118 = "sudo modprobe spd5118 (for DDR5) (WIP)";
 
     //gboolean has_root = (getuid() == 0);
     gboolean has_dmi = !no_handles;
