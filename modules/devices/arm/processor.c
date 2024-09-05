@@ -375,6 +375,7 @@ gchar *processor_name(GSList *processors) {
         char *soc;
     } dt_compat_searches[] = {
         { "hardkernel,odroid-c2", "Amlogic", "S905" }, // C2
+        { "hardkernel,odroid-n2", "Amlogic", "S922x" }, // N2
         { "amlogic,a311d", "Amlogic", "A311D" }, // VIM3
         { "brcm,bcm2712", "Broadcom", "BCM2712" }, // RPi 5
         { "brcm,bcm2711", "Broadcom", "BCM2711" }, // RPi 4
