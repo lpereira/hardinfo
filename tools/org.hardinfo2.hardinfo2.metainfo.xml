@@ -44,4 +44,8 @@
       <image>https://hardinfo2.org/img/appstream213.png</image>
     </screenshot>
   </screenshots>
+  <developer id="org.hardinfo2">
+    <name>Hardinfo2 Team</name>
+  </developer>
+  <content_rating type="oars-1.0" /> 
 </component>
