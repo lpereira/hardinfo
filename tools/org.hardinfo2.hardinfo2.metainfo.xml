@@ -28,20 +28,20 @@
   <url type="help">https://hardinfo2.org/userguide</url>
   <url type="vcs-browser">https://github.com/hardinfo2/hardinfo2</url>
   <url type="contribute">https://github.com/hardinfo2/hardinfo2</url>
-  <url type="forum">https://github.com/hardinfo2/hardinfo2/discussions</url>
+  <url type="contact">https://github.com/hardinfo2/hardinfo2/discussions</url>
   <url type="translate">https://github.com/hardinfo2/hardinfo2/tree/master/po</url>
   <url type="bugtracker">https://github.com/hardinfo2/hardinfo2/issues</url>
   
   <launchable type="desktop-id">hardinfo2.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image>https://hardinfo2.org/img/hardinfo8.webp</image>
+      <image>https://hardinfo2.org/img/appstream211.png</image>
     </screenshot>
     <screenshot>
-      <image>https://hardinfo2.org/img/hardinfo3.webp</image>
+      <image>https://hardinfo2.org/img/appstream212.png</image>
     </screenshot>
     <screenshot>
-      <image>https://hardinfo2.org/img/hardinfo6.webp</image>
+      <image>https://hardinfo2.org/img/appstream213.png</image>
     </screenshot>
   </screenshots>
 </component>
