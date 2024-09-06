@@ -826,6 +826,7 @@ gchar *memory_devices_get_info() {
             g_free(spd);
             moreinfo_add_with_prefix(tag_prefix, tag, details); /* moreinfo now owns *details */
             gchar *mfgr = s->mfgr ? vendor_match_tag(s->mfgr,  params.fmt_opts) : NULL;
+	    if(!mfgr && s->mfgr) mfgr=g_strdup(s->mfgr);
             ret = h_strdup_cprintf("$!%s$%s=%s|%s|%s\n",
                     ret,
                     tag,
