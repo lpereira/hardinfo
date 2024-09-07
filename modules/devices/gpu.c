@@ -139,6 +139,9 @@ static void _gpu_pci_dev(gpud* gpu) {
     gchar *t=NULL,*g=module_call_method("computer::getOGLRenderer");
     if(g) {
         int i=1;
+	g=strreplace(g,"(R)","");
+	g=strreplace(g,"(TM)","");
+	g=strreplace(g,"(tm)","");
 	if( strstr(module_call_method("computer::getMachineType"),"irtual") ){//virtual
 	    gpuname=g_strdup_printf("GPU=%s\n",module_call_method("computer::getMachineType"));
 	} else if(strlen(g)>7 && g[0]=='l' && g[1]=='l' && g[2]=='v' && g[3]=='m' && g[4]=='p' && g[5]=='i' && g[6]=='p' && g[7]=='e'){
