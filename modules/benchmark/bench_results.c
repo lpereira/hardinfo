@@ -56,6 +56,7 @@ typedef struct {
     char *linux_os;           /*distroversion*/
     char *power_state;
     char *gpu_name;
+    char *storage;
 } bench_machine;
 
 typedef struct {
@@ -194,6 +195,8 @@ bench_machine *bench_machine_this()
 	m->linux_os = module_call_method("computer::getOS");
 	m->power_state= module_call_method("devices::getPowerState");
 	m->gpu_name= module_call_method("devices::getGPUname");
+	m->storage= strreplace(module_call_method("devices::getStorageDevicesSimple"),"\n",",");
+	if(m->storage && (strlen(m->storage)>1)) m->storage[strlen(m->storage)-1]=0;
         free(tmp);
 
         cpu_procs_cores_threads_nodes(&m->processors, &m->cores, &m->threads, &m->nodes);
@@ -441,6 +444,7 @@ bench_result *bench_result_benchmarkjson(const gchar *bench_name,
         .machine_data_version = json_get_int(machine, "MachineDataVersion"),
         .machine_type = json_get_string_dup(machine, "MachineType"),
 	.gpu_name= json_get_string_dup(machine, "GPU"),
+	.storage= json_get_string_dup(machine, "Storage"),
 
     };
 
@@ -484,6 +488,7 @@ static char *bench_result_more_info_less(bench_result *b)
         /* threads */ "%s=%d\n"
         /* gpu desc */ "%s=%s\n"
         /* ogl rend */ "%s=%s\n"
+        /* storage */ "%s=%s\n"
         /* mem */ "%s=%s\n"
         /* bits */ "%s=%s\n",
         _("Benchmark Result"), _("Threads"), b->bvalue.threads_used,
@@ -505,6 +510,7 @@ static char *bench_result_more_info_less(bench_result *b)
         _("Threads Available"), b->machine->threads,
         _("GPU"), (b->machine->gpu_name != NULL) ? b->machine->gpu_name : (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
         _("OpenGL Renderer"), (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
+        _("Storage"), (b->machine->storage != NULL) ? b->machine->storage : _(unk),
         _("Memory"), memory,
         b->machine->ptr_bits ? _("Pointer Size") : "#AddySize", bits);
     free(memory);
@@ -541,6 +547,7 @@ static char *bench_result_more_info_complete(bench_result *b)
         /* threads */ "%s=%d\n"
         /* gpu desc */ "%s=%s\n"
         /* ogl rend */ "%s=%s\n"
+        /* storage */ "%s=%s\n"
         /* mem */ "%s=%" PRId64 " %s\n"
         /* mem phys */ "%s=%" PRId64 " %s %s\n"
         /* bits */ "%s=%s\n"
@@ -572,6 +579,8 @@ static char *bench_result_more_info_complete(bench_result *b)
         (b->machine->gpu_name != NULL) ? b->machine->gpu_name : (b->machine->gpu_desc != NULL) ? b->machine->gpu_desc : _(unk),
         _("OpenGL Renderer"),
         (b->machine->ogl_renderer != NULL) ? b->machine->ogl_renderer : _(unk),
+        _("Storage"),
+        (b->machine->storage != NULL) ? b->machine->storage : _(unk),
         _("Memory"), b->machine->memory_kiB, _("kiB"), _("Physical Memory"),
         b->machine->memory_phys_MiB, _("MiB"), b->machine->ram_types,
         b->machine->ptr_bits ? _("Pointer Size") : "#AddySize", bits,

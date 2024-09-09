@@ -357,13 +357,17 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select)
 
     rkey = g_strdup_printf("%s__%d", b->machine->mid, ri++);
 
-    if(!strstr(b->name,"GPU")){//CPU
-        lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
-                          b->machine->cpu_name,
-                          b->legacy ? problem_marker() : "");
-    } else {//GPU
+    if(strstr(b->name,"GPU")){//GPU
         lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
                           b->machine->gpu_name,
+                          b->legacy ? problem_marker() : "");
+    } else if(strstr(b->name,"Storage")){//Storage
+        lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
+                          b->machine->storage,
+                          b->legacy ? problem_marker() : "");
+    } else {//CPU
+        lbl = g_strdup_printf("%s%s%s%s", this_marker, select ? " " : "",
+                          b->machine->cpu_name,
                           b->legacy ? problem_marker() : "");
     }
     elbl = key_label_escape(lbl);
@@ -552,7 +556,29 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
         bench_result_free(br); /* no longer needed */
     }
     g_slist_free(result_list);
-    if(!strstr(benchmark,"GPU")){//CPU
+    if(strstr(benchmark,"GPU")){//GPU
+        output = g_strdup_printf("[$ShellParam$]\n"
+                             "Zebra=1\n"
+                             "OrderType=%d\n"
+                             "ViewType=4\n"
+                             "ColumnTitle$Progress=%s\n"  /* Results */
+                             "ColumnTitle$TextValue=%s\n" /* GPU */
+                             "ShowColumnHeaders=true\n"
+                             "[%s]\n%s",
+                             order_type, _("Results"),
+                             _("GPU"), benchmark, results);
+    }else if(strstr(benchmark,"Storage")){//Storage
+        output = g_strdup_printf("[$ShellParam$]\n"
+                             "Zebra=1\n"
+                             "OrderType=%d\n"
+                             "ViewType=4\n"
+                             "ColumnTitle$Progress=%s\n"  /* Results */
+                             "ColumnTitle$TextValue=%s\n" /* GPU */
+                             "ShowColumnHeaders=true\n"
+                             "[%s]\n%s",
+                             order_type, _("Results"),
+                             _("Storage"), benchmark, results);
+    } else {//CPU
         output = g_strdup_printf("[$ShellParam$]\n"
                              "Zebra=1\n"
                              "OrderType=%d\n"
@@ -564,18 +590,7 @@ static gchar *benchmark_include_results_internal(bench_value this_machine_value,
                              "[%s]\n%s",
                              order_type, _("CPU Config"), _("Results"),
                              _("CPU"), benchmark, results);
-      } else {//GPU
-        output = g_strdup_printf("[$ShellParam$]\n"
-                             "Zebra=1\n"
-                             "OrderType=%d\n"
-                             "ViewType=4\n"
-                             "ColumnTitle$Progress=%s\n"  /* Results */
-                             "ColumnTitle$TextValue=%s\n" /* GPU */
-                             "ShowColumnHeaders=true\n"
-                             "[%s]\n%s",
-                             order_type, _("Results"),
-                             _("GPU"), benchmark, results);
-      }
+    }
     g_free(path);
     g_free(results);
 
@@ -834,6 +849,7 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(int, "BenchmarkVersion", bench_results[i].revision);
         ADD_JSON_VALUE(string, "PowerState", this_machine->power_state);
         ADD_JSON_VALUE(string, "GPU", this_machine->gpu_name);
+        ADD_JSON_VALUE(string, "Storage", this_machine->storage);
 
 #undef ADD_JSON_VALUE
 

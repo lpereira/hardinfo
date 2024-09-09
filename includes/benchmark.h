@@ -30,6 +30,7 @@ enum BenchmarkEntries {
 #if(HARDINFO2_QT5)
     BENCHMARK_OPENGL,
 #endif
+    BENCHMARK_STORAGE,
     BENCHMARK_N_ENTRIES
 };
 
@@ -55,6 +56,7 @@ void benchmark_iperf3_single(void);
 #if(HARDINFO2_QT5)
 void benchmark_opengl(void);
 #endif
+void benchmark_storage(void);
 
 typedef struct {
     double result;
