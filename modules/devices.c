@@ -293,8 +293,7 @@ gchar *get_storage_devices_simple(void)
     gchar *storage_devs = NULL, *tmp;
 
     GRegex *regex;
-    regex = g_regex_new ("<.*>", 0, 0, NULL);
-
+    regex = g_regex_new ("<.*?>", 0, 0, NULL);
     for (i = 0; i < info->groups->len; i++) {
         group = &g_array_index(info->groups, struct InfoGroup, info->groups->len - 1);
         if (!group)
@@ -307,6 +306,7 @@ gchar *get_storage_devices_simple(void)
                 continue;
 
             tmp = g_regex_replace(regex, field->value, -1, 0, "", 0, NULL); // remove html tags
+	    tmp=strreplace(tmp,"  "," ");
             storage_devs = h_strdup_cprintf("%s\n", storage_devs, g_strchug(tmp));
             g_free(tmp);
         }
