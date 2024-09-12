@@ -768,6 +768,7 @@ gchar *callback_display(void)
     xinfo *xi = computer->display->xi;
     xrr_info *xrr = xi->xrr;
     glx_info *glx = xi->glx;
+    vk_info *vk = xi->vk;
     wl_info *wl = computer->display->wl;
 
     struct Info *info = info_new();
@@ -836,6 +837,24 @@ gchar *callback_display(void)
         info_field(_("Version (ES)"), THISORUNK(glx->ogles_version) ),
         info_field(_("Shading Language Version (ES)"), THISORUNK(glx->ogles_sl_version) ),
         info_field(_("GLX Version"), THISORUNK(glx->glx_version) ),
+        info_field_last());
+
+    //Search for real vulkan GPU
+    int i=0;
+    while(i<VK_MAX_GPU && (vk->vk_devType[i]) && strstr(vk->vk_devType[i],"CPU")) i++;
+    if((i>=VK_MAX_GPU) || !vk->vk_devType[i] || strstr(vk->vk_devType[i],"CPU")) i=0;//not found set to first if any
+
+    info_add_group(info, _("Vulkan"),
+        info_field(_("Instance Version"), THISORUNK(vk->vk_instVer) ),
+        //GPU
+        info_field(_("Api Version"), THISORUNK(vk->vk_apiVer[i]) ),
+        info_field(_("Driver Version"), THISORUNK(vk->vk_drvVer[i]) ),
+        info_field(_("Vendor"), THISORUNK(vk->vk_vendorId[i]), .value_has_vendor = TRUE ),
+        info_field(_("Device Type"), THISORUNK(vk->vk_devType[i]) ),
+        info_field(_("Device Name"), THISORUNK(vk->vk_devName[i]) ),
+        info_field(_("Driver Name"), THISORUNK(vk->vk_drvName[i]) ),
+        info_field(_("Driver Info"), THISORUNK(vk->vk_drvInfo[i]) ),
+        info_field(_("Conformance Version"), THISORUNK(vk->vk_conformVer[i]) ),
         info_field_last());
 
     return info_flatten(info);
@@ -1120,6 +1139,7 @@ static const gchar *hinote_display() {
     *note = 0; /* clear */
     ok &= note_require_tool("xrandr", note, _("X.org's <i><b>xrandr</b></i> utility provides additional details when available."));
     ok &= note_require_tool("glxinfo", note, _("Mesa's <i><b>glxinfo</b></i> utility is required for OpenGL information."));
+    ok &= note_require_tool("vulkaninfo", note, _("Vulkan's <i><b>vulkaninfo</b></i> utility is required for Vulkan information."));
     return ok ? NULL : g_strstrip(note); /* remove last \n */
 }
 

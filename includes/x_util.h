@@ -30,6 +30,20 @@ typedef struct {
 wl_info *get_walyand_info();
 void wl_free(wl_info *);
 
+#define VK_MAX_GPU 5
+typedef struct {
+    char *vk_instVer;
+    //GPU
+    char *vk_apiVer[VK_MAX_GPU];
+    char *vk_drvVer[VK_MAX_GPU];
+    char *vk_vendorId[VK_MAX_GPU];
+    char *vk_devType[VK_MAX_GPU];
+    char *vk_devName[VK_MAX_GPU];
+    char *vk_drvName[VK_MAX_GPU];
+    char *vk_drvInfo[VK_MAX_GPU];
+    char *vk_conformVer[VK_MAX_GPU];
+} vk_info;
+
 typedef struct {
     char *glx_version;
     int direct_rendering;
@@ -96,6 +110,7 @@ typedef struct {
     char *display_name, *vendor, *version, *release_number;
     xrr_info *xrr;
     glx_info *glx;
+    vk_info *vk; /*Vulkan info*/
 } xinfo;
 
 xinfo *xinfo_get_info();

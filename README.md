@@ -52,7 +52,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
 - sudo apt install ./hardinfo2_*  (Use reinstall instead of install if already installed)
-- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd
+- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd x11-xserver-utils vulkan-tools
 - hardinfo2
 
 **Fedora/CentOS/RedHat/Rocky/Alma/Oracle**
@@ -69,7 +69,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
 - sudo yum install ./hardinfo2-*  (Use reinstall instead of install if already installed)
-- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd
+- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd xrandr vulkan-tools
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, zypper --no-gpg-checks install ./hardinfo2-*
@@ -96,6 +96,8 @@ Most hardware is detected automatically by Hardinfo2, but some might need manual
 - **iperf3**: iperf3 is used to benchmark internal network speed.
 - **fwupd**: fwupd is used to read and display information about firmware in system.
 - **Service**: Service loads SPD modules (at24/ee1004/spd5118) to display SPD info for your DIMMs memory. Show addresses for iomem+ioports.
+- **xrandr/x11-xserver-utils**: xrandr is used to read monitor setup
+- **vulkan-tools**: vulkaninfo is used to display vulcan information.
 
 **User can install/setup these depending on hardware**
 - **hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp

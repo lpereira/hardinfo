@@ -42,7 +42,7 @@ void wl_free(wl_info *s) {
     }
 }
 
-/* get x information from xrandr, xdpyinfo, and glxinfo */
+/* get x information from xrandr, xdpyinfo, glxinfo and vulkaninfo*/
 
 static char *simple_line_value(char *line, const char *prefix) {
     if (g_str_has_prefix(g_strstrip(line), prefix)) {
@@ -52,6 +52,93 @@ static char *simple_line_value(char *line, const char *prefix) {
         return NULL;
 }
 
+gboolean fill_vk_info(vk_info *vk) {
+    gboolean spawned;
+    gchar *out, *err, *p, *l, *next_nl;
+    int gpu=0;
+    gchar *vk_cmd = g_strdup("vulkaninfo --summary");
+
+#define VK_MATCH_LINE(prefix_str, struct_member) \
+    if (l = simple_line_value(p, prefix_str)) { vk->struct_member = g_strdup(strreplace(l,"= ","")); goto vk_next_line; }
+
+    spawned = hardinfo_spawn_command_line_sync(vk_cmd, &out, &err, NULL, NULL);
+    g_free(vk_cmd);
+    if (spawned) {
+        p = out;
+        while(next_nl = strchr(p, '\n')) {
+            strend(p, '\n');
+            g_strstrip(p);
+            VK_MATCH_LINE("Vulkan Instance Version", vk_instVer);
+            if(strstr(p,"GPU")==p) sscanf(p,"GPU%d:",&gpu);
+	    if((gpu>=0) && (gpu<VK_MAX_GPU)){
+                VK_MATCH_LINE("apiVersion", vk_apiVer[gpu]);
+                VK_MATCH_LINE("driverVersion", vk_drvVer[gpu]);
+                VK_MATCH_LINE("vendorID", vk_vendorId[gpu]);
+                VK_MATCH_LINE("deviceType", vk_devType[gpu]);
+                VK_MATCH_LINE("deviceName", vk_devName[gpu]);
+                VK_MATCH_LINE("driverName", vk_drvName[gpu]);
+                VK_MATCH_LINE("driverInfo", vk_drvInfo[gpu]);
+                VK_MATCH_LINE("conformanceVersion", vk_conformVer[gpu]);
+	    }
+
+            vk_next_line:
+                p = next_nl + 1;
+        }
+        g_free(out);
+        g_free(err);
+	for(int i=0; i<VK_MAX_GPU;i++) if(vk->vk_vendorId[i]){
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10000","Khronos");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10001","Viv");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10002","VSI");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10003","Kazan");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10004","CodePlay");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10005","Mesa");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10006","POCL");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10007","MobileEye");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x0","Unknown");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x1002","AMD");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x106b","Apple");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x13b5","ARM");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x14e4","BroadCom");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x1ae0","Google");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x8086","Intel");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10de","NVidia");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x1010","PowerVR");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x5143","Qualcom");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x144d","Samsung");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x15ad","VMWare");
+	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x9999","Vivante");
+	}
+        return TRUE;
+    }
+    return FALSE;
+}
+
+vk_info *vk_create() {
+    vk_info *s = malloc(sizeof(vk_info));
+    if(!s) return NULL;
+    memset(s, 0, sizeof(vk_info));
+    return s;
+}
+void vk_free(vk_info *s) {
+    if (s) {
+        free(s->vk_instVer);
+	//
+	for(int i=0;i<VK_MAX_GPU;i++){
+            free(s->vk_apiVer[i]);
+            free(s->vk_drvVer[i]);
+            free(s->vk_vendorId[i]);
+            free(s->vk_devType[i]);
+            free(s->vk_devName[i]);
+            free(s->vk_drvName[i]);
+            free(s->vk_drvInfo[i]);
+            free(s->vk_conformVer[i]);
+	}
+        free(s);
+    }
+}
+
+
 gboolean fill_glx_info(glx_info *glx) {
     gboolean spawned;
     gchar *out, *err, *p, *l, *next_nl;
@@ -60,8 +147,7 @@ gboolean fill_glx_info(glx_info *glx) {
 #define GLX_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { glx->struct_member = g_strdup(l); goto glx_next_line; }
 
-    spawned = hardinfo_spawn_command_line_sync(glx_cmd,
-            &out, &err, NULL, NULL);
+    spawned = hardinfo_spawn_command_line_sync(glx_cmd, &out, &err, NULL, NULL);
     g_free(glx_cmd);
     if (spawned) {
         p = out;
@@ -322,12 +408,15 @@ xinfo *xinfo_get_info() {
     memset(xi, 0, sizeof(xinfo));
     xi->glx = glx_create();
     xi->xrr = xrr_create();
+    xi->vk = vk_create();
 
     if ( !fill_xinfo(xi) )
         fail++;
     if ( !xi->xrr || !fill_xrr_info(xi->xrr) )
         fail++;
     if ( !xi->glx || !fill_glx_info(xi->glx) )
+        fail++;
+    if ( !xi->vk || !fill_vk_info(xi->vk) )
         fail++;
 
     if (fail) {
@@ -346,6 +435,7 @@ void xinfo_free(xinfo *xi) {
         free(xi->release_number);
         xrr_free(xi->xrr);
         glx_free(xi->glx);
+	vk_free(xi->vk);
         free(xi);
     }
 }
