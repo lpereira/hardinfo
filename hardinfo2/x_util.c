@@ -86,7 +86,7 @@ gboolean fill_vk_info(vk_info *vk) {
         }
         g_free(out);
         g_free(err);
-	for(int i=0; i<VK_MAX_GPU;i++) if(vk->vk_vendorId[i]){
+	int i=0; do if(vk->vk_vendorId[i]){
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10000","Khronos");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10001","Viv");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10002","VSI");
@@ -108,7 +108,8 @@ gboolean fill_vk_info(vk_info *vk) {
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x144d","Samsung");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x15ad","VMWare");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x9999","Vivante");
-	}
+	    i++;
+	  } while(i<VK_MAX_GPU);
         return TRUE;
     }
     return FALSE;
@@ -124,7 +125,7 @@ void vk_free(vk_info *s) {
     if (s) {
         free(s->vk_instVer);
 	//
-	for(int i=0;i<VK_MAX_GPU;i++){
+	int i=0;do{
             free(s->vk_apiVer[i]);
             free(s->vk_drvVer[i]);
             free(s->vk_vendorId[i]);
@@ -133,7 +134,8 @@ void vk_free(vk_info *s) {
             free(s->vk_drvName[i]);
             free(s->vk_drvInfo[i]);
             free(s->vk_conformVer[i]);
-	}
+	    i++;
+	}while(i<VK_MAX_GPU);
         free(s);
     }
 }
