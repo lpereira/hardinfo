@@ -86,7 +86,7 @@ gboolean fill_vk_info(vk_info *vk) {
         }
         g_free(out);
         g_free(err);
-	int i=0; do if(vk->vk_vendorId[i]){
+	int i=0; do {if(vk->vk_vendorId[i]){
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10000","Khronos");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10001","Viv");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x10002","VSI");
@@ -108,8 +108,7 @@ gboolean fill_vk_info(vk_info *vk) {
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x144d","Samsung");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x15ad","VMWare");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x9999","Vivante");
-	    i++;
-	  } while(i<VK_MAX_GPU);
+	  }i++;} while(i<VK_MAX_GPU);
         return TRUE;
     }
     return FALSE;
