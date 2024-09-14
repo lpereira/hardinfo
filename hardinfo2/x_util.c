@@ -158,7 +158,6 @@ gboolean fill_glx_info(glx_info *glx) {
             GLX_MATCH_LINE("GLX version", glx_version);
             GLX_MATCH_LINE("OpenGL vendor string", ogl_vendor);
             GLX_MATCH_LINE("OpenGL renderer string", ogl_renderer);
-            GLX_MATCH_LINE("OpenGL renderer string", ogl_renderer);
             GLX_MATCH_LINE("OpenGL core profile version string", ogl_core_version);
             GLX_MATCH_LINE("OpenGL core profile shading language version string", ogl_core_sl_version);
             GLX_MATCH_LINE("OpenGL version string", ogl_version);
@@ -212,8 +211,7 @@ gboolean fill_xinfo(xinfo *xi) {
 #define XI_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { xi->struct_member = g_strdup(l); goto xi_next_line; }
 
-    spawned = hardinfo_spawn_command_line_sync(xi_cmd,
-            &out, &err, NULL, NULL);
+    spawned = hardinfo_spawn_command_line_sync(xi_cmd, &out, &err, NULL, NULL);
     g_free(xi_cmd);
     if (spawned) {
         p = out;
@@ -223,8 +221,8 @@ gboolean fill_xinfo(xinfo *xi) {
             XI_MATCH_LINE("name of display", display_name);
             XI_MATCH_LINE("vendor string", vendor);
             XI_MATCH_LINE("vendor release number", release_number);
-            XI_MATCH_LINE("XFree86 version", version);
-            XI_MATCH_LINE("X.Org version", version);
+            if(!xi->version) XI_MATCH_LINE("XFree86 version", version);
+            if(!xi->version) XI_MATCH_LINE("X.Org version", version);
 
             xi_next_line:
                 p = next_nl + 1;
@@ -345,10 +343,10 @@ gboolean fill_basic_xlib(xinfo *xi) {
     display = XOpenDisplay(NULL);
     if (display) {
         if (!xi->display_name)
-            xi->display_name = XDisplayName(NULL);
+	    xi->display_name = g_strdup(XDisplayName(NULL));
 
         if (!xi->vendor)
-            xi->vendor = XServerVendor(display);
+	    xi->vendor = g_strdup(XServerVendor(display));
 
         if (!xi->release_number) {
             rn = XVendorRelease(display);
@@ -403,28 +401,29 @@ void xrr_free(xrr_info *xrr) {
 }
 
 xinfo *xinfo_get_info() {
-    int fail = 0;
+    int fail=0;
     xinfo *xi = malloc(sizeof(xinfo));
     if(!xi) return NULL;
     memset(xi, 0, sizeof(xinfo));
+
     xi->glx = glx_create();
+    if(!xi->glx) {free(xi);return NULL;}
+
     xi->xrr = xrr_create();
+    if(!xi->xrr) {free(xi->glx);free(xi);return NULL;}
+
     xi->vk = vk_create();
+    if(!xi->vk) {free(xi->glx);free(xi->xrr);free(xi);return NULL;}
 
-    if ( !fill_xinfo(xi) )
-        fail++;
-    if ( !xi->xrr || !fill_xrr_info(xi->xrr) )
-        fail++;
-    if ( !xi->glx || !fill_glx_info(xi->glx) )
-        fail++;
-    if ( !xi->vk || !fill_vk_info(xi->vk) )
-        fail++;
+    if(!fill_xinfo(xi)) fail++;
+    if(fill_xrr_info(xi->xrr)) fail++;
 
-    if (fail) {
-        /* as fallback, try xlib directly */
-        if ( !fill_basic_xlib(xi) )
-            xi->nox = 1;
-    }
+    /* as fallback, try xlib directly */
+    if ( fail && !fill_basic_xlib(xi) ) xi->nox = 1;
+
+    fill_glx_info(xi->glx);
+    fill_vk_info(xi->vk);
+
     return xi;
 }
 
