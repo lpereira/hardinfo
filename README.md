@@ -86,7 +86,8 @@ Setting up addition tools
 Most hardware is detected automatically by Hardinfo2, but some might need manual set up.
 
 **Package installs these**
-- **sysbench**: is needed to run standard sysbench benchmarks.
+- **sysbench**: is needed to run standard sysbench benchmarks. <br>
+RiscV: The package is not ready yet - build by using the ./tools/build_and_install_sysbench_riscv.sh script from building hardinfo2.
 - **udisks2**: is needed to provide NVME++ informations.
 - **dmi-decode**: is needed to provide DMI informations.
 - **mesa-utils**: is needed to provide opengl and run standard sysbench benchmarks.
