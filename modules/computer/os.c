@@ -360,7 +360,8 @@ parse_os_release(void)
     gchar *version = NULL;
     gchar *codename = NULL;
     gchar **split, *contents, **line;
-    int armbian=0,raspberry=0,mxlinux=0;
+    int armbian=0,raspberry=0,mxlinux=0;//debian
+    int kubuntu=0;//ubuntu
 
     //check for MX Linux
     if (g_file_get_contents("/etc/mx-version", &contents, NULL, NULL)){
@@ -378,6 +379,12 @@ parse_os_release(void)
     if (g_file_get_contents("/etc/armbian-release", &contents, NULL, NULL)){
         g_free(contents);
 	armbian=1;
+    }
+
+    //check for kubuntu
+    if (g_file_get_contents("/etc/kubuntu-default-settings/directory-home", &contents, NULL, NULL)){
+        g_free(contents);
+	kubuntu=1;
     }
 
     //some overrides the /etc/os-release, which is normally a link=>check first
@@ -501,6 +508,19 @@ parse_os_release(void)
             }
             g_free(contents);
         }
+    }
+
+    //ubuntu flavour it
+    if (pretty_name && version && g_str_equal(id, "ubuntu")) {
+        if(kubuntu){
+	    gchar *t=pretty_name;
+	    pretty_name=strreplace(pretty_name,"Ubuntu","Kubuntu");
+	    g_free(t);
+	    //
+	    t=id;
+	    id=g_strdup("kubuntu");
+	    g_free(t);
+	}
     }
 
     if (pretty_name){
