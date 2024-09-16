@@ -374,13 +374,14 @@ parse_os_release(void)
         g_free(contents);
     }
 
-    //armbian overrides the /etc/os-release, which is normally a link
+    //check for armbian
     if (g_file_get_contents("/etc/armbian-release", &contents, NULL, NULL)){
         g_free(contents);
-        if (!g_file_get_contents("/etc/os-release", &contents, NULL, NULL))
-            return (Distro) {};
 	armbian=1;
-    } else {
+    }
+
+    //some overrides the /etc/os-release, which is normally a link=>check first
+    if (!g_file_get_contents("/etc/os-release", &contents, NULL, NULL)){
         if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
             return (Distro) {};
     }
@@ -507,7 +508,10 @@ parse_os_release(void)
         return (Distro) { .distro = pretty_name, .codename = codename, .id = id };
     }
 
+    g_free(pretty_name);
     g_free(id);
+    g_free(version);
+    g_free(codename);
     return (Distro) {};
 }
 
