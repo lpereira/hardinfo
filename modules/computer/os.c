@@ -385,32 +385,61 @@ parse_os_release(void)
         return (Distro) {};
 
     for (line = split; *line; line++) {
-        if (!strncmp(*line, "ID=", sizeof("ID=") - 1)) {
+        if (!strncmp(*line, "ID=", sizeof("ID=") - 1) && (id == NULL)) {
             id = g_strdup(*line + strlen("ID="));
-        } else if (!strncmp(*line, "VERSION_ID=", sizeof("VERSION_ID=") - 1)) {
+        } else if (!strncmp(*line, "VERSION_ID=", sizeof("VERSION_ID=") - 1) && (version == NULL)) {
             version = g_strdup(*line + strlen("VERSION_ID="));
-	    contents=version;
-	    version = strreplace(version,"\"","");
-	    g_free(contents);
-        } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1) && codename == NULL) {
+        } else if (!strncmp(*line, "CODENAME=", sizeof("CODENAME=") - 1) && (codename == NULL)) {
             codename = g_strdup(*line + strlen("CODENAME="));
-        } else if (!strncmp(*line, "VERSION_CODENAME=", sizeof("VERSION_CODENAME=") - 1) && codename == NULL) {
+        } else if (!strncmp(*line, "VERSION_CODENAME=", sizeof("VERSION_CODENAME=") - 1) && (codename == NULL)) {
             codename = g_strdup(*line + strlen("VERSION_CODENAME="));
-        } else if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1)) {
+        } else if (!strncmp(*line, "PRETTY_NAME=", sizeof("PRETTY_NAME=") - 1) && (pretty_name == NULL)) {
             pretty_name = g_strdup(*line + strlen("PRETTY_NAME="));
-	    contents=pretty_name;
-            pretty_name = strreplace(pretty_name,"\"","");
-	    g_free(contents);
         }
     }
 
     g_strfreev(split);
 
-    //remove " from codename, allow empty codename, remove newline
+    //remove ",/n,allow empty
+    if(pretty_name){
+	contents=pretty_name;
+        pretty_name=strreplace(pretty_name,"\"","");
+        g_free(contents);
+	//
+	contents=pretty_name;
+        pretty_name=strreplace(pretty_name,"\n","");
+        g_free(contents);
+        if(strlen(pretty_name)<1) {g_free(pretty_name);pretty_name=NULL;}
+    }
     if(codename){
+	contents=codename;
+        codename=strreplace(codename,"\"","");
+        g_free(contents);
+	//
+	contents=codename;
         codename=strreplace(codename,"\n","");
-        if(strlen(codename)>=2 && codename[0]=='"') codename=strreplace(codename,"\"","");
+        g_free(contents);
         if(strlen(codename)<1) {g_free(codename);codename=NULL;}
+    }
+    if(id){
+	contents=id;
+        id=strreplace(id,"\"","");
+        g_free(contents);
+	//
+	contents=id;
+        id=strreplace(id,"\n","");
+        g_free(contents);
+        if(strlen(id)<1) {g_free(id);id=NULL;}
+    }
+    if(version){
+	contents=version;
+        version=strreplace(version,"\"","");
+        g_free(contents);
+	//
+	contents=version;
+        version=strreplace(version,"\n","");
+        g_free(contents);
+        if(strlen(version)<1) {g_free(version);version=NULL;}
     }
 
     //remove codename from pretty name
