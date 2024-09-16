@@ -1354,7 +1354,7 @@ static void group_handle_special(GKeyFile *key_file,
 		GdkPixbuf *pixbuf;
 		if(strstr(file,"LARGE")==file){
 		    file=strreplace(file,"LARGE","");
-                     pixbuf = icon_cache_get_pixbuf_at_size(file, 33, 33);
+                     pixbuf = icon_cache_get_pixbuf_at_size(file, -1, 33);
 		} else {
                      pixbuf = icon_cache_get_pixbuf_at_size(file, 22, 22);
 		}
