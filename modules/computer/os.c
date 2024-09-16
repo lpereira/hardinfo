@@ -360,7 +360,13 @@ parse_os_release(void)
     gchar *version = NULL;
     gchar *codename = NULL;
     gchar **split, *contents, **line;
-    int armbian=0,raspberry=0;
+    int armbian=0,raspberry=0,mxlinux=0;
+
+    //check for MX Linux
+    if (g_file_get_contents("/etc/mx-version", &contents, NULL, NULL)){
+        mxlinux=1;
+        g_free(contents);
+    }
 
     //check for rpi
     if (g_file_get_contents("/etc/rpi-issue", &contents, NULL, NULL)){
@@ -378,6 +384,7 @@ parse_os_release(void)
         if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
             return (Distro) {};
     }
+
 
     split = g_strsplit(contents, "\n", 0);
     g_free(contents);
@@ -461,13 +468,29 @@ parse_os_release(void)
     if (pretty_name && version && g_str_equal(id, "debian")) {
         if (g_file_get_contents("/etc/debian_version", &contents, NULL, NULL)){
             if (isdigit(contents[0])){
-	        if(raspberry){
+	        if(mxlinux){
+		    gchar *t=pretty_name;
+		    pretty_name=g_strdup_printf("MX Linux - Debian %s",contents);
+		    g_free(t);
+		    //
+		    t=id;
+		    id=g_strdup("mxlinux");
+		    g_free(t);
+	        } else if(raspberry){
 		    gchar *t=pretty_name;
 		    pretty_name=g_strdup_printf("Raspberry Pi - Debian %s",contents);
+		    g_free(t);
+		    //
+		    t=id;
+		    id=g_strdup("raspberry-pi");
 		    g_free(t);
 	        } else if(armbian){
 		    gchar *t=pretty_name;
 		    pretty_name=g_strdup_printf("%s - Debian %s",t,contents);
+		    g_free(t);
+		    //
+		    t=id;
+		    id=g_strdup("armbian");
 		    g_free(t);
 		} else {
 		    gchar *t=pretty_name;
