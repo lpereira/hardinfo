@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="258.15445mm"
+   height="217.5018mm"
+   viewBox="0 0 258.15445 217.50181"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (1:1.1+202202050950+0a00cf5339)"
+   sodipodi:docname="PureOSlogo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="0.23384891"
+     inkscape:cx="389.14015"
+     inkscape:cy="724.82698"
+     inkscape:window-width="1280"
+     inkscape:window-height="711"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="-45.681576"
+       y="-31.196589"
+       width="788.06989"
+       height="219.86971"
+       id="rect62618" />
+    <rect
+       x="939.47314"
+       y="209.16643"
+       width="936.30402"
+       height="337.0116"
+       id="rect3158" />
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-381.96857,43.395533)">
+    <rect
+       style="fill:#ffffff;stroke-width:0.494317"
+       id="rect70176"
+       width="258.15445"
+       height="219.6707"
+       x="381.96857"
+       y="-45.564438" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:50.8px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="412.46887"
+       y="147.2695"
+       id="text4220"><tspan
+         sodipodi:role="line"
+         id="tspan4218"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:50.8px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.264583"
+         x="412.46887"
+         y="147.2695">PureOS</tspan></text>
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:15.812;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect848"
+       width="164.77086"
+       height="99.468605"
+       x="436.85641"
+       y="-14.320307" />
+  </g>
+</svg>
