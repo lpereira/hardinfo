@@ -381,21 +381,3 @@ const char *x86_flag_meaning(const char *flag) {
     return NULL;
 }
 
-static void x86_flag_find_dups(void) {
-    int t, i;
-
-    t = 0;
-    while(tab_flag_meaning[t].name != NULL) {
-        i = t+1;
-        while(tab_flag_meaning[i].name != NULL) {
-            if (strcmp(tab_flag_meaning[t].name, tab_flag_meaning[i].name) == 0) {
-                printf("x86-flag duplicate definition: %s\n ... %d: %s\n ... %d: %s\n",
-                    tab_flag_meaning[i].name,
-                    t, tab_flag_meaning[t].meaning,
-                    i, tab_flag_meaning[i].meaning);
-            }
-            i++;
-        }
-        t++;
-    }
-}

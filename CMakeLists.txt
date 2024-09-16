@@ -420,13 +420,13 @@ set_source_files_properties(
 	hardinfo2/problem_marker.c
 	hardinfo2/hinote_util.c
 	PROPERTIES
-	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-unused-function -Wno-switch -Werror=implicit-function-declaration"
+	COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-switch -Werror=implicit-function-declaration"
 )
 
 foreach (_module ${HARDINFO2_MODULES})
 	add_library(${_module} MODULE ${MODULE_${_module}_SOURCES})
 	set_target_properties(${_module} PROPERTIES PREFIX "")
-	set_target_properties(${_module} PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-function -Wno-missing-braces -Wno-switch -Werror=implicit-function-declaration")
+	set_target_properties(${_module} PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-missing-braces -Wno-switch -Werror=implicit-function-declaration")
 	target_link_libraries(${_module} ${JSON_GLIB_LIBRARIES})
 endforeach()
 
@@ -449,7 +449,7 @@ add_library(sysobj_early STATIC
 	deps/sysobj_early/src/format_early.c
 	deps/sysobj_early/src/cpubits.c
 )
-set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Wno-unused-function -Werror=implicit-function-declaration")
+set_target_properties(sysobj_early PROPERTIES COMPILE_FLAGS "-std=c99 -Wall -Wextra -Wno-parentheses -Werror=implicit-function-declaration")
 target_link_libraries(sysobj_early m)
 
 if (HARDINFO2_GTK3)
@@ -477,7 +477,7 @@ set_source_files_properties(
 	hardinfo2/x_util.c
 	hardinfo2/dt_util.c
 	PROPERTIES
-	COMPILE_FLAGS "-Wall -Wextra -Wno-parentheses -Wno-unused-function -Werror=implicit-function-declaration"
+	COMPILE_FLAGS "-Wall -Wextra -Wno-parentheses -Werror=implicit-function-declaration"
 )
 
 if (HARDINFO2_GTK3)
