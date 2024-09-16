@@ -593,7 +593,7 @@ gchar *callback_os(void)
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
     distro_icon = computer->os->distroid
-       ? idle_free(g_strdup_printf("distros/%s.svg",computer->os->distroid))
+       ? idle_free(g_strdup_printf("LARGEdistros/%s.svg",computer->os->distroid))
        : NULL;
     distro = computer->os->distrocode
        ? idle_free(g_strdup_printf("%s (%s)",

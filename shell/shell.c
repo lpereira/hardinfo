@@ -1351,7 +1351,13 @@ static void group_handle_special(GKeyFile *key_file,
 
             if (item) {
                 gchar *file = g_key_file_get_value(key_file, group, key, NULL);
-                GdkPixbuf *pixbuf = icon_cache_get_pixbuf_at_size(file, 22, 22);
+		GdkPixbuf *pixbuf;
+		if(strstr(file,"LARGE")==file){
+		    file=strreplace(file,"LARGE","");
+                     pixbuf = icon_cache_get_pixbuf_at_size(file, 33, 33);
+		} else {
+                     pixbuf = icon_cache_get_pixbuf_at_size(file, 22, 22);
+		}
 
                 g_free(file);
 
