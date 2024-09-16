@@ -75,8 +75,8 @@ Building and installing
 **openSUSE**: use zypper instead of yum, zypper --no-gpg-checks install ./hardinfo2-*
 libqt5-qtbase-devel instead of qt5-qtbase-devel
 
-**ArchLinux/Garuda/Manjaro - AUR Package**
- - git clone https://aur.archlinux.org/hardinfo2 (hardinfo2-git for unstable master for developers)
+**ArchLinux/Garuda/Manjaro/Endeavour - AUR Package**
+ - git clone https://aur.archlinux.org/hardinfo2
  - cd hardinfo2
  - makepkg -cis
  - hardinfo2
