@@ -629,6 +629,7 @@ gchar *make_spd_section(spd_data *spd) {
                 full_spd = decode_ddr4_sdram_extra(spd->bytes, spd->spd_size);
 		break;
             case DDR5_SDRAM:
+	        //return NULL; //FIXME - Disabled showing DDR5 SPD until DDR5 SPD decoding is done
                 full_spd = decode_ddr5_sdram_extra(spd->bytes, spd->spd_size);
                 break;
             default:
@@ -1008,25 +1009,31 @@ gchar *memory_devices_get_system_memory_str() {
 static gchar note_state[note_max_len] = "";
 
 gboolean memory_devices_hinote(const char **msg) {
-    gchar *want_dmi    = "<b><i>dmidecode</i></b> package installed";
-    gchar *want_root   = "sudo chmod a+r /sys/firmware/dmi/tables/*";
-    gchar *want_at24   = "sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)";
-    gchar *want_ee1004 = "sudo modprobe ee1004 (for DDR4)";
-    gchar *want_spd5118 = "sudo modprobe spd5118 (for DDR5) (WIP)";
+    *note_state = 0; /* clear */
+    //check for dmi interface
+    gboolean has_dmi = g_file_test("/sys/firmware/dmi", G_FILE_TEST_IS_DIR);
+    if(!has_dmi) {
+        note_printf(note_state, "%s", _("No DMI available"));
+	*msg=note_state;
+        return TRUE;
+    }
+    gboolean has_dmiaccess = (access("/sys/firmware/dmi/tables/DMI", R_OK)==0) || (access("/sys/firmware/dmi/tables/smbios_entry_point", R_OK)==0);
+    gchar *want_dmi       = "<b><i>dmidecode</i></b> package installed";
+    gchar *want_dmiaccess = "sudo chmod a+r /sys/firmware/dmi/tables/*";
+    gchar *want_at24      = "sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)";
+    gchar *want_ee1004    = "sudo modprobe ee1004 (for DDR4)";
+    gchar *want_spd5118   = "sudo modprobe spd5118 (for DDR5) (WIP)";
 
-    //gboolean has_root = (getuid() == 0);
-    gboolean has_dmi = !no_handles;
     gboolean has_at24eep = g_file_test("/sys/bus/i2c/drivers/at24", G_FILE_TEST_IS_DIR) ||
                            g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
     gboolean has_ee1004 = g_file_test("/sys/bus/i2c/drivers/ee1004", G_FILE_TEST_IS_DIR);
     gboolean has_spd5118 = g_file_test("/sys/bus/i2c/drivers/spd5118", G_FILE_TEST_IS_DIR);
 
-    *note_state = 0; /* clear */
     note_printf(note_state, "%s\n", _("Memory Information requires more Setup:"));
     note_print(note_state, "<tt>1. </tt>");
-    note_cond_bullet(has_dmi, note_state, want_dmi);
+    gboolean has_dmidecode = note_require_tool("dmidecode", note_state, want_dmi);
     note_print(note_state, "<tt>   </tt>");
-    note_cond_bullet(has_dmi, note_state, want_root);
+    note_cond_bullet(has_dmiaccess, note_state, want_dmiaccess);
     note_print(note_state, "<tt>2. </tt>");
     note_cond_bullet(has_at24eep, note_state, want_at24);
     note_print(note_state, "<tt>   </tt>");
@@ -1036,12 +1043,12 @@ gboolean memory_devices_hinote(const char **msg) {
     g_strstrip(note_state); /* remove last \n */
 
     gboolean ddr3_ee1004 = ((dmi_ram_types & (1<<(DDR3_SDRAM-1))) && has_ee1004);
+    gboolean ddr4 = dmi_ram_types & (1<<(DDR5_SDRAM-1));
+    gboolean ddr5 = dmi_ram_types & (1<<(DDR5_SDRAM-1));
 
-    //FIXME: Below is not updated for DDR5 and DDR5 SPD is not decoded!!
     gboolean best_state = FALSE;
-    if (has_dmi && /*has_root &&*/
-        ((has_at24eep && !spd_ddr4_partial_data)
-        || (has_ee1004 && !ddr3_ee1004) ) )
+    if (has_dmidecode && has_dmiaccess &&
+        ((has_at24eep && !spd_ddr4_partial_data && !ddr4 && !ddr5) || (has_ee1004 && !ddr3_ee1004 && ddr4) || (has_spd5118 && ddr5) ))
         best_state = TRUE;
 
     if (!best_state) {
