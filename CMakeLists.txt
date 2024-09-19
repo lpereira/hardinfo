@@ -11,6 +11,7 @@ option(HARDINFO2_QT5 "Build opengl benchmark for QT5 " 1)
 
 SET(CMAKE_INSTALL_PREFIX "/usr")
 SET(HARDINFO2_SYSTEMV 0)
+SET(HARDINFO2_RUNIT 0)
 
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
@@ -226,6 +227,11 @@ endif()
 #Devuan
 if(${distro} MATCHES "Devuan")
     set(HARDINFO2_SYSTEMV 1)
+endif()
+#Devuan
+
+if(${distro} MATCHES "Void")
+    set(HARDINFO2_RUNIT 1)
 endif()
 
 #WSL 1/2
@@ -572,7 +578,10 @@ if(HARDINFO2_SERVICE)
     set(CMAKE_INSTALL_SERVICEDIR "/usr/lib" CACHE PATH "Path where the systemd service file gets installed")
     message("ServiceDir=" ${CMAKE_INSTALL_SERVICEDIR})
 
-    if(${HARDINFO2_SYSTEMV})
+    if(${HARDINFO2_RUNIT})
+        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/run DESTINATION /etc/sv/hardinfo2/
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    elseif(${HARDINFO2_SYSTEMV})
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hardinfo2 DESTINATION /etc/init.d/
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     else()
