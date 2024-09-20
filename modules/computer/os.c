@@ -62,8 +62,10 @@ void apt_flavors_scan(char **pretty_name,char **codename,char **id) {
     gint exit_status;
     const AptFlavor *f = NULL;
     gchar *cmd_line = g_strdup("apt-cache policy");
-    for(int i = 0; apt_flavors[i].name; i++) {
+    int i = 0;
+      while(apt_flavors[i].name){
         cmd_line = appfsp(cmd_line, "%s", apt_flavors[i].aptname);
+	i++;
     }
 
     spawned = hardinfo_spawn_command_line_sync(cmd_line, &out, &err, &exit_status, NULL);
