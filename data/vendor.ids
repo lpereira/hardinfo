@@ -88,12 +88,6 @@ name Advanced Micro Devices
     match_string Advanced Micro Devices
     match_string_case AMD
 
-name Alcor Life Extension Foundation
-# Makes devices?
-    name_short Alcor
-    url www.alcor.org
-    match_string ALCOR
-
 name Allwinner Technology
     name_short AllWinner
     url www.allwinnertech.com
@@ -477,10 +471,6 @@ name GCT Semiconductor
     match_string GCT Semiconductor
     match_string_case GCT
 
-name Genius
-    url www.genius.ru
-    match_string Genius
-
 name Gigabyte Technology
     name_short Gigabyte
     url www.gigabyte.com.tw
@@ -488,7 +478,6 @@ name Gigabyte Technology
     match_string Giga-byte
     match_string Gigabyte
 
-# NOT Globalsat Group
 name Globalsat Technology
     match_string Globalsat Technology
 
@@ -553,15 +542,6 @@ name Holtek Semiconductor
     ansi_color 0;34;107
     match_string Holtek
 
-name Hoodman Corporation
-    name_short Hoodman
-    url www.hoodmanusa.com
-    ansi_color 0;30;43
-    match_string Hoodman
-
-name HT Micron
-    match_string HT Micron
-
 # JEDEC mfgr [0][64]
 name Infineon Technologies
     name_short infineon
@@ -570,12 +550,6 @@ name Infineon Technologies
     ansi_color 0;34;107
     match_string Infineon
     match_string Infineon (former Siemens)
-
-name Insyde Software
-    name_short Insyde
-    url www.insyde.com
-    ansi_color 0;30;42
-    match_string Insyde
 
 name Intel Corporation
     name_short Intel
@@ -727,8 +701,8 @@ name Logitech International
     url www.logitech.com
     match_string Logitech
 
-name Longsys (formerly Micron Lexar)
-    name_short longsys/Lexar
+name Lexar
+    name_short Lexar
     url lexar.com
     wikipedia Lexar
     ansi_color 0;31;40
@@ -769,43 +743,17 @@ name Maxtor
     url www.maxtor.com
     match_string Maxtor
 
-name AO MCST
-    name_short MCST
-    url www.mcst.ru
-    url_support www.mcst.ru/support
+name MX Linux
+    name_short MX Linux
     ansi_color 0;34;107
-    match_string EL2S4
-    match_string MBE1C-PC
-    match_string MONOCUB
-    match_string E8C-SWTX
-    match_string_prefix MBE8C-PC
-    match_string Elbrus-MCST
-
-name AO MCST
-    name_short Information:
-    url www.mcst.ru/elbrus-4c
-    match_string Elbrus-4C
-    url www.mcst.ru/elbrus-1c-plus
-    match_string Elbrus-1C+
-    url www.mcst.ru/elbrus-2c-plus
-    match_string Elbrus-2C+
-    url www.mcst.ru/elbrus-8c
-    match_string Elbrus-8C
-    url www.mcst.ru/elbrus-8sv
-    match_string Elbrus-8CB
-    url www.mcst.ru/elbrus-12c
-    match_string Elbrus-12C
-    url www.mcst.ru/elbrus-16c
-    match_string Elbrus-16C
-    url www.mcst.ru/elbrus-2c3
-    match_string Elbrus-2C3
+    url www.mxlinux.org
+    match_string MX Linux
 
 name Manjaro Linux
     name_short Manjaro Linux
     url www.manjaro.org
     ansi_color 0;33;40
     match_string Manjaro Linux
-
 
 name MediaTek
     url www.mediatek.com
@@ -1144,9 +1092,6 @@ name Sharp Corporation
     note EDID vendor: SHP
     match_string_exact SHP
 
-name Siano Mobile Silicon
-    match_string Siano Mobile Silicon
-
 name Siemens AG
     name_short Siemens
     url www.siemens.com
@@ -1236,11 +1181,6 @@ name STMicroelectronics
     ansi_color 0;97;104
     match_string STMicroelectronics
     match_string ST Micro
-
-name Suprema
-    url www.supremainc.com
-    ansi_color 0;31;107
-    match_string suprema
 
 name Synaptics (formerly Brooktree)
     name_short Synaptics (Brooktree)
@@ -1341,14 +1281,6 @@ name United Microelectronics Corporation
     note x86 processor vendor ID
     match_string UMC UMC UMC
 
-name Valve Corporation
-    name_short VALVE
-    url valvesoftware.com
-    wikipedia Valve Corporation
-    ansi_color 0;97;41
-    match_string Valve Corporation
-    match_string Valve
-
 name VIA (formerly Centaur Technology)
     name_short VIA (Centaur)
     url www.via.tw
@@ -1425,13 +1357,6 @@ name Western Digital
     match_string Western Digital
     match_string_case WDC
     match_string_num_prefix_case WD
-
-# Company defunct, now brand name of Chinese company
-name Westinghouse Electronics
-    name_short W
-    wikipedia Westinghouse Electronics
-    ansi_color 0;97;44
-    match_string Westinghouse
 
 name Winbond Electronics Corporation
     name_short Winbond
