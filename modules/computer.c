@@ -599,7 +599,6 @@ gchar *callback_os(void)
          computer->os->distro, computer->os->distrocode))
        : computer->os->distro;
 
-    struct InfoGroup *version_group =
     info_add_group(
         info, _("Version"), info_field(_("Kernel"), computer->os->kernel),
         info_field(_("Command Line"), idle_free(strwrap(computer->os->kcmdline,80,' ')) ?: _("Unknown")),
@@ -609,13 +608,6 @@ gchar *callback_os(void)
                    .value_has_vendor = TRUE,
                    .icon = distro_icon),
         info_field_last());
-
-    if (computer->os->distro_flavor) {
-        info_group_add_field(version_group,
-            info_field(_("Spin/Flavor"), computer->os->distro_flavor->name,
-                .value_has_vendor = TRUE,
-                .icon = computer->os->distro_flavor->icon) );
-    }
 
     info_add_group(info, _("Current Session"),
         info_field(_("Computer Name"), computer->os->hostname),

@@ -335,7 +335,6 @@ set(MODULE_computer_SOURCES
 	modules/computer/memory_usage.c
 	modules/computer/modules.c
 	modules/computer/os.c
-	modules/computer/ubuntu_flavors.c
 	modules/computer/uptime.c
 	modules/computer/users.c
 	modules/computer/groups.c

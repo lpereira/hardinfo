@@ -22,10 +22,101 @@
 #include <sys/utsname.h>
 #include "hardinfo.h"
 #include "computer.h"
-#include "distro_flavors.h"
+#include "util_sysobj.h" /* for appfsp() */
 
-static gchar *
-get_libc_version(void)
+//find distro for debian/unbuntu bases
+typedef struct {
+    const char *name;
+    const char *id;
+    const char *aptname;
+    const char *filename;
+    const char *versiontext;
+} AptFlavor;
+
+static const AptFlavor apt_flavors[] = {
+    { "Ubuntu Server",  "ubuntu",          "ubuntu-server",            "",                           "" },
+    { "Ubuntu Desktop", "ubuntu",          "ubuntu-desktop",           "",                           "" },
+    { "Ubuntu MATE",    "ubuntu-mate",     "ubuntu-mate-desktop",      "",                           "" },
+    { "Ubuntu Budgie",  "ubuntu-budgie",   "ubuntu-budgie-desktop",    "",                           "" },
+    { "Ubuntu Kylin",   "ubuntu-kylin",    "ubuntukylin-desktop",      "",                           "" },
+    { "Ubuntu Studio",  "ubuntu-studio",   "ubuntustudio-desktop",     "",                           "" },
+    { "Xubuntu",        "xubuntu",         "xubuntu-desktop",          "",                           "" },
+    { "Kubuntu",        "kubuntu",         "kubuntu-desktop",          "",                           "" },
+    { "Lubuntu",        "lubuntu",         "lubuntu-desktop",          "",                           "" },
+    { "Edubuntu",       "edubuntu",        "edubuntu-desktop",         "",                           "" },
+    { "Bodhi Linux",    "bodhi",           "bodhi-appcenter",          "/etc/bodhi/info",            "RELEASE=" },
+    { "MX Linux",       "mxlinux",         "mx-welcome",               "/etc/mx-version",            "MX-" },
+    { "Raspbian",       "raspbian",        "raspbian-archive-keyring", "",                           "" },
+    { "Armbian",        "armbian",         "armbian-config",           "/etc/armbian-image-release", "VERSION=" },
+    { "Raspberry Pi",   "raspberry-pi",    "rpi-update",               "",                           "" },
+    /* old non active distros */
+    { "Ubuntu GNOME",   "ubuntu-gnome",    "ubuntu-gnome-desktop",     "",                           "" },
+    // Mythbuntu
+    { NULL }
+};
+
+void apt_flavors_scan(char **pretty_name,char **codename,char **id) {
+    gboolean spawned;
+    gchar *out, *err, *p, *next_nl,*st,*version;
+    gchar **split, *contents, **line;
+    gint exit_status;
+    const AptFlavor *f = NULL;
+    gchar *cmd_line = g_strdup("apt-cache policy");
+    for(int i = 0; apt_flavors[i].name; i++) {
+        cmd_line = appfsp(cmd_line, "%s", apt_flavors[i].aptname);
+    }
+
+    spawned = hardinfo_spawn_command_line_sync(cmd_line, &out, &err, &exit_status, NULL);
+    if (spawned) {
+        p = out;
+        while((next_nl = strchr(p, '\n'))) {
+            strend(p, '\n');
+            int mc = 0;
+            char pkg[32] = "";
+            if (*p != ' ' && *p != '\t')
+                mc = sscanf(p, "%31s", pkg);
+            if (mc == 1) {
+                strend(pkg, ':');
+                int i=0; while(apt_flavors[i].name && !SEQ(apt_flavors[i].aptname, pkg)) i++;
+		if(apt_flavors[i].name) f=&apt_flavors[i]; else f=NULL;
+            } else if(g_strstr_len(p, -1, "Installed:") && !g_strstr_len(p, -1, "(none)") ) {
+	        //find version
+	        version=NULL; split=NULL; contents=NULL;
+                if (f && f->filename && (strlen(f->filename)>1) && g_file_get_contents(f->filename, &contents, NULL, NULL)){
+		    split = g_strsplit(contents, "\n", 0);
+		    if (split) for (line = split; *line; line++) {
+		        if (!f->versiontext || !strlen(f->versiontext) || !strncmp(*line, f->versiontext, strlen(f->versiontext))) {
+			    version = g_strdup(*line + strlen(f->versiontext));
+			    strend(version,' ');
+			    strend(version,'_');
+			    //clean up version and allow zero length
+			    st=version; version=strreplace(version,"\"",""); g_free(st);
+			    st=version; version=strreplace(version,"\n",""); g_free(st);
+			    if(strlen(version)<1) {g_free(version);version=NULL;}
+		        }
+		    }
+		}
+		if(version){
+	            st=*pretty_name; *pretty_name=g_strdup_printf("%s %s - %s",f->name, version, *pretty_name); g_free(st);
+		} else {
+	            st=*pretty_name; *pretty_name=g_strdup_printf("%s - %s",f->name, *pretty_name); g_free(st);
+		}
+                //g_free(*codename);*codename=NULL;
+		if(contents) g_free(contents);
+		if(split) g_strfreev(split);
+                g_free(*id);*id=g_strdup(f->id);
+	        break;
+            }
+            p = next_nl + 1;
+        }
+        g_free(out);
+        g_free(err);
+    }
+    g_free(cmd_line);
+}
+
+
+static gchar *get_libc_version(void)
 {
     static const struct {
         const char *test_cmd;
@@ -101,8 +192,7 @@ static gchar *detect_kde_version(void)
     return tmp ? g_strdup(tmp + strlen("KDE: ")) : NULL;
 }
 
-static gchar *
-detect_gnome_version(void)
+static gchar *detect_gnome_version(void)
 {
     gchar *tmp;
     gchar *out;
@@ -134,8 +224,7 @@ detect_gnome_version(void)
 }
 
 
-static gchar *
-detect_mate_version(void)
+static gchar *detect_mate_version(void)
 {
     gchar *tmp;
     gchar *out;
@@ -155,8 +244,7 @@ detect_mate_version(void)
     return NULL;
 }
 
-static gchar *
-detect_window_manager(void)
+static gchar *detect_window_manager(void)
 {
   const gchar *curdesktop;
   const gchar* windowman;
@@ -198,8 +286,7 @@ desktop_with_session_type(const gchar *desktop_env)
     return g_strdup(desktop_env);
 }
 
-static gchar *
-detect_xdg_environment(const gchar *env_var)
+static gchar *detect_xdg_environment(const gchar *env_var)
 {
     const gchar *tmp;
 
@@ -229,8 +316,7 @@ detect_xdg_environment(const gchar *env_var)
     return g_strdup(tmp);
 }
 
-static gchar *
-detect_desktop_environment(void)
+static gchar *detect_desktop_environment(void)
 {
     const gchar *tmp;
     gchar *windowman;
@@ -267,8 +353,7 @@ detect_desktop_environment(void)
     return g_strdup(_("Unknown"));
 }
 
-gchar *
-computer_get_dmesg_status(void)
+gchar *computer_get_dmesg_status(void)
 {
     gchar *out = NULL, *err = NULL;
     int ex = 1, result = 0;
@@ -290,8 +375,7 @@ computer_get_dmesg_status(void)
     return g_strdup(_("(Unknown)"));
 }
 
-gchar *
-computer_get_aslr(void)
+gchar *computer_get_aslr(void)
 {
     switch (h_sysfs_read_int("/proc/sys/kernel", "randomize_va_space")) {
     case 0:
@@ -305,8 +389,7 @@ computer_get_aslr(void)
     }
 }
 
-gchar *
-computer_get_entropy_avail(void)
+gchar *computer_get_entropy_avail(void)
 {
     gchar tab_entropy_fstr[][32] = {
       N_(/*/bits of entropy for rng (0)*/              "(None or not available)"),
@@ -321,8 +404,7 @@ computer_get_entropy_avail(void)
     return g_strdup_printf(_(tab_entropy_fstr[0]), bits);
 }
 
-gchar *
-computer_get_language(void)
+gchar *computer_get_language(void)
 {
     gchar *tab_lang_env[] =
         { "LANGUAGE", "LANG", "LC_ALL", "LC_MESSAGES", NULL };
@@ -352,46 +434,17 @@ computer_get_language(void)
     return ret;
 }
 
-static Distro
-parse_os_release(void)
+static Distro parse_os_release(void)
 {
     gchar *pretty_name = NULL;
     gchar *id = NULL;
     gchar *version = NULL;
     gchar *codename = NULL;
     gchar **split, *contents, **line;
-    int armbian=0,raspberry=0,mxlinux=0;//debian
-    int kubuntu=0;//ubuntu
 
-    //check for MX Linux
-    if (g_file_get_contents("/etc/mx-version", &contents, NULL, NULL)){
-        mxlinux=1;
-        g_free(contents);
-    }
-
-    //check for rpi
-    if (g_file_get_contents("/etc/rpi-issue", &contents, NULL, NULL)){
-        raspberry=1;
-        g_free(contents);
-    }
-
-    //check for armbian
-    if (g_file_get_contents("/etc/armbian-release", &contents, NULL, NULL)){
-        g_free(contents);
-	armbian=1;
-    }
-
-    //check for kubuntu
-    if (g_file_get_contents("/etc/kubuntu-default-settings/directory-home", &contents, NULL, NULL)){
-        g_free(contents);
-	kubuntu=1;
-    }
-
-    //some overrides the /etc/os-release, which is normally a link=>check first
-    if (!g_file_get_contents("/etc/os-release", &contents, NULL, NULL)){
-        if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
+    //some overrides the /etc/os-release, so we use usr/lib and fixes distro via Apt
+    if (!g_file_get_contents("/usr/lib/os-release", &contents, NULL, NULL))
             return (Distro) {};
-    }
 
 
     split = g_strsplit(contents, "\n", 0);
@@ -472,55 +525,9 @@ parse_os_release(void)
 	g_strstrip(pretty_name);
     }
 
-    //read debian version & flavour it
-    if (pretty_name && version && g_str_equal(id, "debian")) {
-        if (g_file_get_contents("/etc/debian_version", &contents, NULL, NULL)){
-            if (isdigit(contents[0])){
-	        if(mxlinux){
-		    gchar *t=pretty_name;
-		    pretty_name=g_strdup_printf("MX Linux - Debian %s",contents);
-		    g_free(t);
-		    //
-		    t=id;
-		    id=g_strdup("mxlinux");
-		    g_free(t);
-	        } else if(raspberry){
-		    gchar *t=pretty_name;
-		    pretty_name=g_strdup_printf("Raspberry Pi - Debian %s",contents);
-		    g_free(t);
-		    //
-		    t=id;
-		    id=g_strdup("raspberry-pi");
-		    g_free(t);
-	        } else if(armbian){
-		    gchar *t=pretty_name;
-		    pretty_name=g_strdup_printf("%s - Debian %s",t,contents);
-		    g_free(t);
-		    //
-		    t=id;
-		    id=g_strdup("armbian");
-		    g_free(t);
-		} else {
-		    gchar *t=pretty_name;
-	            pretty_name=strreplace(t,version,contents);
-		    g_free(t);
-		}
-            }
-            g_free(contents);
-        }
-    }
-
-    //ubuntu flavour it
-    if (pretty_name && version && g_str_equal(id, "ubuntu")) {
-        if(kubuntu){
-	    gchar *t=pretty_name;
-	    pretty_name=strreplace(pretty_name,"Ubuntu","Kubuntu");
-	    g_free(t);
-	    //
-	    t=id;
-	    id=g_strdup("kubuntu");
-	    g_free(t);
-	}
+    //use APT to find distro
+    if (pretty_name && (g_str_equal(id, "debian") ||g_str_equal(id, "ubuntu")) ) {
+        apt_flavors_scan(&pretty_name,&codename,&id);
     }
 
     if (pretty_name){
@@ -536,8 +543,7 @@ parse_os_release(void)
 }
 
 
-static Distro
-detect_distro(void)
+static Distro detect_distro(void)
 {
     static const struct {
         const gchar *file;
@@ -545,13 +551,13 @@ detect_distro(void)
         const gchar *override;
     } distro_db[] = {
 #define DB_PREFIX "/etc/"
-        { DB_PREFIX "arch-release", "arch", "Arch Linux" },
+        //{ DB_PREFIX "arch-release", "arch", "Arch Linux" },
         { DB_PREFIX "fatdog-version", "fatdog" },
-        { DB_PREFIX "debian_version", "debian" },
+	//{ DB_PREFIX "debian_version", "debian" },
         { DB_PREFIX "slackware-version", "slk" },
         { DB_PREFIX "mandrake-release", "mdk" },
         { DB_PREFIX "mandriva-release", "mdv" },
-        { DB_PREFIX "fedora-release", "fedora" },
+        //{ DB_PREFIX "fedora-release", "fedora" },
         { DB_PREFIX "coas", "coas" },
         { DB_PREFIX "environment.corel", "corel"},
         { DB_PREFIX "gentoo-release", "gnt" },
@@ -571,6 +577,7 @@ detect_distro(void)
         { DB_PREFIX "PartedMagic-version", "pmag" },
         { DB_PREFIX "NIXOS", "nixos", "NixOS Linux" },
          /*
+         * REMOVE ABOVE AS MUCH AS POSSIBLE - No debian/ubuntu in above, nor rolling, etc.
          * RedHat must be the *last* one to be checked, since
          * some distros (like Mandrake) includes a redhat-relase
          * file too.
@@ -652,15 +659,6 @@ computer_get_os(void)
         os->desktop = desktop_with_session_type(idle_free(os->desktop));
 
     os->entropy_avail = computer_get_entropy_avail();
-
-    if (g_strcmp0(os->distroid, "ubuntu") == 0) {
-        GSList *flavs = ubuntu_flavors_scan();
-        if (flavs) {
-            /* just use the first one */
-            os->distro_flavor = (DistroFlavor*)flavs->data;
-        }
-        g_slist_free(flavs);
-    }
 
     return os;
 }
