@@ -101,6 +101,12 @@ name Allwinner Technology
     ansi_color 0;97;44
     match_string AllWinner
 
+name AlmaLinux
+    name_short AlmaLinux
+    url www.almalinux.org
+    ansi_color 0;31;40
+    match_string AlmaLinux
+
 name American Megatrends
     name_short AMI
     url www.ami.com
@@ -151,7 +157,7 @@ name Applied Micro Circuits
     match_string_case AMCC
 
 name Arch Linux
-    name_short Arch
+    name_short Arch Linux
     url www.archlinux.org
     ansi_color 0;36;107
     match_string arch linux
@@ -225,6 +231,12 @@ name Biostar Microtech International
     ansi_color 0;31;40
     match_string Biostar
 
+name Bodhi Linux
+    name_short Bodhi Linux
+    url www.bodhilinux.com
+    ansi_color 0;97;42
+    match_string Bodhi Linux
+
 name Bright Micron Technology
     name_short BMT
     match_string Bright Micron
@@ -272,6 +284,12 @@ name CDEmu
     url cdemu.sourceforge.io
     match_string CDEmu
 
+name CentOS
+    name_short CentOS
+    ansi_color 0;34;107
+    url www.centos.org
+    match_string CentOS
+
 name Chengdu Haiguang Integrated Circuit Design
     name_short Hygon
     ansi_color 0;97;104
@@ -289,6 +307,12 @@ name Chicony
 name Cirrus Logic
     url www.cirrus.com
     match_string Cirrus Logic
+
+name Clear Linux
+    name_short Clear Linux
+    ansi_color 0;34;107
+    url www.clearlinux.org
+    match_string Clear Linux
 
 name Coreboot Project
     name_short Coreboot
@@ -345,6 +369,12 @@ name Dell Computer
     note EDID vendor: DEL
     match_string_exact DEL
 
+name Devuan
+    name_short Devuan
+    ansi_color 0;34;107
+    url www.devuan.org
+    match_string Devuan
+
 name Digital Equipment Corporation
     name_short DEC
     note Dead; various parts to Intel, Compaq, HP
@@ -374,6 +404,12 @@ name Embest Technology
     ansi_color 0;96;44
     match_string Embest
 
+name EndeavourOS
+    name_short EndeavourOS
+    url www.endeavouros.com
+    ansi_color 0;33;40
+    match_string EndeavourOS
+
 name eMPIA Technology
     url www.empiatech.com.tw
     match_string_case eMPIA
@@ -400,6 +436,13 @@ name Faraday Technology
     match_string Faraday Technology
     match_string Faraday
 
+name Fedora Linux
+    name_short Fedora
+    ansi_color 0;34;107
+    url www.fedoraproject.com
+    match_string Fedora Linux
+    match_string Fedora
+
 name Fujitsu
     name_short FUJITSU
     url www.fujitsu.com
@@ -413,6 +456,11 @@ name Fuzhou Rockchip Electronics
     url www.rock-chips.com
     ansi_color 0;34;43
     match_string Rockchip
+
+name Garuda Linux
+    url www.garudalinux.org
+    ansi_color 0;97;45
+    match_string Garuda Linux
 
 name G.Skill International Enterprise
     name_short G.Skill
@@ -584,6 +632,12 @@ name Koninklijke Philips
     note EDID vendor: PHL
     match_string_exact PHL
 
+name Kubuntu
+    name_short Kubuntu
+    url www.kubuntu.org
+    ansi_color 0;97;104
+    match_string_case Kubuntu
+
 name KVM
     url www.linux-kvm.org
     match_string KVMKVMKVM
@@ -650,10 +704,22 @@ name Linux Foundation
     match_string Linux Foundation
     match_string Linux
 
+name Linux Mint
+    name_short Linux Mint
+    url www.linuxmint.com
+    ansi_color 0;97;42
+    match_string Linux Mint
+
 name LITE-ON
     url www.liteonit.com
     ansi_color 0;97;104
     match_string_case LITE-ON
+
+name LMDE
+    name_short LMDE
+    url www.linuxmint.com
+    ansi_color 0;97;42
+    match_string LMDE
 
 name Logitech International
     name_short logitech
@@ -673,6 +739,12 @@ name Longsys
     url longsys.com
     ansi_color 0;31;107
     match_string Longsys
+
+name Lubuntu
+    name_short Lubuntu
+    ansi_color 0;30;107
+    url www.lubuntu.me
+    match_string Lubuntu
 
 name Magewell
     url www.magewell.com
@@ -727,6 +799,13 @@ name AO MCST
     match_string Elbrus-16C
     url www.mcst.ru/elbrus-2c3
     match_string Elbrus-2C3
+
+name Manjaro Linux
+    name_short Manjaro Linux
+    url www.manjaro.org
+    ansi_color 0;33;40
+    match_string Manjaro Linux
+
 
 name MediaTek
     url www.mediatek.com
@@ -816,6 +895,12 @@ name Oculus VR
     match_string Oculus VR
     match_string Oculus
 
+name openSUSE
+    name_short openSUSE
+    url www.opensuse.org
+    ansi_color 0;97;42
+    match_string openSUSE
+
 name Oracle Corporation (formerly InnoTek Systemberatung)
     name_short Oracle (InnoTek)
     url www.virtualbox.org/wiki/innotek
@@ -865,6 +950,12 @@ name Patriot Memory
     ansi_color 0;97;44
     match_string Patriot Memory
 
+name PCLinuxOS
+    name_short PCLinuxOS
+    url www.pclinuxos.com
+    ansi_color 0;97;44
+    match_string PCLinuxOS
+
 name Phison Electronics Corporation
     name_short Phison
     url www.phison.com
@@ -900,6 +991,18 @@ name PNY Technologies
     wikipedia PNY Technologies
     ansi_color 0;97;100
     match_string_case PNY
+
+name Pop!_OS
+    name_short Pop!_OS
+    url pop.system76.com
+    ansi_color 0;97;100
+    match_string_case Pop!_OS
+
+name PureOS
+    name_short PureOS
+    ansi_color 0;34;107
+    url www.pureos.net
+    match_string PureOS
 
 name Qualcomm (formerly Atheros)
     name_short Qualcomm (Atheros)
@@ -939,7 +1042,7 @@ name Raspberry Pi Foundation
     match_string Raspberry Pi
 
 name Raspbian
-    url www.raspberrypi.org/downloads/raspbian/
+    url www.raspbian.org
     ansi_color 0;97;101
     match_string raspbian
 
@@ -972,6 +1075,12 @@ name Rise Technology
     name_short Rise
     note x86 processor vendor ID
     match_string RiseRiseRise
+
+name Rocky Linux
+    name_short Rocky Linux
+    url www.rockylinux.org
+    ansi_color 0;97;42
+    match_string Rocky Linux
 
 name S3 Graphics
     name_short VIA/S3
@@ -1293,6 +1402,12 @@ name Vizio
     note EDID vendor: VIZ
     match_string_exact VIZ
 
+name Void Linux
+    name_short Void Linux
+    url www.voidlinux.org
+    ansi_color 0;33;40
+    match_string Void Linux
+
 name VMware
     url www.vmware.com
     wikipedia VMware
@@ -1342,6 +1457,12 @@ name XFX Pine Group
     wikipedia XFX
     ansi_color 0;30;42
     match_string_case XFX
+
+name Xubuntu
+    name_short Xubuntu
+    ansi_color 0;30;107
+    url www.xubuntu.org
+    match_string Xubuntu
 
 name Yamaha Corporation
     name_short Yamaha
