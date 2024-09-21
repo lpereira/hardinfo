@@ -885,6 +885,7 @@ gchar *get_os_kernel(void)
 gchar *get_os(void)
 {
     scan_os(FALSE);
+    if(computer->os->distrocode) return g_strdup_printf("%s (%s)",computer->os->distro,computer->os->distrocode);
     return g_strdup(computer->os->distro);
 }
 
