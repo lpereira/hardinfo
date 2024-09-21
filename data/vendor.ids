@@ -823,6 +823,12 @@ name NexGen
     note x86 processor vendor ID
     match_string NexGenDriven
 
+name NixOS Linux
+    name_short NixOS Linux
+    ansi_color 0;34;107
+    url nixos.org
+    match_string NixOS Linux
+
 name nVidia Corporation
     name_short nVidia
     url www.nvidia.com
