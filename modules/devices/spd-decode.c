@@ -1229,14 +1229,25 @@ GSList *spd_scan() {
                     if (isdigit(dir_entry[0])) {
                         name_file = g_build_filename(driver->dir_path, dir_entry, "name", NULL);
                         g_file_get_contents(name_file, &name, NULL, NULL);
-
-                        is_spd = g_strcmp0(name, driver->spd_name);
-
+			is_spd=g_strcmp0(name, driver->spd_name);
                         g_free(name_file);
-                        g_free(name);
+			g_free(name);
+			//check i2c controller is SMBus for eeprom (eeproms autodection is wild, so we improve)
+			if(strstr(driver->spd_name,"eeprom") && is_spd){
+			    name=g_strdup(dir_entry);
+                            strend(name,'-');
+                            name_file = g_strdup_printf("/sys/bus/i2c/devices/i2c-%s/name", name);
+			    g_free(name); name=NULL;
+                            g_file_get_contents(name_file, &name, NULL, NULL);
+			    is_spd=0;
+			    if(name){
+                                is_spd=(strstr(name, "SMBus")?1:0);
+                                g_free(name);
+			    }
+                            g_free(name_file);
+		        }
                     }
-                }
-                else {
+                } else {
                     is_spd = g_str_has_prefix(dir_entry, "eeprom-");
                 }
 
