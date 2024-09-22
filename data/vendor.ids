@@ -952,6 +952,12 @@ name Pop!_OS
     ansi_color 0;97;100
     match_string_case Pop!_OS
 
+name Puppy Linux
+    name_short Puppy Linux
+    url puppylinux-woof-ce.github.io
+    ansi_color 0;31;107
+    match_string Puppy Linux
+
 name PureOS
     name_short PureOS
     ansi_color 0;34;107

@@ -50,78 +50,91 @@ static const AptFlavor apt_flavors[] = {
     { "Armbian",        "armbian",         "armbian-config",           "/etc/armbian-image-release", "VERSION=" },
     { "Raspberry Pi",   "raspberry-pi",    "rpi-update",               "/etc/os-release",            "VERSION_ID=" },
     { "PureOS",         "pureos",          "pureos-settings",          "/etc/os-release",            "VERSION_ID=" },
+    { "Puppy Linux",    "puppy",           "/etc/DISTRO_SPECS",        "/etc/DISTRO_SPECS",          "DISTRO_VERSION=" },
     { "Ubuntu GNOME",   "ubuntu-gnome",    "ubuntu-gnome-desktop",     "/etc/os-release",            "VERSION_ID=" },//dead
     { NULL }
 };
 void apt_flavors_scan(gchar **pretty_name, gchar **codename, gchar **id, gchar **orig_id, gchar **orig_name) {
     gboolean spawned;
     gchar *out, *err, *p, *next_nl,*st,*version;
-    gchar **split, *contents, **line;
+    gchar **split, *contents=NULL, **line;
     gint exit_status;
     const AptFlavor *f = NULL;
     gchar *cmd_line = g_strdup("apt-cache policy");
     int i = 0, found=0;
-      while(apt_flavors[i].name){
-        cmd_line = appfsp(cmd_line, "%s", apt_flavors[i].aptname);
+
+    while(apt_flavors[i].name){
+        if(apt_flavors[i].aptname[0]!='/') cmd_line = appfsp(cmd_line, "%s", apt_flavors[i].aptname);
+	if((apt_flavors[i].aptname[0]=='/') && g_file_get_contents(apt_flavors[i].aptname, &contents, NULL, NULL)) {found=1;break;}
 	i++;
     }
+    if(found){
+        f = &apt_flavors[i];
+	g_free(contents);
+    } else {
+        spawned = hardinfo_spawn_command_line_sync(cmd_line, &out, &err, &exit_status, NULL);
+        if (spawned) {
+            p = out;
+            while((next_nl = strchr(p, '\n'))) {
+                strend(p, '\n');
+                int mc = 0;
+		char pkg[32] = "";
+		if (*p != ' ' && *p != '\t')
+		  mc = sscanf(p, "%31s", pkg);
+		if (mc == 1) {
+		  strend(pkg, ':');
+		  int i=0;
+		  while(apt_flavors[i].name && !SEQ(apt_flavors[i].aptname, pkg)) i++;
+		  if(apt_flavors[i].name) f = &apt_flavors[i]; else f=NULL;
+		} else if(g_strstr_len(p, -1, "Installed:") && !g_strstr_len(p, -1, "(none)") ) {
+		  found=1;
+		  break;
+		}
+		p = next_nl + 1;
+	    }
+	    g_free(out);
+	    g_free(err);
+	}
+    }
 
-    spawned = hardinfo_spawn_command_line_sync(cmd_line, &out, &err, &exit_status, NULL);
-    if (spawned) {
-        p = out;
-        while((next_nl = strchr(p, '\n'))) {
-            strend(p, '\n');
-            int mc = 0;
-            char pkg[32] = "";
-            if (*p != ' ' && *p != '\t')
-                mc = sscanf(p, "%31s", pkg);
-            if (mc == 1) {
-                strend(pkg, ':');
-                int i=0; while(apt_flavors[i].name && !SEQ(apt_flavors[i].aptname, pkg)) i++;
-		if(apt_flavors[i].name) f=&apt_flavors[i]; else f=NULL;
-            } else if(g_strstr_len(p, -1, "Installed:") && !g_strstr_len(p, -1, "(none)") ) {
-	        //find version
-	        version=NULL; split=NULL; contents=NULL;
-                if (f && f->filename && (strlen(f->filename)>1) && g_file_get_contents(f->filename, &contents, NULL, NULL)){
-		    split = g_strsplit(contents, "\n", 0);
-		    if (split) for (line = split; *line; line++) {
-                        if (!f->versiontext ||
-                           (!strlen(f->versiontext) || !strncmp(*line, f->versiontext, strlen(f->versiontext))) ) {
-		            if(strlen(f->versiontext)==0)
-		                version=g_strdup(contents);
-		            else
-		                version = g_strdup(*line + strlen(f->versiontext));
-			    strend(version,' ');
-			    strend(version,'_');
-			    //clean up version and allow zero length
-			    st=version; version=strreplace(version,"\"",""); g_free(st);
-			    st=version; version=strreplace(version,"\n",""); g_free(st);
-			    if(strlen(version)<1) {g_free(version);version=NULL;}
-		        }
-		    }
+    if(found){
+        //find version
+        version=NULL; split=NULL; contents=NULL;
+        if (f && f->filename && (strlen(f->filename)>1) && g_file_get_contents(f->filename, &contents, NULL, NULL)){
+	    split = g_strsplit(contents, "\n", 0);
+	    if (split) for (line = split; *line; line++) {
+		if (!f->versiontext ||
+		    (!strlen(f->versiontext) || !strncmp(*line, f->versiontext, strlen(f->versiontext))) ) {
+		  if(strlen(f->versiontext)==0)
+		      version=g_strdup(contents);
+		  else
+		      version = g_strdup(*line + strlen(f->versiontext));
+		  strend(version,' ');
+		  strend(version,'_');
+		  //clean up version and allow zero length
+		  st=version; version=strreplace(version,"\"",""); g_free(st);
+		  st=version; version=strreplace(version,"\n",""); g_free(st);
+		  if(strlen(version)<1) {g_free(version); version=NULL;}
 		}
-		if(version){
-	            st=*pretty_name; *pretty_name=g_strdup_printf("%s %s - %s", f->name, version, st); g_free(st);
-		} else {
-	            st=*pretty_name; *pretty_name=g_strdup_printf("%s - %s", f->name, st); g_free(st);
-		}
-                //g_free(*codename);*codename=NULL;
-		if(contents) g_free(contents);
-		if(split) g_strfreev(split);
-                g_free(*id);*id=g_strdup(f->id);
-		found=1;
-	        break;
-            }
-            p = next_nl + 1;
-        }
-        g_free(out);
-        g_free(err);
+	      }
+	}
+	if(version){
+	    st=*pretty_name; *pretty_name=g_strdup_printf("%s %s - %s", f->name, version, st); g_free(st);
+	} else {
+	    st=*pretty_name; *pretty_name=g_strdup_printf("%s - %s", f->name, st); g_free(st);
+	}
+	//g_free(*codename);*codename=NULL;
+	if(contents) g_free(contents);
+	if(split) g_strfreev(split);
+	g_free(*id);*id=g_strdup(f->id);
     }
     //use from os-release if not found and not native debian
-    if(!found && !g_str_equal(*orig_id,"debian")){
+    if(!found && *orig_id && !g_str_equal(*orig_id,"debian")){
 	*id=*orig_id;
-        st=*pretty_name; *pretty_name=g_strdup_printf("%s - %s", *orig_name, st); g_free(st);
-        g_free(*orig_name);
+	if(*pretty_name && *orig_name){
+            st=*pretty_name; *pretty_name=g_strdup_printf("%s - %s", *orig_name, st); g_free(st);
+	}
+        if(*orig_name) g_free(*orig_name);
     }
     g_free(cmd_line);
 }
@@ -545,15 +558,19 @@ static Distro parse_os_release(void)
        g_free(contents);
     }
     //Based on debian add to distro string
-    if(pretty_name && id && g_file_get_contents("/etc/debian_version", &contents , NULL, NULL) ) {
+    if(pretty_name && id && (g_file_get_contents("/etc/debian_version", &contents , NULL, NULL) || g_str_equal(id,"debian")) ) {
        orig_id=id;
        id=g_strdup("debian");
        orig_name=pretty_name;
        //debian version check
-       if (isdigit(contents[0]) || contents[0] != 'D')
-           pretty_name=g_strdup_printf("Debian GNU/Linux %s", contents);
-       else
+       if (!contents || isdigit(contents[0]) || contents[0] != 'D') {
+	   if(contents)
+              pretty_name=g_strdup_printf("Debian GNU/Linux %s", contents);
+           else
+              pretty_name=g_strdup_printf("Debian GNU/Linux");
+       } else {
            pretty_name=g_strdup(contents);
+       }
        g_free(contents);
     }
     //use APT to find distro
@@ -603,8 +620,7 @@ static Distro detect_distro(void)
         { DB_PREFIX "SuSE-release",        "suse" },
         { DB_PREFIX "sun-release",         "sun" },
         { DB_PREFIX "zenwalk-version",     "zen" },
-        { DB_PREFIX "DISTRO_SPECS",        "ppy",      "Puppy Linux",     NULL },
-        { DB_PREFIX "puppyversion",        "ppy",      "Puppy Linux",     NULL },
+        { DB_PREFIX "DISTRO_SPECS",        "puppy",    "Puppy Linux",     "DISTRO_VERSION=" },
         { DB_PREFIX "distro-release",      "fl" },
         { DB_PREFIX "vine-release",        "vine" },
         { DB_PREFIX "PartedMagic-version", "pmag" },
