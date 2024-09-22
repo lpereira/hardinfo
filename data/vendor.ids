@@ -1213,6 +1213,13 @@ name Synopsys
     ansi_color 0;35;107
     match_string Synopsys
 
+name System Rescue
+    name_short System Rescue
+    url www.system-rescue.org
+    ansi_color 0;97;44
+    match_string System Rescue
+    match_string SystemRescue
+
 name TDK-Micronas
     url www.micronas.com
     match_string Micronas
