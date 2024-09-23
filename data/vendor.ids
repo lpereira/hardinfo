@@ -1144,13 +1144,15 @@ name Slackware
     name_short Slackware
     url www.slackware.com
     ansi_color 0;30;107
-    match_string Slackware
+    match_string Slackw
 
+#note: Slint can miss matching compared to slackware (longer word)
 name Slint
     name_short Slint
     url slint.fr
     ansi_color 0;30;107
-    match_string Slint
+    match_string_num_prefix Slint 
+#note space above needed at end of Slint
 
 name Socket Mobile
     url www.socketmobile.com
