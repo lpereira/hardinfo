@@ -57,6 +57,9 @@ typedef struct {
     char *power_state;
     char *gpu_name;
     char *storage;
+    char *vulkanDriver;
+    char *vulkanDevice;
+    char *vulkanVersions;
 } bench_machine;
 
 typedef struct {
@@ -131,6 +134,7 @@ bench_machine *bench_machine_this()
         m->ogl_renderer = module_call_method("computer::getOGLRenderer");
         tmp = module_call_method("computer::getMemoryTotal");
         m->memory_kiB = strtoull(tmp, NULL, 10);
+        free(tmp);
         m->memory_phys_MiB = memory_devices_get_system_memory_MiB();
         m->ram_types = memory_devices_get_system_memory_types_str();
         m->machine_type = module_call_method("computer::getMachineType");
@@ -140,7 +144,9 @@ bench_machine *bench_machine_this()
 	m->gpu_name= module_call_method("devices::getGPUname");
 	m->storage= strreplace(module_call_method("devices::getStorageDevicesSimple"),"\n",",");
 	if(m->storage && (strlen(m->storage)>1)) m->storage[strlen(m->storage)-1]=0;
-        free(tmp);
+	m->vulkanDriver = module_call_method("computer::getVulkanDriver");
+	m->vulkanDevice = module_call_method("computer::getVulkanDevice");
+	m->vulkanVersions = module_call_method("computer::getVulkanVersions");
 
         cpu_procs_cores_threads_nodes(&m->processors, &m->cores, &m->threads, &m->nodes);
         gen_machine_id(m);

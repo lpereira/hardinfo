@@ -850,6 +850,9 @@ static gchar *get_benchmark_results(gsize *len)
         ADD_JSON_VALUE(string, "PowerState", this_machine->power_state);
         ADD_JSON_VALUE(string, "GPU", this_machine->gpu_name);
         ADD_JSON_VALUE(string, "Storage", this_machine->storage);
+        ADD_JSON_VALUE(string, "VulkanDriver", this_machine->vulkanDriver);
+        ADD_JSON_VALUE(string, "VulkanDevice", this_machine->vulkanDevice);
+        ADD_JSON_VALUE(string, "VulkanVersions", this_machine->vulkanVersions);
 
 #undef ADD_JSON_VALUE
 

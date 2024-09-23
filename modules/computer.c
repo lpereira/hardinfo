@@ -889,6 +889,42 @@ gchar *get_os(void)
     return g_strdup(computer->os->distro);
 }
 
+gchar *get_vulkan_driver(void) {
+    scan_display(FALSE);
+    //Search for real vulkan GPU
+    int i=0;
+    while(i<VK_MAX_GPU && (computer->display->xi->vk->vk_devType[i]) && strstr(computer->display->xi->vk->vk_devType[i],"CPU")) i++;
+    if((i>=VK_MAX_GPU) || !computer->display->xi->vk->vk_devType[i] || strstr(computer->display->xi->vk->vk_devType[i],"CPU")) i=0;//not found set to first if any
+
+    return g_strdup_printf("%s V:%s info:%s",THISORUNK(computer->display->xi->vk->vk_drvName[i]),THISORUNK(computer->display->xi->vk->vk_drvVer[i]),THISORUNK(computer->display->xi->vk->vk_drvInfo[i]));
+}
+
+gchar *get_vulkan_device(void) {
+    scan_display(FALSE);
+    //Search for real vulkan GPU
+    int i=0;
+    gchar *st="";
+    while(i<VK_MAX_GPU && (computer->display->xi->vk->vk_devType[i]) && strstr(computer->display->xi->vk->vk_devType[i],"CPU")) i++;
+    if((i>=VK_MAX_GPU) || !computer->display->xi->vk->vk_devType[i] || strstr(computer->display->xi->vk->vk_devType[i],"CPU")) i=0;//not found set to first if any
+    if(computer->display->xi->vk->vk_devType[i]){
+      st=computer->display->xi->vk->vk_devType[i];
+      if(strstr(computer->display->xi->vk->vk_devType[i],"CPU")) st="CPU";
+      if(strstr(computer->display->xi->vk->vk_devType[i],"GPU")) st="GPU";
+    }
+    return g_strdup_printf("%s:%s - %s",st,THISORUNK(computer->display->xi->vk->vk_vendorId[i]),THISORUNK(computer->display->xi->vk->vk_devName[i]));
+}
+
+gchar *get_vulkan_versions(void) {
+    scan_display(FALSE);
+    //Search for real vulkan GPU
+    int i=0;
+    while(i<VK_MAX_GPU && (computer->display->xi->vk->vk_devType[i]) && strstr(computer->display->xi->vk->vk_devType[i],"CPU")) i++;
+    if((i>=VK_MAX_GPU) || !computer->display->xi->vk->vk_devType[i] || strstr(computer->display->xi->vk->vk_devType[i],"CPU")) i=0;//not found set to first if any
+
+    return g_strdup_printf("inst:%s api:%s conform:%s type:%s",THISORUNK(computer->display->xi->vk->vk_instVer),THISORUNK(computer->display->xi->vk->vk_apiVer[i]),THISORUNK(computer->display->xi->vk->vk_conformVer[i]),THISORUNK(computer->display->session_type));
+}
+
+
 gchar *get_ogl_renderer(void)
 {
     scan_display(FALSE);
@@ -1000,6 +1036,9 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getMemoryTotal", get_memory_total},
         {"getMemoryDesc", get_memory_desc},
         {"getMachineType", get_machine_type},
+        {"getVulkanDriver", get_vulkan_driver},
+        {"getVulkanDevice", get_vulkan_device},
+        {"getVulkanVersions", get_vulkan_versions},
         {NULL},
     };
 
