@@ -919,7 +919,8 @@ gchar *get_os_short(void)
 {
     scan_os(FALSE);
     gchar *os=g_strdup(computer->os->distro);
-    if(strend(os,'-')) os[strlen(os)-1]=0;
+    strend(os,'-');
+    if(os[strlen(os)-1]==' ') os[strlen(os)-1]=0;
     return os;
 }
 

@@ -572,7 +572,11 @@ static Distro parse_os_release(void)
 	//RHEL8=>FC28
 	//RHEL9=>FC34
 	//RHEL10=>FC40
-        t=pretty_name; pretty_name=g_strdup_printf("%s - RHEL %s", t,p); g_free(t);
+	if(atoi(p)>=19){//hmm, distro should have had fedora-release
+            t=pretty_name; pretty_name=g_strdup_printf("%s - Fedora %s", t,p); g_free(t);
+	} else {
+            t=pretty_name; pretty_name=g_strdup_printf("%s - RHEL %s", t,p); g_free(t);
+	}
         g_free(contents);
     }
     //Based on Arch Linux add to distro string
