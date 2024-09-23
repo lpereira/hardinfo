@@ -878,6 +878,12 @@ name Oracle Corporation
     ansi_color 0;97;41
     match_string Oracle
 
+name Oracle Linux
+    name_short Oracle Linux
+    url www.oracle.com/linux
+    ansi_color 0;97;41
+    match_string Oracle Linux
+
 name Ours Technology
     url www.oti.com.tw
     match_string_case OTi
