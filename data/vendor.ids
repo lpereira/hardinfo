@@ -1304,6 +1304,13 @@ name Ubuntu
     ansi_color 0;97;45
     match_string ubuntu
 
+name Ultramarine Linux
+    name_short Ultramarine Linux
+    ansi_color 0;34;107
+    url ultramarine-linux.org
+    match_string Ultramarine Linux
+    match_string Ultramarine
+
 name Union Memory (Shenzhen)
     name_short Union Memory
     url unionmem.com
