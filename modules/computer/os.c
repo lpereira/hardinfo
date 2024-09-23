@@ -551,6 +551,14 @@ static Distro parse_os_release(void)
 	g_strstrip(pretty_name);
     }
 
+    //Based on RedHat Linux add to distro string
+    if(pretty_name && !g_str_equal(id, "rhel") && g_file_get_contents("/etc/redhat-release", &contents , NULL, NULL) ) {
+        gchar *t,*p=contents;
+        while(*p && ((*p>'9') || (*p<'0'))) p++;
+        if(p) strend(p,' '); else p="";
+        t=pretty_name; pretty_name=g_strdup_printf("%s - RHEL %s", t,p); g_free(t);
+        g_free(contents);
+    }
     //Based on Arch Linux add to distro string
     if(pretty_name && !g_str_equal(id, "arch") && g_file_get_contents("/etc/arch-release", &contents , NULL, NULL) ) {
        gchar *t;
