@@ -531,12 +531,6 @@ static void create_window(void)
 {
     GtkWidget *vbox, *hbox;
     char theme_st[200];
-#if GTK_CHECK_VERSION(3, 20, 0)
-    GtkCssProvider *provider;
-    provider = gtk_css_provider_new();
-    GtkCssProvider *provider2;
-    provider2 = gtk_css_provider_new();
-#endif
 
     shell = g_new0(Shell, 1);
 

@@ -184,6 +184,12 @@ void cb_disable_theme()
     g_key_file_free(key_file);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
+    //Fix for budgie Fluent
+    GtkCssProvider *providera;
+    providera = gtk_css_provider_new();
+    gtk_css_provider_load_from_data(providera,"notebook {background-color:unset;}",-1,NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),GTK_STYLE_PROVIDER(providera),GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
     if(params.theme>0){//enable
        if(params.darkmode){
 	   sprintf(theme_st,"window.background {background-image: url(\"%s/pixmaps/bg%d_dark.jpg\"); background-repeat: no-repeat; background-size:100%% 100%%; }",params.path_data,params.theme);
