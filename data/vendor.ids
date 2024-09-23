@@ -1141,9 +1141,16 @@ name SK Hynix
     match_string Hyundai
 
 name Slackware
+    name_short Slackware
     url www.slackware.com
     ansi_color 0;30;107
     match_string Slackware
+
+name Slint
+    name_short Slint
+    url slint.fr
+    ansi_color 0;30;107
+    match_string Slint
 
 name Socket Mobile
     url www.socketmobile.com

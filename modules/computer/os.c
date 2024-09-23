@@ -551,10 +551,16 @@ static Distro parse_os_release(void)
 	g_strstrip(pretty_name);
     }
 
-    //Based on arch add to distro string
+    //Based on Arch Linux add to distro string
     if(pretty_name && !g_str_equal(id, "arch") && g_file_get_contents("/etc/arch-release", &contents , NULL, NULL) ) {
        gchar *t;
        t=pretty_name; pretty_name=g_strdup_printf("%s - Arch Linux", t); g_free(t);
+       g_free(contents);
+    }
+    //Based on Slackware add to distro string
+    if(pretty_name && !g_str_equal(id, "slackware") && g_file_get_contents("/etc/slackware-version", &contents , NULL, NULL) ) {
+       gchar *t;
+       t=pretty_name; pretty_name=g_strdup_printf("%s - Slackware", t); g_free(t);
        g_free(contents);
     }
     //Based on debian add to distro string
