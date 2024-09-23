@@ -829,6 +829,12 @@ name NixOS Linux
     url nixos.org
     match_string NixOS Linux
 
+name Nobara Linux
+    name_short Nobara Linux
+    ansi_color 0;34;107
+    url nobaraproject.org
+    match_string Nobara Linux
+
 name nVidia Corporation
     name_short nVidia
     url www.nvidia.com
