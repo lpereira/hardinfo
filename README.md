@@ -21,6 +21,8 @@ Status
 - Features: Online database for exchanging benchmark results.
 - Development: Currently done by community, hwspeedy maintains
 
+Latest Release News: [https://hardinfo2.org/news](https://hardinfo2.org/news)
+
 Server code can be found here: [https://github.com/hardinfo2/server](https://github.com/hardinfo2/server)
 
 Packaging status
