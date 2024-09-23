@@ -386,7 +386,7 @@ gchar *callback_memory_usage()
                lginterval);
 }
 
-static gchar *detect_machine_type(void)
+static gchar *detect_machine_type(int english)
 {
     GDir *dir;
     gchar *chassis;
@@ -398,7 +398,10 @@ static gchar *detect_machine_type(void)
     chassis = dtr_get_string("/model", 0);
     if (chassis) {
          g_free(chassis);
-         return g_strdup(_("Single-board computer"));
+	 if(english)
+             return g_strdup(N_("Single-board computer"));
+	 else
+             return g_strdup(_("Single-board computer"));
     }
 
     if (g_file_test("/proc/pmu/info", G_FILE_TEST_EXISTS))
@@ -433,7 +436,10 @@ static gchar *detect_machine_type(void)
                     g_free(contents);
                     g_dir_close(dir);
 
-                    return g_strdup(_("Laptop"));
+	            if(english)
+                        return g_strdup(N_("Laptop"));
+		    else
+                        return g_strdup(_("Laptop"));
                 }
 
                 g_free(contents);
@@ -445,14 +451,17 @@ static gchar *detect_machine_type(void)
 
     if(strstr(module_call_method("computer::getOSKernel"),"WSL2"))
         return g_strdup("WSL2");
-
-    return g_strdup(_("Unknown physical machine type"));
+    if(english)
+        return g_strdup(N_("Unknown physical machine type"));
+    else
+        return g_strdup(_("Unknown physical machine type"));
 }
 
 /* Table based off imvirt by Thomas Liske <liske@ibh.de>
    Copyright (c) 2008 IBH IT-Service GmbH under GPLv2. */
 char get_virtualization[100]={};
-gchar *computer_get_virtualization(void)
+char get_virtualization_english[100]={};
+gchar *computer_get_virtualization(int english)
 {
     gboolean found = FALSE;
     gint i, j;
@@ -491,23 +500,33 @@ gchar *computer_get_virtualization(void)
     };
     gchar *tmp;
     //Caching for speedup
-    if(get_virtualization[0]!=0) return g_strdup(get_virtualization);
+    if((get_virtualization[0]!=0) && (english==0)) return g_strdup(get_virtualization);
+    if((get_virtualization_english[0]!=0) && (english==1)) return g_strdup(get_virtualization_english);
 
     DEBUG("Detecting virtual machine");
 
     if (g_file_test("/proc/xen", G_FILE_TEST_EXISTS)) {
          DEBUG("/proc/xen found; assuming Xen");
-         return g_strdup(_("Virtual (Xen)"));
+	 if(english)
+             return g_strdup(N_("Virtual (Xen)"));
+	 else
+             return g_strdup(_("Virtual (Xen)"));
     }
 
     tmp = module_call_method("devices::getMotherboard");
     if (strstr(tmp, "VirtualBox") != NULL) {
         g_free(tmp);
-        return g_strdup(_("Virtual (VirtualBox)"));
+	if(english)
+            return g_strdup(N_("Virtual (VirtualBox)"));
+        else
+            return g_strdup(_("Virtual (VirtualBox)"));
     }
     if (strstr(tmp, "VMware") != NULL) {
         g_free(tmp);
-        return g_strdup(_("Virtual (VMware)"));
+	if(english)
+            return g_strdup(N_("Virtual (VMware)"));
+	else
+            return g_strdup(_("Virtual (VMware)"));
     }
     g_free(tmp);
 
@@ -528,20 +547,27 @@ gchar *computer_get_virtualization(void)
               fclose(file);
 
               if (found) {
-                  DEBUG("%s found (by reading file %s)",
-                        vm_types[j].vmtype, files[i]);
-		  strcpy(get_virtualization,_(vm_types[j].vmtype));//Save
-                  return g_strdup(_(vm_types[j].vmtype));
+                  DEBUG("%s found (by reading file %s)", vm_types[j].vmtype, files[i]);
+		  if(!english) strcpy(get_virtualization,_(vm_types[j].vmtype));//Save
+		  if(english) strcpy(get_virtualization_english,_(vm_types[j].vmtype));//Save
+		  if(english)
+                      return g_strdup(N_(vm_types[j].vmtype));
+		  else
+                      return g_strdup(_(vm_types[j].vmtype));
               }
          }
 
     }
 
     DEBUG("no virtual machine detected; assuming physical machine");
-    char *c=detect_machine_type();
-    strcpy(get_virtualization,c);//Save
-    free(c);
-    return g_strdup(get_virtualization);
+    gchar *c=detect_machine_type(english);
+    if(!english) strcpy(get_virtualization,c);//Save
+    if(english) strcpy(get_virtualization_english,c);//Save
+    g_free(c);
+    if(english)
+       return g_strdup(get_virtualization_english);
+    else
+       return g_strdup(get_virtualization);
 }
 
 gchar *callback_summary(void)
@@ -555,7 +581,7 @@ gchar *callback_summary(void)
             idle_free(module_call_method("devices::getProcessorNameAndDesc"))),
         info_field_update(_("Memory"), 1000),
         info_field_printf(_("Machine Type"), "%s",
-            computer_get_virtualization()),
+            computer_get_virtualization(0)),
         info_field(_("Operating System"), computer->os->distro),
         info_field(_("User Name"), computer->os->username),
         info_field_update(_("Date/Time"), 1000),
@@ -889,6 +915,14 @@ gchar *get_os(void)
     return g_strdup(computer->os->distro);
 }
 
+gchar *get_os_short(void)
+{
+    scan_os(FALSE);
+    gchar *os=g_strdup(computer->os->distro);
+    if(strend(os,'-')) os[strlen(os)-1]=0;
+    return os;
+}
+
 gchar *get_vulkan_driver(void) {
     scan_display(FALSE);
     //Search for real vulkan GPU
@@ -1021,7 +1055,12 @@ const gchar *get_memory_desc(void) // [1] const (as to say "don't free")
 
 static gchar *get_machine_type(void)
 {
-    return computer_get_virtualization();
+    return computer_get_virtualization(0);
+}
+
+static gchar *get_machine_type_english(void)
+{
+    return computer_get_virtualization(1);
 }
 
 const ShellModuleMethod *hi_exported_methods(void)
@@ -1029,6 +1068,7 @@ const ShellModuleMethod *hi_exported_methods(void)
     static const ShellModuleMethod m[] = {
         {"getOSKernel", get_os_kernel},
         {"getOS", get_os},
+        {"getOSshort", get_os_short},
         {"getDisplaySummary", get_display_summary},
         {"getOGLRenderer", get_ogl_renderer},
         {"getAudioCards", get_audio_cards},
@@ -1036,6 +1076,7 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getMemoryTotal", get_memory_total},
         {"getMemoryDesc", get_memory_desc},
         {"getMachineType", get_machine_type},
+        {"getMachineTypeEnglish", get_machine_type_english},
         {"getVulkanDriver", get_vulkan_driver},
         {"getVulkanDevice", get_vulkan_device},
         {"getVulkanVersions", get_vulkan_versions},
@@ -1069,14 +1110,14 @@ gchar **hi_module_get_dependencies(void)
 
 gchar *hi_module_get_summary(void)
 {
-    gchar *virt = computer_get_virtualization();
+    gchar *virt = computer_get_virtualization(0);
     gchar *machine_type = g_strdup_printf("%s (%s)",
                                           _("Motherboard"),
                                           (char*)idle_free(virt));
 
     return g_strdup_printf("[%s]\n"
                     "Icon=os.png\n"
-                    "Method=computer::getOS\n"
+                    "Method=computer::getOSshort\n"
                     "[%s]\n"
                     "Icon=processor.png\n"
                     "Method=devices::getProcessorNameAndDesc\n"

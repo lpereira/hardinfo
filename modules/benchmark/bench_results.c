@@ -137,7 +137,7 @@ bench_machine *bench_machine_this()
         free(tmp);
         m->memory_phys_MiB = memory_devices_get_system_memory_MiB();
         m->ram_types = memory_devices_get_system_memory_types_str();
-        m->machine_type = module_call_method("computer::getMachineType");
+        m->machine_type = module_call_method("computer::getMachineTypeEnglish");
 	m->linux_kernel = module_call_method("computer::getOSKernel");
 	m->linux_os = module_call_method("computer::getOS");
 	m->power_state= module_call_method("devices::getPowerState");
