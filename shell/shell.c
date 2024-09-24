@@ -406,15 +406,15 @@ static void stylechange3_me(void)
     gchar *theme=NULL;
     int newDark=0,i=0;
     gchar **keys;
-    if(!newgnome) keys=g_settings_list_keys(settings);
-    while(!newgnome && (keys[i]!=NULL)){
+    if(settings && !newgnome) keys=g_settings_list_keys(settings);
+    while(!newgnome && settings && (keys[i]!=NULL)){
         if(strcmp(keys[i],"color-scheme")==0) newgnome=1;
 	g_free(keys[i]);
         i++;
     }
-    //check Adwaita as new gnome uses it
-    theme = g_settings_get_string(settings, "gtk-theme");
-    if(!strstr(theme,"Adwaita")) newgnome=0;
+    //check Adwaita as new gnome uses it - but new mate/budgie does not
+    //theme = g_settings_get_string(settings, "gtk-theme");
+    //if(!strstr(theme,"Adwaita")) newgnome=0;
 
     //new gnome using only normal/dark mode
     if(newgnome){
@@ -543,8 +543,10 @@ static void create_window(void)
     g_signal_connect(G_OBJECT(shell->window), "style-updated", stylechange_me, NULL);
     g_signal_connect_after(G_OBJECT(shell->window), "draw", stylechange2_me, NULL);
     update=-1;
-    settings=g_settings_new("org.gnome.desktop.interface");
-    g_signal_connect_after(settings,"changed",stylechange3_me,NULL);
+    settings=NULL;
+    if(g_settings_schema_source_lookup(g_settings_schema_source_get_default(),"org.gnome.desktop.interface",FALSE))
+        settings=g_settings_new("org.gnome.desktop.interface");
+    if(settings) g_signal_connect_after(settings,"changed",stylechange3_me,NULL);
     stylechange3_me();
     update=0;
 #endif
