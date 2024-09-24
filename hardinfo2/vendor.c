@@ -291,7 +291,7 @@ void vendor_free(Vendor *v) {
 
 const Vendor *vendor_match(const gchar *id_str, ...) {
     Vendor *ret = NULL;
-    va_list ap, ap2;
+    va_list ap;
     gchar *tmp = NULL, *p = NULL;
     int tl = 0, c = 0;
 
@@ -392,8 +392,7 @@ gchar *vendor_get_link_from_vendor(const Vendor *v)
 
     gchar *url = NULL;
 
-    if (link_ok && link_wikipedia && v->wikipedia
-        || v->wikipedia && !v->url)
+    if ( (link_ok && link_wikipedia && v->wikipedia) || (v->wikipedia && !v->url) )
         url = g_strdup_printf("http://wikipedia.com/wiki/%s", v->wikipedia);
     else if (v->url)
         url = g_strdup(v->url);
@@ -483,7 +482,7 @@ vendor_list vendor_list_remove_duplicates_deep(vendor_list vl) {
 }
 
 vendor_list vendors_match(const gchar *id_str, ...) {
-    va_list ap, ap2;
+    va_list ap;
     gchar *tmp = NULL, *p = NULL;
     int tl = 0, c = 0;
 

@@ -100,7 +100,7 @@ GSList* udisks2_drives_func_caller(GDBusConnection* conn,
                                    gpointer (*func)(const char*, GDBusProxy*,
                                    GDBusProxy*, const char*)) {
     GDBusProxy *block_proxy, *drive_proxy;
-    GVariant *block_v, *v;
+    GVariant *v;
     GSList *result_list = NULL, *block_dev_list, *node;
     GError *error = NULL;
     gpointer output;
@@ -463,7 +463,7 @@ gpointer get_udisks2_drive_info(const char *blockdev, GDBusProxy *block,
                                 GDBusProxy *drive, const char *drivepath) {
     GVariant *v;
     GVariantIter *iter;
-    const gchar *str, *part;
+    const gchar *str;
     udiskd *u = NULL;
     udiskp **p = NULL;
     gsize n, i;

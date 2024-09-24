@@ -455,8 +455,6 @@ void info_remove_group(struct Info *info, guint index)
 }
 
 struct InfoField *info_find_field(struct Info *info, const gchar *tag, const gchar *name) {
-    struct InfoGroup *group;
-    struct InfoField *field;
     guint gi,fi;
     for (gi = 0; gi < info->groups->len; gi++) {
         struct InfoGroup *group = &g_array_index(info->groups, struct InfoGroup, gi);
@@ -552,7 +550,6 @@ struct Info *info_unflatten(const gchar *str)
             } else if (g_str_has_prefix(keys[k], "ColumnTitle$")) {
                 info_set_column_title(info, strchr(keys[k], '$') + 1, value);
             } else if (g_str_has_prefix(keys[k], "Icon$")) {
-                const gchar *chk_name = NULL;
                 gchar *chk_tag = NULL;
                 parm = strchr(keys[k], '$');
                 if (key_is_flagged(parm))

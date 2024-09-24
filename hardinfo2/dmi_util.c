@@ -370,7 +370,7 @@ dmi_handle_list *dmidecode_handles(const dmi_type *type) {
     full = dmidecode_read(type);
     if (full) {
         p = full;
-        while(next_nl = strchr(p, '\n')) {
+        while( (next_nl = strchr(p, '\n')) ) {
             unsigned int ch = 0, ct = 0, cb = 0;
             strend(p, '\n');
             if (sscanf(p, "Handle 0x%X, DMI type %u, %u bytes", &ch, &ct, &cb) > 0) {
@@ -403,7 +403,7 @@ char *dmidecode_match(const char *name, const dmi_type *type, const dmi_handle *
     full = dmidecode_read(type);
     if (full) {
         p = full;
-        while(next_nl = strchr(p, '\n')) {
+        while( (next_nl = strchr(p, '\n')) ) {
             strend(p, '\n');
             if (!(sscanf(p, "Handle 0x%X", &ch) > 0) ) {
                 if (!handle || *handle == ch) {
@@ -439,7 +439,7 @@ dmi_handle_list *dmidecode_match_value(const char *name, const char *value, cons
     full = dmidecode_read(type);
     if (full) {
         p = full;
-        while(next_nl = strchr(p, '\n')) {
+        while( (next_nl = strchr(p, '\n')) ) {
             strend(p, '\n');
             if (!(sscanf(p, "Handle 0x%X, DMI type %u, %u bytes", &ch, &ct, &cb) > 0)) {
                 while(*p == '\t') p++;

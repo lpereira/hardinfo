@@ -247,8 +247,8 @@ static void sync_dialog_start_sync(SyncDialog *sd)
         fd = open(path,O_RDONLY);
     }
     if(fd>=0){
-        int c=read(fd,buf,100);
-        sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
+        if(read(fd,buf,100))
+            sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
         close(fd);
     }
     free(path);
@@ -285,7 +285,6 @@ static void sync_dialog_start_sync(SyncDialog *sd)
 static void got_msg(const guint8 *buf,int len, gpointer user_data)
 {
     SyncNetAction *sna = user_data;
-    GInputStream *is;
     gchar *path;
     int fd,updateversion=0;
     gchar buffer[101];
@@ -314,9 +313,10 @@ static void got_msg(const guint8 *buf,int len, gpointer user_data)
 	if(updateversion){
             fd = open(path,O_RDONLY);
             if(fd){
-	        int c=read(fd,buffer,100);
-                sscanf(buffer,"{\"update-version\":\"%u\",",&server_blobs_update_version);
-		DEBUG("SERVER_BLOBS_UPDATE_VERSION=%u",server_blobs_update_version);
+	        if(read(fd,buffer,100)) {
+                   sscanf(buffer,"{\"update-version\":\"%u\",",&server_blobs_update_version);
+		   DEBUG("SERVER_BLOBS_UPDATE_VERSION=%u",server_blobs_update_version);
+	        }
                 close(fd);
             }
 	}
@@ -335,7 +335,9 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
 #endif
 {
     SyncNetAction *sna = user_data;
+#if SOUP_CHECK_VERSION(2,42,0)
     GInputStream *is;
+#endif
     gchar *path;
     int fd,updateversion=0;
     gchar buffer[101];
@@ -388,8 +390,8 @@ static void got_response(SoupSession *source, SoupMessage *res, gpointer user_da
 	if(updateversion){
             fd = open(path,O_RDONLY);
             if(fd){
-	        int c=read(fd,buffer,100);
-                sscanf(buffer,"{\"update-version\":\"%u\",",&server_blobs_update_version);
+	        if(read(fd,buffer,100))
+                    sscanf(buffer,"{\"update-version\":\"%u\",",&server_blobs_update_version);
 		DEBUG("SERVER_BLOBS_UPDATE_VERSION=%u",server_blobs_update_version);
                 close(fd);
             }
@@ -410,7 +412,6 @@ static gboolean send_request_for_net_action(SyncNetAction *sna)
 {
     gchar *uri;
     SoupMessage *msg;
-    guint response_code;
     const guint8 *buf=NULL;
     gsize len;
     gchar *contents=NULL;
@@ -612,7 +613,7 @@ static void sync_dialog_netarea_show(SyncDialog *sd)
     //gtk_window_reshow_with_initial_size(GTK_WINDOW(sd->dialog));
 }
 
-static void sync_dialog_netarea_hide(SyncDialog *sd)
+/*static void sync_dialog_netarea_hide(SyncDialog *sd)
 {
     g_return_if_fail(sd && sd->sna);
 
@@ -621,7 +622,7 @@ static void sync_dialog_netarea_hide(SyncDialog *sd)
 
     gtk_label_set_markup(GTK_LABEL(sd->label), LABEL_SYNC_DEFAULT);
     gtk_window_reshow_with_initial_size(GTK_WINDOW(sd->dialog));
-}
+}*/
 
 static void populate_store(GtkListStore *store)
 {
@@ -862,8 +863,8 @@ void sync_manager_update_on_startup(int send_benchmark)//0:normal only get, 1:se
         fd = open(path,O_RDONLY);
     }
     if(fd>=0){
-        int c=read(fd,buf,100);
-        sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
+        if(read(fd,buf,100))
+	    sscanf(buf,"{\"update-version\":\"%u\",",&our_blobs_update_version);
         close(fd);
     }
     free(path);

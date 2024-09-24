@@ -142,7 +142,7 @@ char *strend(gchar * str, gchar chr)
 	return NULL;
 
     char *p;
-    if ((p = g_utf8_strchr(str, -1, chr)))
+    if( (p = g_utf8_strchr(str, -1, chr)) )
 	*p = 0;
 
     return str;
@@ -500,7 +500,7 @@ void parameters_init(int *argc, char ***argv, ProgramParameters * param)
     /* clean user note */
     if (bench_user_note) {
         char *p = NULL;
-        while(p = strchr(bench_user_note, ';'))  { *p = ','; }
+        while( (p = strchr(bench_user_note, ';')) )  { *p = ','; }
         param->bench_user_note =
             gg_key_file_parse_string_as_value(bench_user_note, '|');
     }
@@ -791,7 +791,7 @@ static ShellModule *module_load(gchar * filename)
     return module;
 }
 
-static gboolean module_in_module_list(gchar * module, gchar ** module_list)
+/*static gboolean module_in_module_list(gchar * module, gchar ** module_list)
 {
     int i = 0;
 
@@ -804,7 +804,7 @@ static gboolean module_in_module_list(gchar * module, gchar ** module_list)
     }
 
     return FALSE;
-}
+}*/
 
 static gint module_cmp(gconstpointer m1, gconstpointer m2)
 {
@@ -814,7 +814,7 @@ static gint module_cmp(gconstpointer m1, gconstpointer m2)
     return a->weight - b->weight;
 }
 
-static GSList *modules_check_deps(GSList * modules)
+/*static GSList *modules_check_deps(GSList * modules)
 {
     GSList *mm;
     ShellModule *module;
@@ -847,7 +847,7 @@ static GSList *modules_check_deps(GSList * modules)
 
 			if (mod)
 			    modules = g_slist_append(modules, mod);
-			modules = modules_check_deps(modules);	/* re-check dependencies */
+			modules = modules_check_deps(modules);	// re-check dependencies 
 
 			break;
 		    }
@@ -874,7 +874,7 @@ static GSList *modules_check_deps(GSList * modules)
 
 			    if (mod)
 				modules = g_slist_prepend(modules, mod);
-			    modules = modules_check_deps(modules);	/* re-check dependencies */
+			    modules = modules_check_deps(modules);	// re-check dependencies 
 			} else {
 			    g_error("HardInfo2 cannot run without loading the additional module.");
 			    exit(1);
@@ -891,7 +891,7 @@ static GSList *modules_check_deps(GSList * modules)
     }
 
     return modules;
-}
+}*/
 
 GSList *modules_load_all(void)
 {
@@ -903,7 +903,7 @@ GSList *modules_load_all(void)
     while(i<4) {
         if(i==2 && !params.gui_running && params.skip_benchmarks) {//skip benchmark reporting if no gui, report and skip benchmark
         }else
-        if (module = module_load(filenames[i])) {
+	  if ( (module = module_load(filenames[i])) ) {
             modules = g_slist_prepend(modules, module);
         }
         i++;

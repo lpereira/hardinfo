@@ -104,10 +104,10 @@ void load_graph_destroy(LoadGraph * lg)
     }
 }
 
-static gboolean _expose(GtkWidget * widget, GdkEventExpose * event, gpointer user_data)
+/*static gboolean _expose(GtkWidget * widget, GdkEventExpose * event, gpointer user_data)
 {
     return TRUE;
-}
+}*/
 
 void load_graph_configure_expose(LoadGraph * lg)
 {

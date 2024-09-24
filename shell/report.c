@@ -105,7 +105,7 @@ gchar *make_icon_css(const gchar *file) {
         return g_strdup("");
     gchar *ret = NULL;
     gchar *path = g_build_filename(params.path_data, "pixmaps", file, NULL);
-    gchar *contents = NULL;
+    char *contents = NULL;
     gsize length = 0;
     if ( g_file_get_contents(path, &contents, &length, NULL) ) {
         gchar *css_class = icon_name_css_id(file);
@@ -297,7 +297,7 @@ static void report_table_shell_dump(ReportContext *ctx, gchar *key_file_str, int
 
     if (key_file_str) {
         p = text = g_strdup(key_file_str);
-        while(next_nl = strchr(p, '\n')) {
+        while( (next_nl = strchr(p, '\n')) ) {
             *next_nl = 0;
             eq = strchr(p, '=');
             if (*p != '[' && eq) {
@@ -732,14 +732,15 @@ report_create_inner_from_module_list(ReportContext * ctx, GSList * modules)
 
 	for (entries = module->entries; entries; entries = entries->next) {
 	    ShellModuleEntry *entry = (ShellModuleEntry *) entries->data;
-        if (entry->flags & MODULE_FLAG_HIDE) continue;
+            if (entry->flags & MODULE_FLAG_HIDE) continue;
 
 	    if (!params.gui_running && !params.quiet)
 		fprintf(stderr, "\033[2K\033[40;32;1m %s\033[0m\n",
 			entry->name);
 
-        if (entry->icon_file)
-            cache_icon(ctx, entry->icon_file);
+            if (entry->icon_file){
+                cache_icon(ctx, entry->icon_file);
+	    }
 
 	    ctx->entry = entry;
 	    report_subtitle(ctx, entry->name);

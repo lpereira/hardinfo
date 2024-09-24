@@ -368,7 +368,7 @@ static void stylechange2_me(void)
     gint darkmode=0;
     if((color.red+color.green+color.blue)<=1.5) darkmode=1;
     //
-    if(schemeDark & !darkmode) {
+    if(schemeDark && (!darkmode) ) {
         if(newgnome){
             darkmode=1;
             //g_print("We need to change GTK_THEME to dark\n");
@@ -378,7 +378,7 @@ static void stylechange2_me(void)
 	    changed2dark=1;
 	}
     }
-    if(!schemeDark & darkmode & changed2dark) {
+    if( (!schemeDark) && darkmode && changed2dark ) {
         if(newgnome){
 	    darkmode=0;
             //g_print("We need to change GTK_THEME to light\n");
@@ -530,7 +530,6 @@ void shell_set_title(Shell *shell, gchar *subtitle)
 static void create_window(void)
 {
     GtkWidget *vbox, *hbox;
-    char theme_st[200];
 
     shell = g_new0(Shell, 1);
 
@@ -658,14 +657,14 @@ static void menu_item_set_icon_always_visible(Shell *shell,
                                               gchar *parent_path,
                                               gchar *item_id)
 {
-    GtkWidget *menuitem;
-    gchar *path;
+    //GtkWidget *menuitem;
+    //gchar *path;
 
-    path = g_strdup_printf("%s/%s", parent_path, item_id);
-    menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
+    //path = g_strdup_printf("%s/%s", parent_path, item_id);
+    //menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
 
     //gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
-    g_free(path);
+    //g_free(path);
 }
 
 
@@ -674,7 +673,7 @@ add_module_entry_to_view_menu(gchar * module, gchar * name,
 			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
 {
     GtkAction *action;
-    GtkWidget *menuitem;
+    //GtkWidget *menuitem;
     gint merge_id;
     gchar *path;
     GtkActionEntry entry = {
@@ -1043,7 +1042,7 @@ static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *)data;
 #if GTK_CHECK_VERSION(2, 14, 0)
-    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->window));
+    //GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->window));
 #endif
 
     /* if the entry is still selected, update it */
@@ -1576,7 +1575,7 @@ void shell_clear_field_updates(void)
     }
 }
 
-static gboolean
+/*static gboolean
 select_first_item(gpointer data)
 {
     GtkTreeIter first;
@@ -1585,7 +1584,7 @@ select_first_item(gpointer data)
         gtk_tree_selection_select_iter(shell->info_tree->selection, &first);
 
     return FALSE;
-}
+}*/
 
 static gboolean select_marked_or_first_item(gpointer data)
 {
@@ -1837,7 +1836,7 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
 static void
 module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
 {
-    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info_tree->view));
+    //GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info_tree->view));
     gsize ngroups;
     gint i;
 
@@ -1877,6 +1876,8 @@ module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
     case SHELL_VIEW_PROGRESS:
         update_progress();
         break;
+    default:
+        break;
     }
 
     if (!reload) {
@@ -1885,6 +1886,8 @@ module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
         case SHELL_VIEW_LOAD_GRAPH:
         case SHELL_VIEW_PROGRESS_DUAL:
             g_idle_add(select_marked_or_first_item, NULL);
+        default:
+            break;
         }
     }
     shell_set_note_from_entry(entry);
@@ -1964,12 +1967,15 @@ static void detail_view_add_item(DetailView *detail_view,
                                  gchar *name,
                                  gchar *value)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+#else
+    GtkWidget *alignment;
+#endif
     GtkWidget *frame;
     GtkWidget *frame_label_box;
     GtkWidget *frame_image;
     GtkWidget *frame_label;
     GtkWidget *content;
-    GtkWidget *alignment;
     gchar *temp;
 
     temp = detail_view_clear_value(value);
@@ -2099,7 +2105,6 @@ static void module_selected(gpointer data)
     ShellModuleEntry *entry;
     static ShellModuleEntry *current = NULL;
     static gboolean updating = FALSE;
-    GtkScrollbar *hscrollbar, *vscrollbar;
 
     /* Gets the currently selected item on the left-side TreeView; if there is
        no selection, silently return */
