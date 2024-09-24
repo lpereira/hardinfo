@@ -405,9 +405,9 @@ static void stylechange3_me(void)
 {
     gchar *theme=NULL;
     int newDark=0,i=0;
-    gchar **keys;
+    gchar **keys=NULL;
     if(settings && !newgnome) keys=g_settings_list_keys(settings);
-    while(!newgnome && settings && (keys[i]!=NULL)){
+    while(!newgnome && keys && (keys[i]!=NULL)){
         if(strcmp(keys[i],"color-scheme")==0) newgnome=1;
 	g_free(keys[i]);
         i++;
@@ -417,23 +417,19 @@ static void stylechange3_me(void)
     //if(!strstr(theme,"Adwaita")) newgnome=0;
 
     //new gnome using only normal/dark mode
-    if(newgnome){
-       theme = g_settings_get_string(settings, "color-scheme");
-       if(strstr(theme,"Dark")||strstr(theme,"dark")) {
-	   newDark=1;
-       }
-    } else {//older gnome using themes with dark in theme-name
-       theme = g_settings_get_string(settings, "gtk-theme");//normal
-       if(strstr(theme,"Dark")||strstr(theme,"dark")) {
-           newDark=1;
-       }
-       g_free(theme);
-       theme = g_settings_get_string(settings, "icon-theme");//alternative
-       if(strstr(theme,"Dark")||strstr(theme,"dark")) {
-           newDark=1;
-       }
+    if(settings){
+        if(newgnome){
+            theme = g_settings_get_string(settings, "color-scheme");
+            if(strstr(theme,"Dark")||strstr(theme,"dark")) newDark=1;
+        } else {//older gnome using themes with dark in theme-name
+            theme = g_settings_get_string(settings, "gtk-theme");//normal
+            if(strstr(theme,"Dark")||strstr(theme,"dark")) newDark=1;
+            g_free(theme);
+            theme = g_settings_get_string(settings, "icon-theme");//alternative
+            if(strstr(theme,"Dark")||strstr(theme,"dark")) newDark=1;
+        }
+        g_free(theme);
     }
-    g_free(theme);
     //
     if(newDark){
       if(schemeDark!=1) if(!update) update=1;
@@ -543,7 +539,6 @@ static void create_window(void)
     g_signal_connect(G_OBJECT(shell->window), "style-updated", stylechange_me, NULL);
     g_signal_connect_after(G_OBJECT(shell->window), "draw", stylechange2_me, NULL);
     update=-1;
-    settings=NULL;
     if(g_settings_schema_source_lookup(g_settings_schema_source_get_default(),"org.gnome.desktop.interface",FALSE))
         settings=g_settings_new("org.gnome.desktop.interface");
     if(settings) g_signal_connect_after(settings,"changed",stylechange3_me,NULL);
