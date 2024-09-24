@@ -1024,6 +1024,12 @@ name Realtek Semiconductor
     ansi_color 0;34;107
     match_string Realtek
 
+name RebornOS Linux
+    name_short RebornOS Linux
+    url rebornos.org
+    ansi_color 0;36;107
+    match_string RebornOS Linux
+
 name Red Hat
     url www.redhat.com
     ansi_color 0;31;40
