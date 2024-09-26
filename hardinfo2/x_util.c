@@ -55,7 +55,7 @@ static char *simple_line_value(char *line, const char *prefix) {
 gboolean fill_vk_info(vk_info *vk) {
     gboolean spawned;
     gchar *out, *err, *p, *l, *next_nl;
-    int gpu=0,old=0;
+    int gpu=0,old=0,found=0;
     gchar *vk_cmd = g_strdup("vulkaninfo --summary");
 
 #define VK_MATCH_LINE(prefix_str, struct_member) \
@@ -72,6 +72,7 @@ gboolean fill_vk_info(vk_info *vk) {
             VK_MATCH_LINE("Vulkan Instance Version", vk_instVer);
             if(strstr(p,"GPU")==p) sscanf(p,"GPU%d:",&gpu);
 	    if((gpu>=0) && (gpu<VK_MAX_GPU)){
+	        found=1;
                 VK_MATCH_LINE("apiVersion", vk_apiVer[gpu]);
                 VK_MATCH_LINE("driverVersion", vk_drvVer[gpu]);
                 VK_MATCH_LINE("vendorID", vk_vendorId[gpu]);
@@ -110,7 +111,7 @@ gboolean fill_vk_info(vk_info *vk) {
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x15ad","VMWare");
 	    vk->vk_vendorId[i]=strreplace(vk->vk_vendorId[i],"0x9999","Vivante");
 	  }i++;} while(i<VK_MAX_GPU);
-        return TRUE;
+        if(found) return TRUE;
     }
     //old vulkaninfo does not have summary
     //new full info is too hard to parse -> 2 steps
