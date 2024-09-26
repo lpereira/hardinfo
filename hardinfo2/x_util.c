@@ -55,12 +55,13 @@ static char *simple_line_value(char *line, const char *prefix) {
 gboolean fill_vk_info(vk_info *vk) {
     gboolean spawned;
     gchar *out, *err, *p, *l, *next_nl;
-    int gpu=0;
-    gchar *vk_cmd = g_strdup("vulkaninfo");
+    int gpu=0,old=0;
+    gchar *vk_cmd = g_strdup("vulkaninfo --summary");
 
 #define VK_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { vk->struct_member = g_strdup(strreplace(l,"= ","")); goto vk_next_line; }
 
+  while(old<=1){
     spawned = hardinfo_spawn_command_line_sync(vk_cmd, &out, &err, NULL, NULL);
     g_free(vk_cmd);
     if (spawned) {
@@ -111,7 +112,12 @@ gboolean fill_vk_info(vk_info *vk) {
 	  }i++;} while(i<VK_MAX_GPU);
         return TRUE;
     }
-    return FALSE;
+    //old vulkaninfo does not have summary
+    //new full info is too hard to parse -> 2 steps
+    vk_cmd = g_strdup("vulkaninfo");
+    old++;
+  }
+  return FALSE;
 }
 
 vk_info *vk_create() {
