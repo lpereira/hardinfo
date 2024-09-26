@@ -56,7 +56,7 @@ gboolean fill_vk_info(vk_info *vk) {
     gboolean spawned;
     gchar *out, *err, *p, *l, *next_nl;
     int gpu=0;
-    gchar *vk_cmd = g_strdup("vulkaninfo --summary");
+    gchar *vk_cmd = g_strdup("vulkaninfo");
 
 #define VK_MATCH_LINE(prefix_str, struct_member) \
     if (l = simple_line_value(p, prefix_str)) { vk->struct_member = g_strdup(strreplace(l,"= ","")); goto vk_next_line; }
