@@ -372,9 +372,19 @@ static void br_mi_add(char **results_list, bench_result *b, gboolean select)
     }
     elbl = key_label_escape(lbl);
 
-    *results_list = h_strdup_cprintf("$@%s%s$%s=%.2f|%s\n", *results_list,
+    if(strstr(b->name,"GPU")){//GPU
+         *results_list = h_strdup_cprintf("$@%s%s$%s=%.2f\n", *results_list,
+                                     select ? "*" : "", rkey, elbl,
+                                     b->bvalue.result);
+    } else if(strstr(b->name,"Storage")){//Storage
+        *results_list = h_strdup_cprintf("$@%s%s$%s=%.2f\n", *results_list,
+                                     select ? "*" : "", rkey, elbl,
+                                     b->bvalue.result);
+    } else {//CPU
+        *results_list = h_strdup_cprintf("$@%s%s$%s=%.2f|%s\n", *results_list,
                                      select ? "*" : "", rkey, elbl,
                                      b->bvalue.result, b->machine->cpu_config);
+    }
 
     moreinfo_add_with_prefix("BENCH", rkey, bench_result_more_info(b));
 
