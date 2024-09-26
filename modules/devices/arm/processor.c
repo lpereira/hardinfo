@@ -439,14 +439,19 @@ gchar *processor_name(GSList *processors) {
         i = 0;
         while(dt_compat_searches[i].search_str != NULL) {
             if (strstr(compat, dt_compat_searches[i].search_str) != NULL) {
-                ret = g_strdup_printf("%s %s", dt_compat_searches[i].vendor, dt_compat_searches[i].soc);
+	        if(strstr(dt_compat_searches[i].soc,"Unknown"))
+		    ret = g_strdup_printf("%s %s (%s)", dt_compat_searches[i].vendor, dt_compat_searches[i].soc, compat);
+		else
+                    ret = g_strdup_printf("%s %s", dt_compat_searches[i].vendor, dt_compat_searches[i].soc);
                 break;
             }
             i++;
         }
+        if(!ret) ret = g_strdup_printf("ARM Processor (%s)", compat);
+        g_free(compat);
     }
-    g_free(compat);
-    UNKIFNULL(ret);
+
+    if(!ret) ret = g_strdup("ARM Processor (NoDT)");
     return ret;
 }
 

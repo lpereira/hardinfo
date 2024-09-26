@@ -19,6 +19,7 @@
 #include "hardinfo.h"
 #include "devices.h"
 #include "cpu_util.h"
+#include "dt_util.h"
 
 GSList *
 processor_scan(void)
@@ -52,11 +53,23 @@ processor_scan(void)
 
     fclose(cpuinfo);
 
-    return g_slist_append(NULL, processor);
+    return g_slist_append(NULL, processor);q
 }
 
 gchar *processor_name(GSList * processors) {
-    return processor_name_default(processors);
+    gchar *ret = NULL;
+    gchar *compat = NULL;
+
+    compat = dtr_get_string("/compatible", 1);
+
+    if (compat != NULL) {
+        //FIXME - Add table for incoming compatible DT info
+        ret= g_strdup_printf("Loongarch64 Processor (%s/%s)",processor_name_default(processors), compat);
+        g_free(compat);
+    }
+
+    if(!ret) ret=g_strdup("Loongarch64 Processor (%s/NoDT)",processor_name_default_(processors));
+    return ret;
 }
 
 gchar *processor_describe(GSList * processors) {
