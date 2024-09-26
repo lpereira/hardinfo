@@ -70,9 +70,8 @@ gboolean fill_vk_info(vk_info *vk) {
             strend(p, '\n');
             g_strstrip(p);
             VK_MATCH_LINE("Vulkan Instance Version", vk_instVer);
-            if(strstr(p,"GPU")==p) sscanf(p,"GPU%d:",&gpu);
+            if(strstr(p,"GPU")==p) {found=1;sscanf(p,"GPU%d:",&gpu);}
 	    if((gpu>=0) && (gpu<VK_MAX_GPU)){
-	        found=1;
                 VK_MATCH_LINE("apiVersion", vk_apiVer[gpu]);
                 VK_MATCH_LINE("driverVersion", vk_drvVer[gpu]);
                 VK_MATCH_LINE("vendorID", vk_vendorId[gpu]);
