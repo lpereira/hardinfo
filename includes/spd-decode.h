@@ -66,19 +66,14 @@ static const char *ram_types[] = {
 typedef uint64_t dmi_mem_size;
 struct dmi_mem_socket;
 typedef struct {
-    unsigned char *bytes;
+    unsigned char *bytes;//allocated
     char dev[32];
-    const char *spd_driver;
     int spd_size;
     RamType type;
     int vendor_bank;
     int vendor_index;
-    const char *vendor_str;
-    const Vendor *vendor;
     int dram_vendor_bank;
     int dram_vendor_index;
-    const char *dram_vendor_str;
-    const Vendor *dram_vendor;
     char partno[32];
     char serialno[32];
     const char *form_factor;
@@ -88,8 +83,13 @@ typedef struct {
     int spd_rev_minor;
     int week, year;
     gboolean ddr4_no_ee1004;
-    struct dmi_mem_socket *dmi_socket;
     int match_score;
+    const char *spd_driver;//link to static const
+    char *vendor_str;//links to static const
+    char *dram_vendor_str;//links to static const
+    struct dmi_mem_socket *dmi_socket;//links
+    const Vendor *vendor;//links
+    const Vendor *dram_vendor;//links
 } spd_data;
 
 GSList *spd_scan();

@@ -59,12 +59,12 @@ typedef struct {
     const char *spd_name;
 } SpdDriver;
 
-const SpdDriver spd_drivers[] = {
-#ifdef DEBUG
+static const SpdDriver spd_drivers[] = {
+//#ifdef DEBUG
   { "",    "/.", 2048, FALSE, ""}, //scans /eeprom-FILENAME
-#endif
-    { "espd5216",    "/sys/bus/i2c/drivers/espd5216", 2048, TRUE, "espd5216"},//DDR5
-    { "spd5118",     "/sys/bus/i2c/drivers/spd5118",  1024, TRUE, "spd5118"},//DDR5
+//#endif
+    { "espd5216",    "/sys/bus/i3c/drivers/espd5216", 2048, TRUE, "espd5216"},//DDR5
+    { "spd5118",     "/sys/bus/i3c/drivers/spd5118",  1024, TRUE, "spd5118"},//DDR5
     { "ee1004",      "/sys/bus/i2c/drivers/ee1004" ,   512, TRUE, "ee1004"},//DDR4
     { "at24",        "/sys/bus/i2c/drivers/at24"   ,   256, TRUE, "spd"},//improved detection used for DDR3--
     { "eeprom",      "/sys/bus/i2c/drivers/eeprom" ,   256, TRUE, "eeprom"},//Wildcard DDR3--
@@ -105,47 +105,91 @@ int decode_ram_type(unsigned char *bytes) {
     return UNKNOWN;
 }
 
+void decode_old_manufacturer(spd_data *spd) {
+    unsigned char first;
+    int ai = 0;
+    int len = 8;
+    unsigned char *bytes = 64 + spd -> bytes;
+    do { ai++; } while ((--len && (*bytes++ == 0x7f)));
+    first = *--bytes;
+    if (ai == 0) spd->vendor_str = "Invalid";
+    else if (parity(first) != 1) spd->vendor_str = "Invalid";
+    else spd->vendor_str = (char *)JEDEC_MFG_STR(ai - 1, (first & 0x7f) - 1);
+}
+
+void decode_manufacturer(spd_data *spd, int MLSB, int MMSB, int CLSB, int CMSB) {
+  if((MLSB>=0) && (MMSB < spd->spd_size)&&(MLSB < spd->spd_size)){
+    unsigned char McodeLSB=spd->bytes[MLSB];
+    unsigned char McodeMSB=spd->bytes[MMSB];
+    //Module
+    if (((McodeMSB == 0) && (McodeLSB == 0)) || ((McodeMSB == 255) && (McodeLSB == 255))) {
+        spd->vendor_str=_("Unspecified");
+    } else if (parity(McodeMSB) != 1 || parity(McodeLSB) != 1) {
+        spd->vendor_str=_("Invalid");
+    } else {
+        spd->vendor_bank = McodeLSB & 0x7f;
+        spd->vendor_index = McodeMSB & 0x7f;
+        if (spd->vendor_bank >= VENDORS_BANKS) {
+            spd->vendor_str=NULL;
+        } else spd->vendor_str=(char *)JEDEC_MFG_STR(spd->vendor_bank, spd->vendor_index - 1);
+    }
+  }
+    //CHIP DRAM
+  if((CLSB>=0) && (CLSB < spd->spd_size)&&(CMSB < spd->spd_size)){
+    unsigned char CcodeLSB=spd->bytes[CLSB];
+    unsigned char CcodeMSB=spd->bytes[CMSB];
+    if (((CcodeMSB == 0) && (CcodeLSB == 0)) || ((CcodeMSB == 255) && (CcodeLSB == 255))) {
+        spd->dram_vendor_str=_("Unspecified");
+    } else if (parity(CcodeMSB) != 1 || parity(CcodeLSB) != 1) {
+        spd->dram_vendor_str=_("Invalid");
+    } else {
+        spd->dram_vendor_bank = CcodeLSB & 0x7f;
+        spd->dram_vendor_index = CcodeMSB & 0x7f;
+        if (spd->dram_vendor_bank >= VENDORS_BANKS) {
+            spd->dram_vendor_str=NULL;
+        } else spd->dram_vendor_str=(char *)JEDEC_MFG_STR(spd->dram_vendor_bank, spd->dram_vendor_index - 1);
+    }
+  }
+}
+
+void decode_module_date(spd_data *spd, int Week, int Year) {
+  if((Week < spd->spd_size) && (Year < spd->spd_size)){
+    unsigned char weekb=spd->bytes[Week];
+    unsigned char yearb=spd->bytes[Year];
+    if ((yearb == 0x0) || (yearb == 0xff) || (weekb == 0x0) || (weekb == 0xff)) return;
+    spd->week = (weekb>>4) & 0xf;
+    spd->week *= 10;
+    spd->week += weekb & 0xf;
+    spd->year = (yearb>>4) & 0xf;
+    spd->year *= 10;
+    spd->year += yearb & 0xf;
+    spd->year += 2000;
+  }
+}
+
 
 
 
 /* -------------------------------------------------- */
 /* ----------------------- SDR ---------------------- */
 /* -------------------------------------------------- */
-void decode_module_manufacturer(unsigned char *bytes, char **manufacturer) {
-    char *out = "Unknown";
-    unsigned char first;
-    int ai = 0;
-    int len = 8;
-
-    do { ai++; } while ((--len && (*bytes++ == 0x7f)));
-    first = *--bytes;
-
-    if (ai == 0) out = "Invalid";
-    else if (parity(first) != 1) out = "Invalid";
-    else out = (char*)JEDEC_MFG_STR(ai - 1, (first & 0x7f) - 1);
-
-    if (manufacturer) { *manufacturer = out; }
-}
-
-void decode_module_part_number(unsigned char *bytes, char *part_number) {
-    if (part_number) {
-        bytes += 8 + 64;
-
-        while (*++bytes && *bytes >= 32 && *bytes < 127) { *part_number++ = *bytes; }
-        *part_number = '\0';
-    }
-}
-
-void decode_sdr_module_size(unsigned char *bytes, dmi_mem_size *size) {
+void decode_sdr_basic(spd_data *spd){
+    //decode_sdr_module_detail
+    snprintf(spd->type_detail, 255, "SDR");
+    //decode_module_part_number
+    strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
+    //decode manufacturer
+    decode_old_manufacturer(spd);
+    //decode_sdr_module_size
+    unsigned char *bytes = spd->bytes;
     unsigned short i, k = 0;
-
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
     if (bytes[5] <= 8 && bytes[17] <= 8) { k = bytes[5] * bytes[17]; }
 
     if (i > 0 && i <= 12 && k > 0) {
-      if (size) { *size = (dmi_mem_size)k * (unsigned short)(1 << i); }
+       spd->size_MiB = (dmi_mem_size)k * (unsigned short)(1 << i);
     } else {
-        if (size) { *size = -1; }
+        spd->size_MiB = -1;
     }
 }
 
@@ -269,13 +313,6 @@ void decode_sdr_module_refresh_rate(unsigned char *bytes, char **refresh_rate) {
     if (refresh_rate) { *refresh_rate = temp; }
 }
 
-void decode_sdr_module_detail(unsigned char *bytes, char *type_detail) {
-    bytes = bytes; /* silence unused warning */
-    if (type_detail) {
-        snprintf(type_detail, 255, "SDR");
-    }
-}
-
 gchar *decode_sdr_sdram_extra(unsigned char *bytes) {
     int rows, data_width;
     float tcl, trcd, trp, tras;
@@ -353,17 +390,27 @@ void decode_ddr_module_speed(unsigned char *bytes, float *ddrclk, int *pcclk) {
     if (pcclk) *pcclk = pc;
 }
 
-void decode_ddr_module_size(unsigned char *bytes, dmi_mem_size *size) {
-    unsigned short i, k;
-
+void decode_ddr_basic(spd_data *spd){
+    decode_old_manufacturer(spd);
+    //decode_module_part_number(spd);
+    strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
+    //decode_ddr_module_size(spd->bytes, &s->size_MiB);
+    //decode_sdr_module_size
+    unsigned char *bytes = spd->bytes;
+    unsigned short i, k = 0;
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
-    k = (bytes[5] <= 8 && bytes[17] <= 8) ? bytes[5] * bytes[17] : 0;
+    if (bytes[5] <= 8 && bytes[17] <= 8) { k = bytes[5] * bytes[17]; }
 
     if (i > 0 && i <= 12 && k > 0) {
-      if (size) { *size = (dmi_mem_size)k * (unsigned short)(1 << i); }
+       spd->size_MiB = (dmi_mem_size)k * (unsigned short)(1 << i);
     } else {
-        if (size) { *size = -1; }
+        spd->size_MiB = -1;
     }
+    //decode_ddr_module_detail(spd->bytes, s->type_detail);
+    float ddr_clock;
+    int pc_speed;
+    decode_ddr_module_speed(bytes, &ddr_clock, &pc_speed);
+    snprintf(spd->type_detail, 255, "DDR-%.0f (PC-%d)", ddr_clock, pc_speed);
 }
 
 void decode_ddr_module_timings(unsigned char *bytes, float *tcl, float *trcd, float *trp,
@@ -396,15 +443,6 @@ void decode_ddr_module_timings(unsigned char *bytes, float *tcl, float *trcd, fl
     if (tcl) { *tcl = highest_cas; }
 }
 
-void decode_ddr_module_detail(unsigned char *bytes, char *type_detail) {
-    float ddr_clock;
-    int pc_speed;
-    if (type_detail) {
-        decode_ddr_module_speed(bytes, &ddr_clock, &pc_speed);
-        snprintf(type_detail, 255, "DDR-%.0f (PC-%d)", ddr_clock, pc_speed);
-    }
-}
-
 gchar *decode_ddr_sdram_extra(unsigned char *bytes) {
     float tcl, trcd, trp, tras;
 
@@ -425,20 +463,6 @@ gchar *decode_ddr_sdram_extra(unsigned char *bytes) {
 /* -------------------------------------------------- */
 /* ----------------------- DDR2 --------------------- */
 /* -------------------------------------------------- */
-void decode_ddr234_module_date(unsigned char weekb, unsigned char yearb, int *week, int *year) {
-    if (yearb == 0x0 || yearb == 0xff ||
-        weekb == 0x0 || weekb == 0xff) {
-        return;
-    }
-    *week = (weekb>>4) & 0xf;
-    *week *= 10;
-    *week += weekb & 0xf;
-    *year = (yearb>>4) & 0xf;
-    *year *= 10;
-    *year += yearb & 0xf;
-    *year += 2000;
-}
-
 float decode_ddr2_module_ctime(unsigned char byte) {
     float ctime;
 
@@ -460,6 +484,7 @@ float decode_ddr2_module_ctime(unsigned char byte) {
     return ctime;
 }
 
+
 void decode_ddr2_module_speed(unsigned char *bytes, float *ddr_clock, int *pc2_speed) {
     float ctime;
     float ddrclk;
@@ -477,18 +502,39 @@ void decode_ddr2_module_speed(unsigned char *bytes, float *ddr_clock, int *pc2_s
     if (pc2_speed) { *pc2_speed = pcclk; }
 }
 
-void decode_ddr2_module_size(unsigned char *bytes, dmi_mem_size *size) {
-    unsigned short i, k;
-
+void decode_ddr2_basic(spd_data *spd){
+    decode_old_manufacturer(spd);
+    //decode_module_part_number(spd);
+    strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
+    //decode_ddr_module_size(spd->bytes, &s->size_MiB);
+    //decode_sdr_module_size
+    unsigned char *bytes = spd->bytes;
+    unsigned short i, k = 0;
     i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
-    k = ((bytes[5] & 0x7) + 1) * bytes[17];
+    if (bytes[5] <= 8 && bytes[17] <= 8) { k = bytes[5] * bytes[17]; }
 
     if (i > 0 && i <= 12 && k > 0) {
-      if (size) { *size = (dmi_mem_size)k * (unsigned short)(1 << i); }
+       spd->size_MiB = (dmi_mem_size)k * (unsigned short)(1 << i);
     } else {
-        if (size) { *size = 0; }
+        spd->size_MiB = -1;
+    }
+    //decode_ddr_module_detail(spd->bytes, s->type_detail);
+    float ddr_clock;
+    int pc2_speed;
+    decode_ddr_module_speed(bytes, &ddr_clock, &pc2_speed);
+    snprintf(spd->type_detail, 255, "DDR2-%.0f (PC2-%d)", ddr_clock, pc2_speed);
+}
+
+void decode_ddr2_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
+  int i;
+    unsigned long sn=0;
+    if (spd_size > 98) {
+        for (i = 98; i >= 95; i--)
+	  sn=bytes[i]+(sn<<8);
+        sprintf(serialno,"%lu (%08lx)",sn,sn);
     }
 }
+
 
 void decode_ddr2_module_type(unsigned char *bytes, const char **type) {
     switch (bytes[20]) {
@@ -548,14 +594,6 @@ gboolean decode_ddr2_module_ctime_for_casx(int casx_minus, unsigned char *bytes,
     return TRUE;
 }
 
-void decode_ddr2_module_detail(unsigned char *bytes, char *type_detail) {
-    float ddr_clock;
-    int pc2_speed;
-    if (type_detail) {
-        decode_ddr2_module_speed(bytes, &ddr_clock, &pc2_speed);
-        snprintf(type_detail, 255, "DDR2-%.0f (PC2-%d)", ddr_clock, pc2_speed);
-    }
-}
 
 gchar *decode_ddr2_sdram_extra(unsigned char *bytes) {
     float trcd, trp, tras, ctime, tcl;
@@ -604,9 +642,6 @@ gchar *decode_ddr2_sdram_extra(unsigned char *bytes) {
     return out;
 }
 
-void decode_ddr2_module_date(unsigned char *bytes, int *week, int *year) {
-    decode_ddr234_module_date(bytes[94], bytes[93], week, year);
-}
 
 
 
@@ -615,32 +650,7 @@ void decode_ddr2_module_date(unsigned char *bytes, int *week, int *year) {
 /* -------------------------------------------------- */
 /* ----------------------- DDR3 --------------------- */
 /* -------------------------------------------------- */
-void decode_ddr34_manufacturer(unsigned char count, unsigned char code, char **manufacturer, int *bank, int *index) {
-    if (!manufacturer) return;
 
-    if (code == 0x00 || code == 0xFF) {
-        *manufacturer = NULL;
-        return;
-    }
-
-    if (parity(count) != 1 || parity(code) != 1) {
-        *manufacturer = _("Invalid");
-        return;
-    }
-
-    *bank = count & 0x7f;
-    *index = code & 0x7f;
-    if (*bank >= VENDORS_BANKS) {
-        *manufacturer = NULL;
-        return;
-    }
-
-    *manufacturer = (char *)JEDEC_MFG_STR(*bank, *index - 1);
-}
-
-void decode_ddr3_manufacturer(unsigned char *bytes, char **manufacturer, int *bank, int *index) {
-    decode_ddr34_manufacturer(bytes[117], bytes[118], (char **) manufacturer, bank, index);
-}
 
 void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int *pc3_speed) {
     float ctime;
@@ -776,14 +786,12 @@ void decode_ddr3_part_number(unsigned char *bytes, char *part_number) {
     }
 }
 
-void decode_ddr3_module_date(unsigned char *bytes, int *week, int *year) {
-    decode_ddr234_module_date(bytes[121], bytes[120], week, year);
+void decode_ddr3_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
+    if (spd_size > 125) {
+        sprintf(serialno,"0x%02x%02x%02x%02x",bytes[122],bytes[123],bytes[124],bytes[125]);
+    }
 }
 
-void decode_ddr3_dram_manufacturer(unsigned char *bytes,
-                                            char **manufacturer, int *bank, int *index) {
-    decode_ddr34_manufacturer(bytes[94], bytes[95], (char **) manufacturer, bank, index);
-}
 
 
 
@@ -886,19 +894,6 @@ void decode_ddr4_module_spd_timings(unsigned char *bytes, float speed, char **st
     }
 }
 
-void decode_ddr4_module_date(unsigned char *bytes, int spd_size, int *week, int *year) {
-    if (spd_size > 324)
-        decode_ddr234_module_date(bytes[324], bytes[323], week, year);
-}
-
-void decode_ddr4_dram_manufacturer(unsigned char *bytes, int spd_size,
-                                            char **manufacturer, int *bank, int *index) {
-    if (spd_size > 351)
-        decode_ddr34_manufacturer(bytes[350], bytes[351], (char **) manufacturer, bank, index);
-    else
-        *manufacturer = NULL;
-}
-
 void detect_ddr4_xmp(unsigned char *bytes, int spd_size, int *majv, int *minv) {
     if (spd_size > 387){
         *majv = 0; *minv = 0;
@@ -996,13 +991,12 @@ void decode_ddr4_part_number(unsigned char *bytes, int spd_size, char *part_numb
     *part_number = '\0';
 }
 
-void decode_ddr4_module_manufacturer(unsigned char *bytes, int spd_size,
-                                            char **manufacturer, int *bank, int *index) {
-    if (spd_size > 321)
-        decode_ddr34_manufacturer(bytes[320], bytes[321], manufacturer, bank, index);
-    else
-        *manufacturer = NULL;
+void decode_ddr4_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
+    if (spd_size > 328) {
+        sprintf(serialno,"0x%02x%02x%02x%02x",bytes[325],bytes[326],bytes[327],bytes[328]);
+    }
 }
+
 
 
 
@@ -1037,21 +1031,9 @@ void decode_ddr5_part_number(unsigned char *bytes, int spd_size, char *part_numb
 }
 
 void decode_ddr5_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
-    int i;
-    unsigned long sn=0;
     if (spd_size > 520) {
-        for (i = 517; i <= 520; i++)
-	  sn=bytes[i]+(sn<<8);
-        sprintf(serialno,"%lu",sn);
+        sprintf(serialno,"0x%02x%02x%02x%02x",bytes[517],bytes[518],bytes[519],bytes[520]);
     }
-}
-
-void decode_ddr5_module_manufacturer(unsigned char *bytes, int spd_size,
-                                            char **manufacturer, int *bank, int *index) {
-    if (spd_size > 513)
-        decode_ddr34_manufacturer(bytes[512], bytes[513], manufacturer, bank, index);
-    else
-        *manufacturer = NULL;
 }
 
 char *ddr5_print_spd_timings(int speed, float cas, float trcd, float trp, float tras,
@@ -1146,18 +1128,6 @@ void decode_ddr5_module_spd_timings(unsigned char *bytes, float speed, char **st
                 ddr5_print_spd_timings((int)(2000.0 / pctime), best_cas, trcd, trp, tras, pctime));
         }
     }
-}
-
-void decode_ddr5_module_date(unsigned char *bytes, int spd_size, int *week, int *year) {
-    if (spd_size > 516) decode_ddr234_module_date(bytes[516], bytes[515], week, year);
-}
-
-void decode_ddr5_dram_manufacturer(unsigned char *bytes, int spd_size,
-                                            char **manufacturer, int *bank, int *index) {
-    if (spd_size > 553)
-        decode_ddr34_manufacturer(bytes[552], bytes[553], (char **) manufacturer, bank, index);
-    else
-        *manufacturer = NULL;
 }
 
 void detect_ddr5_xmp(unsigned char *bytes, int spd_size, int *majv, int *minv) {
@@ -1303,7 +1273,6 @@ void spd_data_free(spd_data *s) { g_free(s->bytes);g_free(s); }
 GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sysfs, int max_size) {
     GSList *eeprom, *dimm_list = NULL;
     int count = 0;
-    int spd_size = 0;
     spd_data *s = NULL;
 
     for (eeprom = eeprom_list; eeprom; eeprom = eeprom->next, count++) {
@@ -1313,57 +1282,48 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
         s = g_new0(spd_data,1);
         s->bytes=g_malloc(max_size);
         memset(s->bytes, 0, max_size); /* clear */
-        spd_size = read_spd(spd_path, 0, max_size, use_sysfs, s->bytes);
+        s->spd_size = read_spd(spd_path, 0, max_size, use_sysfs, s->bytes);
         s->type = decode_ram_type(s->bytes);
 
         switch (s->type) {
         case SDR_SDRAM:
-            decode_module_part_number(s->bytes, s->partno);
-            decode_module_manufacturer(s->bytes + 64, (char**)&s->vendor_str);
-            decode_sdr_module_size(s->bytes, &s->size_MiB);
-            decode_sdr_module_detail(s->bytes, s->type_detail);
+	    decode_sdr_basic(s);
             break;
         case DDR_SDRAM:
-            decode_module_part_number(s->bytes, s->partno);
-            decode_module_manufacturer(s->bytes + 64, (char**)&s->vendor_str);
-            decode_ddr_module_size(s->bytes, &s->size_MiB);
-            decode_ddr_module_detail(s->bytes, s->type_detail);
+	    decode_ddr_basic(s);
             break;
         case DDR2_SDRAM:
-            decode_module_part_number(s->bytes, s->partno);
-            decode_module_manufacturer(s->bytes + 64, (char**)&s->vendor_str);
-            decode_ddr2_module_size(s->bytes, &s->size_MiB);
-            decode_ddr2_module_detail(s->bytes, s->type_detail);
+	    decode_ddr2_basic(s);
             decode_ddr2_module_type(s->bytes, &s->form_factor);
-            decode_ddr2_module_date(s->bytes, &s->week, &s->year);
+            decode_module_date(s, 94, 93);
+	    decode_ddr2_module_serialno(s->bytes, s->spd_size, s->serialno);
             break;
         case DDR3_SDRAM:
             decode_ddr3_part_number(s->bytes, s->partno);
-            decode_ddr3_manufacturer(s->bytes, (char**)&s->vendor_str, &s->vendor_bank, &s->vendor_index);
-            decode_ddr3_dram_manufacturer(s->bytes, (char**)&s->dram_vendor_str, &s->dram_vendor_bank, &s->dram_vendor_index);
+            decode_manufacturer(s, 117, 118, 148, 149);
             decode_ddr3_module_size(s->bytes, &s->size_MiB);
-            decode_ddr3_module_type(s->bytes, &s->form_factor);
             decode_ddr3_module_detail(s->bytes, s->type_detail);
-            decode_ddr3_module_date(s->bytes, &s->week, &s->year);
+            decode_ddr3_module_type(s->bytes, &s->form_factor);
+            decode_module_date(s, 121, 120);
+	    decode_ddr3_module_serialno(s->bytes, s->spd_size, s->serialno);
             break;
         case DDR4_SDRAM:
-            decode_ddr4_part_number(s->bytes, spd_size, s->partno);
-            decode_ddr4_module_manufacturer(s->bytes, spd_size, (char**)&s->vendor_str, &s->vendor_bank, &s->vendor_index);
-            decode_ddr4_dram_manufacturer(s->bytes, spd_size, (char**)&s->dram_vendor_str, &s->dram_vendor_bank, &s->dram_vendor_index);
+            decode_ddr4_part_number(s->bytes, s->spd_size, s->partno);
+            decode_manufacturer(s, 320, 321, 350, 351);
             decode_ddr4_module_size(s->bytes, &s->size_MiB);
             decode_ddr4_module_type(s->bytes, &s->form_factor);
             decode_ddr4_module_detail(s->bytes, s->type_detail);
-            decode_ddr4_module_date(s->bytes, spd_size, &s->week, &s->year);
+            decode_module_date(s, 324, 323);
+	    decode_ddr4_module_serialno(s->bytes, s->spd_size, s->serialno);
             break;
         case DDR5_SDRAM:
-	    decode_ddr5_part_number(s->bytes, spd_size, s->partno);
-            decode_ddr5_module_manufacturer(s->bytes, spd_size, (char**)&s->vendor_str, &s->vendor_bank, &s->vendor_index);
-            decode_ddr5_dram_manufacturer(s->bytes, spd_size, (char**)&s->dram_vendor_str, &s->dram_vendor_bank, &s->dram_vendor_index);
+	    decode_ddr5_part_number(s->bytes, s->spd_size, s->partno);
+            decode_manufacturer(s, 512, 513, 552, 553);
             decode_ddr5_module_size(s->bytes, &s->size_MiB);
             decode_ddr5_module_type(s->bytes, &s->form_factor);
             decode_ddr5_module_detail(s->bytes, s->type_detail);
-            decode_ddr5_module_date(s->bytes, spd_size, &s->week, &s->year);
-	    decode_ddr5_module_serialno(s->bytes, spd_size, s->serialno);
+            decode_module_date(s, 516, 515);
+	    decode_ddr5_module_serialno(s->bytes, s->spd_size, s->serialno);
             break;
         case UNKNOWN:
         default:
@@ -1374,7 +1334,6 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
         if (s) {
             strncpy(s->dev, g_path_get_basename(spd_path), 31);
             s->spd_driver = driver;
-            s->spd_size = spd_size;
             switch (s->type) {
             case SDR_SDRAM:
             case DDR_SDRAM:
@@ -1490,12 +1449,14 @@ gchar *make_spd_section(spd_data *spd) {
         gchar *size_str = NULL;
         if (!spd->size_MiB)
             size_str = g_strdup(_("(Unknown)"));
-        else
+        else if(spd->size_MiB >= 1024)
+	    size_str = g_strdup_printf("%li %s", spd->size_MiB>>10, _("GiB") );
+	else
 	    size_str = g_strdup_printf("%li %s", spd->size_MiB, _("MiB") );
 
         gchar *mfg_date_str = NULL;
         if (spd->year)
-            mfg_date_str = g_strdup_printf("%d / %d", spd->week, spd->year);
+	    mfg_date_str = g_strdup_printf("%d / %d", spd->year, spd->week);
 
         ret = g_strdup_printf("[%s - %s]\n"
                     "%s=%s (%s)%s\n"
@@ -1522,7 +1483,7 @@ gchar *make_spd_section(spd_data *spd) {
                     _("Part Number"), UNKIFEMPTY2(spd->partno),
                     _("Serial Number"), UNKIFEMPTY2(spd->serialno),
                     _("Size"), size_str,
-                    _("Manufacturing Date (Week / Year)"), UNKIFNULL2(mfg_date_str),
+                    _("Manufacturing Date (Year / Week)"), UNKIFNULL2(mfg_date_str),
                     full_spd ? full_spd : ""
                     );
         g_free(full_spd);
