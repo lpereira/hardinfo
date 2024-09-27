@@ -60,11 +60,11 @@ typedef struct {
 } SpdDriver;
 
 static const SpdDriver spd_drivers[] = {
-//#ifdef DEBUG
+#ifdef DEBUG
   { "",    "/.", 2048, FALSE, ""}, //scans /eeprom-FILENAME
-//#endif
-    { "espd5216",    "/sys/bus/i3c/drivers/espd5216", 2048, TRUE, "espd5216"},//DDR5
-    { "spd5118",     "/sys/bus/i3c/drivers/spd5118",  1024, TRUE, "spd5118"},//DDR5
+#endif
+    { "espd5216",    "/sys/bus/i2c/drivers/espd5216", 2048, TRUE, "espd5216"},//DDR5
+    { "spd5118",     "/sys/bus/i2c/drivers/spd5118",  1024, TRUE, "spd5118"},//DDR5
     { "ee1004",      "/sys/bus/i2c/drivers/ee1004" ,   512, TRUE, "ee1004"},//DDR4
     { "at24",        "/sys/bus/i2c/drivers/at24"   ,   256, TRUE, "spd"},//improved detection used for DDR3--
     { "eeprom",      "/sys/bus/i2c/drivers/eeprom" ,   256, TRUE, "eeprom"},//Wildcard DDR3--
@@ -106,6 +106,7 @@ int decode_ram_type(unsigned char *bytes) {
 }
 
 void decode_old_manufacturer(spd_data *spd) {
+  if(spd->spd_size>72){
     unsigned char first;
     int ai = 0;
     int len = 8;
@@ -115,6 +116,7 @@ void decode_old_manufacturer(spd_data *spd) {
     if (ai == 0) spd->vendor_str = "Invalid";
     else if (parity(first) != 1) spd->vendor_str = "Invalid";
     else spd->vendor_str = (char *)JEDEC_MFG_STR(ai - 1, (first & 0x7f) - 1);
+  }
 }
 
 void decode_manufacturer(spd_data *spd, int MLSB, int MMSB, int CLSB, int CMSB) {
@@ -177,19 +179,21 @@ void decode_sdr_basic(spd_data *spd){
     //decode_sdr_module_detail
     snprintf(spd->type_detail, 255, "SDR");
     //decode_module_part_number
-    strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
+    if(spd->spd_size > 72)
+        strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
     //decode manufacturer
     decode_old_manufacturer(spd);
     //decode_sdr_module_size
-    unsigned char *bytes = spd->bytes;
-    unsigned short i, k = 0;
-    i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
-    if (bytes[5] <= 8 && bytes[17] <= 8) { k = bytes[5] * bytes[17]; }
-
-    if (i > 0 && i <= 12 && k > 0) {
-       spd->size_MiB = (dmi_mem_size)k * (unsigned short)(1 << i);
-    } else {
-        spd->size_MiB = -1;
+    if(spd->spd_size > 17){
+        unsigned char *bytes = spd->bytes;
+        unsigned short i, k = 0;
+        i = (bytes[3] & 0x0f) + (bytes[4] & 0x0f) - 17;
+        if (bytes[5] <= 8 && bytes[17] <= 8) { k = bytes[5] * bytes[17]; }
+        if (i > 0 && i <= 12 && k > 0) {
+            spd->size_MiB = (dmi_mem_size)k * (unsigned short)(1 << i);
+        } else {
+            spd->size_MiB = -1;
+        }
     }
 }
 
@@ -1235,7 +1239,10 @@ int read_spd(char *spd_path, int offset, size_t size, int use_sysfs,
         FILE *spd;
         gchar *temp_path;
 
-        temp_path = g_strdup_printf("%s/eeprom", spd_path);
+	if(strstr(spd_path,"spd5118"))
+            temp_path = g_strdup_printf("%s/nvmem", spd_path);
+	else
+            temp_path = g_strdup_printf("%s/eeprom", spd_path);
         if ((spd = fopen(temp_path, "rb"))) {
             fseek(spd, offset, SEEK_SET);
             data_size = fread(bytes_out, 1, size, spd);
