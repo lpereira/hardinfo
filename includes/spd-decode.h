@@ -67,7 +67,7 @@ typedef uint64_t dmi_mem_size;
 struct dmi_mem_socket;
 typedef struct {
     unsigned char *bytes;
-    char dev[32];  /* %1d-%04d\0 */
+    char dev[32];
     const char *spd_driver;
     int spd_size;
     RamType type;
@@ -80,11 +80,12 @@ typedef struct {
     const char *dram_vendor_str;
     const Vendor *dram_vendor;
     char partno[32];
+    char serialno[32];
     const char *form_factor;
     char type_detail[256];
     dmi_mem_size size_MiB;
-    int spd_rev_major; // bytes[1] >> 4
-    int spd_rev_minor; // bytes[1] & 0xf
+    int spd_rev_major;
+    int spd_rev_minor;
     int week, year;
     gboolean ddr4_no_ee1004;
     struct dmi_mem_socket *dmi_socket;
@@ -97,7 +98,14 @@ void spd_data_free(spd_data *s);
 
 
 
-
+/* from decode-dimms, in the i2c-tools package:
+ * https://mirrors.edge.kernel.org/pub/software/utils/i2c-tools/
+ *
+ * STANDARD MANUFACTURERS IDENTIFICATION CODEs
+ * as defined in JEP106
+ *
+ * As of: 13 August 2024
+ */
 
 #define VENDORS_BANKS 13
 #define VENDORS_ITEMS 128

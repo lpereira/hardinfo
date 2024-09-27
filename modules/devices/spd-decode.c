@@ -73,14 +73,12 @@ const SpdDriver spd_drivers[] = {
 };
 
 int decode_ram_type(unsigned char *bytes) {
-    DEBUG("SPD RAM TYPE 0:%x",bytes[0]);
     if (bytes[0] < 4) {
         switch (bytes[2]) {
         case 1: return DIRECT_RAMBUS;
         case 17: return RAMBUS;
         }
     } else {
-        DEBUG("SPD RAM TYPE 2:%x",bytes[2]);
         switch (bytes[2]) {
         case 1: return FPM_DRAM;
         case 2: return EDO;
@@ -1028,7 +1026,7 @@ void decode_ddr5_module_type(unsigned char *bytes, const char **type) {
     default: *type = NULL;
     }
 }
-/*FIXME BELOW HERE*/
+
 void decode_ddr5_part_number(unsigned char *bytes, int spd_size, char *part_number) {
     int i;
     if (part_number && (spd_size > 550)) {
@@ -1036,6 +1034,16 @@ void decode_ddr5_part_number(unsigned char *bytes, int spd_size, char *part_numb
            *part_number++ = bytes[i];
     }
     *part_number = '\0';
+}
+
+void decode_ddr5_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
+    int i;
+    unsigned long sn=0;
+    if (spd_size > 520) {
+        for (i = 517; i <= 520; i++)
+	  sn=bytes[i]+(sn<<8);
+        sprintf(serialno,"%lu",sn);
+    }
 }
 
 void decode_ddr5_module_manufacturer(unsigned char *bytes, int spd_size,
@@ -1091,7 +1099,6 @@ void decode_ddr5_module_speed(unsigned char *bytes, float *ddr_clock, int *pc5_s
     int pcclk;
 
     ctime = (bytes[21]<<8) + bytes[20];
-    DEBUG("SPD CTIME=%f",ctime);
     ddrclk = (2000000.0 / ctime);
 
     pcclk = ddrclk*8;
@@ -1311,21 +1318,18 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
 
         switch (s->type) {
         case SDR_SDRAM:
-	    DEBUG("DECODING SDR");
             decode_module_part_number(s->bytes, s->partno);
             decode_module_manufacturer(s->bytes + 64, (char**)&s->vendor_str);
             decode_sdr_module_size(s->bytes, &s->size_MiB);
             decode_sdr_module_detail(s->bytes, s->type_detail);
             break;
         case DDR_SDRAM:
-	    DEBUG("DECODING DDR");
             decode_module_part_number(s->bytes, s->partno);
             decode_module_manufacturer(s->bytes + 64, (char**)&s->vendor_str);
             decode_ddr_module_size(s->bytes, &s->size_MiB);
             decode_ddr_module_detail(s->bytes, s->type_detail);
             break;
         case DDR2_SDRAM:
-	    DEBUG("DECODING DDR2");
             decode_module_part_number(s->bytes, s->partno);
             decode_module_manufacturer(s->bytes + 64, (char**)&s->vendor_str);
             decode_ddr2_module_size(s->bytes, &s->size_MiB);
@@ -1334,7 +1338,6 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
             decode_ddr2_module_date(s->bytes, &s->week, &s->year);
             break;
         case DDR3_SDRAM:
-	    DEBUG("DECODING DDR3");
             decode_ddr3_part_number(s->bytes, s->partno);
             decode_ddr3_manufacturer(s->bytes, (char**)&s->vendor_str, &s->vendor_bank, &s->vendor_index);
             decode_ddr3_dram_manufacturer(s->bytes, (char**)&s->dram_vendor_str, &s->dram_vendor_bank, &s->dram_vendor_index);
@@ -1344,7 +1347,6 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
             decode_ddr3_module_date(s->bytes, &s->week, &s->year);
             break;
         case DDR4_SDRAM:
-	    DEBUG("DECODING DDR4");
             decode_ddr4_part_number(s->bytes, spd_size, s->partno);
             decode_ddr4_module_manufacturer(s->bytes, spd_size, (char**)&s->vendor_str, &s->vendor_bank, &s->vendor_index);
             decode_ddr4_dram_manufacturer(s->bytes, spd_size, (char**)&s->dram_vendor_str, &s->dram_vendor_bank, &s->dram_vendor_index);
@@ -1354,7 +1356,6 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
             decode_ddr4_module_date(s->bytes, spd_size, &s->week, &s->year);
             break;
         case DDR5_SDRAM:
-	    DEBUG("DECODING DDR5");
 	    decode_ddr5_part_number(s->bytes, spd_size, s->partno);
             decode_ddr5_module_manufacturer(s->bytes, spd_size, (char**)&s->vendor_str, &s->vendor_bank, &s->vendor_index);
             decode_ddr5_dram_manufacturer(s->bytes, spd_size, (char**)&s->dram_vendor_str, &s->dram_vendor_bank, &s->dram_vendor_index);
@@ -1362,6 +1363,7 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
             decode_ddr5_module_type(s->bytes, &s->form_factor);
             decode_ddr5_module_detail(s->bytes, s->type_detail);
             decode_ddr5_module_date(s->bytes, spd_size, &s->week, &s->year);
+	    decode_ddr5_module_serialno(s->bytes, spd_size, s->serialno);
             break;
         case UNKNOWN:
         default:
@@ -1402,14 +1404,11 @@ GSList *spd_scan() {
     gchar *dimm_list_entry, *dir_entry, *name_file, *name;
     const SpdDriver *driver;
     gboolean is_spd = FALSE;
-    DEBUG("SPD_SCAN");
     for (driver = spd_drivers; driver->dir_path; driver++) {
         if (g_file_test(driver->dir_path, G_FILE_TEST_EXISTS)) {
             dir = g_dir_open(driver->dir_path, 0, NULL);
             if (!dir) continue;
 
-            DEBUG("SPD_SCAN driver found");
-            //driver_found = TRUE;
             while ((dir_entry = (char *)g_dir_read_name(dir))) {
                 is_spd = FALSE;
 
@@ -1486,7 +1485,7 @@ gchar *make_spd_section(spd_data *spd) {
                 full_spd = decode_ddr5_sdram_extra(spd->bytes, spd->spd_size);
                 break;
             default:
-	        DEBUG("blug for type: %d %s\n", spd->type, ram_types[spd->type]);
+	        DEBUG("SPD unknown type: %d %s\n", spd->type, ram_types[spd->type]);
         }
         gchar *size_str = NULL;
         if (!spd->size_MiB)
@@ -1506,11 +1505,12 @@ gchar *make_spd_section(spd_data *spd) {
                     "$^$%s=[%02x%02x] %s\n" /* module vendor */
                     "$^$%s=[%02x%02x] %s\n" /* dram vendor */
                     "%s=%s\n" /* part */
+                    "%s=%s\n" /* serialno */
                     "%s=%s\n" /* size */
                     "%s=%s\n" /* mfg date */
                     "%s",
                     _("Serial Presence Detect (SPD)"), ram_types[spd->type],
-                    _("Source"), spd->dev, spd->spd_driver, /*FIXME DDR5 changes?*/
+                    _("Source"), spd->dev, spd->spd_driver,
                         (spd->type == DDR4_SDRAM && strcmp(spd->spd_driver, "ee1004") != 0) ? problem_marker() : "",
                     _("SPD Revision"), spd->spd_rev_major, spd->spd_rev_minor,
                     _("Form Factor"), UNKIFNULL2(spd->form_factor),
@@ -1520,6 +1520,7 @@ gchar *make_spd_section(spd_data *spd) {
                     _("DRAM Vendor"), spd->dram_vendor_bank, spd->dram_vendor_index,
                         UNKIFNULL2(spd->dram_vendor_str),
                     _("Part Number"), UNKIFEMPTY2(spd->partno),
+                    _("Serial Number"), UNKIFEMPTY2(spd->serialno),
                     _("Size"), size_str,
                     _("Manufacturing Date (Week / Year)"), UNKIFNULL2(mfg_date_str),
                     full_spd ? full_spd : ""
