@@ -350,6 +350,7 @@ set(MODULE_devices_SOURCES
 	modules/devices/firmware.c
 	modules/devices/devicetree.c
 	modules/devices/inputdevices.c
+	modules/devices/spd-decode.c
 	modules/devices/pci.c
 	modules/devices/printers.c
 	modules/devices/resources.c
