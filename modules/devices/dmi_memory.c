@@ -32,8 +32,6 @@ extern const char *dtree_mem_str; /* in devicetree.c */
 /* in monitors.c */
 gchar **get_output_lines(const char *cmd_line);
 
-//#define dmi_spd_msg(...)  /* fprintf (stderr, __VA_ARGS__) */
-
 gboolean no_handles = FALSE;
 gboolean sketchy_info = FALSE;
 
@@ -54,23 +52,16 @@ static const char empty_icon[] = "module.png";
 dmi_mem_size dmi_read_memory_str_to_MiB(const char *memstr) {
     dmi_mem_size ret = 0, v = 0;
     char l[7] = "";
-    /* dmidecode units: "bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB" */
-    int mc = sscanf(memstr, "%"PRId64" %6s", &v, l);
+    /* dmidecode units: "bytes", "kB", "MB", "GB", "TB" */
+    int mc = sscanf(memstr, "%u %6s", &v, l);
     if (mc == 2) {
-        if (SEQ(l, "ZB")) ret = v * 1024 * 1024 * 1024 * 1024 * 1024;
-        else if (SEQ(l, "EB")) ret = v * 1024 * 1024 * 1024 * 1024;
-        else if (SEQ(l, "PB")) ret = v * 1024 * 1024 * 1024;
-        else if (SEQ(l, "TB")) ret = v * 1024 * 1024;
+        if (SEQ(l, "TB")) ret = v * 1024 * 1024;
         else if (SEQ(l, "GB")) ret = v * 1024;
         else if (SEQ(l, "MB")) ret = v;
         else if (SEQ(l, "kB")) {
-            /* should never appear */
-            //if (v % 1024) { dmi_spd_msg("OMG kB!"); }
             ret = v / 1024;
         }
         else if (SEQ(l, "bytes")) {
-            /* should never appear */
-            //if (v % 1024) { dmi_spd_msg("OMG bytes!"); }
             ret = v / (1024 * 1024);
         }
     }
@@ -643,9 +634,9 @@ gchar *memory_devices_get_info() {
 
         if (a->size_MiB_max > 1024 && (a->size_MiB_max % 1024 == 0)
             && a->size_MiB_present > 1024 && (a->size_MiB_present % 1024 == 0) )
-            size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present / 1024, a->size_MiB_max / 1024, _("GiB"));
+            size_str = g_strdup_printf("%u / %u %s", a->size_MiB_present / 1024, a->size_MiB_max / 1024, _("GiB"));
         else
-            size_str = g_strdup_printf("%"PRId64" / %"PRId64" %s", a->size_MiB_present, a->size_MiB_max, _("MiB"));
+            size_str = g_strdup_printf("%u / %u %s", a->size_MiB_present, a->size_MiB_max, _("MiB"));
 
         if (a->size_MiB_max < a->size_MiB_present) {
             sketchy_info = TRUE;
@@ -653,9 +644,9 @@ gchar *memory_devices_get_info() {
         }
 
         if (a->size_MiB_rom > 1024 && (a->size_MiB_rom % 1024 == 0))
-            rom_size_str = g_strdup_printf("%"PRId64" %s", a->size_MiB_rom / 1024, _("GiB"));
+            rom_size_str = g_strdup_printf("%u %s", a->size_MiB_rom / 1024, _("GiB"));
         else
-            rom_size_str = g_strdup_printf("%"PRId64" %s", a->size_MiB_rom, _("MiB"));
+            rom_size_str = g_strdup_printf("%u %s", a->size_MiB_rom, _("MiB"));
 
         gchar *types_str = NULL;
         int i;
@@ -709,7 +700,7 @@ gchar *memory_devices_get_info() {
             else if (!s->size_MiB)
                 size_str = g_strdup(s->size_str);
             else
-                size_str = g_strdup_printf("%"PRId64" %s", s->size_MiB, _("MiB") );
+                size_str = g_strdup_printf("%u %s", s->size_MiB, _("MiB") );
 
             gchar *spd = s->spd ? make_spd_section(s->spd) : NULL;
 
@@ -795,9 +786,9 @@ gchar *memory_devices_get_info() {
         gchar *size_str = NULL;
 
         if (mem->spd_size_MiB > 1024 && (mem->spd_size_MiB % 1024 == 0) )
-            size_str = g_strdup_printf("%"PRId64" %s", mem->spd_size_MiB / 1024, _("GiB"));
+            size_str = g_strdup_printf("%u %s", mem->spd_size_MiB / 1024, _("GiB"));
         else
-            size_str = g_strdup_printf("%"PRId64" %s", mem->spd_size_MiB, _("MiB"));
+            size_str = g_strdup_printf("%u %s", mem->spd_size_MiB, _("MiB"));
 
         int i;
         for(i = 1; i < N_RAM_TYPES; i++) {
@@ -843,7 +834,7 @@ gchar *memory_devices_get_info() {
         if (!s->size_MiB)
             size_str = g_strdup(_("(Unknown)"));
         else
-            size_str = g_strdup_printf("%"PRId64" %s", s->size_MiB, _("MiB") );
+            size_str = g_strdup_printf("%u %s", s->size_MiB, _("MiB") );
 
         gchar *details = make_spd_section(s);
 
@@ -924,9 +915,9 @@ gchar *memory_devices_get_system_memory_str() {
     dmi_mem_size m = memory_devices_get_system_memory_MiB();
     if (m) {
         if (m > 1024 && (m % 1024 == 0) )
-            ret = g_strdup_printf("%"PRId64" %s", m/1024, _("GiB"));
+            ret = g_strdup_printf("%u %s", m>>10, _("GiB"));
         else
-            ret = g_strdup_printf("%"PRId64" %s", m, _("MiB"));
+            ret = g_strdup_printf("%u %s", m, _("MiB"));
     }
     return ret;
 }

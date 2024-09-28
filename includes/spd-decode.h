@@ -63,7 +63,7 @@ static const char *ram_types[] = {
     "DDR5 SDRAM"
 };
 
-typedef uint64_t dmi_mem_size;
+typedef uint32_t dmi_mem_size;
 struct dmi_mem_socket;
 typedef struct {
     unsigned char *bytes;//allocated

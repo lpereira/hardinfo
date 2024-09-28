@@ -169,6 +169,23 @@ void decode_module_date(spd_data *spd, int Week, int Year) {
   }
 }
 
+void decode_module_partno(spd_data *spd, int start, int end) {
+    unsigned int j=0;
+    if( (spd->spd_size > end) ){
+        int i=start;
+        while(i<=end){
+	    if((spd->bytes[i]>=' ') && (j<sizeof(spd->partno)-1)) spd->partno[j++]=(char)spd->bytes[i];
+	    i++;
+        }
+    }
+    spd->partno[j]=0;
+}
+
+void decode_module_serialno(spd_data *spd, int SN) {
+    if (spd->spd_size > SN+3) {
+        sprintf(spd->serialno,"0x%02x%02x%02x%02x",spd->bytes[SN],spd->bytes[SN+1],spd->bytes[SN+2],spd->bytes[SN+3]);
+    }
+}
 
 
 
@@ -176,14 +193,11 @@ void decode_module_date(spd_data *spd, int Week, int Year) {
 /* ----------------------- SDR ---------------------- */
 /* -------------------------------------------------- */
 void decode_sdr_basic(spd_data *spd){
-    //decode_sdr_module_detail
-    snprintf(spd->type_detail, 255, "SDR");
-    //decode_module_part_number
-    if(spd->spd_size > 72)
-        strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
-    //decode manufacturer
+    sprintf(spd->type_detail, "SDR");
+    decode_module_partno(spd, 73, 90);
     decode_old_manufacturer(spd);
-    //decode_sdr_module_size
+    decode_module_serialno(spd, 95);
+   //decode_sdr_module_size
     if(spd->spd_size > 17){
         unsigned char *bytes = spd->bytes;
         unsigned short i, k = 0;
@@ -197,17 +211,13 @@ void decode_sdr_basic(spd_data *spd){
     }
 }
 
-void decode_sdr_module_timings(unsigned char *bytes, float *tcl, float *trcd, float *trp,
-                                      float *tras) {
+void decode_sdr_module_timings(unsigned char *bytes, float *tcl, float *trcd, float *trp, float *tras) {
     float cas[3], ctime;
     int i, j;
-
     for (i = 0, j = 0; j < 7; j++) {
         if (bytes[18] & 1 << j) { cas[i++] = j + 1; }
     }
-
     ctime = ((bytes[9] >> 4) + (bytes[9] & 0xf)) * 0.1;
-
     if (trcd) { *trcd = ceil(bytes[29] / ctime); }
     if (trp) { *trp = ceil(bytes[27] / ctime); }
     if (tras) { *tras = ceil(bytes[30] / ctime); }
@@ -216,7 +226,6 @@ void decode_sdr_module_timings(unsigned char *bytes, float *tcl, float *trcd, fl
 
 void decode_sdr_module_row_address_bits(unsigned char *bytes, char **bits) {
     char *temp;
-
     switch (bytes[3]) {
     case 0: temp = "Undefined"; break;
     case 1: temp = "1/16"; break;
@@ -226,13 +235,11 @@ void decode_sdr_module_row_address_bits(unsigned char *bytes, char **bits) {
         /* printf("%d\n", bytes[3]); */
         temp = NULL;
     }
-
     if (bits) { *bits = temp; }
 }
 
 void decode_sdr_module_col_address_bits(unsigned char *bytes, char **bits) {
     char *temp;
-
     switch (bytes[4]) {
     case 0: temp = "Undefined"; break;
     case 1: temp = "1/16"; break;
@@ -242,7 +249,6 @@ void decode_sdr_module_col_address_bits(unsigned char *bytes, char **bits) {
         /*printf("%d\n", bytes[4]); */
         temp = NULL;
     }
-
     if (bits) { *bits = temp; }
 }
 
@@ -272,38 +278,32 @@ void decode_sdr_module_interface_signal_levels(unsigned char *bytes, char **sign
     case 255: temp = "New Table"; break;
     default: temp = NULL;
     }
-
     if (signal_levels) { *signal_levels = temp; }
 }
 
 void decode_sdr_module_configuration_type(unsigned char *bytes, char **module_config_type) {
     char *temp;
-
     switch (bytes[11]) {
     case 0: temp = "No parity"; break;
     case 1: temp = "Parity"; break;
     case 2: temp = "ECC"; break;
     default: temp = NULL;
     }
-
     if (module_config_type) { *module_config_type = temp; }
 }
 
 void decode_sdr_module_refresh_type(unsigned char *bytes, char **refresh_type) {
     char *temp;
-
     if (bytes[12] & 0x80) {
         temp = "Self refreshing";
     } else {
         temp = "Not self refreshing";
     }
-
     if (refresh_type) { *refresh_type = temp; }
 }
 
 void decode_sdr_module_refresh_rate(unsigned char *bytes, char **refresh_rate) {
     char *temp;
-
     switch (bytes[12] & 0x7f) {
     case 0: temp = "Normal (15.625us)"; break;
     case 1: temp = "Reduced (3.9us)"; break;
@@ -313,7 +313,6 @@ void decode_sdr_module_refresh_rate(unsigned char *bytes, char **refresh_rate) {
     case 5: temp = "Extended (125us)"; break;
     default: temp = NULL;
     }
-
     if (refresh_rate) { *refresh_rate = temp; }
 }
 
@@ -322,7 +321,6 @@ gchar *decode_sdr_sdram_extra(unsigned char *bytes) {
     float tcl, trcd, trp, tras;
     char *row_address_bits, *col_address_bits, *signal_level;
     char *module_config_type, *refresh_type, *refresh_rate;
-
     decode_sdr_module_timings(bytes, &tcl, &trcd, &trp, &tras);
     decode_sdr_module_row_address_bits(bytes, &row_address_bits);
     decode_sdr_module_col_address_bits(bytes, &col_address_bits);
@@ -332,7 +330,6 @@ gchar *decode_sdr_sdram_extra(unsigned char *bytes) {
     decode_sdr_module_configuration_type(bytes, &module_config_type);
     decode_sdr_module_refresh_type(bytes, &refresh_type);
     decode_sdr_module_refresh_rate(bytes, &refresh_rate);
-
     /* TODO:
        - RAS to CAS delay
        - Supported CAS latencies
@@ -378,27 +375,21 @@ gchar *decode_sdr_sdram_extra(unsigned char *bytes) {
 void decode_ddr_module_speed(unsigned char *bytes, float *ddrclk, int *pcclk) {
     float temp, clk;
     int tbits, pc;
-
     temp = (bytes[9] >> 4) + (bytes[9] & 0xf) * 0.1;
     clk = 2 * (1000 / temp);
     tbits = (bytes[7] * 256) + bytes[6];
-
     if (bytes[11] == 2 || bytes[11] == 1) { tbits -= 8; }
-
     pc = clk * tbits / 8;
     if (pc % 100 > 50) { pc += 100; }
     pc -= pc % 100;
-
     if (ddrclk) *ddrclk = (int)clk;
-
     if (pcclk) *pcclk = pc;
 }
 
 void decode_ddr_basic(spd_data *spd){
     decode_old_manufacturer(spd);
-    //decode_module_part_number(spd);
-    strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
-    //decode_ddr_module_size(spd->bytes, &s->size_MiB);
+    decode_module_partno(spd, 73, 90);
+    decode_module_serialno(spd, 95);
     //decode_sdr_module_size
     unsigned char *bytes = spd->bytes;
     unsigned short i, k = 0;
@@ -410,48 +401,39 @@ void decode_ddr_basic(spd_data *spd){
     } else {
         spd->size_MiB = -1;
     }
-    //decode_ddr_module_detail(spd->bytes, s->type_detail);
+    //decode_ddr_module_detail
     float ddr_clock;
     int pc_speed;
     decode_ddr_module_speed(bytes, &ddr_clock, &pc_speed);
     snprintf(spd->type_detail, 255, "DDR-%.0f (PC-%d)", ddr_clock, pc_speed);
 }
 
-void decode_ddr_module_timings(unsigned char *bytes, float *tcl, float *trcd, float *trp,
-                                      float *tras) {
+void decode_ddr_module_timings(unsigned char *bytes, float *tcl, float *trcd, float *trp, float *tras) {
     float ctime;
     float highest_cas = 0;
     int i;
-
     for (i = 0; i < 7; i++) {
         if (bytes[18] & (1 << i)) { highest_cas = 1 + i * 0.5f; }
     }
-
     ctime = (bytes[9] >> 4) + (bytes[9] & 0xf) * 0.1;
-
     if (trcd) {
         *trcd = (bytes[29] >> 2) + ((bytes[29] & 3) * 0.25);
         *trcd = ceil(*trcd / ctime);
     }
-
     if (trp) {
         *trp = (bytes[27] >> 2) + ((bytes[27] & 3) * 0.25);
         *trp = ceil(*trp / ctime);
     }
-
     if (tras) {
         *tras = bytes[30];
         *tras = ceil(*tras / ctime);
     }
-
     if (tcl) { *tcl = highest_cas; }
 }
 
 gchar *decode_ddr_sdram_extra(unsigned char *bytes) {
     float tcl, trcd, trp, tras;
-
     decode_ddr_module_timings(bytes, &tcl, &trcd, &trp, &tras);
-
     return g_strdup_printf("[%s]\n"
                            "tCL=%.2f\n"
                            "tRCD=%.2f\n"
@@ -469,10 +451,8 @@ gchar *decode_ddr_sdram_extra(unsigned char *bytes) {
 /* -------------------------------------------------- */
 float decode_ddr2_module_ctime(unsigned char byte) {
     float ctime;
-
     ctime = (byte >> 4);
     byte &= 0xf;
-
     if (byte <= 9) {
         ctime += byte * 0.1;
     } else if (byte == 10) {
@@ -484,7 +464,6 @@ float decode_ddr2_module_ctime(unsigned char byte) {
     } else if (byte == 13) {
         ctime += 0.75;
     }
-
     return ctime;
 }
 
@@ -495,21 +474,17 @@ void decode_ddr2_module_speed(unsigned char *bytes, float *ddr_clock, int *pc2_s
     int tbits, pcclk;
     ctime = decode_ddr2_module_ctime(bytes[9]);
     ddrclk = 2 * (1000 / ctime);
-
     tbits = (bytes[7] * 256) + bytes[6];
     if (bytes[11] & 0x03) { tbits -= 8; }
-
     pcclk = ddrclk * tbits / 8;
     pcclk -= pcclk % 100;
-
     if (ddr_clock) { *ddr_clock = (int)ddrclk; }
     if (pc2_speed) { *pc2_speed = pcclk; }
 }
 
 void decode_ddr2_basic(spd_data *spd){
     decode_old_manufacturer(spd);
-    //decode_module_part_number(spd);
-    strncpy(spd->partno, (char *)(spd->bytes + 8 + 64), sizeof(spd->partno)-1);
+    decode_module_partno(spd, 73, 90);
     //decode_ddr_module_size(spd->bytes, &s->size_MiB);
     //decode_sdr_module_size
     unsigned char *bytes = spd->bytes;
@@ -518,7 +493,7 @@ void decode_ddr2_basic(spd_data *spd){
     if (bytes[5] <= 8 && bytes[17] <= 8) { k = bytes[5] * bytes[17]; }
 
     if (i > 0 && i <= 12 && k > 0) {
-       spd->size_MiB = (dmi_mem_size)k * (unsigned short)(1 << i);
+        spd->size_MiB = (dmi_mem_size)k * (unsigned short)(1 << i);
     } else {
         spd->size_MiB = -1;
     }
@@ -529,15 +504,6 @@ void decode_ddr2_basic(spd_data *spd){
     snprintf(spd->type_detail, 255, "DDR2-%.0f (PC2-%d)", ddr_clock, pc2_speed);
 }
 
-void decode_ddr2_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
-  int i;
-    unsigned long sn=0;
-    if (spd_size > 98) {
-        for (i = 98; i >= 95; i--)
-	  sn=bytes[i]+(sn<<8);
-        sprintf(serialno,"%lu (%08lx)",sn,sn);
-    }
-}
 
 
 void decode_ddr2_module_type(unsigned char *bytes, const char **type) {
@@ -555,18 +521,14 @@ void decode_ddr2_module_type(unsigned char *bytes, const char **type) {
 }
 
 void decode_ddr2_module_timings(float ctime, unsigned char *bytes, float *trcd, float *trp, float *tras) {
-
     if (trcd) { *trcd = ceil(((bytes[29] >> 2) + ((bytes[29] & 3) * 0.25)) / ctime); }
-
     if (trp) { *trp = ceil(((bytes[27] >> 2) + ((bytes[27] & 3) * 0.25)) / ctime); }
-
     if (tras) { *tras = ceil(bytes[30] / ctime); }
 }
 
 gboolean decode_ddr2_module_ctime_for_casx(int casx_minus, unsigned char *bytes, float *ctime, float *tcl){
     int highest_cas = 0, i, bytei;
     float ctimev = 0;
-
     switch (casx_minus){
         case 0:
             bytei = 9;
@@ -580,21 +542,16 @@ gboolean decode_ddr2_module_ctime_for_casx(int casx_minus, unsigned char *bytes,
         default:
             return FALSE;
     }
-
     for (i = 0; i < 7; i++) {
         if (bytes[18] & (1 << i)) { highest_cas = i; }
     }
-
     if ((bytes[18] & (1 << (highest_cas-casx_minus))) == 0)
         return FALSE;
-
     ctimev = decode_ddr2_module_ctime(bytes[bytei]);
     if (ctimev == 0)
         return FALSE;
-
     if (tcl) { *tcl = highest_cas-casx_minus; }
     if (ctime) { *ctime = ctimev; }
-
     return TRUE;
 }
 
@@ -604,7 +561,6 @@ gchar *decode_ddr2_sdram_extra(unsigned char *bytes) {
     const char* voltage;
     gchar *out;
     int i;
-
     switch(bytes[8]){
         case 0x0:
             voltage = "TTL/5 V tolerant";
@@ -627,7 +583,6 @@ gchar *decode_ddr2_sdram_extra(unsigned char *bytes) {
         default:
             voltage = _("(Unknown)");
     }
-
     /* expected to continue an [SPD] section */
     out = g_strdup_printf("%s=%s\n"
                           "[%s]\n",
@@ -661,13 +616,10 @@ void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int *pc3_s
     float ddrclk;
     int tbits, pcclk;
     float mtb = 0.125;
-
     if (bytes[10] == 1 && bytes[11] == 8) mtb = 0.125;
     if (bytes[10] == 1 && bytes[11] == 15) mtb = 0.0625;
     ctime = mtb * bytes[12];
-
     ddrclk = 2 * (1000 / ctime);
-
     tbits = 64;
     switch (bytes[8]) {
     case 1: tbits = 16; break;
@@ -675,10 +627,8 @@ void decode_ddr3_module_speed(unsigned char *bytes, float *ddr_clock, int *pc3_s
     case 3:
     case 0xb: tbits = 64; break;
     }
-
     pcclk = ddrclk * tbits / 8;
     pcclk -= pcclk % 100;
-
     if (ddr_clock) { *ddr_clock = (int)ddrclk; }
     if (pc3_speed) { *pc3_speed = pcclk; }
 }
@@ -688,27 +638,20 @@ void decode_ddr3_module_size(unsigned char *bytes, dmi_mem_size *size) {
     unsigned int sdr_width = 4 << (bytes[7] & 0x7);
     unsigned int bus_width = 8 << (bytes[8] & 0x7);
     unsigned int ranks = 1 + ((bytes[7] >> 3) & 0x7);
-
     *size = (dmi_mem_size)sdr_capacity / 8 * bus_width / sdr_width * ranks;
 }
 
-void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float *trp, float *tras,
-                                       float *tcl) {
+void decode_ddr3_module_timings(unsigned char *bytes, float *trcd, float *trp, float *tras, float *tcl) {
     float ctime;
     float mtb = 0.125;
     float taa;
-
     if (bytes[10] == 1 && bytes[11] == 8) mtb = 0.125;
     if (bytes[10] == 1 && bytes[11] == 15) mtb = 0.0625;
     ctime = mtb * bytes[12];
     taa = bytes[16] * mtb;
-
     if (trcd) { *trcd = bytes[18] * mtb; }
-
     if (trp) { *trp = bytes[20] * mtb; }
-
     if (tras) { *tras = (bytes[22] + (bytes[21] & 0xf)) * mtb; }
-
     if (tcl) { *tcl = ceil(taa/ctime); }
 }
 
@@ -732,14 +675,11 @@ void decode_ddr3_module_detail(unsigned char *bytes, char *type_detail) {
 
 gchar *decode_ddr3_sdram_extra(unsigned char *bytes) {
     float trcd, trp, tras, tcl;
-
     decode_ddr3_module_timings(bytes, &trcd, &trp, &tras, &tcl);
-
     int ranks = 1 + ((bytes[7] >> 3) & 0x7);
     int pins = 4 << (bytes[7] & 0x7);
     int die_count = (bytes[33] >> 4) & 0x7;
     int ts = !!(bytes[32] & 0x80);
-
     /* expected to continue an [SPD] section */
     return g_strdup_printf("%s=%d\n"
                            "%s=%d\n"
@@ -782,19 +722,7 @@ gchar *decode_ddr3_sdram_extra(unsigned char *bytes) {
                            );
 }
 
-void decode_ddr3_part_number(unsigned char *bytes, char *part_number) {
-    int i;
-    if (part_number) {
-        for (i = 128; i <= 145; i++) *part_number++ = bytes[i];
-        *part_number = '\0';
-    }
-}
 
-void decode_ddr3_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
-    if (spd_size > 125) {
-        sprintf(serialno,"0x%02x%02x%02x%02x",bytes[122],bytes[123],bytes[124],bytes[125]);
-    }
-}
 
 
 
@@ -981,25 +909,6 @@ gchar *decode_ddr4_sdram_extra(unsigned char *bytes, int spd_size) {
     return out;
 }
 
-void decode_ddr4_part_number(unsigned char *bytes, int spd_size, char *part_number) {
-    int i;
-    if (!part_number) return;
-
-    if (spd_size < 348) {
-        *part_number++ = '\0';
-        return;
-    }
-
-    for (i = 329; i <= 348; i++)
-        *part_number++ = bytes[i];
-    *part_number = '\0';
-}
-
-void decode_ddr4_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
-    if (spd_size > 328) {
-        sprintf(serialno,"0x%02x%02x%02x%02x",bytes[325],bytes[326],bytes[327],bytes[328]);
-    }
-}
 
 
 
@@ -1025,20 +934,6 @@ void decode_ddr5_module_type(unsigned char *bytes, const char **type) {
     }
 }
 
-void decode_ddr5_part_number(unsigned char *bytes, int spd_size, char *part_number) {
-    int i;
-    if (part_number && (spd_size > 550)) {
-        for (i = 521; i <= 550; i++)
-           *part_number++ = bytes[i];
-    }
-    *part_number = '\0';
-}
-
-void decode_ddr5_module_serialno(unsigned char *bytes, int spd_size, char *serialno) {
-    if (spd_size > 520) {
-        sprintf(serialno,"0x%02x%02x%02x%02x",bytes[517],bytes[518],bytes[519],bytes[520]);
-    }
-}
 
 char *ddr5_print_spd_timings(int speed, float cas, float trcd, float trp, float tras,
                                float ctime) {
@@ -1303,34 +1198,34 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
 	    decode_ddr2_basic(s);
             decode_ddr2_module_type(s->bytes, &s->form_factor);
             decode_module_date(s, 94, 93);
-	    decode_ddr2_module_serialno(s->bytes, s->spd_size, s->serialno);
+	    decode_module_serialno(s, 95);
             break;
         case DDR3_SDRAM:
-            decode_ddr3_part_number(s->bytes, s->partno);
+            decode_module_partno(s, 128, 145);
             decode_manufacturer(s, 117, 118, 148, 149);
             decode_ddr3_module_size(s->bytes, &s->size_MiB);
             decode_ddr3_module_detail(s->bytes, s->type_detail);
             decode_ddr3_module_type(s->bytes, &s->form_factor);
             decode_module_date(s, 121, 120);
-	    decode_ddr3_module_serialno(s->bytes, s->spd_size, s->serialno);
+	    decode_module_serialno(s, 122);
             break;
         case DDR4_SDRAM:
-            decode_ddr4_part_number(s->bytes, s->spd_size, s->partno);
+            decode_module_partno(s, 329, 348);
             decode_manufacturer(s, 320, 321, 350, 351);
             decode_ddr4_module_size(s->bytes, &s->size_MiB);
             decode_ddr4_module_type(s->bytes, &s->form_factor);
             decode_ddr4_module_detail(s->bytes, s->type_detail);
             decode_module_date(s, 324, 323);
-	    decode_ddr4_module_serialno(s->bytes, s->spd_size, s->serialno);
+	    decode_module_serialno(s, 325);
             break;
         case DDR5_SDRAM:
-	    decode_ddr5_part_number(s->bytes, s->spd_size, s->partno);
+            decode_module_partno(s, 521, 550);
             decode_manufacturer(s, 512, 513, 552, 553);
             decode_ddr5_module_size(s->bytes, &s->size_MiB);
             decode_ddr5_module_type(s->bytes, &s->form_factor);
             decode_ddr5_module_detail(s->bytes, s->type_detail);
             decode_module_date(s, 516, 515);
-	    decode_ddr5_module_serialno(s->bytes, s->spd_size, s->serialno);
+	    decode_module_serialno(s, 517);
             break;
         case UNKNOWN:
         default:
@@ -1457,9 +1352,9 @@ gchar *make_spd_section(spd_data *spd) {
         if (!spd->size_MiB)
             size_str = g_strdup(_("(Unknown)"));
         else if(spd->size_MiB >= 1024)
-	    size_str = g_strdup_printf("%li %s", spd->size_MiB>>10, _("GiB") );
+	    size_str = g_strdup_printf("%u %s", spd->size_MiB>>10, _("GiB") );
 	else
-	    size_str = g_strdup_printf("%li %s", spd->size_MiB, _("MiB") );
+	    size_str = g_strdup_printf("%u %s", spd->size_MiB, _("MiB") );
 
         gchar *mfg_date_str = NULL;
         if (spd->year)
