@@ -307,11 +307,56 @@ gchar *get_storage_devices_simple(void)
 
             tmp = g_regex_replace(regex, field->value, -1, 0, "", 0, NULL); // remove html tags
 	    tmp=strreplace(tmp,"  "," ");
-            storage_devs = h_strdup_cprintf("%s\n", storage_devs, g_strchug(tmp));
+            storage_devs = h_strdup_cprintf("%s\n", storage_devs, g_strstrip(tmp));
             g_free(tmp);
         }
     }
+    g_regex_unref(regex);
     g_free(info);
+
+    return storage_devs;
+}
+
+gchar *get_storage_devices_models(void)
+{
+    scan_storage(FALSE);
+
+    struct Info *info = info_unflatten(storage_list);
+    if (!info) {
+        return "";
+    }
+
+    guint i, fi;
+    struct InfoGroup *group;
+    struct InfoField *field;
+    gchar *storage_devs = NULL, *tmp;//,*t,*s;
+    GList *hdlist=NULL;
+    GRegex *regex;
+    regex = g_regex_new ("<.*?>", 0, 0, NULL);
+    for (i = 0; i < info->groups->len; i++) {
+        group = &g_array_index(info->groups, struct InfoGroup, info->groups->len - 1);
+        if (!group)
+            continue;
+
+        info_group_strip_extra(group);
+        for (fi = 0; fi < group->fields->len; fi++) {
+            field = &g_array_index(group->fields, struct InfoField, fi);
+            if (!field->value)
+                continue;
+
+            tmp = g_regex_replace(regex, field->value, -1, 0, "", 0, NULL); // remove html tags
+	    tmp=g_strstrip(strreplace(tmp,"  "," "));
+
+	    if(!g_list_find_custom(hdlist, tmp, (GCompareFunc)g_strcmp0) && !strstr(tmp,"CDROM") && !strstr(tmp,"DVD")) {
+                storage_devs = h_strdup_cprintf("%s,", storage_devs, tmp);
+	    }
+	    hdlist=g_list_append(hdlist, tmp);
+        }
+    }
+    g_regex_unref(regex);
+    g_free(info);
+    g_list_free_full(hdlist,g_free);
+    if(storage_devs) storage_devs[strlen(storage_devs)-1]=0;
 
     return storage_devs;
 }
@@ -580,6 +625,7 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getProcessorFrequencyDesc", get_processor_frequency_desc},
         {"getStorageDevices", get_storage_devices},
         {"getStorageDevicesSimple", get_storage_devices_simple},
+        {"getStorageDevicesModels", get_storage_devices_models},
         {"getPrinters", get_printers},
         {"getInputDevices", get_input_devices},
         {"getMotherboard", get_motherboard},
@@ -620,7 +666,9 @@ void scan_dmi(gboolean reload)
 
 void scan_dmi_mem(gboolean reload)
 {
+    DEBUG("SCAN_DMI_MEM %s",(reload?"RELOAD":"CACHED"));
     SCAN_START();
+    DEBUG("SCAN_DMI_MEM SCANNING");
     if (memory_devices_info)
         g_free(memory_devices_info);
     memory_devices_info = memory_devices_get_info();
