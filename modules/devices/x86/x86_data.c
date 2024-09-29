@@ -310,6 +310,7 @@ static struct flag_to_meaning *tab_flag_meaning;
 
 //static char all_flags[4096] = "";
 
+#if JSON_CHECK_VERSION(0,20,0)
 static void build_meaning_table_iter(JsonObject *object,
                                      const gchar *member_name,
                                      JsonNode *member_node,
@@ -324,6 +325,7 @@ static void build_meaning_table_iter(JsonObject *object,
 
     (*i)++;
 }
+#endif
 
 void cpuflags_x86_init(void)
 {
