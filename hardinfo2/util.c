@@ -36,8 +36,6 @@
 #include <hardinfo.h>
 #include <gtk/gtk.h>
 
-#include <binreloc.h>
-
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -272,87 +270,6 @@ gchar *file_chooser_build_filename(GtkWidget * chooser, gchar * extension)
     g_free(filename);
 
     return retval;
-}
-
-gboolean binreloc_init(gboolean try_hardcoded)
-{
-    GError *error = NULL;
-    gchar *tmp;
-
-    DEBUG("initializing binreloc (hardcoded = %d)", try_hardcoded);
-
-    /* If the runtime data directories we previously found, don't even try
-       to find them again. */
-    if (params.path_data && params.path_lib) {
-	DEBUG("data and lib path already found.");
-	return TRUE;
-    }
-
-    if (try_hardcoded || !gbr_init(&error)) {
-	/* We were asked to try hardcoded paths or BinReloc failed to initialize. */
-	params.path_data = g_strdup(PREFIX);
-	params.path_lib = g_strdup(LIBPREFIX);
-	params.path_locale = g_strdup(LOCALEDIR);
-
-	if (error) {
-	    g_error_free(error);
-	}
-
-	DEBUG("%strying hardcoded paths.",
-	      try_hardcoded ? "" : "binreloc init failed. ");
-    } else {
-	/* If we were able to initialize BinReloc, build the default data
-	   and library paths. */
-	DEBUG("done, trying to use binreloc paths.");
-
-	tmp = gbr_find_data_dir(PREFIX);
-	params.path_data = g_build_filename(tmp, "hardinfo2", NULL);
-	g_free(tmp);
-
-	tmp = gbr_find_lib_dir(PREFIX);
-	params.path_lib = g_build_filename(tmp, "hardinfo2", NULL);
-	g_free(tmp);
-
-	tmp = gbr_find_locale_dir(PREFIX);
-	params.path_locale = g_build_filename(tmp, NULL);
-	g_free(tmp);
-    }
-
-    DEBUG("searching for runtime data on these locations:");
-    DEBUG("   lib: %s", params.path_lib);
-    DEBUG("  data: %s", params.path_data);
-    DEBUG("locale: %s", params.path_locale);
-
-    /* Try to see if the benchmark test data file isn't missing. This isn't the
-       definitive test, but it should do okay for most situations. */
-    tmp = g_build_filename(params.path_data, "benchmark.data", NULL);
-    if (!g_file_test(tmp, G_FILE_TEST_EXISTS)) {
-	DEBUG("runtime data not found");
-
-	g_free(params.path_data);
-	g_free(params.path_lib);
-	g_free(params.path_locale);
-	g_free(tmp);
-
-	params.path_data = params.path_lib =  params.path_locale = NULL;
-
-	if (try_hardcoded) {
-	    /* We tried the hardcoded paths, but still was unable to find the
-	       runtime data. Give up. */
-	    DEBUG("giving up");
-	    return FALSE;
-	} else {
-	    /* Even though BinReloc worked OK, the runtime data was not found.
-	       Try the hardcoded paths. */
-	    DEBUG("trying to find elsewhere");
-	    return binreloc_init(TRUE);
-	}
-    }
-    g_free(tmp);
-
-    DEBUG("runtime data found!");
-    /* We found the runtime data; hope everything is fine */
-    return TRUE;
 }
 
 static void

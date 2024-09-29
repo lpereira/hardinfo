@@ -146,9 +146,6 @@ const gchar  *module_entry_get_note(ShellModuleEntry *module_entry);
 gchar        *module_entry_get_field(ShellModuleEntry * module_entry, gchar * field);
 gchar        *module_entry_get_moreinfo(ShellModuleEntry * module_entry, gchar * field);
 
-/* BinReloc stuff */
-gboolean binreloc_init(gboolean try_hardcoded);
-
 /* GTK UI stuff */
 gint     ui_init(int *argc, char ***argv);
 void     parameters_init(int *argc, char ***argv, ProgramParameters *params);

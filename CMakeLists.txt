@@ -490,7 +490,6 @@ if (HARDINFO2_GTK3)
 add_executable(hardinfo2
 	hardinfo2/usb_util.c
 	hardinfo2/pci_util.c
-	hardinfo2/binreloc.c
 	hardinfo2/expr.c
         hardinfo2/hardinfo.c
 	hardinfo2/socket.c
@@ -532,7 +531,6 @@ else()
 add_executable(hardinfo2
 	hardinfo2/usb_util.c
 	hardinfo2/pci_util.c
-	hardinfo2/binreloc.c
 	hardinfo2/expr.c
         hardinfo2/hardinfo.c
 	hardinfo2/socket.c

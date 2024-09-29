@@ -30,8 +30,6 @@
 #include <glib/gstdio.h>
 #include <stdbool.h>
 #include "callbacks.h"
-
-#include <binreloc.h>
 #include "dmi_util.h"
 
 ProgramParameters params = { 0 };
@@ -57,15 +55,9 @@ int main(int argc, char **argv)
     /* parse all command line parameters */
     parameters_init(&argc, &argv, &params);
 
-    /* initialize the binreloc library, so we can load program data */
-#if(ENABLE_BINRELOC)
-    if (!binreloc_init(FALSE))
-         g_error("Failed to find runtime data. PREFIX=%s, LIB=%s, LOCALE=%s\n",PREFIX,LIBPREFIX,LOCALEDIR);
-#else
     params.path_data=g_strdup(PREFIX);
     params.path_lib=g_strdup(LIBPREFIX);
     params.path_locale=g_strdup(LOCALEDIR);
-#endif
 
     setlocale(LC_ALL, "");
     bindtextdomain("hardinfo2", params.path_locale);
@@ -111,21 +103,17 @@ int main(int argc, char **argv)
         g_print
             (_(/*/ %d will be latest year of copyright*/ "Copyright (C) 2003-2023 L. A. F. Pereira. 2024-%d Hardinfo2 Project.\n\n"), HARDINFO2_COPYRIGHT_LATEST_YEAR );
 
-	g_print(_("Compile-time options:\n"
-		"  Release version:   %s (%s)\n"
-		"  LibSoup version:   %s\n"
-		"  BinReloc enabled:  %s\n"
-		"  Data prefix:       %s\n"
-		"  Library prefix:    %s\n"
-		"  Locale prefix :    %s\n"
-		"  Data hardcoded:    %s\n"
-		"  Library hardcoded: %s\n"
-		"  Locale hardcoded:  %s\n"
-		"  Compiled for:      %s\n"),
+	g_print(N_("Compile-time options:\n"
+		"  Release version:  %s (%s)\n"
+		"  LibSoup version:  %s\n"
+		"  Data           :  %s\n"
+		"  Library        :  %s\n"
+		"  Locale         :  %s\n"
+		"  Compiled for   :  %s\n"),
 		RELEASE==1 ? "Yes (" VERSION ")" : (RELEASE==0?"No (" VERSION ")":"Debug (" VERSION ")"), ARCH,
 		HARDINFO2_LIBSOUP3 ? _("3.0") : "2.4",
-		ENABLE_BINRELOC ? _("Yes") : _("No"),
-		params.path_data, params.path_lib, params.path_locale, PREFIX, LIBPREFIX,LOCALEDIR, PLATFORM);
+		params.path_data, params.path_lib, params.path_locale,
+		PLATFORM);
         return 0;
     }
 
