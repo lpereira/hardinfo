@@ -137,7 +137,7 @@ static ModuleEntry entries[] = {
             "blowfish.png",
             callback_benchmark_bfish_single,
             scan_benchmark_bfish_single,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_BLOWFISH_THREADS] =
         {
@@ -145,7 +145,7 @@ static ModuleEntry entries[] = {
             "blowfish.png",
             callback_benchmark_bfish_threads,
             scan_benchmark_bfish_threads,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_BLOWFISH_CORES] =
         {
@@ -153,7 +153,7 @@ static ModuleEntry entries[] = {
             "blowfish.png",
             callback_benchmark_bfish_cores,
             scan_benchmark_bfish_cores,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_ZLIB] =
         {
@@ -161,7 +161,7 @@ static ModuleEntry entries[] = {
             "file-roller.png",
             callback_benchmark_zlib,
             scan_benchmark_zlib,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_CRYPTOHASH] =
         {
@@ -169,7 +169,7 @@ static ModuleEntry entries[] = {
             "cryptohash.png",
             callback_benchmark_cryptohash,
             scan_benchmark_cryptohash,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_FIB] =
         {
@@ -177,7 +177,7 @@ static ModuleEntry entries[] = {
             "nautilus.png",
             callback_benchmark_fib,
             scan_benchmark_fib,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_NQUEENS] =
         {
@@ -185,7 +185,7 @@ static ModuleEntry entries[] = {
             "nqueens.png",
             callback_benchmark_nqueens,
             scan_benchmark_nqueens,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_FFT] =
         {
@@ -193,7 +193,7 @@ static ModuleEntry entries[] = {
             "fft.png",
             callback_benchmark_fft,
             scan_benchmark_fft,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_RAYTRACE] =
         {
@@ -201,7 +201,7 @@ static ModuleEntry entries[] = {
             "raytrace.png",
             callback_benchmark_raytrace,
             scan_benchmark_raytrace,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_IPERF3_SINGLE] =
         {
@@ -209,7 +209,7 @@ static ModuleEntry entries[] = {
             "network.png",
             callback_benchmark_iperf3_single,
             scan_benchmark_iperf3_single,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_SBCPU_SINGLE] =
         {
@@ -217,7 +217,7 @@ static ModuleEntry entries[] = {
             "processor.png",
             callback_benchmark_sbcpu_single,
             scan_benchmark_sbcpu_single,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_SBCPU_ALL] =
         {
@@ -225,7 +225,7 @@ static ModuleEntry entries[] = {
             "processor.png",
             callback_benchmark_sbcpu_all,
             scan_benchmark_sbcpu_all,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_SBCPU_QUAD] =
         {
@@ -233,7 +233,7 @@ static ModuleEntry entries[] = {
             "processor.png",
             callback_benchmark_sbcpu_quad,
             scan_benchmark_sbcpu_quad,
-            MODULE_FLAG_HIDE,
+            MODULE_FLAG_BENCHMARK|MODULE_FLAG_HIDE,
         },
     [BENCHMARK_MEMORY_SINGLE] =
         {
@@ -241,7 +241,7 @@ static ModuleEntry entries[] = {
             "memory.png",
             callback_benchmark_memory_single,
             scan_benchmark_memory_single,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_MEMORY_DUAL] =
         {
@@ -249,7 +249,7 @@ static ModuleEntry entries[] = {
             "memory.png",
             callback_benchmark_memory_dual,
             scan_benchmark_memory_dual,
-            MODULE_FLAG_HIDE,
+            MODULE_FLAG_BENCHMARK|MODULE_FLAG_HIDE,
         },
     [BENCHMARK_MEMORY_QUAD] =
         {
@@ -257,7 +257,7 @@ static ModuleEntry entries[] = {
             "memory.png",
             callback_benchmark_memory_quad,
             scan_benchmark_memory_quad,
-            MODULE_FLAG_HIDE,
+            MODULE_FLAG_BENCHMARK|MODULE_FLAG_HIDE,
         },
     [BENCHMARK_MEMORY_ALL] =
         {
@@ -265,7 +265,7 @@ static ModuleEntry entries[] = {
             "memory.png",
             callback_benchmark_memory_all,
             scan_benchmark_memory_all,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     [BENCHMARK_GUI] =
         {
@@ -273,7 +273,7 @@ static ModuleEntry entries[] = {
             "monitor.png",
             callback_benchmark_gui,
             scan_benchmark_gui,
-            MODULE_FLAG_NO_REMOTE,
+            MODULE_FLAG_BENCHMARK|MODULE_FLAG_NO_REMOTE,
         },
 #if(HARDINFO2_QT5)
     [BENCHMARK_OPENGL] =
@@ -282,7 +282,7 @@ static ModuleEntry entries[] = {
             "monitor.png",
             callback_benchmark_opengl,
             scan_benchmark_opengl,
-            MODULE_FLAG_NO_REMOTE,
+            MODULE_FLAG_BENCHMARK|MODULE_FLAG_NO_REMOTE,
         },
 #endif
     [BENCHMARK_STORAGE] =
@@ -291,7 +291,7 @@ static ModuleEntry entries[] = {
             "hdd.png",
             callback_benchmark_storage,
             scan_benchmark_storage,
-            MODULE_FLAG_NONE,
+            MODULE_FLAG_BENCHMARK,
         },
     {NULL}};
 
