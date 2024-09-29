@@ -41,23 +41,28 @@ static bench_value storage_runtest() {
         else
 	   spawned = g_spawn_command_line_sync(cmd_line_long, &out, &err, NULL, NULL);
         if (spawned){
-            if((s=strstr(err,"records out\n"))){
-	        i=sscanf(s+12,"%d",&writebytes);
+	    i=0;
+	    if( (s=strstr(err,"\n")) && (s=strstr(s+1,"\n")) ) {
+	        i=sscanf(s+1,"%d",&writebytes);
 	        if(i==1) {
-                    if((s=strstr(s,"copied, "))){
-  	                i=sscanf(s+8,"%f s, %f %*s\n",&writetime, &writespeed);
+                    if( (s=strstr(s,")")) && (s=strstr(s+1,", ")) ){
+                         i=sscanf(s+2,"%f",&writetime);
+                         if((i==1) && (s=strstr(s+2,", ")))
+                              i=sscanf(s+2,"%f",&writespeed);
 	            }
 	        }
             }
-            if((i==2) && (s=strstr(s,"records out\n"))){
-	        i=sscanf(s+12,"%d",&readbytes);
+	    if( (i==1) && (s=strstr(s+1,"\n")) && (s=strstr(s+1,"\n")) && (s=strstr(s+1,"\n")) ) {
+	        i=sscanf(s+1,"%d",&readbytes);
 	        if(i==1) {
-                     if((s=strstr(s,"copied, "))){
-  	                 i=sscanf(s+8,"%f s, %f %*s\n",&readtime, &readspeed);
+                    if( (s=strstr(s,")")) && (s=strstr(s+1,", ")) ){
+                         i=sscanf(s+2,"%f",&readtime);
+                         if((i==1) && (s=strstr(s+2,", ")))
+                              i=sscanf(s+2,"%f",&readspeed);
 	            }
 	        }
             }
-            if((i==2) && (readtime!=0) && (writetime!=0)){
+            if((i==1) && (readtime!=0) && (writetime!=0)){
 	        writespeed=writebytes/writetime;
 	        readspeed=readbytes/readtime;
                 ret.elapsed_time = writetime+readtime;
