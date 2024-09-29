@@ -1005,8 +1005,8 @@ static gboolean update_field(gpointer data)
 }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  #define RANGE_SET_VALUE(tree,scrollbar,value) gtk_range_set_value(GTK_RANGE(gtk_scrolled_window_get_##scrollbar(GTK_SCROLLED_WINDOW(shell->tree->scroll))), value)
-  #define RANGE_GET_VALUE(tree,scrollbar) gtk_range_get_value(GTK_RANGE(gtk_scrolled_window_get_##scrollbar(GTK_SCROLLED_WINDOW(shell->tree->scroll))))
+    #define RANGE_SET_VALUE(tree,scrollbar,value) {while (gtk_events_pending()) gtk_main_iteration();gtk_range_set_value(GTK_RANGE(gtk_scrolled_window_get_##scrollbar(GTK_SCROLLED_WINDOW(shell->tree->scroll))), value);}
+    #define RANGE_GET_VALUE(tree,scrollbar) gtk_range_get_value(GTK_RANGE(gtk_scrolled_window_get_##scrollbar(GTK_SCROLLED_WINDOW(shell->tree->scroll))))
 #else
   #define RANGE_SET_VALUE(tree, scrollbar, value)			       \
     do {                                                                       \
@@ -1592,11 +1592,16 @@ static gboolean select_marked_or_first_item(gpointer data)
     if (gtk_tree_model_get_iter_first(shell->info_tree->model, &first)) {
         it = first;
         while (gtk_tree_model_iter_next(shell->info_tree->model, &it)) {
-            gtk_tree_model_get(shell->info_tree->model, &it, INFO_TREE_COL_DATA,
-                               &datacol, -1);
+            gtk_tree_model_get(shell->info_tree->model, &it, INFO_TREE_COL_DATA, &datacol, -1);
+
             if (key_is_highlighted(datacol)) {
-                gtk_tree_selection_select_iter(shell->info_tree->selection,
-                                               &it);
+                gtk_tree_selection_select_iter(shell->info_tree->selection, &it);
+
+		//scoll to selected this machine benchmark
+		GtkTreePath *path=gtk_tree_model_get_path(shell->info_tree->model, &it);
+	        gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW(shell->info_tree->view), path, NULL, TRUE, 0.5, 0.0);
+		gtk_tree_path_free(path);
+
                 found_selection = TRUE;
             }
             g_free(datacol);
@@ -1993,7 +1998,6 @@ static void detail_view_add_item(DetailView *detail_view,
     gtk_box_pack_start(GTK_BOX(frame_label_box), frame_label, FALSE, FALSE, 0);
 
     content = gtk_label_new(temp);
-    /* TODO:GTK3 gtk_alignment_new(), etc is deprecated from 3.14 */
 #if GTK_CHECK_VERSION(3, 0, 0)
     GtkWidget *frame_box;
     frame_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -2015,8 +2019,7 @@ static void detail_view_add_item(DetailView *detail_view,
     gtk_frame_set_label_widget(GTK_FRAME(frame), frame_label_box);
 
     /* pack the item on the detail_view screen */
-    gtk_box_pack_start(GTK_BOX(shell->detail_view->view), frame, FALSE, FALSE,
-                       4);
+    gtk_box_pack_start(GTK_BOX(shell->detail_view->view), frame, FALSE, FALSE, 4);
 
     g_free(temp);
 }
@@ -2141,7 +2144,11 @@ static void module_selected(gpointer data)
 
         gtk_tree_view_columns_autosize(GTK_TREE_VIEW(shell->info_tree->view));
 
-        RANGE_SET_VALUE(info_tree, vscrollbar, 0.0);
+	if(entry->flags & MODULE_FLAG_BENCHMARK) {
+	    //allow to scroll to selected THIS-Machine
+	} else {
+            RANGE_SET_VALUE(info_tree, vscrollbar, 0.0);
+	}
         RANGE_SET_VALUE(info_tree, hscrollbar, 0.0);
         RANGE_SET_VALUE(detail_view, vscrollbar, 0.0);
         RANGE_SET_VALUE(detail_view, hscrollbar, 0.0);
