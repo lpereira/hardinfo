@@ -25,8 +25,8 @@ void
 benchmark_gui(void)
 {
     bench_value r = EMPTY_BENCH_VALUE;
-    double frametime[5];
-    int framecount[5];
+    static double frametime[5];
+    static int framecount[5];
 
     shell_view_set_enabled(FALSE);
     shell_status_update("Running GPU Drawing...");
