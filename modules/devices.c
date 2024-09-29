@@ -347,7 +347,7 @@ gchar *get_storage_devices_models(void)
             tmp = g_regex_replace(regex, field->value, -1, 0, "", 0, NULL); // remove html tags
 	    tmp=g_strstrip(strreplace(tmp,"  "," "));
 
-	    if(!g_list_find_custom(hdlist, tmp, (GCompareFunc)g_strcmp0) && !strstr(tmp,"CDROM") && !strstr(tmp,"DVD")) {
+	    if(!g_list_find_custom(hdlist, tmp, (GCompareFunc)g_strcmp0) && !strstr(tmp,"CDROM") && !strstr(tmp,"DVD") && !strstr(tmp," CD")) {
                 storage_devs = h_strdup_cprintf("%s,", storage_devs, tmp);
 	    }
 	    hdlist=g_list_append(hdlist, tmp);
