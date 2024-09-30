@@ -219,6 +219,12 @@ if(${disversion} LESS 20.99)
   endif()
 endif()
 
+#slackware
+if(${distro} MATCHES "Slackware")
+    message("Slackware - LS24")
+    set(HARDINFO2_LIBSOUP3 0)
+endif()
+
 #PCLinuxOS
 if(${distro} MATCHES "PCLinux")
     set(HARDINFO2_SYSTEMV 1)
