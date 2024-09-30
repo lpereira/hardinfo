@@ -131,7 +131,7 @@ gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
 
 double guibench(double *frameTime, int *frameCount)
 {
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     GtkCssProvider *provider;
     provider = gtk_css_provider_new();
 #endif
@@ -151,18 +151,11 @@ double guibench(double *frameTime, int *frameCount)
     window = (GtkWindow*)gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     darkmode=(params.max_bench_results==1?1:0); //darkmode set by hardinfo2
-#if GTK_CHECK_VERSION(3,20,0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     if(darkmode){
         gtk_css_provider_load_from_data(provider, "window { background-color: rgba(0x0, 0x0, 0x0, 1); } ", -1, NULL);
         gtk_style_context_add_provider(gtk_widget_get_style_context((GtkWidget *)window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     }
-#else
-#if GTK_CHECK_VERSION(3,0,0)
-    if(darkmode){
-        GdkRGBA black = {0, 0, 0, 0};
-        gtk_widget_override_background_color((GtkWidget *)window, GTK_STATE_NORMAL, &black);
-    }
-#endif
 #endif
     gtk_window_set_default_size (window, 1024, 800);
     gtk_window_set_position     (window, GTK_WIN_POS_CENTER);

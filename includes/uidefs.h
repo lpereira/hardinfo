@@ -23,7 +23,7 @@ char *uidefs_str =
     "	<menu name=\"ViewMenu\" action=\"ViewMenuAction\">"
     "		<menuitem name=\"SidePane\" action=\"SidePaneAction\"/>"
     "		<menuitem name=\"Toolbar\" action=\"ToolbarAction\"/>"
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     "	   <menu name=\"ThemeMenu\" action=\"ThemeMenuAction\">"
     "            <menuitem name=\"DisableTheme\" action=\"DisableThemeAction\"/>"
     "            <menuitem name=\"Theme1\" action=\"Theme1Action\"/>"

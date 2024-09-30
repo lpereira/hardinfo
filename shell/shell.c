@@ -624,7 +624,7 @@ static void create_window(void)
 
     g_free(conf_path);
     g_key_file_free(key_file);
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme==-1) shell_action_set_active("DisableThemeAction", TRUE);
     if(params.theme==1) shell_action_set_active("Theme1Action", TRUE);
     if(params.theme==2) shell_action_set_active("Theme2Action", TRUE);
@@ -873,7 +873,7 @@ void shell_init(GSList * modules)
     shell_action_set_property("ReportAction", "is-important", TRUE);
     shell_action_set_property("SyncManagerAction", "is-important", TRUE);
 
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     shell_action_set_property("DisableThemeAction", "draw-as-radio", TRUE);
     shell_action_set_property("Theme1Action", "draw-as-radio", TRUE);
     shell_action_set_property("Theme2Action", "draw-as-radio", TRUE);
@@ -1618,7 +1618,7 @@ static void module_selected_show_info_list(GKeyFile *key_file,
                                            gchar **groups,
                                            gsize ngroups)
 {
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     GtkCssProvider *provider;
     provider = gtk_css_provider_new();
 #endif
@@ -1632,7 +1632,7 @@ static void module_selected_show_info_list(GKeyFile *key_file,
 
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(shell->info_tree->view), FALSE);
 
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){
       if(params.darkmode){
         gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } treeview:selected { background-color: rgba(0x60, 0x80, 0xff, 1); } ", -1, NULL);
@@ -2230,18 +2230,6 @@ static ShellInfoTree *info_tree_new(void)
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
     gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), TRUE);
 
-/*#if GTK_CHECK_VERSION(3, 20, 0)
-    if(params.theme>0){
-       //GdkRGBA info_default_text_color       = { .red = 0.2, .green = 0.3, .blue = 1.0, .alpha = 1.0 };
-       //gtk_widget_override_color(treeview, GTK_STATE_FLAG_SELECTED, &info_default_text_color);
-    }
-#else
-    if(params.theme>0){
-       //GdkColor info_default_text_color       = { 0, 0x4fff, 0x6fff, 0xffff };
-       //gtk_widget_modify_fg(treeview, GTK_STATE_SELECTED, &info_default_text_color);
-    }
-#endif*/
-
     info->col_progress = column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_visible(column, FALSE);
     gtk_tree_view_column_set_min_width(column, 240);
@@ -2324,7 +2312,7 @@ static ShellTree *tree_new()
     GtkCellRenderer *cr_text, *cr_pbuf;
     GtkTreeViewColumn *column;
     GtkTreeSelection *sel;
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     GtkCssProvider *provider;
     provider = gtk_css_provider_new();
 #endif
@@ -2350,18 +2338,6 @@ static ShellTree *tree_new()
     gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(treeview), 24);
 #endif
 
-/*#if GTK_CHECK_VERSION(3, 20, 0)
-    if(params.theme>0){
-        GdkRGBA info_default_text_color       = { .red = 0.2, .green = 0.3, .blue = 1.0, .alpha = 1.0 };
-        gtk_widget_override_color(treeview, GTK_STATE_FLAG_SELECTED, &info_default_text_color);
-    }
-#else
-    if(params.theme>0){
-        GdkColor info_default_text_color       = { 0, 0x4fff, 0x6fff, 0xffff };
-        gtk_widget_modify_fg(treeview, GTK_STATE_SELECTED, &info_default_text_color);
-    }
-#endif*/
-
     column = gtk_tree_view_column_new();
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
@@ -2381,7 +2357,7 @@ static ShellTree *tree_new()
 
     gtk_container_add(GTK_CONTAINER(scroll), treeview);
 
-#if GTK_CHECK_VERSION(3, 20, 0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){
         gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
         gtk_style_context_add_provider(gtk_widget_get_style_context(treeview), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
