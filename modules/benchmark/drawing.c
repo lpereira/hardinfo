@@ -19,7 +19,7 @@
 #include "benchmark.h"
 #include "guibench.h"
 
-#define BENCH_REVISION 3
+#define BENCH_REVISION 4
 
 void
 benchmark_gui(void)

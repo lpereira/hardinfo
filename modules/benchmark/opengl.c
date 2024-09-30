@@ -62,10 +62,10 @@ void benchmark_opengl(void) {
     shell_view_set_enabled(FALSE);
     shell_status_update("Performing opengl benchmark (single thread)...");
 
-    r = opengl_bench(1,params.max_bench_results);
+    r = opengl_bench(1,(params.max_bench_results==1?1:0));
 
     if(r.threads_used!=1) {
-        r = opengl_bench(0,params.max_bench_results);
+        r = opengl_bench(0,(params.max_bench_results==1?1:0));
     }
     
     bench_results[BENCHMARK_OPENGL] = r;

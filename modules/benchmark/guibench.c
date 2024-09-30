@@ -24,6 +24,7 @@
 
 #include "iconcache.h"
 #include "config.h"
+#include "hardinfo.h"
 
 #define CRUNCH_TIME 3
 
@@ -144,19 +145,18 @@ double guibench(double *frameTime, int *frameCount)
 
     // window setup
     window = (GtkWindow*)gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+#if GTK_CHECK_VERSION(3,0,0)
+    darkmode=(params.max_bench_results==1?1:0); //darkmode set by hardinfo2
+    if(darkmode){
+        GdkColor black = {0, 0x0000, 0x0000, 0x0000};
+        gtk_widget_modify_bg((GtkWidget *)window, GTK_STATE_NORMAL, &black);
+    }
+#endif
     gtk_window_set_default_size (window, 1024, 800);
     gtk_window_set_position     (window, GTK_WIN_POS_CENTER);
     gtk_window_set_title        (window, "GPU Benchmarking...");
     g_signal_connect(window, "destroy", gtk_main_quit, NULL);
-
-    //Get DarkMode state from system
-#if GTK_CHECK_VERSION(3,0,0)
-    GtkStyleContext *sctx=gtk_widget_get_style_context(GTK_WIDGET(window));
-    GdkRGBA color;
-    gtk_style_context_lookup_color(sctx, "theme_bg_color", &color);
-    darkmode=0;
-    if((color.red+color.green+color.blue)<=1.5) darkmode=1;
-#endif
 
     // create the are we can draw in
     GtkDrawingArea* drawingArea;
