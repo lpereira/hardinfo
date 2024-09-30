@@ -938,7 +938,7 @@ gboolean memory_devices_hinote(const char **msg) {
     gchar *want_dmiaccess = "sudo chmod a+r /sys/firmware/dmi/tables/*";
     gchar *want_at24      = "sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)";
     gchar *want_ee1004    = "sudo modprobe ee1004 (for DDR4)";
-    gchar *want_spd5118   = "sudo modprobe spd5118 (for DDR5) (WIP)";
+    gchar *want_spd5118   = "sudo modprobe spd5118 (for DDR5)";
 
     gboolean has_at24_eeprom = g_file_test("/sys/bus/i2c/drivers/at24", G_FILE_TEST_IS_DIR) ||
                                g_file_test("/sys/bus/i2c/drivers/eeprom", G_FILE_TEST_IS_DIR);
