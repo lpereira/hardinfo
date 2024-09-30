@@ -1134,10 +1134,7 @@ int read_spd(char *spd_path, int offset, size_t size, int use_sysfs,
         FILE *spd;
         gchar *temp_path;
 
-	if(strstr(spd_path,"spd5118"))
-            temp_path = g_strdup_printf("%s/nvmem", spd_path);
-	else
-            temp_path = g_strdup_printf("%s/eeprom", spd_path);
+        temp_path = g_strdup_printf("%s/eeprom", spd_path);
         if ((spd = fopen(temp_path, "rb"))) {
             fseek(spd, offset, SEEK_SET);
             data_size = fread(bytes_out, 1, size, spd);
