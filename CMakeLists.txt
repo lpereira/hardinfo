@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 cmake_policy(VERSION 3.0.2)
 project(hardinfo2)
 
-set(HARDINFO2_VERSION "2.1.16")
+set(HARDINFO2_VERSION "2.1.17")
 
 option(HARDINFO2_SERVICE "Build with service support" 1)
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
