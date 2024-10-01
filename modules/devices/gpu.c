@@ -136,14 +136,15 @@ static void _gpu_pci_dev(gpud* gpu) {
     }
 
     //Add GPU name from renderer - this is only correct for 1 GPU systems, which are most builds
+    if(gpuname) g_free(gpuname);
     gchar *t=NULL,*g=module_call_method("computer::getOGLRenderer");
     if(g) {
         int i=1;
 	g=strreplace(g,"(R)","");
 	g=strreplace(g,"(TM)","");
 	g=strreplace(g,"(tm)","");
-	if( strstr(module_call_method("computer::getMachineType"),"irtual") ){//virtual
-	    gpuname=g_strdup_printf("GPU=%s\n",module_call_method("computer::getMachineType"));
+	if( strstr(module_call_method("computer::getMachineTypeEnglish"),"irtual") ){//virtual
+	    gpuname=g_strdup_printf("GPU=%s\n",module_call_method("computer::getMachineTypeEnglish"));
 	} else if(strlen(g)>7 && g[0]=='l' && g[1]=='l' && g[2]=='v' && g[3]=='m' && g[4]=='p' && g[5]=='i' && g[6]=='p' && g[7]=='e'){
 	    //Software - no hw accelleration drivers
 	    if(strstr(vendor_device_str,"ntegrat")){//Integrated
@@ -170,7 +171,13 @@ static void _gpu_pci_dev(gpud* gpu) {
             gpuname=g_strdup_printf("GPU=%s\n",g);
 	}
         g_free(g);
-    }else gpuname=g_strdup("GPU=Unknown\n");//unknown as no renderer
+    } else {//unknown as no renderer, try pcie
+	if( strstr(module_call_method("computer::getMachineTypeEnglish"),"irtual") ){//virtual
+	    gpuname=g_strdup_printf("GPU=%s\n",module_call_method("computer::getMachineTypeEnglish"));
+	} else {
+            gpuname=g_strdup_printf("GPU=%s\n",((gpu->nice_name) ? gpu->nice_name : name));
+	}
+    }
 
     str = g_strdup_printf("[%s]\n"
 	     /* GPU */	     "%s\n"
@@ -263,6 +270,7 @@ int _dt_soc_gpu(gpud *gpu) {
     gpu_summary_add((gpu->nice_name) ? gpu->nice_name : name);
     gpu_list = h_strdup_cprintf("$!%s$%s=%s\n", gpu_list, key, key, name);
 
+    if(gpuname) g_free(gpuname);
     gpuname=g_strdup_printf("GPU=Integrated (%s)\n",module_call_method("devices::getProcessorName"));
 
     gchar *str = g_strdup_printf("[%s]\n"
@@ -331,5 +339,7 @@ void scan_gpu_do(void) {
     else  {
         /* NO GPU? */
         gpu_list = g_strconcat(gpu_list, _("No GPU devices found"), "=\n", NULL);
+        if(gpuname) g_free(gpuname);
+	gpuname = g_strdup("No GPU");
     }
 }
