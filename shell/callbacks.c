@@ -350,6 +350,7 @@ void cb_about()
         "Boris Afonot",
 	"Amstelchen",
 	"lucascastro",
+	"topazus",
 	"More contributors in GitHub",
 	"",
 	"Based on work by:",
@@ -367,6 +368,9 @@ void cb_about()
         "Vendor list based on GtkSysInfo by Pissens Sebastien",
         "DMI support based on code by Stewart Adam",
         "SCSI support based on code by Pascal F. Martin",
+	"OpenGL benchmark based on code by Zack Rusin",
+	"OpenGL benchmark based on code by David Reveman",
+	"OpenGL benchmark based on code by Peter Nilsson",
 	"",
 	"Translated by:",
 	"Alexander Münch",
@@ -401,6 +405,9 @@ void cb_about()
 	"quincyf467 (Gentoo)",
 	"terryn94 (PCLinuxOS)",
 	"bjornfor (NixOS+NIX packages)",
+	"DidierSpaier (Slint)",
+	"B. Watson (Slackbuild packages)",
+	"K1ngfish3r (Clear Linux)",
 	"",
         NULL
     };
