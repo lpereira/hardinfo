@@ -394,6 +394,7 @@ void cb_about()
 	"Rawdanitsu",
 	"Larry Ewing",
 	"2x910",
+	"tutralex",
 	"",
 	"Packaging by:",
 	"Topazus (Fedora/Redhat branches)",
