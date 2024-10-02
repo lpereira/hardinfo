@@ -572,7 +572,8 @@ static Distro parse_os_release(void)
 	//RHEL8=>FC28
 	//RHEL9=>FC34
 	//RHEL10=>FC40
-	if(atoi(p)>=19){//hmm, distro should have had fedora-release
+	if(g_str_equal(id,"openmandriva")) {/*Mandriva is not based on redhat/fedora anymore - was based on RH5.1*/}
+	else if(atoi(p)>=19){//hmm, distro should have had fedora-release
             t=pretty_name; pretty_name=g_strdup_printf("%s - Fedora %s", t,p); g_free(t);
 	} else {
             t=pretty_name; pretty_name=g_strdup_printf("%s - RHEL %s", t,p); g_free(t);

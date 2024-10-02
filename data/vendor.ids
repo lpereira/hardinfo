@@ -855,6 +855,12 @@ name Oculus VR
     match_string Oculus VR
     match_string Oculus
 
+name OpenMandriva
+    name_short OpenMandriva
+    url www.openmandriva.org
+    ansi_color 0;34;107
+    match_string OpenMandriva
+
 name openSUSE
     name_short openSUSE
     url www.opensuse.org
