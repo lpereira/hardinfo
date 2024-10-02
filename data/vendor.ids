@@ -101,6 +101,12 @@ name AlmaLinux
     ansi_color 0;31;40
     match_string AlmaLinux
 
+name Alpine Linux
+    name_short Alpine Linux
+    url www.alpinelinux.org
+    ansi_color 0;34;107
+    match_string Alpine Linux
+
 name American Megatrends
     name_short AMI
     url www.ami.com
