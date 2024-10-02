@@ -44,6 +44,7 @@ static const AptFlavor apt_flavors[] = {
     { "Kubuntu",        "kubuntu",         "kubuntu-desktop",          "/etc/os-release",            "VERSION_ID=" },
     { "Lubuntu",        "lubuntu",         "lubuntu-desktop",          "/etc/os-release",            "VERSION_ID=" },
     { "Edubuntu",       "edubuntu",        "edubuntu-desktop",         "/etc/os-release",            "VERSION_ID=" },
+    { "Parrot Security","parrot",          "parrot-updater",           "/etc/os-release",            "VERSION_ID=" },
     { "Bodhi Linux",    "bodhi",           "bodhi-appcenter",          "/etc/bodhi/info",            "RELEASE=" },
     { "MX Linux",       "mxlinux",         "mx-welcome",               "/etc/mx-version",            "MX-" },
     { "Raspbian",       "raspbian",        "raspbian-archive-keyring", "/etc/os-release",            "VERSION_ID=" },

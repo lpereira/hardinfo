@@ -921,6 +921,12 @@ name Parallels
     url www.parallels.com
     match_string lrpepyh vr
 
+name Parrot Security
+    name_short Parrot Security
+    url www.parrotsec.org
+    ansi_color 0;97;44
+    match_string Parrot Security
+
 name Patriot Memory
     name_short Patriot
     url www.patriotmemory.com

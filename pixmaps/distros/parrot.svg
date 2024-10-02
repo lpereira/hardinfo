@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1"
+	 id="Layer_1" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 175 175"
+	 style="enable-background:new 0 0 175 175;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#15E0ED;}
+	.st1{fill:url(#SVGID_1_);}
+</style>
+<sodipodi:namedview  bordercolor="#000000" borderopacity="0.25" id="namedview30" inkscape:current-layer="Layer_1" inkscape:cx="103.63054" inkscape:cy="93.628987" inkscape:deskcolor="#d1d1d1" inkscape:pagecheckerboard="0" inkscape:pageopacity="0.0" inkscape:showpageshadow="2" inkscape:window-height="887" inkscape:window-maximized="1" inkscape:window-width="1532" inkscape:window-x="0" inkscape:window-y="0" inkscape:zoom="4.149356" pagecolor="#ffffff" showgrid="false">
+	</sodipodi:namedview>
+<circle id="circle25" class="st0" cx="87.5" cy="87.5" r="87.5"/>
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="61.3272" y1="97.5719" x2="167.6137" y2="91.5736">
+	<stop  offset="0" style="stop-color:#000000;stop-opacity:0.9"/>
+	<stop  offset="8.563758e-02" style="stop-color:#000909;stop-opacity:0.8229"/>
+	<stop  offset="0.2278" style="stop-color:#002023;stop-opacity:0.695"/>
+	<stop  offset="0.4089" style="stop-color:#00464C;stop-opacity:0.532"/>
+	<stop  offset="0.6218" style="stop-color:#007A85;stop-opacity:0.3404"/>
+	<stop  offset="0.8587" style="stop-color:#00BCCD;stop-opacity:0.1271"/>
+	<stop  offset="1" style="stop-color:#00E7FC;stop-opacity:0"/>
+</linearGradient>
+<polygon class="st1" points="60.6,31.7 141.9,19 146.8,23.2 149.4,25.6 153.4,30 156.3,33.5 159.3,37.5 162,41.6 164.4,45.8 
+	166.2,49.3 168.2,53.7 169.9,58.1 171.5,62.8 172.9,68.6 174,73.9 174.5,78.4 175,83.7 175,89.9 174.7,94.3 174.1,100 173.4,104.4 
+	171.9,110.6 170,116.7 168.5,120.8 166.7,124.7 164.9,128.3 162.7,132.2 160.3,136.1 156.8,141 154.4,143.9 150.4,148.3 
+	146.2,152.4 141.1,156.7 135.8,160.4 132.8,162.4 128.3,164.9 121.7,168.2 116.6,162.4 80.6,122.1 54.6,61.3 "/>
+<g id="g289">
+	<g id="g287" inkscape:label="Clip">
+		<path id="path27" sodipodi:nodetypes="cccccccccccccc" d="M80.6,122.1l36,40.3l-12-25.2l11.2,11.7L79.3,83L95,63.4l58.7-24.3
+			L95,40.4l38.2-20.1L60.6,31.7l-6,29.6l-29.3,1.9l-5.1,25.1l14.7-12"/>
+	</g>
+</g>
+</svg>
