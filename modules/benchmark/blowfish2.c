@@ -21,7 +21,7 @@
 #include "blowfish.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 1
+#define BENCH_REVISION 2
 #define CRUNCH_TIME 7
 #define BENCH_DATA_SIZE 65536
 #define BENCH_DATA_MD5 "c25cf5c889f7bead2ff39788eedae37b"
@@ -35,18 +35,18 @@ static gpointer bfish_exec(const void *in_data, gint thread_number)
     unsigned long data_len = BENCH_DATA_SIZE, i = 0;
     BLOWFISH_CTX ctx;
 
-    data = malloc(BENCH_DATA_SIZE);
-    memcpy(data, in_data, BENCH_DATA_SIZE);
-
-    Blowfish_Init(&ctx, (guchar *)key, strlen(key));
-    for(i = 0; i < data_len; i += 8) {
-        Blowfish_Encrypt(&ctx, (unsigned long*)&data[i], (unsigned long*)&data[i+4]);
+    data = g_malloc(BENCH_DATA_SIZE);
+    if(data){
+        memcpy(data, in_data, BENCH_DATA_SIZE);
+        Blowfish_Init(&ctx, (guchar *)key, strlen(key));
+        for(i = 0; i < (data_len-sizeof(unsigned long)); i += 2*sizeof(unsigned long)) {
+            Blowfish_Encrypt(&ctx, (unsigned long*)&data[i], (unsigned long*)&data[i+4]);
+        }
+        for(i = 0; i < (data_len-sizeof(unsigned long)); i += 2*sizeof(unsigned long)) {
+             Blowfish_Decrypt(&ctx, (unsigned long*)&data[i], (unsigned long*)&data[i+4]);
+	     }
+        g_free(data);
     }
-    for(i = 0; i < data_len; i += 8) {
-        Blowfish_Decrypt(&ctx, (unsigned long*)&data[i], (unsigned long*)&data[i+4]);
-    }
-
-    free(data);
     return NULL;
 }
 

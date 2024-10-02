@@ -476,13 +476,13 @@ void Blowfish_Init(BLOWFISH_CTX * ctx, unsigned char *key, int keyLen)
     }
     datal = 0x00000000;
     datar = 0x00000000;
-    for (i = 0; i < N + 2; i += 2) {
+    for (i = 0; i < (N + 2-1); i += 2) {
 	Blowfish_Encrypt(ctx, &datal, &datar);
 	ctx->P[i] = datal;
 	ctx->P[i + 1] = datar;
     }
     for (i = 0; i < 4; ++i) {
-	for (j = 0; j < 256; j += 2) {
+        for (j = 0; j < (256-1); j += 2) {
 	    Blowfish_Encrypt(ctx, &datal, &datar);
 	    ctx->S[i][j] = datal;
 	    ctx->S[i][j + 1] = datar;
