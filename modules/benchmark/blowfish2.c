@@ -21,7 +21,7 @@
 #include "blowfish.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 2
+#define BENCH_REVISION 3
 #define CRUNCH_TIME 7
 #define BENCH_DATA_SIZE 65536
 #define BENCH_DATA_MD5 "c25cf5c889f7bead2ff39788eedae37b"
@@ -39,12 +39,12 @@ static gpointer bfish_exec(const void *in_data, gint thread_number)
     if(data){
         memcpy(data, in_data, BENCH_DATA_SIZE);
         Blowfish_Init(&ctx, (guchar *)key, strlen(key));
-        for(i = 0; i < (data_len-sizeof(unsigned long)); i += 2*sizeof(unsigned long)) {
-            Blowfish_Encrypt(&ctx, (unsigned long*)&data[i], (unsigned long*)&data[i+4]);
+        for(i = 0; i < (data_len-sizeof(guint32)); i += 2*sizeof(guint32)) {
+	    Blowfish_Encrypt(&ctx, (guint32 *)&data[i], (guint32 *)&data[i+sizeof(guint32)]);
         }
-        for(i = 0; i < (data_len-sizeof(unsigned long)); i += 2*sizeof(unsigned long)) {
-             Blowfish_Decrypt(&ctx, (unsigned long*)&data[i], (unsigned long*)&data[i+4]);
-	     }
+        for(i = 0; i < (data_len-sizeof(guint32)); i += 2*sizeof(guint32)) {
+            Blowfish_Decrypt(&ctx, (guint32 *)&data[i], (guint32 *)&data[i+sizeof(guint32)]);
+        }
         g_free(data);
     }
     return NULL;

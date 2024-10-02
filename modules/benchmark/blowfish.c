@@ -58,14 +58,14 @@ have time to provide unpaid support for everyone who uses this code.
 #include "blowfish.h"
 
 #define N               16
-static const unsigned long ORIG_P[16 + 2] =
+static const guint32 ORIG_P[16 + 2] =
     { 0x243F6A88L, 0x85A308D3L, 0x13198A2EL, 0x03707344L, 0xA4093822L,
     0x299F31D0L, 0x082EFA98L, 0xEC4E6C89L, 0x452821E6L, 0x38D01377L,
 	0xBE5466CFL, 0x34E90C6CL, 0xC0AC29B7L,
     0xC97C50DDL, 0x3F84D5B5L, 0xB5470917L, 0x9216D5D9L, 0x8979FB1BL
 };
 
-static const unsigned long ORIG_S[4][256] = {
+static const guint32 ORIG_S[4][256] = {
 	{0xD1310BA6L, 0x98DFB5ACL, 0x2FFD72DBL, 0xD01ADFB7L, 0xB8E1AFEDL,
 	 0x6A267E96L, 0xBA7C9045L, 0xF12C7F99L, 0x24A19947L, 0xB3916CF7L,
 	 0x0801F2E2L, 0x858EFC16L, 0x636920D8L, 0x71574E69L, 0xA458FEA3L,
@@ -384,10 +384,10 @@ static const unsigned long ORIG_S[4][256] = {
  0x3AC372E6L}
 };
 
-static unsigned long F(BLOWFISH_CTX * ctx, unsigned long x)
+static guint32 F(BLOWFISH_CTX * ctx, guint32 x)
 {
     unsigned short a, b, c, d;
-    unsigned long y;
+    guint32 y;
     d = (unsigned short) (x & 0xFF);
     x >>= 8;
     c = (unsigned short) (x & 0xFF);
@@ -401,12 +401,12 @@ static unsigned long F(BLOWFISH_CTX * ctx, unsigned long x)
     return y;
 }
 
-void Blowfish_Encrypt(BLOWFISH_CTX * ctx, unsigned long *xl,
-		      unsigned long *xr)
+void Blowfish_Encrypt(BLOWFISH_CTX * ctx, guint32 *xl,
+		      guint32 *xr)
 {
-    unsigned long Xl;
-    unsigned long Xr;
-    unsigned long temp;
+    guint32 Xl;
+    guint32 Xr;
+    guint32 temp;
     short i;
     Xl = *xl;
     Xr = *xr;
@@ -426,12 +426,12 @@ void Blowfish_Encrypt(BLOWFISH_CTX * ctx, unsigned long *xl,
     *xr = Xr;
 }
 
-void Blowfish_Decrypt(BLOWFISH_CTX * ctx, unsigned long *xl,
-		      unsigned long *xr)
+void Blowfish_Decrypt(BLOWFISH_CTX * ctx, guint32 *xl,
+		      guint32 *xr)
 {
-    unsigned long Xl;
-    unsigned long Xr;
-    unsigned long temp;
+    guint32 Xl;
+    guint32 Xr;
+    guint32 temp;
     short i;
     Xl = *xl;
     Xr = *xr;
@@ -458,7 +458,7 @@ void Blowfish_Decrypt(BLOWFISH_CTX * ctx, unsigned long *xl,
 void Blowfish_Init(BLOWFISH_CTX * ctx, unsigned char *key, int keyLen)
 {
     int i, j, k;
-    unsigned long data, datal, datar;
+    guint32 data, datal, datar;
     for (i = 0; i < 4; i++) {
 	for (j = 0; j < 256; j++)
 	    ctx->S[i][j] = ORIG_S[i][j];

@@ -17,15 +17,15 @@
 See blowfish.c for more information about this file.
 */
 
-  
+
 typedef struct {
-  unsigned long P[16 + 2];
-  unsigned long S[4][256];
+  guint32 P[16 + 2];
+  guint32 S[4][256];
 } BLOWFISH_CTX;
 
 void Blowfish_Init(BLOWFISH_CTX *ctx, unsigned char *key, int keyLen);
-void Blowfish_Encrypt(BLOWFISH_CTX *ctx, unsigned long *xl, unsigned long *xr);
-void Blowfish_Decrypt(BLOWFISH_CTX *ctx, unsigned long *xl, unsigned long *xr);
+void Blowfish_Encrypt(BLOWFISH_CTX *ctx, guint32 *xl, guint32 *xr);
+void Blowfish_Decrypt(BLOWFISH_CTX *ctx, guint32 *xl, guint32 *xr);
 
 
 
