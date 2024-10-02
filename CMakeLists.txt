@@ -240,6 +240,10 @@ if(${distro} MATCHES "Void")
     set(HARDINFO2_RUNIT 1)
 endif()
 
+if(${distro} MATCHES "Alpine")
+    set(HARDINFO2_SYSTEMV 1)
+endif()
+
 #WSL 1/2
 if(EXISTS "/bin/wslinfo")
     message("WSL Detected")
