@@ -539,11 +539,24 @@ static Distro parse_os_release(void)
     //remove codename from pretty name
     if(pretty_name && codename){
         gchar *t;
+	//upper first letter
+	t=g_strdup_printf(" (%s)",codename);
+	t[2]=toupper(t[2]);
+	contents=pretty_name;
+        pretty_name=strreplace(contents,t,"");
+	g_free(t);g_free(contents);
+	//normal
 	t=g_strdup_printf(" (%s)",codename);
 	contents=pretty_name;
         pretty_name=strreplace(contents,t,"");
 	g_free(t);g_free(contents);
-	//
+	//without brackets upper first letter
+	t=g_strdup_printf(" %s",codename);
+	t[1]=toupper(t[1]);
+	contents=pretty_name;
+        pretty_name=strreplace(contents,t,"");
+	g_free(t);g_free(contents);
+	//without brackets normal
 	t=g_strdup_printf(" %s",codename);
 	contents=pretty_name;
         pretty_name=strreplace(contents,t,"");
