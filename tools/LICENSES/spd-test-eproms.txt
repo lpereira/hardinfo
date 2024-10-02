@@ -1,0 +1,15 @@
+SPD test eeproms
+
+These are settings communication files according to jedec standards.
+This is not generated nor binary code - it is settings files for debug and they are not included in builds.
+
+License Public Domain
+
+Usage:
+to use for test/development/debug: copy eeprom-test file to / (root of file system) and build application using debug.
+
+From:
+hwspeedy historical PC's DIMM modules
+DDR5 modules from hwspeedy and kernel mailling list:
+https://lore.kernel.org/lkml/cf9d752e-0137-4a6d-85d3-fbe69293a43e@t-8ch.de/
+announced to us by t-8ch.
