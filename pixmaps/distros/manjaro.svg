@@ -1,3 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" stroke="#35bf5c" stroke-width="4" viewBox="0 0 14 14">
-<path d="M9 2H2V14 2M7 5v9M12 0V14"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <path d="m-1e-5 0.0011v512h146v-366h183v-146h-183v-0.5zm366 0.36v511h146v-511zm-183 183v328h146v-328z" fill="#35bf5c"/>
 </svg>
