@@ -566,7 +566,7 @@ static Distro parse_os_release(void)
     }
 
     //Based on Alpine Linux add to distro string
-    if(pretty_name && !g_str_equal(id, "fedora")  && g_file_get_contents("/etc/alpine-release", &contents , NULL, NULL) ) {
+    if(pretty_name && !g_str_equal(id, "alpine")  && g_file_get_contents("/etc/alpine-release", &contents , NULL, NULL) ) {
         gchar *t,*p=contents;
         while(*p && ((*p>'9') || (*p<'0'))) p++;
         if(p) strend(p,' '); else p="";
