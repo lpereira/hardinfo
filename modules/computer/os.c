@@ -565,6 +565,14 @@ static Distro parse_os_release(void)
 	g_strstrip(pretty_name);
     }
 
+    //Based on Alpine Linux add to distro string
+    if(pretty_name && !g_str_equal(id, "fedora")  && g_file_get_contents("/etc/alpine-release", &contents , NULL, NULL) ) {
+        gchar *t,*p=contents;
+        while(*p && ((*p>'9') || (*p<'0'))) p++;
+        if(p) strend(p,' '); else p="";
+        t=pretty_name; pretty_name=g_strdup_printf("%s - Alpine %s", t,p); g_free(t);
+        g_free(contents);
+    } else
     //Based on Fedora Linux add to distro string
     if(pretty_name && !g_str_equal(id, "fedora")  && g_file_get_contents("/etc/fedora-release", &contents , NULL, NULL) ) {
         gchar *t,*p=contents;

@@ -988,6 +988,12 @@ name Puppy Linux
     ansi_color 0;31;107
     match_string Puppy Linux
 
+name postmarketOS
+    name_short postmarketOS
+    url www.postmarketos.org
+    ansi_color 0;97;42
+    match_string postmarketOS
+
 name PureOS
     name_short PureOS
     ansi_color 0;34;107
