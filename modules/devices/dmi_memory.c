@@ -934,7 +934,7 @@ gboolean memory_devices_hinote(const char **msg) {
         return TRUE;
     }
     gboolean has_dmiaccess = (access("/sys/firmware/dmi/tables/DMI", R_OK)==0) || (access("/sys/firmware/dmi/tables/smbios_entry_point", R_OK)==0);
-    gchar *want_dmi       = "<b><i>dmidecode</i></b> package installed";
+    gchar *want_dmi       = _("<b><i>dmidecode</i></b> package installed");
     gchar *want_dmiaccess = "sudo chmod a+r /sys/firmware/dmi/tables/*";
     gchar *want_at24      = "sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)";
     gchar *want_ee1004    = "sudo modprobe ee1004 (for DDR4)";

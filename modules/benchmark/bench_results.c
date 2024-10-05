@@ -29,7 +29,7 @@
 uint64_t memory_devices_get_system_memory_MiB();
 gchar *memory_devices_get_system_memory_types_str();
 
-/*/ Used for an unknown value. Having it in only one place cleans up the .po
+/*!/ Used for an unknown value. Having it in only one place cleans up the .po
  * line references */
 static const char *unk = N_("(Unknown)");
 
@@ -300,13 +300,13 @@ static gchar *get_cpu_desc(JsonObject *machine)
             ngettext("%d NUMA node", "%d NUMA nodes", num_nodes);
 
         full_fmt = g_strdup_printf(
-            _(/*/NP procs; NC cores across NN nodes; NT threads*/
+            _(/*!/NP procs; NC cores across NN nodes; NT threads*/
               "%s; %s across %s; %s"),
             packs_fmt, cores_fmt, nodes_fmt, threads_fmt);
         ret = g_strdup_printf(full_fmt, num_cpus, num_cores * num_nodes, num_nodes, num_threads);
     } else {
         full_fmt =
-            g_strdup_printf(_(/*/NP procs; NC cores; NT threads*/ "%s; %s; %s"),
+            g_strdup_printf(_(/*!/NP procs; NC cores; NT threads*/ "%s; %s; %s"),
                             packs_fmt, cores_fmt, threads_fmt);
         ret = g_strdup_printf(full_fmt, num_cpus, num_cores, num_threads);
     }

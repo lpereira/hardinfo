@@ -305,7 +305,7 @@ desktop_with_session_type(const gchar *desktop_env)
     tmp = g_getenv("XDG_SESSION_TYPE");
     if (tmp) {
         if (!g_str_equal(tmp, "unspecified"))
-            return g_strdup_printf(_(/*/{desktop environment} on {session type}*/ "%s on %s"), desktop_env, tmp);
+            return g_strdup_printf(_(/*!/{desktop environment} on {session type}*/ "%s on %s"), desktop_env, tmp);
     }
 
     return g_strdup(desktop_env);
@@ -417,10 +417,10 @@ gchar *computer_get_aslr(void)
 gchar *computer_get_entropy_avail(void)
 {
     gchar tab_entropy_fstr[][32] = {
-      N_(/*/bits of entropy for rng (0)*/              "(None or not available)"),
-      N_(/*/bits of entropy for rng (low/poor value)*/  "%d bits (low)"),
-      N_(/*/bits of entropy for rng (medium value)*/    "%d bits (medium)"),
-      N_(/*/bits of entropy for rng (high/good value)*/ "%d bits (healthy)")
+      N_(/*!/bits of entropy for rng (0)*/              "(None or not available)"),
+      N_(/*!/bits of entropy for rng (low/poor value)*/  "%d bits (low)"),
+      N_(/*!/bits of entropy for rng (medium value)*/    "%d bits (medium)"),
+      N_(/*!/bits of entropy for rng (high/good value)*/ "%d bits (healthy)")
     };
     gint bits = h_sysfs_read_int("/proc/sys/kernel/random", "entropy_avail");
     if (bits > 3000) return g_strdup_printf(_(tab_entropy_fstr[3]), bits);
