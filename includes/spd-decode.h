@@ -21,12 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#define UNKNOWN_MEM_TYPE_STRING _("RAM")
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
 #define STR_IGNORE(str, ignore) if (SEQ(str, ignore)) { *str = 0; null_if_empty(&str); }
 #define GET_RAM_TYPE_STR(rt) (ram_types[(rt < N_RAM_TYPES) ? rt : 0])
+#define UNKNOWN_MEM_TYPE_STRING _("RAM")
 
 typedef enum {
     UNKNOWN           = 0,

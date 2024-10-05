@@ -28,6 +28,7 @@
 #define HI_STOCK_SYNC_MENU	"hi-stock-sync-menu"
 #define HI_STOCK_DONATE		"hi-stock-donate"
 #define HI_STOCK_SERVER		"hi-stock-server"
+#define HI_STOCK_QUIT "hi-stock-quit"
 
 void stock_icons_init(void);
 void stock_icon_register(gchar *filename, gchar *stock_id);
