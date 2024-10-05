@@ -54,14 +54,14 @@ static GtkActionEntry entries[] = {
      G_CALLBACK(cb_generate_report)},
 
     {"SyncManagerAction", HI_STOCK_SYNC_MENU,
-     N_("Synchronize"), NULL,
+     N_("Synchronize"), "<control>S",
      N_("Send benchmark results and receive updated data from the network"),
      G_CALLBACK(cb_sync_manager)},
 
-    {"OpenAction", "_Open",
+    /*{"OpenAction", "_Open",
      N_("_Open..."), NULL,
      NULL,
-     G_CALLBACK(cb_sync_manager)},
+     G_CALLBACK(cb_sync_manager)},*/
 
     //does not work correctly and value low
     /*{"CopyAction", HI_STOCK_CLIPBOARD,
@@ -75,7 +75,7 @@ static GtkActionEntry entries[] = {
      G_CALLBACK(cb_refresh)},
 
     {"HomePageAction", HI_STOCK_INTERNET,
-     N_("_Open HardInfo2 Web Site"), NULL,
+     N_("_Open Hardinfo2 Web Site"), NULL,
      NULL,
      G_CALLBACK(cb_open_web_page)},
 
@@ -84,8 +84,8 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_report_bug)},
 
-    {"AboutAction", HI_STOCK_ABOUT_MODULES,
-     N_("_About HardInfo2"), NULL,
+    {"AboutAction", HI_STOCK_ABOUT,
+     N_("_About Hardinfo2"), "<control>A",
      N_("Displays program version information"),
      G_CALLBACK(cb_about)},
 
@@ -108,7 +108,7 @@ static GtkToggleActionEntry toggle_entries[] = {
      N_("Synchronize on startup"), NULL,
      NULL,
      G_CALLBACK(cb_sync_on_startup)},
-#if GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 20, 0)
     {"DisableThemeAction", NULL,
      N_("Disable Theme"), NULL,
      NULL,

@@ -25,15 +25,12 @@ static struct {
     gchar *filename;
     gchar *stock_id;
 } stock_icons[] = {
-    { "clipboard.png", HI_STOCK_CLIPBOARD},
+  //    { "clipboard.png", HI_STOCK_CLIPBOARD},
     { "refresh.png", HI_STOCK_REFRESH},
     { "report.png", HI_STOCK_REPORT},
     { "internet.png", HI_STOCK_INTERNET},
-    { "module.png", HI_STOCK_MODULE},
-    { "about-modules.png", HI_STOCK_ABOUT_MODULES},
-    { "syncmanager-small.png", HI_STOCK_SYNC_MENU},
-    { "face-grin.png", HI_STOCK_DONATE},
-    { "server.png", HI_STOCK_SERVER},
+    { "about.png", HI_STOCK_ABOUT},
+    { "syncmanager.png", HI_STOCK_SYNC_MENU},
     { "close.png", HI_STOCK_QUIT}
 };
 
