@@ -72,6 +72,8 @@ add_definitions("-Wformat-security")
 
 set(PACKAGE_LIBSOUP2_MINVERSION 2.42)
 set(PACKAGE_LIBGLIB2_MINVERSION 2.24)
+SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr, vulkan-tools")
+SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-server-utils, vulkan-tools")
 
 #########################CPack PACKAGING SETUP###############################
 if(EXISTS "/etc/os-release")
@@ -140,6 +142,13 @@ if(${disversion} LESS 9.99)
   endif()
 endif()
 
+#centos/redhat/oracle/opensuse/suse 7
+if(${disversion} LESS 7.99)
+  if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*"))
+      SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr") #miss vulkan-tools
+  endif()
+endif()
+
 #centos/redhat/oracle/opensuse/suse 6
 if(${disversion} LESS 6.99)
   if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*"))
@@ -150,13 +159,23 @@ if(${disversion} LESS 6.99)
     set(HARDINFO2_SYSTEMV 1)
     message("RPM EL6 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
+    SET(RPM_REQ "sysbench, lsscsi, glx-utils, lm_sensors, xdg-utils, xrandr") #miss vulkan-tools, udisks2, fwupd, iperf3
   endif()
 endif()
+
+#opensuse tumbeweed
+if(${disversion} GREATER 20000101)
+  if(${distro} MATCHES "openSUSE*")
+    SET(RPM_REQ "sysbench, udisks2, lsscsi, xdg-utils, fwupd, xrandr,vulkan-tools,  Mesa-demo-x, iperf, sensors") 
+  endif()
+endif()
+
 
 #Fedora 23
 if(${distro}${disversion} MATCHES "Fedora23")
     message("FC23 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
+    SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr") #miss vulkan-tools
 endif()
 
 #debian 7
@@ -197,6 +216,7 @@ if(${disversion} LESS 11.99)
     set(HARDINFO2_LIBSOUP3 0)
   endif()
 endif()
+
 #pureos ->10 (debian 11 or less)
 if(${disversion} LESS 10.99)
   if(${distro} MATCHES "PureOS")
@@ -225,8 +245,14 @@ if(${distro} MATCHES "Slackware")
     set(HARDINFO2_LIBSOUP3 0)
 endif()
 
+#OpenMandriva
+if(${distro} MATCHES "OpenMandriva")
+    SET(RPM_REQ "udisks2, sysbench, fwupd, lm_sensors, xdg-utils, xrandr, vulkan-tools,  glxinfo, iperf") #miss lsscsi
+endif()
+
 #PCLinuxOS
 if(${distro} MATCHES "PCLinux")
+    SET(RPM_REQ "udisks2, lsscsi, lm_sensors, xdg-utils, xrandr, vulkan-tools,  glxinfo, iperf") #miss sysbench,fwupd
     set(HARDINFO2_SYSTEMV 1)
 endif()
 
@@ -649,7 +675,7 @@ endif()
 SET(CPACK_RPM_PACKAGE_OBSOLETES "hardinfo")
 SET(CPACK_RPM_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_RPM_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
-SET(CPACK_RPM_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr, vulkan-tools")
+SET(CPACK_RPM_PACKAGE_REQUIRES ${RPM_REQ})
 SET(CPACK_RPM_PACKAGE_LICENSE "GPL2+")
 SET(CPACK_RPM_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 SET(CPACK_RPM_PACKAGE_URL "https://www.hardinfo2.org")
@@ -675,7 +701,7 @@ SET(CPACK_DEBIAN_PACKAGE_REPLACES "hardinfo")
 SET(CPACK_DEBIAN_PACKAGE_BREAKS "hardinfo")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
-SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-server-utils, vulkan-tools")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS ${DEB_REQ})
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 if(${HARDINFO2_LIBSOUP3})
     SET(PACKAGE_LS "libsoup-3.0-0 (>=3.0)")
