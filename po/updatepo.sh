@@ -21,7 +21,7 @@ do
     # work from hardinfo2 root to get reasonable file reference comments
     cd ..
     echo -n `pwd`; echo "/$d ..."
-    find "$d" -type f -name "*.[hc]" -print | sort | xargs xgettext -j -d hardinfo2 -o "$DER/hardinfo2.pot" -k_ -kN_ -kC_:1c,2 -kNC_:1c,2 -c/ --from-code=UTF-8
+    find "$d" -type f -name "*.[hc]" -print | sort | xargs xgettext -j -d hardinfo2 -o "$DER/hardinfo2.pot" -k_ -kN_ -kC_:1c,2 -kNC_:1c,2 -c*/ --from-code=UTF-8
     cd "$DER"
 done;
 
