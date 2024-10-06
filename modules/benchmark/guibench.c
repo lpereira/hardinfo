@@ -29,183 +29,161 @@
 #define CRUNCH_TIME 3
 
 static int darkmode;
-static int count = 0;
-static int testnumber = 0;
-static GTimer *timer, *frametimer;
+static int count=0;
+static int testnumber=0;
+static GTimer *timer,*frametimer;
 static gdouble score = 0.0f;
 static GdkPixbuf *pixbufs[3];
 static GRand *r;
 double *frametime;
 int *framecount;
 
-gboolean on_draw(GtkWidget *widget, GdkEventExpose *event, gpointer data)
-{
-#if GTK_CHECK_VERSION(3, 0, 0)
- const int divfactor[5] = {2231, 2122, 2113, 2334, 2332};
-#else // Note: OLD GTK does not do the same amount of work
- const int divfactor[5] = {12231, 12122, 12113, 12334, 12332};
+gboolean on_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
+#if GTK_CHECK_VERSION(3,0,0)
+   const int divfactor[5]={2231,2122,2113,2334,2332};
+#else //Note: OLD GTK does not do the same amount of work
+   const int divfactor[5]={12231,12122,12113,12334,12332};
 #endif
- const int iterations[5] = {100, 300, 100, 300, 100};
- int i;
- cairo_t *cr;
- GdkWindow *window = gtk_widget_get_window(widget);
+   const int iterations[5]={100,300,100,300,100};
+   int i;
+   cairo_t * cr;
+   GdkWindow* window = gtk_widget_get_window(widget);
 
-#if GTK_CHECK_VERSION(3, 22, 0)
- cairo_region_t *cairoRegion = cairo_region_create();
- GdkDrawingContext *drawingContext;
-
- drawingContext = gdk_window_begin_draw_frame(window, cairoRegion);
- cr = gdk_drawing_context_get_cairo_context(drawingContext);
+#if GTK_CHECK_VERSION(3,22,0)
+   cairo_region_t * cairoRegion = cairo_region_create();
+   GdkDrawingContext * drawingContext;
+    
+   drawingContext = gdk_window_begin_draw_frame (window,cairoRegion);
+   cr = gdk_drawing_context_get_cairo_context (drawingContext);
 #else
- cr = gdk_cairo_create(window);
+   cr = gdk_cairo_create(window);
 #endif
 
- g_timer_continue(frametimer);
- for (i = iterations[testnumber]; i >= 0; i--)
- {
-  switch (testnumber)
-  {
-  case 0: // Line Drawing
-   cairo_move_to(cr, g_rand_int_range(r, 0, 1024), g_rand_int_range(r, 0, 800));
-   cairo_set_source_rgb(cr, g_rand_double_range(r, 0.2, 0.8), g_rand_double_range(r, 0.2, 0.8),
-                        g_rand_double_range(r, 0.2, 0.8));
-   cairo_line_to(cr, g_rand_int_range(r, 0, 1024), g_rand_int_range(r, 0, 800));
-   cairo_stroke(cr);
-   break;
-  case 1: // Shape Drawing
-   cairo_rectangle(cr, g_rand_int_range(r, 0, 1024 - 200), g_rand_int_range(r, 0, 800 - 200),
-                   g_rand_int_range(r, 0, 400), g_rand_int_range(r, 0, 300));
-   cairo_set_source_rgb(cr, g_rand_double_range(r, 0.2, 0.8), g_rand_double_range(r, 0.2, 0.8),
-                        g_rand_double_range(r, 0.2, 0.8));
-   cairo_stroke(cr);
-   break;
-  case 2: // Filled Shape Drawing
-   cairo_rectangle(cr, g_rand_int_range(r, 0, 1024 - 200), g_rand_int_range(r, 0, 800 - 200),
-                   g_rand_int_range(r, 0, 400), g_rand_int_range(r, 0, 300));
-   if (darkmode)
-   {
-    cairo_set_source_rgb(cr, g_rand_double_range(r, 0.0, 0.3), g_rand_double_range(r, 0.0, 0.3),
-                         g_rand_double_range(r, 0.0, 0.3));
-   }
-   else
-   {
-    cairo_set_source_rgb(cr, g_rand_double_range(r, 0.7, 0.9), g_rand_double_range(r, 0.7, 0.9),
-                         g_rand_double_range(r, 0.7, 0.9));
-   }
-   cairo_fill(cr);
-   break;
-  case 3: // Text Drawing
-   cairo_move_to(cr, g_rand_int_range(r, 0, 1024 - 100), g_rand_int_range(r, 0, 800));
-   cairo_set_font_size(cr, 25);
-   cairo_set_source_rgb(cr, g_rand_double_range(r, 0.2, 0.8), g_rand_double_range(r, 0.2, 0.8),
-                        g_rand_double_range(r, 0.2, 0.8));
-   cairo_show_text(cr, "I \342\231\245 hardinfo2");
-   break;
-   //
-  case 4: // Icon Blitting
-   gdk_cairo_set_source_pixbuf(cr, pixbufs[g_rand_int_range(r, 0, 3)], g_rand_int_range(r, 0, 1024 - 64),
-                               g_rand_int_range(r, 0, 800 - 64));
-   cairo_paint(cr);
-   break;
-  }
- }
- g_timer_stop(frametimer);
-#if GTK_CHECK_VERSION(3, 22, 0)
- gdk_window_end_draw_frame(window, drawingContext);
+   g_timer_continue(frametimer);
+   for (i = iterations[testnumber]; i >= 0; i--) {
+       switch(testnumber) {
+	  case 0 : //Line Drawing
+                cairo_move_to(cr, g_rand_int_range(r,0,1024), g_rand_int_range(r,0,800));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8));
+		cairo_line_to(cr, g_rand_int_range(r,0,1024), g_rand_int_range(r,0,800));
+		cairo_stroke(cr);
+		break;
+	  case 1 : //Shape Drawing
+	        cairo_rectangle(cr,g_rand_int_range(r,0,1024-200),g_rand_int_range(r,0,800-200),g_rand_int_range(r,0,400),g_rand_int_range(r,0,300));
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8));
+		cairo_stroke(cr);
+		break;
+	  case 2 : //Filled Shape Drawing
+	        cairo_rectangle(cr,g_rand_int_range(r,0,1024-200),g_rand_int_range(r,0,800-200),g_rand_int_range(r,0,400),g_rand_int_range(r,0,300));
+		if(darkmode){
+		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.0,0.3),g_rand_double_range(r,0.0,0.3),g_rand_double_range(r,0.0,0.3));
+		}else{
+		    cairo_set_source_rgb(cr,g_rand_double_range(r,0.7,0.9),g_rand_double_range(r,0.7,0.9),g_rand_double_range(r,0.7,0.9));
+		}
+		cairo_fill(cr);
+		break;
+	  case 3 : //Text Drawing
+                cairo_move_to(cr,g_rand_int_range(r,0,1024-100),g_rand_int_range(r,0,800));
+                cairo_set_font_size(cr,25);
+		cairo_set_source_rgb(cr,g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8),g_rand_double_range(r,0.2,0.8));
+                cairo_show_text(cr, "I \342\231\245 hardinfo2");
+		break;
+		//
+	  case 4 : //Icon Blitting
+                gdk_cairo_set_source_pixbuf (cr, pixbufs[g_rand_int_range(r,0,3)],g_rand_int_range(r,0,1024-64), g_rand_int_range(r,0,800-64));
+		cairo_paint(cr);
+	        break;
+	  }
+     }
+     g_timer_stop(frametimer);
+#if GTK_CHECK_VERSION(3,22,0)
+     gdk_window_end_draw_frame(window,drawingContext);
 #endif
- count++;
- if (g_timer_elapsed(timer, NULL) < CRUNCH_TIME)
- {
-  gtk_widget_queue_draw_area(widget, 0, 0, 1024, 800);
- }
- else
- {
-  score += ((double)iterations[testnumber] * count / g_timer_elapsed(frametimer, NULL)) / divfactor[testnumber];
-  frametime[testnumber] = g_timer_elapsed(frametimer, NULL);
-  framecount[testnumber] = count;
-  DEBUG("GPU Test %d => %d =>score:%f (frametime=%f)", testnumber, count, score, g_timer_elapsed(frametimer, NULL));
-  count = 0;
-  testnumber++;
-  // Done
-  if (testnumber >= 5)
-  {
-   gtk_main_quit();
-  }
-  else
-  {
-   g_timer_start(frametimer);
-   g_timer_stop(frametimer);
-   g_timer_start(timer);
-   gtk_widget_queue_draw_area(widget, 0, 0, 1024, 800);
-  }
- }
+     count++;
+     if(g_timer_elapsed(timer, NULL)<CRUNCH_TIME) {
+         gtk_widget_queue_draw_area(widget,0,0,1024,800);
+     } else {
+         score += ((double)iterations[testnumber]*count/g_timer_elapsed(frametimer,NULL)) / divfactor[testnumber];
+	 frametime[testnumber]=g_timer_elapsed(frametimer,NULL);
+	 framecount[testnumber]=count;
+         DEBUG("GPU Test %d => %d =>score:%f (frametime=%f)",testnumber,count,score,g_timer_elapsed(frametimer,NULL));
+         count=0;
+	 testnumber++;
+	 //Done
+         if(testnumber>=5){
+	     gtk_main_quit();
+         } else {
+	     g_timer_start(frametimer);
+	     g_timer_stop(frametimer);
+             g_timer_start(timer);
+             gtk_widget_queue_draw_area(widget,0,0,1024,800);
+	 }
+     }
 
- // cleanup
-#if GTK_CHECK_VERSION(3, 22, 0)
- cairo_region_destroy(cairoRegion);
+     // cleanup
+#if GTK_CHECK_VERSION(3,22,0)
+     cairo_region_destroy(cairoRegion);
 #endif
 
- return FALSE;
+     return FALSE;
 }
+
 
 double guibench(double *frameTime, int *frameCount)
 {
 #if GTK_CHECK_VERSION(3, 0, 0)
- GtkCssProvider *provider;
- provider = gtk_css_provider_new();
+    GtkCssProvider *provider;
+    provider = gtk_css_provider_new();
 #endif
- GtkWindow *window;
+    GtkWindow * window;
 
- frametime = frameTime;
- framecount = frameCount;
+    frametime=frameTime;
+    framecount=frameCount;
+    
+    DEBUG("GUIBENCH");
+    pixbufs[0] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("hardinfo2.png"),64,64,GDK_INTERP_BILINEAR);
+    pixbufs[1] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("syncmanager.png"),64,64,GDK_INTERP_BILINEAR);
+    pixbufs[2] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("report-large.png"),64,64,GDK_INTERP_BILINEAR);
 
- DEBUG("GUIBENCH");
+    r = g_rand_new();
 
- pixbufs[0] = icon_cache_get_pixbuf_at_size("hardinfo2.svg", 64, 64);
- pixbufs[1] = icon_cache_get_pixbuf_at_size("sync.svg", 64, 64);
- pixbufs[2] = icon_cache_get_pixbuf_at_size("report.svg", 64, 64);
+    // window setup
+    window = (GtkWindow*)gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
- r = g_rand_new();
-
- // window setup
- window = (GtkWindow *)gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
- darkmode = (params.max_bench_results == 1 ? 1 : 0); // darkmode set by hardinfo2
+    darkmode=(params.max_bench_results==1?1:0); //darkmode set by hardinfo2
 #if GTK_CHECK_VERSION(3, 0, 0)
- if (darkmode)
- {
-  gtk_css_provider_load_from_data(provider, "window { background-color: rgba(0x0, 0x0, 0x0, 1); } ", -1, NULL);
-  gtk_style_context_add_provider(gtk_widget_get_style_context((GtkWidget *)window), GTK_STYLE_PROVIDER(provider),
-                                 GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
- }
+    if(darkmode){
+        gtk_css_provider_load_from_data(provider, "window { background-color: rgba(0x0, 0x0, 0x0, 1); } ", -1, NULL);
+        gtk_style_context_add_provider(gtk_widget_get_style_context((GtkWidget *)window), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
 #endif
- gtk_window_set_default_size(window, 1024, 800);
- gtk_window_set_position(window, GTK_WIN_POS_CENTER);
- gtk_window_set_title(window, "GPU Benchmarking...");
- g_signal_connect(window, "destroy", gtk_main_quit, NULL);
+    gtk_window_set_default_size (window, 1024, 800);
+    gtk_window_set_position     (window, GTK_WIN_POS_CENTER);
+    gtk_window_set_title        (window, "GPU Benchmarking...");
+    g_signal_connect(window, "destroy", gtk_main_quit, NULL);
 
- // create the are we can draw in
- GtkDrawingArea *drawingArea;
- drawingArea = (GtkDrawingArea *)gtk_drawing_area_new();
- gtk_container_add(GTK_CONTAINER(window), (GtkWidget *)drawingArea);
-#if GTK_CHECK_VERSION(3, 0, 0)
- g_signal_connect((GtkWidget *)drawingArea, "draw", G_CALLBACK(on_draw), NULL);
+    // create the are we can draw in
+    GtkDrawingArea* drawingArea;
+    drawingArea = (GtkDrawingArea*) gtk_drawing_area_new();
+    gtk_container_add(GTK_CONTAINER(window), (GtkWidget*)drawingArea);
+#if GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect((GtkWidget*)drawingArea, "draw", G_CALLBACK(on_draw), NULL);
 #else
- g_signal_connect((GtkWidget *)drawingArea, "expose-event", G_CALLBACK(on_draw), NULL);
+    g_signal_connect((GtkWidget*)drawingArea, "expose-event", G_CALLBACK(on_draw), NULL);
 #endif
- frametimer = g_timer_new();
- g_timer_stop(frametimer);
- timer = g_timer_new();
- gtk_widget_show_all((GtkWidget *)window);
+    frametimer = g_timer_new();
+    g_timer_stop(frametimer);
+    timer = g_timer_new();
+    gtk_widget_show_all ((GtkWidget*)window);
 
- gtk_main();
+    gtk_main();
 
- g_timer_destroy(timer);
- g_timer_destroy(frametimer);
- g_rand_free(r);
- g_object_unref(pixbufs[0]);
- g_object_unref(pixbufs[1]);
- g_object_unref(pixbufs[2]);
+    g_timer_destroy(timer);
+    g_timer_destroy(frametimer);
+    g_rand_free(r);
+    g_object_unref(pixbufs[0]);
+    g_object_unref(pixbufs[1]);
+    g_object_unref(pixbufs[2]);
 
- return score;
+    return score;
 }

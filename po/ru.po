@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-06 06:24+0300\n"
+"POT-Creation-Date: 2024-10-06 01:42+0200\n"
 "PO-Revision-Date: 2022-03-05 23:00+0300\n"
-"Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn, tutralex\n"
+"Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn\n"
 "Language-Team: \n"
 "Language: ru\n"
 "X-Poedit-Basepath: ../\n"
@@ -993,7 +993,7 @@ msgstr ""
 
 #: modules/benchmark/benches.c:290
 msgid "Storage R/W Speed"
-msgstr "Скорость хранилища"
+msgstr "Скорость чтения/записи хранилища"
 
 #: modules/benchmark/benches.c:304
 msgid ""
@@ -6572,3 +6572,6 @@ msgstr "Широковещательный адрес"
 #: includes/spd-decode.h:28
 msgid "RAM"
 msgstr "ОЗУ"
+
+#~ msgid "_Open..."
+#~ msgstr "_Открыть..."

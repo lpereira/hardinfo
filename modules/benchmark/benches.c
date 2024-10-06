@@ -214,7 +214,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_SBCPU_SINGLE] =
         {
             N_("SysBench CPU (Single-thread)"),
-            SVG_PROCESSOR,
+            "processor.png",
             callback_benchmark_sbcpu_single,
             scan_benchmark_sbcpu_single,
             MODULE_FLAG_BENCHMARK,
@@ -222,7 +222,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_SBCPU_ALL] =
         {
             N_("SysBench CPU (Multi-thread)"),
-            SVG_PROCESSOR,
+            "processor.png",
             callback_benchmark_sbcpu_all,
             scan_benchmark_sbcpu_all,
             MODULE_FLAG_BENCHMARK,
@@ -230,7 +230,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_SBCPU_QUAD] =
         {
             N_("SysBench CPU (Four threads)"),
-            SVG_PROCESSOR,
+            "processor.png",
             callback_benchmark_sbcpu_quad,
             scan_benchmark_sbcpu_quad,
             MODULE_FLAG_BENCHMARK|MODULE_FLAG_HIDE,

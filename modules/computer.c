@@ -93,8 +93,8 @@ enum {
 };
 
 static ModuleEntry entries[] = {
-    [ENTRY_SUMMARY] = {N_("Summary"), SVG_SUMMARY, callback_summary, scan_summary, MODULE_FLAG_NONE},
-    [ENTRY_OS] = {N_("Operating System"), SVG_OS, callback_os, scan_os, MODULE_FLAG_NONE},
+    [ENTRY_SUMMARY] = {N_("Summary"), "summary.png", callback_summary, scan_summary, MODULE_FLAG_NONE},
+    [ENTRY_OS] = {N_("Operating System"), "os.png", callback_os, scan_os, MODULE_FLAG_NONE},
     [ENTRY_SECURITY] = {N_("Security"), "security.png", callback_security, scan_security, MODULE_FLAG_NONE},
     [ENTRY_KMOD] = {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
     [ENTRY_BOOTS] = {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
@@ -1117,10 +1117,10 @@ gchar *hi_module_get_summary(void)
                                           (char*)idle_free(virt));
 
     return g_strdup_printf("[%s]\n"
-                    "Icon=" SVG_OS "\n"
+                    "Icon=os.png\n"
                     "Method=computer::getOSshort\n"
                     "[%s]\n"
-                    "Icon=" SVG_PROCESSOR "\n"
+                    "Icon=processor.png\n"
                     "Method=devices::getProcessorNameAndDesc\n"
                     "[%s]\n"
                     "Icon=memory.png\n"
