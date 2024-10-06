@@ -21,10 +21,24 @@
 
 #include <gtk/gtk.h>
 
-void		 icon_cache_init(void);
-GdkPixbuf	*icon_cache_get_pixbuf(const gchar *file);
-GtkWidget	*icon_cache_get_image(const gchar *file);
-GdkPixbuf	*icon_cache_get_pixbuf_at_size(const gchar *file, gint wid, gint hei);
-GtkWidget	*icon_cache_get_image_at_size(const gchar *file, gint wid, gint hei);
+#define SVG_ABOUT "hardinfo2.svg"
+#define SVG_REFRESH "refresh.svg"
+#define SVG_REPORT "report.svg"
+#define SVG_INTERNET "internet.svg"
+#define SVG_SYNC "sync.svg"
+#define SVG_QUIT "close.svg"
+#define SVG_DIALOG_INFO "dialog-information.svg"
+#define SVG_SUMMARY "summary.svg"
+#define SVG_OS "os.svg"
+#define SVG_PROCESSOR "processor.svg"
 
-#endif	/* __ICONCACHE_H__ */
+#define DEF_ICON_SIZE 24
+#define ICON_SUFFIX(size) "@" #size "x" #size
+
+void icon_cache_init(void);
+GdkPixbuf *icon_cache_get_pixbuf(const gchar *file);
+GtkWidget *icon_cache_get_image(const gchar *file);
+GdkPixbuf *icon_cache_get_pixbuf_at_size(const gchar *file, gint wid, gint hei);
+GtkWidget *icon_cache_get_image_at_size(const gchar *file, gint wid, gint hei);
+
+#endif /* __ICONCACHE_H__ */

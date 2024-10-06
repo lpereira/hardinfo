@@ -23,78 +23,90 @@ static GHashTable *cache = NULL;
 
 void icon_cache_init(void)
 {
-    if (!cache) {
-        DEBUG("initializing icon cache");
-	cache = g_hash_table_new(g_str_hash, g_str_equal);
-    }
+ if (!cache)
+ {
+  DEBUG("initializing icon cache");
+  cache = g_hash_table_new(g_str_hash, g_str_equal);
+ }
 }
 
-GdkPixbuf *icon_cache_get_pixbuf(const gchar * file)
+GdkPixbuf *icon_cache_get_pixbuf(const gchar *file)
 {
-    GdkPixbuf *icon;
+ GdkPixbuf *icon;
+ gchar *ikey;
 
-    if (!cache)
-	icon_cache_init();
+ if (!cache)
+  icon_cache_init();
 
-    icon = g_hash_table_lookup(cache, file);
+ ikey = g_strdup_printf("%s" ICON_SUFFIX(DEF_ICON_SIZE), file);
+ icon = g_hash_table_lookup(cache, ikey);
 
-    if (!icon) {
-	gchar *path;
+ if (!icon)
+ {
+  gchar *path;
 
-	path = g_build_filename(params.path_data, "pixmaps", file, NULL);
-	icon = gdk_pixbuf_new_from_file(path, NULL);
-	g_hash_table_insert(cache, g_strdup(file), icon);
+  path = g_build_filename(params.path_data, "pixmaps", file, NULL);
+  icon = gdk_pixbuf_new_from_file_at_size(path, DEF_ICON_SIZE, DEF_ICON_SIZE,
+                                          NULL);
+  g_hash_table_insert(cache, g_strdup(ikey), icon);
 
-	g_free(path);
-    }
+  g_free(path);
+ }
 
-    if (icon) {
-      g_object_ref(icon);
-    }
+ g_free(ikey);
 
-    return icon;
+ if (icon)
+ {
+  g_object_ref(icon);
+ }
+
+ return icon;
 }
 
-GtkWidget *icon_cache_get_image(const gchar * file)
+GtkWidget *icon_cache_get_image(const gchar *file)
 {
-    GdkPixbuf *icon;
+ GdkPixbuf *icon;
 
-    icon = icon_cache_get_pixbuf(file);
-    return gtk_image_new_from_pixbuf(icon);
+ icon = icon_cache_get_pixbuf(file);
+ return gtk_image_new_from_pixbuf(icon);
 }
 
-GdkPixbuf *icon_cache_get_pixbuf_at_size(const gchar * file, gint wid,
-					 gint hei)
+GdkPixbuf *icon_cache_get_pixbuf_at_size(const gchar *file, gint wid, gint hei)
 {
-    GdkPixbuf *icon;
+ GdkPixbuf *icon;
+ gchar *ikey;
 
-    if (!cache)
-	icon_cache_init();
+ if (!cache)
+  icon_cache_init();
 
-    icon = g_hash_table_lookup(cache, file);
+ ikey = g_strdup_printf("%s@%ix%i", file, wid, hei);
+ icon = g_hash_table_lookup(cache, ikey);
 
-    if (!icon) {
-	gchar *path;
+ if (!icon)
+ {
+  gchar *path;
 
-	path = g_build_filename(params.path_data, "pixmaps", file, NULL);
-	icon = gdk_pixbuf_new_from_file_at_size(path, wid, hei, NULL);
-	g_hash_table_insert(cache, g_strdup(file), icon);
+  path = g_build_filename(params.path_data, "pixmaps", file, NULL);
+  icon = gdk_pixbuf_new_from_file_at_size(path, wid, hei, NULL);
+  g_hash_table_insert(cache, g_strdup(ikey), icon);
 
-	g_free(path);
-    }
+  g_free(path);
+ }
 
-    if (icon) {
-      g_object_ref(icon);
-    }
+ g_free(ikey);
 
-    return icon;
+ if (icon)
+ {
+  g_object_ref(icon);
+ }
+
+ return icon;
 }
 
-GtkWidget *icon_cache_get_image_at_size(const gchar * file, gint wid,
-					gint hei)
+GtkWidget *icon_cache_get_image_at_size(const gchar *file, gint wid, gint hei)
 {
-    GdkPixbuf *icon;
+ GdkPixbuf *icon;
 
-    icon = icon_cache_get_pixbuf_at_size(file, wid, hei);
-    return gtk_image_new_from_pixbuf(icon);
+ icon = icon_cache_get_pixbuf_at_size(file, wid, hei);
+ return gtk_image_new_from_pixbuf(icon);
 }
