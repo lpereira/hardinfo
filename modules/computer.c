@@ -95,7 +95,7 @@ enum {
 static ModuleEntry entries[] = {
     [ENTRY_SUMMARY] = {N_("Summary"), "summary.svg", callback_summary, scan_summary, MODULE_FLAG_NONE},
     [ENTRY_OS] = {N_("Operating System"), "os.svg", callback_os, scan_os, MODULE_FLAG_NONE},
-    [ENTRY_SECURITY] = {N_("Security"), "security.png", callback_security, scan_security, MODULE_FLAG_NONE},
+    [ENTRY_SECURITY] = {N_("Security"), "security.svg", callback_security, scan_security, MODULE_FLAG_NONE},
     [ENTRY_KMOD] = {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
     [ENTRY_BOOTS] = {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
     [ENTRY_LANGUAGES] = {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
@@ -108,8 +108,8 @@ static ModuleEntry entries[] = {
 #else
     [ENTRY_DEVEL] = {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_HIDE},
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
-    [ENTRY_USERS] = {N_("Users"), "users.png", callback_users, scan_users, MODULE_FLAG_NONE},
-    [ENTRY_GROUPS] = {N_("Groups"), "users.png", callback_groups, scan_groups, MODULE_FLAG_NONE},
+    [ENTRY_USERS] = {N_("Users"), "users.svg", callback_users, scan_users, MODULE_FLAG_NONE},
+    [ENTRY_GROUPS] = {N_("Groups"), "users.svg", callback_groups, scan_groups, MODULE_FLAG_NONE},
     {NULL},
 };
 

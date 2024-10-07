@@ -687,7 +687,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 
 	content_area = gtk_dialog_get_content_area (GTK_DIALOG(bench_dialog));
 
-        bench_image = icon_cache_get_image_at_size("benchmark.png",48,48);
+        bench_image = icon_cache_get_image_at_size("benchmark.svg", 64, 64);
 
 #if GTK_CHECK_VERSION(3,0,0)
 	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
