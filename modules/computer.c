@@ -96,8 +96,8 @@ static ModuleEntry entries[] = {
     [ENTRY_SUMMARY] = {N_("Summary"), "summary.svg", callback_summary, scan_summary, MODULE_FLAG_NONE},
     [ENTRY_OS] = {N_("Operating System"), "os.svg", callback_os, scan_os, MODULE_FLAG_NONE},
     [ENTRY_SECURITY] = {N_("Security"), "security.svg", callback_security, scan_security, MODULE_FLAG_NONE},
-    [ENTRY_KMOD] = {N_("Kernel Modules"), "module.png", callback_modules, scan_modules, MODULE_FLAG_NONE},
-    [ENTRY_BOOTS] = {N_("Boots"), "boot.png", callback_boots, scan_boots, MODULE_FLAG_NONE},
+    [ENTRY_KMOD] = {N_("Kernel Modules"), "module.svg", callback_modules, scan_modules, MODULE_FLAG_NONE},
+    [ENTRY_BOOTS] = {N_("Boots"), "boot.svg", callback_boots, scan_boots, MODULE_FLAG_NONE},
     [ENTRY_LANGUAGES] = {N_("Languages"), "language.png", callback_locales, scan_locales, MODULE_FLAG_NONE},
     [ENTRY_MEMORY_USAGE] = {N_("Memory Usage"), "memory.png", callback_memory_usage, scan_memory_usage, MODULE_FLAG_NONE},
     [ENTRY_FS] = {N_("Filesystems"), "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
@@ -1126,7 +1126,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=memory.png\n"
                     "Method=computer::getMemoryDesc\n"
                     "[%s]\n"
-                    "Icon=module.png\n"
+                    "Icon=module.svg\n"
                     "Method=devices::getMotherboard\n"
                     "[%s]\n"
                     "Icon=monitor.png\n"

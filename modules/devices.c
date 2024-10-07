@@ -114,7 +114,7 @@ static ModuleEntry entries[] = {
 #else
     [ENTRY_DTREE] = {N_("Device Tree"), "devices.png", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
-    [ENTRY_RESOURCES] = {N_("Resources"), "resources.png", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
+    [ENTRY_RESOURCES] = {N_("Resources"), "resources.svg", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     { NULL }
 };
 
