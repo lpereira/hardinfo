@@ -1,0 +1,15 @@
+Hi, I am Alexander under the pseudonym tutralex, I confirm that made new SVG images for the Hardinfo2 project myself
+and provide them for free access under the CC0 license.
+
+List:
+ pixmaps/close.svg
+ pixmaps/dialog-information.svg
+ pixmaps/internet.svg
+ pixmaps/os.svg
+ pixmaps/processor.svg
+ pixmaps/refresh.svg
+ pixmaps/report.svg
+ pixmaps/summary.svg
+ pixmaps/sync.svg
+
+and all subsequent ones added by me to the Hardinfo2 project.
