@@ -458,35 +458,55 @@ static void close_note(GtkWidget * widget, gpointer user_data)
 
 static ShellNote *note_new(void)
 {
-     ShellNote *note;
-     GtkWidget *hbox, *icon, *button;
-    
-     note = g_new0(ShellNote, 1);
-     note->label = gtk_label_new("");
-     note->event_box = gtk_event_box_new();
-     button = gtk_button_new();
-     icon = icon_cache_get_image("close.svg");
-     gtk_widget_show(icon);
-     gtk_container_add(GTK_CONTAINER(button), icon);
-     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-     g_signal_connect(G_OBJECT(button), "clicked", (GCallback)close_note, NULL);
-    
-#if GTK_CHECK_VERSION(3, 0, 0)
-     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
-#else
-     hbox = gtk_hbox_new(FALSE, 3);
-#endif
-     icon = icon_cache_get_image_at_size("dialog-information.svg", 32, 32);
-    
-     gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 4);
-     gtk_box_pack_start(GTK_BOX(hbox), note->label, FALSE, FALSE, 0);
-     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-    
-     gtk_container_set_border_width(GTK_CONTAINER(hbox), 4);
-     gtk_container_add(GTK_CONTAINER(note->event_box), hbox);
-     gtk_widget_show_all(hbox);
+    ShellNote *note;
+    GtkWidget *hbox, *icon, *button;
+    GtkWidget *border_box;
+    GdkColor info_default_border_color     = { 0, 0x0000, 0xad00, 0x9d00 };
+    GdkColor info_default_fill_color       = { 0, 0x4000, 0x6000, 0xff00 };
 
-     return note;
+    note = g_new0(ShellNote, 1);
+    note->label = gtk_label_new("");
+    note->event_box = gtk_event_box_new();
+    button = gtk_button_new();
+
+    border_box = gtk_event_box_new();
+    gtk_container_set_border_width(GTK_CONTAINER(border_box), 1);
+    gtk_container_add(GTK_CONTAINER(note->event_box), border_box);
+    gtk_widget_show(border_box);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkRGBA info_default_text_color       = { .red = 0.7, .green = 0.7, .blue = 0.7, .alpha = 1.0 };
+    gtk_widget_override_color(note->label, GTK_STATE_FLAG_NORMAL, &info_default_text_color);
+#else
+    GdkColor info_default_text_color       = { 0, 0xafff, 0xafff, 0xafff };
+    gtk_widget_modify_fg(note->label, GTK_STATE_NORMAL, &info_default_text_color);
+#endif
+    gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
+    gtk_widget_modify_bg(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
+
+    icon = icon_cache_get_image("close.png");
+    gtk_widget_show(icon);
+    gtk_container_add(GTK_CONTAINER(button), icon);
+    gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    g_signal_connect(G_OBJECT(button), "clicked", (GCallback) close_note,
+		     NULL);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
+#else
+    hbox = gtk_hbox_new(FALSE, 3);
+#endif
+    icon = icon_cache_get_image("dialog-information.png");
+
+    gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), note->label, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+    gtk_container_set_border_width(GTK_CONTAINER(hbox), 2);
+    gtk_container_add(GTK_CONTAINER(border_box), hbox);
+    gtk_widget_show_all(hbox);
+
+    return note;
 }
 
 void shell_set_title(Shell *shell, gchar *subtitle)
