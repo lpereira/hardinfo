@@ -141,9 +141,9 @@ double guibench(double *frameTime, int *frameCount)
     framecount=frameCount;
     
     DEBUG("GUIBENCH");
-    pixbufs[0] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("hardinfo2.png"),64,64,GDK_INTERP_BILINEAR);
-    pixbufs[1] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("syncmanager.png"),64,64,GDK_INTERP_BILINEAR);
-    pixbufs[2] = gdk_pixbuf_scale_simple(icon_cache_get_pixbuf("report-large.png"),64,64,GDK_INTERP_BILINEAR);
+    pixbufs[0] = icon_cache_get_pixbuf_at_size("hardinfo2.svg",64,64);
+    pixbufs[1] = icon_cache_get_pixbuf_at_size("sync.svg",64,64);
+    pixbufs[2] = icon_cache_get_pixbuf_at_size("report.svg",64,64);
 
     r = g_rand_new();
 
