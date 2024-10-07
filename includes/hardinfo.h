@@ -74,6 +74,7 @@ struct _ProgramParameters {
   gchar   *path_data;
   gchar   *path_locale;
   gchar   *argv0;
+  float   scale;
 };
 
 struct _FileTypes {

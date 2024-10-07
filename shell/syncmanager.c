@@ -692,7 +692,7 @@ static SyncDialog *sync_dialog_new(GtkWidget *parent)
     gtk_window_set_title(GTK_WINDOW(dialog), _("Synchronize"));
     gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
     gtk_window_set_icon(GTK_WINDOW(dialog), icon_cache_get_pixbuf("sync.svg"));
-    gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
+    gtk_window_set_default_size(GTK_WINDOW(dialog), 420*params.scale, 260*params.scale);
     gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 

@@ -59,6 +59,10 @@ int main(int argc, char **argv)
     params.path_lib=g_strdup(LIBPREFIX);
     params.path_locale=g_strdup(LOCALEDIR);
 
+    //scale from environment
+    const char *s=getenv("GDK_DPI_SCALE");
+    if(!s || (sscanf(s,"%f",&params.scale)!=1)) params.scale=1.0;
+
     setlocale(LC_ALL, "");
     bindtextdomain("hardinfo2", params.path_locale);
     textdomain("hardinfo2");

@@ -24,6 +24,7 @@
 #include <config.h>
 
 #include <stock.h>
+#include <iconcache.h>
 
 #include <callbacks.h>
 #include <hardinfo.h>
@@ -31,15 +32,8 @@
 
 #include "uidefs.h"
 
-#ifndef GTK_STOCK_COPY
-#define GTK_STOCK_COPY "_Copy"
-#endif
-
-#ifndef GTK_STOCK_REFRESH
-#define GTK_STOCK_REFRESH "_Refresh"
-#endif
-
 static GtkActionEntry entries[] = {
+  //    {"MainMenuAction", NULL, ""},
     {"InformationMenuAction", NULL, N_("_Information")},	/* name, stock id, label */
     {"ViewMenuAction", NULL, N_("_View")},
 #if GTK_CHECK_VERSION(3, 20, 0)
@@ -58,11 +52,6 @@ static GtkActionEntry entries[] = {
      N_("Send benchmark results and receive updated data from the network"),
      G_CALLBACK(cb_sync_manager)},
 
-    /*{"OpenAction", "_Open",
-     N_("_Open..."), NULL,
-     NULL,
-     G_CALLBACK(cb_sync_manager)},*/
-
     //does not work correctly and value low
     /*{"CopyAction", HI_STOCK_CLIPBOARD,
      N_("_Copy to Clipboard"), "<control>C",
@@ -74,22 +63,22 @@ static GtkActionEntry entries[] = {
      NULL,
      G_CALLBACK(cb_refresh)},
 
-    {"HomePageAction", HI_STOCK_INTERNET,
+    {"HomePageAction", NULL,
      N_("_Open HardInfo2 Web Site"), NULL,
      NULL,
      G_CALLBACK(cb_open_web_page)},
 
-    {"ReportBugAction", HI_STOCK_INTERNET,
+    {"ReportBugAction", NULL,
      N_("_Report bug"), NULL,
      NULL,
      G_CALLBACK(cb_report_bug)},
 
-    {"AboutAction", HI_STOCK_ABOUT,
+    {"AboutAction", NULL,
      N_("_About HardInfo2"), "<control>A",
      N_("Displays program version information"),
      G_CALLBACK(cb_about)},
 
-    {"QuitAction", HI_STOCK_QUIT,
+    {"QuitAction", NULL,
      N_("_Quit"), "<control>Q",
      NULL,
      G_CALLBACK(cb_quit)}
@@ -203,8 +192,39 @@ void menu_init(Shell * shell)
     /* Show the window and run the main loop, we're done! */
     gtk_widget_show(menu_box);
 
-    gtk_toolbar_set_style(GTK_TOOLBAR
-			  (gtk_ui_manager_get_widget
-			   (shell->ui_manager, "/MainMenuBarAction")),
+    //Scale menubar
+    GtkIconSize icon_size=3;//24
+    int size=16;
+    if(params.scale>=1.5) {size=20;icon_size=5;}//32
+    if(params.scale>=2) {size=24;icon_size=6;}//48
+    gtk_toolbar_set_icon_size(GTK_TOOLBAR(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenuBarAction")), icon_size);
+
+    //Scale (menubar)+menu items
+    /*GtkToolButton *b;
+    b=GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenuBarAction/Refresh"));
+    GtkWidget *i=icon_cache_get_image_at_size("hardinfo2.svg",2*size,2*size);
+    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(b),"hardinfo2.svg");
+    b=GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenuBar/Report"));
+    gtk_tool_button_set_icon_widget(b,icon_cache_get_image_at_size("report.svg",2*size,2*size));
+    b=GTK_TOOL_BUTTON(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenuBar/SyncManager"));
+    gtk_tool_button_set_icon_widget(b,icon_cache_get_image_at_size("sync.svg",2*size,2*size));
+    */
+    GtkImageMenuItem *t;
+    t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/InformationMenu/Report"));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("report.svg",size,size));
+    t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/InformationMenu/SyncManager"));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("sync.svg",size,size));
+    t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/InformationMenu/Quit"));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("close.svg",size,size));
+    t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/ViewMenu/Refresh"));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("refresh.svg",size,size));
+    t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/HelpMenu/WebPage"));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("internet.svg",size,size));
+    t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/HelpMenu/ReportBug"));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("internet.svg",size,size));
+    t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/HelpMenu/About"));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("hardinfo2.svg",size,size));
+
+    gtk_toolbar_set_style(GTK_TOOLBAR(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenuBarAction")),
 			  GTK_TOOLBAR_BOTH_HORIZ);
 }

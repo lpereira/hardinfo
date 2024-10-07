@@ -403,7 +403,7 @@ static void stylechange2_me(void)
 //gsettings
 static void stylechange3_me(void)
 {
-    gchar *theme=NULL;
+    gchar *theme=NULL,*scale=NULL;
     int newDark=0,i=0;
     gchar **keys=NULL;
     if(settings && !newgnome) keys=g_settings_list_keys(settings);
@@ -418,6 +418,10 @@ static void stylechange3_me(void)
 
     //new gnome using only normal/dark mode
     if(settings){
+        //FIXME get dynamic scaling info
+        //scale=g_settings_get_string(settings, "text-scaling-factor");
+	//if(scale) sscanf(scale,"%f",&params.scale);
+
         if(newgnome){
             theme = g_settings_get_string(settings, "color-scheme");
             if(strstr(theme,"Dark")||strstr(theme,"dark")) newDark=1;
@@ -532,7 +536,7 @@ static void create_window(void)
     shell->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_icon(GTK_WINDOW(shell->window), icon_cache_get_pixbuf("hardinfo2.svg"));
     shell_set_title(shell, NULL);
-    gtk_window_set_default_size(GTK_WINDOW(shell->window), 1280, 800);
+    gtk_window_set_default_size(GTK_WINDOW(shell->window), 1280*params.scale, 800*params.scale);
     g_signal_connect(G_OBJECT(shell->window), "destroy", destroy_me, NULL);
 #if GTK_CHECK_VERSION(3, 0, 0)
     g_signal_connect(G_OBJECT(shell->window), "style-updated", stylechange_me, NULL);
@@ -649,58 +653,6 @@ static void view_menu_select_entry(gpointer data, gpointer data2)
     gtk_tree_path_free(path);
 }
 
-static void menu_item_set_icon_always_visible(Shell *shell,
-                                              gchar *parent_path,
-                                              gchar *item_id)
-{
-    //GtkWidget *menuitem;
-    //gchar *path;
-
-    //path = g_strdup_printf("%s/%s", parent_path, item_id);
-    //menuitem = gtk_ui_manager_get_widget(shell->ui_manager, path);
-
-    //gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menuitem), TRUE);
-    //g_free(path);
-}
-
-
-static void
-add_module_entry_to_view_menu(gchar * module, gchar * name,
-			      GdkPixbuf * pixbuf, GtkTreeIter * iter)
-{
-    GtkAction *action;
-    //GtkWidget *menuitem;
-    gint merge_id;
-    gchar *path;
-    GtkActionEntry entry = {
-       name,			/* name */
-       name,			/* stockid */
-       name,			/* label */
-       NULL,			/* accelerator */
-       NULL,			/* tooltip */
-       (GCallback) view_menu_select_entry,	/* callback */
-    };
-
-    stock_icon_register_pixbuf(pixbuf, name);
-
-    if ((action = gtk_action_group_get_action(shell->action_group, name))) {
-        gtk_action_group_remove_action(shell->action_group, action);
-    }
-
-    gtk_action_group_add_actions(shell->action_group, &entry, 1, iter);
-
-    merge_id = gtk_ui_manager_new_merge_id(shell->ui_manager);
-    path = g_strdup_printf("/menubar/ViewMenu/%s", module);
-    gtk_ui_manager_add_ui(shell->ui_manager,
-                          merge_id,
-                          path,
-			  name, name, GTK_UI_MANAGER_AUTO, FALSE);
-    shell->merge_ids = g_slist_prepend(shell->merge_ids, GINT_TO_POINTER(merge_id));
-
-    menu_item_set_icon_always_visible(shell, path, name);
-
-    g_free(path);
-}
 
 void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 {
@@ -744,10 +696,6 @@ void shell_add_modules_to_gui(gpointer _shell_module, gpointer _shell_tree)
 		gtk_tree_store_set(store, &child, TREE_COL_PBUF,
 				   entry->icon, -1);
 	    }
-
-	    add_module_entry_to_view_menu(module->name, entry->name,
-					  entry->icon,
-					  gtk_tree_iter_copy(&child));
 
 	    shell_status_pulse();
 	}

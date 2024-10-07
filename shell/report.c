@@ -1131,7 +1131,7 @@ static ReportDialog
     gtk_window_set_title(GTK_WINDOW(dialog), _("Generate Report"));
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_window_set_icon(GTK_WINDOW(dialog), icon_cache_get_pixbuf("report.svg"));
-    gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
+    gtk_window_set_default_size(GTK_WINDOW(dialog), 420*params.scale, 260*params.scale);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
     gtk_window_set_position(GTK_WINDOW(dialog),
 			    GTK_WIN_POS_CENTER_ON_PARENT);

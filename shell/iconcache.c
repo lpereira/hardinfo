@@ -44,7 +44,7 @@ GdkPixbuf *icon_cache_get_pixbuf(const gchar * file)
         gchar *path;
       
         path = g_build_filename(params.path_data, "pixmaps", file, NULL);
-        icon = gdk_pixbuf_new_from_file_at_size(path, DEF_ICON_SIZE, DEF_ICON_SIZE, NULL);
+        icon = gdk_pixbuf_new_from_file_at_size(path, DEF_ICON_SIZE*params.scale, DEF_ICON_SIZE*params.scale, NULL);
         g_hash_table_insert(cache, g_strdup(ikey), icon);
       
         g_free(path);
@@ -80,7 +80,7 @@ GdkPixbuf *icon_cache_get_pixbuf_at_size(const gchar * file, gint wid, gint hei)
         gchar *path;
       
         path = g_build_filename(params.path_data, "pixmaps", file, NULL);
-        icon = gdk_pixbuf_new_from_file_at_size(path, wid, hei, NULL);
+        icon = gdk_pixbuf_new_from_file_at_size(path, wid==-1?wid:wid*params.scale, hei==-1?hei:hei*params.scale, NULL);
         g_hash_table_insert(cache, g_strdup(ikey), icon);
       
         g_free(path);
