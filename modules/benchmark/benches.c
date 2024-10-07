@@ -134,7 +134,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_BLOWFISH_SINGLE] =
         {
             N_("CPU Blowfish (Single-thread)"),
-            "blowfish.png",
+            "blowfish.svg",
             callback_benchmark_bfish_single,
             scan_benchmark_bfish_single,
             MODULE_FLAG_BENCHMARK,
@@ -142,7 +142,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_BLOWFISH_THREADS] =
         {
             N_("CPU Blowfish (Multi-thread)"),
-            "blowfish.png",
+            "blowfish.svg",
             callback_benchmark_bfish_threads,
             scan_benchmark_bfish_threads,
             MODULE_FLAG_BENCHMARK,
@@ -150,7 +150,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_BLOWFISH_CORES] =
         {
             N_("CPU Blowfish (Multi-core)"),
-            "blowfish.png",
+            "blowfish.svg",
             callback_benchmark_bfish_cores,
             scan_benchmark_bfish_cores,
             MODULE_FLAG_BENCHMARK,

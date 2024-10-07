@@ -62,7 +62,7 @@ static ModuleEntry entries[] = {
     {N_("IP Connections"), "network-connections.png", callback_connections, scan_connections, MODULE_FLAG_NONE},
     {N_("Routing Table"), "network.png", callback_route, scan_route, MODULE_FLAG_NONE},
     {N_("ARP Table"), "module.svg", callback_arp, scan_arp, MODULE_FLAG_NONE},
-    {N_("DNS Servers"), "dns.png", callback_dns, scan_dns, MODULE_FLAG_NONE},
+    {N_("DNS Servers"), "internet.svg", callback_dns, scan_dns, MODULE_FLAG_NONE},
     {N_("Statistics"), "network-statistics.png", callback_statistics, scan_statistics, MODULE_FLAG_NONE},
     {N_("Shared Directories"), "shares.png", callback_shares, scan_shares, MODULE_FLAG_NONE},
     {NULL},

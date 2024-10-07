@@ -91,7 +91,7 @@ const char *find_icon(const char *lvfs_name) {
      * in the fwupd source. */
     static const
     struct { char *lvfs, *hi; } imap[] = {
-        { "applications-internet", "dns.png" },
+        { "applications-internet", "internet.svg" },
         { "audio-card", "audio.png" },
         { "computer", "computer.png" },
         { "drive-harddisk", "hdd.png" },
