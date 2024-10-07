@@ -26,12 +26,12 @@ static struct {
     gchar *stock_id;
 } stock_icons[] = {
   //    { "clipboard.png", HI_STOCK_CLIPBOARD},
-    { "refresh.png", HI_STOCK_REFRESH},
-    { "report.png", HI_STOCK_REPORT},
-    { "internet.png", HI_STOCK_INTERNET},
-    { "about.png", HI_STOCK_ABOUT},
-    { "syncmanager.png", HI_STOCK_SYNC_MENU},
-    { "close.png", HI_STOCK_QUIT}
+    { "hardinfo2.svg", HI_STOCK_ABOUT},
+    { "refresh.svg", HI_STOCK_REFRESH},
+    { "report.svg", HI_STOCK_REPORT},
+    { "internet.svg", HI_STOCK_INTERNET},
+    { "sync.svg", HI_STOCK_SYNC_MENU},
+    { "close.svg", HI_STOCK_QUIT}
 };
 
 static GtkIconFactory *icon_factory;

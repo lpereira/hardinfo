@@ -21,6 +21,9 @@
 
 #include <gtk/gtk.h>
 
+#define DEF_ICON_SIZE 24
+#define ICON_SUFFIX(size) "@" #size "x" #size
+
 void		 icon_cache_init(void);
 GdkPixbuf	*icon_cache_get_pixbuf(const gchar *file);
 GtkWidget	*icon_cache_get_image(const gchar *file);
