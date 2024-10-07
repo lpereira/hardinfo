@@ -30,7 +30,7 @@ static struct {
     { "refresh.svg", HI_STOCK_REFRESH},
     { "report.svg", HI_STOCK_REPORT},
     { "internet.svg", HI_STOCK_INTERNET},
-    { "sync.svg", HI_STOCK_SYNC_MENU},
+    { "sync.svg", HI_STOCK_SYNC},
     { "close.svg", HI_STOCK_QUIT}
 };
 

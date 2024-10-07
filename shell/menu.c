@@ -53,7 +53,7 @@ static GtkActionEntry entries[] = {
      N_("Generates a report with detailed system information"),			/* tooltip */
      G_CALLBACK(cb_generate_report)},
 
-    {"SyncManagerAction", HI_STOCK_SYNC_MENU,
+    {"SyncManagerAction", HI_STOCK_SYNC,
      N_("Synchronize"), "<control>S",
      N_("Send benchmark results and receive updated data from the network"),
      G_CALLBACK(cb_sync_manager)},

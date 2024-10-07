@@ -455,8 +455,7 @@ void cb_about()
     gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), copyright);
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about),
 				  _("System Information and Benchmark"));
-    gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about),
-			      icon_cache_get_pixbuf("hardinfo2.png"));
+    gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), icon_cache_get_pixbuf_at_size("hardinfo2.svg", 144, 144));
 
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about),
 				 _("HardInfo2 is free software; you can redistribute it and/or modify "

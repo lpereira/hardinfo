@@ -24,7 +24,7 @@
 #define HI_STOCK_REFRESH	"hi-stock-refresh"
 #define HI_STOCK_REPORT "hi-stock-report"
 #define HI_STOCK_INTERNET "hi-stock-internet"
-#define HI_STOCK_SYNC_MENU	"hi-stock-sync-menu"
+#define HI_STOCK_SYNC "hi-stock-sync"
 #define HI_STOCK_QUIT "hi-stock-quit"
 
 void stock_icons_init(void);

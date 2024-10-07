@@ -1130,6 +1130,7 @@ static ReportDialog
     dialog = gtk_dialog_new();
     gtk_window_set_title(GTK_WINDOW(dialog), _("Generate Report"));
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+    gtk_window_set_icon(GTK_WINDOW(dialog), icon_cache_get_pixbuf("report.svg"));
     gtk_window_set_default_size(GTK_WINDOW(dialog), 420, 260);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
     gtk_window_set_position(GTK_WINDOW(dialog),
@@ -1164,9 +1165,7 @@ static ReportDialog
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 #endif
 
-    gtk_box_pack_start(GTK_BOX(hbox),
-		       icon_cache_get_image("report-large.png"),
-		       FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), icon_cache_get_image_at_size("report.svg", 64, 64), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_widget_show_all(hbox);
 
