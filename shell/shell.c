@@ -484,7 +484,7 @@ static ShellNote *note_new(void)
     gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
     gtk_widget_modify_bg(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
 
-    icon = icon_cache_get_image("close.png");
+    icon = icon_cache_get_image_at_size("close.svg", 16, 16);
     gtk_widget_show(icon);
     gtk_container_add(GTK_CONTAINER(button), icon);
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -496,9 +496,9 @@ static ShellNote *note_new(void)
 #else
     hbox = gtk_hbox_new(FALSE, 3);
 #endif
-    icon = icon_cache_get_image("dialog-information.png");
+    icon = icon_cache_get_image("dialog-information.svg");
 
-    gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), note->label, FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
