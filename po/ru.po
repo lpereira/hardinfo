@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-06 01:42+0200\n"
+"POT-Creation-Date: 2024-10-09 01:18+0300\n"
 "PO-Revision-Date: 2022-03-05 23:00+0300\n"
-"Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn\n"
+"Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn, tutralex\n"
 "Language-Team: \n"
 "Language: ru\n"
 "X-Poedit-Basepath: ../\n"
@@ -433,7 +433,7 @@ msgid "Symbol Map"
 msgstr "Карта символов"
 
 #. !/ %d will be latest year of copyright
-#: hardinfo2/hardinfo.c:104
+#: hardinfo2/hardinfo.c:108
 #, c-format
 msgid ""
 "Copyright (C) 2003-2023 L. A. F. Pereira. 2024-%d Hardinfo2 Project.\n"
@@ -442,7 +442,7 @@ msgstr ""
 "Авторское право: © 2003-2023 L. A. F. Pereira. 2024-%d Hardinfo2 Project.\n"
 "\n"
 
-#: hardinfo2/hardinfo.c:106
+#: hardinfo2/hardinfo.c:110
 #, c-format
 msgid ""
 "Compile-time options:\n"
@@ -461,22 +461,22 @@ msgstr ""
 "  Локаль:          %s\n"
 "  Скомпилировано:  %s\n"
 
-#: hardinfo2/hardinfo.c:114
+#: hardinfo2/hardinfo.c:118
 msgid "3.0"
 msgstr ""
 
-#: hardinfo2/hardinfo.c:149
+#: hardinfo2/hardinfo.c:153
 #, c-format
 msgid "Unknown benchmark ``%s''\n"
 msgstr "Неизвестный тест \"%s\"\n"
 
-#: hardinfo2/hardinfo.c:188
+#: hardinfo2/hardinfo.c:192
 msgid "Don't know what to do. Exiting."
 msgstr "Не знаю что делать... Выхожу."
 
 #: hardinfo2/usb_util.c:293 modules/devices/devicetree.c:90
 #: modules/devices/devicetree.c:91 modules/devices/monitors.c:411
-#: modules/devices/storage.c:306 modules/devices/storage.c:328
+#: modules/devices/storage.c:310 modules/devices/storage.c:332
 msgid "(None)"
 msgstr "(Нет)"
 
@@ -616,12 +616,12 @@ msgstr ""
 "Неизвестные аргументы.\n"
 "Используйте \"%s --help\" для справки.\n"
 
-#: hardinfo2/util.c:869
+#: hardinfo2/util.c:873
 #, c-format
 msgid "Scanning: %s..."
 msgstr "Сканирование: %s..."
 
-#: hardinfo2/util.c:879 shell/shell.c:303 shell/shell.c:925 shell/shell.c:2163
+#: hardinfo2/util.c:883 shell/shell.c:303 shell/shell.c:877 shell/shell.c:2115
 msgid "Done."
 msgstr "Выполнено."
 
@@ -645,11 +645,11 @@ msgstr "Проверить обновления"
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: shell/callbacks.c:457 shell/shell.c:522
+#: shell/callbacks.c:457 shell/shell.c:531
 msgid "System Information and Benchmark"
 msgstr "Информация о системе и тесты"
 
-#: shell/callbacks.c:462
+#: shell/callbacks.c:461
 msgid ""
 "HardInfo2 is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
@@ -678,151 +678,151 @@ msgstr ""
 "нет, напишите в FSF, Inc., 51 Franklin St, Fifth Floor, Boston, MA "
 "02110-1301 USA."
 
-#: shell/menu.c:43
+#: shell/menu.c:37
 msgid "_Information"
 msgstr "_Информация"
 
-#: shell/menu.c:44
+#: shell/menu.c:38
 msgid "_View"
 msgstr "_Вид"
 
-#: shell/menu.c:46
+#: shell/menu.c:40
 msgid "_Theme"
 msgstr "_Тема"
 
-#: shell/menu.c:48
+#: shell/menu.c:42
 msgid "_Help"
 msgstr "_Справка"
 
-#: shell/menu.c:52
+#: shell/menu.c:46
 msgid "Generate _Report"
 msgstr "Создать _отчет"
 
-#: shell/menu.c:53
+#: shell/menu.c:47
 msgid "Generates a report with detailed system information"
 msgstr "Создать отчет с подробной информацией о системе"
 
-#: shell/menu.c:57 shell/syncmanager.c:692
+#: shell/menu.c:51 shell/syncmanager.c:692
 msgid "Synchronize"
 msgstr "Синхронизировать"
 
-#: shell/menu.c:58
+#: shell/menu.c:52
 msgid "Send benchmark results and receive updated data from the network"
 msgstr "Отправить результаты тестирования и получить обновленные данные"
 
-#: shell/menu.c:73
+#: shell/menu.c:62
 msgid "_Refresh"
 msgstr "_Обновить"
 
-#: shell/menu.c:78
+#: shell/menu.c:67
 msgid "_Open HardInfo2 Web Site"
 msgstr "_Открыть домашнюю станицу"
 
-#: shell/menu.c:83
+#: shell/menu.c:72
 msgid "_Report bug"
 msgstr "_Сообщить об ошибке"
 
-#: shell/menu.c:88
+#: shell/menu.c:77
 msgid "_About HardInfo2"
 msgstr "_О приложении..."
 
-#: shell/menu.c:89
+#: shell/menu.c:78
 msgid "Displays program version information"
 msgstr "Показывает информацию о версии программы"
 
-#: shell/menu.c:93
+#: shell/menu.c:82
 msgid "_Quit"
 msgstr "_Выход"
 
-#: shell/menu.c:100
+#: shell/menu.c:89
 msgid "_Side Pane"
 msgstr "_Боковая панель"
 
-#: shell/menu.c:101
+#: shell/menu.c:90
 msgid "Toggles side pane visibility"
 msgstr "Видимость боковой панели"
 
-#: shell/menu.c:104
+#: shell/menu.c:93
 msgid "_Toolbar"
 msgstr "_Панель инструментов"
 
-#: shell/menu.c:108
+#: shell/menu.c:97
 msgid "Synchronize on startup"
 msgstr "Синхронизировать при запуске"
 
-#: shell/menu.c:113
+#: shell/menu.c:102
 msgid "Disable Theme"
 msgstr "Отключена"
 
-#: shell/menu.c:117
+#: shell/menu.c:106
 msgid "Theme Motherboard"
 msgstr "Motherboard"
 
-#: shell/menu.c:121
+#: shell/menu.c:110
 msgid "Theme Graffiti"
 msgstr "Graffiti"
 
-#: shell/menu.c:125
+#: shell/menu.c:114
 msgid "Theme Anime PC"
 msgstr "Anime PC"
 
-#: shell/menu.c:129
+#: shell/menu.c:118
 msgid "Theme Tux Star"
 msgstr "Tux Star"
 
-#: shell/menu.c:133
+#: shell/menu.c:122
 msgid "Theme PixArt"
 msgstr "PixArt"
 
-#: shell/menu.c:137
+#: shell/menu.c:126
 msgid "Theme Silicon"
 msgstr "Silicon"
 
-#: shell/report.c:772 shell/report.c:780
+#: shell/report.c:783 shell/report.c:791
 msgid "Save File"
 msgstr "Сохранить файл"
 
-#: shell/report.c:775 shell/report.c:1252 shell/syncmanager.c:780
+#: shell/report.c:786 shell/report.c:1262 shell/syncmanager.c:778
 msgid "_Cancel"
 msgstr "_Отмена"
 
-#: shell/report.c:777
+#: shell/report.c:788
 msgid "_Save"
 msgstr "_Сохранить"
 
-#: shell/report.c:952
+#: shell/report.c:963
 msgid "Cannot create ReportContext. Programming bug?"
 msgstr "Не могу создать отчет. Программная ошибка?"
 
-#: shell/report.c:972
+#: shell/report.c:983
 msgid "Open the report with your web browser?"
 msgstr "Открыть отчет в веб-браузере?"
 
-#: shell/report.c:975
+#: shell/report.c:986
 msgid "_No"
 msgstr "_Нет"
 
-#: shell/report.c:976
+#: shell/report.c:987
 msgid "_Open"
 msgstr "_Открыть"
 
-#: shell/report.c:1007
+#: shell/report.c:1018
 msgid "Generating report..."
 msgstr "Создается отчет..."
 
-#: shell/report.c:1017
+#: shell/report.c:1028
 msgid "Report saved."
 msgstr "Отчет сохранен."
 
-#: shell/report.c:1019
+#: shell/report.c:1030
 msgid "Error while creating the report."
 msgstr "Ошибка во время создания отчета."
 
-#: shell/report.c:1121
+#: shell/report.c:1132
 msgid "Generate Report"
 msgstr "Создать отчет"
 
-#: shell/report.c:1146
+#: shell/report.c:1158
 msgid ""
 "<big><b>Generate Report</b></big>\n"
 "Please choose the information that you wish to view in your report:"
@@ -830,45 +830,45 @@ msgstr ""
 "<big><b>Создать отчет</b></big>\n"
 "Пожалуйста, выберите информацию для отображения в отчете:"
 
-#: shell/report.c:1218
+#: shell/report.c:1228
 msgid "Select _None"
 msgstr "Выбор: нет"
 
-#: shell/report.c:1229
+#: shell/report.c:1239
 msgid "Select _All"
 msgstr "Выбор: все"
 
-#: shell/report.c:1262
+#: shell/report.c:1272
 msgid "_Generate"
 msgstr "_Сгенерировать"
 
-#: shell/shell.c:517
+#: shell/shell.c:526
 #, c-format
 msgid "%s - System Information and Benchmark"
 msgstr "%s — Системная информация и тесты"
 
-#: shell/shell.c:910
+#: shell/shell.c:862
 msgid "Loading modules..."
 msgstr "Загрузка модулей..."
 
-#: shell/shell.c:1681
+#: shell/shell.c:1633
 msgid "URL"
 msgstr "Сайт"
 
-#: shell/shell.c:1688
+#: shell/shell.c:1640
 msgid "Support URL"
 msgstr "Сайт поддержки"
 
-#: shell/shell.c:1699
+#: shell/shell.c:1651
 msgid "Wikipedia"
 msgstr "Википедия"
 
-#: shell/shell.c:2033
+#: shell/shell.c:1985
 #, c-format
 msgid "<b>%s → Summary</b>"
 msgstr "<b>%s → Сводка</b>"
 
-#: shell/shell.c:2139
+#: shell/shell.c:2091
 msgid "Updating..."
 msgstr "Обновление..."
 
@@ -902,15 +902,15 @@ msgstr "(ошибка)"
 msgid "Send benchmark results"
 msgstr "Отправить результаты тестирования"
 
-#: shell/syncmanager.c:767
+#: shell/syncmanager.c:765
 msgid "Privacy Policy"
 msgstr "Политика конфиденциальности"
 
-#: shell/syncmanager.c:789
+#: shell/syncmanager.c:787
 msgid "_Synchronize"
 msgstr "_Синхронизировать"
 
-#: shell/syncmanager.c:838
+#: shell/syncmanager.c:836
 #, c-format
 msgid "Synchronizing: %s"
 msgstr "Синхронизация: %s"
@@ -993,7 +993,7 @@ msgstr ""
 
 #: modules/benchmark/benches.c:290
 msgid "Storage R/W Speed"
-msgstr "Скорость чтения/записи хранилища"
+msgstr "Скорость хранилища"
 
 #: modules/benchmark/benches.c:304
 msgid ""
@@ -1057,8 +1057,8 @@ msgstr "Результаты в FPS. Чем выше, тем лучше."
 #: modules/devices/spd-decode.c:584 modules/devices/spd-decode.c:899
 #: modules/devices/spd-decode.c:900 modules/devices/spd-decode.c:1111
 #: modules/devices/spd-decode.c:1350 modules/devices/storage.c:27
-#: modules/devices/storage.c:307 modules/devices/storage.c:336
-#: modules/devices/storage.c:431 modules/devices/usb.c:29
+#: modules/devices/storage.c:311 modules/devices/storage.c:340
+#: modules/devices/storage.c:435 modules/devices/usb.c:29
 #: modules/network/net.c:460 includes/cpu_util.h:11 includes/spd-decode.h:24
 #: includes/spd-decode.h:25
 msgid "(Unknown)"
@@ -1559,7 +1559,7 @@ msgid "Program"
 msgstr "Программа"
 
 #: modules/computer.c:366 modules/computer.c:629 modules/computer.c:631
-#: modules/computer.c:807 modules/computer/modules.c:372
+#: modules/computer.c:807 modules/computer/modules.c:375
 #: modules/devices/dmi.c:41 modules/devices/dmi.c:47 modules/devices/dmi.c:51
 #: modules/devices/dmi.c:57 modules/devices/firmware.c:75
 #: modules/devices/inputdevices.c:146 modules/devices/monitors.c:409
@@ -1570,8 +1570,8 @@ msgstr "Версия"
 msgid "Field"
 msgstr "Поле"
 
-#: modules/computer.c:385 modules/computer.c:730 modules/computer/modules.c:370
-#: modules/computer/modules.c:371 modules/devices/arm/processor.c:479
+#: modules/computer.c:385 modules/computer.c:730 modules/computer/modules.c:373
+#: modules/computer/modules.c:374 modules/devices/arm/processor.c:479
 msgid "Description"
 msgstr "Описание"
 
@@ -1741,7 +1741,7 @@ msgid "Loaded Modules"
 msgstr "Загруженные модули"
 
 #: modules/computer.c:729 modules/computer.c:757 modules/computer.c:897
-#: modules/computer/languages.c:95 modules/computer/modules.c:370
+#: modules/computer/languages.c:95 modules/computer/modules.c:373
 #: modules/devices/arm/processor.c:478 modules/devices/dmi.c:38
 #: modules/devices/dmi.c:49 modules/devices/e2k/processor.c:358
 #: modules/devices/gpu.c:301 modules/devices/ia64/processor.c:160
@@ -1823,8 +1823,8 @@ msgstr "X-сервер"
 #: modules/devices/ia64/processor.c:161 modules/devices/inputdevices.c:144
 #: modules/devices/monitors.c:402 modules/devices/pci.c:101
 #: modules/devices/pci.c:109 modules/devices/storage.c:47
-#: modules/devices/storage.c:56 modules/devices/storage.c:282
-#: modules/devices/storage.c:572 modules/devices/storage.c:777
+#: modules/devices/storage.c:56 modules/devices/storage.c:286
+#: modules/devices/storage.c:576 modules/devices/storage.c:781
 #: modules/devices/usb.c:171 modules/devices/x86/processor.c:654
 msgid "Vendor"
 msgstr "Поставщик"
@@ -1870,15 +1870,15 @@ msgstr "Рендер"
 msgid "Direct Rendering"
 msgstr "Графическое ускорение"
 
-#: modules/computer.c:849 modules/computer/modules.c:352
-#: modules/computer/modules.c:353 modules/devices/inputdevices.c:153
+#: modules/computer.c:849 modules/computer/modules.c:355
+#: modules/computer/modules.c:356 modules/devices/inputdevices.c:153
 #: modules/devices/printers.c:145 modules/devices/spd-decode.c:888
 #: modules/devices/spd-decode.c:1100
 msgid "Yes"
 msgstr "Да"
 
-#: modules/computer.c:849 modules/computer/modules.c:352
-#: modules/computer/modules.c:353 modules/devices/printers.c:145
+#: modules/computer.c:849 modules/computer/modules.c:355
+#: modules/computer/modules.c:356 modules/devices/printers.c:145
 #: modules/devices/spd-decode.c:886 modules/devices/spd-decode.c:1097
 msgid "No"
 msgstr "Нет"
@@ -1967,7 +1967,7 @@ msgid "GiB"
 msgstr "ГиБ"
 
 #: modules/computer.c:1043 modules/computer/memory_usage.c:73
-#: modules/computer/modules.c:370
+#: modules/computer/modules.c:373
 msgid "KiB"
 msgstr "КиБ"
 
@@ -2348,51 +2348,51 @@ msgstr "Разбивка таблицы страниц размером 1G"
 msgid "Update kernel module icon table"
 msgstr "Обновить таблицу значков модулей ядра"
 
-#: modules/computer/modules.c:338 modules/computer/modules.c:339
-#: modules/computer/modules.c:340 modules/computer/modules.c:341
-#: modules/computer/modules.c:342 modules/computer/modules.c:343
+#: modules/computer/modules.c:341 modules/computer/modules.c:342
+#: modules/computer/modules.c:343 modules/computer/modules.c:344
+#: modules/computer/modules.c:345 modules/computer/modules.c:346
 #: modules/devices/dmi.c:117 modules/devices/firmware.c:245
 #: modules/devices/x86/processor.c:694
 msgid "(Not available)"
 msgstr "(Недоступно)"
 
-#: modules/computer/modules.c:369
+#: modules/computer/modules.c:372
 msgid "Module Information"
 msgstr "Информация о модуле"
 
-#: modules/computer/modules.c:369 modules/devices/gpu.c:298
+#: modules/computer/modules.c:372 modules/devices/gpu.c:298
 msgid "Path"
 msgstr "Путь"
 
-#: modules/computer/modules.c:369
+#: modules/computer/modules.c:372
 msgid "Used Memory"
 msgstr "Обьем используемой памяти"
 
-#: modules/computer/modules.c:371
+#: modules/computer/modules.c:374
 msgid "Version Magic"
 msgstr "Версия"
 
-#: modules/computer/modules.c:372
+#: modules/computer/modules.c:375
 msgid "In Linus' Tree"
 msgstr "В дереве исходных кодов ядра Linux"
 
-#: modules/computer/modules.c:373
+#: modules/computer/modules.c:376
 msgid "Retpoline Enabled"
 msgstr "Retpoline включен"
 
-#: modules/computer/modules.c:373
+#: modules/computer/modules.c:376
 msgid "Copyright"
 msgstr "Авторское право"
 
-#: modules/computer/modules.c:373
+#: modules/computer/modules.c:376
 msgid "Author"
 msgstr "Автор"
 
-#: modules/computer/modules.c:374
+#: modules/computer/modules.c:377
 msgid "License"
 msgstr "Лицензия"
 
-#: modules/computer/modules.c:380
+#: modules/computer/modules.c:383
 msgid "Dependencies"
 msgstr "Зависимости"
 
@@ -4476,35 +4476,35 @@ msgid ""
 "[UDisks2]\n"
 msgstr ""
 
-#: modules/devices/storage.c:257
+#: modules/devices/storage.c:261
 msgid "Removable"
 msgstr "Съемное"
 
-#: modules/devices/storage.c:257
+#: modules/devices/storage.c:261
 msgid "Fixed"
 msgstr "Фиксированное"
 
-#: modules/devices/storage.c:260
+#: modules/devices/storage.c:264
 msgid "Ejectable"
 msgstr "Сменное"
 
-#: modules/devices/storage.c:263
+#: modules/devices/storage.c:267
 msgid "Self-monitoring (S.M.A.R.T.)"
 msgstr "Мониторинг (S.M.A.R.T.)"
 
-#: modules/devices/storage.c:266 modules/devices/x86/processor.c:664
+#: modules/devices/storage.c:270 modules/devices/x86/processor.c:664
 msgid "Power Management"
 msgstr "Управление питанием"
 
-#: modules/devices/storage.c:269
+#: modules/devices/storage.c:273
 msgid "Advanced Power Management"
 msgstr "Расширенное управление питанием"
 
-#: modules/devices/storage.c:272
+#: modules/devices/storage.c:276
 msgid "Automatic Acoustic Management"
 msgstr "Автоматическое управление шумом"
 
-#: modules/devices/storage.c:275
+#: modules/devices/storage.c:279
 #, c-format
 msgid ""
 "[Drive Information]\n"
@@ -4513,7 +4513,7 @@ msgstr ""
 "[Информация о диске]\n"
 "Модель=%s\n"
 
-#: modules/devices/storage.c:285
+#: modules/devices/storage.c:289
 #, c-format
 msgid ""
 "Revision=%s\n"
@@ -4528,12 +4528,12 @@ msgstr ""
 "Размер=%s\n"
 "Возможности=%s\n"
 
-#: modules/devices/storage.c:300
+#: modules/devices/storage.c:304
 #, c-format
 msgid "Rotation Rate=%d RPM\n"
 msgstr "Скорость вращения=%d об/мин\n"
 
-#: modules/devices/storage.c:303
+#: modules/devices/storage.c:307
 #, c-format
 msgid ""
 "Media=%s\n"
@@ -4542,33 +4542,33 @@ msgstr ""
 "Медиа=%s\n"
 "Совместимость с медиа=%s\n"
 
-#: modules/devices/storage.c:310
+#: modules/devices/storage.c:314
 #, c-format
 msgid "Connection bus=%s\n"
 msgstr "Шина подключения=%s\n"
 
-#: modules/devices/storage.c:322
+#: modules/devices/storage.c:326
 msgid "WWN"
 msgstr ""
 
-#: modules/devices/storage.c:323
+#: modules/devices/storage.c:327
 msgid "EUI "
 msgstr ""
 
-#: modules/devices/storage.c:328
+#: modules/devices/storage.c:332
 msgid "WWN / EUI"
 msgstr ""
 
-#: modules/devices/storage.c:332
+#: modules/devices/storage.c:336
 #, c-format
 msgid "$^$%s=[%s] %s\n"
 msgstr ""
 
-#: modules/devices/storage.c:334
+#: modules/devices/storage.c:338
 msgid "IEEE OUI"
 msgstr ""
 
-#: modules/devices/storage.c:346
+#: modules/devices/storage.c:350
 msgid ""
 "[Self-monitoring (S.M.A.R.T.)]\n"
 "Status=%s\n"
@@ -4578,15 +4578,15 @@ msgstr ""
 "Статус=%s\n"
 "Плохие сектора=%"
 
-#: modules/devices/storage.c:352
+#: modules/devices/storage.c:356
 msgid "Failing"
 msgstr "Неудачно"
 
-#: modules/devices/storage.c:352
+#: modules/devices/storage.c:356
 msgid "OK"
 msgstr "ОК"
 
-#: modules/devices/storage.c:358
+#: modules/devices/storage.c:362
 msgid ""
 "[S.M.A.R.T. Attributes]\n"
 "Attribute=<tt>Value      / Normalized / Worst / Threshold</tt>\n"
@@ -4594,19 +4594,19 @@ msgstr ""
 "[Атрибуты S.M.A.R.T.]\n"
 "Атрибут=<tt>Значение / Нормализованное / Худшее / Пороговое</tt>\n"
 
-#: modules/devices/storage.c:381
+#: modules/devices/storage.c:385
 msgid "%"
 msgid_plural "%"
 msgstr[0] "%"
 msgstr[1] "%"
 msgstr[2] "%"
 
-#: modules/devices/storage.c:419
+#: modules/devices/storage.c:423
 #, c-format
 msgid "(%d) %s=<tt>%s</tt>\n"
 msgstr "(%d) %s=<tt>%s</tt>\n"
 
-#: modules/devices/storage.c:428
+#: modules/devices/storage.c:432
 #, c-format
 msgid ""
 "[Partition table]\n"
@@ -4615,12 +4615,12 @@ msgstr ""
 "[Таблица разделов]\n"
 "Тип=%s\n"
 
-#: modules/devices/storage.c:447
+#: modules/devices/storage.c:451
 #, c-format
 msgid "Partition %s=%s\n"
 msgstr "Раздел %s=%s\n"
 
-#: modules/devices/storage.c:496
+#: modules/devices/storage.c:500
 msgid ""
 "\n"
 "[SCSI Disks]\n"
@@ -4628,7 +4628,7 @@ msgstr ""
 "\n"
 "[SCSI диски]\n"
 
-#: modules/devices/storage.c:567 modules/devices/storage.c:773
+#: modules/devices/storage.c:571 modules/devices/storage.c:777
 #, c-format
 msgid ""
 "[Device Information]\n"
@@ -4637,7 +4637,7 @@ msgstr ""
 "[Информация об устройстве]\n"
 "Модель=%s\n"
 
-#: modules/devices/storage.c:574
+#: modules/devices/storage.c:578
 #, c-format
 msgid ""
 "Type=%s\n"
@@ -4656,7 +4656,7 @@ msgstr ""
 "ID=%d\n"
 "LUN=%d\n"
 
-#: modules/devices/storage.c:621
+#: modules/devices/storage.c:625
 msgid ""
 "\n"
 "[IDE Disks]\n"
@@ -4664,12 +4664,12 @@ msgstr ""
 "\n"
 "[IDE диски]\n"
 
-#: modules/devices/storage.c:707
+#: modules/devices/storage.c:711
 #, c-format
 msgid "Driver=%s\n"
 msgstr "Драйвер=%s\n"
 
-#: modules/devices/storage.c:779
+#: modules/devices/storage.c:783
 #, c-format
 msgid ""
 "Device Name=hd%c\n"
@@ -4680,7 +4680,7 @@ msgstr ""
 "Медиа=%s\n"
 "Кэш=%d кБ\n"
 
-#: modules/devices/storage.c:789
+#: modules/devices/storage.c:793
 #, c-format
 msgid ""
 "[Geometry]\n"
@@ -4691,7 +4691,7 @@ msgstr ""
 "Физическая=%s\n"
 "Логическая=%s\n"
 
-#: modules/devices/storage.c:799
+#: modules/devices/storage.c:803
 #, c-format
 msgid ""
 "[Capabilities]\n"
@@ -4700,7 +4700,7 @@ msgstr ""
 "[Возможности]\n"
 "%s"
 
-#: modules/devices/storage.c:806
+#: modules/devices/storage.c:810
 #, c-format
 msgid ""
 "[Speeds]\n"

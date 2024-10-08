@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-06 01:42+0200\n"
+"POT-Creation-Date: 2024-10-09 01:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -434,14 +434,14 @@ msgid "Symbol Map"
 msgstr ""
 
 #. !/ %d will be latest year of copyright
-#: hardinfo2/hardinfo.c:104
+#: hardinfo2/hardinfo.c:108
 #, c-format
 msgid ""
 "Copyright (C) 2003-2023 L. A. F. Pereira. 2024-%d Hardinfo2 Project.\n"
 "\n"
 msgstr ""
 
-#: hardinfo2/hardinfo.c:106
+#: hardinfo2/hardinfo.c:110
 #, c-format
 msgid ""
 "Compile-time options:\n"
@@ -453,22 +453,22 @@ msgid ""
 "  Compiled for   :  %s\n"
 msgstr ""
 
-#: hardinfo2/hardinfo.c:114
+#: hardinfo2/hardinfo.c:118
 msgid "3.0"
 msgstr ""
 
-#: hardinfo2/hardinfo.c:149
+#: hardinfo2/hardinfo.c:153
 #, c-format
 msgid "Unknown benchmark ``%s''\n"
 msgstr ""
 
-#: hardinfo2/hardinfo.c:188
+#: hardinfo2/hardinfo.c:192
 msgid "Don't know what to do. Exiting."
 msgstr ""
 
 #: hardinfo2/usb_util.c:293 modules/devices/devicetree.c:90
 #: modules/devices/devicetree.c:91 modules/devices/monitors.c:411
-#: modules/devices/storage.c:306 modules/devices/storage.c:328
+#: modules/devices/storage.c:310 modules/devices/storage.c:332
 msgid "(None)"
 msgstr ""
 
@@ -596,12 +596,12 @@ msgid ""
 "Try ``%s --help'' for more information.\n"
 msgstr ""
 
-#: hardinfo2/util.c:869
+#: hardinfo2/util.c:873
 #, c-format
 msgid "Scanning: %s..."
 msgstr ""
 
-#: hardinfo2/util.c:879 shell/shell.c:303 shell/shell.c:925 shell/shell.c:2163
+#: hardinfo2/util.c:883 shell/shell.c:303 shell/shell.c:877 shell/shell.c:2115
 msgid "Done."
 msgstr ""
 
@@ -625,11 +625,11 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: shell/callbacks.c:457 shell/shell.c:522
+#: shell/callbacks.c:457 shell/shell.c:531
 msgid "System Information and Benchmark"
 msgstr ""
 
-#: shell/callbacks.c:462
+#: shell/callbacks.c:461
 msgid ""
 "HardInfo2 is free software; you can redistribute it and/or modify it under "
 "the terms of the GNU General Public License as published by the Free "
@@ -645,195 +645,195 @@ msgid ""
 "Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 msgstr ""
 
-#: shell/menu.c:43
+#: shell/menu.c:37
 msgid "_Information"
 msgstr ""
 
-#: shell/menu.c:44
+#: shell/menu.c:38
 msgid "_View"
 msgstr ""
 
-#: shell/menu.c:46
+#: shell/menu.c:40
 msgid "_Theme"
 msgstr ""
 
-#: shell/menu.c:48
+#: shell/menu.c:42
 msgid "_Help"
 msgstr ""
 
-#: shell/menu.c:52
+#: shell/menu.c:46
 msgid "Generate _Report"
 msgstr ""
 
-#: shell/menu.c:53
+#: shell/menu.c:47
 msgid "Generates a report with detailed system information"
 msgstr ""
 
-#: shell/menu.c:57 shell/syncmanager.c:692
+#: shell/menu.c:51 shell/syncmanager.c:692
 msgid "Synchronize"
 msgstr ""
 
-#: shell/menu.c:58
+#: shell/menu.c:52
 msgid "Send benchmark results and receive updated data from the network"
 msgstr ""
 
-#: shell/menu.c:73
+#: shell/menu.c:62
 msgid "_Refresh"
 msgstr ""
 
-#: shell/menu.c:78
+#: shell/menu.c:67
 msgid "_Open HardInfo2 Web Site"
 msgstr ""
 
-#: shell/menu.c:83
+#: shell/menu.c:72
 msgid "_Report bug"
 msgstr ""
 
-#: shell/menu.c:88
+#: shell/menu.c:77
 msgid "_About HardInfo2"
 msgstr ""
 
-#: shell/menu.c:89
+#: shell/menu.c:78
 msgid "Displays program version information"
 msgstr ""
 
-#: shell/menu.c:93
+#: shell/menu.c:82
 msgid "_Quit"
 msgstr ""
 
-#: shell/menu.c:100
+#: shell/menu.c:89
 msgid "_Side Pane"
 msgstr ""
 
-#: shell/menu.c:101
+#: shell/menu.c:90
 msgid "Toggles side pane visibility"
 msgstr ""
 
-#: shell/menu.c:104
+#: shell/menu.c:93
 msgid "_Toolbar"
 msgstr ""
 
-#: shell/menu.c:108
+#: shell/menu.c:97
 msgid "Synchronize on startup"
 msgstr ""
 
-#: shell/menu.c:113
+#: shell/menu.c:102
 msgid "Disable Theme"
 msgstr ""
 
-#: shell/menu.c:117
+#: shell/menu.c:106
 msgid "Theme Motherboard"
 msgstr ""
 
-#: shell/menu.c:121
+#: shell/menu.c:110
 msgid "Theme Graffiti"
 msgstr ""
 
-#: shell/menu.c:125
+#: shell/menu.c:114
 msgid "Theme Anime PC"
 msgstr ""
 
-#: shell/menu.c:129
+#: shell/menu.c:118
 msgid "Theme Tux Star"
 msgstr ""
 
-#: shell/menu.c:133
+#: shell/menu.c:122
 msgid "Theme PixArt"
 msgstr ""
 
-#: shell/menu.c:137
+#: shell/menu.c:126
 msgid "Theme Silicon"
 msgstr ""
 
-#: shell/report.c:772 shell/report.c:780
+#: shell/report.c:783 shell/report.c:791
 msgid "Save File"
 msgstr ""
 
-#: shell/report.c:775 shell/report.c:1252 shell/syncmanager.c:780
+#: shell/report.c:786 shell/report.c:1262 shell/syncmanager.c:778
 msgid "_Cancel"
 msgstr ""
 
-#: shell/report.c:777
+#: shell/report.c:788
 msgid "_Save"
 msgstr ""
 
-#: shell/report.c:952
+#: shell/report.c:963
 msgid "Cannot create ReportContext. Programming bug?"
 msgstr ""
 
-#: shell/report.c:972
+#: shell/report.c:983
 msgid "Open the report with your web browser?"
 msgstr ""
 
-#: shell/report.c:975
+#: shell/report.c:986
 msgid "_No"
 msgstr ""
 
-#: shell/report.c:976
+#: shell/report.c:987
 msgid "_Open"
 msgstr ""
 
-#: shell/report.c:1007
+#: shell/report.c:1018
 msgid "Generating report..."
 msgstr ""
 
-#: shell/report.c:1017
+#: shell/report.c:1028
 msgid "Report saved."
 msgstr ""
 
-#: shell/report.c:1019
+#: shell/report.c:1030
 msgid "Error while creating the report."
 msgstr ""
 
-#: shell/report.c:1121
+#: shell/report.c:1132
 msgid "Generate Report"
 msgstr ""
 
-#: shell/report.c:1146
+#: shell/report.c:1158
 msgid ""
 "<big><b>Generate Report</b></big>\n"
 "Please choose the information that you wish to view in your report:"
 msgstr ""
 
-#: shell/report.c:1218
+#: shell/report.c:1228
 msgid "Select _None"
 msgstr ""
 
-#: shell/report.c:1229
+#: shell/report.c:1239
 msgid "Select _All"
 msgstr ""
 
-#: shell/report.c:1262
+#: shell/report.c:1272
 msgid "_Generate"
 msgstr ""
 
-#: shell/shell.c:517
+#: shell/shell.c:526
 #, c-format
 msgid "%s - System Information and Benchmark"
 msgstr ""
 
-#: shell/shell.c:910
+#: shell/shell.c:862
 msgid "Loading modules..."
 msgstr ""
 
-#: shell/shell.c:1681
+#: shell/shell.c:1633
 msgid "URL"
 msgstr ""
 
-#: shell/shell.c:1688
+#: shell/shell.c:1640
 msgid "Support URL"
 msgstr ""
 
-#: shell/shell.c:1699
+#: shell/shell.c:1651
 msgid "Wikipedia"
 msgstr ""
 
-#: shell/shell.c:2033
+#: shell/shell.c:1985
 #, c-format
 msgid "<b>%s → Summary</b>"
 msgstr ""
 
-#: shell/shell.c:2139
+#: shell/shell.c:2091
 msgid "Updating..."
 msgstr ""
 
@@ -862,15 +862,15 @@ msgstr ""
 msgid "Send benchmark results"
 msgstr ""
 
-#: shell/syncmanager.c:767
+#: shell/syncmanager.c:765
 msgid "Privacy Policy"
 msgstr ""
 
-#: shell/syncmanager.c:789
+#: shell/syncmanager.c:787
 msgid "_Synchronize"
 msgstr ""
 
-#: shell/syncmanager.c:838
+#: shell/syncmanager.c:836
 #, c-format
 msgid "Synchronizing: %s"
 msgstr ""
@@ -1009,8 +1009,8 @@ msgstr ""
 #: modules/devices/spd-decode.c:584 modules/devices/spd-decode.c:899
 #: modules/devices/spd-decode.c:900 modules/devices/spd-decode.c:1111
 #: modules/devices/spd-decode.c:1350 modules/devices/storage.c:27
-#: modules/devices/storage.c:307 modules/devices/storage.c:336
-#: modules/devices/storage.c:431 modules/devices/usb.c:29
+#: modules/devices/storage.c:311 modules/devices/storage.c:340
+#: modules/devices/storage.c:435 modules/devices/usb.c:29
 #: modules/network/net.c:460 includes/cpu_util.h:11 includes/spd-decode.h:24
 #: includes/spd-decode.h:25
 msgid "(Unknown)"
@@ -1504,7 +1504,7 @@ msgid "Program"
 msgstr ""
 
 #: modules/computer.c:366 modules/computer.c:629 modules/computer.c:631
-#: modules/computer.c:807 modules/computer/modules.c:372
+#: modules/computer.c:807 modules/computer/modules.c:375
 #: modules/devices/dmi.c:41 modules/devices/dmi.c:47 modules/devices/dmi.c:51
 #: modules/devices/dmi.c:57 modules/devices/firmware.c:75
 #: modules/devices/inputdevices.c:146 modules/devices/monitors.c:409
@@ -1515,8 +1515,8 @@ msgstr ""
 msgid "Field"
 msgstr ""
 
-#: modules/computer.c:385 modules/computer.c:730 modules/computer/modules.c:370
-#: modules/computer/modules.c:371 modules/devices/arm/processor.c:479
+#: modules/computer.c:385 modules/computer.c:730 modules/computer/modules.c:373
+#: modules/computer/modules.c:374 modules/devices/arm/processor.c:479
 msgid "Description"
 msgstr ""
 
@@ -1686,7 +1686,7 @@ msgid "Loaded Modules"
 msgstr ""
 
 #: modules/computer.c:729 modules/computer.c:757 modules/computer.c:897
-#: modules/computer/languages.c:95 modules/computer/modules.c:370
+#: modules/computer/languages.c:95 modules/computer/modules.c:373
 #: modules/devices/arm/processor.c:478 modules/devices/dmi.c:38
 #: modules/devices/dmi.c:49 modules/devices/e2k/processor.c:358
 #: modules/devices/gpu.c:301 modules/devices/ia64/processor.c:160
@@ -1768,8 +1768,8 @@ msgstr ""
 #: modules/devices/ia64/processor.c:161 modules/devices/inputdevices.c:144
 #: modules/devices/monitors.c:402 modules/devices/pci.c:101
 #: modules/devices/pci.c:109 modules/devices/storage.c:47
-#: modules/devices/storage.c:56 modules/devices/storage.c:282
-#: modules/devices/storage.c:572 modules/devices/storage.c:777
+#: modules/devices/storage.c:56 modules/devices/storage.c:286
+#: modules/devices/storage.c:576 modules/devices/storage.c:781
 #: modules/devices/usb.c:171 modules/devices/x86/processor.c:654
 msgid "Vendor"
 msgstr ""
@@ -1815,15 +1815,15 @@ msgstr ""
 msgid "Direct Rendering"
 msgstr ""
 
-#: modules/computer.c:849 modules/computer/modules.c:352
-#: modules/computer/modules.c:353 modules/devices/inputdevices.c:153
+#: modules/computer.c:849 modules/computer/modules.c:355
+#: modules/computer/modules.c:356 modules/devices/inputdevices.c:153
 #: modules/devices/printers.c:145 modules/devices/spd-decode.c:888
 #: modules/devices/spd-decode.c:1100
 msgid "Yes"
 msgstr ""
 
-#: modules/computer.c:849 modules/computer/modules.c:352
-#: modules/computer/modules.c:353 modules/devices/printers.c:145
+#: modules/computer.c:849 modules/computer/modules.c:355
+#: modules/computer/modules.c:356 modules/devices/printers.c:145
 #: modules/devices/spd-decode.c:886 modules/devices/spd-decode.c:1097
 msgid "No"
 msgstr ""
@@ -1912,7 +1912,7 @@ msgid "GiB"
 msgstr ""
 
 #: modules/computer.c:1043 modules/computer/memory_usage.c:73
-#: modules/computer/modules.c:370
+#: modules/computer/modules.c:373
 msgid "KiB"
 msgstr ""
 
@@ -2268,51 +2268,51 @@ msgstr ""
 msgid "Update kernel module icon table"
 msgstr ""
 
-#: modules/computer/modules.c:338 modules/computer/modules.c:339
-#: modules/computer/modules.c:340 modules/computer/modules.c:341
-#: modules/computer/modules.c:342 modules/computer/modules.c:343
+#: modules/computer/modules.c:341 modules/computer/modules.c:342
+#: modules/computer/modules.c:343 modules/computer/modules.c:344
+#: modules/computer/modules.c:345 modules/computer/modules.c:346
 #: modules/devices/dmi.c:117 modules/devices/firmware.c:245
 #: modules/devices/x86/processor.c:694
 msgid "(Not available)"
 msgstr ""
 
-#: modules/computer/modules.c:369
+#: modules/computer/modules.c:372
 msgid "Module Information"
 msgstr ""
 
-#: modules/computer/modules.c:369 modules/devices/gpu.c:298
+#: modules/computer/modules.c:372 modules/devices/gpu.c:298
 msgid "Path"
 msgstr ""
 
-#: modules/computer/modules.c:369
+#: modules/computer/modules.c:372
 msgid "Used Memory"
 msgstr ""
 
-#: modules/computer/modules.c:371
+#: modules/computer/modules.c:374
 msgid "Version Magic"
 msgstr ""
 
-#: modules/computer/modules.c:372
+#: modules/computer/modules.c:375
 msgid "In Linus' Tree"
 msgstr ""
 
-#: modules/computer/modules.c:373
+#: modules/computer/modules.c:376
 msgid "Retpoline Enabled"
 msgstr ""
 
-#: modules/computer/modules.c:373
+#: modules/computer/modules.c:376
 msgid "Copyright"
 msgstr ""
 
-#: modules/computer/modules.c:373
+#: modules/computer/modules.c:376
 msgid "Author"
 msgstr ""
 
-#: modules/computer/modules.c:374
+#: modules/computer/modules.c:377
 msgid "License"
 msgstr ""
 
-#: modules/computer/modules.c:380
+#: modules/computer/modules.c:383
 msgid "Dependencies"
 msgstr ""
 
@@ -4344,42 +4344,42 @@ msgid ""
 "[UDisks2]\n"
 msgstr ""
 
-#: modules/devices/storage.c:257
+#: modules/devices/storage.c:261
 msgid "Removable"
 msgstr ""
 
-#: modules/devices/storage.c:257
+#: modules/devices/storage.c:261
 msgid "Fixed"
 msgstr ""
 
-#: modules/devices/storage.c:260
+#: modules/devices/storage.c:264
 msgid "Ejectable"
 msgstr ""
 
-#: modules/devices/storage.c:263
+#: modules/devices/storage.c:267
 msgid "Self-monitoring (S.M.A.R.T.)"
 msgstr ""
 
-#: modules/devices/storage.c:266 modules/devices/x86/processor.c:664
+#: modules/devices/storage.c:270 modules/devices/x86/processor.c:664
 msgid "Power Management"
 msgstr ""
 
-#: modules/devices/storage.c:269
+#: modules/devices/storage.c:273
 msgid "Advanced Power Management"
 msgstr ""
 
-#: modules/devices/storage.c:272
+#: modules/devices/storage.c:276
 msgid "Automatic Acoustic Management"
 msgstr ""
 
-#: modules/devices/storage.c:275
+#: modules/devices/storage.c:279
 #, c-format
 msgid ""
 "[Drive Information]\n"
 "Model=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:285
+#: modules/devices/storage.c:289
 #, c-format
 msgid ""
 "Revision=%s\n"
@@ -4389,102 +4389,102 @@ msgid ""
 "Features=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:300
+#: modules/devices/storage.c:304
 #, c-format
 msgid "Rotation Rate=%d RPM\n"
 msgstr ""
 
-#: modules/devices/storage.c:303
+#: modules/devices/storage.c:307
 #, c-format
 msgid ""
 "Media=%s\n"
 "Media compatibility=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:310
+#: modules/devices/storage.c:314
 #, c-format
 msgid "Connection bus=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:322
+#: modules/devices/storage.c:326
 msgid "WWN"
 msgstr ""
 
-#: modules/devices/storage.c:323
+#: modules/devices/storage.c:327
 msgid "EUI "
 msgstr ""
 
-#: modules/devices/storage.c:328
+#: modules/devices/storage.c:332
 msgid "WWN / EUI"
 msgstr ""
 
-#: modules/devices/storage.c:332
+#: modules/devices/storage.c:336
 #, c-format
 msgid "$^$%s=[%s] %s\n"
 msgstr ""
 
-#: modules/devices/storage.c:334
+#: modules/devices/storage.c:338
 msgid "IEEE OUI"
 msgstr ""
 
-#: modules/devices/storage.c:346
+#: modules/devices/storage.c:350
 msgid ""
 "[Self-monitoring (S.M.A.R.T.)]\n"
 "Status=%s\n"
 "Bad Sectors=%"
 msgstr ""
 
-#: modules/devices/storage.c:352
+#: modules/devices/storage.c:356
 msgid "Failing"
 msgstr ""
 
-#: modules/devices/storage.c:352
+#: modules/devices/storage.c:356
 msgid "OK"
 msgstr ""
 
-#: modules/devices/storage.c:358
+#: modules/devices/storage.c:362
 msgid ""
 "[S.M.A.R.T. Attributes]\n"
 "Attribute=<tt>Value      / Normalized / Worst / Threshold</tt>\n"
 msgstr ""
 
-#: modules/devices/storage.c:381
+#: modules/devices/storage.c:385
 msgid "%"
 msgid_plural "%"
 msgstr[0] ""
 msgstr[1] ""
 
-#: modules/devices/storage.c:419
+#: modules/devices/storage.c:423
 #, c-format
 msgid "(%d) %s=<tt>%s</tt>\n"
 msgstr ""
 
-#: modules/devices/storage.c:428
+#: modules/devices/storage.c:432
 #, c-format
 msgid ""
 "[Partition table]\n"
 "Type=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:447
+#: modules/devices/storage.c:451
 #, c-format
 msgid "Partition %s=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:496
+#: modules/devices/storage.c:500
 msgid ""
 "\n"
 "[SCSI Disks]\n"
 msgstr ""
 
-#: modules/devices/storage.c:567 modules/devices/storage.c:773
+#: modules/devices/storage.c:571 modules/devices/storage.c:777
 #, c-format
 msgid ""
 "[Device Information]\n"
 "Model=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:574
+#: modules/devices/storage.c:578
 #, c-format
 msgid ""
 "Type=%s\n"
@@ -4496,18 +4496,18 @@ msgid ""
 "LUN=%d\n"
 msgstr ""
 
-#: modules/devices/storage.c:621
+#: modules/devices/storage.c:625
 msgid ""
 "\n"
 "[IDE Disks]\n"
 msgstr ""
 
-#: modules/devices/storage.c:707
+#: modules/devices/storage.c:711
 #, c-format
 msgid "Driver=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:779
+#: modules/devices/storage.c:783
 #, c-format
 msgid ""
 "Device Name=hd%c\n"
@@ -4515,7 +4515,7 @@ msgid ""
 "Cache=%dkb\n"
 msgstr ""
 
-#: modules/devices/storage.c:789
+#: modules/devices/storage.c:793
 #, c-format
 msgid ""
 "[Geometry]\n"
@@ -4523,14 +4523,14 @@ msgid ""
 "Logical=%s\n"
 msgstr ""
 
-#: modules/devices/storage.c:799
+#: modules/devices/storage.c:803
 #, c-format
 msgid ""
 "[Capabilities]\n"
 "%s"
 msgstr ""
 
-#: modules/devices/storage.c:806
+#: modules/devices/storage.c:810
 #, c-format
 msgid ""
 "[Speeds]\n"
