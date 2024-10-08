@@ -102,7 +102,7 @@ static ModuleEntry entries[] = {
     [ENTRY_MEMORY_USAGE] = {N_("Memory Usage"), "memory.svg", callback_memory_usage, scan_memory_usage, MODULE_FLAG_NONE},
     [ENTRY_FS] = {N_("Filesystems"), "filesystem.svg", callback_fs, scan_fs, MODULE_FLAG_NONE},
     [ENTRY_DISPLAY] = {N_("Display"), "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
-    [ENTRY_ENV] = {N_("Environment Variables"), "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
+    [ENTRY_ENV] = {N_("Environment Variables"), "environment.svg", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
 #if GLIB_CHECK_VERSION(2,14,0)
     [ENTRY_DEVEL] = {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
 #else
