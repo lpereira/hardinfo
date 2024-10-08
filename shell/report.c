@@ -451,6 +451,7 @@ static void report_html_header(ReportContext * ctx)
 	 "    tr:nth-of-type(1) { background-color: #009879; color: #ffffff; text-align: left; }\n"
 	 "    tr:last-of-type { border-bottom: 2px solid #009879; }\n"
 	 "    td.icon_subtitle { width: 30px; }\n"
+	 "    td.icon_subtitle img { width: 4.0em; }\n"
 	 "    td:not(.stitle, .sstitle, .icon_subtitle) { padding: 12px 15px; border-bottom: 1px solid #dddddd; }\n"
 	 "    td.icon { min-width: 27px; }\n"
 	 "    td.icon img  { width: 1.2em; }\n"
