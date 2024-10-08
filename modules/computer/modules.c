@@ -332,8 +332,11 @@ void scan_modules_do(void) {
         module_list = h_strdup_cprintf("$%s$%s=%s\n", module_list, hashkey, modname,
                                        description ? description : "");
         icon = get_module_icon(modname, filename);
-        module_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", module_icons, hashkey,
-                                        modname, icon ? icon: "module");
+	if(!icon || strstr(icon,"module") || strstr(icon,"therm") || strstr(icon,"fan")){
+            module_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", module_icons, hashkey, modname, icon ? icon: "module");
+	} else {
+            module_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", module_icons, hashkey, modname, icon ? icon: "module");
+	}
 
         STRIFNULL(filename, _("(Not available)"));
         STRIFNULL(description, _("(Not available)"));
