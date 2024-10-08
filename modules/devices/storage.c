@@ -253,7 +253,11 @@ gboolean __scan_udisks2_devices(void) {
         ven_tag = vendor_list_ribbon(ext->vendors, params.fmt_opts);
 
         udisks2_storage_list = h_strdup_cprintf("$%s$%s=%s|%s %s\n", udisks2_storage_list, devid, disk->block_dev, size, ven_tag ? ven_tag : "", disk->model);
-        storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, disk->model, icon);
+	if(strstr(icon,"hdd") || strstr(icon,"dev_removable")){
+            storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", storage_icons, devid, disk->model, icon);
+	} else {
+            storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, disk->model, icon);
+	}
         features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
 
         if (disk->ejectable) {
