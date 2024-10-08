@@ -716,7 +716,7 @@ msgstr "_Обновить"
 
 #: shell/menu.c:67
 msgid "_Open HardInfo2 Web Site"
-msgstr "_Открыть домашнюю станицу"
+msgstr "_Домашняя станица"
 
 #: shell/menu.c:72
 msgid "_Report bug"
