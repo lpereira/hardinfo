@@ -619,7 +619,11 @@ static ShellModule *module_load(gchar * filename)
 
 	simple_name = strreplace(tmpicon, "lib", "");
 
-	tmp = g_strdup_printf("%s.png", simple_name);
+	if(strstr(simple_name,"benchmark")){
+	    tmp = g_strdup_printf("%s.svg", simple_name);
+	} else {
+	    tmp = g_strdup_printf("%s.png", simple_name);
+	}
 	module->icon = icon_cache_get_pixbuf(tmp);
 
 	g_free(tmp);
