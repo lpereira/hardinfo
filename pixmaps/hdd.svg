@@ -22,7 +22,7 @@
  <circle cx="279" cy="244" r="6.67" fill="#808080"/>
  <circle cx="232" cy="157" r="6.67" fill="#808080"/>
  <circle cx="256" cy="200" r="13" fill="#808080"/>
- <circle cx="96.6" cy="43.5" r="13" fill="#666" style="fill:#999"/>
- <circle cx="415" cy="43.5" r="13" fill="#666" style="fill:#999"/>
- <circle cx="415" cy="447" r="13" fill="#666" style="fill:#999"/>
+ <circle cx="96.6" cy="43.5" r="13" fill="#999"/>
+ <circle cx="415" cy="43.5" r="13" fill="#999"/>
+ <circle cx="415" cy="447" r="13" fill="#999"/>
 </svg>

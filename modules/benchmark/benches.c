@@ -270,7 +270,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_GUI] =
         {
             N_("GPU Drawing"),
-            "monitor.png",
+            "monitor.svg",
             callback_benchmark_gui,
             scan_benchmark_gui,
             MODULE_FLAG_BENCHMARK|MODULE_FLAG_NO_REMOTE,
@@ -279,7 +279,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_OPENGL] =
         {
             N_("GPU OpenGL Drawing"),
-            "monitor.png",
+            "monitor.svg",
             callback_benchmark_opengl,
             scan_benchmark_opengl,
             MODULE_FLAG_BENCHMARK|MODULE_FLAG_NO_REMOTE,

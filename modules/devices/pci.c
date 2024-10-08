@@ -36,7 +36,7 @@ static const struct {
     { .class = 0x0703, .icon = "modem.png" },
     { .class = 0x01, .icon = "hdd.svg" },
     { .class = 0x02, .icon = "network.png" },
-    { .class = 0x03, .icon = "monitor.png" },
+    { .class = 0x03, .icon = "monitor.svg" },
     { .class = 0x05, .icon = "memory.svg" },
     { .class = 0x07, .icon = "network-connections.png" },
     { .class = 0x09, .icon = "inputdevices.png" },

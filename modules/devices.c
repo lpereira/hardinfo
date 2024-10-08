@@ -98,7 +98,7 @@ enum {
 static ModuleEntry entries[] = {
     [ENTRY_PROCESSOR] = {N_("Processor"), "processor.svg", callback_processors, scan_processors, MODULE_FLAG_NONE},
     [ENTRY_GPU] = {N_("Graphics Processors"), "devices.png", callback_gpu, scan_gpu, MODULE_FLAG_NONE},
-    [ENTRY_MONITORS] = {N_("Monitors"), "monitor.png", callback_monitors, scan_monitors, MODULE_FLAG_NONE},
+    [ENTRY_MONITORS] = {N_("Monitors"), "monitor.svg", callback_monitors, scan_monitors, MODULE_FLAG_NONE},
     [ENTRY_PCI] = {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
     [ENTRY_USB] = {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
     [ENTRY_FW] = {N_("Firmware"), "processor.svg", callback_firmware, scan_firmware, MODULE_FLAG_NONE},

@@ -23,7 +23,7 @@
 #include "util_edid.h"
 #include "util_ids.h"
 
-static const char monitor_icon[] = "monitor.png";
+static const char monitor_icon[] = "monitor.svg";
 
 #define UNKIFNULL2(f) ((f) ? f : _("(Unknown)"))
 #define UNKIFEMPTY2(f) ((*f) ? f : _("(Unknown)"))
