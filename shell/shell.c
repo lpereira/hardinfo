@@ -466,7 +466,6 @@ static ShellNote *note_new(void)
     GtkWidget *hbox, *icon, *button;
     GtkWidget *border_box;
     GdkColor info_default_border_color     = { 0, 0x0000, 0xad00, 0x9d00 };
-    GdkColor info_default_fill_color       = { 0, 0x4000, 0x6000, 0xff00 };
 
     note = g_new0(ShellNote, 1);
     note->label = gtk_label_new("");
@@ -479,13 +478,19 @@ static ShellNote *note_new(void)
     gtk_widget_show(border_box);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-    GdkRGBA info_default_text_color       = { .red = 0.7, .green = 0.7, .blue = 0.7, .alpha = 1.0 };
+    GdkRGBA info_default_text_color       = { .red = 1, .green = 1, .blue = 1, .alpha = 1.0 };
     gtk_widget_override_color(note->label, GTK_STATE_FLAG_NORMAL, &info_default_text_color);
 #else
-    GdkColor info_default_text_color       = { 0, 0xafff, 0xafff, 0xafff };
+    GdkColor info_default_text_color       = { 0, 0xffff, 0xffff, 0xffff };
     gtk_widget_modify_fg(note->label, GTK_STATE_NORMAL, &info_default_text_color);
 #endif
-    gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
+    if(params.darkmode){
+        GdkColor info_default_fill_color = { 0, 0x4000*1.1, 0x6000*1.1, 0xff00 };
+	gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
+    } else {
+        GdkColor info_default_fill_color = { 0, 0x4000*0.9, 0x6000*0.9, 0xff00 };
+	gtk_widget_modify_bg(border_box, GTK_STATE_NORMAL, &info_default_fill_color);
+    }
     gtk_widget_modify_bg(note->event_box, GTK_STATE_NORMAL, &info_default_border_color);
 
     icon = icon_cache_get_image_at_size("close.svg", 16, 16);
@@ -1582,7 +1587,7 @@ static void module_selected_show_info_list(GKeyFile *key_file,
 #if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){
       if(params.darkmode){
-        gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } treeview:selected { background-color: rgba(0x60, 0x80, 0xff, 1); } ", -1, NULL);
+        gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
         gtk_style_context_add_provider(gtk_widget_get_style_context(shell->info_tree->view), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
       }else{
         gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
@@ -2306,8 +2311,13 @@ static ShellTree *tree_new()
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     if(params.theme>0){
-        gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
-        gtk_style_context_add_provider(gtk_widget_get_style_context(treeview), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        if(params.darkmode){
+            gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0xa0, 0xa0, 0xa0, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
+            gtk_style_context_add_provider(gtk_widget_get_style_context(treeview), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        } else {
+            gtk_css_provider_load_from_data(provider, "treeview { background-color: rgba(0x60, 0x60, 0x60, 0.1); } treeview:selected { background-color: rgba(0x40, 0x60, 0xff, 1); } ", -1, NULL);
+            gtk_style_context_add_provider(gtk_widget_get_style_context(treeview), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        }
     }
 #endif
 
