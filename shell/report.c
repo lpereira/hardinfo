@@ -976,13 +976,13 @@ static gboolean report_generate(ReportDialog * rd)
 
     if (ctx->format == REPORT_FORMAT_HTML) {
 	GtkWidget *dialog;
-	dialog = gtk_message_dialog_new(NULL,
+	dialog = gtk_message_dialog_new(GTK_WINDOW(shell_get_main_shell()->window),
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_QUESTION,
 					GTK_BUTTONS_NONE,
 					_("Open the report with your web browser?"));
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_dialog_add_buttons(GTK_DIALOG(dialog),
+        gtk_dialog_add_buttons(GTK_DIALOG(dialog),
 			       _("_No"), GTK_RESPONSE_REJECT,
 			       _("_Open"), GTK_RESPONSE_ACCEPT, NULL);
 #else
