@@ -99,8 +99,8 @@ static ModuleEntry entries[] = {
     [ENTRY_KMOD] = {N_("Kernel Modules"), "module.svg", callback_modules, scan_modules, MODULE_FLAG_NONE},
     [ENTRY_BOOTS] = {N_("Boots"), "boot.svg", callback_boots, scan_boots, MODULE_FLAG_NONE},
     [ENTRY_LANGUAGES] = {N_("Languages"), "language.svg", callback_locales, scan_locales, MODULE_FLAG_NONE},
-    [ENTRY_MEMORY_USAGE] = {N_("Memory Usage"), "memory.png", callback_memory_usage, scan_memory_usage, MODULE_FLAG_NONE},
-    [ENTRY_FS] = {N_("Filesystems"), "dev_removable.png", callback_fs, scan_fs, MODULE_FLAG_NONE},
+    [ENTRY_MEMORY_USAGE] = {N_("Memory Usage"), "memory.svg", callback_memory_usage, scan_memory_usage, MODULE_FLAG_NONE},
+    [ENTRY_FS] = {N_("Filesystems"), "dev_removable.svg", callback_fs, scan_fs, MODULE_FLAG_NONE},
     [ENTRY_DISPLAY] = {N_("Display"), "monitor.png", callback_display, scan_display, MODULE_FLAG_NONE},
     [ENTRY_ENV] = {N_("Environment Variables"), "environment.png", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
 #if GLIB_CHECK_VERSION(2,14,0)
@@ -1123,7 +1123,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=processor.svg\n"
                     "Method=devices::getProcessorNameAndDesc\n"
                     "[%s]\n"
-                    "Icon=memory.png\n"
+                    "Icon=memory.svg\n"
                     "Method=computer::getMemoryDesc\n"
                     "[%s]\n"
                     "Icon=module.svg\n"
@@ -1132,7 +1132,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=monitor.png\n"
                     "Method=computer::getDisplaySummary\n"
                     "[%s]\n"
-                    "Icon=hdd.png\n"
+                    "Icon=hdd.svg\n"
                     "Method=devices::getStorageDevicesSimple\n"
                     "[%s]\n"
                     "Icon=printer.png\n"

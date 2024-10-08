@@ -94,7 +94,7 @@ const char *find_icon(const char *lvfs_name) {
         { "applications-internet", "internet.svg" },
         { "audio-card", "audio.png" },
         { "computer", "computer.png" },
-        { "drive-harddisk", "hdd.png" },
+        { "drive-harddisk", "hdd.svg" },
         { "input-gaming", "joystick.png" },
         { "input-tablet", NULL },
         { "network-modem", "wireless.png" },
@@ -102,7 +102,7 @@ const char *find_icon(const char *lvfs_name) {
         { "thunderbolt", NULL },
         { "touchpad-disabled", NULL },
         /* default */
-        { NULL, "memory.png" } /* a device with firmware maybe */
+        { NULL, "memory.svg" } /* a device with firmware maybe */
     };
     unsigned int i = 0;
     for(; imap[i].lvfs; i++) {

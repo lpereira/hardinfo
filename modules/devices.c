@@ -106,9 +106,9 @@ static ModuleEntry entries[] = {
     [ENTRY_BATTERY] = {N_("Battery"), "battery.png", callback_battery, scan_battery, MODULE_FLAG_NONE},
     [ENTRY_SENSORS] = {N_("Sensors"), "therm.svg", callback_sensors, scan_sensors, MODULE_FLAG_NONE},
     [ENTRY_INPUT] = {N_("Input Devices"), "inputdevices.png", callback_input, scan_input, MODULE_FLAG_NONE},
-    [ENTRY_STORAGE] = {N_("Storage"), "hdd.png", callback_storage, scan_storage, MODULE_FLAG_NONE},
+    [ENTRY_STORAGE] = {N_("Storage"), "hdd.svg", callback_storage, scan_storage, MODULE_FLAG_NONE},
     [ENTRY_DMI] = {N_("System DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
-    [ENTRY_DMI_MEM] = {N_("Memory Devices"), "memory.png", callback_dmi_mem, scan_dmi_mem, MODULE_FLAG_NONE},
+    [ENTRY_DMI_MEM] = {N_("Memory Devices"), "memory.svg", callback_dmi_mem, scan_dmi_mem, MODULE_FLAG_NONE},
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
     [ENTRY_DTREE] = {N_("Device Tree"), "devices.png", callback_dtree, scan_dtree, MODULE_FLAG_HIDE},
 #else

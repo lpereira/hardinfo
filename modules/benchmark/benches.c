@@ -238,7 +238,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_MEMORY_SINGLE] =
         {
             N_("SysBench Memory (Single-thread)"),
-            "memory.png",
+            "memory.svg",
             callback_benchmark_memory_single,
             scan_benchmark_memory_single,
             MODULE_FLAG_BENCHMARK,
@@ -246,7 +246,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_MEMORY_DUAL] =
         {
             N_("SysBench Memory (Two threads)"),
-            "memory.png",
+            "memory.svg",
             callback_benchmark_memory_dual,
             scan_benchmark_memory_dual,
             MODULE_FLAG_BENCHMARK|MODULE_FLAG_HIDE,
@@ -254,7 +254,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_MEMORY_QUAD] =
         {
             N_("SysBench Memory (Quad threads)"),
-            "memory.png",
+            "memory.svg",
             callback_benchmark_memory_quad,
             scan_benchmark_memory_quad,
             MODULE_FLAG_BENCHMARK|MODULE_FLAG_HIDE,
@@ -262,7 +262,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_MEMORY_ALL] =
         {
             N_("SysBench Memory (Multi-thread)"),
-            "memory.png",
+            "memory.svg",
             callback_benchmark_memory_all,
             scan_benchmark_memory_all,
             MODULE_FLAG_BENCHMARK,
@@ -288,7 +288,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_STORAGE] =
         {
             N_("Storage R/W Speed"),
-            "hdd.png",
+            "hdd.svg",
             callback_benchmark_storage,
             scan_benchmark_storage,
             MODULE_FLAG_BENCHMARK,
