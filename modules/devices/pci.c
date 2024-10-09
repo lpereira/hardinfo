@@ -29,7 +29,7 @@ static const struct {
     uint32_t class;
 } class2icon[] = {
     { .class = 0x0200, .icon = "network-interface.png" },
-    { .class = 0x0c03, .icon = "usb.png" },
+    { .class = 0x0c03, .icon = "usb.svg" },
     { .class = 0x0403, .icon = "audio.png" },
     { .class = 0x0805, .icon = "usbfldisk.png" },
     { .class = 0x0d11, .icon = "bluetooth.png" },
@@ -56,7 +56,7 @@ static const gchar *find_icon_for_class(uint32_t class)
 	}
     }
 
-    return "devices.svg";
+    return "pci.svg";
 }
 
 static gchar *_pci_dev(const pcid *p, gchar *icons) {
