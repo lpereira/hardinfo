@@ -56,7 +56,7 @@ static const gchar *find_icon_for_class(uint32_t class)
 	}
     }
 
-    return "devices.png";
+    return "devices.svg";
 }
 
 static gchar *_pci_dev(const pcid *p, gchar *icons) {

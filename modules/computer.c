@@ -104,9 +104,9 @@ static ModuleEntry entries[] = {
     [ENTRY_DISPLAY] = {N_("Display"), "monitor.svg", callback_display, scan_display, MODULE_FLAG_NONE},
     [ENTRY_ENV] = {N_("Environment Variables"), "environment.svg", callback_env_var, scan_env_var, MODULE_FLAG_NONE},
 #if GLIB_CHECK_VERSION(2,14,0)
-    [ENTRY_DEVEL] = {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_NONE},
+    [ENTRY_DEVEL] = {N_("Development"), "devel.svg", callback_dev, scan_dev, MODULE_FLAG_NONE},
 #else
-    [ENTRY_DEVEL] = {N_("Development"), "devel.png", callback_dev, scan_dev, MODULE_FLAG_HIDE},
+    [ENTRY_DEVEL] = {N_("Development"), "devel.svg", callback_dev, scan_dev, MODULE_FLAG_HIDE},
 #endif /* GLIB_CHECK_VERSION(2,14,0) */
     [ENTRY_USERS] = {N_("Users"), "users.svg", callback_users, scan_users, MODULE_FLAG_NONE},
     [ENTRY_GROUPS] = {N_("Groups"), "users.svg", callback_groups, scan_groups, MODULE_FLAG_NONE},

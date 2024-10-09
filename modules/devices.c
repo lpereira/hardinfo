@@ -97,9 +97,9 @@ enum {
 
 static ModuleEntry entries[] = {
     [ENTRY_PROCESSOR] = {N_("Processor"), "processor.svg", callback_processors, scan_processors, MODULE_FLAG_NONE},
-    [ENTRY_GPU] = {N_("Graphics Processors"), "devices.png", callback_gpu, scan_gpu, MODULE_FLAG_NONE},
+    [ENTRY_GPU] = {N_("Graphics Processors"), "devices.svg", callback_gpu, scan_gpu, MODULE_FLAG_NONE},
     [ENTRY_MONITORS] = {N_("Monitors"), "monitor.svg", callback_monitors, scan_monitors, MODULE_FLAG_NONE},
-    [ENTRY_PCI] = {N_("PCI Devices"), "devices.png", callback_pci, scan_pci, MODULE_FLAG_NONE},
+    [ENTRY_PCI] = {N_("PCI Devices"), "devices.svg", callback_pci, scan_pci, MODULE_FLAG_NONE},
     [ENTRY_USB] = {N_("USB Devices"), "usb.png", callback_usb, scan_usb, MODULE_FLAG_NONE},
     [ENTRY_FW] = {N_("Firmware"), "processor.svg", callback_firmware, scan_firmware, MODULE_FLAG_NONE},
     [ENTRY_PRINTERS] = {N_("Printers"), "printer.png", callback_printers, scan_printers, MODULE_FLAG_NONE},
@@ -110,9 +110,9 @@ static ModuleEntry entries[] = {
     [ENTRY_DMI] = {N_("System DMI"), "computer.png", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
     [ENTRY_DMI_MEM] = {N_("Memory Devices"), "memory.svg", callback_dmi_mem, scan_dmi_mem, MODULE_FLAG_NONE},
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
-    [ENTRY_DTREE] = {N_("Device Tree"), "devices.png", callback_dtree, scan_dtree, MODULE_FLAG_HIDE},
+    [ENTRY_DTREE] = {N_("Device Tree"), "devices.svg", callback_dtree, scan_dtree, MODULE_FLAG_HIDE},
 #else
-    [ENTRY_DTREE] = {N_("Device Tree"), "devices.png", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
+    [ENTRY_DTREE] = {N_("Device Tree"), "devices.svg", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
     [ENTRY_RESOURCES] = {N_("Resources"), "resources.svg", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     { NULL }
