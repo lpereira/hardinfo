@@ -7,7 +7,7 @@
   </linearGradient>
  </defs>
  <path d="m362 1h-211l-149 149v211l149 149h211l149-149v-211z" fill="url(#a)"/>
- <path d="m373 279 8.19 25.1-230 75.2-8.19-25.1z" fill="#fff"/>
- <circle cx="191" cy="199" r="25.7" fill="#fff"/>
- <circle cx="324" cy="199" r="25.7" fill="#fff"/>
+ <path d="m373 279 13.1 37.3-230 76.1-13.4-38.2z" fill="#fff"/>
+ <circle cx="191" cy="199" r="35.1" fill="#fff"/>
+ <circle cx="324" cy="199" r="35.1" fill="#fff"/>
 </svg>
