@@ -58,6 +58,7 @@ struct _ReportContext {
   ReportFormat		format;
 
   gboolean		first_table;
+  gboolean		first_sub_table;
   gboolean		in_details;
 
   gboolean		show_column_headers;

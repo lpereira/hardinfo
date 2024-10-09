@@ -26,6 +26,9 @@
 #include <config.h>
 #include "uri_handler.h"
 
+gint columns=0;//set by subtitle and propagates down
+gint cols=0;//set by details and propagates down
+
 static ReportDialog *report_dialog_new(GtkTreeModel * model,
 				       GtkWidget * parent);
 static void set_all_active(ReportDialog * rd, gboolean setting);
@@ -200,11 +203,11 @@ void report_context_configure(ReportContext * ctx, GKeyFile * keyfile)
 }
 
 static void report_html_details_start(ReportContext *ctx, gchar *key, gchar *value, gsize longest_key) {
-    guint cols = report_get_visible_columns(ctx);
+    cols = 2;//always 2 cols in details
     report_key_value(ctx, key, value, longest_key);
     ctx->parent_columns = ctx->columns;
     ctx->columns = REPORT_COL_VALUE;
-    ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\"><table class=\"details\">\n", ctx->output, cols);
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\"><table class=\"details\">\n", ctx->output, columns+1);//above
 }
 
 static void report_html_details_end(ReportContext *ctx) {
@@ -239,7 +242,7 @@ void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details
         tmpgroup = g_strdup(group);
         strend(group, '#');
 
-        report_subsubtitle(ctx, group);
+        report_details_section(ctx, group);
 
         keys = g_key_file_get_keys(key_file, tmpgroup, NULL, NULL);
 
@@ -268,7 +271,7 @@ void report_details(ReportContext *ctx, gchar *key, gchar *value, gchar *details
                     }
                 }
 
-                report_key_value(ctx, key, value, longest_key);
+                report_details_keyvalue(ctx, key, value, longest_key);
 
             }
 
@@ -447,7 +450,7 @@ static void report_html_header(ReportContext * ctx)
 	 "              background: #07575B; border-bottom: 2px solid #009879; border-top: 2px solid #009879;}\n"
 	 "    .field  { font: 1em sans-serif; color: #C4DFE6; padding: 2px; font-family: Arial, sans-serif; min-width: auto; width: 300px !important; }\n"
 	 "    .value  { font: 1em sans-serif; color: #C4DFE6; font-family: Arial, sans-serif; }\n"
-	 "    table.details { margin-left: 50px; }\n"
+	 "    table.details { margin-left: 0px;min-width:auto;width:100%%; }\n"
 	 "    tr:nth-of-type(1) { background-color: #009879; color: #ffffff; text-align: left; }\n"
 	 "    tr:last-of-type { border-bottom: 2px solid #009879; }\n"
 	 "    td.icon_subtitle { width: 30px; }\n"
@@ -484,7 +487,9 @@ static void report_html_footer(ReportContext * ctx)
 static void report_html_title(ReportContext * ctx, gchar * text)
 {
     if (!ctx->first_table) {
-      ctx->output = h_strdup_cprintf("</table>", ctx->output);
+        ctx->output = h_strdup_cprintf("</table>", ctx->output);
+    } else {
+        ctx->first_table = FALSE;
     }
 
     ctx->output = h_strdup_cprintf("<h1 class=\"title\">%s</h1>", ctx->output, text);
@@ -492,12 +497,12 @@ static void report_html_title(ReportContext * ctx, gchar * text)
 
 static void report_html_subtitle(ReportContext * ctx, gchar * text)
 {
-    gint columns = report_get_visible_columns(ctx);
+    columns = strstr(text,"GPUs")?2:strstr(text,"Memory Device List")?4:(strstr(text,"Processor")?4:report_get_visible_columns(ctx));
 
-    if (!ctx->first_table) {
+    if (!ctx->first_sub_table) {
       ctx->output = h_strdup_cprintf("</table>", ctx->output);
     } else {
-      ctx->first_table = FALSE;
+      ctx->first_sub_table = FALSE;
     }
 
     gchar *icon = NULL;
@@ -509,30 +514,32 @@ static void report_html_subtitle(ReportContext * ctx, gchar * text)
         icon = g_strdup("");
     }
 
-    ctx->output = h_strdup_cprintf("<table><tr><td class=\"icon_subtitle\">%s</td><td colspan=\"%d\" class=\"stit"
-				  "le\">%s</td></tr>\n",
-				  ctx->output,
-                  icon,
-				  columns,
-				  text);
+    ctx->output = h_strdup_cprintf("<table><tr><td class=\"icon_subtitle\">%s</td><td colspan=\"%d\" class=\"stitle\">%s</td></tr>\n",
+				   ctx->output,
+				   icon,
+				   columns,
+				   text);
     g_free(icon);
 }
 
 static void report_html_subsubtitle(ReportContext * ctx, gchar * text)
 {
-    gint columns = report_get_visible_columns(ctx);
-
-    ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\" class=\"ssti"
-				  "tle\">%s</td></tr>\n",
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\" class=\"sstitle\">%s</td></tr>\n",
 				  ctx->output,
 				  columns+1,
 				  text);
 }
 
-static void
-report_html_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
+static void report_html_details_subsubtitle(ReportContext * ctx, gchar * text)
 {
-    gint columns = report_get_visible_columns(ctx);
+    ctx->output = h_strdup_cprintf("<tr><td colspan=\"%d\" class=\"sstitle\">%s</td></tr>\n",
+				  ctx->output,
+				  cols+1,
+				  text);
+}
+
+static void report_html_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
+{
     gchar **values;
     gint i, mc;
 
@@ -562,10 +569,54 @@ report_html_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longe
 
       ctx->output = h_strdup_cprintf("\n<tr%s>\n<td class=\"icon\">%s</td><td class=\"field\">%s</td>", ctx->output, highlight ? " class=\"hilight\"" : "", icon, name);
 
-      for (i = mc; i >= 0; i--) {
+      for (i = columns-2; i >= 0; i--) {
         ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
                                        ctx->output,
-                                       values[i]);
+                                       (i<=mc)?values[i]:"");
+      }
+
+      ctx->output = h_strdup_cprintf("</tr>\n", ctx->output);
+
+      g_strfreev(values);
+    }
+    g_free(icon);
+}
+
+static void report_html_details_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
+{
+    gchar **values;
+    gint i, mc;
+
+    gboolean highlight = key_is_highlighted(key);
+    gchar *tag = key_mi_tag(key);
+    gchar *icon = tag ? (gchar*)g_hash_table_lookup(ctx->icon_refs, tag) : NULL;
+    g_free(tag);
+    /* icon from the table is const, so can be re-used without free */
+    if (icon) {
+        gchar *icon_class = icon_name_css_id(icon);
+        icon = g_strdup_printf("<div class=\"%s\"></div>", icon_class);
+        g_free(icon_class);
+    } else
+        icon = g_strdup("");
+
+    gchar *name = (gchar*)key_get_name(key);
+
+    if (columns == 2) {
+      ctx->output = h_strdup_cprintf("<tr%s><td class=\"icon\">%s</td><td class=\"field\">%s</td>"
+                                    "<td class=\"value\">%s</td></tr>\n",
+                                    ctx->output,
+                                    highlight ? " class=\"hilight\"" : "",
+                                    icon, name, value);
+    } else {
+      values = g_strsplit(value, "|", cols);
+      mc = g_strv_length(values) - 1;
+
+      ctx->output = h_strdup_cprintf("\n<tr%s>\n<td class=\"icon\">%s</td><td class=\"field\">%s</td>", ctx->output, highlight ? " class=\"hilight\"" : "", icon, name);
+
+      for (i = cols-2; i >= 0; i--) {
+        ctx->output = h_strdup_cprintf("<td class=\"value\">%s</td>",
+                                       ctx->output,
+                                       (i<=mc)?values[i]:"");
       }
 
       ctx->output = h_strdup_cprintf("</tr>\n", ctx->output);
@@ -620,8 +671,7 @@ static void report_text_subsubtitle(ReportContext * ctx, gchar * text)
     ctx->output = h_strdup_cprintf("%s-%s-\n", ctx->output, indent, text);
 }
 
-static void
-report_text_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
+static void report_text_key_value(ReportContext * ctx, gchar *key, gchar *value, gsize longest_key)
 {
     gint columns = report_get_visible_columns(ctx);
     gchar **values;
@@ -824,8 +874,8 @@ ReportContext *report_context_html_new()
     ctx->keyvalue = report_html_key_value;
 
     ctx->details_start = report_html_details_start;
-    ctx->details_section = report_html_subsubtitle;
-    ctx->details_keyvalue = report_html_key_value;
+    ctx->details_section = report_html_details_subsubtitle;
+    ctx->details_keyvalue = report_html_details_key_value;
     ctx->details_end = report_html_details_end;
 
     ctx->output = g_strdup("");
@@ -833,6 +883,7 @@ ReportContext *report_context_html_new()
 
     ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                g_free, g_free);
+    ctx->first_sub_table = TRUE;
     ctx->first_table = TRUE;
 
     ctx->icon_data = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
@@ -863,6 +914,7 @@ ReportContext *report_context_text_new()
     ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                g_free, g_free);
     ctx->first_table = TRUE;
+    ctx->first_sub_table = TRUE;
 
     return ctx;
 }
@@ -886,6 +938,7 @@ ReportContext *report_context_shell_new()
     ctx->column_titles = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                g_free, g_free);
     ctx->first_table = TRUE;
+    ctx->first_sub_table = TRUE;
 
     return ctx;
 }
