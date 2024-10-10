@@ -930,7 +930,7 @@ static gboolean update_field(gpointer data)
             gtk_tree_store_set(store, item->iter, INFO_TREE_COL_VALUE, value, -1);
         } else {
             GList *children = gtk_container_get_children(GTK_CONTAINER(item->widget));
-            gtk_label_set_markup(GTK_LABEL(children->next->data), value);
+	    if(children && children->next->data && value) gtk_label_set_markup(GTK_LABEL(children->next->data), value);
             g_list_free(children);
         }
 
@@ -990,9 +990,6 @@ static void detail_view_clear(DetailView *detail_view)
 static gboolean reload_section(gpointer data)
 {
     ShellModuleEntry *entry = (ShellModuleEntry *)data;
-#if GTK_CHECK_VERSION(2, 14, 0)
-    //GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->window));
-#endif
 
     /* if the entry is still selected, update it */
     if (entry->selected) {
@@ -1000,6 +997,9 @@ static gboolean reload_section(gpointer data)
         GtkTreeIter iter;
         double pos_info_scroll;
         double pos_detail_scroll;
+
+	/*Freeze window updates*/
+	gdk_window_freeze_updates(gtk_widget_get_window(shell->window));
 
         /* save current position */
         pos_info_scroll = RANGE_GET_VALUE(info_tree, vscrollbar);
@@ -1013,7 +1013,6 @@ static gboolean reload_section(gpointer data)
 
         /* update the information, clear the treeview and populate it again */
         module_entry_reload(entry);
-        detail_view_clear(shell->detail_view);
         module_selected_show_info(entry, TRUE);
 
         /* if there was a selection, reselect it */
@@ -1022,14 +1021,16 @@ static gboolean reload_section(gpointer data)
             gtk_tree_view_set_cursor(GTK_TREE_VIEW(shell->info_tree->view),
                                      path, NULL, FALSE);
             gtk_tree_path_free(path);
-        } else {
-            /* restore position */
-            RANGE_SET_VALUE(info_tree, vscrollbar, pos_info_scroll);
         }
 
-        RANGE_SET_VALUE(detail_view, vscrollbar, pos_detail_scroll);
+        /* restore position */
+        if(pos_info_scroll) RANGE_SET_VALUE(info_tree, vscrollbar, pos_info_scroll);
+        if(pos_detail_scroll) RANGE_SET_VALUE(detail_view, vscrollbar, pos_detail_scroll);
 
+	/*UnFreeze widget updates*/
+        gdk_window_thaw_updates(gtk_widget_get_window(shell->window));
     }
+
 
     /* destroy the timeout: it'll be set up again */
     return FALSE;
@@ -1222,7 +1223,6 @@ static void group_handle_special(GKeyFile *key_file,
             const gchar *chk = g_utf8_strchr(key, -1, '$');
             fu->field_name = g_strdup(key_is_flagged(chk) ? chk : chk + 1);
             fu->entry = entry;
-
             sfutbl = g_new0(ShellFieldUpdateSource, 1);
             sfutbl->source_id = g_timeout_add(ms, update_field, fu);
             sfutbl->sfu = fu;
@@ -1790,7 +1790,6 @@ static void module_selected_show_info_detail(GKeyFile *key_file,
 static void
 module_selected_show_info(ShellModuleEntry *entry, gboolean reload)
 {
-    //GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(shell->info_tree->view));
     gsize ngroups;
     gint i;
 
