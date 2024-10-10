@@ -174,7 +174,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_FIB] =
         {
             N_("CPU Fibonacci"),
-            "nautilus.png",
+            "nautilus.svg",
             callback_benchmark_fib,
             scan_benchmark_fib,
             MODULE_FLAG_BENCHMARK,
