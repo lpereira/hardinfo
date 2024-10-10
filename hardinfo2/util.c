@@ -661,8 +661,6 @@ static ShellModule *module_load(gchar * filename)
 	module->weight = weight_func ? weight_func() : 0;
 	module->name = name_func();
 
-        g_module_symbol(module->dll, "hi_module_get_about",
-   	 	        (gpointer) & (module->aboutfunc));
         g_module_symbol(module->dll, "hi_module_deinit",
    	 	        (gpointer) & (module->deinit));
         g_module_symbol(module->dll, "hi_module_get_summary",
