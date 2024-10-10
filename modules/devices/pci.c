@@ -31,7 +31,7 @@ static const struct {
     { .class = 0x0200, .icon = "network-interface.png" },
     { .class = 0x0c03, .icon = "usb.svg" },
     { .class = 0x0403, .icon = "audio.png" },
-    { .class = 0x0805, .icon = "usbfldisk.png" },
+    { .class = 0x0805, .icon = "media-floppy.png" },
     { .class = 0x0d11, .icon = "bluetooth.png" },
     { .class = 0x0703, .icon = "modem.png" },
     { .class = 0x01, .icon = "hdd.svg" },
