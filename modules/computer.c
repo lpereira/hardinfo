@@ -1126,7 +1126,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=memory.svg\n"
                     "Method=computer::getMemoryDesc\n"
                     "[%s]\n"
-                    "Icon=module.svg\n"
+                    "Icon=devices.svg\n"
                     "Method=devices::getMotherboard\n"
                     "[%s]\n"
                     "Icon=monitor.svg\n"

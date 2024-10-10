@@ -45,7 +45,7 @@ static const char mobo_shorter[] = "Mainboard";
 static const dmi_type dta = 16; /* array */
 static const dmi_type dtm = 17; /* socket */
 static const char mem_icon[] = "memory.svg";
-static const char array_icon[] = "pci.svg";
+static const char array_icon[] = "computer.png";
 static const char empty_icon[] = "module.svg";
 
 
