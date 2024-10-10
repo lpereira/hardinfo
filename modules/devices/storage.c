@@ -95,15 +95,15 @@ gboolean __scan_udisks2_devices(void) {
         char *label;
         char *icon;
     } media_info[] = {
-        { "thumb",                  "Thumb-drive",        "usbfldisk" },
-        { "flash",                  "Flash Card",         "usbfldisk" },
-        { "flash_cf",               "CompactFlash",       "usbfldisk" },
-        { "flash_ms",               "MemoryStick",        "usbfldisk" },
-        { "flash_sm",               "SmartMedia",         "usbfldisk" },
-        { "flash_sd",               "SD",                 "usbfldisk" },
-        { "flash_sdhc",             "SDHC",               "usbfldisk" },
-        { "flash_sdxc",             "SDXC",               "usbfldisk" },
-        { "flash_mmc",              "MMC",                "usbfldisk" },
+        { "thumb",                  "Thumb-drive",        "media-usb" },
+        { "flash",                  "Flash Card",         "media-sd" },
+        { "flash_cf",               "CompactFlash",       "media-sd" },
+        { "flash_ms",               "MemoryStick",        "media-sd" },
+        { "flash_sm",               "SmartMedia",         "media-sd" },
+        { "flash_sd",               "SD",                 "media-sd" },
+        { "flash_sdhc",             "SDHC",               "media-sd" },
+        { "flash_sdxc",             "SDXC",               "media-sd" },
+        { "flash_mmc",              "MMC",                "media-sd" },
         { "floppy",                 "Floppy Disk",        "media-floppy" },
         { "floppy_zip",             "Zip Disk",           "media-floppy" },
         { "floppy_jaz",             "Jaz Disk",           "media-floppy" },
@@ -253,11 +253,7 @@ gboolean __scan_udisks2_devices(void) {
         ven_tag = vendor_list_ribbon(ext->vendors, params.fmt_opts);
 
         udisks2_storage_list = h_strdup_cprintf("$%s$%s=%s|%s %s\n", udisks2_storage_list, devid, disk->block_dev, size, ven_tag ? ven_tag : "", disk->model);
-	if(strstr(icon,"hdd")){
-            storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", storage_icons, devid, disk->model, icon);
-	} else {
-            storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, disk->model, icon);
-	}
+        storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", storage_icons, devid, disk->model, icon);
         features = h_strdup_cprintf("%s", features, disk->removable ? _("Removable"): _("Fixed"));
 
         if (disk->ejectable) {
@@ -566,7 +562,7 @@ void __scan_scsi_devices(void)
 
                 gchar *devid = g_strdup_printf("SCSI%d", n);
                 scsi_storage_list = h_strdup_cprintf("$%s$scsi%d=|%s\n", scsi_storage_list, devid, scsi_controller, model);
-                storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons, devid, model, icon);
+                storage_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", storage_icons, devid, model, icon);
 
                 gchar *strhash = g_strdup_printf(_("[Device Information]\n"
                                                  "Model=%s\n"), model);
@@ -771,7 +767,7 @@ void __scan_ide_devices(void)
 
 	    ide_storage_list = h_strdup_cprintf("$%s$hd%c=|%s\n", ide_storage_list, devid, iface, model);
 	    storage_icons =
-		h_strdup_cprintf("Icon$%s$%s=%s.png\n", storage_icons,
+		h_strdup_cprintf("Icon$%s$%s=%s.svg\n", storage_icons,
 				 devid, model, g_str_equal(media, "cdrom") ? "cdrom" : "hdd");
 
 	    gchar *strhash = g_strdup_printf(_("[Device Information]\n" "Model=%s\n"),

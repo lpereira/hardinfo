@@ -416,7 +416,7 @@ static void scan_net_interfaces_24(void)
          trans_mb, _("MiB"), recv_mb, _("MiB"));
         net_get_iface_type(ifacename, &iface_type, &iface_icon, &ni);
 
-        network_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n",
+        network_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n",
                          network_icons, devid,
                          ifacename, iface_icon);
 

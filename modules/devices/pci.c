@@ -29,19 +29,19 @@ static const struct {
     const gchar *icon;
     uint32_t class;
 } class2icon[] = {
-    { .class = 0x0102, .icon = "media-floppy.png" },
+    { .class = 0x0102, .icon = "media-floppy.svg" },
     { .class = 0x0200, .icon = "network-interface.svg" },
     { .class = 0x0c03, .icon = "usb.svg" },
     { .class = 0x0c80, .icon = "usb.svg" },
     { .class = 0x0400, .icon = "gpu.svg" },
-    { .class = 0x0402, .icon = "modem.png" },
+    { .class = 0x0402, .icon = "modem.svg" },
     { .class = 0x0403, .icon = "audio.svg" },
-    { .class = 0x0805, .icon = "media-sd.png" },
-    { .class = 0x0d11, .icon = "bluetooth.png" },
-    { .class = 0x0703, .icon = "modem.png" },
-    { .class = 0x0900, .icon = "keyboard.png" },
-    { .class = 0x0902, .icon = "mouse.png" },
-    { .class = 0x0904, .icon = "joystick.png" },
+    { .class = 0x0805, .icon = "media-sd.svg" },
+    { .class = 0x0d11, .icon = "bluetooth.svg" },
+    { .class = 0x0703, .icon = "modem.svg" },
+    { .class = 0x0900, .icon = "keyboard.svg" },
+    { .class = 0x0902, .icon = "mouse.svg" },
+    { .class = 0x0904, .icon = "joystick.svg" },
     { .class = 0x01, .icon = "hdd.svg" },
     { .class = 0x02, .icon = "network.svg" },
     { .class = 0x03, .icon = "monitor.svg" },
@@ -54,10 +54,10 @@ static const struct {
     /*{ .class = 0x0a, .icon = "docking.svg" },*/
     { .class = 0x0b, .icon = "processor.svg" },
     /*{ .class = 0x0c, .icon = "serial.svg" },*/
-    { .class = 0x0d, .icon = "wireless.png" },
+    { .class = 0x0d, .icon = "wireless.svg" },
     /*{ .class = 0x0e, .icon = "intelligent.svg" },*/
     /*{ .class = 0x0f, .icon = "satellite.svg" },*/
-    { .class = 0x10, .icon = "cryptohash.png" },
+    { .class = 0x10, .icon = "cryptohash.svg" },
     /*{ .class = 0x11, .icon = "dsp.svg" },*/
     /*{ .class = 0x12, .icon = "fpga.svg" },*/
     /*{ .class = 0x13, .icon = "instrumentation.svg" },*/

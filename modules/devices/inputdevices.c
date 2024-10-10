@@ -29,9 +29,9 @@ static struct {
     char *icon;
 } input_devices[] = {
     { NULL,       "module.svg"   }, // UNKNOWN
-    { "Keyboard", "keyboard.png" },
-    { "Joystick", "joystick.png" },
-    { "Mouse",    "mouse.png"    },
+    { "Keyboard", "keyboard.svg" },
+    { "Joystick", "joystick.svg" },
+    { "Mouse",    "mouse.svg"    },
     { "Speaker",  "audio.svg"    },
     { "Audio",    "audio.svg"    }
 };

@@ -95,10 +95,10 @@ const char *find_icon(const char *lvfs_name) {
         { "audio-card", "audio.svg" },
         { "computer", "computer.svg" },
         { "drive-harddisk", "hdd.svg" },
-        { "input-gaming", "joystick.png" },
+        { "input-gaming", "joystick.svg" },
         { "input-tablet", NULL },
-        { "network-modem", "wireless.png" },
-        { "preferences-desktop-keyboard", "keyboard.png" },
+        { "network-modem", "wireless.svg" },
+        { "preferences-desktop-keyboard", "keyboard.svg" },
         { "thunderbolt", NULL },
         { "touchpad-disabled", NULL },
         /* default */

@@ -121,11 +121,7 @@ static void _usb_dev(const usbd *u) {
     icon = get_usbdev_icon(u);
 
     usb_list = h_strdup_cprintf("$%s$%s=%s\n", usb_list, key, label, name);
-    if(!icon || strstr(icon,"usb")){
-        usb_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", usb_icons, key, label, icon ? icon: "usb");
-    } else {
-        usb_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", usb_icons, key, label, icon ? icon: "usb");
-    }
+    usb_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", usb_icons, key, label, icon ? icon: "usb");
 
     if (u->if_list != NULL) {
         i = u->if_list;
