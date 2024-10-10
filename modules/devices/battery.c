@@ -266,7 +266,7 @@ __scan_battery_sysfs_add_battery(const gchar *name)
 	g_free(status);
     }
 
-    if(name[0]=='B'){//Battery
+    if((name[0]=='B') || strstr(name,"CMB")){//Battery
 
     status = read_contents(path, "status");
     capacity = read_contents(path, "capacity");
