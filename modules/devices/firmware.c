@@ -92,8 +92,8 @@ const char *find_icon(const char *lvfs_name) {
     static const
     struct { char *lvfs, *hi; } imap[] = {
         { "applications-internet", "internet.svg" },
-        { "audio-card", "audio.png" },
-        { "computer", "computer.png" },
+        { "audio-card", "audio.svg" },
+        { "computer", "computer.svg" },
         { "drive-harddisk", "hdd.svg" },
         { "input-gaming", "joystick.png" },
         { "input-tablet", NULL },

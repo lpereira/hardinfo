@@ -32,8 +32,8 @@ static struct {
     { "Keyboard", "keyboard.png" },
     { "Joystick", "joystick.png" },
     { "Mouse",    "mouse.png"    },
-    { "Speaker",  "audio.png"    },
-    { "Audio",    "audio.png"    }
+    { "Speaker",  "audio.svg"    },
+    { "Audio",    "audio.svg"    }
 };
 
 // source: https://elixir.bootlin.com/linux/v5.9/source/include/uapi/linux/input.h#L251

@@ -58,13 +58,13 @@ void scan_arp(gboolean reload);
 void scan_statistics(gboolean reload);
 
 static ModuleEntry entries[] = {
-    {N_("Interfaces"), "network-interface.png", callback_network, scan_network, MODULE_FLAG_NONE},
-    {N_("IP Connections"), "network-connections.png", callback_connections, scan_connections, MODULE_FLAG_NONE},
-    {N_("Routing Table"), "network.png", callback_route, scan_route, MODULE_FLAG_NONE},
-    {N_("ARP Table"), "module.svg", callback_arp, scan_arp, MODULE_FLAG_NONE},
+    {N_("Interfaces"), "network-interface.svg", callback_network, scan_network, MODULE_FLAG_NONE},
+    {N_("IP Connections"), "network-connections.svg", callback_connections, scan_connections, MODULE_FLAG_NONE},
+    {N_("Routing Table"), "route.svg", callback_route, scan_route, MODULE_FLAG_NONE},
+    {N_("ARP Table"), "network-arp.svg", callback_arp, scan_arp, MODULE_FLAG_NONE},
     {N_("DNS Servers"), "internet.svg", callback_dns, scan_dns, MODULE_FLAG_NONE},
-    {N_("Statistics"), "network-statistics.png", callback_statistics, scan_statistics, MODULE_FLAG_NONE},
-    {N_("Shared Directories"), "shares.png", callback_shares, scan_shares, MODULE_FLAG_NONE},
+    {N_("Statistics"), "network-statistics.svg", callback_statistics, scan_statistics, MODULE_FLAG_NONE},
+    {N_("Shared Directories"), "shares.svg", callback_shares, scan_shares, MODULE_FLAG_NONE},
     {NULL},
 };
 

@@ -166,11 +166,7 @@ static void add_sensor(const char *type,
     }
 
     if (icon != NULL) {
-        if(strstr(icon,"fan")||strstr(icon,"therm")){
-            sensor_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", sensor_icons, key, sensor, icon);
-        } else {
-            sensor_icons = h_strdup_cprintf("Icon$%s$%s=%s.png\n", sensor_icons, key, sensor, icon);
-        }
+      sensor_icons = h_strdup_cprintf("Icon$%s$%s=%s.svg\n", sensor_icons, key, sensor, icon);
     }
 
     moreinfo_add_with_prefix("DEV", key, g_strdup_printf("%.2f%s", value, unit));

@@ -158,7 +158,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_ZLIB] =
         {
             N_("CPU Zlib"),
-            "file-roller.png",
+            "compress.svg",
             callback_benchmark_zlib,
             scan_benchmark_zlib,
             MODULE_FLAG_BENCHMARK,
@@ -166,7 +166,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_CRYPTOHASH] =
         {
             N_("CPU CryptoHash"),
-            "cryptohash.png",
+            "cryptohash.svg",
             callback_benchmark_cryptohash,
             scan_benchmark_cryptohash,
             MODULE_FLAG_BENCHMARK,
@@ -182,7 +182,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_NQUEENS] =
         {
             N_("CPU N-Queens"),
-            "nqueens.png",
+            "nqueens.svg",
             callback_benchmark_nqueens,
             scan_benchmark_nqueens,
             MODULE_FLAG_BENCHMARK,
@@ -190,7 +190,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_FFT] =
         {
             N_("FPU FFT"),
-            "fft.png",
+            "fft.svg",
             callback_benchmark_fft,
             scan_benchmark_fft,
             MODULE_FLAG_BENCHMARK,
@@ -198,7 +198,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_RAYTRACE] =
         {
             N_("FPU Raytracing (Single-thread)"),
-            "raytrace.png",
+            "raytrace.svg",
             callback_benchmark_raytrace,
             scan_benchmark_raytrace,
             MODULE_FLAG_BENCHMARK,
@@ -206,7 +206,7 @@ static ModuleEntry entries[] = {
     [BENCHMARK_IPERF3_SINGLE] =
         {
             N_("Internal Network Speed"),
-            "network.png",
+            "network.svg",
             callback_benchmark_iperf3_single,
             scan_benchmark_iperf3_single,
             MODULE_FLAG_BENCHMARK,

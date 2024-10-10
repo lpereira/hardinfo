@@ -1126,7 +1126,7 @@ gchar *hi_module_get_summary(void)
                     "Icon=memory.svg\n"
                     "Method=computer::getMemoryDesc\n"
                     "[%s]\n"
-                    "Icon=devices.svg\n"
+                    "Icon=mb.svg\n"
                     "Method=devices::getMotherboard\n"
                     "[%s]\n"
                     "Icon=monitor.svg\n"
@@ -1135,10 +1135,10 @@ gchar *hi_module_get_summary(void)
                     "Icon=hdd.svg\n"
                     "Method=devices::getStorageDevicesSimple\n"
                     "[%s]\n"
-                    "Icon=printer.png\n"
+                    "Icon=printer.svg\n"
                     "Method=devices::getPrinters\n"
                     "[%s]\n"
-                    "Icon=audio.png\n"
+                    "Icon=audio.svg\n"
                     "Method=computer::getAudioCards\n",
                     _("Operating System"),
                     _("Processor"), _("Memory"), (char*)idle_free(machine_type), _("Graphics"),
