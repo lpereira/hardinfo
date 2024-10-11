@@ -524,6 +524,10 @@ static Distro parse_os_release(void)
 	contents=id;
         id=strreplace(id,"\n","");
         g_free(contents);
+	//
+	contents=id;
+        id=strreplace(id," ","");
+        g_free(contents);
         if(strlen(id)<1) {g_free(id);id=NULL;}
     }
     if(version){
