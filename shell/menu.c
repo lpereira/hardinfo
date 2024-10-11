@@ -221,7 +221,7 @@ void menu_init(Shell * shell)
     t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/HelpMenu/WebPage"));
     gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("home.svg",size,size));
     t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/HelpMenu/ReportBug"));
-    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("report-bug.svg",size,size));
+    gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("report-bug.svg",size*0.8,size*0.8));
     t=GTK_IMAGE_MENU_ITEM(gtk_ui_manager_get_widget(shell->ui_manager, "/MainMenu/HelpMenu/About"));
     gtk_image_menu_item_set_image(t,icon_cache_get_image_at_size("hardinfo2.svg",size,size));
 

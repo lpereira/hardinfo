@@ -110,9 +110,9 @@ static ModuleEntry entries[] = {
     [ENTRY_DMI] = {N_("System DMI"), "computer.svg", callback_dmi, scan_dmi, MODULE_FLAG_NONE},
     [ENTRY_DMI_MEM] = {N_("Memory Devices"), "memory.svg", callback_dmi_mem, scan_dmi_mem, MODULE_FLAG_NONE},
 #if defined(ARCH_x86) || defined(ARCH_x86_64)
-    [ENTRY_DTREE] = {N_("Device Tree"), "devices.svg", callback_dtree, scan_dtree, MODULE_FLAG_HIDE},
+    [ENTRY_DTREE] = {N_("Device Tree"), "devicetree.svg", callback_dtree, scan_dtree, MODULE_FLAG_HIDE},
 #else
-    [ENTRY_DTREE] = {N_("Device Tree"), "devices.svg", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
+    [ENTRY_DTREE] = {N_("Device Tree"), "devicetree.svg", callback_dtree, scan_dtree, MODULE_FLAG_NONE},
 #endif	/* x86 or x86_64 */
     [ENTRY_RESOURCES] = {N_("Resources"), "resources.svg", callback_device_resources, scan_device_resources, MODULE_FLAG_NONE},
     { NULL }
