@@ -709,6 +709,7 @@ gchar *processor_meta(GSList * processors) {
     g_free(meta_cpu_topo);
     g_free(meta_freq_desc);
     g_free(meta_clocks);
+    g_free(meta_caches);
     return ret;
 }
 
