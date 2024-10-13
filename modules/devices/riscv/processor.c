@@ -26,6 +26,225 @@
 #include "riscv_data.h"
 #include "riscv_data.c"
 
+static gchar *__cache_get_info_as_string(Processor *processor)
+{
+    gchar *result = g_strdup("");
+    GSList *cache_list;
+    ProcessorCache *cache;
+
+    if (!processor->cache) {
+        return g_strdup(_("Cache information not available=\n"));
+    }
+
+    for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
+        cache = (ProcessorCache *)cache_list->data;
+
+        result = h_strdup_cprintf(_("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"),
+                                  result,
+                                  cache->level,
+                                  C_("cache-type", cache->type),
+                                  cache->ways_of_associativity,
+                                  cache->number_of_sets,
+                                  cache->size);
+    }
+
+    return result;
+}
+
+/* This is not used directly, but creates translatable strings for
+ * the type string returned from /sys/.../cache */
+//static const char* cache_types[] = {
+//    NC_("cache-type", /*/cache type, as appears in: Level 1 (Data)*/ "Data"),
+//    NC_("cache-type", /*/cache type, as appears in: Level 1 (Instruction)*/ "Instruction"),
+//    NC_("cache-type", /*/cache type, as appears in: Level 2 (Unified)*/ "Unified")
+//};
+
+static void __cache_obtain_info(Processor *processor)
+{
+    ProcessorCache *cache;
+    gchar *endpoint, *entry, *index;
+    gchar *uref = NULL;
+    gint i;
+    gint processor_number = processor->id;
+
+    endpoint = g_strdup_printf("/sys/devices/system/cpu/cpu%d/cache", processor_number);
+
+    for (i = 0; ; i++) {
+      cache = g_new0(ProcessorCache, 1);
+
+      index = g_strdup_printf("index%d/", i);
+
+      entry = g_strconcat(index, "type", NULL);
+      cache->type = h_sysfs_read_string(endpoint, entry);
+      g_free(entry);
+
+      if (!cache->type) {
+        g_free(cache);
+        g_free(index);
+        goto fail;
+      }
+
+      entry = g_strconcat(index, "level", NULL);
+      cache->level = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "number_of_sets", NULL);
+      cache->number_of_sets = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "physical_line_partition", NULL);
+      cache->physical_line_partition = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "size", NULL);
+      cache->size = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      entry = g_strconcat(index, "ways_of_associativity", NULL);
+      cache->ways_of_associativity = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      /* unique cache references: id is nice, but share_cpu_list can be
+       * used if it is not available. */
+      entry = g_strconcat(index, "id", NULL);
+      uref = h_sysfs_read_string(endpoint, entry);
+      g_free(entry);
+      if (uref != NULL && *uref != 0 )
+        cache->uid = atoi(uref);
+      else
+        cache->uid = -1;
+      g_free(uref);
+      entry = g_strconcat(index, "shared_cpu_list", NULL);
+      cache->shared_cpu_list = h_sysfs_read_string(endpoint, entry);
+      g_free(entry);
+
+      /* reacharound */
+      entry = g_strconcat(index, "../../topology/physical_package_id", NULL);
+      cache->phy_sock = h_sysfs_read_int(endpoint, entry);
+      g_free(entry);
+
+      g_free(index);
+
+      processor->cache = g_slist_append(processor->cache, cache);
+    }
+
+fail:
+    g_free(endpoint);
+}
+
+
+#define cmp_cache_test(f) if (a->f < b->f) return -1; if (a->f > b->f) return 1;
+
+static gint cmp_cache(ProcessorCache *a, ProcessorCache *b) {
+        gint i = 0;
+        cmp_cache_test(phy_sock);
+        i = g_strcmp0(a->type, b->type); if (i!=0) return i;
+        cmp_cache_test(level);
+        cmp_cache_test(size);
+        cmp_cache_test(uid); /* uid is unique among caches with the same (type, level) */
+        if (a->uid == -1) {
+            /* if id wasn't available, use shared_cpu_list as a unique ref */
+            i = g_strcmp0(a->shared_cpu_list, b->shared_cpu_list); if (i!=0)
+            return i;
+        }
+        return 0;
+}
+
+static gint cmp_cache_ignore_id(ProcessorCache *a, ProcessorCache *b) {
+        gint i = 0;
+        cmp_cache_test(phy_sock);
+        i = g_strcmp0(a->type, b->type); if (i!=0) return i;
+        cmp_cache_test(level);
+        cmp_cache_test(size);
+        return 0;
+}
+
+gchar *caches_summary(GSList * processors)
+{
+    gchar *ret = g_strdup_printf("[%s]\n", _("Caches"));
+    GSList *all_cache = NULL, *uniq_cache = NULL;
+    GSList *tmp, *l;
+    Processor *p;
+    ProcessorCache *c, *cur = NULL;
+    gint cur_count = 0;
+
+    /* create list of all cache references */
+    for (l = processors; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (p->cache) {
+            tmp = g_slist_copy(p->cache);
+            if (all_cache) {
+                all_cache = g_slist_concat(all_cache, tmp);
+            } else {
+                all_cache = tmp;
+            }
+        }
+    }
+
+    if (g_slist_length(all_cache) == 0) {
+        ret = h_strdup_cprintf("%s=\n", ret, _("(Not Available)") );
+        g_slist_free(all_cache);
+        return ret;
+    }
+
+    /* ignore duplicate references */
+    all_cache = g_slist_sort(all_cache, (GCompareFunc)cmp_cache);
+    for (l = all_cache; l; l = l->next) {
+        c = (ProcessorCache*)l->data;
+        if (!cur) {
+            cur = c;
+        } else {
+            if (cmp_cache(cur, c) != 0) {
+                uniq_cache = g_slist_prepend(uniq_cache, cur);
+                cur = c;
+            }
+        }
+    }
+    uniq_cache = g_slist_prepend(uniq_cache, cur);
+    uniq_cache = g_slist_reverse(uniq_cache);
+    cur = 0, cur_count = 0;
+
+    /* count and list caches */
+    for (l = uniq_cache; l; l = l->next) {
+        c = (ProcessorCache*)l->data;
+        if (!cur) {
+            cur = c;
+            cur_count = 1;
+        } else {
+            if (cmp_cache_ignore_id(cur, c) != 0) {
+                ret = h_strdup_cprintf(_("Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"),
+                                      ret,
+                                      cur->level,
+                                      C_("cache-type", cur->type),
+                                      cur->phy_sock,
+                                      cur_count,
+                                      cur->size,
+                                      cur->size * cur_count,
+                                      cur->ways_of_associativity,
+                                      cur->number_of_sets);
+                cur = c;
+                cur_count = 1;
+            } else {
+                cur_count++;
+            }
+        }
+    }
+    ret = h_strdup_cprintf(_("Level %d (%s)#%d=%dx %dKB (%dKB), %d-way set-associative, %d sets\n"),
+                          ret,
+                          cur->level,
+                          C_("cache-type", cur->type),
+                          cur->phy_sock,
+                          cur_count,
+                          cur->size,
+                          cur->size * cur_count,
+                          cur->ways_of_associativity,
+                          cur->number_of_sets);
+
+    g_slist_free(all_cache);
+    g_slist_free(uniq_cache);
+    return ret;
+}
+
 
 gchar *processor_name(GSList * processors) {
     /* compatible contains a list of compatible hardware, so be careful
@@ -86,6 +305,96 @@ gchar *processor_name(GSList * processors) {
     }
 
     if(!ret) ret = g_strdup("RISC-V Processor (NoDT)");
+    return ret;
+}
+
+#define khzint_to_mhzdouble(k) (((double)k)/1000)
+#define cmp_clocks_test(f) if (a->f < b->f) return -1; if (a->f > b->f) return 1;
+
+static gint cmp_cpufreq_data(cpufreq_data *a, cpufreq_data *b) {
+        gint i = 0;
+        i = g_strcmp0(a->shared_list, b->shared_list); if (i!=0) return i;
+        cmp_clocks_test(cpukhz_max);
+        cmp_clocks_test(cpukhz_min);
+        return 0;
+}
+
+static gint cmp_cpufreq_data_ignore_affected(cpufreq_data *a, cpufreq_data *b) {
+        cmp_clocks_test(cpukhz_max);
+        cmp_clocks_test(cpukhz_min);
+        return 0;
+}
+
+gchar *clocks_summary(GSList * processors)
+{
+    gchar *ret = g_strdup_printf("[%s]\n", _("Clocks"));
+    GSList *all_clocks = NULL, *uniq_clocks = NULL;
+    GSList *l;
+    Processor *p;
+    cpufreq_data *c, *cur = NULL;
+    gint cur_count = 0;
+
+    /* create list of all clock references */
+    for (l = processors; l; l = l->next) {
+        p = (Processor*)l->data;
+        if (p->cpufreq && p->cpufreq->cpukhz_max > 0) {
+            all_clocks = g_slist_prepend(all_clocks, p->cpufreq);
+        }
+    }
+
+    if (g_slist_length(all_clocks) == 0) {
+        ret = h_strdup_cprintf("%s=\n", ret, _("(Not Available)") );
+        g_slist_free(all_clocks);
+        return ret;
+    }
+
+    /* ignore duplicate references */
+    all_clocks = g_slist_sort(all_clocks, (GCompareFunc)cmp_cpufreq_data);
+    for (l = all_clocks; l; l = l->next) {
+        c = (cpufreq_data*)l->data;
+        if (!cur) {
+            cur = c;
+        } else {
+            if (cmp_cpufreq_data(cur, c) != 0) {
+                uniq_clocks = g_slist_prepend(uniq_clocks, cur);
+                cur = c;
+            }
+        }
+    }
+    uniq_clocks = g_slist_prepend(uniq_clocks, cur);
+    uniq_clocks = g_slist_reverse(uniq_clocks);
+    cur = 0, cur_count = 0;
+
+    /* count and list clocks */
+    for (l = uniq_clocks; l; l = l->next) {
+        c = (cpufreq_data*)l->data;
+        if (!cur) {
+            cur = c;
+            cur_count = 1;
+        } else {
+            if (cmp_cpufreq_data_ignore_affected(cur, c) != 0) {
+                ret = h_strdup_cprintf(_("%.2f-%.2f %s=%dx\n"),
+                                ret,
+                                khzint_to_mhzdouble(cur->cpukhz_min),
+                                khzint_to_mhzdouble(cur->cpukhz_max),
+                                _("MHz"),
+                                cur_count);
+                cur = c;
+                cur_count = 1;
+            } else {
+                cur_count++;
+            }
+        }
+    }
+    ret = h_strdup_cprintf(_("%.2f-%.2f %s=%dx\n"),
+                    ret,
+                    khzint_to_mhzdouble(cur->cpukhz_min),
+                    khzint_to_mhzdouble(cur->cpukhz_max),
+                    _("MHz"),
+                    cur_count);
+
+    g_slist_free(all_clocks);
+    g_slist_free(uniq_clocks);
     return ret;
 }
 
@@ -167,6 +476,8 @@ processor_scan(void)
     for (pi = procs; pi; pi = pi->next) {
         processor = (Processor *) pi->data;
 
+	__cache_obtain_info(processor);
+
         /* strings can't be null or segfault later */
         STRIFNULL(processor->model_name, "RISC-V Processor" );
         UNKIFNULL(processor->mmu);
@@ -215,11 +526,41 @@ gchar *processor_get_capabilities_from_flags(gchar * strflags)
 }
 
 gchar *processor_describe(GSList * processors) {
-    return processor_describe_default(processors);
+    return processor_describe_by_counting_names(processors);
 }
 
-gchar *
-processor_get_detailed_info(Processor *processor)
+gchar *processor_meta(GSList * processors) {
+    gchar *meta_soc = processor_name(processors);
+    gchar *meta_cpu_desc = processor_describe(processors);
+    gchar *meta_cpu_topo = processor_describe_default(processors);
+    gchar *meta_freq_desc = processor_frequency_desc(processors);
+    gchar *meta_clocks = clocks_summary(processors);
+    gchar *meta_caches = caches_summary(processors);
+    gchar *ret = NULL;
+    UNKIFNULL(meta_cpu_desc);
+    ret = g_strdup_printf("[%s]\n"
+                            "%s=%s\n"
+                            "%s=%s\n"
+                            "%s=%s\n"
+                            "%s=%s\n"
+                            "%s"
+                            "%s",
+                            _("SOC/Package"),
+                            _("Name"), meta_soc,
+                            _("Description"), meta_cpu_desc,
+                            _("Topology"), meta_cpu_topo,
+                            _("Logical CPU Config"), meta_freq_desc,
+			    meta_clocks, meta_caches );
+    g_free(meta_soc);
+    g_free(meta_cpu_desc);
+    g_free(meta_cpu_topo);
+    g_free(meta_freq_desc);
+    g_free(meta_clocks);
+    g_free(meta_caches);
+    return ret;
+}
+
+gchar *processor_get_detailed_info(Processor *processor)
 {
     gchar *tmp_flags, *tmp_cpufreq, *tmp_topology, *ret;
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
@@ -261,9 +602,13 @@ gchar *processor_get_info(GSList * processors)
 
     if (g_slist_length(processors) > 1) {
     gchar *ret, *tmp, *hashkey;
+    gchar *meta;
     GSList *l;
 
-    tmp = g_strdup("");
+    tmp = g_strdup_printf("$!CPU_META$%s=\n", _("SOC/Package Information") );
+
+    meta = processor_meta(processors);
+    moreinfo_add_with_prefix("DEV", "CPU_META", meta);
 
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
