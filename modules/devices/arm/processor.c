@@ -36,17 +36,17 @@ static const gchar *arm_mode_str[] = {
     "A32 on A64",
 };
 
-static gchar *__cache_get_info_as_string(Processor *processor)
+static gchar *__cache_get_info_as_string(GSList *cpu_cache)
 {
     gchar *result = g_strdup("");
-    GSList *cache_list;
     ProcessorCache *cache;
+    GSList *cache_list;
 
-    if (!processor->cache) {
+    if (!cpu_cache) {
         return g_strdup(_("Cache information not available=\n"));
     }
 
-    for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
+    for (cache_list = cpu_cache; cache_list; cache_list = cache_list->next) {
         cache = (ProcessorCache *)cache_list->data;
 
         result = h_strdup_cprintf(_("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"),
@@ -532,14 +532,15 @@ gchar *clocks_summary(GSList * processors)
 gchar *
 processor_get_detailed_info(Processor *processor)
 {
-    gchar *tmp_flags, *tmp_imp = NULL, *tmp_part = NULL,
-        *tmp_arch, *tmp_cpufreq, *tmp_topology, *ret;
+    gchar *tmp_flags, *tmp_imp = NULL, *tmp_part = NULL, *tmp_cache;
+    gchar *tmp_arch, *tmp_cpufreq, *tmp_topology, *ret;
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
     arm_part(processor->cpu_implementer, processor->cpu_part, &tmp_imp, &tmp_part);
     tmp_arch = (char*)arm_arch_more(processor->cpu_architecture);
 
     tmp_topology = cputopo_section_str(processor->cputopo);
     tmp_cpufreq = cpufreq_section_str(processor->cpufreq);
+    tmp_cache = __cache_get_info_as_string(processor->cache);
 
     ret = g_strdup_printf("[%s]\n"
                        "%s=%s\n"       /* linux name */
@@ -548,17 +549,17 @@ processor_get_detailed_info(Processor *processor)
                        "%s=%.2f %s\n"  /* frequency */
                        "%s=%.2f\n"     /* bogomips */
                        "%s=%s\n"       /* byte order */
-                       "%s" /* topology */
-                       "%s" /* frequency scaling */
-                       "[%s]\n"    /* ARM */
+                       "%s"            /* topology */
+                       "%s"            /* frequency scaling */
+		       "[%s]\n%s\n"    /* cache */
+                       "[%s]\n"        /* ARM */
                        "%s=[%s] %s\n"  /* implementer */
                        "%s=[%s] %s\n"  /* part */
                        "%s=[%s] %s\n"  /* architecture */
                        "%s=%s\n"       /* variant */
                        "%s=%s\n"       /* revision */
-                       "[%s]\n" /* flags */
-                       "%s"
-                       "%s",    /* empty */
+                       "[%s]\n"        /* flags */
+		       "%s",
                    _("Processor"),
                    _("Linux Name"), processor->linux_name,
                    _("Decoded Name"), processor->model_name,
@@ -568,17 +569,18 @@ processor_get_detailed_info(Processor *processor)
                    _("Byte Order"), byte_order_str(),
                    tmp_topology,
                    tmp_cpufreq,
+		   _("Cache"), tmp_cache,
                    _("ARM"),
                    _("Implementer"), processor->cpu_implementer, (tmp_imp) ? tmp_imp : "",
                    _("Part"), processor->cpu_part, (tmp_part) ? tmp_part : "",
                    _("Architecture"), processor->cpu_architecture, (tmp_arch) ? tmp_arch : "",
                    _("Variant"), processor->cpu_variant,
                    _("Revision"), processor->cpu_revision,
-                   _("Capabilities"), tmp_flags,
-                    "");
+                   _("Capabilities"), tmp_flags);
     g_free(tmp_flags);
     g_free(tmp_cpufreq);
     g_free(tmp_topology);
+    g_free(tmp_cache);
     return ret;
 }
 
@@ -719,6 +721,7 @@ gchar *processor_get_info(GSList * processors)
     gchar *ret, *tmp, *hashkey;
     gchar *meta; /* becomes owned by more_info? no need to free? */
     GSList *l;
+    gchar *icons=g_strdup("");
 
     tmp = g_strdup_printf("$!CPU_META$%s=\n", _("SOC/Package Information") );
 
@@ -741,9 +744,21 @@ gchar *processor_get_info(GSList * processors)
 
     ret = g_strdup_printf("[$ShellParam$]\n"
                   "ViewType=1\n"
+                  "ColumnTitle$TextValue=%s\n"
+                  "ColumnTitle$Value=%s\n"
+                  "ColumnTitle$Extra1=%s\n"
+                  "ColumnTitle$Extra2=%s\n"
+                  "ShowColumnHeaders=true\n"
+                  "%s"
                   "[Processors]\n"
-                  "%s", tmp);
+                  "%s", _("Device"), _("Frequency"), _("Model"), _("Socket:Core"), icons, tmp);
     g_free(tmp);
+    g_free(icons);
+
+    // now here's something fun...
+    struct Info *i = info_unflatten(ret);
+    g_free(ret);
+    ret = info_flatten(i);
 
     return ret;
 }
