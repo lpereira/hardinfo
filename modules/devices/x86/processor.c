@@ -781,8 +781,7 @@ gchar *processor_get_info(GSList * processors)
         if (v)
             tag_vendor(&model_name, 0, v->name_short ? v->name_short : v->name, v->ansi_color, params.fmt_opts);
 
-        // bp: not convinced it looks good, but here's how it would be done...
-        //icons = h_strdup_cprintf("Icon$CPU%d$cpu%d=processor.svg\n", icons, processor->id, processor->id);
+        icons = h_strdup_cprintf("Icon$CPU%d$cpu%d=processor.svg\n", icons, processor->id, processor->id);
 
         tmp = g_strdup_printf("%s$CPU%d$cpu%d=%.2f %s|%s|%d:%d\n",
                   tmp, processor->id,

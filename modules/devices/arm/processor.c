@@ -731,6 +731,8 @@ gchar *processor_get_info(GSList * processors)
     for (l = processors; l; l = l->next) {
         processor = (Processor *) l->data;
 
+        icons = h_strdup_cprintf("Icon$CPU%d$cpu%d=processor.svg\n", icons, processor->id, processor->id);
+
         tmp = g_strdup_printf("%s$CPU%d$%s=%.2f %s\n",
                   tmp, processor->id,
                   processor->model_name,
