@@ -26,17 +26,17 @@
 #include "riscv_data.h"
 #include "riscv_data.c"
 
-static gchar *__cache_get_info_as_string(Processor *processor)
+static gchar *__cache_get_info_as_string(GSList *cpu_cache)
 {
     gchar *result = g_strdup("");
-    GSList *cache_list;
     ProcessorCache *cache;
+    GSList *cache_list;
 
-    if (!processor->cache) {
+    if (!cpu_cache) {
         return g_strdup(_("Cache information not available=\n"));
     }
 
-    for (cache_list = processor->cache; cache_list; cache_list = cache_list->next) {
+    for (cache_list = cpu_cache; cache_list; cache_list = cache_list->next) {
         cache = (ProcessorCache *)cache_list->data;
 
         result = h_strdup_cprintf(_("Level %d (%s)=%d-way set-associative, %d sets, %dKB size\n"),
@@ -562,23 +562,24 @@ gchar *processor_meta(GSList * processors) {
 
 gchar *processor_get_detailed_info(Processor *processor)
 {
-    gchar *tmp_flags, *tmp_cpufreq, *tmp_topology, *ret;
+  gchar *tmp_flags, *tmp_cpufreq, *tmp_topology, *tmp_cache, *ret;
     tmp_flags = processor_get_capabilities_from_flags(processor->flags);
     tmp_topology = cputopo_section_str(processor->cputopo);
     tmp_cpufreq = cpufreq_section_str(processor->cpufreq);
+    tmp_cache = __cache_get_info_as_string(processor->cache);
 
     ret = g_strdup_printf("[%s]\n"
-                   "%s=%s\n"  /* model */
-                   "%s=%s\n"  /* isa */
-                   "%s=%s\n"  /* uarch */
-                   "%s=%s\n"  /* mmu */
+                   "%s=%s\n"      /* model */
+                   "%s=%s\n"      /* isa */
+                   "%s=%s\n"      /* uarch */
+                   "%s=%s\n"      /* mmu */
                    "%s=%.2f %s\n" /* frequency */
                    "%s=%s\n"      /* byte order */
-                   "%s" /* topology */
-                   "%s" /* frequency scaling */
-                   "[%s]\n" /* extensions */
-                   "%s"
-                   "%s",/* empty */
+                   "%s"           /* topology */
+                   "%s"           /* frequency scaling */
+		   "[%s]\n%s"     /* cache */
+                   "[%s]\n"       /* extensions */
+		   "%s",
                    _("Processor"),
                    _("Model"), processor->model_name,
                    _("Architecture"), processor->isa,
@@ -588,8 +589,8 @@ gchar *processor_get_detailed_info(Processor *processor)
                    _("Byte Order"), byte_order_str(),
                    tmp_topology,
                    tmp_cpufreq,
-                   _("Capabilities"), tmp_flags,
-                    "");
+		   _("Cache"), tmp_cache,
+                   _("Capabilities"), tmp_flags);
     g_free(tmp_flags);
     g_free(tmp_cpufreq);
     g_free(tmp_topology);
@@ -599,11 +600,10 @@ gchar *processor_get_detailed_info(Processor *processor)
 gchar *processor_get_info(GSList * processors)
 {
     Processor *processor;
-
-    if (g_slist_length(processors) > 1) {
     gchar *ret, *tmp, *hashkey;
     gchar *meta;
     GSList *l;
+    gchar *icons=g_strdup("");
 
     tmp = g_strdup_printf("$!CPU_META$%s=\n", _("SOC/Package Information") );
 
@@ -628,13 +628,21 @@ gchar *processor_get_info(GSList * processors)
 
     ret = g_strdup_printf("[$ShellParam$]\n"
                   "ViewType=1\n"
+                  "ColumnTitle$TextValue=%s\n"
+                  "ColumnTitle$Value=%s\n"
+                  "ColumnTitle$Extra1=%s\n"
+                  "ColumnTitle$Extra2=%s\n"
+                  "ShowColumnHeaders=true\n"
+                  "%s"
                   "[Processors]\n"
-                  "%s", tmp);
+                  "%s", _("Device"), _("Frequency"), _("Model"), _("Socket:Core"), icons, tmp);
     g_free(tmp);
+    g_free(icons);
+
+    // now here's something fun...
+    struct Info *i = info_unflatten(ret);
+    g_free(ret);
+    ret = info_flatten(i);
 
     return ret;
-    }
-
-    processor = (Processor *) processors->data;
-    return processor_get_detailed_info(processor);
 }
