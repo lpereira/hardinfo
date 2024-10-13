@@ -1,18 +1,22 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-	 viewBox="0 0 491.52 491.52" xml:space="preserve">
-<path style="fill:#3A556A;" d="M398.238,361.868c-39.644,37.995-93.36,61.416-152.477,61.416
-	c-59.033,0-112.681-23.354-152.31-61.254c-21.846,22.83-38.692,50.484-48.58,81.292c-8.933,27.835,16.509,54.68,44.662,46.804
-	c106.184-29.707,210.195-30.694,311.914-1.373c28.308,8.16,54.317-18.661,45.142-46.656
-	C436.63,411.703,419.873,384.427,398.238,361.868z"/>
-<circle style="fill:#EBF0F3;" cx="245.76" cy="202.706" r="202.706"/>
-<path style="fill:#2F4859;" d="M245.76,405.411c-54.046,0-103.112-21.193-139.451-55.669c-4.443,3.928-8.757,8.003-12.856,12.287
-	c39.629,37.9,93.276,61.254,152.31,61.254c59.116,0,112.832-23.421,152.477-61.416c-4.105-4.281-8.423-8.35-12.871-12.275
-	C349.012,384.157,299.883,405.411,245.76,405.411z"/>
-<circle style="fill:#3A556A;" cx="245.76" cy="202.706" r="118.323"/>
-<circle style="fill:#64798A;" cx="245.76" cy="202.706" r="88.643"/>
-<circle style="fill:#FCD462;" cx="245.76" cy="45.112" r="17.352"/>
-<circle style="fill:#27A2DB;" cx="245.76" cy="202.706" r="58.793"/>
-<ellipse transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 248.4315 452.8476)" style="fill:#FFFFFF;" cx="218.005" cy="174.971" rx="10.593" ry="20.977"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <radialGradient id="a" cx="256" cy="50.67" r="18" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#caff9b" offset="0"/>
+   <stop style="stop-color:#a4f754" offset=".656"/>
+   <stop style="stop-color:#67cd00" offset="1"/>
+  </radialGradient>
+  <linearGradient id="b" x1="257" x2="257.5" y1="213" y2="213.5" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#2aa4da" offset="0"/>
+   <stop style="stop-color:#249ed6" offset="1"/>
+  </linearGradient>
+ </defs>
+ <path d="m414.2 376.5c-41.13 39.42-96.87 63.73-158.2 63.73-61.25 0-116.9-24.23-158-63.56-22.67 23.69-40.15 52.38-50.41 84.35-9.269 28.88 17.13 56.74 46.34 48.56 110.2-30.82 218.1-31.85 323.6-1.425 29.37 8.467 56.36-19.36 46.84-48.41-10.33-31.54-27.72-59.84-50.17-83.25z" fill="#3a556a"/>
+ <path d="m256 421.7c-56.08 0-107-21.99-144.7-57.76-4.61 4.076-9.46 8.678-13.71 13.12 41.12 39.32 97.16 63.93 158.4 63.93 61.34 0 117.4-24.68 158.6-64.1-4.259-4.442-9.114-9.038-13.73-13.11-37.72 35.86-88.7 57.92-144.9 57.92z" fill="#2f4859"/>
+ <circle cx="256" cy="213.9" r="210" fill="#b8bdc1"/>
+ <circle cx="256" cy="213.9" r="123" fill="#3a556a"/>
+ <circle cx="256" cy="213.9" r="92" fill="#64798a"/>
+ <circle cx="256" cy="50.7" r="18" fill="url(#a)"/>
+ <circle cx="256" cy="213.9" r="61" fill="url(#b)"/>
+ <ellipse transform="rotate(225)" cx="-291" cy="30" rx="11" ry="22" fill="#fff"/>
 </svg>
