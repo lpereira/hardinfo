@@ -22,7 +22,7 @@
   <linearGradient id="b" x1="8.163" x2="623.4" y1="11.01" y2="11.01" gradientTransform="matrix(.31 0 0 .2 62.6 346.3)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
   <linearGradient id="d" x1="256.1" x2="446.9" y1="348.4" y2="348.4" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
  </defs>
- <path d="m1 470.3c143.8 0 183.1-424.7 255-424.7 65.38 0 104.6 424.7 255 424.7z" style="fill:url(#c)"/>
- <path d="m65 470.3c53.9 0 68.5-122 95.5-122 24.5 0 39.2 122 95.5 122z" style="fill:url(#b)"/>
- <path d="m256 470.3c53.9 0 68.5-122 95.5-122 24.5 0 39.2 122 95.5 122z" style="fill:url(#d)"/>
+ <path d="m1 470.3c143.8 0 183.1-424.7 255-424.7 65.38 0 104.6 424.7 255 424.7z" fill="url(#c)"/>
+ <path d="m65 470.3c53.9 0 68.5-102.8 95.5-102.8 24.5 0 39.2 102.8 95.5 102.8z" fill="url(#b)"/>
+ <path d="m256 470.3c53.9 0 68.5-102.8 95.5-102.8 24.5 0 39.2 102.8 95.5 102.8z" fill="url(#d)"/>
 </svg>
