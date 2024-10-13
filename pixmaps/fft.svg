@@ -1,14 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
-  <defs>
-    <linearGradient id="g">
-      <stop offset="24.999999%" stop-color="rgb(0,10,100)"/>
-      <stop offset="25.000001%" stop-color="rgb(0,10,155)"/>
-      <stop offset="49.999999%" stop-color="rgb(0,10,155)"/>
-      <stop offset="50.000001%" stop-color="rgb(0,10,205)"/>
-      <stop offset="74.999999%" stop-color="rgb(0,10,205)"/>
-      <stop offset="75.000001%" stop-color="rgb(0,10,255)"/>
-      <stop offset="100%" stop-color="rgb(0,10,255)"/>
-    </linearGradient>
-  </defs>
-  <path d="M10,490C230,490 290,10 400,10C500,10 560,490 790,490v5H10z" fill="url(#g)"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="a" x1="7.89" x2="623" y1="12.7" y2="12.7" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#dbdb00" offset=".25"/>
+   <stop style="stop-color:#e5e500" offset=".25"/>
+   <stop style="stop-color:#ffff00" offset=".5"/>
+   <stop style="stop-color:#ffff66" offset=".5"/>
+   <stop style="stop-color:#ffff99" offset=".75"/>
+   <stop style="stop-color:#ffffcc" offset=".75"/>
+   <stop style="stop-color:#ffffe5" offset="1"/>
+  </linearGradient>
+  <linearGradient id="c" x1=".999" x2="511.1" y1="470.4" y2="470.4" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#000eb2" offset=".25"/>
+   <stop style="stop-color:#000ae5" offset=".25"/>
+   <stop style="stop-color:#0009e5" offset=".5"/>
+   <stop style="stop-color:#1a26ff" offset=".5"/>
+   <stop style="stop-color:#1a22ff" offset=".75"/>
+   <stop style="stop-color:#333aff" offset=".75"/>
+   <stop style="stop-color:#6868ff" offset="1"/>
+  </linearGradient>
+  <linearGradient id="b" x1="8.163" x2="623.4" y1="11.01" y2="11.01" gradientTransform="matrix(.31 0 0 .2 62.6 346.3)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <linearGradient id="d" x1="256.1" x2="446.9" y1="348.4" y2="348.4" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+ </defs>
+ <path d="m1 470.3c143.8 0 183.1-424.7 255-424.7 65.38 0 104.6 424.7 255 424.7z" style="fill:url(#c)"/>
+ <path d="m65 470.3c53.9 0 68.5-122 95.5-122 24.5 0 39.2 122 95.5 122z" style="fill:url(#b)"/>
+ <path d="m256 470.3c53.9 0 68.5-122 95.5-122 24.5 0 39.2 122 95.5 122z" style="fill:url(#d)"/>
 </svg>
