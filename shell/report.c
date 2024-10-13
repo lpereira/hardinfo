@@ -457,7 +457,7 @@ static void report_html_header(ReportContext * ctx)
 	 "    td.icon_subtitle img { width: 4.0em; padding: 0.28em 0 0 0.28em; }\n"
 	 "    td:not(.stitle, .sstitle, .icon_subtitle) { padding: 12px 15px; border-bottom: 1px solid #dddddd; }\n"
 	 "    td.icon { min-width: 27px; }\n"
-	 "    td.icon img  { width: 1.2em; }\n"
+	 "    td.icon img  { width: 2.2em; }\n"
 	 "    td.icon div { display: block; box-sizing: border-box; -moz-box-sizing: border-box; width: 1.2em; "
 	 "                  height: 1.2em; background-position: right; }\n"
 	 "    td.icon_subtitle div { display: block; box-sizing: border-box; -moz-box-sizing: border-box; margin-left: 15px; "
@@ -550,7 +550,7 @@ static void report_html_key_value(ReportContext * ctx, gchar *key, gchar *value,
     /* icon from the table is const, so can be re-used without free */
     if (icon) {
         gchar *icon_class = icon_name_css_id(icon);
-        icon = g_strdup_printf("<div class=\"%s\"></div>", icon_class);
+        icon = g_strdup_printf("<img class=\"%s\"/>", icon_class);
         g_free(icon_class);
     } else
         icon = g_strdup("");
@@ -594,7 +594,7 @@ static void report_html_details_key_value(ReportContext * ctx, gchar *key, gchar
     /* icon from the table is const, so can be re-used without free */
     if (icon) {
         gchar *icon_class = icon_name_css_id(icon);
-        icon = g_strdup_printf("<div class=\"%s\"></div>", icon_class);
+        icon = g_strdup_printf("<img class=\"%s\"/>", icon_class);
         g_free(icon_class);
     } else
         icon = g_strdup("");
