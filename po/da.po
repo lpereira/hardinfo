@@ -794,7 +794,7 @@ msgstr "Åbne rapporten med din webbrowser?"
 
 #: shell/report.c:975
 msgid "_No"
-msgstr "_Nr"
+msgstr "_Nej"
 
 #: shell/report.c:976
 msgid "_Open"
