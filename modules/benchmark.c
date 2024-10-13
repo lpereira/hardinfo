@@ -675,7 +675,7 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
         gboolean done=FALSE;
         bench_results[entry] = r;
 
-	bench_status = g_strdup_printf(_("Benchmarking: <b>%s</b>."), entries[entry].name);
+	bench_status = g_strdup_printf(_("Benchmarking: <b>%s</b>."), _(entries[entry].name));
         shell_status_update(bench_status);
 	g_free(bench_status);
 
