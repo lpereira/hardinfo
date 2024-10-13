@@ -274,9 +274,8 @@ bench_value benchmark_parallel_for(gint n_threads,
         }
     }
 
-    DEBUG("Using %d threads across %d logical processors; processing %d "
-          "elements (%d per thread)",
-          ret.threads_used, cpu_threads, (end - start), iter_per_thread);
+    /*DEBUG("Using %d threads across %d logical processors; processing %d elements (%d per thread)",
+      ret.threads_used, cpu_threads, (end - start), iter_per_thread);*/
 
     g_timer_start(timer);
     for (iter = start; iter < end;) {
@@ -672,22 +671,26 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
         bench_value r = EMPTY_BENCH_VALUE;
         GIOChannel *channel=NULL;
         guint watch_id;
+	gchar *title;
         gboolean done=FALSE;
+
         bench_results[entry] = r;
 
 	bench_status = g_strdup_printf(_("Benchmarking: <b>%s</b>."), _(entries[entry].name));
         shell_status_update(bench_status);
 	g_free(bench_status);
 
-	bench_dialog = gtk_dialog_new_with_buttons ("Benchmarking...",
+	title=g_strdup_printf(_("Benchmarking: %s"),_(entries[entry].name));
+	bench_dialog = gtk_dialog_new_with_buttons (title,
                                       GTK_WINDOW(shell_get_main_shell()->transient_dialog),
                                       GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
 				      _("Stop"), GTK_RESPONSE_ACCEPT,
                                       NULL);
+	g_free(title);
 
 	content_area = gtk_dialog_get_content_area (GTK_DIALOG(bench_dialog));
 
-        bench_image = icon_cache_get_image_at_size("benchmark.svg", 64, 64);
+        bench_image = icon_cache_get_image_at_size(entries[entry].icon, 64, 64);
 
 #if GTK_CHECK_VERSION(3,0,0)
 	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
@@ -709,8 +712,6 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
 	gtk_window_set_deletable(GTK_WINDOW(bench_dialog), FALSE);
 	gtk_widget_show_all (bench_dialog);
 
-        //while (gtk_events_pending()) {gtk_main_iteration();}
-
         benchmark_dialog = g_new0(BenchmarkDialog, 1);
         benchmark_dialog->dialog = bench_dialog;
         benchmark_dialog->r = r;
@@ -723,37 +724,28 @@ static void do_benchmark(void (*benchmark_function)(void), int entry)
                                      &bench_pid, NULL, &bench_stdout, NULL,
                                      NULL)) {
 
-	    //DEBUG("spawning benchmark; pid=%d", bench_pid);
             channel = g_io_channel_unix_new(bench_stdout);
             watch_id = g_io_add_watch(channel, G_IO_IN, do_benchmark_handler, benchmark_dialog);
 
             switch (gtk_dialog_run(GTK_DIALOG(benchmark_dialog->dialog))) {
             case GTK_RESPONSE_NONE:
-	        //DEBUG("benchmark finished");
                 if(benchmark_dialog) bench_results[entry] = benchmark_dialog->r;
 		done=TRUE;
                 break;
 	    case GTK_RESPONSE_ACCEPT:
-	        //DEBUG("cancelling benchmark");
 		break;
 	    }
 
-	    //if(!done) DEBUG("benchmark NOT done");
             if(!done) if(watch_id) g_source_remove(watch_id);
             if(!done) kill(bench_pid, SIGINT);
 	    if(!done) params.aborting_benchmarks=1;
 
             g_io_channel_unref(channel);
-	    //shell_status_set_enabled(FALSE);
-	    //shell_view_set_enabled(TRUE);
             if(benchmark_dialog && benchmark_dialog->dialog) gtk_widget_destroy(benchmark_dialog->dialog);
             g_free(benchmark_dialog);
 
             return;
         }
-        //shell_status_set_enabled(FALSE);
-        //shell_view_set_enabled(TRUE);
-	//gtk_widget_activate(GTK_WINDOW(shell_get_main_shell()->window));
         if(benchmark_dialog && benchmark_dialog->dialog) gtk_widget_destroy(benchmark_dialog->dialog);
         g_free(benchmark_dialog);
         return;
@@ -886,7 +878,6 @@ static gchar *get_benchmark_results(gsize *len)
 static gchar *run_benchmark(gchar *name)
 {
     int i;
-    //DEBUG("run_benchmark = %s", name);
     for (i = 0; entries[i].name; i++) {
         if (g_str_equal(entries[i].name, name)) {
             void (*scan_callback)(gboolean rescan);
