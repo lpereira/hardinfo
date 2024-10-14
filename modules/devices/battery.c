@@ -238,8 +238,11 @@ static void
 __scan_battery_sysfs_add_battery(const gchar *name)
 {
     gchar *path = g_strdup_printf("/sys/class/power_supply/%s", name);
-    gchar *status, *capacity, *capacity_level, *technology, *manufacturer,
-        *model_name, *serial_number;
+    gchar *status, *capacity, *capacity_level, *technology, *manufacturer;
+    gchar *model_name, *serial_number, *charge_full_design=NULL, *charge_full=NULL;
+    gchar *voltage_min_design=NULL,*energy_full_design=NULL;
+    float full_design=-1.0,full_current=-1.0,voltage=-1.0;
+    unsigned long l;
 
     if (!path)
         return;
@@ -275,10 +278,25 @@ __scan_battery_sysfs_add_battery(const gchar *name)
     manufacturer = read_contents(path, "manufacturer");
     model_name = read_contents(path, "model_name");
     serial_number = read_contents(path, "serial_number");
+    energy_full_design = read_contents(path, "energy_full_design");
+    charge_full_design = read_contents(path, "charge_full_design");
+    charge_full = read_contents(path, "charge_full");
+    voltage_min_design = read_contents(path, "voltage_min_design");
+
+    if(voltage_min_design) if(sscanf(voltage_min_design, "%lu", &l)==1) voltage=(float)l/1000000.0;//uV->V
+    if(!charge_full_design && energy_full_design) if(sscanf(energy_full_design, "%lu", &l)==1) full_design=(float)l/(voltage>0?voltage*1000000.0:-1.0);//uWh->Ah
+    if(charge_full_design) if(sscanf(charge_full_design, "%lu", &l)==1) full_design=(float)l/1000000.0;//uAh->Ah
+    if(charge_full) if(sscanf(charge_full, "%lu", &l)==1) full_current=(float)l/1000000.0;//uAh->Ah
 
     battery_list = h_strdup_cprintf(_("\n[Battery: %s]\n"
         "State=%s\n"
         "Capacity=%s / %s\n"
+        "Battery Health=%.0f %%\n"
+        "Design Full Energy=%.3f Wh\n"
+        "Current Full Energy=%.3f Wh\n"
+        "Design Full Capacity=%.3f Ah\n"
+        "Current Full Capacity=%.3f Ah\n"
+        "Voltage Design=%.3f V\n"
         "Battery Technology=%s\n"
         "Manufacturer=%s\n"
         "Model Number=%s\n"
@@ -287,6 +305,12 @@ __scan_battery_sysfs_add_battery(const gchar *name)
         name,
         status,
         capacity, capacity_level,
+	voltage>0?(full_current*voltage*100.0)/(full_design*voltage):-1,
+	voltage>0?full_design*voltage:-1,
+        voltage>0?full_current*voltage:-1,
+	full_design,
+        full_current,
+	voltage,
         technology,
         manufacturer,
         model_name,
@@ -296,6 +320,10 @@ __scan_battery_sysfs_add_battery(const gchar *name)
         g_free(powerstate);powerstate=g_strdup("BAT");
     }
 
+    free(voltage_min_design);
+    free(energy_full_design);
+    free(charge_full_design);
+    free(charge_full);
     free(status);
     free(capacity);
     free(capacity_level);
