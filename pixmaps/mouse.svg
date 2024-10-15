@@ -6,12 +6,12 @@
    <stop style="stop-color:#314960" offset="1"/>
   </linearGradient>
   <linearGradient id="b" x1="158" x2="354" y1="302" y2="302" gradientUnits="userSpaceOnUse">
-   <stop style="stop-color:#d9d9d9" offset="0"/>
+   <stop style="stop-color:#e5e5e5" offset="0"/>
    <stop style="stop-color:#bfbfbf" offset="1"/>
   </linearGradient>
  </defs>
  <path d="m268 158h-23.4v-28.2c0-21 17-38 38-38h128c8.06 0 14.6-6.56 14.6-14.6 0-8.06-6.56-14.6-14.6-14.6h-323c-21 0-38-17-38-38v-24.6h23.4v24.6c0 8.06 6.56 14.6 14.6 14.6h323c21 0 38 17 38 38s-17 38-38 38h-128c-8.06 0-14.6 6.56-14.6 14.6z" fill="#808080"/>
- <path d="m256 150.1c-50.52-4.8e-4 -106.9 41.67-106.9 107.3v143.6c0 59.3 47.88 107.3 106.9 107.3s106.9-48.07 106.9-107.3v-143.6c0-65.36-56.42-107.3-106.9-107.3z" style="fill:url(#b);stroke-width:4;stroke:#b2b2b2"/>
+ <path d="m256 150.1c-50.52-4.8e-4 -106.9 41.67-106.9 107.3v143.6c0 59.3 47.88 107.3 106.9 107.3s106.9-48.07 106.9-107.3v-143.6c0-65.36-56.42-107.3-106.9-107.3z" style="fill:url(#b);stroke-width:4;stroke:#999"/>
  <ellipse cx="256" cy="446" rx="28.9" ry="14.2" fill="#a2b8c0"/>
  <path d="m151.1 256.9v39.66h102.3v-144.4c-55.77 2.475-102.3 48.34-102.3 104.7z" fill="#e2e6e9"/>
  <path d="m258.7 152.1v144.4h102.3v-39.66c0-56.38-46.52-102.3-102.3-104.7z" fill="#d3d6d9"/>
