@@ -305,7 +305,7 @@ __scan_battery_sysfs_add_battery(const gchar *name)
         name,
         status,
         capacity, capacity_level,
-	voltage>0?(full_current*voltage*100.0)/(full_design*voltage):-1,
+	full_design>0?(full_current*100.0)/full_design:-1,
 	voltage>0?full_design*voltage:-1,
         voltage>0?full_current*voltage:-1,
 	full_design,
