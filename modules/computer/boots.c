@@ -29,6 +29,8 @@ scan_boots_real(void)
     gchar **tmp;
     gboolean spawned;
     gchar *out, *err, *p, *s, *next_nl;
+    int cnt;
+    cnt=0;
 
     scan_os(FALSE);
 
@@ -37,13 +39,13 @@ scan_boots_real(void)
     else
       return;
 
-    spawned = hardinfo_spawn_command_line_sync("last",
-            &out, &err, NULL, NULL);
+    spawned = hardinfo_spawn_command_line_sync("last -F -w", &out, &err, NULL, NULL);
+
     if (spawned && out != NULL) {
         p = out;
         while((next_nl = strchr(p, '\n'))) {
             strend(p, '\n');
-            if (strstr(p, "system boot")) {
+            if (strstr(p, "system boot") && (params.force_all_details || (cnt++<20))) {
                 s = p;
                 while (*s) {
                   if (*s == ' ' && *(s + 1) == ' ') {
@@ -55,11 +57,11 @@ scan_boots_real(void)
                 }
                 tmp = g_strsplit(p, " ", 0);
                 computer->os->boots =
-                  h_strdup_cprintf("\n%s %s %s %s=%s",
-                    computer->os->boots,
-                    tmp[4], tmp[5], tmp[6], tmp[7], tmp[3]);
+                  h_strdup_cprintf("\n%s %s %s %s %s=%s",
+				   computer->os->boots,
+				   tmp[4], tmp[5], tmp[6], tmp[7], tmp[8], tmp[3]);
                 g_strfreev(tmp);
-            }
+	    }
             p = next_nl + 1;
         }
       g_free(out);
