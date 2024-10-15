@@ -1,38 +1,55 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-	 viewBox="0 0 512.024 512.024" xml:space="preserve">
-<path d="M359.548,485.792H152.476c-4.328,0-7.864-3.536-7.864-7.864V7.864c0-4.328,3.536-7.864,7.864-7.864h207.072
-	c4.328,0,7.864,3.536,7.864,7.864v470.064C367.412,482.248,363.876,485.792,359.548,485.792z"/>
-<path style="fill:#333333;" d="M155.756,0v148.096c0,11.536,9.44,20.968,20.968,20.968h158.584c11.536,0,20.968-9.44,20.968-20.968
-	V0H155.756z"/>
-<rect x="155.756" y="74.264" width="200.56" height="5.24"/>
-<rect x="155.756" y="10.048" width="200.56" height="5.24"/>
-<rect x="218.644" y="125.376" style="fill:#5B5C5F;" width="19.744" height="5.24"/>
-<rect x="191.444" y="125.376" style="fill:#DB2B42;" width="19.744" height="5.24"/>
-<rect x="155.972" y="482.32" width="200.08" height="29.704"/>
-<rect x="300.268" y="125.376" style="fill:#DB2B42;" width="19.744" height="5.24"/>
-<rect x="273.052" y="125.376" style="fill:#5B5C5F;" width="19.744" height="5.24"/>
-<rect x="245.852" y="125.376" style="fill:#DB2B42;" width="19.744" height="5.24"/>
-<circle style="fill:#5B5C5F;" cx="327.22" cy="210.568" r="21.152"/>
-<path style="fill:#999999;" d="M327.22,233.056c-12.392,0-22.488-10.096-22.488-22.488c0-12.392,10.096-22.488,22.488-22.488
-	c12.392,0,22.488,10.096,22.488,22.488S339.612,233.056,327.22,233.056z M327.22,190.744c-10.928,0-19.824,8.896-19.824,19.824
-	c0,10.928,8.896,19.824,19.824,19.824c10.928,0,19.824-8.896,19.824-19.824S338.148,190.744,327.22,190.744z"/>
-<circle cx="327.22" cy="210.568" r="15.024"/>
-<circle style="fill:#DB2B42;" cx="327.22" cy="210.568" r="6.392"/>
-<g style="opacity:0.5;">
-	<rect x="222.812" y="421.568" style="fill:#FFFFFF;" width="66.4" height="20.096"/>
-</g>
-<path style="fill:#5B5C5F;" d="M320.668,142.352H191.356l-18.32,26.416c1.2,0.176,2.424,0.304,3.688,0.304h158.584
-	c1.264,0,2.488-0.128,3.688-0.304L320.668,142.352z"/>
-<circle cx="269.532" cy="155.704" r="3.928"/>
-<circle cx="283.388" cy="155.704" r="3.928"/>
-<circle cx="297.212" cy="155.704" r="3.928"/>
-<circle cx="311.1" cy="155.704" r="3.928"/>
-<g style="opacity:0.25;">
-	<path style="fill:#FFFFFF;" d="M356.924,0H256.012v485.792h100.912c5.768,0,10.488-4.72,10.488-10.488V10.488
-		C367.412,4.72,362.692,0,356.924,0z"/>
-</g>
-<rect x="196.684" y="153.04" width="24.24" height="5.336"/>
-<rect x="231.764" y="153.04" width="24.24" height="5.336"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="c" x1="198.4" x2="432.2" y1="244" y2="244" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#fff;stop-opacity:.18" offset="0"/>
+   <stop style="stop-color:#fff;stop-opacity:0" offset=".4642"/>
+   <stop style="stop-color:#fff;stop-opacity:0" offset=".5902"/>
+   <stop style="stop-color:#fff;stop-opacity:.18" offset="1"/>
+  </linearGradient>
+  <linearGradient id="a" x1="210" x2="420.7" y1="380" y2="380" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#0000ff;stop-opacity:0" offset="0"/>
+   <stop style="stop-color:#0000ff" offset=".16"/>
+   <stop style="stop-color:#0000ff" offset=".81"/>
+   <stop style="stop-color:#0000ff;stop-opacity:0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="e" x1="118.5" x2="242" y1="256.4" y2="256.4" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#000" offset="0"/>
+   <stop style="stop-color:#454545" offset="1"/>
+  </linearGradient>
+  <radialGradient id="d" cx="222.1" cy="264.2" r="45.52" gradientTransform="matrix(2.869 0 3.952e-6 7.878 -452.7 -1810)" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#0000fd" offset="0"/>
+   <stop style="stop-color:#0303ea;stop-opacity:0" offset="1"/>
+  </radialGradient>
+  <radialGradient id="b" cx="223.6" cy="179.7" r="27.51" gradientTransform="matrix(2.491 0 0 3.253 -365.7 -405.2)" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#4d4dff" offset="0"/>
+   <stop style="stop-color:#4d4dff;stop-opacity:0" offset="1"/>
+  </radialGradient>
+ </defs>
+ <path d="m79.77 85.15 122.2-82.74 1.319 507.9-123.5-43.38z" fill="url(#e)"/>
+ <path d="m422 511h-215.4c-4.543 0-8.255-3.712-8.255-8.255v-493.5c0-4.543 3.712-8.255 8.255-8.255h215.4c7.106 0 10.26 3.274 10.26 10.26v489.5c0 7.139-3.823 10.26-10.26 10.26z"/>
+ <path d="m210.1 1.048v155.4c0 12.11 9.91 22.01 22.01 22.01h166.4c12.11 0 22.01-9.91 22.01-22.01v-155.4z" fill="#333"/>
+ <rect x="210.1" y="79.1" width="210.5" height="5.5"/>
+ <rect x="210.1" y="11.62" width="210.5" height="5.5"/>
+ <rect x="276.1" y="132.7" width="20.7" height="5.5" fill="#5b5c5f"/>
+ <rect x="247.5" y="132.7" width="20.7" height="5.5" fill="#db2b42"/>
+ <rect x="361.8" y="132.7" width="20.7" height="5.5" fill="#db2b42"/>
+ <rect x="333.2" y="132.7" width="20.7" height="5.5" fill="#5b5c5f"/>
+ <rect x="304.6" y="132.7" width="20.7" height="5.5" fill="#db2b42"/>
+ <circle cx="390.1" cy="222.1" r="22.21" fill="#5b5c5f"/>
+ <circle cx="390.1" cy="222.1" r="15.77"/>
+ <circle cx="390.1" cy="222.1" r="6.71" fill="#db2b42"/>
+ <path d="m284 444h69.7v21.1h-69.7z" fill="#999"/>
+ <path d="m383.2 150.5h-135.7l-19.23 27.73c1.26 0.1848 2.545 0.3192 3.871 0.3192h166.4c1.327 0 2.612-0.1344 3.871-0.3192z" fill="#5b5c5f"/>
+ <circle cx="329.6" cy="164.5" r="4.16"/>
+ <circle cx="344.1" cy="164.5" r="4.16"/>
+ <circle cx="358.6" cy="164.5" r="4.16"/>
+ <circle cx="373.2" cy="164.5" r="4.16"/>
+ <rect x="253" y="160.4" width="26" height="8.3"/>
+ <rect x="289.7" y="160.4" width="26" height="8.3"/>
+ <path d="m424 511h-217.4c-4.543 0-8.255-3.712-8.255-8.255v-493.5c0-4.543 3.712-8.255 8.255-8.255h217.4c4.543 0 8.255 3.712 8.255 8.255v493.5c0 4.535-3.712 8.255-8.255 8.255z" fill="url(#c)"/>
+ <path d="m209.9 254.8v247.9l36-9.834v-228.2zm210.8 0-32 9.834v228.2l32 9.834z" fill="url(#a)"/>
+ <path d="m91.7 101.4 91.03-52.56v426.5l-91.03-25.18z" fill="url(#d)"/>
+ <path d="m182.7 104.6c-73.36 21.06-73.36 128.2 0 149.2z" fill="url(#b)"/>
+ <path d="m310 461v-5.93h-4.62v5.93h-2.56v-13.6h2.56v5.47h4.62v-5.47h2.56v13.6zm5.12-11.5v-2.09h8.6v2.09h-3v9.41h3v2.12h-8.6v-2.12h3v-9.41zm11.5 11.5v-1.88c2.01-2.44 6.28-5.01 6.28-7.8 0-1.88-2.53-2.97-5-0.63l-1.34-1.73c0.876-0.814 2.36-1.81 4.4-1.81 2.77 0 4.49 1.51 4.42 3.99-0.114 3.73-3.06 5.46-5.25 7.51h5.74v2.34z"/>
 </svg>
