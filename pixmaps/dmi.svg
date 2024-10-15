@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   viewBox="0 0 512 512"
+   xml:space="preserve"
+   sodipodi:docname="dmi.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs85" /><sodipodi:namedview
+   id="namedview83"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="1.2304688"
+   inkscape:cx="256"
+   inkscape:cy="256"
+   inkscape:window-width="3840"
+   inkscape:window-height="2065"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<rect
+   y="57.324001"
+   width="512"
+   height="397.336"
+   id="rect2"
+   style="fill:#0d25ff;fill-opacity:1"
+   x="0" />
+<circle
+   style="fill:#E21B1B;"
+   cx="44.192"
+   cy="89.38"
+   r="8.928"
+   id="circle4" />
+<g
+   style="opacity:0.7;"
+   id="g8">
+	<circle
+   style="fill:#FFFFFF;"
+   cx="70.968"
+   cy="89.38"
+   r="8.928"
+   id="circle6" />
+</g>
+<g
+   id="g14">
+	<circle
+   style="fill:#666666;"
+   cx="97.736"
+   cy="89.38"
+   r="8.928"
+   id="circle10" />
+	<polygon
+   style="fill:#666666;"
+   points="443.52,105.06 155.96,105.06 175.08,73.716 462.656,73.716  "
+   id="polygon12" />
+</g>
+
+<g
+   id="g28">
+	<polygon
+   style="fill:#666666;"
+   points="0,423.58 82.856,423.58 113.944,454.66 0,454.66  "
+   id="polygon24" />
+	<polygon
+   style="fill:#666666;"
+   points="512,423.58 429.144,423.58 398.056,454.66 512,454.66  "
+   id="polygon26" />
+</g>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<text
+   xml:space="preserve"
+   style="font-style:normal;font-weight:normal;font-size:48.7905px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.21976"
+   x="119.74501"
+   y="189.45796"
+   id="text6080"
+   transform="scale(1.0167343,0.98354111)"><tspan
+     sodipodi:role="line"
+     id="tspan6078"
+     x="119.74501"
+     y="189.45796"
+     style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:104.086px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke-width:1.21976">DMI</tspan><tspan
+     sodipodi:role="line"
+     x="119.74501"
+     y="319.56546"
+     style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:104.086px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ff0000;stroke-width:1.21976"
+     id="tspan11854">BIOS</tspan><tspan
+     sodipodi:role="line"
+     x="119.74501"
+     y="449.67297"
+     style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:104.086px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;stroke-width:1.21976"
+     id="tspan24396">UEFI</tspan></text></svg>
