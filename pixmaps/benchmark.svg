@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
  <defs>
-  <linearGradient id="a" x1="334" x2="187" y1="176" y2="323"  gradientUnits="userSpaceOnUse">
-   <stop style="stop-color:#faf093" offset="0"/>
-   <stop style="stop-color:#dbc400" offset="1"/>
-  </linearGradient>
-  <linearGradient id="b" x1="191" x2="327" y1="183" y2="319"  gradientUnits="userSpaceOnUse">
-   <stop style="stop-color:#656565" offset="0"/>
-   <stop style="stop-color:#3a3a3a" offset="1"/>
-  </linearGradient>
+  <radialGradient id="a" cx="256" cy="256" r="240" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#fffcf5" offset="0"/>
+   <stop style="stop-color:#fbefd0" offset="1"/>
+  </radialGradient>
  </defs>
- <path d="m52.3 255c1e-5 -113 91.5-204 204-204v204zm409 0.821c0 113-91.4 204-204 204v-204z" style="fill:url(#a);stroke-width:12;stroke:#e7bf00"/>
- <path d="m52.3 256c0 113 91.5 204 204 204l-0.0259-204zm409-0.237c0-113-91.4-204-204-204l-0.0884 204z" style="fill:url(#b);stroke-width:12;stroke:#333"/>
- <path d="m242 15.7v225h-227c-20.7 0-20.9 29.7 0 29.7h227v225c0 21.4 29.7 21.4 29.7 0v-225h226c19.4 0 19.7-29.7 0-29.7h-226v-225c0-19.7-29.7-20.1-29.7 0z"/>
+ <circle cx="256" cy="256" r="240" fill="url(#a)"/>
+ <path d="m419 172c14.1 22.7 22.6 58.1 21.6 77.9h-62.5c-1.27-23.4-6.84-36.5-13.9-51.1z" style="fill:#fd4755;stroke-width:2;stroke:#fd071c"/>
+ <path d="m355 98.9c25.7 14.7 44.7 38.5 54.7 55.9l-50.5 34.2c-12.9-17.7-18.5-22.8-36-36.9z" style="fill:#fb6871;stroke-width:2;stroke:#fb3742"/>
+ <path d="m264 68.8c21.5-1.44 58.4 7.4 75.9 20.6l-26.9 57.1c-20.9-9.45-27.7-10.9-49.1-13.5z" style="fill:#ffb945;stroke-width:2;stroke:#fa9b00"/>
+ <path d="m249 133c-11.6 2.01-31.3 4.47-48.7 13.5l-28.7-56.8c17.6-12.3 52.6-22 75.4-20.4z" style="fill:#fde27a;stroke-width:2;stroke:#fdd330"/>
+ <path d="m190 152c-16.8 9.28-28.9 23.4-37.6 36.9l-52.5-32.7c13.1-23.6 32.8-42.2 54.8-57.6z" style="fill:#6af7c7;stroke-width:2;stroke:#1cf7a9"/>
+ <path d="m70.9 251c-0.642-23.7 8.76-58.4 21.3-79.1 0 0 40.4 19.1 55 27.7 0 0-13 22.7-13.2 51.4z" style="fill:#88c7fe;stroke-width:2;stroke:#39a6fe"/>
+ <path d="m256 1c-141 0-255 114-255 255s114 255 255 255 255-114 255-255-114-255-255-255zm0 40c119 0 215 96.3 215 215s-96.3 215-215 215-215-96.3-215-215 96.3-215 215-215zm135 91.2-156 115c-17 12.5-20.3 34.9-4.9 51.2s41 11.4 53.7-7.57zm-121 138c2.16 8.05-2.62 16.3-10.7 18.5-8.05 2.16-16.3-2.62-18.5-10.7-2.16-8.05 2.62-16.3 10.7-18.5 7.44-1.99 16.2 2.06 18.5 10.7z" fill="#364f63"/>
 </svg>
