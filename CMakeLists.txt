@@ -260,8 +260,20 @@ endif()
 if(${distro} MATCHES "Devuan")
     set(HARDINFO2_SYSTEMV 1)
 endif()
-#Devuan
 
+#MX
+if(${distro} MATCHES "DebianGNULinux")
+    if(EXISTS "/etc/initrd_release")
+        file(STRINGS /etc/initrd_release mxdistro REGEX "^NAME=")
+        if(${mxdistro} MATCHES "MX")
+            message("-- Found MX")
+            set(HARDINFO2_SYSTEMV 1)
+	    set(distro "MXLinux")
+        endif()
+   endif()
+endif()
+
+#Void
 if(${distro} MATCHES "Void")
     set(HARDINFO2_RUNIT 1)
 endif()

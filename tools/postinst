@@ -7,7 +7,7 @@ if [ -e /bin/wslinfo ] ; then
   chmod a+r /tmp/hardinfo2_ioports
   echo "Service Installed... (SystemV-WSL)"
 else
-  if [ -e /bin/systemctl ] ; then
+  if [ -e /bin/systemctl ] && [ ! -e /etc/mx-version ] ; then
     systemctl daemon-reload
     systemctl enable hardinfo2
     systemctl start hardinfo2
