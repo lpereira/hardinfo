@@ -7,7 +7,7 @@
    <stop style="stop-color:#ccc" offset="1"/>
   </linearGradient>
  </defs>
- <path d="m258 354v-48.9h177v48.9m-177-99v50.1h-180v48.9" style="fill:none;stroke-width:8;stroke:#2d32b6"/>
+ <path d="m258 354v-48.9h177v48.9m-177-99v50.1h-180v48.9" style="fill:none;stroke-width:16;stroke:#2d32b6"/>
  <path d="m276 339 41.9 42.6v97c0 10.3-8.29 18.6-18.6 18.6h-85.9c-10.3 0-18.6-8.29-18.6-18.6v-121c0-10.3 8.29-18.6 18.6-18.6z" fill="#bfc8d6"/>
  <path d="m317 448v29.7c0 10.3-8.29 18.6-18.6 18.6h-85.9c-10.3 0-18.6-8.29-18.6-18.6v-29.7z" fill="#fcc10a"/>
  <path d="m318 381-23.3-0.159c-10.3-0.0704-18.6-8.29-18.6-18.6l-0.0241-23.5z" fill="#7a859f"/>
