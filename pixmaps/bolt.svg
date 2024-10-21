@@ -1,2 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--fxemoji" preserveAspectRatio="xMidYMid meet"><path fill="#FFB636" d="M459.866 218.346l-186.7.701c-4.619.017-7.618-4.861-5.517-8.975L370.845 8.024c3.103-6.075-4.493-11.949-9.592-7.417L39.948 286.141c-4.221 3.751-1.602 10.732 4.045 10.78l170.444 1.457c4.443.038 7.391 4.619 5.583 8.679L133.317 501.73c-2.688 6.035 4.709 11.501 9.689 7.16l320.937-279.725c4.307-3.753 1.637-10.84-4.077-10.819z"></path></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="a" x1="341" x2="175" y1="47" y2="466" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#ffbf4c" offset="0"/>
+   <stop style="stop-color:#ffa100" offset="1"/>
+  </linearGradient>
+ </defs>
+ <path d="m464 220-187 0.701c-4.62 0.017-7.62-4.86-5.52-8.98l103-202c3.1-6.08-4.49-11.9-9.59-7.42l-321 286c-4.22 3.75-1.6 10.7 4.04 10.8l170 1.46c4.44 0.038 7.39 4.62 5.58 8.68l-86.7 195c-2.69 6.04 4.71 11.5 9.69 7.16l321-280c4.31-3.75 1.64-10.8-4.08-10.8z" fill="url(#a)"/>
+</svg>

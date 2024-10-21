@@ -933,11 +933,11 @@ msgstr ""
 
 #: modules/benchmark/benches.c:168
 msgid "CPU CryptoHash"
-msgstr ""
+msgstr "CPU криптохеш"
 
 #: modules/benchmark/benches.c:176
 msgid "CPU Fibonacci"
-msgstr ""
+msgstr "CPU Фибоначчи"
 
 #: modules/benchmark/benches.c:184
 msgid "CPU N-Queens"

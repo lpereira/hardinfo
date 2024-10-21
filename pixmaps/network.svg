@@ -29,17 +29,17 @@
    <stop style="stop-color:#a5a5fd" offset="1"/>
   </linearGradient>
  </defs>
- <path d="m8.61 255h103v70.3-70.3h392-102v70.3-70.3h-145v-69.1" style="fill:none;stroke-width:16;stroke:#2d32b6"/>
- <circle cx="256" cy="256" r="30" fill="#2d32b6"/>
- <circle cx="111" cy="256" r="30" fill="#2d32b6"/>
- <circle cx="401" cy="256" r="30" fill="#2d32b6"/>
+ <path d="m8.61 255h103v70.3-70.3h392-102v70.3-70.3h-145v-69.1" style="fill:none;stroke-width:20;stroke:#cc3434"/>
+ <circle cx="256" cy="256" r="30" fill="#cc3434"/>
+ <circle cx="111" cy="256" r="30" fill="#cc3434"/>
+ <circle cx="401" cy="256" r="30" fill="#cc3434"/>
  <path d="m214 175-1.07 6.97c-0.138 1 0.825 1.83 1.84 1.83h81.2c1.01 0 2.02-0.837 1.84-1.83l-1.5-7.33z" style="fill:#808080;stroke-width:11;stroke:#808080"/>
  <path d="m213 179c-0.127 0.888 0.829 1.62 1.85 1.62h81.6c1.02 0 2.02-0.737 1.85-1.62 0 0-0.614-4.98-1.12-7.45-0.178-0.879-1.47-2-2.49-2-26 0.0888-52.2 0.188-65.6 0.226s-14.9-0.331-14.9 0.537z" style="fill:#333;stroke-width:10;stroke:#333"/>
  <path d="m248 144h17.2v28.3c0 6.2-17.2 6.11-17.2 0z" fill="url(#a)"/>
  <path d="m150 5.61h211v138h-211z" fill="url(#b)"/>
  <path d="m150 5.57h211c-44.2 53.2-94.3 88.8-211 100z" style="fill-opacity:.35;fill:#97f0ff"/>
  <rect x="150" y="5.4" width="212" height="138" rx="5" ry="5" style="fill:none;stroke-width:10;stroke:#333"/>
- <path d="m359 489-0.871 6.4c-0.138 1 0.825 1.83 1.84 1.83h81.5c1.01 0 2.02-0.837 1.84-1.83l-1.61-6.3z" style="fill:#808080;stroke-width:11;stroke:#808080"/>
+ <path d="m359 490-0.871 6.4c-0.138 1 0.825 1.83 1.84 1.83h81.5c1.01 0 2.02-0.837 1.84-1.83l-1.61-6.3z" style="fill:#808080;stroke-width:11;stroke:#808080"/>
  <path d="m358 492c-0.127 0.888 0.829 1.62 1.85 1.62h81.6c1.02 0 2.02-0.737 1.85-1.62 0 0-0.614-4.98-1.12-7.45-0.178-0.879-1.47-2-2.49-2-26 0.0888-52.2 0.188-65.6 0.226s-14.9-0.299-14.9 0.628z" style="fill:#333;stroke-width:10;stroke:#333"/>
  <path d="m392 457h17.2v28.3c0 6.2-17.2 6.11-17.2 0z" fill="url(#c)"/>
  <path d="m295 319h211v138h-211z" fill="url(#d)"/>

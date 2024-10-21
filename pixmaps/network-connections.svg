@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" version="1.1">
-
-   <defs>
-    <radialGradient id="RG1" cx="50%" cy="50%" fx="50%" fy="50%" r="50%">
-      <stop style="stop-color:rgb(103,155,203);stop-opacity:0.75;" offset="0%"/>
-      <stop style="stop-color:rgb(18,49,65);stop-opacity:1;" offset="100%"/>
-    </radialGradient>
-  </defs>
-  <ellipse cx="35" cy="34" rx="32" ry="30" style="stroke-width:4;stroke:#dddddd;fill:none;"/>
-  <ellipse cx="35" cy="34" rx="32" ry="30" style="fill:url(#RG1);fill-opacity:1;fill-rule:nonzero"/>
-  <g style="fill:none;stroke:#aaaaaa;stroke-width:1.5px;stroke-linecap:butt;" >
-    <path d="M 36,64 C 22,56 19,46 19,34 19,22 26,10 36,4 l 0,60 C 36,64 54,55 54,34 54,13 36,4 36,4" />
-    <path d="m 4,34 63,0 0,0"/>
-    <path d="m 13,15 c 0,0 12,7 23,7 13,0 23,-7 23,-7"/>
-    <path d="m 13,54 c 0,0 9,-7 23,-7 16,0 23,7 23,7"/>
-  </g>
-  <ellipse cx="35" cy="34" rx="32" ry="30" style="stroke-width:3;stroke:#123141;fill:none;"/>
-
-  <ellipse cx="35" cy="22" rx="5" ry="5" style="fill:#000000;stroke:#cccccc;stroke-width:2"/>
-  <path style="fill:none;stroke:#000000;stroke-width:4;" d="M 38,81 C 12,92 3.9,67 10,58 17,46 32,46 39,35 41,32 41,25 36,22"/>
-
-  <path style="fill:#111111;stroke:#666666" d="m 60,87 0,5 c 0,0 -3,0 -4,0 -2,0 -3,3 -3,3 1,0 26,0 27,0 0,0 -1,-3 -3,-3 -1,0 -4,0 -4,0 l 0,-5"/>
-  <path style="fill:#ffffff;stroke:#000000;stroke-width:4px;stroke-linecap:butt" d="m 39,83 c 0,-8 0,-25 0,-31 0,-2 0,-5 3,-5 6,0 45,0 48,0 3,0 3,3 3,7 0,6 0,26 0,29 0,1 0,3 -5,3 -3,0 -43,0 -46,0 -3,0 -3,-3 -3,-3 z"/>
-  <path style="fill:#444444;stroke:#ffffff" d="m 41,49 50,0 0,35 -50,0 z"/>
-
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="a" x1="236" x2="277" y1="409" y2="409" gradientTransform="matrix(.575 0 0 .575 214 247)" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#333" offset="0"/>
+   <stop style="stop-color:#808080" offset=".5"/>
+   <stop style="stop-color:#333" offset="1"/>
+  </linearGradient>
+  <linearGradient id="b" x1="219" x2="298" y1="383" y2="53" gradientTransform="matrix(.575 0 0 .575 214 234)" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#2b34e7" offset="0"/>
+   <stop style="stop-color:#a5a5fd" offset="1"/>
+  </linearGradient>
+  <linearGradient id="c" x1="70.1" x2="435" y1="77.1" y2="442" gradientTransform="matrix(.682 0 0 .683 .317 .142)" gradientUnits="userSpaceOnUse">
+   <stop style="stop-color:#1aa4e5" offset="0"/>
+   <stop style="stop-color:#116b98" offset="1"/>
+  </linearGradient>
+ </defs>
+ <path d="m1 174c0 95 71.8 178 178 176 83.1-1.99 148-62.2 165-133 15.3-63.2-4.98-142-73.9-188-54.4-36.1-122-35.2-176-7.6-53.9 27.6-93.4 82.2-93.4 153zm185-149c24.3 9.45 40.2 47.1 44.2 68.3-12.7-2.27-35.7-3.29-44.3-3.29zm-21.4 65.2c-14.5 0.424-28.9 1.65-43.2 3.84 10.4-37.4 27-61.6 43.2-68.8zm-66.2 8.48c-34.7 8.22-55.9 20.1-67.7 28.8 5.18-15.5 28.9-74 96.5-96.6-8.41 11.6-20.4 32.9-28.7 67.8zm154-1.99c-6.77-24.8-16.1-48.3-28.8-65.8 47.8 14.3 84.1 55 96.5 97.6-12.2-6.73-37-22.4-67.7-31.9zm-88.8 68.3h-30.8c-4.75-14.5-16.3-20.4-21.1-22.2 1.36-14 3.35-24.8 3.62-26.2 22.3-4.13 41.7-5.01 48.1-5.24zm21.6-53.4c9.24 0 33.5 0.503 49.2 4.32 3.22 25.9 3.64 37 4.07 49.3-17.8 9e-3 -35.6 0.018-53.4 0.0272 6.5e-4 -17.8 2e-3 -35.7 3e-3 -53.4l0.0661 2e-3zm-92.4 10.4c-0.934 6.37-1.84 13.4-2.45 19.8-12.4 3.31-21.1 12.6-24.5 23.2h-41.9c13-20.6 44-41.6 68.8-43zm231 43.2c-21.6-2e-3 -43.2-3e-3 -64.7-6e-3 -0.698-22.6-3.42-41.5-3.73-43.7 15.7 5.75 60 23.9 68.2 43.7zm-161 21.4v53.4c-21-0.719-37.3-3.1-48.4-5.19-1.55-8.68-2.81-17.4-3.6-26.2 14.1-5.39 19.4-17.1 21.1-22.2 2.25 4e-3 22.8 0.154 30.9 0.154zm-98 0c3.81 11.8 13.2 20.2 24.3 23.2 0.652 6.63 1.44 13.3 2.44 19.9-15.3-4.34-57.5-18.2-68.8-43.2zm173 0.113c0.49 12.3-2.18 44.7-5.13 49.6-16.1 3.29-35.7 4.09-49.7 3.95v-53.4zm85.2 0.285c-10.8 24.5-57 40.8-67.7 44.4 1.62-14.3 3.14-28.6 3.59-44.4zm-102 135c22.7-28.3 29.4-63.2 31-68.8 20.3-3.96 53.4-19.6 65.7-31-13 46.9-55.9 82.7-97 99.7zm-126-67.8c4.9 20.7 13.6 47.2 28.9 67.8-55.9-18.6-85.2-63.7-96.5-96.6 19.7 14.3 44.2 23.1 67.7 28.7zm66.2 8.01v65.2c-25.1-11-39.2-54.5-43.4-68.8-9e-3 -0.0355 15.3 3.21 43.4 4.01zm21.4 65.2c2e-3 -21.7 3e-3 -43.3 6e-3 -64.7 15 0 33.7-1.26 45.7-3.97-3.29 15.9-19.3 57-45.7 68.8z" fill="url(#c)"/>
+ <path d="m258 384c44.4 156-237 156-212 7.45 10.2-62.7 103-60.1 121-125 11.5-42.1-41.3-76.8-67.1-92.2" style="fill:none;stroke-width:20;stroke:#cc3434"/>
+ <ellipse cx="99.4" cy="175" rx="22.1" ry="22.1" fill="#cc3434"/>
+ <path d="m304 498-1.46 9.56c-0.189 1.38 1.13 2.52 2.51 2.52h111c1.38 0 2.76-1.15 2.51-2.52l-2.05-10.1z" style="fill:#808080;stroke-width:1.38;stroke:#808080"/>
+ <path d="m303 503c-0.173 1.22 1.13 2.22 2.53 2.22h111c1.4 0 2.76-1.01 2.53-2.22 0 0-0.841-6.83-1.53-10.2-0.243-1.21-2.01-2.75-3.4-2.75-35.5 0.122-71.3 0.258-89.8 0.311-18.3 0.0524-20.4-0.455-20.4 0.74z" style="fill:#333;stroke-width:1.25;stroke:#333"/>
+ <path d="m351 455h23.5v38.9c0 8.53-23.5 8.37-23.5 0z" fill="url(#a)"/>
+ <path d="m217 265h288v190h-288z" fill="url(#b)"/>
+ <path d="m217 265h288c-60.5 72.9-129 122-288 138z" style="fill-opacity:.35;fill:#97f0ff"/>
+ <rect x="217" y="265" width="290" height="190" rx=".625" ry=".625" style="fill:none;stroke-width:8;stroke:#333"/>
 </svg>
