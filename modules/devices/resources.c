@@ -91,16 +91,16 @@ void scan_device_resources(gboolean reload)
       if ((io = fopen(resources[i].file, "r"))) {
         _resources = h_strconcat(_resources, resources[i].description, NULL);
         t=0;
-	//check /tmp/hardinfo2_(iomem/ioports) exists and use if not root
+	//check /run/hardinfo2/(iomem+ioports) exists and use if not root
         if(getuid() != 0){//not root access
 	  if(i==0) {
-	    if((iotmp = fopen("/tmp/hardinfo2_ioports", "r"))){
+	    if((iotmp = fopen("/run/hardinfo2/ioports", "r"))){
 	      fclose(io);
 	      io = iotmp;iotmp=NULL;
 	    }
 	  }
 	  if(i==1) {
-	    if((iotmp = fopen("/tmp/hardinfo2_iomem", "r"))){
+	    if((iotmp = fopen("/run/hardinfo2/iomem", "r"))){
 	      fclose(io);
 	      io = iotmp;iotmp=NULL;
 	    }

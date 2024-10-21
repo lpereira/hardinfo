@@ -4,7 +4,9 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c "cat /proc/iomem >/tmp/hardinfo2_iomem;chmod a+r /tmp/hardinfo2_iomem;cat /proc/ioports >/tmp/hardinfo2_ioports;chmod a+r /tmp/hardinfo2_ioports;chmod a+r /sys/firmware/dmi/tables/*;modprobe -q spd5118;modprobe -q ee1004;modprobe -q at24 || true"
+#Add below to allow all users access to DMI
+#chmod a+r /sys/firmware/dmi/tables/*;
+ExecStart=/bin/sh -c "mkdir /run/hardinfo2;cat /proc/iomem |grep -v Kernel|grep -v System >/run/hardinfo2/iomem;chmod a+r /run/hardinfo2/iomem;cat /proc/ioports >/run/hardinfo2/ioports;chmod a+r /run/hardinfo2/ioports;modprobe -q spd5118;modprobe -q ee1004;modprobe -q at24 || true"
 
 [Install]
 WantedBy=basic.target
