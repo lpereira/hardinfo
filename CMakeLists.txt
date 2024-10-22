@@ -152,6 +152,9 @@ endif()
 #centos/redhat/oracle/opensuse/suse 6
 if(${disversion} LESS 6.99)
   if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*"))
+    message("RPM EL6 - Too old to have run directory - creating at install")
+    #create run directory owned by root
+    install(DIRECTORY DESTINATION /run)
     message("RPM EL6 - GTK2 - deprecated - support will end at any time")
     set(HARDINFO2_GTK3 0)
     message("RPM EL6 - LS24 - deprecated version 2.34.3 - but ok")
