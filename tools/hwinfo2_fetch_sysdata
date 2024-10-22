@@ -1,21 +1,21 @@
 #!/bin/sh
 
 #create group hardinfo2 if not exists
-groupadd hardinfo2
-addgroup hardinfo2
+groupadd hardinfo2 2>/dev/null
+addgroup hardinfo2 2>/dev/null
 
 #Create runtime data directory
-mkdir /run/hardinfo2
+mkdir /run/hardinfo2 2>/dev/null
 
 
 #----Allow users in hardinfo2 group to get these hardware info----
 #iomem and ioport address - no need to show system/kernel addresses.
-cat /proc/iomem |grep -v Kernel|grep -v System >/run/hardinfo2/iomem
-cat /proc/ioports >/run/hardinfo2/ioports
+cat /proc/iomem |grep -v Kernel|grep -v System >/run/hardinfo2/iomem 2>/dev/null
+cat /proc/ioports >/run/hardinfo2/ioports 2>/dev/null
 
 #DMI memory array and DIMM memory information
-dmidecode -t 16 >/run/hardinfo2/dmi_memarray
-dmidecode -t 17 >/run/hardinfo2/dmi_memory
+dmidecode -t 16 >/run/hardinfo2/dmi_memarray 2>/dev/null
+dmidecode -t 17 >/run/hardinfo2/dmi_memory 2>/dev/null
 
 
 #set rights
