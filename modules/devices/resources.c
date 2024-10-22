@@ -70,7 +70,7 @@ void scan_device_resources(gboolean reload)
 {
     SCAN_START();
     FILE *io,*iotmp;
-    gchar buffer[512];
+    gchar buffer[8192];//512cpus*12=6K
     guint i,t;
     gint zero_to_zero_addr = 0;
 
@@ -106,9 +106,9 @@ void scan_device_resources(gboolean reload)
 	    }
 	  }
 	}
-        while (fgets(buffer, 512, io)) {
+        while (fgets(buffer, sizeof(buffer), io)) {
           gchar **temp = g_strsplit(buffer, ":", 2);
-	  if((i!=3) || (temp[1]!=NULL)){//discard CPU numbers
+	  if((i!=3) || (temp[1]!=NULL)){//discard CPU numbers for interrupts that has no :
 	    gchar *name=NULL;
 	    if(i==3){
 	      //Discard irq counts
