@@ -1,25 +1,20 @@
 #/bin/sh
-if [ -e /bin/wslinfo ] ; then
-  #No WSL service - SPD+DMI not supported
-  echo "No Service Installed... (SystemV-WSL)"
-else
-  if [ -e /bin/systemctl ] && [ ! -e /etc/mx-version ] ; then
+if [ -e /bin/systemctl ] && [ ! -e /etc/mx-version ] ; then
     systemctl daemon-reload
     systemctl enable hardinfo2
     systemctl start hardinfo2
     echo "Service Installed... (SystemD)"
-  elif [ -e /sbin/chkconfig ] ; then
+elif [ -e /sbin/chkconfig ] ; then
     chkconfig --add hardinfo2
     chkconfig hardinfo2 on
     /etc/init.d/hardinfo2 start
     echo "Service Installed... (SystemV)"
-  elif [ -e /sbin/sv ] ; then
+elif [ -e /sbin/sv ] ; then
     ln -s /etc/sv/hardinfo2 /etc/runit/runsvdir/default/
     /etc/sv/hardinfo2/run
     echo "Service Installed... (Runit)"
-  else
+else
     update-rc.d hardinfo2 defaults 95 10
     /etc/init.d/hardinfo2 start
     echo "Service Installed... (SystemV-rc)"
-  fi
 fi
