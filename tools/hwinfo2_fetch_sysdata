@@ -1,0 +1,28 @@
+#!/bin/sh
+
+#create group hardinfo2 if not exists
+groupadd hardinfo2
+
+#Create runtime data directory
+mkdir /run/hardinfo2
+
+
+#----Allow users in hardinfo2 group to get these hardware info----
+#iomem and ioport address - no need to show system/kernel addresses.
+cat /proc/iomem |grep -v Kernel|grep -v System >/run/hardinfo2/iomem
+cat /proc/ioports >/run/hardinfo2/ioports
+
+#DMI memory array and DIMM memory information
+dmidecode -t 16 >/run/hardinfo2/dmi_memarray
+dmidecode -t 17 >/run/hardinfo2/dmi_memory
+
+
+#set rights
+chown -R root:hardinfo2 /run/hardinfo2
+chmod -R 640 /run/hardinfo2
+
+
+#loading SPD modules
+modprobe -q spd5118
+modprobe -q ee1004
+modprobe -q at24 || true

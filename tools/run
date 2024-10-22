@@ -1,13 +1,4 @@
 #!/bin/sh
 exec 2>&1
-mkdir /run/hardinfo2
-cat /proc/iomem |grep -v Kernel|grep -v System >/run/hardinfo2/iomem
-chmod a+r /run/hardinfo2/iomem
-cat /proc/ioports >/run/hardinfo2/ioports
-chmod a+r /run/hardinfo2/ioports
-#enable below for DMI for all users
-#chmod a+r /sys/firmware/dmi/tables/*
-modprobe -q spd5118
-modprobe -q ee1004
-modprobe -q at24
+hwinfo2_fetch_sysdata
 pause

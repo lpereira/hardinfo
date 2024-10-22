@@ -15,10 +15,8 @@
 
 
 start() {
-    #ADD below to allow all users access to DMI
-    #chmod a+r /sys/firmware/dmi/tables/*;
-   /bin/sh -c "mkdir /run/hardinfo2;cat /proc/iomem |grep -v Kernel|grep -v System >/run/hardinfo2/iomem;chmod a+r /run/hardinfo2/iomem;cat /proc/ioports >/run/hardinfo2/ioports;chmod a+r /run/hardinfo2/ioports;modprobe -q spd5118;modprobe -q ee1004;modprobe -q at24 || true"
-  return 0
+   hwinfo2_fetch_sysdata
+   return 0
 }
 
 stop() {
