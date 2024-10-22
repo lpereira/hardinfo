@@ -2,6 +2,7 @@
 
 #create group hardinfo2 if not exists
 groupadd hardinfo2
+addgroup hardinfo2
 
 #Create runtime data directory
 mkdir /run/hardinfo2
