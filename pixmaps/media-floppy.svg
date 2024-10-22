@@ -1,24 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--emojione" preserveAspectRatio="xMidYMid meet">
-<path d="M61.3 9.3l-6.6-6.6c-.4-.4-1.2-.7-1.7-.7H9v4H5V2H3c-.5 0-1 .5-1 1v58c0 .5.5 1 1 1h58c.5 0 1-.5 1-1V11c0-.6-.3-1.3-.7-1.7" fill="#3e4347">
-</path>
-<path d="M12 62V34c0-1.1.9-2 2-2h36c1.1 0 2 .9 2 2v28H12" fill="#ffffff">
-</path>
-<path d="M18 2v20c0 1.1.9 2 2 2h30c1.1 0 2-.9 2-2V2H18" fill="#e8e8e8">
-</path>
-<path fill="#3e4347" d="M36 6h10v16H36z">
-</path>
-<path d="M59 56c0-.6-.5-1-1-1h-2c-.5 0-1 .4-1 1v2c0 .5.5 1 1 1h2c.5 0 1-.5 1-1v-2" fill="#ffffff">
-</path>
-<g fill="#f15744">
-<path d="M12 54h40v8H12z">
-</path>
-<path d="M17 36h30v2H17z">
-</path>
-<path d="M17 42h30v2H17z">
-</path>
-<path d="M17 48h30v2H17z">
-</path>
-</g>
-</svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <path d="m505 63-56.1-56.1c-3.4-3.4-10.2-5.95-14.4-5.95h-374v34h-34v-34h-17c-4.25 0-8.5 4.25-8.5 8.5v493c0 4.25 4.25 8.5 8.5 8.5h493c4.25 0 8.5-4.25 8.5-8.5v-425c0-5.1-2.55-11-5.95-14.4" fill="#3e4347"/>
+ <path d="m86 511v-238c0-9.35 7.65-17 17-17h306c9.35 0 17 7.65 17 17v238h-340" fill="#fff"/>
+ <path d="m137 1v170c0 9.35 7.65 17 17 17h255c9.35 0 17-7.65 17-17v-170h-289" fill="#e8e8e8"/>
+ <path d="m290 35h85v136h-85z" fill="#3e4347"/>
+ <path d="m486 460c0-5.1-4.25-8.5-8.5-8.5h-17c-4.25 0-8.5 3.4-8.5 8.5v17c0 4.25 4.25 8.5 8.5 8.5h17c4.25 0 8.5-4.25 8.5-8.5v-17" fill="#fff"/>
+ <path d="m128.5 290v17h255v-17zm0 51v17h255v-17zm0 51v17h255v-17zm-42.5 51v68h340.2l-4e-3 -68z" fill="#f15744"/>
+</svg>
