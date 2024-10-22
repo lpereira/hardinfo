@@ -19,7 +19,8 @@ dmidecode -t 17 >/run/hardinfo2/dmi_memory
 
 #set rights
 chown -R root:hardinfo2 /run/hardinfo2
-chmod -R 640 /run/hardinfo2
+chmod 750 /run/hardinfo2
+chmod 640 /run/hardinfo2/*
 
 
 #loading SPD modules
