@@ -999,7 +999,7 @@ const gchar *hi_note_func(gint entry)
     }
     if (entry == ENTRY_RESOURCES) {
         if (root_required_for_resources()) {
-            return g_strdup(_("Resource information requires superuser privileges"));
+            return g_strdup(_("Ensure hardinfo2 service is enabled. Add yourself to hardinfo2 group: sudo usermod -a -G hardinfo2 YOUR_LOGIN"));
         }
     }
     else if (entry == ENTRY_STORAGE){

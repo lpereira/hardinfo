@@ -297,6 +297,7 @@ char *dmidecode_read(const dmi_type *type) {
     gchar full_path[PATH_MAX];
     gboolean spawned;
     gchar *out, *err;
+    FILE *f;
 
     int i = 0;
 
@@ -329,6 +330,42 @@ char *dmidecode_read(const dmi_type *type) {
             g_free(out);
 
         g_free(err);
+    }
+
+    //check /run/hardinfo2/dmi_memarray exists and use if no info
+    if( type && (*type==16) && !ret ){
+         if( (f = fopen("/run/hardinfo2/dmi_memarray", "r")) ){
+	     fseek(f, 0, SEEK_END);
+	     size_t fsize=ftell(f);
+	     if(fsize>0){
+	         fseek(f, 0, SEEK_SET);
+	         ret=g_malloc(fsize+1);
+	         if(fread(ret, fsize, fsize, f)){
+		     ret[fsize]=0;
+		 }else{
+		     g_free(ret);ret=NULL;
+		 }
+	     }
+	     fclose(f);
+         }
+    }
+
+    //check /run/hardinfo2/dmi_memory exists and use if no info
+    if( type && (*type==17) && !ret ){
+         if( (f = fopen("/run/hardinfo2/dmi_memory", "r")) ){
+	     fseek(f, 0, SEEK_END);
+	     size_t fsize=ftell(f);
+	     if(fsize>0){
+	         fseek(f, 0, SEEK_SET);
+	         ret=g_malloc(fsize+1);
+	         if(fread(ret, fsize, fsize, f)){
+		     ret[fsize]=0;
+		 }else{
+		     g_free(ret);ret=NULL;
+		 }
+	     }
+	     fclose(f);
+         }
     }
 
     if (ret) {
