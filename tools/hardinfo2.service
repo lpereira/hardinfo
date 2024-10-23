@@ -1,6 +1,6 @@
 [Unit]
 Description=Hardinfo2 support for root access
-After=multi-user.target
+After=basic.target
 
 [Service]
 Type=oneshot
