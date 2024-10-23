@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=hwinfo2_fetch_sysdata
+ExecStart=/usr/bin/hwinfo2_fetch_sysdata
 
 [Install]
 WantedBy=basic.target

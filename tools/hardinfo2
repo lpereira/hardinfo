@@ -15,7 +15,7 @@
 
 
 start() {
-   hwinfo2_fetch_sysdata
+   /usr/bin/hwinfo2_fetch_sysdata
    return 0
 }
 

@@ -1,4 +1,4 @@
 #!/bin/sh
 exec 2>&1
-hwinfo2_fetch_sysdata
+/usr/bin/hwinfo2_fetch_sysdata
 pause
