@@ -1,15 +1,50 @@
-Hi, I am Alexander under the pseudonym tutralex, I confirm that made new SVG images for the Hardinfo2 project myself
+Hi, I am Alexander under the pseudonym tutralex, I confirm that made SVG-images for the Hardinfo2 project myself
 and provide them for free access under the CC0 license.
 
 List:
- pixmaps/close.svg
- pixmaps/dialog-information.svg
- pixmaps/internet.svg
- pixmaps/os.svg
- pixmaps/processor.svg
- pixmaps/refresh.svg
- pixmaps/report.svg
- pixmaps/summary.svg
- pixmaps/sync.svg
+ audio.svg
+ battery.svg
+ benchmark.svg
+ blowfish.svg
+ boot.svg
+ close.svg
+ compress.svg
+ computer.svg
+ devel.svg
+ dialog-error.svg
+ dialog-information.svg
+ dialog-warning.svg
+ dmi.svg
+ environment.svg
+ fan.svg
+ filesystem.svg
+ firmware.svg
+ hdd.svg
+ home.svg
+ internet.svg
+ language.svg
+ memory.svg
+ module.svg
+ monitor.svg
+ mouse.svg
+ nautilus.svg
+ network.svg
+ network-arp.svg
+ network-connections.svg
+ nqueens.svg
+ os.svg
+ pci.svg
+ raytrace.svg
+ refresh.svg
+ report.svg
+ report-bug.svg
+ resources.svg
+ security.svg
+ summary.svg
+ sync.svg
+ therm.svg
+ usb.svg
+ users.svg
+ wireless.svg
 
 and all subsequent ones added by me to the Hardinfo2 project.
