@@ -935,7 +935,7 @@ gboolean memory_devices_hinote(const char **msg) {
     }
     gboolean has_dmiaccess = (access("/sys/firmware/dmi/tables/DMI", R_OK)==0) || (access("/sys/firmware/dmi/tables/smbios_entry_point", R_OK)==0) || (access("/run/hardinfo2/dmi_memory", R_OK)==0);
     gchar *want_dmi       = _("<b><i>dmidecode</i></b> package installed");
-    gchar *want_dmiaccess = "Ensure hardinfo2 service is enabled. Add yourself to hardinfo2 group: sudo usermod -a -G hardinfo2 YOUR_LOGIN";
+    gchar *want_dmiaccess = "Ensure hardinfo2 service is enabled+started: sudo systemctl enable hardinfo2 --now (SystemD distro)\nAdd yourself to hardinfo2 group: sudo usermod -a -G hardinfo2 YOUR_LOGIN\nAnd Logout/Reboot for groups to be updates...";
     gchar *want_at24      = "sudo modprobe at24 (or eeprom) (for SDR, DDR, DDR2, DDR3)";
     gchar *want_ee1004    = "sudo modprobe ee1004 (for DDR4)";
     gchar *want_spd5118   = "sudo modprobe spd5118 (for DDR5)";
