@@ -1,4 +1,5 @@
-Hi, I am Alexander under the pseudonym tutralex, I confirm that made SVG-images for the Hardinfo2 project myself
+Hi, I am Alexander under the pseudonym tutralex.
+I confirm that made SVG-icons for the Hardinfo2 project myself
 and provide them for free access under the CC0 license.
 
 List:
@@ -34,7 +35,6 @@ List:
  nqueens.svg
  os.svg
  pci.svg
- raytrace.svg
  refresh.svg
  report.svg
  report-bug.svg
