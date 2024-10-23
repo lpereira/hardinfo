@@ -77,6 +77,18 @@
   <content_rating type="oars-1.0" />
 
   <releases>
+    <release type="stable" version="2.2.1" date="2024-10-24">
+      <description>
+	<p>Stable Release with new features and fixes.</p>
+	<p>
+	  New SVG icons
+	  New Manual High DPI scaling support 'GDK_DPI_SCALE=1.5 hardinfo2'
+	  New HTML Report - new theme and fixes for html generator
+	  Fix MultiUser Security bug (is in 2.1.14, 2.1.17)
+	  Several minor fixes and updates.
+	</p>
+      </description>
+    </release>
     <release type="stable" version="2.1.17" date="2024-10-01">
       <description>
 	<p>Stable Release with new features and fixes.</p>
