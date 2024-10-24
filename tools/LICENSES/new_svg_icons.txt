@@ -10,7 +10,6 @@ List:
  boot.svg
  close.svg
  compress.svg
- computer.svg
  devel.svg
  devices.svg
  dialog-error.svg
