@@ -12,6 +12,7 @@ List:
  compress.svg
  computer.svg
  devel.svg
+ devices.svg
  dialog-error.svg
  dialog-information.svg
  dialog-warning.svg
