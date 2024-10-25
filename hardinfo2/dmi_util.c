@@ -340,10 +340,12 @@ char *dmidecode_read(const dmi_type *type) {
 	     if(fsize>0){
 	         fseek(f, 0, SEEK_SET);
 	         ret=g_malloc(fsize+1);
-	         if(fread(ret, fsize, fsize, f)){
-		     ret[fsize]=0;
-		 }else{
-		     g_free(ret);ret=NULL;
+		 if(ret){
+		     if(fread(ret, fsize, 1, f)){
+		         ret[fsize]=0;
+		     }else{
+		         g_free(ret);ret=NULL;
+		     }
 		 }
 	     }
 	     fclose(f);
@@ -358,10 +360,12 @@ char *dmidecode_read(const dmi_type *type) {
 	     if(fsize>0){
 	         fseek(f, 0, SEEK_SET);
 	         ret=g_malloc(fsize+1);
-	         if(fread(ret, fsize, fsize, f)){
-		     ret[fsize]=0;
-		 }else{
-		     g_free(ret);ret=NULL;
+		 if(ret){
+		     if(fread(ret, fsize, 1, f)){
+		         ret[fsize]=0;
+		     }else{
+		         g_free(ret);ret=NULL;
+		     }
 		 }
 	     }
 	     fclose(f);
@@ -374,7 +378,6 @@ char *dmidecode_read(const dmi_type *type) {
         else
             dd_cache[127] = g_strdup(ret);
     }
-
     return ret;
 }
 
