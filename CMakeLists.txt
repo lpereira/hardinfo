@@ -73,7 +73,7 @@ add_definitions("-Wformat-security")
 set(PACKAGE_LIBSOUP2_MINVERSION 2.42)
 set(PACKAGE_LIBGLIB2_MINVERSION 2.24)
 SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr, vulkan-tools")
-SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-server-utils, vulkan-tools")
+SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools")
 
 #########################CPack PACKAGING SETUP###############################
 if(EXISTS "/etc/os-release")
@@ -205,7 +205,13 @@ else()
     if(${distro}${disversion} MATCHES "DebianGNULinux9")
         message("DEB 9 - QT5 too low - Disabling opengl benchmarks")
         set(HARDINFO2_QT5 0)
+	SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
     endif()
+endif()
+
+#debian 10
+if(${distro}${disversion} MATCHES "DebianGNULinux10")
+  SET(DEB_REQ "udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
 endif()
 
 #debian ->11
@@ -232,6 +238,12 @@ endif()
 if(${distro}${disversion} MATCHES "Ubuntu16")
     message("Ubuntu 16 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
+    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
+endif()
+
+#ubuntu 18
+if(${distro}${disversion} MATCHES "Ubuntu18")
+    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
 endif()
 
 #ubuntu 20.04
@@ -288,6 +300,10 @@ endif()
 
 if(${distro} MATCHES "Puppy")
     set(HARDINFO2_SYSTEMV 1)
+endif()
+
+if(HARDINFO2_ARCH MATCHES "riscv")
+    SET(DEB_REQ "udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
 endif()
 
 #WSL 1/2
@@ -724,7 +740,6 @@ SET(CPACK_DEBIAN_PACKAGE_REPLACES "hardinfo")
 SET(CPACK_DEBIAN_PACKAGE_BREAKS "hardinfo")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "hwspeedy <hardinfo2@bigbear.dk>")
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Hardinfo2 - System Information and Benchmark")
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS ${DEB_REQ})
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/hardinfo2/hardinfo2")
 if(${HARDINFO2_LIBSOUP3})
     SET(PACKAGE_LS "libsoup-3.0-0 (>=3.0)")
@@ -736,7 +751,7 @@ if(HARDINFO2_GTK3)
 else()
     SET(PACKAGE_GTK "${PACKAGE_GTK2} (>=2.20)")
 endif()
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libjson-glib-1.0-0, zlib1g, ${PACKAGE_LS}, ${PACKAGE_GTK}")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "${DEB_REQ}, libjson-glib-1.0-0, zlib1g, ${PACKAGE_LS}, ${PACKAGE_GTK}")
 #DEB-SERVICE
 if(HARDINFO2_SERVICE)
     SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/packaging/postinst;${CMAKE_CURRENT_BINARY_DIR}/packaging/prerm")
