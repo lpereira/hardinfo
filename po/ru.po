@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-24 02:48+0300\n"
+"POT-Creation-Date: 2024-10-25 12:52+0300\n"
 "PO-Revision-Date: 2022-03-05 23:00+0300\n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn, tutralex\n"
 "Language-Team: \n"
@@ -89,7 +89,7 @@ msgstr "Книга"
 msgid "Drawer"
 msgstr "Трассировщик"
 
-#: hardinfo2/cpu_util.c:249 modules/devices/arm/processor.c:706
+#: hardinfo2/cpu_util.c:249 modules/devices/arm/processor.c:707
 #: modules/devices/riscv/processor.c:551 modules/devices/x86/processor.c:751
 msgid "Topology"
 msgstr "Топология"
@@ -1068,7 +1068,7 @@ msgstr "(Неизвестно)"
 
 #: modules/benchmark/bench_results.c:261 modules/devices/alpha/processor.c:90
 #: modules/devices/arm/processor.c:511 modules/devices/arm/processor.c:524
-#: modules/devices/arm/processor.c:567 modules/devices/arm/processor.c:739
+#: modules/devices/arm/processor.c:567 modules/devices/arm/processor.c:740
 #: modules/devices.c:430 modules/devices.c:438 modules/devices.c:466
 #: modules/devices/e2k/processor.c:363 modules/devices/e2k/processor.c:400
 #: modules/devices/gpu.c:125 modules/devices/gpu.c:127
@@ -1579,7 +1579,7 @@ msgid "Field"
 msgstr "Поле"
 
 #: modules/computer.c:385 modules/computer.c:730 modules/computer/modules.c:369
-#: modules/computer/modules.c:370 modules/devices/arm/processor.c:705
+#: modules/computer/modules.c:370 modules/devices/arm/processor.c:706
 #: modules/devices/riscv/processor.c:550
 msgid "Description"
 msgstr "Описание"
@@ -1751,7 +1751,7 @@ msgstr "Загруженные модули"
 
 #: modules/computer.c:729 modules/computer.c:757 modules/computer.c:897
 #: modules/computer/languages.c:95 modules/computer/modules.c:369
-#: modules/devices/arm/processor.c:704 modules/devices/dmi.c:38
+#: modules/devices/arm/processor.c:705 modules/devices/dmi.c:38
 #: modules/devices/dmi.c:49 modules/devices/e2k/processor.c:358
 #: modules/devices/gpu.c:301 modules/devices/ia64/processor.c:160
 #: modules/devices/inputdevices.c:141 modules/devices/monitors.c:403
@@ -1789,7 +1789,7 @@ msgstr "Точка монтирования"
 msgid "Usage"
 msgstr "Использование"
 
-#: modules/computer.c:772 modules/devices/arm/processor.c:756
+#: modules/computer.c:772 modules/devices/arm/processor.c:757
 #: modules/devices.c:865 modules/devices.c:879
 #: modules/devices/e2k/processor.c:416 modules/devices/gpu.c:85
 #: modules/devices/gpu.c:93 modules/devices/gpu.c:293 modules/devices/pci.c:123
@@ -2518,7 +2518,7 @@ msgstr "ID пользователя"
 msgid "Default Shell"
 msgstr "Оболочка по умолчанию"
 
-#: modules/devices/alpha/processor.c:88 modules/devices/arm/processor.c:756
+#: modules/devices/alpha/processor.c:88 modules/devices/arm/processor.c:757
 #: modules/devices.c:865 modules/devices/devicetree.c:162
 #: modules/devices/devicetree.c:208 modules/devices/devicetree/pmac_data.c:80
 #: modules/devices/e2k/processor.c:361 modules/devices/e2k/processor.c:416
@@ -2537,7 +2537,7 @@ msgid "Platform String"
 msgstr "Строка платформы"
 
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:567
-#: modules/devices/arm/processor.c:756 modules/devices/e2k/processor.c:363
+#: modules/devices/arm/processor.c:757 modules/devices/e2k/processor.c:363
 #: modules/devices/e2k/processor.c:416 modules/devices/ia64/processor.c:167
 #: modules/devices/loongarch64/processor.c:98
 #: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
@@ -2921,20 +2921,20 @@ msgstr "Вариант"
 msgid "Capabilities"
 msgstr "Возможности"
 
-#: modules/devices/arm/processor.c:703 modules/devices/riscv/processor.c:548
+#: modules/devices/arm/processor.c:704 modules/devices/riscv/processor.c:548
 msgid "SOC/Package"
 msgstr "SOC/Пакет"
 
-#: modules/devices/arm/processor.c:707 modules/devices/riscv/processor.c:552
+#: modules/devices/arm/processor.c:708 modules/devices/riscv/processor.c:552
 #: modules/devices/x86/processor.c:752
 msgid "Logical CPU Config"
 msgstr "Логическая конфигурация процессора"
 
-#: modules/devices/arm/processor.c:726 modules/devices/riscv/processor.c:608
+#: modules/devices/arm/processor.c:727 modules/devices/riscv/processor.c:608
 msgid "SOC/Package Information"
 msgstr "Информация о SOC/Package"
 
-#: modules/devices/arm/processor.c:756 modules/devices/riscv/processor.c:640
+#: modules/devices/arm/processor.c:757 modules/devices/riscv/processor.c:640
 #: modules/devices/x86/processor.c:810
 msgid "Socket:Core"
 msgstr "Сокет:Ядро"
@@ -3143,7 +3143,7 @@ msgstr "Копия <i><b>pci.ids</b></i> недоступна в системе.
 msgid "A full <i><b>pci.ids</b></i> is not available on the system."
 msgstr "Полный <i><b>pci.ids</b></i> недоступен в системе."
 
-#: modules/devices.c:1002
+#: modules/devices.c:1002 modules/devices/dmi_memory.c:938
 msgid ""
 "Ensure hardinfo2 service is enabled+started: sudo systemctl enable hardinfo2 "
 "--now (SystemD distro)\n"
@@ -3153,7 +3153,7 @@ msgstr ""
 "Убедитесь, что служба hardinfo2 включена и запущена: sudo systemctl enable "
 "hardinfo2 --now (SystemD distro)\n"
 "Добавьте себя в группу hardinfo2: sudo usermod -a -G hardinfo2 YOUR_LOGIN\n"
-"После чего выполните перезагрузку..."
+"Затем перезагрузитесь..."
 
 #: modules/devices.c:1008
 msgid ""
@@ -5563,7 +5563,7 @@ msgid ""
 "indicates OS Visible Workaround, which allows the OS to work around "
 "processor errata."
 msgstr ""
-"показывает на видимое ОС обходное решение, позволяющее обойти ошибки "
+"показывает на видимое ОС обходное решение, позволяющее обойти опечатки "
 "процессора."
 
 #. !/flag:ibs

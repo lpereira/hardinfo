@@ -216,7 +216,7 @@ gg_strescape (const gchar *source,
              const gchar *extra);
 
 /* hinote helpers */
-#define note_max_len 512
+#define note_max_len 1024
 #define note_printf(note_buff, fmt, ...)  \
     snprintf((note_buff) + strlen(note_buff), note_max_len - strlen(note_buff) - 1, \
         fmt, ##__VA_ARGS__)
