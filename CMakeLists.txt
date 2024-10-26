@@ -302,6 +302,10 @@ if(${distro} MATCHES "Puppy")
     set(HARDINFO2_SYSTEMV 1)
 endif()
 
+if(${distro} MATCHES "Artix")
+    set(HARDINFO2_SYSTEMV 1)
+endif()
+
 if(HARDINFO2_ARCH MATCHES "riscv")
     SET(DEB_REQ "udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
 endif()

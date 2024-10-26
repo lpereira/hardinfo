@@ -175,6 +175,13 @@ name Armbian
     ansi_color ff;0;0
     match_string armbian
 
+name Artix Linux
+    name_short Artix Linux
+    url www.artixlinux.org
+    ansi_color 0;36;107
+    match_string artix linux
+    match_string Artix Linux
+
 name ASMedia Technology
     name_short ASMedia
     url www.asmedia.com.tw
