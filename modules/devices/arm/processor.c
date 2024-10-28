@@ -642,6 +642,7 @@ gchar *processor_name(GSList *processors) {
         { "mediatek,mt6735", "MediaTek", "MT6735" },
         { "mediatek,mt6732", "MediaTek", "MT6732" },
         { "mediatek,mt8173", "MediaTek", "MT8173" },
+        { "mediatek,mt8183", "MediaTek", "MT8183" },
         { "qcom,msm8939", "Qualcomm", "Snapdragon 615"},
         { "qcom,msm", "Qualcomm", "Snapdragon-family"},
         { "nvidia,tegra", "nVidia", "Tegra-family" },
