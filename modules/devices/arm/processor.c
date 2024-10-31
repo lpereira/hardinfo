@@ -601,11 +601,11 @@ gchar *processor_name(GSList *processors) {
         { "hardkernel,odroid-c2", "Amlogic", "S905" }, // C2
         { "hardkernel,odroid-n2", "Amlogic", "S922x" }, // N2
         { "amlogic,a311d", "Amlogic", "A311D" }, // VIM3
-        { "brcm,bcm2712", "Broadcom", "BCM2712" }, // RPi 5
-        { "brcm,bcm2711", "Broadcom", "BCM2711" }, // RPi 4
-        { "brcm,bcm2837", "Broadcom", "BCM2837" }, // RPi 3
-        { "brcm,bcm2836", "Broadcom", "BCM2836" }, // RPi 2
-        { "brcm,bcm2835", "Broadcom", "BCM2835" }, // RPi 1
+        { "brcm,bcm2712", "Broadcom", "BCM2712 (RPi5)" }, // RPi 5
+        { "brcm,bcm2711", "Broadcom", "BCM2711 (RPi4)" }, // RPi 4
+        { "brcm,bcm2837", "Broadcom", "BCM2837 (RPi3)" }, // RPi 3
+        { "brcm,bcm2836", "Broadcom", "BCM2836 (RPi2)" }, // RPi 2
+        { "brcm,bcm2835", "Broadcom", "BCM2835 (RPi1)" }, // RPi 1
         { "rockchip,rk3288", "Rockchip", "RK3288" }, // Asus Tinkerboard
         { "rockchip,rk3328", "Rockchip", "RK3328" }, // Firefly Renegade
         { "rockchip,rk3399", "Rockchip", "RK3399" }, // Firefly Renegade Elite
@@ -624,15 +624,15 @@ gchar *processor_name(GSList *processors) {
         { "ti,omap3", "Texas Instruments", "OMAP3-family" },
         { "ti,omap2", "Texas Instruments", "OMAP2-family" },
         { "ti,omap1", "Texas Instruments", "OMAP1-family" },
-        { "mediatek,mt6799", "MediaTek", "MT6799 Helio X30" },
-        { "mediatek,mt6799", "MediaTek", "MT6799 Helio X30" },
-        { "mediatek,mt6797x", "MediaTek", "MT6797X Helio X27" },
-        { "mediatek,mt6797t", "MediaTek", "MT6797T Helio X25" },
-        { "mediatek,mt6797", "MediaTek", "MT6797 Helio X20" },
-        { "mediatek,mt6757T", "MediaTek", "MT6757T Helio P25" },
-        { "mediatek,mt6757", "MediaTek", "MT6757 Helio P20" },
-        { "mediatek,mt6795", "MediaTek", "MT6795 Helio X10" },
-        { "mediatek,mt6755", "MediaTek", "MT6755 Helio P10" },
+        { "mediatek,mt6799", "MediaTek", "MT6799 (Helio X30)" },
+        { "mediatek,mt6799", "MediaTek", "MT6799 (Helio X30)" },
+        { "mediatek,mt6797x", "MediaTek", "MT6797X (Helio X27)" },
+        { "mediatek,mt6797t", "MediaTek", "MT6797T (Helio X25)" },
+        { "mediatek,mt6797", "MediaTek", "MT6797 (Helio X20)" },
+        { "mediatek,mt6757T", "MediaTek", "MT6757T (Helio P25)" },
+        { "mediatek,mt6757", "MediaTek", "MT6757 (Helio P20)" },
+        { "mediatek,mt6795", "MediaTek", "MT6795 (Helio X10)" },
+        { "mediatek,mt6755", "MediaTek", "MT6755 (Helio P10)" },
         { "mediatek,mt6750t", "MediaTek", "MT6750T" },
         { "mediatek,mt6750", "MediaTek", "MT6750" },
         { "mediatek,mt6753", "MediaTek", "MT6753" },
@@ -646,6 +646,7 @@ gchar *processor_name(GSList *processors) {
         { "qcom,msm8939", "Qualcomm", "Snapdragon 615"},
         { "qcom,msm", "Qualcomm", "Snapdragon-family"},
         { "nvidia,tegra", "nVidia", "Tegra-family" },
+        { "apple,t8112", "Apple", "T8112 (M2)" },
         { "brcm,", "Broadcom", UNKSOC },
         { "nvidia,", "nVidia", UNKSOC },
         { "rockchip,", "Rockchip", UNKSOC },
