@@ -190,6 +190,7 @@ if(${distro}${disversion} MATCHES "DebianGNULinux7")
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
     set(HARDINFO2_SYSTEMV 1)
     set(HARDINFO2_QT5 0)
+    SET(DEB_REQ "sysbench, mesa-utils, lsscsi, lm-sensors, xdg-utils, x11-xserver-utils") #miss vulkan-tools,fwupd, udisks2, iperf3
 endif()
 
 #debian 8
@@ -197,6 +198,7 @@ if(${distro}${disversion} MATCHES "DebianGNULinux8")
     message("DEB 8 - GTK3 version 3.14.5 is low - Themes disabled")
     message("DEB 8 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
+    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, x11-xserver-utils") #miss vulkan-tools,fwupd
 endif()
 
 #debian 9
