@@ -484,6 +484,14 @@ name GCT Semiconductor
     match_string GCT Semiconductor
     match_string_case GCT
 
+name Gentoo Linux
+    name_short Gentoo Linux
+    ansi_color 0;34;107
+    url www.gentoo.org
+    match_string Gentoo Linux
+    match_string Gentoo
+    match_string gentoo
+
 name Gigabyte Technology
     name_short Gigabyte
     url www.gigabyte.com.tw
