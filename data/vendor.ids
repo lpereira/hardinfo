@@ -679,6 +679,13 @@ name LIG Nex1
     match_string LG Innotek
     match_string NEX1 Future
 
+name LiGurOS
+    name_short LiGurOS
+    url liguros.gitlab.io
+    ansi_color 0;97;42
+    match_string LiGurOS Linux
+    match_string LiGurOS
+
 name Linaro
     url linaro.org
     wikipedia Linaro
@@ -1479,6 +1486,13 @@ name Yamaha Corporation
     wikipedia Yamaha Corporation
     ansi_color 0;35;107
     match_string Yamaha
+
+name ZORIN OS
+    name_short ZORIN OS
+    ansi_color 0;34;107
+    url zorin.com
+    match_string ZORIN OS
+    match_string Zorin OS
 
 name ZOTAC International
     name_short ZOTAC
