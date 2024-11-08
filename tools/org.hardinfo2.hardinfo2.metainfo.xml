@@ -29,26 +29,18 @@
     <p>Hardinfo2 offers System Information and Benchmark for Linux Systems. It is able to obtain information from both hardware and basic software. It can benchmark your system and compare to other machines online.</p>
     <p>You can find info like: cpu speed, gpu and graphics speed, benchmarks of internal network speed, Linux hw drivers and modules loaded. sysinfo like which development tools are installed, memory dmi and spd information, distro / os informations, hwinfo about your components like pcie and usb.</p>
     <p>And it is all Free and Open Source Software (FOSS) so we can change and add to the program together. See below links for source code, that we all keep safe and secure together.</p>
-  </description>
-  <description xml:lang="fr">
-    <p>Hardinfo2 propose des informations système et des tests de référence pour les systèmes Linux. Il est capable d'obtenir des informations à partir du matériel et des logiciels de base. Il peut évaluer votre système et le comparer à d'autres machines en ligne.</p>
-    <p>Vous pouvez trouver des informations telles que : la vitesse du processeur, la vitesse du GPU et des graphiques, les références de vitesse du réseau interne, les pilotes matériels Linux et les modules chargés. sysinfo comme les outils de développement installés, les informations mémoire dmi et spd, les informations distribution/os, hwinfo sur vos composants comme pcie et usb.</p>
-    <p>Et ce sont tous des logiciels libres et open source (FOSS), nous pouvons donc modifier et ajouter des éléments au programme ensemble. Voir ci-dessous les liens pour le code source, que nous gardons tous en sécurité ensemble.</p>
-  </description>
-  <description xml:lang="de">
-    <p>Hardinfo2 bietet Systeminformationen und Benchmark für Linux-Systeme. Es ist in der Lage, Informationen sowohl von der Hardware als auch von der Basissoftware zu erhalten. Es kann Ihr System vergleichen und online mit anderen Maschinen vergleichen.</p>
+    <p xml:lang="fr">Hardinfo2 propose des informations système et des tests de référence pour les systèmes Linux. Il est capable d'obtenir des informations à partir du matériel et des logiciels de base. Il peut évaluer votre système et le comparer à d'autres machines en ligne.</p>
+    <p xml:lang="fr">Vous pouvez trouver des informations telles que : la vitesse du processeur, la vitesse du GPU et des graphiques, les références de vitesse du réseau interne, les pilotes matériels Linux et les modules chargés. sysinfo comme les outils de développement installés, les informations mémoire dmi et spd, les informations distribution/os, hwinfo sur vos composants comme pcie et usb.</p>
+    <p xml:lang="fr">Et ce sont tous des logiciels libres et open source (FOSS), nous pouvons donc modifier et ajouter des éléments au programme ensemble. Voir ci-dessous les liens pour le code source, que nous gardons tous en sécurité ensemble.</p>
+    <p xml:lang="de">Hardinfo2 bietet Systeminformationen und Benchmark für Linux-Systeme. Es ist in der Lage, Informationen sowohl von der Hardware als auch von der Basissoftware zu erhalten. Es kann Ihr System vergleichen und online mit anderen Maschinen vergleichen.</p>
     <p>Hier finden Sie Informationen wie: CPU-Geschwindigkeit, GPU- und Grafikgeschwindigkeit, Benchmarks der internen Netzwerkgeschwindigkeit, geladene Linux-Hardwaretreiber und -Module. sysinfo wie die installierten Entwicklungstools, Speicher-DMI- und SPD-Informationen, Distributions-/Betriebssysteminformationen, HWInfo über Ihre Komponenten wie PCIe und USB.</p>
     <p>Und es ist alles freie und Open-Source-Software (FOSS), sodass wir das Programm gemeinsam ändern und ergänzen können. Nachfolgend finden Sie die Links zum Quellcode, den wir alle gemeinsam sicher und geschützt aufbewahren.</p>
-  </description>
-  <description xml:lang="es">
-    <p>Hardinfo2 ofrece información del sistema y puntos de referencia para sistemas Linux. Es capaz de obtener información tanto del hardware como del software básico. Puede comparar su sistema con otras máquinas en línea.</p>
-    <p>Puede encontrar información como: velocidad de la CPU, velocidad de la GPU y de los gráficos, puntos de referencia de la velocidad de la red interna, controladores de hardware de Linux y módulos cargados. sysinfo como qué herramientas de desarrollo están instaladas, información de memoria dmi y spd, información de distribución/os, hwinfo sobre sus componentes como pcie y usb.</p>
-    <p>Y todo es software gratuito y de código abierto (FOSS), por lo que podemos cambiarlo y agregarlo al programa juntos. Vea los enlaces a continuación para ver el código fuente, que todos mantenemos seguros y protegidos juntos.</p>
-  </description>
-  <description xml:lang="zh_CN">
-    <p>Hardinfo2 提供 Linux 系统的系统信息和基准测试。它能够从硬件和基础软件中获取信息。它可以对您的系统进行基准测试并与在线其他机器进行比较。</p>
-    <p>您可以找到以下信息：CPU 速度、GPU 和显卡速度、内部网络速度基准、加载的 Linux 硬件驱动程序和模块。 sysinfo 例如安装了哪些开发工具、内存 dmi 和 spd 信息、发行版/操作系统信息、有关 pcie 和 usb 等组件的 hwinfo。</p>
-    <p>而且它都是免费和开源软件（FOSS），因此我们可以一起更改和添加到程序中。请参阅下面的源代码链接，我们共同保证源代码的安全。</p>
+    <p xml:lang="es">Hardinfo2 ofrece información del sistema y puntos de referencia para sistemas Linux. Es capaz de obtener información tanto del hardware como del software básico. Puede comparar su sistema con otras máquinas en línea.</p>
+    <p xml:lang="es">Puede encontrar información como: velocidad de la CPU, velocidad de la GPU y de los gráficos, puntos de referencia de la velocidad de la red interna, controladores de hardware de Linux y módulos cargados. sysinfo como qué herramientas de desarrollo están instaladas, información de memoria dmi y spd, información de distribución/os, hwinfo sobre sus componentes como pcie y usb.</p>
+    <p xml:lang="es">Y todo es software gratuito y de código abierto (FOSS), por lo que podemos cambiarlo y agregarlo al programa juntos. Vea los enlaces a continuación para ver el código fuente, que todos mantenemos seguros y protegidos juntos.</p>
+    <p xml:lang="zh_CN">Hardinfo2 提供 Linux 系统的系统信息和基准测试。它能够从硬件和基础软件中获取信息。它可以对您的系统进行基准测试并与在线其他机器进行比较。</p>
+    <p xml:lang="zh_CN">您可以找到以下信息：CPU 速度、GPU 和显卡速度、内部网络速度基准、加载的 Linux 硬件驱动程序和模块。 sysinfo 例如安装了哪些开发工具、内存 dmi 和 spd 信息、发行版/操作系统信息、有关 pcie 和 usb 等组件的 hwinfo。</p>
+    <p xml:lang="zh_CN">而且它都是免费和开源软件（FOSS），因此我们可以一起更改和添加到程序中。请参阅下面的源代码链接，我们共同保证源代码的安全。</p>
   </description>
 
   <url type="homepage">https://hardinfo2.org</url>

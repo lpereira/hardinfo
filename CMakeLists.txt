@@ -12,6 +12,7 @@ option(HARDINFO2_QT5 "Build opengl benchmark for QT5 " 1)
 SET(CMAKE_INSTALL_PREFIX "/usr")
 SET(HARDINFO2_SYSTEMV 0)
 SET(HARDINFO2_RUNIT 0)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/tools/org.hardinfo2.hardinfo2.metainfo.xml" METAINFO_CONTENT)
 
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
@@ -134,11 +135,27 @@ if(${disversion} LESS 35.99)
   endif()
 endif()
 
-#centos/redhat/oracle/opensuse/suse ->9
+#centos/redhat/oracle ->9
 if(${disversion} LESS 9.99)
-  if(${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*")
-    message("Centos/Redhat/oracle/opensuse/suse/rocky/alma ->9 - LS24")
+  if(${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*")
+    message("Centos/Redhat/oracle/rocky/alma ->9 - LS24")
     set(HARDINFO2_LIBSOUP3 0)
+  endif()
+endif()
+
+#centos/redhat/oracle/opensuse/suse ->8
+if(${disversion} LESS 8.99)
+  if(${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*")
+    message("Centos/Redhat/oracle/opensuse/suse/rocky/alma ->8 - Old Appstream metainfo")
+    string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
+  endif()
+endif()
+
+#centos/redhat/oracle 10
+if((${disversion} GREATER_EQUAL 10) AND (${disversion} LESS 10.99))
+  if(${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*")
+    message("Centos/Redhat/oracle/rocky/alma 10 - Missing xrandr+sysbench!!!")
+    SET(RPM_REQ "udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, vulkan-tools") #miss sysbench, xrandr
   endif()
 endif()
 
@@ -179,6 +196,11 @@ if(${distro}${disversion} MATCHES "Fedora23")
     message("FC23 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
     SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr") #miss vulkan-tools
+    message("Fedora 23 - Too Old for Appstream metainfo")
+    string(REPLACE "<component type=\"desktop-application\">" "<component>" METAINFO_CONTENT "${METAINFO_CONTENT}" )
+    string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
+    string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
+    string(REPLACE "<url type=\"translate\">https://github.com/hardinfo2/hardinfo2/tree/master/po</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
 endif()
 
 #debian 7
@@ -241,14 +263,19 @@ if(${distro}${disversion} MATCHES "Ubuntu16")
     message("Ubuntu 16 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
     SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
+    message("ubuntu 16 - Old Appstream metainfo")
+    string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
+    string(REPLACE "<url type=\"translate\">https://github.com/hardinfo2/hardinfo2/tree/master/po</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
 endif()
 
 #ubuntu 18
 if(${distro}${disversion} MATCHES "Ubuntu18")
     SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
+    message("ubuntu 18 - Old Appstream metainfo")
+    string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
 endif()
 
-#ubuntu 20.04
+#ubuntu ->20.xx
 if(${disversion} LESS 20.99)
   if(${distro} MATCHES "Ubuntu")
     message("Ubuntu ->20.xx - LS24")
@@ -667,7 +694,12 @@ if(HARDINFO2_SERVICE)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tools/prerm ${CMAKE_CURRENT_BINARY_DIR}/packaging/prerm)
 endif()
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/org.hardinfo2.hardinfo2.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo/)
+
+#AppStream MetaInfo
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml" "${METAINFO_CONTENT}")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo/)
+execute_process(COMMAND appstream-util validate-relax --nonet ${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml)
+execute_process(COMMAND appstreamcli validate ${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hwinfo2_fetch_sysdata DESTINATION ${CMAKE_INSTALL_BINDIR}
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
@@ -701,7 +733,6 @@ install(FILES pixmaps/hardinfo2.svg
 
 
 ########################CPack PACKAGE BUILDING###########################
-
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://www.hardinfo2.org")
 if(${RPM})
     set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
