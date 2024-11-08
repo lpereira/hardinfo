@@ -156,6 +156,12 @@ name Applied Micro Circuits
     match_string_case APM
     match_string_case AMCC
 
+name Astra Linux
+    name_short Astra Linux
+    url www.astralinux.ru
+    ansi_color 0;36;107
+    match_string astra linux
+
 name Arch Linux
     name_short Arch Linux
     url www.archlinux.org
