@@ -1,0 +1,3 @@
+#Arch cpack
+message("Starting CPACK for Arch")
+execute_process(COMMAND ../tools/arch_makepkg.sh)

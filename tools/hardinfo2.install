@@ -1,0 +1,7 @@
+post_install() {
+  echo ""
+  echo "The included service is required for root access:"
+  echo "Starting the hardinfo2 server - systemctl start hardinfo2"
+  echo ""
+  systemctl start hardinfo2
+}

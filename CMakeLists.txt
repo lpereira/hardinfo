@@ -87,6 +87,7 @@ else()
   set(disversioncode "Linux")
 endif()
 set(RPM 0)
+set(TGZ 0)
 string(REGEX REPLACE "NAME=" "" distro "${distro}")
 string(REGEX REPLACE "\"" "" distro "${distro}")
 string(REGEX REPLACE "/" "" distro "${distro}")
@@ -104,6 +105,10 @@ string(REGEX REPLACE " " "" disversion "${disversion}")
 #RPM Distro's
 if(${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*" OR ${distro} MATCHES "Fedora*" OR ${distro} MATCHES "RedHat*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*" OR ${distro} MATCHES "PCLinuxOS*" OR ${distro} MATCHES "Ultramarine*" OR ${distro} MATCHES "Nobara*" OR ${distro} MATCHES "OpenMandriva*")
   set(RPM 1)
+endif()
+#Arch Distro's (tgz)
+if(${distro} MATCHES "Arch*" OR ${distro} MATCHES "Endeavour*" OR ${distro} MATCHES "Garuda*" OR ${distro} MATCHES "Reborn*" OR ${distro} MATCHES "Systemrescue*" OR ${distro} MATCHES "Artix*" OR ${distro} MATCHES "Manjaro*")
+  set(TGZ 1)
 endif()
 #Package architecture
 if(${RPM})
@@ -734,7 +739,13 @@ install(FILES pixmaps/hardinfo2.svg
 
 ########################CPack PACKAGE BUILDING###########################
 SET(CPACK_PACKAGE_HOMEPAGE_URL "https://www.hardinfo2.org")
-if(${RPM})
+if(${TGZ})
+    SET(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+    SET(CPACK_SOURCE_IGNORE_FILES "/build/;/.git/;/.github/;.gitignore;.gitmodules;*.po.old;*~;*.mo;")
+    SET(CPACK_SOURCE_GENERATOR "TGZ")
+    SET(CPACK_GENERATOR "External")
+    SET(CPACK_EXTERNAL_PACKAGE_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/tools/archcpack")
+elseif(${RPM})
     set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
     SET(CPACK_SOURCE_IGNORE_FILES "/build/;/.git/;/.github/;.gitignore;.gitmodules;*.po.old;*~;*.mo;")
     SET(CPACK_SOURCE_GENERATOR "RPM;TGZ")
@@ -746,6 +757,9 @@ else()
     SET(CPACK_GENERATOR "DEB")
     SET(PACKAGE_GTK2 "libgtk2.0-0")
 endif()
+
+#TGZ
+SET(CPACK_ARCHIVE_hardinfo2_FILE_NAME "hardinfo2")
 
 #RPM
 SET(CPACK_RPM_PACKAGE_OBSOLETES "hardinfo")

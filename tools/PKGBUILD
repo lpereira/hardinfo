@@ -1,0 +1,53 @@
+# Maintainer: Mark Wagie <mark dot wagie at proton dot me>
+pkgname=hardinfo2
+pkgver=2.2.4
+pkgrel=1
+pkgdesc="System Information and Benchmark for Linux Systems."
+arch=('x86_64')
+url="https://www.hardinfo2.org"
+license=('GPL-2.0-or-later AND GPL-3.0-or-later AND LGPL-2.1-or-later')
+depends=(
+  'gtk3'
+  'libsoup3'
+)
+makedepends=(
+  'cmake'
+  'qt5-base'
+)
+optdepends=(
+  'dmidecode: Memory Devices / System DMI module'
+  'fwupd: Firmware module'
+  'iperf3: Internal Network Speed benchmark'
+  'lm_sensors: Sensors module'
+  'lsscsi: SCSI support for Storage module'
+  'mesa-utils: GLX info for Display module'
+  'pciutils: PCI Devices module'
+  'qt5-base: OpenGL benchmark'
+  'sysbench: SysBench CPU benchmark'
+  'udisks2: Storage module'
+  'usbutils: USB Devices module'
+  'vulkan-tools: display Vulkan information'
+  'xdg-utils: open your browser for bugs, homepage & links'
+  'xorg-xrandr: read monitor setup'
+)
+provides=('hardinfo')
+conflicts=('hardinfo')
+install="$pkgname.install"
+#source=("$pkgname-$pkgver.tar.gz::https://github.com/hardinfo2/hardinfo2/archive/refs/tags/release-$pkgver.tar.gz")
+#sha256sums=('342fd65fbb9c8e28f467a9603fd72759d7159a1c6d3b68299531945d5fd9470f')
+source=("hardinfo2.tgz")
+sha256sums=('SKIP')
+
+build() {
+#  cmake -B build -S "$pkgname-release-$pkgver" \
+  cmake -B build -S "$pkgname" \
+    -DCMAKE_BUILD_TYPE='Release' \
+    -DCMAKE_INSTALL_PREFIX='/usr' \
+    -DCMAKE_INSTALL_LIBDIR='lib' \
+    -Wno-dev
+  cmake --build build -j
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}
