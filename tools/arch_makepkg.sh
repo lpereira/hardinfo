@@ -12,15 +12,21 @@ VER="${VER}_ArchLinux"
 sed -i "/pkgver=/c\pkgver=$VER" PKGBUILD
 
 #build and install
-sudo -u nobody makepkg -cs
+if [ $(id -u) -ne 0 ]; then
+    makepkg -cs
+else
+    chmod o=rwx .
+    sudo -u nobody makepkg -cs
+    chmod o= .
+fi
 
 #move result to build dir
-mv *.zst ~/hardinfo2/build/
+cp *.zst hardinfo2/build/
 
 #cleanup
+rm -f *.zst
 rm -f PKGBUILD
 rm -f hardinfo2.install
 rm -f hardinfo2.tgz
 
 cd hardinfo2/build
-rm hardinfo2_*.json
