@@ -107,6 +107,13 @@ name Alpine Linux
     ansi_color 0;34;107
     match_string Alpine Linux
 
+name ALT Linux
+    name_short ALT Linux
+    url www.altlinux.org
+    ansi_color 0;30;43
+    match_string altlinux
+    match_string alt linux
+
 name American Megatrends
     name_short AMI
     url www.ami.com
