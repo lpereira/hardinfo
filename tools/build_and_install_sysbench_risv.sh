@@ -32,7 +32,7 @@ cd ../../
 make -j
 
 #only local install sysbench
-cp src/sysbench /usr/local/bin/
+sudo cp src/sysbench /usr/local/bin/
 
 #cleanup
 cd ..
