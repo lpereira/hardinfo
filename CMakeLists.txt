@@ -494,6 +494,7 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/iperf3.c
 	modules/benchmark/opengl.c
 	modules/benchmark/storage.c
+	modules/benchmark/cachemem.c
 	modules/benchmark/drawing.c
 	modules/benchmark/guibench.c
 )
@@ -516,6 +517,7 @@ set(MODULE_benchmark_SOURCES
 	modules/benchmark/sysbench.c
 	modules/benchmark/iperf3.c
 	modules/benchmark/storage.c
+	modules/benchmark/cachemem.c
 	modules/benchmark/drawing.c
 	modules/benchmark/guibench.c
 )

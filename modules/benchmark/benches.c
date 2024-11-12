@@ -79,6 +79,7 @@ BENCH_SIMPLE(BENCHMARK_MEMORY_DUAL, "SysBench Memory (Two threads)", benchmark_m
 BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory (Quad threads)", benchmark_memory_quad, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_ALL, "SysBench Memory (Multi-thread)", benchmark_memory_all, 1);
 BENCH_SIMPLE(BENCHMARK_STORAGE, "Storage R/W Speed", benchmark_storage, 1);
+BENCH_SIMPLE(BENCHMARK_CACHEMEM, "Cache/Memory", benchmark_cachemem, 1);
 
 BENCH_CALLBACK(callback_benchmark_gui, "GPU Drawing", BENCHMARK_GUI, 1);
 void scan_benchmark_gui(gboolean reload)
@@ -127,6 +128,7 @@ static char *entries_english_name[] = {
 	    ,"GPU OpenGL Drawing"
 #endif
 	    ,"Storage R/W Speed"
+	    ,"Cache/Memory"
 };
 
 
@@ -293,6 +295,14 @@ static ModuleEntry entries[] = {
             scan_benchmark_storage,
             MODULE_FLAG_BENCHMARK,
         },
+    [BENCHMARK_CACHEMEM] =
+        {
+            N_("Cache/Memory"),
+            "bolt.svg",
+            callback_benchmark_cachemem,
+            scan_benchmark_cachemem,
+            MODULE_FLAG_BENCHMARK,
+        },
     {NULL}};
 
 const gchar *hi_note_func(gint entry)
@@ -326,6 +336,7 @@ const gchar *hi_note_func(gint entry)
         return _("Results in HIMarks. Higher is better.\n"
 		 "Many Desktop Environments only uses software.");
     case BENCHMARK_STORAGE:
+    case BENCHMARK_CACHEMEM:
         return _("Results in MB/s. Higher is better.");
 #if(HARDINFO2_QT5)
     case BENCHMARK_OPENGL:
