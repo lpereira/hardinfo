@@ -1102,6 +1102,12 @@ name Renesas Electronics
     ansi_color 0;97;44
     match_string Renesas
 
+name RevyOS
+    name_short RevyOS
+    url github.com/revyos/revyos
+    ansi_color 0;97;44
+    match_string RevyOS
+
 name Ricoh
     url www.ricoh.com
     wikipedia Ricoh

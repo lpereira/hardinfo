@@ -50,6 +50,7 @@ static const AptFlavor apt_flavors[] = {
     { "Raspbian",       "raspbian",        "raspbian-archive-keyring", "/etc/os-release",            "VERSION_ID=" },
     { "Armbian",        "armbian",         "armbian-config",           "/etc/armbian-image-release", "VERSION=" },
     { "Raspberry Pi",   "raspberry-pi",    "rpi-update",               "/etc/os-release",            "VERSION_ID=" },
+    { "RevyOS",         "revyos",          "revyos-keyring",           "/etc/revyos-release",        "BUILD_ID=" },
     { "PureOS",         "pureos",          "pureos-settings",          "/etc/os-release",            "VERSION_ID=" },
     { "Puppy Linux",    "puppy",           "/etc/DISTRO_SPECS",        "/etc/DISTRO_SPECS",          "DISTRO_VERSION=" },
     { "Ubuntu GNOME",   "ubuntu-gnome",    "ubuntu-gnome-desktop",     "/etc/os-release",            "VERSION_ID=" },//dead
