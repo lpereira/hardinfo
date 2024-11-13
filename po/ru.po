@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hardinfo2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-25 12:52+0300\n"
+"POT-Creation-Date: 2024-11-13 22:49+0300\n"
 "PO-Revision-Date: 2022-03-05 23:00+0300\n"
 "Last-Translator: Sergey Rodin <rodin.s@rambler.ru>, ViktorOn, tutralex\n"
 "Language-Team: \n"
@@ -89,7 +89,7 @@ msgstr "Книга"
 msgid "Drawer"
 msgstr "Трассировщик"
 
-#: hardinfo2/cpu_util.c:249 modules/devices/arm/processor.c:707
+#: hardinfo2/cpu_util.c:249 modules/devices/arm/processor.c:709
 #: modules/devices/riscv/processor.c:551 modules/devices/x86/processor.c:751
 msgid "Topology"
 msgstr "Топология"
@@ -636,9 +636,9 @@ msgid "Check Update Version"
 msgstr "Проверить обновления"
 
 #: hardinfo2/vendor.c:391 modules/computer.c:630 modules/computer.c:829
-#: modules/computer/os.c:196 modules/computer/os.c:378
-#: modules/computer/os.c:413 modules/computer/os.c:745
-#: modules/computer/os.c:806 modules/devices.c:464 modules/devices.c:614
+#: modules/computer/os.c:197 modules/computer/os.c:379
+#: modules/computer/os.c:414 modules/computer/os.c:746
+#: modules/computer/os.c:807 modules/devices.c:464 modules/devices.c:614
 #: modules/devices/firmware.c:149 modules/devices/printers.c:106
 #: modules/devices/printers.c:113 modules/devices/printers.c:123
 #: modules/devices/printers.c:138 modules/devices/printers.c:147
@@ -917,87 +917,91 @@ msgstr "_Синхронизировать"
 msgid "Synchronizing: %s"
 msgstr "Синхронизация: %s"
 
-#: modules/benchmark/benches.c:136
+#: modules/benchmark/benches.c:138
 msgid "CPU Blowfish (Single-thread)"
 msgstr "CPU Blowfish (однопоточный)"
 
-#: modules/benchmark/benches.c:144
+#: modules/benchmark/benches.c:146
 msgid "CPU Blowfish (Multi-thread)"
 msgstr "CPU Blowfish (многопоточный)"
 
-#: modules/benchmark/benches.c:152
+#: modules/benchmark/benches.c:154
 msgid "CPU Blowfish (Multi-core)"
 msgstr "CPU Blowfish (многоядерный)"
 
-#: modules/benchmark/benches.c:160
+#: modules/benchmark/benches.c:162
 msgid "CPU Zlib"
 msgstr ""
 
-#: modules/benchmark/benches.c:168
+#: modules/benchmark/benches.c:170
 msgid "CPU CryptoHash"
 msgstr "CPU криптохеш"
 
-#: modules/benchmark/benches.c:176
+#: modules/benchmark/benches.c:178
 msgid "CPU Fibonacci"
 msgstr "CPU Фибоначчи"
 
-#: modules/benchmark/benches.c:184
+#: modules/benchmark/benches.c:186
 msgid "CPU N-Queens"
 msgstr ""
 
-#: modules/benchmark/benches.c:192
+#: modules/benchmark/benches.c:194
 msgid "FPU FFT"
 msgstr "FPU быстрое преобразование Фурье"
 
-#: modules/benchmark/benches.c:200
+#: modules/benchmark/benches.c:202
 msgid "FPU Raytracing (Single-thread)"
 msgstr "FPU трассировка лучей"
 
-#: modules/benchmark/benches.c:208
+#: modules/benchmark/benches.c:210
 msgid "Internal Network Speed"
 msgstr "Скорость внутренней сети"
 
-#: modules/benchmark/benches.c:216
+#: modules/benchmark/benches.c:218
 msgid "SysBench CPU (Single-thread)"
 msgstr "SysBench CPU (однопоточный)"
 
-#: modules/benchmark/benches.c:224
+#: modules/benchmark/benches.c:226
 msgid "SysBench CPU (Multi-thread)"
 msgstr "SysBench CPU (многопоточный)"
 
-#: modules/benchmark/benches.c:232
+#: modules/benchmark/benches.c:234
 msgid "SysBench CPU (Four threads)"
 msgstr "SysBench CPU (четыре потока)"
 
-#: modules/benchmark/benches.c:240
+#: modules/benchmark/benches.c:242
 msgid "SysBench Memory (Single-thread)"
 msgstr "SysBench Memory (однопоточный)"
 
-#: modules/benchmark/benches.c:248
+#: modules/benchmark/benches.c:250
 msgid "SysBench Memory (Two threads)"
 msgstr "SysBench Memory (два потока)"
 
-#: modules/benchmark/benches.c:256
+#: modules/benchmark/benches.c:258
 msgid "SysBench Memory (Quad threads)"
 msgstr "SysBench Memory (четыре потока)"
 
-#: modules/benchmark/benches.c:264
+#: modules/benchmark/benches.c:266
 msgid "SysBench Memory (Multi-thread)"
 msgstr "SysBench Memory (многопоточный)"
 
-#: modules/benchmark/benches.c:272
+#: modules/benchmark/benches.c:274
 msgid "GPU Drawing"
 msgstr ""
 
-#: modules/benchmark/benches.c:281
+#: modules/benchmark/benches.c:283
 msgid "GPU OpenGL Drawing"
 msgstr ""
 
-#: modules/benchmark/benches.c:290
+#: modules/benchmark/benches.c:292
 msgid "Storage R/W Speed"
 msgstr "Скорость хранилища"
 
-#: modules/benchmark/benches.c:304
+#: modules/benchmark/benches.c:300
+msgid "Cache/Memory"
+msgstr "Кэш/Память"
+
+#: modules/benchmark/benches.c:314
 msgid ""
 "Alexey Kopytov's <i><b>sysbench</b></i> is required.\n"
 "Results in events/second. Higher is better."
@@ -1005,7 +1009,7 @@ msgstr ""
 "Требуется <i><b>sysbench</b></i> от Алексея Копытова.\n"
 "Результаты в событиях в секунду. Чем выше, тем лучше."
 
-#: modules/benchmark/benches.c:310
+#: modules/benchmark/benches.c:320
 msgid ""
 "Alexey Kopytov's <i><b>sysbench</b></i> is required.\n"
 "Results in MiB/second. Higher is better."
@@ -1013,7 +1017,7 @@ msgstr ""
 "Требуется <i><b>sysbench</b></i> от Алексея Копытова.\n"
 "Результаты в МиБ/сек. Чем выше, тем лучше."
 
-#: modules/benchmark/benches.c:313
+#: modules/benchmark/benches.c:323
 msgid ""
 "<i><b>iperf3</b></i> is required.\n"
 "Results in Gbits/s. Higher is better."
@@ -1021,11 +1025,11 @@ msgstr ""
 "Требуется <i><b>iperf3</b></i>.\n"
 "Результаты в Гбит/с. Чем выше, тем лучше."
 
-#: modules/benchmark/benches.c:324
+#: modules/benchmark/benches.c:334
 msgid "Results in HIMarks. Higher is better."
 msgstr "Результаты в HIMarks. Чем выше, тем лучше."
 
-#: modules/benchmark/benches.c:326
+#: modules/benchmark/benches.c:336
 msgid ""
 "Results in HIMarks. Higher is better.\n"
 "Many Desktop Environments only uses software."
@@ -1033,11 +1037,11 @@ msgstr ""
 "Результаты в HIMarks. Чем выше, тем лучше.\n"
 "Многие среды рабочего стола используют только программное обеспечение."
 
-#: modules/benchmark/benches.c:329
+#: modules/benchmark/benches.c:340
 msgid "Results in MB/s. Higher is better."
 msgstr "Результаты в МБ/с. Чем выше, тем лучше."
 
-#: modules/benchmark/benches.c:332
+#: modules/benchmark/benches.c:343
 msgid "Results in FPS. Higher is better."
 msgstr "Результаты в FPS. Чем выше, тем лучше."
 
@@ -1045,7 +1049,7 @@ msgstr "Результаты в FPS. Чем выше, тем лучше."
 #. * line references
 #: modules/benchmark/bench_results.c:34 modules/computer.c:41
 #: modules/computer/display.c:40 modules/computer/display.c:57
-#: modules/computer/os.c:400 modules/computer/os.c:457 modules/devices.c:596
+#: modules/computer/os.c:401 modules/computer/os.c:458 modules/devices.c:596
 #: modules/devices/dmi_memory.c:699 modules/devices/dmi_memory.c:835
 #: modules/devices/gpu.c:40 modules/devices/gpu.c:58 modules/devices/gpu.c:122
 #: modules/devices/gpu.c:130 modules/devices/gpu.c:210
@@ -1068,7 +1072,7 @@ msgstr "(Неизвестно)"
 
 #: modules/benchmark/bench_results.c:261 modules/devices/alpha/processor.c:90
 #: modules/devices/arm/processor.c:511 modules/devices/arm/processor.c:524
-#: modules/devices/arm/processor.c:567 modules/devices/arm/processor.c:740
+#: modules/devices/arm/processor.c:567 modules/devices/arm/processor.c:742
 #: modules/devices.c:430 modules/devices.c:438 modules/devices.c:466
 #: modules/devices/e2k/processor.c:363 modules/devices/e2k/processor.c:400
 #: modules/devices/gpu.c:125 modules/devices/gpu.c:127
@@ -1579,7 +1583,7 @@ msgid "Field"
 msgstr "Поле"
 
 #: modules/computer.c:385 modules/computer.c:730 modules/computer/modules.c:369
-#: modules/computer/modules.c:370 modules/devices/arm/processor.c:706
+#: modules/computer/modules.c:370 modules/devices/arm/processor.c:708
 #: modules/devices/riscv/processor.c:550
 msgid "Description"
 msgstr "Описание"
@@ -1751,7 +1755,7 @@ msgstr "Загруженные модули"
 
 #: modules/computer.c:729 modules/computer.c:757 modules/computer.c:897
 #: modules/computer/languages.c:95 modules/computer/modules.c:369
-#: modules/devices/arm/processor.c:705 modules/devices/dmi.c:38
+#: modules/devices/arm/processor.c:707 modules/devices/dmi.c:38
 #: modules/devices/dmi.c:49 modules/devices/e2k/processor.c:358
 #: modules/devices/gpu.c:301 modules/devices/ia64/processor.c:160
 #: modules/devices/inputdevices.c:141 modules/devices/monitors.c:403
@@ -1789,7 +1793,7 @@ msgstr "Точка монтирования"
 msgid "Usage"
 msgstr "Использование"
 
-#: modules/computer.c:772 modules/devices/arm/processor.c:757
+#: modules/computer.c:772 modules/devices/arm/processor.c:759
 #: modules/devices.c:865 modules/devices.c:879
 #: modules/devices/e2k/processor.c:416 modules/devices/gpu.c:85
 #: modules/devices/gpu.c:93 modules/devices/gpu.c:293 modules/devices/pci.c:123
@@ -2407,102 +2411,102 @@ msgstr "Лицензия"
 msgid "Dependencies"
 msgstr "Зависимости"
 
-#: modules/computer/os.c:153 modules/computer/os.c:154
-#: modules/computer/os.c:155 modules/computer/os.c:156
+#: modules/computer/os.c:154 modules/computer/os.c:155
+#: modules/computer/os.c:156 modules/computer/os.c:157
 msgid "GNU C Library"
 msgstr ""
 
-#: modules/computer/os.c:157
+#: modules/computer/os.c:158
 msgid "uClibc or uClibc-ng"
 msgstr ""
 
-#: modules/computer/os.c:158
+#: modules/computer/os.c:159
 msgid "diet libc"
 msgstr ""
 
-#: modules/computer/os.c:229 modules/computer/os.c:232
+#: modules/computer/os.c:230 modules/computer/os.c:233
 msgid "GNOME Shell "
 msgstr ""
 
-#: modules/computer/os.c:240 modules/computer/os.c:243
+#: modules/computer/os.c:241 modules/computer/os.c:244
 msgid "Version: "
 msgstr "Версия: "
 
-#: modules/computer/os.c:261 modules/computer/os.c:264
+#: modules/computer/os.c:262 modules/computer/os.c:265
 msgid "MATE Desktop Environment "
 msgstr ""
 
-#: modules/computer/os.c:297
+#: modules/computer/os.c:298
 #, c-format
 msgid "Unknown (Window Manager: %s)"
 msgstr "Неизвестно (Оконный менеджер: %s)"
 
 #. !/{desktop environment} on {session type}
-#: modules/computer/os.c:308
+#: modules/computer/os.c:309
 #, c-format
 msgid "%s on %s"
 msgstr "%s на %s"
 
-#: modules/computer/os.c:376
+#: modules/computer/os.c:377
 msgid "Terminal"
 msgstr "Терминал"
 
-#: modules/computer/os.c:392
+#: modules/computer/os.c:393
 msgid "User access allowed"
 msgstr "Пользовательский доступ разрешен"
 
-#: modules/computer/os.c:394
+#: modules/computer/os.c:395
 msgid "User access forbidden"
 msgstr "Пользовательский доступ запрещен"
 
-#: modules/computer/os.c:396
+#: modules/computer/os.c:397
 msgid "Access allowed (running as superuser)"
 msgstr "Доступ разрешен (запущено суперпользователем)"
 
-#: modules/computer/os.c:398
+#: modules/computer/os.c:399
 msgid "Access forbidden? (running as superuser)"
 msgstr "Доступ запрещен? (запущено суперпользователем)"
 
-#: modules/computer/os.c:407 modules/computer/os.c:797
+#: modules/computer/os.c:408 modules/computer/os.c:798
 msgid "Disabled"
 msgstr "Отключено"
 
-#: modules/computer/os.c:409
+#: modules/computer/os.c:410
 msgid "Partially enabled (mmap base+stack+VDSO base)"
 msgstr "Частично включено (mmap base+stack+VDSO base)"
 
-#: modules/computer/os.c:411
+#: modules/computer/os.c:412
 msgid "Fully enabled (mmap base+stack+VDSO base+heap)"
 msgstr "Полностью включено (mmap base+stack+VDSO base+heap)"
 
 #. !/bits of entropy for rng (0)
-#: modules/computer/os.c:420
+#: modules/computer/os.c:421
 msgid "(None or not available)"
 msgstr "(Нет или недоступно)"
 
 #. !/bits of entropy for rng (low/poor value)
-#: modules/computer/os.c:421
+#: modules/computer/os.c:422
 #, c-format
 msgid "%d bits (low)"
 msgstr "%d бит (низкая)"
 
 #. !/bits of entropy for rng (medium value)
-#: modules/computer/os.c:422
+#: modules/computer/os.c:423
 #, c-format
 msgid "%d bits (medium)"
 msgstr "%d бит (средняя)"
 
 #. !/bits of entropy for rng (high/good value)
-#: modules/computer/os.c:423
+#: modules/computer/os.c:424
 #, c-format
 msgid "%d bits (healthy)"
 msgstr "%d бит (огромная)"
 
-#: modules/computer/os.c:792
+#: modules/computer/os.c:793
 msgid "Not installed"
 msgstr "Не установлено"
 
-#: modules/computer/os.c:795
+#: modules/computer/os.c:796
 msgid "Enabled"
 msgstr "Включено"
 
@@ -2518,7 +2522,7 @@ msgstr "ID пользователя"
 msgid "Default Shell"
 msgstr "Оболочка по умолчанию"
 
-#: modules/devices/alpha/processor.c:88 modules/devices/arm/processor.c:757
+#: modules/devices/alpha/processor.c:88 modules/devices/arm/processor.c:759
 #: modules/devices.c:865 modules/devices/devicetree.c:162
 #: modules/devices/devicetree.c:208 modules/devices/devicetree/pmac_data.c:80
 #: modules/devices/e2k/processor.c:361 modules/devices/e2k/processor.c:416
@@ -2537,7 +2541,7 @@ msgid "Platform String"
 msgstr "Строка платформы"
 
 #: modules/devices/alpha/processor.c:90 modules/devices/arm/processor.c:567
-#: modules/devices/arm/processor.c:757 modules/devices/e2k/processor.c:363
+#: modules/devices/arm/processor.c:759 modules/devices/e2k/processor.c:363
 #: modules/devices/e2k/processor.c:416 modules/devices/ia64/processor.c:167
 #: modules/devices/loongarch64/processor.c:98
 #: modules/devices/m68k/processor.c:87 modules/devices/mips/processor.c:77
@@ -2921,20 +2925,20 @@ msgstr "Вариант"
 msgid "Capabilities"
 msgstr "Возможности"
 
-#: modules/devices/arm/processor.c:704 modules/devices/riscv/processor.c:548
+#: modules/devices/arm/processor.c:706 modules/devices/riscv/processor.c:548
 msgid "SOC/Package"
 msgstr "SOC/Пакет"
 
-#: modules/devices/arm/processor.c:708 modules/devices/riscv/processor.c:552
+#: modules/devices/arm/processor.c:710 modules/devices/riscv/processor.c:552
 #: modules/devices/x86/processor.c:752
 msgid "Logical CPU Config"
 msgstr "Логическая конфигурация процессора"
 
-#: modules/devices/arm/processor.c:727 modules/devices/riscv/processor.c:608
+#: modules/devices/arm/processor.c:729 modules/devices/riscv/processor.c:608
 msgid "SOC/Package Information"
 msgstr "Информация о SOC/Package"
 
-#: modules/devices/arm/processor.c:757 modules/devices/riscv/processor.c:640
+#: modules/devices/arm/processor.c:759 modules/devices/riscv/processor.c:640
 #: modules/devices/x86/processor.c:810
 msgid "Socket:Core"
 msgstr "Сокет:Ядро"
