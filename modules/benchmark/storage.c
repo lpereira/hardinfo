@@ -40,27 +40,23 @@ static bench_value storage_runtest() {
 	   spawned = g_spawn_command_line_sync(cmd_line, &out, &err, NULL, NULL);
         else
 	   spawned = g_spawn_command_line_sync(cmd_line_long, &out, &err, NULL, NULL);
-        if (spawned){
+        if (spawned && err){
 	    i=0;
 	    if( (s=strstr(err,"\n")) && (s=strstr(s+1,"\n")) ) {
 	        i=sscanf(s+1,"%d",&writebytes);
-	        if(i==1) {
-                    if( (s=strstr(s,")")) && (s=strstr(s+1,", ")) ){
-                         i=sscanf(s+2,"%f",&writetime);
-                         if((i==1) && (s=strstr(s+2,", ")))
-                              i=sscanf(s+2,"%f",&writespeed);
-	            }
-	        }
+	        if((i==1) && (s=strstr(s,")")) && (s=strstr(s+1,", ")) ){
+                     i=sscanf(s+2,"%f",&writetime);
+                     if((i==1) && (s=strstr(s+2,", ")))
+		         i=sscanf(s+2,"%f",&writespeed); else i=0;
+	        } else i=0;
             }
 	    if( (i==1) && (s=strstr(s+1,"\n")) && (s=strstr(s+1,"\n")) && (s=strstr(s+1,"\n")) ) {
 	        i=sscanf(s+1,"%d",&readbytes);
-	        if(i==1) {
-                    if( (s=strstr(s,")")) && (s=strstr(s+1,", ")) ){
-                         i=sscanf(s+2,"%f",&readtime);
-                         if((i==1) && (s=strstr(s+2,", ")))
-                              i=sscanf(s+2,"%f",&readspeed);
-	            }
-	        }
+	        if((i==1) && (s=strstr(s,")")) && (s=strstr(s+1,", ")) ){
+                     i=sscanf(s+2,"%f",&readtime);
+                     if((i==1) && (s=strstr(s+2,", ")))
+		          i=sscanf(s+2,"%f",&readspeed); else i=0;
+	        } else i=0;
             }
             if((i==1) && (readtime!=0) && (writetime!=0)){
 	        writespeed=writebytes/writetime;
