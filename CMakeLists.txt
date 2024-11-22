@@ -107,7 +107,7 @@ if(${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*" OR ${distro} MATCHES 
   set(RPM 1)
 endif()
 #Arch Distro's (tgz)
-if(${distro} MATCHES "Arch*" OR ${distro} MATCHES "Endeavour*" OR ${distro} MATCHES "Garuda*" OR ${distro} MATCHES "Reborn*" OR ${distro} MATCHES "Systemrescue*" OR ${distro} MATCHES "Artix*" OR ${distro} MATCHES "Manjaro*")
+if(${distro} MATCHES "Arch*" OR ${distro} MATCHES "Endeavour*" OR ${distro} MATCHES "Garuda*" OR ${distro} MATCHES "Reborn*" OR ${distro} MATCHES "SystemRescue*" OR ${distro} MATCHES "Artix*" OR ${distro} MATCHES "Manjaro*")
   set(TGZ 1)
 endif()
 #Package architecture
