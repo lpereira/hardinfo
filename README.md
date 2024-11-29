@@ -54,7 +54,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
 - sudo apt install ./hardinfo2_*  (Use reinstall instead of install if already installed)
-- sudo apt install lm-sensors sysbench lsscsi mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd x11-xserver-utils vulkan-tools
+- sudo apt install lm-sensors sysbench mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd x11-xserver-utils vulkan-tools
 - hardinfo2
 
 **Fedora/CentOS/RedHat/Rocky/Alma/Oracle**
@@ -71,7 +71,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
 - sudo yum install ./hardinfo2-*  (Use reinstall instead of install if already installed)
-- sudo yum install lm_sensors sysbench lsscsi glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd xrandr vulkan-tools
+- sudo yum install lm_sensors sysbench glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd xrandr vulkan-tools
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, zypper --no-gpg-checks install ./hardinfo2-*
@@ -93,7 +93,6 @@ RiscV: The package is not ready yet - build by using the ./tools/build_and_insta
 - **udisks2**: is needed to provide NVME++ informations.
 - **dmi-decode**: is needed to provide DMI informations.
 - **mesa-utils**: is needed to provide opengl and run standard sysbench benchmarks.
-- **lsscsi**: gives information about hard drives.
 - **lm-sensors**: is needed to provide sensors values.
 - **xdg-utils**: xdg_open is used to open your browser for bugs, homepage & links.
 - **iperf3**: iperf3 is used to benchmark internal network speed.

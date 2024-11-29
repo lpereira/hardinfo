@@ -19,7 +19,6 @@ optdepends=(
   'fwupd: Firmware module'
   'iperf3: Internal Network Speed benchmark'
   'lm_sensors: Sensors module'
-  'lsscsi: SCSI support for Storage module'
   'mesa-utils: GLX info for Display module'
   'pciutils: PCI Devices module'
   'qt5-base: OpenGL benchmark'

@@ -72,7 +72,6 @@ BuildRequires:  desktop-file-utils
 %if 0%{?rhel} >= 8 || 0%{?fedora}
 Recommends:     lm_sensors
 Recommends:     sysbench
-Recommends:     lsscsi
 Recommends:     glx-utils
 Recommends:     dmidecode
 Recommends:     udisks2

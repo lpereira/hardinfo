@@ -73,8 +73,8 @@ add_definitions("-Wformat-security")
 
 set(PACKAGE_LIBSOUP2_MINVERSION 2.42)
 set(PACKAGE_LIBGLIB2_MINVERSION 2.24)
-SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr, vulkan-tools")
-SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools")
+SET(RPM_REQ "sysbench, udisks2, glx-utils, lm_sensors, xdg-utils, iperf3, fwupd, xrandr, vulkan-tools")
+SET(DEB_REQ "sysbench, udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools")
 
 #########################CPack PACKAGING SETUP###############################
 if(EXISTS "/etc/os-release")
@@ -160,14 +160,14 @@ endif()
 if((${disversion} GREATER_EQUAL 10) AND (${disversion} LESS 10.99))
   if(${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "Alma*" OR ${distro} MATCHES "Rocky*")
     message("Centos/Redhat/oracle/rocky/alma 10 - Missing xrandr+sysbench!!!")
-    SET(RPM_REQ "udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, vulkan-tools") #miss sysbench, xrandr
+    SET(RPM_REQ "udisks2, glx-utils, lm_sensors, xdg-utils, iperf3, fwupd, vulkan-tools") #miss sysbench, xrandr
   endif()
 endif()
 
 #centos/redhat/oracle/opensuse/suse 7
 if(${disversion} LESS 7.99)
   if((${distro} MATCHES "Red*" OR ${distro} MATCHES "CentOS*" OR ${distro} MATCHES "Oracle*" OR ${distro} MATCHES "openSUSE*" OR ${distro} MATCHES "SUSE*"))
-      SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr") #miss vulkan-tools
+      SET(RPM_REQ "sysbench, udisks2, glx-utils, lm_sensors, xdg-utils, iperf3, fwupd, xrandr") #miss vulkan-tools
   endif()
 endif()
 
@@ -184,14 +184,14 @@ if(${disversion} LESS 6.99)
     set(HARDINFO2_SYSTEMV 1)
     message("RPM EL6 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
-    SET(RPM_REQ "sysbench, lsscsi, glx-utils, lm_sensors, xdg-utils, xrandr") #miss vulkan-tools, udisks2, fwupd, iperf3
+    SET(RPM_REQ "sysbench, glx-utils, lm_sensors, xdg-utils, xrandr") #miss vulkan-tools, udisks2, fwupd, iperf3
   endif()
 endif()
 
 #opensuse tumbeweed
 if(${disversion} GREATER 20000101)
   if(${distro} MATCHES "openSUSE*")
-    SET(RPM_REQ "sysbench, udisks2, lsscsi, xdg-utils, fwupd, xrandr,vulkan-tools,  Mesa-demo-x, iperf, sensors") 
+    SET(RPM_REQ "sysbench, udisks2, xdg-utils, fwupd, xrandr,vulkan-tools,  Mesa-demo-x, iperf, sensors") 
   endif()
 endif()
 
@@ -200,7 +200,7 @@ endif()
 if(${distro}${disversion} MATCHES "Fedora23")
     message("FC23 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
-    SET(RPM_REQ "sysbench, udisks2, glx-utils, lsscsi, lm_sensors, xdg-utils, iperf3, fwupd, xrandr") #miss vulkan-tools
+    SET(RPM_REQ "sysbench, udisks2, glx-utils, lm_sensors, xdg-utils, iperf3, fwupd, xrandr") #miss vulkan-tools
     message("Fedora 23 - Too Old for Appstream metainfo")
     string(REPLACE "<component type=\"desktop-application\">" "<component>" METAINFO_CONTENT "${METAINFO_CONTENT}" )
     string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
@@ -217,7 +217,7 @@ if(${distro}${disversion} MATCHES "DebianGNULinux7")
     set(PACKAGE_LIBSOUP2_MINVERSION 2.34.3)
     set(HARDINFO2_SYSTEMV 1)
     set(HARDINFO2_QT5 0)
-    SET(DEB_REQ "sysbench, mesa-utils, lsscsi, lm-sensors, xdg-utils, x11-xserver-utils") #miss vulkan-tools,fwupd, udisks2, iperf3
+    SET(DEB_REQ "sysbench, mesa-utils, lm-sensors, xdg-utils, x11-xserver-utils") #miss vulkan-tools,fwupd, udisks2, iperf3
 endif()
 
 #debian 8
@@ -225,7 +225,7 @@ if(${distro}${disversion} MATCHES "DebianGNULinux8")
     message("DEB 8 - GTK3 version 3.14.5 is low - Themes disabled")
     message("DEB 8 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
-    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, x11-xserver-utils") #miss vulkan-tools,fwupd
+    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, x11-xserver-utils") #miss vulkan-tools,fwupd
 endif()
 
 #debian 9
@@ -234,13 +234,13 @@ else()
     if(${distro}${disversion} MATCHES "DebianGNULinux9")
         message("DEB 9 - QT5 too low - Disabling opengl benchmarks")
         set(HARDINFO2_QT5 0)
-	SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
+	SET(DEB_REQ "sysbench, udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
     endif()
 endif()
 
 #debian 10
 if(${distro}${disversion} MATCHES "DebianGNULinux10")
-  SET(DEB_REQ "udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
+  SET(DEB_REQ "udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
 endif()
 
 #debian ->11
@@ -267,7 +267,7 @@ endif()
 if(${distro}${disversion} MATCHES "Ubuntu16")
     message("Ubuntu 16 - no QT5 - Disabling opengl benchmarks")
     set(HARDINFO2_QT5 0)
-    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
+    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
     message("ubuntu 16 - Old Appstream metainfo")
     string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
     string(REPLACE "<url type=\"translate\">https://github.com/hardinfo2/hardinfo2/tree/master/po</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
@@ -275,7 +275,7 @@ endif()
 
 #ubuntu 18
 if(${distro}${disversion} MATCHES "Ubuntu18")
-    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
+    SET(DEB_REQ "sysbench, udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils") #miss vulkan-tools
     message("ubuntu 18 - Old Appstream metainfo")
     string(REPLACE "<url type=\"contact\">https://github.com/hardinfo2/hardinfo2/discussions</url>" "" METAINFO_CONTENT "${METAINFO_CONTENT}" )
 endif()
@@ -296,12 +296,11 @@ endif()
 
 #OpenMandriva
 if(${distro} MATCHES "OpenMandriva")
-    SET(RPM_REQ "udisks2, sysbench, fwupd, lm_sensors, xdg-utils, xrandr, vulkan-tools,  glxinfo, iperf") #miss lsscsi
 endif()
 
 #PCLinuxOS
 if(${distro} MATCHES "PCLinux")
-    SET(RPM_REQ "udisks2, lsscsi, lm_sensors, xdg-utils, xrandr, vulkan-tools,  glxinfo, iperf") #miss sysbench,fwupd
+    SET(RPM_REQ "udisks2, lm_sensors, xdg-utils, xrandr, vulkan-tools,  glxinfo, iperf") #miss sysbench,fwupd
     set(HARDINFO2_SYSTEMV 1)
 endif()
 
@@ -341,7 +340,7 @@ if(${distro} MATCHES "Artix")
 endif()
 
 if(HARDINFO2_ARCH MATCHES "riscv")
-    SET(DEB_REQ "udisks2, mesa-utils, lsscsi, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
+    SET(DEB_REQ "udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
 endif()
 
 #WSL 1/2
