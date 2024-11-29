@@ -309,6 +309,7 @@ endif()
 
 #OpenMandriva
 if(${distro} MATCHES "OpenMandriva")
+    SET(RPM_REQ "udisks2, sysbench, fwupd, lm_sensors, xdg-utils, xrandr, vulkan-tools,  glxinfo, iperf")
 endif()
 
 #PCLinuxOS
