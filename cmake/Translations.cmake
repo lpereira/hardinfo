@@ -7,8 +7,7 @@ macro(add_translations_directory NLS_PACKAGE)
     foreach (PO_INPUT ${PO_FILES})
         get_filename_component (PO_INPUT_BASE ${PO_INPUT} NAME_WE)
         set (MO_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PO_INPUT_BASE}.mo)
-        add_custom_command (TARGET i18n COMMAND ${MSGFMT_EXECUTABLE} -o ${MO_OUTPUT} ${PO_INPUT})
-
+        add_custom_command (TARGET i18n POST_BUILD COMMAND ${MSGFMT_EXECUTABLE} -o ${MO_OUTPUT} ${PO_INPUT})
         install (FILES ${MO_OUTPUT} DESTINATION
             ${CMAKE_INSTALL_LOCALEDIR}/${PO_INPUT_BASE}/LC_MESSAGES
             RENAME ${NLS_PACKAGE}.mo)
@@ -33,7 +32,7 @@ macro(add_translations_catalog NLS_PACKAGE)
         endforeach()
     endforeach()
 
-    add_custom_command (TARGET pot COMMAND
+    add_custom_command (TARGET pot POST_BUILD COMMAND
         ${XGETTEXT_EXECUTABLE} -d ${NLS_PACKAGE} -o ${CMAKE_CURRENT_SOURCE_DIR}/${NLS_PACKAGE}.pot
         ${VALA_SOURCE} ${C_SOURCE} -k_ -kN_ -kC_:1c,2 -kNC_:1c,2 -c/ --from-code=UTF-8
         )
