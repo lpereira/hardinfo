@@ -1,10 +1,10 @@
 #hardinfo2 supports CMake version 3.0.2->
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.31.0")
+if(${CMAKE_VERSION} VERSION_GREATER "3.30.99")
     cmake_minimum_required(VERSION 3.10.0)
     cmake_policy(VERSION 3.10.0)
     SET(CMAKE_EXECUTABLE_ENABLE_EXPORTS 1)
 else()
-    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.27.0")
+    if(${CMAKE_VERSION} VERSION_GREATER "3.26.99")
         cmake_minimum_required(VERSION 3.5.0)
         cmake_policy(VERSION 3.5.0)
 	SET(CMAKE_EXECUTABLE_ENABLE_EXPORTS 1)
