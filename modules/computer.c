@@ -386,11 +386,56 @@ gchar *callback_memory_usage()
                lginterval);
 }
 
-static gchar *detect_machine_type(int english)
+
+gchar *computer_get_machinetype(int english)
 {
+    gchar *tmp;
     GDir *dir;
     gchar *chassis;
 
+    if(g_file_test("/proc/xen", G_FILE_TEST_EXISTS)) {
+        DEBUG("/proc/xen found; assuming Xen");
+	if(english)
+            return g_strdup(N_("Virtual (Xen)"));
+	else
+            return g_strdup(_("Virtual (Xen)"));
+    }
+
+    tmp = module_call_method("devices::getMotherboard");
+    if(strstr(tmp, "VirtualBox") != NULL) {
+        g_free(tmp);
+	if(english)
+            return g_strdup(N_("Virtual (VirtualBox)"));
+        else
+            return g_strdup(_("Virtual (VirtualBox)"));
+    }
+    if(strstr(tmp, "VMware") != NULL) {
+        g_free(tmp);
+	if(english)
+            return g_strdup(N_("Virtual (VMware)"));
+	else
+            return g_strdup(_("Virtual (VMware)"));
+    }
+    g_free(tmp);
+
+    tmp = module_call_method("devices::getStorageDevices");
+    if(strstr(tmp, "QEMU") != NULL) {
+        g_free(tmp);
+	if(english)
+            return g_strdup(N_("Virtual (QEMU)"));
+	else
+            return g_strdup(_("Virtual (QEMU)"));
+    }
+    g_free(tmp);
+
+    tmp=module_call_method("computer::getOSKernel");
+    if(strstr(tmp,"WSL2")){
+         g_free(tmp);
+         return g_strdup("Virtual (WSL2)");
+    }
+    g_free(tmp);
+
+    //Physical machine
     chassis = dmi_chassis_type_str(-1, 0);
     if (chassis)
         return chassis;
@@ -449,126 +494,12 @@ static gchar *detect_machine_type(int english)
         g_dir_close(dir);
     }
 
-    if(strstr(module_call_method("computer::getOSKernel"),"WSL2"))
-        return g_strdup("WSL2");
     if(english)
         return g_strdup(N_("Unknown physical machine type"));
     else
         return g_strdup(_("Unknown physical machine type"));
 }
 
-/* Table based off imvirt by Thomas Liske <liske@ibh.de>
-   Copyright (c) 2008 IBH IT-Service GmbH under GPLv2. */
-char get_virtualization[100]={};
-char get_virtualization_english[100]={};
-gchar *computer_get_virtualization(int english)
-{
-    gboolean found = FALSE;
-    gint i, j;
-    gchar *files[] = {
-        "/proc/scsi/scsi",
-        "/proc/cpuinfo",
-        "/var/log/dmesg",
-        NULL
-    };
-    static const struct {
-        gchar *str;
-        gchar *vmtype;
-    } vm_types[] = {
-        /* VMware */
-        { "VMware", N_("Virtual (VMware)") },
-        { ": VMware Virtual IDE CDROM Drive", N_("Virtual (VMware)") },
-        /* QEMU */
-        { "QEMU", N_("Virtual (QEMU)") },
-        { "QEMU Virtual CPU", N_("Virtual (QEMU)") },
-        { ": QEMU HARDDISK", N_("Virtual (QEMU)") },
-        { ": QEMU CD-ROM", N_("Virtual (QEMU)") },
-        /* Generic Virtual Machine */
-        { ": Virtual HD,", N_("Virtual (Unknown)") },
-        { ": Virtual CD,", N_("Virtual (Unknown)") },
-        /* Virtual Box */
-        { "VBOX", N_("Virtual (VirtualBox)") },
-        { ": VBOX HARDDISK", N_("Virtual (VirtualBox)") },
-        { ": VBOX CD-ROM", N_("Virtual (VirtualBox)") },
-        /* Xen */
-        { "Xen virtual console", N_("Virtual (Xen)") },
-        { "Xen reported: ", N_("Virtual (Xen)") },
-        { "xen-vbd: registered block device", N_("Virtual (Xen)") },
-        /* Generic */
-        { " hypervisor", N_("Virtual (hypervisor present)") } ,
-        { NULL }
-    };
-    gchar *tmp;
-    //Caching for speedup
-    if((get_virtualization[0]!=0) && (english==0)) return g_strdup(get_virtualization);
-    if((get_virtualization_english[0]!=0) && (english==1)) return g_strdup(get_virtualization_english);
-
-    DEBUG("Detecting virtual machine");
-
-    if (g_file_test("/proc/xen", G_FILE_TEST_EXISTS)) {
-         DEBUG("/proc/xen found; assuming Xen");
-	 if(english)
-             return g_strdup(N_("Virtual (Xen)"));
-	 else
-             return g_strdup(_("Virtual (Xen)"));
-    }
-
-    tmp = module_call_method("devices::getMotherboard");
-    if (strstr(tmp, "VirtualBox") != NULL) {
-        g_free(tmp);
-	if(english)
-            return g_strdup(N_("Virtual (VirtualBox)"));
-        else
-            return g_strdup(_("Virtual (VirtualBox)"));
-    }
-    if (strstr(tmp, "VMware") != NULL) {
-        g_free(tmp);
-	if(english)
-            return g_strdup(N_("Virtual (VMware)"));
-	else
-            return g_strdup(_("Virtual (VMware)"));
-    }
-    g_free(tmp);
-
-    for (i = 0; files[i+1]; i++) {
-         gchar buffer[512];
-         FILE *file;
-
-         if ((file = fopen(files[i], "r"))) {
-              while (!found && fgets(buffer, 512, file)) {
-                  for (j = 0; vm_types[j+1].str; j++) {
-                      if (strstr(buffer, vm_types[j].str)) {
-                         found = TRUE;
-                         break;
-                      }
-                  }
-              }
-
-              fclose(file);
-
-              if (found) {
-                  DEBUG("%s found (by reading file %s)", vm_types[j].vmtype, files[i]);
-		  if(!english) strcpy(get_virtualization,_(vm_types[j].vmtype));//Save
-		  if(english) strcpy(get_virtualization_english,_(vm_types[j].vmtype));//Save
-		  if(english)
-                      return g_strdup(N_(vm_types[j].vmtype));
-		  else
-                      return g_strdup(_(vm_types[j].vmtype));
-              }
-         }
-
-    }
-
-    DEBUG("no virtual machine detected; assuming physical machine");
-    gchar *c=detect_machine_type(english);
-    if(!english) strcpy(get_virtualization,c);//Save
-    if(english) strcpy(get_virtualization_english,c);//Save
-    g_free(c);
-    if(english)
-       return g_strdup(get_virtualization_english);
-    else
-       return g_strdup(get_virtualization);
-}
 
 gchar *callback_summary(void)
 {
@@ -581,7 +512,7 @@ gchar *callback_summary(void)
             idle_free(module_call_method("devices::getProcessorNameAndDesc"))),
         info_field_update(_("Memory"), 1000),
         info_field_printf(_("Machine Type"), "%s",
-            computer_get_virtualization(0)),
+            computer_get_machinetype(0)),
         info_field(_("Operating System"), computer->os->distro),
         info_field(_("User Name"), computer->os->username),
         info_field_update(_("Date/Time"), 1000),
@@ -1056,12 +987,12 @@ const gchar *get_memory_desc(void) // [1] const (as to say "don't free")
 
 static gchar *get_machine_type(void)
 {
-    return computer_get_virtualization(0);
+    return computer_get_machinetype(0);
 }
 
 static gchar *get_machine_type_english(void)
 {
-    return computer_get_virtualization(1);
+    return computer_get_machinetype(1);
 }
 
 const ShellModuleMethod *hi_exported_methods(void)
@@ -1111,7 +1042,7 @@ gchar **hi_module_get_dependencies(void)
 
 gchar *hi_module_get_summary(void)
 {
-    gchar *virt = computer_get_virtualization(0);
+    gchar *virt = computer_get_machinetype(0);
     gchar *machine_type = g_strdup_printf("%s (%s)",
                                           _("Motherboard"),
                                           (char*)idle_free(virt));
