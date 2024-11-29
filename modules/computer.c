@@ -419,7 +419,7 @@ gchar *computer_get_machinetype(int english)
     g_free(tmp);
 
     tmp = module_call_method("devices::getStorageDevices");
-    if(strstr(tmp, "QEMU") != NULL) {
+    if((strstr(tmp, "QEMU") != NULL) || (strstr(tmp, "VirtIO") != NULL)) {
         g_free(tmp);
 	if(english)
             return g_strdup(N_("Virtual (QEMU)"));
