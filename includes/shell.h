@@ -163,7 +163,7 @@ struct _ShellModuleEntry {
     guint32		 flags;
 
     gchar		*(*func) ();
-    void		(*scan_func) ();
+    void		(*scan_func) (gboolean flag);
 
     gchar		*(*fieldfunc) (gchar * entry);
     gchar 		*(*morefunc)  (gchar * entry);

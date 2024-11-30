@@ -80,7 +80,7 @@ struct _ReportDialog {
   GtkTreeModel *model;
 };
 
-void		 report_dialog_show();
+void		 report_dialog_show(GtkTreeModel *model, GtkWidget *parent);
 
 ReportContext	*report_context_html_new();
 ReportContext	*report_context_text_new();
