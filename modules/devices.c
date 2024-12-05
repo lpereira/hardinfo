@@ -131,8 +131,11 @@ gchar *gpuname=NULL;
 
 /* in dmi_memory.c */
 gchar *memory_devices_get_info();
+gchar *memory_devices_get_system_memory_types_str();
+gchar *memory_devices_get_system_memory_str();
 gboolean memory_devices_hinote(const char **msg);
 gchar *memory_devices_info = NULL;
+gchar *memory_devices_desc = NULL;
 
 /* in firmware.c */
 gchar *firmware_get_info();
@@ -395,6 +398,7 @@ gchar *get_power_state(void)
     if(!powerstate) return g_strdup("AC");
     return g_strdup(powerstate);
 }
+
 gchar *get_gpuname(void)
 {
     scan_gpu(FALSE);
@@ -405,6 +409,14 @@ gchar *get_gpuname(void)
     }
     return g_strdup(gpuname);
 }
+
+gchar *get_mem_desc(void)
+{
+    scan_dmi_mem(FALSE);
+    return g_strdup(memory_devices_desc);
+}
+
+
 
 /* TODO: maybe move into processor.c along with processor_name() etc.
  * Could mention the big.LITTLE cluster arangement for ARM that kind of thing.
@@ -632,6 +644,7 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getGPUList", get_gpu_summary},
         {"getPowerState", get_power_state},
         {"getGPUname", get_gpuname},
+	{"getMemDesc", get_mem_desc},
         {NULL},
     };
 
@@ -666,12 +679,12 @@ void scan_dmi(gboolean reload)
 
 void scan_dmi_mem(gboolean reload)
 {
-    DEBUG("SCAN_DMI_MEM %s",(reload?"RELOAD":"CACHED"));
     SCAN_START();
-    DEBUG("SCAN_DMI_MEM SCANNING");
-    if (memory_devices_info)
-        g_free(memory_devices_info);
+    if (memory_devices_info) g_free(memory_devices_info);
     memory_devices_info = memory_devices_get_info();
+    //
+    if (memory_devices_desc) g_free(memory_devices_desc);
+    memory_devices_desc = g_strdup_printf("%s %s",memory_devices_get_system_memory_str(),memory_devices_get_system_memory_types_str());
     SCAN_END();
 }
 

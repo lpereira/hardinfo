@@ -952,19 +952,12 @@ gchar *get_memory_total(void)
     return moreinfo_lookup ("DEV:MemTotal");
 }
 
-gchar *memory_devices_get_system_memory_str(); /* in dmi_memory.c */
-gchar *memory_devices_get_system_memory_types_str();
-/* Note 1: moreinfo_lookup() results should not be freed because
- *         they are pointers into a GHash.
- *         module_call_method() g_strdup()s it's return value. */
-const gchar *get_memory_desc(void) // [1] const (as to say "don't free")
+gchar *get_memory_desc(void)
 {
-    scan_memory_usage(FALSE);
-    gchar *avail = g_strdup(moreinfo_lookup("DEV:MemTotal")); // [1] g_strdup()
+    gchar *avail = g_strdup(get_memory_total());
     double k = avail ? (double)strtol(avail, NULL, 10) : 0;
     if (k) {
-        g_free(avail);
-        avail = NULL;
+        g_free(avail);avail = NULL;
         const char *fmt = _(/*/ <value> <unit> "usable memory" */ "%0.1f %s available to Linux");
         if (k > (2048 * 1024))
             avail = g_strdup_printf(fmt, k / (1024*1024), _("GiB") );
@@ -973,16 +966,15 @@ const gchar *get_memory_desc(void) // [1] const (as to say "don't free")
         else
             avail = g_strdup_printf(fmt, k, _("KiB") );
     }
-    gchar *mem = memory_devices_get_system_memory_str();
+    //
+    gchar *mem = module_call_method("devices::getMemDesc");
     if (mem) {
-        gchar *types = memory_devices_get_system_memory_types_str();
-        gchar *ret = g_strdup_printf("%s %s\n%s", mem, types, avail ? avail : "");
+    gchar *ret = g_strdup_printf("%s\n%s", mem, (avail ? avail : ""));
         g_free(avail);
         g_free(mem);
-        g_free(types);
-        return (gchar*)idle_free(ret); // [1] idle_free()
+        return ret;
     }
-    return (gchar*)idle_free(avail); // [1] idle_free()
+    return avail;
 }
 
 static gchar *get_machine_type(void)
