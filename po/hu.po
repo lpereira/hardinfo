@@ -3155,6 +3155,7 @@ msgstr "DMI nem elérhető"
 #: modules/devices/dmi.c:162
 msgid "DMI is not available. Perhaps this platform does not provide DMI."
 msgstr ""
+"DMI nem elérhető. Lehetséges, hogy az alaplap nem közöl DMI adatokat."
 
 #: modules/devices/dmi_memory.c:620 modules/devices/dmi_memory.c:859
 msgid "Memory Device List"
@@ -6412,7 +6413,3 @@ msgstr ""
 
 #~ msgid "Copy to clipboard"
 #~ msgstr "Másolás vágólapra"
-
-#~ msgid "DMI is not available. Perhaps this platform does not provide DMI."
-#~ msgstr ""
-#~ "DMI nem elérhető. Lehetséges, hogy az alaplap nem közöl DMI adatokat."
