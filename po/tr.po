@@ -3182,7 +3182,7 @@ msgid "DMI Unavailable"
 msgstr "DMI Kullanılamıyor"
 
 #: modules/devices/dmi.c:162
-msgid "DMI is not avaliable. Perhaps this platform does not provide DMI."
+msgid "DMI is not available. Perhaps this platform does not provide DMI."
 msgstr "DMI mevcut değildir. Belki de bu platform DMI sağlamaz."
 
 #: modules/devices/dmi_memory.c:620 modules/devices/dmi_memory.c:859
