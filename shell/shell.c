@@ -236,8 +236,7 @@ void shell_status_pulse(void)
 	}
 
 	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(shell->progress));
-	while (gtk_events_pending())
-	    gtk_main_iteration();
+	while (gtk_events_pending()) gtk_main_iteration();
     } else if (!params.quiet) {
 	static gint counter = 0;
 
@@ -269,7 +268,7 @@ void shell_status_set_percentage(gint percentage)
 
 void shell_view_set_enabled(gboolean setting)
 {
-    DEBUG("SHELL_VIEW=%s\n",setting?"Normal":"Busy");
+    //DEBUG("SHELL_VIEW=%s\n",setting?"Normal":"Busy");
     if (!params.gui_running)
 	return;
 
@@ -290,7 +289,7 @@ void shell_view_set_enabled(gboolean setting)
 
 void shell_status_set_enabled(gboolean setting)
 {
-    DEBUG("SHELL_STATUS=%d\n",setting?1:0);
+    //DEBUG("SHELL_STATUS=%d\n",setting?1:0);
     if (!params.gui_running)
 	return;
 
@@ -333,7 +332,7 @@ void shell_do_reload(gboolean reload)
 
 void shell_status_update(const gchar * message)
 {
-    DEBUG("Shell_status_update %s",message);
+    //DEBUG("Shell_status_update %s",message);
     if (params.gui_running) {
 	gtk_label_set_markup(GTK_LABEL(shell->status), message);
 	gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(shell->progress),1);
@@ -896,7 +895,7 @@ static gboolean update_field(gpointer data)
     fu = (ShellFieldUpdate *)data;
     g_return_val_if_fail(fu != NULL, FALSE);
 
-    DEBUG("update_field [%s]", fu->field_name);
+    //DEBUG("update_field [%s]", fu->field_name);
 
     item = g_hash_table_lookup(update_tbl, fu->field_name);
     if (!item) {
