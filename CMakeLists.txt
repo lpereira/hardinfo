@@ -353,8 +353,15 @@ if(${distro} MATCHES "Artix")
     set(HARDINFO2_SYSTEMV 1)
 endif()
 
-if(HARDINFO2_ARCH MATCHES "riscv")
+#RiscV
+if(${HARDINFO2_ARCH} MATCHES "riscv")
     SET(DEB_REQ "udisks2, mesa-utils, lm-sensors, xdg-utils, iperf3, fwupd, x11-xserver-utils, vulkan-tools") #miss sysbench
+endif()
+
+#E2K
+if(${HARDINFO2_ARCH} MATCHES "e2k")
+    message("Arch E2K - Using too old GCC for libsoup3 - LS24")
+    set(HARDINFO2_LIBSOUP3 0)
 endif()
 
 #WSL 1/2
