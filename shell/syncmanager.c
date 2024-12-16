@@ -182,7 +182,7 @@ static SyncNetAction *sync_manager_get_selected_actions(gint *n)
 }
 
 #if SOUP_CHECK_VERSION(3,0,0)
-static const char *sync_manager_get_proxy(void)
+static GProxyResolver *sync_manager_get_proxy(void)
 {
     const gchar *conf;
 
@@ -192,7 +192,7 @@ static const char *sync_manager_get_proxy(void)
         }
     }
 
-    return conf;
+    return g_simple_proxy_resolver_new(conf,NULL);
 }
 #else
 static SoupURI *sync_manager_get_proxy(void)
@@ -214,8 +214,9 @@ static void ensure_soup_session(void)
 {
     if (!session) {
 #if SOUP_CHECK_VERSION(3,0,0)
-      const char *proxy=sync_manager_get_proxy();
-      session = soup_session_new_with_options("timeout", 10,"proxy-resolver", proxy,  NULL);
+      GProxyResolver *resolver=sync_manager_get_proxy();
+      session = soup_session_new_with_options("timeout", 10, "proxy-resolver", resolver, NULL);
+      if(resolver) g_object_unref(resolver);
 #else
 #if SOUP_CHECK_VERSION(2,42,0)
         SoupURI *proxy = sync_manager_get_proxy();
