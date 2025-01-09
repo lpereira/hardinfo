@@ -2,10 +2,6 @@
 #    List of ARM CPU IDs
 #    in a format similar to pci.ids/usb.ids.
 #
-#    Version: 2018.12.22
-#    Maintained by: Burt P. (pburt0@gmail.com)
-#    https://github.com/bp0/armids
-#
 # Syntax:
 # implementer  implementer_name
 #	part  part_name     <-- single tab
@@ -19,6 +15,7 @@
 # Based on lscpu-arm.c by Riku Voipio <riku.voipio@iki.fi>
 #
 # The information here is gathered from
+# - https://github.com/util-linux/util-linux/blob/master/sys-utils/lscpu-arm.c
 # - ARM manuals
 # - Linux kernel: arch/armX/include/asm/cputype.h
 # - GCC sources: config/arch/arch-cores.def
@@ -81,7 +78,17 @@
 	d49 Neoverse-N2
 	d4a Neoverse-E1
 	d4b Cortex-A78C
+	d4c Cortex-X1C
 	d4d Cortex-A715
+	d4e Cortex-X3
+	d4f Neoverse-V2
+	d80 Cortex-A520
+	d81 Cortex-A720
+	d82 Cortex-X4
+	d84 Neoverse-C4
+	d85 Cortex-X925
+	d87 Cortex-A725
+	d8e Neoverse-N3
 42 Broadcom
 	00f Brahma B15
 	100 Brahma B53
@@ -126,8 +133,42 @@
 	581 PJ4/PJ4b
 	584 PJ4B-MP
 61 Apple
-        024 Icestorm
-	025 Firestorm
+        000 Swift
+	001 Cyclone
+	002 Typhone
+	003 Typhone/Capri
+	004 Twister
+	005 Twister/Elba/Malta
+	006 Huricane
+	007 Hurrican/Myst
+	008 Monsoon
+	009 Mistral
+	00b Vortex
+	00c Tempest
+	00f Tempest-M9
+	010 Vortex/Aruba
+	011 Tempest/Aruba
+	012 Lightning
+	013 Thunder
+        020 Icestorm-A14
+	021 Firestorm-A14
+	022 Icestorm-M1
+	023 Firestorm-M1
+        024 Icestorm-M1-Pro
+	025 Firestorm-M1-Pro
+	026 Thunder-M10
+	028 Icestorm-M1-Max
+	029 Firestorm-M1-Max
+	030 Blizzard-A15
+	031 Avalanche-A15
+	032 Blizzard-M2
+	033 Avalanche-M2
+	034 Blizzard-M2
+	035 Avalanche-M2
+	036 Sawtooth-A16
+	037 Everest-A16
+	038 Blizzard-M2-Max
+	039 Avalanche-M2-Max
 66 Faraday
 	526 FA526
 	626 FA626
