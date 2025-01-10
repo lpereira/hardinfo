@@ -456,6 +456,13 @@ name Faraday Technology
     match_string Faraday Technology
     match_string Faraday
 
+name Fedora Linux Asahi Remix
+    name_short Fedora Linux Asahi Remix
+    ansi_color 0;34;107
+    url asahilinux.org/fedora/
+    match_string Fedora Asahi Remix
+    match_string Fedora Linux Asahi Remix
+
 name Fedora Linux
     name_short Fedora
     ansi_color 0;34;107
