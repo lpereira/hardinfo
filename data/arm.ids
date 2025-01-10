@@ -133,7 +133,7 @@
 	581 PJ4/PJ4b
 	584 PJ4B-MP
 61 Apple
-        000 Swift
+	000 Swift
 	001 Cyclone
 	002 Typhone
 	003 Typhone/Capri
@@ -154,7 +154,7 @@
 	021 Firestorm-A14
 	022 Icestorm-M1
 	023 Firestorm-M1
-        024 Icestorm-M1-Pro
+	024 Icestorm-M1-Pro
 	025 Firestorm-M1-Pro
 	026 Thunder-M10
 	028 Icestorm-M1-Max
