@@ -247,7 +247,7 @@ __scan_battery_sysfs_add_battery(const gchar *name)
     if (!path)
         return;
 
-    if(name[0]=='A'){//AC Supply
+    if(name[0]=='A' || strstr(name,"macsmc-ac")){//AC Supply
         status=read_contents(path, "online");
 	if(status==NULL) status=g_strdup("1");
 	if(!strcmp(status,"1")) {
@@ -269,7 +269,7 @@ __scan_battery_sysfs_add_battery(const gchar *name)
 	g_free(status);
     }
 
-    if((name[0]=='B') || strstr(name,"CMB")){//Battery
+    if((name[0]=='B') || strstr(name,"CMB") || strstr(name,"macsmc-battery")){//Battery
 
     status = read_contents(path, "status");
     capacity = read_contents(path, "capacity");
