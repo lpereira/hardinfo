@@ -100,6 +100,10 @@ int cpu_procs_cores_threads_nodes(int *p, int *c, int *t, int *n)
 
     *t = cpubits_count(threads);
     *c = cpubits_count(cores);
+//HACK: Arms cores are described different in topology, only Cortex-A65 is multithreaded so this fix is for 99%
+#ifdef ARCH_arm
+    *c = *t;
+#endif
     *p = cpubits_count(packs);
     *n = 1;
 
