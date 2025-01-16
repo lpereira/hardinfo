@@ -598,32 +598,31 @@ gchar *processor_name(GSList *processors) {
         char *vendor;
         char *soc;
     } dt_compat_searches[] = {
-        { "hardkernel,odroid-c2", "Amlogic", "S905" }, // C2
-        { "hardkernel,odroid-n2", "Amlogic", "S922x" }, // N2
-        { "amlogic,a311d", "Amlogic", "A311D" }, // VIM3
+        { "amlogic,a311d", "Amlogic", "A311D (Vim3)" }, // VIM3
+        { "apple,t8132", "Apple", "T8132 (M4)" },
+        { "apple,t8122", "Apple", "T8122 (M3)" },
+        { "apple,t8112", "Apple", "T8112 (M2)" },
+        { "apple,t8103", "Apple", "T8103 (M1 A14X)" },
+        { "apple,t8101", "Apple", "T8101 (M1 A14)" },
+        { "apple,t6042", "Apple", "T6042 (M4 Ultra)" },
+        { "apple,t6041", "Apple", "T6041 (M4 Max)" },
+        { "apple,t6040", "Apple", "T6040 (M4 Pro)" },
+        { "apple,t6032", "Apple", "T6032 (M3 Ultra)" },
+        { "apple,t6031", "Apple", "T6031 (M3 Max)" },
+        { "apple,t6030", "Apple", "T6030 (M3 Pro)" },
+        { "apple,t6022", "Apple", "T6022 (M2 Ultra)" },
+        { "apple,t6021", "Apple", "T6021 (M2 Max)" },
+        { "apple,t6020", "Apple", "T6020 (M2 Pro)" },
+        { "apple,t6002", "Apple", "T6002 (M1 Ultra)" },
+        { "apple,t6001", "Apple", "T6001 (M1 Max)" },
+        { "apple,t6000", "Apple", "T6000 (M1 Pro)" },
         { "brcm,bcm2712", "Broadcom", "BCM2712 (RPi5)" }, // RPi 5
         { "brcm,bcm2711", "Broadcom", "BCM2711 (RPi4)" }, // RPi 4
         { "brcm,bcm2837", "Broadcom", "BCM2837 (RPi3)" }, // RPi 3
         { "brcm,bcm2836", "Broadcom", "BCM2836 (RPi2)" }, // RPi 2
         { "brcm,bcm2835", "Broadcom", "BCM2835 (RPi1)" }, // RPi 1
-        { "rockchip,rk3288", "Rockchip", "RK3288" }, // Asus Tinkerboard
-        { "rockchip,rk3328", "Rockchip", "RK3328" }, // Firefly Renegade
-        { "rockchip,rk3399", "Rockchip", "RK3399" }, // Firefly Renegade Elite
-        { "rockchip,rk32", "Rockchip", "RK32xx-family" },
-        { "rockchip,rk33", "Rockchip", "RK33xx-family" },
-        { "rockchip,rk3588", "Rockchip", "RK3588" }, // rk3588-orangepi-5-max
-        { "ti,omap5432", "Texas Instruments", "OMAP5432" },
-        { "ti,omap5430", "Texas Instruments", "OMAP5430" },
-        { "ti,omap4470", "Texas Instruments", "OMAP4470" },
-        { "ti,omap4460", "Texas Instruments", "OMAP4460" },
-        { "ti,omap4430", "Texas Instruments", "OMAP4430" },
-        { "ti,omap3620", "Texas Instruments", "OMAP3620" },
-        { "ti,omap3450", "Texas Instruments", "OMAP3450" },
-        { "ti,omap5", "Texas Instruments", "OMAP5-family" },
-        { "ti,omap4", "Texas Instruments", "OMAP4-family" },
-        { "ti,omap3", "Texas Instruments", "OMAP3-family" },
-        { "ti,omap2", "Texas Instruments", "OMAP2-family" },
-        { "ti,omap1", "Texas Instruments", "OMAP1-family" },
+        { "hardkernel,odroid-c2", "Amlogic", "S905 (C2)" }, // C2
+        { "hardkernel,odroid-n2", "Amlogic", "S922x (N2)" }, // N2
         { "mediatek,mt8173", "MediaTek", "MT8173" },
         { "mediatek,mt8183", "MediaTek", "MT8183" },
         { "mediatek,mt6895", "MediaTek", "MT6895" },
@@ -644,36 +643,40 @@ gchar *processor_name(GSList *processors) {
         { "mediatek,mt6737t", "MediaTek", "MT6737T" },
         { "mediatek,mt6735", "MediaTek", "MT6735" },
         { "mediatek,mt6732", "MediaTek", "MT6732" },
+        { "nvidia,tegra", "nVidia", "Tegra-family" },
         { "qcom,pineapple", "Qualcomm", "Pineapple (SD8g3)"},
         { "qcom,sm8550", "Qualcomm", "SM8550 (SD8g2)"},
         { "qcom,msm8939", "Qualcomm", "Snapdragon 615"},
         { "qcom,msm", "Qualcomm", "Snapdragon-family"},
-        { "nvidia,tegra", "nVidia", "Tegra-family" },
-        { "apple,t8132", "Apple", "T8132 (M4)" },
-        { "apple,t8122", "Apple", "T8122 (M3)" },
-        { "apple,t8112", "Apple", "T8112 (M2)" },
-        { "apple,t8103", "Apple", "T8103 (M1 A14X)" },
-        { "apple,t8101", "Apple", "T8101 (M1 A14)" },
-        { "apple,t6042", "Apple", "T6042 (M4 Ultra)" },
-        { "apple,t6041", "Apple", "T6041 (M4 Max)" },
-        { "apple,t6040", "Apple", "T6040 (M4 Pro)" },
-        { "apple,t6032", "Apple", "T6032 (M3 Ultra)" },
-        { "apple,t6031", "Apple", "T6031 (M3 Max)" },
-        { "apple,t6030", "Apple", "T6030 (M3 Pro)" },
-        { "apple,t6022", "Apple", "T6022 (M2 Ultra)" },
-        { "apple,t6021", "Apple", "T6021 (M2 Max)" },
-        { "apple,t6020", "Apple", "T6020 (M2 Pro)" },
-        { "apple,t6002", "Apple", "T6002 (M1 Ultra)" },
-        { "apple,t6001", "Apple", "T6001 (M1 Max)" },
-        { "apple,t6000", "Apple", "T6000 (M1 Pro)" },
-        { "brcm,", "Broadcom", UNKSOC },
-        { "nvidia,", "nVidia", UNKSOC },
-        { "rockchip,", "Rockchip", UNKSOC },
-        { "ti,", "Texas Instruments", UNKSOC },
-        { "qcom,", "Qualcom", UNKSOC },
-        { "mediatek,", "MediaTek", UNKSOC },
+        { "rockchip,rk3288", "Rockchip", "RK3288" }, // Asus Tinkerboard
+        { "rockchip,rk3328", "Rockchip", "RK3328" }, // Firefly Renegade
+        { "rockchip,rk3399", "Rockchip", "RK3399" }, // Firefly Renegade Elite
+        { "rockchip,rk32", "Rockchip", "RK32xx-family" },
+        { "rockchip,rk33", "Rockchip", "RK33xx-family" },
+        { "rockchip,rk3588", "Rockchip", "RK3588" }, // rk3588-orangepi-5-max
+        { "sprd,sc9863a", "Unisoc", "SC9864A" },
+        { "ti,omap5432", "Texas Instruments", "OMAP5432" },
+        { "ti,omap5430", "Texas Instruments", "OMAP5430" },
+        { "ti,omap4470", "Texas Instruments", "OMAP4470" },
+        { "ti,omap4460", "Texas Instruments", "OMAP4460" },
+        { "ti,omap4430", "Texas Instruments", "OMAP4430" },
+        { "ti,omap3620", "Texas Instruments", "OMAP3620" },
+        { "ti,omap3450", "Texas Instruments", "OMAP3450" },
+        { "ti,omap5", "Texas Instruments", "OMAP5-family" },
+        { "ti,omap4", "Texas Instruments", "OMAP4-family" },
+        { "ti,omap3", "Texas Instruments", "OMAP3-family" },
+        { "ti,omap2", "Texas Instruments", "OMAP2-family" },
+        { "ti,omap1", "Texas Instruments", "OMAP1-family" },
+	
+        /* Generic vendor names only*/
         { "amlogic,", "Amlogic", UNKSOC },
         { "allwinner,", "Allwinner", UNKSOC },
+        { "brcm,", "Broadcom", UNKSOC },
+        { "mediatek,", "MediaTek", UNKSOC },
+        { "nvidia,", "nVidia", UNKSOC },
+        { "qcom,", "Qualcom", UNKSOC },
+        { "rockchip,", "Rockchip", UNKSOC },
+        { "ti,", "Texas Instruments", UNKSOC },
         { NULL, NULL }
     };
     gchar *ret = NULL;
