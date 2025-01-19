@@ -6,7 +6,7 @@ addgroup hardinfo2 2>/dev/null
 
 #Create runtime data directory
 mkdir /run/hardinfo2 2>/dev/null
-
+chmod 750 /run/hardinfo2
 
 #----Allow users in hardinfo2 group to get these hardware info----
 #iomem and ioport address - no need to show system/kernel addresses.
@@ -17,10 +17,17 @@ cat /proc/ioports >/run/hardinfo2/ioports 2>/dev/null
 dmidecode -t 16 >/run/hardinfo2/dmi_memarray 2>/dev/null
 dmidecode -t 17 >/run/hardinfo2/dmi_memory 2>/dev/null
 
-
+#Allow for single user systems to use user group (To avoid reboot)
+if id -u 1000 1>/dev/null 2>/dev/null && ! id -u 1001 1>/dev/null 2>/dev/null && id -nG 1000 2>/dev/null | grep -qw $(id -un 1000); then
+    echo "Single User System" >/run/hardinfo2/log
+    #set owner to single user
+    chown -R root:$(id -un 1000) /run/hardinfo2
+else
+    echo "Multi user system / root only systems" >/run/hardinfo2/log
+    #set owner to hardinfo2 (multiuser)
+    chown -R root:hardinfo2 /run/hardinfo2
+fi
 #set rights
-chown -R root:hardinfo2 /run/hardinfo2
-chmod 750 /run/hardinfo2
 chmod 640 /run/hardinfo2/*
 
 
