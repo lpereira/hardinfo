@@ -54,7 +54,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
 - sudo apt install ./hardinfo2_*  (Use reinstall instead of install if already installed)
-- sudo apt install lm-sensors sysbench mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd x11-xserver-utils vulkan-tools awk
+- sudo apt install lm-sensors sysbench mesa-utils dmidecode udisks2 xdg-utils iperf3 fwupd x11-xserver-utils vulkan-tools gawk
 - hardinfo2
 
 **Fedora/CentOS/RedHat/Rocky/Alma/Oracle**
@@ -71,7 +71,7 @@ Building and installing
 - cmake ..
 - make package -j (Creates package so you do not pollute your distro and it can be updated by distro releases)
 - sudo yum install ./hardinfo2-*  (Use reinstall instead of install if already installed)
-- sudo yum install lm_sensors sysbench glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd xrandr vulkan-tools awk
+- sudo yum install lm_sensors sysbench glx-utils dmidecode udisks2 xdg-utils iperf3 fwupd xrandr vulkan-tools gawk
 - hardinfo2
 
 **openSUSE**: use zypper instead of yum, zypper --no-gpg-checks install ./hardinfo2-*
@@ -100,7 +100,7 @@ RiscV: The package is not ready yet - build by using the ./tools/build_and_insta
 - **Service**: Service loads SPD modules (at24/ee1004/spd5118) to display SPD info for your DIMMs memory. Show addresses for iomem+ioports.
 - **xrandr/x11-xserver-utils**: xrandr is used to read monitor setup
 - **vulkan-tools**: vulkaninfo is used to display vulcan information.
-- **awk**: Used by hardinfo2 service to determine System Type
+- **gawk**: Used by hardinfo2 service to determine System Type
 
 **User can install/setup these depending on hardware**
 - **hddtemp**: To obtain the hard disk drive temperature, be sure to run hddtemp
