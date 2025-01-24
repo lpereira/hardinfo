@@ -646,9 +646,7 @@ static void transit_surface()
 
 /*  Perform ray trace in specific spectral line  */
 
-static void trace_line(line, ray_h)
-int line;
-double ray_h;
+static void trace_line(int line, double ray_h)
 {
     int i;
 
