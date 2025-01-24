@@ -18,12 +18,18 @@ dmidecode -t 16 >/run/hardinfo2/dmi_memarray 2>/dev/null
 dmidecode -t 17 >/run/hardinfo2/dmi_memory 2>/dev/null
 
 #Allow for single user systems to use user group (To avoid reboot)
-if id -u 1000 1>/dev/null 2>/dev/null && ! id -u 1001 1>/dev/null 2>/dev/null && id -nG 1000 2>/dev/null | grep -qw $(id -un 1000); then
-    echo "Single User System" >/run/hardinfo2/log
+#SYSTYPE 0:Root, 1:SingleUser 2:MultiUser
+$SYSTYPE=$(awk -F: '$3 >= 1000 && !match($7,"false") && !match($7,"nologin") { C++; } END { if(C+0 == 0) print 0; else if(C+0 == 1) print 1; else print 2 }' /etc/passwd)
+if SYSTYPE==1 && id -u 1000 1>/dev/null 2>/dev/null && id -nG 1000 2>/dev/null | grep -qw $(id -un 1000); then
+    echo "Single User System" >/run/hardinfo2/systype
     #set owner to single user
     chown -R root:$(id -un 1000) /run/hardinfo2
 else
-    echo "Multi user system / root only systems" >/run/hardinfo2/log
+    if SYSTYPE==0; then
+	echo "Root Only Systems" >/run/hardinfo2/systype
+    else
+	echo "Multi User System" >/run/hardinfo2/systype
+    fi
     #set owner to hardinfo2 (multiuser)
     chown -R root:hardinfo2 /run/hardinfo2
 fi

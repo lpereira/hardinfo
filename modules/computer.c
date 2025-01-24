@@ -583,15 +583,26 @@ gchar *callback_os(void)
 
 gchar *callback_security(void)
 {
-    gchar *st;
+    gchar *st, buffer[100], *systype=NULL;
+    FILE *io;
+
+    if( (io = fopen("/run/hardinfo2/systype", "r")) ) {
+        if(fgets(buffer, sizeof(buffer), io)) {
+	    if(strstr(buffer,"Root")) systype=g_strdup(_("Root Only System"));
+	    if(strstr(buffer,"Single")) systype=g_strdup(_("Single User System"));
+	    if(strstr(buffer,"Multi")) systype=g_strdup(_("Multi User System"));
+        }
+    }
+
     struct Info *info = info_new();
 
     info_set_view_type(info, SHELL_VIEW_DETAIL);
 
     info_add_group(info, _("HardInfo2"),
-                   info_field(_("HardInfo2 running as"),
-                              (getuid() == 0) ? _("Superuser") : _("User")),
-                   info_field_last());
+        info_field(_("HardInfo2 running as"), (getuid() == 0) ? _("Superuser") : _("User")),
+        info_field(_("User System Type"), (systype!=NULL) ? systype : _("Hardinfo2 Service not enabled/started")),
+        info_field_last());
+    if(systype) idle_free(systype);
 
     info_add_group(
         info, _("Health"),
