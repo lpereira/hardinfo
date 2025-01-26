@@ -18,15 +18,21 @@ dmidecode -t 16 >/run/hardinfo2/dmi_memarray 2>/dev/null
 dmidecode -t 17 >/run/hardinfo2/dmi_memory 2>/dev/null
 
 #Allow for single user systems to use user group (To avoid reboot)
+UID_MIN=$(awk 'match($1,"UID_MIN") && !match($1,"SYS") {print $2}' /etc/login.defs)
+echo $UID_MIN >/run/hardinfo2/uid_min
 #SYSTYPE 0:Root, 1:SingleUser 2:MultiUser
-$SYSTYPE=$(awk -F: '$3 >= 1000 && !match($7,"false") && !match($7,"nologin") { C++; } END { if(C+0 == 0) print 0; else if(C+0 == 1) print 1; else print 2 }' /etc/passwd)
-if SYSTYPE==1 && id -u 1000 1>/dev/null 2>/dev/null && id -nG 1000 2>/dev/null | grep -qw $(id -un 1000); then
+SYSTYPE=$(awk -F: -v UID_MIN=$UID_MIN '$3 >= UID_MIN && !match($7,"false") && !match($7,"nologin") { C++; } END { if(C+0 == 0) print 0; else if(C+0 == 1) print 1; else print 2 }' /etc/passwd)
+#Find User ID, User Name, Group Name
+UIDNO=$(awk -F: -v UID_MIN=$UID_MIN '$3 >= UID_MIN && !match($7,"false") && !match($7,"nologin") { print $3;exit; }' /etc/passwd)
+UIDNAME=$(awk -F: -v UIDNO=$UIDNO '$3 == UIDNO { print $1 }' /etc/passwd)
+GIDNAME=$(awk -F: -v UIDNO=$UIDNO '$3 == UIDNO { print $1 }' /etc/group)
+if [ $SYSTYPE = "1" ] && [ ! -z "${UIDNAME}" ] && [ $GIDNAME = $UIDNAME ]; then
     echo "Single User System" >/run/hardinfo2/systype
-    #set owner to single user
-    chown -R root:$(id -un 1000) /run/hardinfo2
+    #set owner to single user group
+    chown -R root:$GIDNAME /run/hardinfo2
 else
-    if SYSTYPE==0; then
-	echo "Root Only Systems" >/run/hardinfo2/systype
+    if [ $SYSTYPE = "0" ]; then
+	echo "Root Only System" >/run/hardinfo2/systype
     else
 	echo "Multi User System" >/run/hardinfo2/systype
     fi
