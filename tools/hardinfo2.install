@@ -3,5 +3,9 @@ post_install() {
   echo "The included service is required for root access:"
   echo "Starting the hardinfo2 server - systemctl start hardinfo2"
   echo ""
-  systemctl start hardinfo2
+  if [ -e /sbin/rc-update ] ; then
+      rc-service hardinfo2 start
+  else
+      systemctl start hardinfo2
+  fi
 }
