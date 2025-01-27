@@ -21,9 +21,9 @@ dmidecode -t 17 >/run/hardinfo2/dmi_memory 2>/dev/null
 UID_MIN=$(awk 'match($1,"UID_MIN") && !match($1,"SYS") {print $2}' /etc/login.defs)
 echo $UID_MIN >/run/hardinfo2/uid_min
 #SYSTYPE 0:Root, 1:SingleUser 2:MultiUser
-SYSTYPE=$(awk -F: -v UID_MIN=$UID_MIN '$3 >= UID_MIN && !match($7,"false") && !match($7,"nologin") { C++; } END { if(C+0 == 0) print 0; else if(C+0 == 1) print 1; else print 2 }' /etc/passwd)
+SYSTYPE=$(awk -F: -v UID_MIN=$UID_MIN '$3 >= UID_MIN && !match($7,"false") && !match($7,"nologin") && !match($1,"nobody") { C++; } END { if(C+0 == 0) print 0; else if(C+0 == 1) print 1; else print 2 }' /etc/passwd)
 #Find User ID, User Name, Group Name
-UIDNO=$(awk -F: -v UID_MIN=$UID_MIN '$3 >= UID_MIN && !match($7,"false") && !match($7,"nologin") { print $3;exit; }' /etc/passwd)
+UIDNO=$(awk -F: -v UID_MIN=$UID_MIN '$3 >= UID_MIN && !match($7,"false") && !match($7,"nologin") && !match($1,"nobody") { print $3;exit; }' /etc/passwd)
 UIDNAME=$(awk -F: -v UIDNO=$UIDNO '$3 == UIDNO { print $1 }' /etc/passwd)
 GIDNAME=$(awk -F: -v UIDNO=$UIDNO '$3 == UIDNO { print $1 }' /etc/group)
 if [ $SYSTYPE = "1" ] && [ ! -z "${UIDNAME}" ] && [ $GIDNAME = $UIDNAME ]; then
