@@ -13,6 +13,10 @@ elif [ -e /sbin/sv ] ; then
     ln -s /etc/sv/hardinfo2 /etc/runit/runsvdir/default/
     /etc/sv/hardinfo2/run
     echo "Service Installed... (Runit)"
+elif [ -e /sbin/rc-update ] ; then
+    rc-update add hardinfo2 default
+    rc-service hardinfo2 start
+    echo "Service Installed... (SystemV-openrc)"
 else
     update-rc.d hardinfo2 defaults 95 10
     /etc/init.d/hardinfo2 start
