@@ -320,6 +320,63 @@ gchar *get_storage_devices_simple(void)
     return storage_devs;
 }
 
+gchar *get_storage_home_models(void)
+{
+    scan_storage(FALSE);
+
+    if (!storage_list) return "";
+
+    gchar *p,*np,*tmp;
+    GRegex *regex;
+
+    gchar *homepath=NULL,*out=NULL,*err=NULL;
+    gboolean spawned;
+    const char cmd_line[] = "sh -c 'cd ~;df --output=source . |tail -1'";
+    spawned = g_spawn_command_line_sync(cmd_line, &out, &err, NULL, NULL);
+    if(spawned && out){
+       if(strstr(out,"/dev/")) homepath=strdup(out+5);
+    }
+    g_free(out);
+    g_free(err);
+    if(!homepath) return "NoHomePath";
+    homepath[strlen(homepath)-1]=0;
+    if(!strstr(homepath,"sdp") && (p=strstr(homepath,"p1")) ) *p=0;
+    if(!strstr(homepath,"sdp") && (p=strstr(homepath,"p2")) ) *p=0;
+    if(!strstr(homepath,"sdp") && (p=strstr(homepath,"p3")) ) *p=0;
+    if(!strstr(homepath,"sdp") && (p=strstr(homepath,"p4")) ) *p=0;
+    if(!strstr(homepath,"sdp") && (p=strstr(homepath,"p5")) ) *p=0;
+    if(!strstr(homepath,"sdp") && (p=strstr(homepath,"p6")) ) *p=0;
+    if(!strstr(homepath,"sdp") && (p=strstr(homepath,"p7")) ) *p=0;
+    //printf("Homepath=%s (%d)\n",homepath,strlen(homepath));
+
+    regex = g_regex_new ("<.*?>", 0, 0, NULL);
+    p=storage_list;
+    while ( (np=strstr(p,"\n")) ){
+      *np=0;
+      //printf("name=%s\n",p);
+      if(strstr(p,homepath)) {
+	  tmp = g_regex_replace(regex, strstr(p,"=")+1, -1, 0, "", 0, NULL); // remove html tags
+	  tmp = g_strstrip(strreplace(tmp,"  "," "));
+	  tmp = g_strstrip(strreplace(tmp,"| ","|"));
+	  p=strstr(tmp,"|");
+	  *p=0;
+	  p++;
+          g_regex_unref(regex);
+          g_free(homepath);
+          //printf("Homepathmodel=%s\n",g_strdup_printf("%s (%s)",p,tmp));
+	  //return g_strdup_printf("%s (%s)",p,tmp);
+          //printf("Homepathmodel=%s\n",p);
+	  return p;
+      }
+      p=np+1;
+    }
+
+    g_regex_unref(regex);
+    g_free(homepath);
+
+    return "HomePathNotFound";
+}
+
 gchar *get_storage_devices_models(void)
 {
     scan_storage(FALSE);
@@ -638,6 +695,7 @@ const ShellModuleMethod *hi_exported_methods(void)
         {"getStorageDevices", get_storage_devices},
         {"getStorageDevicesSimple", get_storage_devices_simple},
         {"getStorageDevicesModels", get_storage_devices_models},
+        {"getStorageHomeModels", get_storage_home_models},
         {"getPrinters", get_printers},
         {"getInputDevices", get_input_devices},
         {"getMotherboard", get_motherboard},

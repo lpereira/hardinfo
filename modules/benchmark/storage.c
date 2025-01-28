@@ -21,7 +21,7 @@
 #include "math.h"
 
 /* if anything changes in this block, increment revision */
-#define BENCH_REVISION 1
+#define BENCH_REVISION 2
 
 static bench_value storage_runtest() {
     bench_value ret = EMPTY_BENCH_VALUE;

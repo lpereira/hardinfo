@@ -140,9 +140,10 @@ bench_machine *bench_machine_this()
         m->machine_type = module_call_method("computer::getMachineTypeEnglish");
 	m->linux_kernel = module_call_method("computer::getOSKernel");
 	m->linux_os = module_call_method("computer::getOS");
-	m->power_state= module_call_method("devices::getPowerState");
-	m->gpu_name= module_call_method("devices::getGPUname");
-	m->storage= module_call_method("devices::getStorageDevicesModels");
+	m->power_state = module_call_method("devices::getPowerState");
+	m->gpu_name = module_call_method("devices::getGPUname");
+	//m->storage = module_call_method("devices::getStorageDevicesModels");
+	m->storage = module_call_method("devices::getStorageHomeModels");
 	m->vulkanDriver = module_call_method("computer::getVulkanDriver");
 	m->vulkanDevice = module_call_method("computer::getVulkanDevice");
 	m->vulkanVersions = module_call_method("computer::getVulkanVersions");
