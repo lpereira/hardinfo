@@ -331,25 +331,25 @@ gchar *get_storage_home_models(void)
     gchar *homepath=NULL,*out=NULL,*err=NULL;
     gboolean spawned;
     const char cmd_line[] = "sh -c 'cd ~;df --output=source . |tail -1'";
-    const char cmd_line1disk[] = "sh -c 'lsblk -l |grep disk'";
-    const char cmd_lineblk[100];
+    const char cmd_line1disk[] = "sh -c 'lsblk -l |grep disk|grep -v zram'";
+    char cmd_lineblk[100];
 
     //lookup home disk by df - only works on newer machines
     spawned = g_spawn_command_line_sync(cmd_line, &out, &err, NULL, NULL);
     if(spawned && out){
-        if(strstr(out,"/dev/") && !strstr(out,"mapper")) homepath=strdup(out+5);
+        if(strstr(out,"/dev/") && !strstr(out,"mapper") && !strstr(out,"/dev/root") ) homepath=strdup(out+5);
 	if(strstr(out,"mapper")) {
-	   p=strstr(out,"\n");
-	   *p=0;
-	   sprintf(cmd_lineblk,"sh -c 'lsblk -l -s %s|tail -1'",out);
-	   g_free(out);
-	   g_free(err);
-           spawned = g_spawn_command_line_sync(cmd_lineblk, &out, &err, NULL, NULL);
-	   if(spawned && out){
-	     p=strstr(out," ")+1;//note: field 4 is size
-	     *p=0;
-	     homepath=g_strdup(out);
-	   }
+	    p=strstr(out,"\n");
+	    *p=0;
+	    sprintf(cmd_lineblk,"sh -c 'lsblk -l -s %s|tail -1'",out);
+	    g_free(out);
+	    g_free(err);
+            spawned = g_spawn_command_line_sync(cmd_lineblk, &out, &err, NULL, NULL);
+	    if(spawned && out){
+	        p=strstr(out," ")+1;//note: field 4 is size
+	        *p=0;
+	        homepath=g_strdup(out);
+	    }
 	}
     }
     g_free(out);
@@ -367,7 +367,7 @@ gchar *get_storage_home_models(void)
         g_free(out);
         g_free(err);
     }
-    if(!homepath) return "NoHomePath";
+    if(!homepath) return g_strdup("NoHomePath");
     homepath[strlen(homepath)-1]=0;
     while(homepath[strlen(homepath)-1]>='0' && homepath[strlen(homepath)-1]<='9') homepath[strlen(homepath)-1]=0;
     if( !strstr(homepath,"sdp") && !strstr(homepath,"vdp") && (homepath[strlen(homepath)-1]=='p') ) homepath[strlen(homepath)-1]=0;
@@ -390,14 +390,14 @@ gchar *get_storage_home_models(void)
           //printf("Homepathmodel=%s\n",g_strdup_printf("%s (%s)",p,tmp));
 	  //return g_strdup_printf("%s (%s)",p,tmp);
           //printf("Homepathmodel=%s\n",p);
-	  return p;
+	  return g_strdup(p);
       }
       p=np+1;
     }
 
     g_regex_unref(regex);
     g_free(homepath);
-    return "HomePathNotFound";
+    return g_strdup("HomePathNotFound");
 }
 
 gchar *get_storage_devices_models(void)
