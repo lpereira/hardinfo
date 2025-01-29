@@ -328,16 +328,45 @@ gchar *get_storage_home_models(void)
 
     gchar *p,*np,*tmp;
     GRegex *regex;
-
     gchar *homepath=NULL,*out=NULL,*err=NULL;
     gboolean spawned;
     const char cmd_line[] = "sh -c 'cd ~;df --output=source . |tail -1'";
+    const char cmd_line1disk[] = "sh -c 'lsblk -l |grep disk'";
+    const char cmd_lineblk[100];
+
+    //lookup home disk by df - only works on newer machines
     spawned = g_spawn_command_line_sync(cmd_line, &out, &err, NULL, NULL);
     if(spawned && out){
-       if(strstr(out,"/dev/")) homepath=strdup(out+5);
+        if(strstr(out,"/dev/") && !strstr(out,"mapper")) homepath=strdup(out+5);
+	if(strstr(out,"mapper")) {
+	   p=strstr(out,"\n");
+	   *p=0;
+	   sprintf(cmd_lineblk,"sh -c 'lsblk -l -s %s|tail -1'",out);
+	   g_free(out);
+	   g_free(err);
+           spawned = g_spawn_command_line_sync(cmd_lineblk, &out, &err, NULL, NULL);
+	   if(spawned && out){
+	     p=strstr(out," ")+1;//note: field 4 is size
+	     *p=0;
+	     homepath=g_strdup(out);
+	   }
+	}
     }
     g_free(out);
     g_free(err);
+
+    if(!homepath) {  //simple systems - only 1 disk
+        spawned = g_spawn_command_line_sync(cmd_line1disk, &out, &err, NULL, NULL);
+        if(spawned && out){
+	    if(strstr(out,"disk") && (strstr(out,"\n")==(out+strlen(out)-1)) ) {
+	        p=strstr(out," ")+1;//note: field 4 is size
+		*p=0;
+                homepath=strdup(out);
+	    }
+        }
+        g_free(out);
+        g_free(err);
+    }
     if(!homepath) return "NoHomePath";
     homepath[strlen(homepath)-1]=0;
     while(homepath[strlen(homepath)-1]>='0' && homepath[strlen(homepath)-1]<='9') homepath[strlen(homepath)-1]=0;
@@ -368,7 +397,6 @@ gchar *get_storage_home_models(void)
 
     g_regex_unref(regex);
     g_free(homepath);
-
     return "HomePathNotFound";
 }
 
