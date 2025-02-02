@@ -15,7 +15,7 @@ else()
 endif()
 project(hardinfo2)
 
-set(HARDINFO2_VERSION "2.2.7")
+set(HARDINFO2_VERSION "2.2.8")
 
 option(HARDINFO2_SERVICE "Build with service support" 1)
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
