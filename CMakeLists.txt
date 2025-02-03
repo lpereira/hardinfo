@@ -15,9 +15,12 @@ else()
 endif()
 project(hardinfo2)
 
+#Release settings
 set(HARDINFO2_VERSION "2.2.8")
-set(HARDINFO2_RELEASE_YEAR "2025")
+set(HARDINFO2_RELEASE_DATE "2025-02-02")
+set(HARDINFO2_RELEASE_NOTE_HTML "<p>Stable Release</p><p>\nNew Benchmark for Cache/Memory\nLots of minor fixes/maintenance\nFor details see https://hardinfo2.org/news</p>")
 
+#Build settings
 option(HARDINFO2_SERVICE "Build with service support" 1)
 option(HARDINFO2_GTK3 "Build for GTK3 (0/off for GTK2)" 1)
 option(HARDINFO2_LIBSOUP3 "Build for libsoup-3.0 (0/off for libsoup-2.4)" 1)
@@ -26,7 +29,11 @@ option(HARDINFO2_QT5 "Build opengl benchmark for QT5 " 1)
 SET(CMAKE_INSTALL_PREFIX "/usr")
 SET(HARDINFO2_SYSTEMV 0)
 SET(HARDINFO2_RUNIT 0)
+string(SUBSTRING ${HARDINFO2_RELEASE_DATE} 0 4 HARDINFO2_RELEASE_YEAR)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/tools/org.hardinfo2.hardinfo2.metainfo.xml" METAINFO_CONTENT)
+string(REPLACE "VERSION" "${HARDINFO2_VERSION}" METAINFO_CONTENT "${METAINFO_CONTENT}" )
+string(REPLACE "RELEASE_DATE" "${HARDINFO2_RELEASE_DATE}" METAINFO_CONTENT "${METAINFO_CONTENT}" )
+string(REPLACE "DESCRIPTION" "${HARDINFO2_RELEASE_NOTE_HTML}" METAINFO_CONTENT "${METAINFO_CONTENT}" )
 
 SET(CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
