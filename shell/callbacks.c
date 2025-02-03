@@ -422,7 +422,7 @@ void cb_about()
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), "Hardinfo2");
 #endif
 
-    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira\nCopyright \302\251 2024-%d Hardinfo2 Project\n\n\n\n", HARDINFO2_COPYRIGHT_LATEST_YEAR);
+    copyright = g_strdup_printf("Copyright \302\251 2003-2023 L. A. F. Pereira\nCopyright \302\251 2024-%d Hardinfo2 Project\n\n\n\n", RELEASE_YEAR);
 
     path = g_build_filename(g_get_user_config_dir(), "hardinfo2","blobs-update-version.json", NULL);
     fd = open(path,O_RDONLY);

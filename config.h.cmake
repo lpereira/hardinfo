@@ -2,6 +2,7 @@
 #define __CONFIG_H__
 
 #define VERSION			"@HARDINFO2_VERSION@"
+#define RELEASE_YEAR		@HARDINFO2_RELEASE_YEAR@
 
 #define ARCH			"ARCH_@HARDINFO2_ARCH@"
 #define OS			"@HARDINFO2_OS@"

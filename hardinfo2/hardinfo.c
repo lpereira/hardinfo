@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     if (params.show_version) {
         g_print("Hardinfo2 version " VERSION "\n");
         g_print
-            (_(/*!/ %d will be latest year of copyright*/ "Copyright (C) 2003-2023 L. A. F. Pereira. 2024-%d Hardinfo2 Project.\n\n"), HARDINFO2_COPYRIGHT_LATEST_YEAR );
+            (_(/*!/ %d will be latest year of copyright*/ "Copyright (C) 2003-2023 L. A. F. Pereira. 2024-%d Hardinfo2 Project.\n\n"), RELEASE_YEAR );
 
 	g_print(N_("Compile-time options:\n"
 		"  Release version:  %s (%s)\n"
