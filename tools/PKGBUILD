@@ -1,6 +1,6 @@
 # Maintainer: Mark Wagie <mark dot wagie at proton dot me>
 pkgname=hardinfo2
-pkgver=2.2.4
+pkgver=2.2.7
 pkgrel=1
 pkgdesc="System Information and Benchmark for Linux Systems."
 arch=('x86_64')
@@ -14,9 +14,11 @@ makedepends=(
   'cmake'
   'qt5-base'
 )
+checkdepends=('appstream')
 optdepends=(
   'dmidecode: Memory Devices / System DMI module'
   'fwupd: Firmware module'
+  'gawk: determine System Type'
   'iperf3: Internal Network Speed benchmark'
   'lm_sensors: Sensors module'
   'mesa-utils: GLX info for Display module'
@@ -33,7 +35,7 @@ provides=('hardinfo')
 conflicts=('hardinfo')
 install="$pkgname.install"
 #source=("$pkgname-$pkgver.tar.gz::https://github.com/hardinfo2/hardinfo2/archive/refs/tags/release-$pkgver.tar.gz")
-#sha256sums=('342fd65fbb9c8e28f467a9603fd72759d7159a1c6d3b68299531945d5fd9470f')
+#sha256sums=('1856d067b5cb8516ef98ca9962d31d68ed14ed66cc42edb93d08265a03bc5f6e')
 source=("hardinfo2.tgz")
 sha256sums=('SKIP')
 
@@ -45,6 +47,11 @@ build() {
     -DCMAKE_INSTALL_LIBDIR='lib' \
     -Wno-dev
   cmake --build build -j
+}
+
+check() {
+  desktop-file-validate "build/$pkgname.desktop"
+  appstreamcli validate --no-net "build/org.$pkgname.$pkgname.metainfo.xml"
 }
 
 package() {
