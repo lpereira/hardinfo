@@ -18,7 +18,7 @@ project(hardinfo2)
 #Release settings
 set(HARDINFO2_VERSION "2.2.8")
 set(HARDINFO2_RELEASE_DATE "2025-02-02")
-set(HARDINFO2_RELEASE_NOTE_HTML "<p>Stable Release</p><p>\nNew Benchmark for Cache/Memory\nLots of minor fixes/maintenance\nFor details see https://hardinfo2.org/news</p>")
+set(HARDINFO2_RELEASE_NOTE_HTML "<p>Development Release</p><p>\nNew Benchmark for Cache/Memory\nLots of minor fixes/maintenance\nFor details see homepage news.</p>")
 
 #Build settings
 option(HARDINFO2_SERVICE "Build with service support" 1)
