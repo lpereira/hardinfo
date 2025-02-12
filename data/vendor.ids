@@ -1406,6 +1406,12 @@ name United Microelectronics Corporation
     note x86 processor vendor ID
     match_string UMC UMC UMC
 
+name Vendefoul Wolf
+    name_short Vendefoul Wolf
+    ansi_color 0;34;107
+    url vendefoulwolf.wordpress.com
+    match_string Vendefoul Wolf
+
 name VIA (formerly Centaur Technology)
     name_short VIA (Centaur)
     url www.via.tw
