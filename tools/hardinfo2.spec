@@ -4,7 +4,7 @@
 %endif
 
 Name:           hardinfo2
-Version:        2.0.15
+Version:        2.2.7
 Release:        %autorelease
 Summary:        System Information and Benchmark for Linux Systems
 
@@ -55,23 +55,34 @@ BuildRequires:  cmake3
 BuildRequires:  cmake
 %endif
 
+BuildRequires:  cmake(Qt5Core)
+BuildRequires:  cmake(Qt5Gui)
+BuildRequires:  cmake(Qt5Widgets)
+BuildRequires:  cmake(Qt5OpenGL)
+
 BuildRequires:  pkgconfig(gtk+-3.0)
 BuildRequires:  pkgconfig(cairo)
 BuildRequires:  pkgconfig(cairo-png)
 BuildRequires:  pkgconfig(gthread-2.0)
 BuildRequires:  pkgconfig(gmodule-export-2.0)
-# BuildRequires:  pkgconfig(libsoup-3.0)
+%if 0%{?fedora} || 0%{?rhel} >= 10
+BuildRequires:  pkgconfig(libsoup-3.0)
+%else
 BuildRequires:  pkgconfig(libsoup-2.4)
+%endif
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(json-glib-1.0)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  zlib-devel
 
+BuildRequires:  systemd-rpm-macros
 BuildRequires:  desktop-file-utils
+BuildRequires:  libappstream-glib
 
 %if 0%{?rhel} >= 8 || 0%{?fedora}
 Recommends:     lm_sensors
 Recommends:     sysbench
+Recommends:     lsscsi
 Recommends:     glx-utils
 Recommends:     dmidecode
 Recommends:     udisks2
@@ -114,24 +125,29 @@ Features include:
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.metainfo.xml
 
 %files -f %{name}.lang
 %license LICENSE
 %doc README.md
 %{_bindir}/hardinfo2
+%{_bindir}/hwinfo2_fetch_sysdata
+%{_unitdir}/hardinfo2.service
 %dir %{_libdir}/hardinfo2
 %dir %{_libdir}/hardinfo2/modules
 %{_libdir}/hardinfo2/modules/benchmark.so
 %{_libdir}/hardinfo2/modules/computer.so
 %{_libdir}/hardinfo2/modules/devices.so
 %{_libdir}/hardinfo2/modules/network.so
+%{_libdir}/hardinfo2/modules/qgears2
+%{_metainfodir}/org.hardinfo2.hardinfo2.metainfo.xml
 %{_datadir}/applications/hardinfo2.desktop
 %dir %{_datadir}/hardinfo2
 %{_datadir}/hardinfo2/*.ids
 %{_datadir}/hardinfo2/benchmark.data
 %{_datadir}/hardinfo2/*.json
 %{_datadir}/hardinfo2/pixmaps/
-%{_datadir}/icons/hicolor/256x256/apps/hardinfo2.png
+%{_datadir}/icons/hicolor/scalable/apps/hardinfo2.svg
 %{_mandir}/man1/hardinfo2.1*
 
 %changelog
