@@ -54,6 +54,7 @@ static const AptFlavor apt_flavors[] = {
     { "PureOS",         "pureos",          "pureos-settings",          "/etc/os-release",            "VERSION_ID=" },
     { "Puppy Linux",    "puppy",           "/etc/DISTRO_SPECS",        "/etc/DISTRO_SPECS",          "DISTRO_VERSION=" },
     { "Ubuntu GNOME",   "ubuntu-gnome",    "ubuntu-gnome-desktop",     "/etc/os-release",            "VERSION_ID=" },//dead
+    { "Winux",          "winux",          "/usr/bin/winux-driver-manager","/etc/os-release",        "PRETTY_NAME=\"Winux " },
     { NULL }
 };
 void apt_flavors_scan(gchar **pretty_name, gchar **codename, gchar **id, gchar **orig_id, gchar **orig_name) {

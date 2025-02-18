@@ -1496,6 +1496,13 @@ name Winbond Electronics Corporation
     ansi_color 0;31;107
     match_string Winbond
 
+name Winux
+    name_short Winux
+    ansi_color 0;34;107
+    url www.winuxos.com
+    match_string Winux 11
+    match_string Winux 12
+
 name X.Org Foundation
     name_short X.Org
     url www.x.org
