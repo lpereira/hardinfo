@@ -9,28 +9,24 @@ license=('GPL-2.0-or-later AND GPL-3.0-or-later AND LGPL-2.1-or-later')
 depends=(
   'gtk3'
   'libsoup3'
+  'gawk'
+  'dmidecode'
+  'iperf3'
+  'lm_sensors'
+  'mesa-utils'
+  'sysbench'
+  'udisks2'
+  'vulkan-tools'
+  'xdg-utils'
+  'xorg-xrandr'
+  'fwupd'
+  'qt5-base'
 )
 makedepends=(
   'cmake'
   'qt5-base'
 )
 checkdepends=('appstream')
-optdepends=(
-  'dmidecode: Memory Devices / System DMI module'
-  'fwupd: Firmware module'
-  'gawk: determine System Type'
-  'iperf3: Internal Network Speed benchmark'
-  'lm_sensors: Sensors module'
-  'mesa-utils: GLX info for Display module'
-  'pciutils: PCI Devices module'
-  'qt5-base: OpenGL benchmark'
-  'sysbench: SysBench CPU benchmark'
-  'udisks2: Storage module'
-  'usbutils: USB Devices module'
-  'vulkan-tools: display Vulkan information'
-  'xdg-utils: open your browser for bugs, homepage & links'
-  'xorg-xrandr: read monitor setup'
-)
 provides=('hardinfo')
 conflicts=('hardinfo')
 install="$pkgname.install"
