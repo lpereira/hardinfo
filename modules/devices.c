@@ -374,7 +374,7 @@ gchar *get_storage_home_models(void)
     //printf("Homepath=%s (%u)\n",homepath,(unsigned int)strlen(homepath));
 
     regex = g_regex_new ("<.*?>", 0, 0, NULL);
-    p=storage_list;
+    p=g_strdup(storage_list);
     while ( (np=strstr(p,"\n")) ){
       *np=0;
       //printf("name=%s\n",p);
@@ -390,13 +390,14 @@ gchar *get_storage_home_models(void)
           //printf("Homepathmodel=%s\n",g_strdup_printf("%s (%s)",p,tmp));
 	  //return g_strdup_printf("%s (%s)",p,tmp);
           //printf("Homepathmodel=%s\n",p);
-	  return g_strdup(p);
+	  return p;
       }
       p=np+1;
     }
 
     g_regex_unref(regex);
     g_free(homepath);
+    g_free(p);
     return g_strdup("HomePathNotFound");
 }
 
