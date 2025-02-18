@@ -405,7 +405,7 @@ void cb_about()
 	"AngryPenguinPL (OpenMandriva)",
 	"quincyf467 (Gentoo)",
 	"terryn94 (PCLinuxOS)",
-	"bjornfor (NixOS+NIX packages)",
+	"sigmanificient (NixOS+NIX packages)",
 	"DidierSpaier (Slint)",
 	"B. Watson (Slackbuild packages)",
 	"K1ngfish3r (Clear Linux)",
