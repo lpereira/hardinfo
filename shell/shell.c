@@ -651,15 +651,15 @@ static void create_window(void)
     if(!find_program("dmidecode")) {p=pkgok;pkgok=g_strconcat("dmidecode\n", pkgok, NULL);g_free(p);}
     if(!find_program("xdg-open")) {p=pkgok;pkgok=g_strconcat("xdg-utils\n", pkgok, NULL);g_free(p);}
     if(strstr(PACK_REQ,"udisk") && !find_program("udisksctl")) {p=pkgok;pkgok=g_strconcat("udisk2\n", pkgok, NULL);g_free(p);}
-    if(strstr(PACK_REQ,"vulkaninfo") && !find_program("vulkaninfo")) {p=pkgok;pkgok=g_strconcat("vulkaninfo\n", pkgok, NULL);g_free(p);}
-    if(!find_program("glxinfo")) {p=pkgok;pkgok=g_strconcat("mesa-utils\n", pkgok, NULL);g_free(p);}
+    if(strstr(PACK_REQ,"vulkaninfo") && !find_program("vulkaninfo / vulkan-tools")) {p=pkgok;pkgok=g_strconcat("vulkaninfo\n", pkgok, NULL);g_free(p);}
+    if(!find_program("glxinfo")) {p=pkgok;pkgok=g_strconcat("glxinfo / mesa-utils\n", pkgok, NULL);g_free(p);}
     if(strstr(PACK_REQ,"iperf") && !find_program("iperf3")) {p=pkgok;pkgok=g_strconcat("iperf3\n", pkgok, NULL);g_free(p);}
     if(!find_program("sysbench")) {p=pkgok;pkgok=g_strconcat("sysbench\n", pkgok, NULL);g_free(p);}
 #if(HARDINFO2_QT5)
     //if(!find_program("qmake-qt5")) {p=pkgok;pkgok=g_strconcat("qt5-base\n", pkgok, NULL);g_free(p);}//no binary in qt5-base package
 #endif
     if(strstr(PACK_REQ,"randr") && !find_program("xrandr")) {p=pkgok;pkgok=g_strconcat("xrandr\n", pkgok, NULL);g_free(p);}
-    if(strstr(PACK_REQ,"fwupd") && !find_program("fwupdtool")) {p=pkgok;pkgok=g_strconcat("fwupd\n", pkgok, NULL);g_free(p);}
+    if(strstr(PACK_REQ,"fwupd") && !find_program("fwupdtool") && !find_program("fwupdmgr") ) {p=pkgok;pkgok=g_strconcat("fwupd\n", pkgok, NULL);g_free(p);}
     if(pkgok){
         GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 	GtkWidget *pkgdialog;
