@@ -644,28 +644,31 @@ static void create_window(void)
     gtk_widget_show(shell->window);
 
     //Check packaging
-    gchar *pkgok=NULL;
-    //minimum installed
-    if(!find_program("awk")) pkgok=g_strconcat("gawk ", pkgok, NULL);
-    if(!find_program("dmidecode")) pkgok=g_strconcat("dmidecode ", pkgok, NULL);
-    if(!find_program("xdg-open")) pkgok=g_strconcat("xdg-utils ", pkgok, NULL);
-    if(!find_program("udisksctl")) pkgok=g_strconcat("udisk2 ", pkgok, NULL);
-    if(!find_program("vulkaninfo")) pkgok=g_strconcat("vulkaninfo ", pkgok, NULL);
-    if(!find_program("glxinfo")) pkgok=g_strconcat("mesa-utils ", pkgok, NULL);
-    if(!find_program("iperf3")) pkgok=g_strconcat("iperf3 ", pkgok, NULL);
-    if(!find_program("sysbench")) pkgok=g_strconcat("sysbench ", pkgok, NULL);
-    //if(!find_program("qmake-qt5")) pkgok=g_strconcat("qt5-base ", pkgok, NULL);//no binary in qt5-base package
-    if(!find_program("xrandr")) pkgok=g_strconcat("xrandr ", pkgok, NULL);
-    if(!find_program("fwupdtool")) pkgok=g_strconcat("fwupd ", pkgok, NULL);
+    gchar *pkgok=NULL,*p;
+    //minimum of packages installed by hardinfo2 package - as specified on README.md
+    //pkgok=g_strdup("TESTING\n");//for testing - always triggers
+    if(!find_program("awk")) {p=pkgok;pkgok=g_strconcat("gawk\n", pkgok, NULL);g_free(p);}
+    if(!find_program("dmidecode")) {p=pkgok;pkgok=g_strconcat("dmidecode\n", pkgok, NULL);g_free(p);}
+    if(!find_program("xdg-open")) {p=pkgok;pkgok=g_strconcat("xdg-utils\n", pkgok, NULL);g_free(p);}
+    if(strstr(PACK_REQ,"udisk") && !find_program("udisksctl")) {p=pkgok;pkgok=g_strconcat("udisk2\n", pkgok, NULL);g_free(p);}
+    if(strstr(PACK_REQ,"vulkaninfo") && !find_program("vulkaninfo")) {p=pkgok;pkgok=g_strconcat("vulkaninfo\n", pkgok, NULL);g_free(p);}
+    if(!find_program("glxinfo")) {p=pkgok;pkgok=g_strconcat("mesa-utils\n", pkgok, NULL);g_free(p);}
+    if(strstr(PACK_REQ,"iperf") && !find_program("iperf3")) {p=pkgok;pkgok=g_strconcat("iperf3\n", pkgok, NULL);g_free(p);}
+    if(!find_program("sysbench")) {p=pkgok;pkgok=g_strconcat("sysbench\n", pkgok, NULL);g_free(p);}
+#if(HARDINFO2_QT5)
+    //if(!find_program("qmake-qt5")) {p=pkgok;pkgok=g_strconcat("qt5-base\n", pkgok, NULL);g_free(p);}//no binary in qt5-base package
+#endif
+    if(strstr(PACK_REQ,"randr") && !find_program("xrandr")) {p=pkgok;pkgok=g_strconcat("xrandr\n", pkgok, NULL);g_free(p);}
+    if(strstr(PACK_REQ,"fwupd") && !find_program("fwupdtool")) {p=pkgok;pkgok=g_strconcat("fwupd\n", pkgok, NULL);g_free(p);}
     if(pkgok){
         GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 	GtkWidget *pkgdialog;
         pkgdialog = gtk_message_dialog_new_with_markup (GTK_WINDOW(shell->window),
-				     flags,
-				     GTK_MESSAGE_ERROR,
-				     GTK_BUTTONS_CLOSE,
-				     "<b>Hardinfo2 not packages correctly</b>\n\nMissing packages:\n\n%s\n\nPlease fix by installing manually",
-				     pkgok);//PACK_REQ);
+			 flags,
+			 GTK_MESSAGE_ERROR,
+			 GTK_BUTTONS_CLOSE,
+			 _("<b>Hardinfo2 not packaged correctly</b>\n\nMissing packages:\n\n%s\n\nPlease fix by installing manually"),
+			 pkgok);//PACK_REQ);
         gtk_dialog_run (GTK_DIALOG (pkgdialog));
         gtk_widget_destroy (pkgdialog);
 	g_free(pkgok);
