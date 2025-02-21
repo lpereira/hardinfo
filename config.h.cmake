@@ -10,6 +10,7 @@
 #define KERNEL			""
 #define HOSTNAME		""
 #define ARCH_@HARDINFO2_ARCH@
+#define PACK_REQ		"@PACK_REQ@"
 
 #define LIBDIR			"@CMAKE_INSTALL_LIBDIR@"
 #define LIBPREFIX		"@CMAKE_INSTALL_FULL_LIBDIR@/hardinfo2"

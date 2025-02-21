@@ -708,6 +708,15 @@ target_link_libraries(hardinfo2
 )
 endif()
 
+if(${TGZ})
+    SET(PACK_REQ "dmidecode,iperf3,lm_sensors,mesa-utils,sysbench,udisks2,vulkan-tools,xdg-utils,xorg-xrandr,fwupd,qt5-base")
+endif()
+if(${RPM})
+    SET(PACK_REQ ${RPM_REQ})
+endif()
+if(${DEB})
+    SET(PACK_REQ ${DEB_REQ})
+endif()
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h @ONLY)
 configure_file(hardinfo2.desktop.cmake ${CMAKE_BINARY_DIR}/hardinfo2.desktop @ONLY)
 

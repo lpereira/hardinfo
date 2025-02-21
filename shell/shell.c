@@ -642,6 +642,34 @@ static void create_window(void)
 #endif
 
     gtk_widget_show(shell->window);
+
+    //Check packaging
+    gchar *pkgok=NULL;
+    //minimum installed
+    if(!find_program("awk")) pkgok=g_strconcat("gawk ", pkgok, NULL);
+    if(!find_program("dmidecode")) pkgok=g_strconcat("dmidecode ", pkgok, NULL);
+    if(!find_program("xdg-open")) pkgok=g_strconcat("xdg-utils ", pkgok, NULL);
+    if(!find_program("udisksctl")) pkgok=g_strconcat("udisk2 ", pkgok, NULL);
+    if(!find_program("vulkaninfo")) pkgok=g_strconcat("vulkaninfo ", pkgok, NULL);
+    if(!find_program("glxinfo")) pkgok=g_strconcat("mesa-utils ", pkgok, NULL);
+    if(!find_program("iperf3")) pkgok=g_strconcat("iperf3 ", pkgok, NULL);
+    if(!find_program("sysbench")) pkgok=g_strconcat("sysbench ", pkgok, NULL);
+    //if(!find_program("qmake-qt5")) pkgok=g_strconcat("qt5-base ", pkgok, NULL);//no binary in qt5-base package
+    if(!find_program("xrandr")) pkgok=g_strconcat("xrandr ", pkgok, NULL);
+    if(!find_program("fwupdtool")) pkgok=g_strconcat("fwupd ", pkgok, NULL);
+    if(pkgok){
+        GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+	GtkWidget *pkgdialog;
+        pkgdialog = gtk_message_dialog_new_with_markup (GTK_WINDOW(shell->window),
+				     flags,
+				     GTK_MESSAGE_ERROR,
+				     GTK_BUTTONS_CLOSE,
+				     "<b>Hardinfo2 not packages correctly</b>\n\nMissing packages:\n\n%s\n\nPlease fix by installing manually",
+				     pkgok);//PACK_REQ);
+        gtk_dialog_run (GTK_DIALOG (pkgdialog));
+        gtk_widget_destroy (pkgdialog);
+	g_free(pkgok);
+    }
 }
 
 static void view_menu_select_entry(gpointer data, gpointer data2)
