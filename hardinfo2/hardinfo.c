@@ -191,7 +191,6 @@ int main(int argc, char **argv)
     } else {
         g_error(_("Don't know what to do. Exiting."));
     }
-
     moreinfo_shutdown();
     vendor_cleanup();
     dmidecode_cache_free();
