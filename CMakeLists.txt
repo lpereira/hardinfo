@@ -743,7 +743,7 @@ endif()
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml" "${METAINFO_CONTENT}")
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo/)
 execute_process(COMMAND appstream-util validate-relax --nonet ${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml)
-execute_process(COMMAND appstreamcli validate ${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml)
+execute_process(COMMAND appstreamcli validate --no-net ${CMAKE_CURRENT_BINARY_DIR}/org.hardinfo2.hardinfo2.metainfo.xml)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tools/hwinfo2_fetch_sysdata DESTINATION ${CMAKE_INSTALL_BINDIR}
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
