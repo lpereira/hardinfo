@@ -2000,7 +2000,8 @@ uber_graph_dispose (GObject *object) /* IN */
 	 * Stop any timeout handlers.
 	 */
 	if (priv->fps_handler) {
-		g_source_remove(priv->fps_handler);
+	     g_source_remove(priv->fps_handler);
+	     priv->fps_handler=0;
 	}
 	if (priv->dps_handler) {
 		g_source_remove(priv->dps_handler);
