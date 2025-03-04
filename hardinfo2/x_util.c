@@ -384,6 +384,7 @@ gboolean fill_basic_xlib(xinfo *xi) {
                 memcpy(&xi->xrr->screens[xi->xrr->screen_count-1], &ts, sizeof(x_screen));
 	    }
         }
+	XCloseDisplay(display);
         return TRUE;
     }
     return FALSE;
