@@ -494,9 +494,8 @@ void cb_generate_report()
 
 void cb_quit(void)
 {
-    do {
+    //do {
 	gtk_main_quit();
-    } while (gtk_main_level() > 1);
-
-    exit(0);
+    //} while (gtk_main_level() > 1);
+    //exit(0);
 }
