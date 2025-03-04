@@ -2045,7 +2045,7 @@ static void shell_show_detail_view(void)
          groups = g_key_file_get_groups(keyfile, NULL);
 
          for (group = 0; groups[group]; group++) {
-             gchar *icon, *method, *method_result;
+             gchar *icon=NULL, *method=NULL, *method_result=NULL;
 
              shell_status_pulse();
 
@@ -2114,7 +2114,7 @@ static void module_selected(gpointer data)
     /* Get the current selection and shows its related info */
     gtk_tree_model_get(model, &iter, TREE_COL_MODULE_ENTRY, &entry, -1);
     if (entry && !entry->selected) {
-        gchar *title;
+        gchar *title=NULL;
 
         shell_status_set_enabled(TRUE);
         shell_status_update(_("Updating..."));
