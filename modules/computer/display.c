@@ -23,28 +23,28 @@
 
 DisplayInfo *computer_get_display(void) {
     DisplayInfo *di = g_new0(DisplayInfo, 1);
-    wl_info *wl = get_walyand_info();
-    xinfo *xi = xinfo_get_info();
-    xrr_info *xrr = xi->xrr;
+    memset(di,0,sizeof(DisplayInfo));
+    di->wl = get_walyand_info();
+    di->xi = xinfo_get_info();
 
     di->width = di->height = 0;
-    if (xrr->screen_count > 0) {
-        di->width = xrr->screens[0].px_width;
-        di->height = xrr->screens[0].px_height;
+    if (di->xi->xrr->screen_count > 0) {
+        di->width = di->xi->xrr->screens[0].px_width;
+        di->height = di->xi->xrr->screens[0].px_height;
     }
-    di->vendor = xi->vendor;
-    di->session_type = wl->xdg_session_type;
+    di->vendor = di->xi->vendor;
+    di->session_type = di->wl->xdg_session_type;
 
     if (strcmp(di->session_type, "x11") == 0 ) {
-        if (xi->nox) {
+        if (di->xi->nox) {
             di->display_server = g_strdup(_("(Unknown)"));
             /* assumed x11 previously, because it wasn't set */
-            free(wl->xdg_session_type);
-            di->session_type = wl->xdg_session_type = NULL;
-        } else if (xi->vendor && xi->version)
-            di->display_server = g_strdup_printf("%s %s", xi->vendor, xi->version );
-        else if (xi->vendor && xi->release_number)
-            di->display_server = g_strdup_printf("[X11] %s %s", xi->vendor, xi->release_number );
+            free(di->wl->xdg_session_type);
+            di->session_type = (di->wl->xdg_session_type = NULL);
+        } else if (di->xi->vendor && di->xi->version)
+            di->display_server = g_strdup_printf("%s %s", di->xi->vendor, di->xi->version );
+        else if (di->xi->vendor && di->xi->release_number)
+            di->display_server = g_strdup_printf("[X11] %s %s", di->xi->vendor, di->xi->release_number );
         else
             di->display_server = g_strdup("X11");
     } else
@@ -57,8 +57,6 @@ DisplayInfo *computer_get_display(void) {
         di->display_server = g_strdup(_("(Unknown)"));
     }
 
-    di->xi = xi;
-    di->wl = wl;
     return di;
 }
 
