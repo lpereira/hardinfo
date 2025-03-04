@@ -32,10 +32,11 @@ conflicts=('hardinfo')
 install="$pkgname.install"
 #source=("$pkgname-$pkgver.tar.gz::https://github.com/hardinfo2/hardinfo2/archive/refs/tags/release-$pkgver.tar.gz")
 #sha256sums=('1856d067b5cb8516ef98ca9962d31d68ed14ed66cc42edb93d08265a03bc5f6e')
-source=("hardinfo2.tgz")
+source=()
 sha256sums=('SKIP')
 
 build() {
+  cd ../..
 #  cmake -B build -S "$pkgname-release-$pkgver" \
   cmake -B build -S "$pkgname" \
     -DCMAKE_BUILD_TYPE='Release' \
@@ -46,10 +47,12 @@ build() {
 }
 
 check() {
+  cd ../..
   desktop-file-validate "build/$pkgname.desktop"
   appstreamcli validate --no-net "build/org.$pkgname.$pkgname.metainfo.xml"
 }
 
 package() {
+  cd ../..
   DESTDIR="$pkgdir" cmake --install build
 }
