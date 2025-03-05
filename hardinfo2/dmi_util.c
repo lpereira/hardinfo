@@ -160,7 +160,7 @@ char *dmi_get_str(const char *id_str) {
 }
 
 char *dmi_get_str_abs(const char *id_str) {
-    static struct {
+    static const struct {
         char *id;
         char *path;
     } tab_dmi_sysfs[] = {
