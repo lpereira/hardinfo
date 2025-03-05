@@ -1256,12 +1256,139 @@ GSList *decode_dimms2(GSList *eeprom_list, const gchar *driver, gboolean use_sys
     return dimm_list;
 }
 
+static GSList *memory_info_from_udev(void)
+{
+    GSList *dimm_list = NULL;
+    gchar **lines;
+    gchar *stdout;
+    int i;
+
+    if (!g_spawn_command_line_sync("/usr/bin/udevadm info -e", &stdout, NULL,
+                                   NULL, NULL))
+        return NULL;
+
+    lines = g_strsplit(stdout, "\n", -1);
+    g_free(stdout);
+
+    long last_id = -1;
+    spd_data *spd = NULL;
+    const char *speed_mts = NULL;
+    const char *speed_mts_configured = NULL;
+    const char *mem_tech = NULL;
+    const char *type_detail = NULL;
+
+    for (i = 0; lines[i]; i++) {
+        if (!g_str_has_prefix(lines[i], "E: MEMORY_DEVICE_"))
+            continue;
+
+        gchar *line = lines[i];
+        char *underline;
+
+        errno = 0;
+        long id = strtol(line + strlen("E: MEMORY_DEVICE_"), &underline, 10);
+        if (errno)
+            continue;
+
+        line = underline + 1;
+
+        gchar *equal = strchr(line, '=');
+        if (!equal)
+            continue;
+
+        gchar *key = line;
+        gchar *value = equal + 1;
+
+        if (last_id != id) {
+            last_id = id;
+            if (spd) {
+                snprintf(spd->type_detail, 256,
+                    "%s %s, %sMT/s @ %sMT/s",
+                    type_detail ? type_detail : "",
+                    mem_tech ? mem_tech : "",
+                    speed_mts ? speed_mts : "?",
+                    speed_mts_configured ? speed_mts_configured : "?");
+                dimm_list = g_slist_append(dimm_list, spd);
+            }
+            spd = g_new0(spd_data, 1);
+            spd->spd_driver = "udev";
+            snprintf(spd->dev, 32, "stick-%ld", id);
+            speed_mts = speed_mts_configured = mem_tech = type_detail = NULL;
+        }
+
+        if (g_str_has_prefix(key, "TYPE")) {
+            if (g_str_has_prefix(key, "TYPE_DETAIL")) {
+                type_detail = value;
+            } else {
+                if (g_str_equal(value, "DDR4"))
+                    spd->type = DDR4_SDRAM;
+                else if (g_str_equal(value, "DDR3"))
+                    spd->type = DDR3_SDRAM;
+                else if (g_str_equal(value, "DDR2"))
+                    spd->type = DDR2_SDRAM;
+                else if (g_str_equal(value, "DDR"))
+                    spd->type = DDR_SDRAM;
+                else if (g_str_equal(value, "SDR"))
+                    spd->type = SDR_SDRAM;
+                else
+                    spd->type = UNKNOWN;
+            }
+        } else if (g_str_has_prefix(key, "MANUFACTURER")) {
+            spd->vendor = vendor_match(value, NULL);
+            spd->vendor_str = vendor_get_name(value);
+        } else if (g_str_has_prefix(key, "FORM_FACTOR")) {
+            if (g_str_equal(value, "RDIMM"))
+                spd->form_factor = "RDIMM";
+            else if (g_str_equal(value, "UDIMM"))
+                spd->form_factor = "UDIMM";
+            else if (g_str_equal(value, "SODIMM"))
+                spd->form_factor = "SODIMM";
+        } else if (g_str_has_prefix(key, "SPEED_MTS")) {
+            speed_mts = value;
+        } else if (g_str_has_prefix(key, "CONFIGURED_SPEED_MTS")) {
+            speed_mts_configured = value;
+        } else if (g_str_has_prefix(key, "MEMORY_TECHNOLOGY")) {
+            mem_tech = value;
+        } else if (g_str_has_prefix(key, "PART_NUMBER")) {
+            snprintf(spd->partno, 32, "%s", value);
+        } else if (g_str_has_prefix(key, "VOLATILE_SIZE")) {
+            spd->size_MiB = strtoll(value, NULL, 10) / 1048576u;
+        } else if (g_str_has_prefix(key, "MODULE_MANUFACTURER_ID")) {
+            int bank, index;
+            if (sscanf(value, "Bank %d, Hex 0x%x", &bank, &index) == 2) {
+                spd->vendor_bank = bank;
+                spd->vendor_index = index;
+            }
+        } else {
+            /* FIXME: there are many more fields there! */
+        }
+    }
+
+    if (spd) {
+        snprintf(spd->type_detail, 256,
+            "%s %s, %sMT/s @ %sMT/s",
+            type_detail ? type_detail : "",
+            mem_tech ? mem_tech : "",
+            speed_mts ? speed_mts : "?",
+            speed_mts_configured ? speed_mts_configured : "?");
+        dimm_list = g_slist_append(dimm_list, spd);
+    }
+
+    g_strfreev(lines);
+
+    return dimm_list;
+}
+
 GSList *spd_scan() {
     GDir *dir = NULL;
     GSList *eeprom_list = NULL, *dimm_list = NULL;
     gchar *dimm_list_entry, *dir_entry, *name_file, *name;
     const SpdDriver *driver;
     gboolean is_spd = FALSE;
+
+    dimm_list = memory_info_from_udev();
+    if (dimm_list)
+        return dimm_list;
+
     for (driver = spd_drivers; driver->dir_path; driver++) {
         if (g_file_test(driver->dir_path, G_FILE_TEST_EXISTS)) {
             dir = g_dir_open(driver->dir_path, 0, NULL);

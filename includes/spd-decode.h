@@ -84,7 +84,7 @@ typedef struct {
     gboolean ddr4_no_ee1004;
     int match_score;
     const char *spd_driver;//link to static const
-    char *vendor_str;//links to static const
+    const char *vendor_str;//links to static const
     char *dram_vendor_str;//links to static const
     struct dmi_mem_socket *dmi_socket;//links
     const Vendor *vendor;//links
