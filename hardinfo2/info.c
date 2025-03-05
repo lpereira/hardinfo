@@ -529,6 +529,7 @@ struct Info *info_unflatten(const gchar *str)
             }
             g_array_append_val(info->groups, group);
         }
+	g_strfreev(keys);
     }
 
     if (spg >= 0) {
@@ -576,6 +577,8 @@ struct Info *info_unflatten(const gchar *str)
         g_free(group_name);
         g_strfreev(keys);
     }
+
+    g_key_file_free(key_file);
 
     return info;
 }
