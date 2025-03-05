@@ -402,14 +402,14 @@ gchar *computer_get_machinetype(int english)
     }
 
     tmp = module_call_method("devices::getMotherboard");
-    if(strstr(tmp, "VirtualBox") != NULL) {
+    if(tmp && strstr(tmp, "VirtualBox") != NULL) {
         g_free(tmp);
 	if(english)
             return g_strdup(N_("Virtual (VirtualBox)"));
         else
             return g_strdup(_("Virtual (VirtualBox)"));
     }
-    if(strstr(tmp, "VMware") != NULL) {
+    if(tmp && strstr(tmp, "VMware") != NULL) {
         g_free(tmp);
 	if(english)
             return g_strdup(N_("Virtual (VMware)"));
@@ -419,7 +419,7 @@ gchar *computer_get_machinetype(int english)
     g_free(tmp);
 
     tmp = module_call_method("devices::getStorageDevices");
-    if((strstr(tmp, "QEMU") != NULL) || (strstr(tmp, "VirtIO") != NULL)) {
+    if(tmp && ((strstr(tmp, "QEMU") != NULL) || (strstr(tmp, "VirtIO") != NULL))) {
         g_free(tmp);
 	if(english)
             return g_strdup(N_("Virtual (QEMU)"));
@@ -429,7 +429,7 @@ gchar *computer_get_machinetype(int english)
     g_free(tmp);
 
     tmp=module_call_method("computer::getOSKernel");
-    if(strstr(tmp,"WSL2")){
+    if(tmp && strstr(tmp,"WSL2")){
          g_free(tmp);
          return g_strdup("Virtual (WSL2)");
     }
