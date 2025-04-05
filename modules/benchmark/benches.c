@@ -53,6 +53,7 @@ BENCH_SIMPLE(BENCHMARK_SBCPU_QUAD, "SysBench CPU (Four threads)", benchmark_sbcp
 BENCH_SIMPLE(BENCHMARK_MEMORY_SINGLE, "SysBench Memory (Single-thread)", benchmark_memory_single, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_DUAL, "SysBench Memory (Two threads)", benchmark_memory_dual, 1);
 BENCH_SIMPLE(BENCHMARK_MEMORY_QUAD, "SysBench Memory", benchmark_memory_quad, 1);
+BENCH_SIMPLE(BENCHMARK_IPERF3_SINGLE, "Iperf3 localhost", benchmark_iperf3_single, 1);
 
 #if !GTK_CHECK_VERSION(3,0,0)
 BENCH_CALLBACK(callback_gui, "GPU Drawing", BENCHMARK_GUI, 1);
@@ -198,6 +199,14 @@ static ModuleEntry entries[] = {
             scan_benchmark_memory_quad,
             MODULE_FLAG_NONE,
         },
+    [BENCHMARK_IPERF3_SINGLE] =
+        {
+            N_("Iperf3 localhost"),
+            "memory.png",
+            callback_benchmark_iperf3_single,
+            scan_benchmark_iperf3_single,
+            MODULE_FLAG_NONE,
+        },
 #if !GTK_CHECK_VERSION(3, 0, 0)
     [BENCHMARK_GUI] =
         {
@@ -220,6 +229,10 @@ const gchar *hi_note_func(gint entry)
     case BENCHMARK_SBCPU_ALL:
         return _("Alexey Kopytov's <i><b>sysbench</b></i> is required.\n"
                  "Results in events/second. Higher is better.");
+
+    case BENCHMARK_IPERF3_SINGLE:
+        return _("<i><b>iperf3</b></i> is required.\n"
+                 "Results in Gbits/s. Higher is better.");
 
     case BENCHMARK_MEMORY_SINGLE:
     case BENCHMARK_MEMORY_DUAL:
