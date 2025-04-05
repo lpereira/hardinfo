@@ -1440,6 +1440,7 @@ gboolean hardinfo_spawn_command_line_sync(const gchar *command_line,
                                           GError **error)
 {
     shell_status_pulse();
+    DEBUG("Trying: %s", command_line);
     return g_spawn_command_line_sync(command_line, standard_output,
                                      standard_error, exit_status, error);
 }
