@@ -237,6 +237,32 @@ static const gchar* get_module_icon(const char *modname, const char *path)
     return NULL;
 }
 
+static char *fill_module_parameters(char *strmodule, const char *modname)
+{
+    gchar *path = g_build_filename("/sys/module", modname, "parameters", NULL);
+    GDir *dir;
+
+    dir = g_dir_open(path, 0, NULL);
+    if (dir) {
+        const gchar *filename;
+        strmodule = h_strdup_cprintf(_("[Parameters]\n"), strmodule);
+        while ((filename = g_dir_read_name(dir))) {
+            gchar *tmp = g_build_filename(path, filename, NULL);
+            gchar *contents;
+            if (g_file_get_contents(tmp, &contents, NULL, NULL)) {
+                strmodule = h_strdup_cprintf("%s=%s\n", strmodule, filename, contents);
+                g_free(contents);
+            }
+            g_free(tmp);
+        }
+        g_dir_close(dir);
+    }
+
+    g_free(path);
+
+    return strmodule;
+}
+
 void scan_modules_do(void) {
     FILE *lsmod;
     gchar buffer[1024];
@@ -364,6 +390,9 @@ void scan_modules_do(void) {
                                     _("Version"), version, _("In Linus' Tree"), intree,
                                     _("Retpoline Enabled"), retpoline, _("Copyright"), _("Author"),
                                     author, _("License"), license);
+
+
+        strmodule = fill_module_parameters(strmodule, modname);
 
         /* if there are dependencies, append them to that string */
         if (deps && strlen(deps)) {
